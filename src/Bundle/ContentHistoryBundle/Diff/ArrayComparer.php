@@ -26,53 +26,54 @@ class ArrayComparer
      */
     public static function diff(array $old = [], array $new = [])
     {
-        $old = self::normalize($new, $old);
+        $diff = array_merge_recursive(self::compareOld($old, $new), self::compareNew($new, $old));
 
-        $new = self::normalize($old, $new);
+        return $diff;
+    }
 
+
+    public static function compareOld(array $old, array $new)
+    {
         $diff = [];
-
-        foreach ($new as $key => $value) {
-            if (in_array($key, self::IGNORE_KEYS)) {
-                continue;
-            }
-
-            if (is_array($value) && null !== $old[$key]) {
-                $result = self::diff($old[$key], $value);
-                if (count($result)) {
-                    $diff[$key] = $result;
+        foreach ($old as $key => $value) {
+            if (array_key_exists($key, $new)) {
+                if (is_array($value) && is_array($new[$key]) && $key != 'relations') {
+                    if ($diffSub = self::compareOld($value, $new[$key])) {
+                        $diff[$key] = $diffSub;
+                    }
                 }
-            } elseif ($old[$key] !== $value) {
-                // value has changed
-                $diff[$key] = [$old[$key], $value];
+            } else {
+                if (!empty($value)) {
+                    $diff[$key] = [$value, null];
+                }
             }
         }
 
         return $diff;
     }
 
-    /**
-     * @param array $old
-     * @param array $new
-     * @return array
-     */
-    public static function normalize(array $old = [], array $new = [])
+    public static function compareNew(array $new, array $old)
     {
-        foreach (array_keys($old) as $key) {
-            if (!array_key_exists($key, $new)) {
-                // add missing key
-                if (is_array($old[$key])) {
-                    $new[$key] = [];
+        $diff = [];
+        foreach ($new as $key => $value) {
+            if (array_key_exists($key, $old)) {
+                if (is_array($value) && is_array($old[$key]) && $key !== 'relations') {
+                    if ($diffSub = self::compareNew($value, $old[$key])) {
+                        $diff[$key] = $diffSub;
+                    }
                 } else {
-                    $new[$key] = null;
+                    if ($value != $old[$key]) {
+                        $diff[$key] = [$old[$key], $value];
+                    }
                 }
-            }
-
-            if (is_array($old[$key])) {
-                $new[$key] = self::normalize($old[$key], $new[$key]);
+            } else {
+                if (!empty($value)) {
+                    $diff[$key] = [null, $value];
+                }
             }
         }
 
-        return $new;
+
+        return $diff;
     }
 }

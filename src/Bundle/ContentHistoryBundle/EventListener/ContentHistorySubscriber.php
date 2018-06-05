@@ -69,8 +69,8 @@ class ContentHistorySubscriber implements EventSubscriber
 
     /**
      * @param DocumentManager $dm
-     * @param array           $documents
-     * @param string          $action
+     * @param array $documents
+     * @param string $action
      */
     protected function dispatch(DocumentManager $dm, array $documents, $action)
     {
@@ -86,8 +86,10 @@ class ContentHistorySubscriber implements EventSubscriber
 
             $this->eventDispatcher->dispatch($action, new ContentHistoryEvent($history, $document, $originalData));
 
-            $dm->persist($history);
-            $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $history);
+            if (count($history->getChangeSet())) {
+                $dm->persist($history);
+                $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $history);
+            }
         }
     }
 
