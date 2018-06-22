@@ -57,6 +57,10 @@ class ChannelType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
+            if (empty($data['domains'])) {
+                return;
+            }
+
             $primaryChannelIsIteratedAndEmpty = false;
 
             foreach ($data['domains'] as $domain) {
@@ -90,6 +94,10 @@ class ChannelType extends AbstractType
                 'choice_label' => 'name',
             ]
         );
+
+        $builder->add('permissions', PermissionsType::class, [
+            'required' => false,
+        ]);
     }
 
     /**

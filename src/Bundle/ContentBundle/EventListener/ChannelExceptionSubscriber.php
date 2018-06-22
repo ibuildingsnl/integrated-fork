@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -25,9 +25,9 @@ use Symfony\Component\Routing\Router;
 class ChannelExceptionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var Router
+     * @var UrlGeneratorInterface
      */
-    private $router;
+    private $generator;
 
     /**
      * @var ChannelContextInterface
@@ -35,12 +35,12 @@ class ChannelExceptionSubscriber implements EventSubscriberInterface
     private $channelContext;
 
     /**
-     * @param Router                  $router
+     * @param UrlGeneratorInterface   $generator
      * @param ChannelContextInterface $channelContext
      */
-    public function __construct(Router $router, ChannelContextInterface $channelContext)
+    public function __construct(UrlGeneratorInterface $generator, ChannelContextInterface $channelContext)
     {
-        $this->router = $router;
+        $this->generator = $generator;
         $this->channelContext = $channelContext;
     }
 
@@ -71,6 +71,6 @@ class ChannelExceptionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new RedirectResponse($this->router->generate('integrated_content_content_index')));
+        $event->setResponse(new RedirectResponse($this->generator->generate('integrated_content_content_index')));
     }
 }

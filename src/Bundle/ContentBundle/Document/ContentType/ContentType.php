@@ -15,6 +15,7 @@ use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
+use Integrated\Common\Security\PermissionTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,6 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ContentType implements ContentTypeInterface
 {
+    use PermissionTrait;
+
     /**
      * @var string
      * @Slug(fields={"name"}, separator="_")
@@ -58,6 +61,11 @@ class ContentType implements ContentTypeInterface
      * @var \DateTime
      */
     protected $createdAt;
+
+    /**
+     * @var bool
+     */
+    protected $locked = false;
 
     /**
      * Constructor.
@@ -289,6 +297,26 @@ class ContentType implements ContentTypeInterface
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param bool $locked
+     *
+     * @return $this
+     */
+    public function setLocked($locked = true)
+    {
+        $this->locked = $locked;
 
         return $this;
     }
