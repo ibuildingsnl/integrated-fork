@@ -16,6 +16,7 @@ use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Integrated\Common\Security\PermissionTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -27,6 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Channel implements ChannelInterface
 {
+    use PermissionTrait;
+
     /**
      * @var string
      * @Slug(fields={"name"}, separator="_")

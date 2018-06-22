@@ -187,31 +187,33 @@ class ContentController extends Controller
                 }
             }
 
-            // allow content without workflow
-            $fq = $query->createFilterQuery('workflow')
-                ->addTag('workflow')
-                ->addTag('security')
-                ->setQuery('(*:* -security_workflow_read:[* TO *])');
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                // allow content without workflow
+                $fq = $query->createFilterQuery('workflow')
+                    ->addTag('workflow')
+                    ->addTag('security')
+                    ->setQuery('(*:* -security_workflow_read:[* TO *])');
 
-            // allow content with group access
-            if ($filterWorkflow) {
+                // allow content with group access
+                if ($filterWorkflow) {
+                    $fq->setQuery(
+                        $fq->getQuery().' OR security_workflow_read: ((%1%))',
+                        [implode(') OR (', $filterWorkflow)]
+                    );
+                }
+
+                // always allow access to assigned content
                 $fq->setQuery(
-                    $fq->getQuery().' OR security_workflow_read: ((%1%))',
-                    [implode(') OR (', $filterWorkflow)]
+                    $fq->getQuery().' OR facet_workflow_assigned_id: %1%',
+                    [$user->getId()]
                 );
-            }
 
-            // always allow access to assinged content
-            $fq->setQuery(
-                $fq->getQuery().' OR facet_workflow_assigned_id: %1%',
-                [$user->getId()]
-            );
-
-            if ($person = $user->getRelation()) {
-                $fq->setQuery(
-                    $fq->getQuery().' OR author: %1%*',
-                    [$person->getId()]
-                );
+                if ($person = $user->getRelation()) {
+                    $fq->setQuery(
+                        $fq->getQuery().' OR author: %1%*',
+                        [$person->getId()]
+                    );
+                }
             }
         }
 
@@ -383,7 +385,7 @@ class ContentController extends Controller
     public function newAction(Request $request)
     {
         /** @var ContentTypeInterface $contentType */
-        $contentType = $this->get('integrated_content.resolver')->getType($request->get('type'));
+        $contentType = $this->get('integrated_content.content_type.manager')->getType($request->get('type'));
 
         $content = $contentType->create();
 
@@ -469,7 +471,7 @@ class ContentController extends Controller
     public function editAction(Request $request, Content $content)
     {
         /** @var ContentTypeInterface $contentType */
-        $contentType = $this->get('integrated_content.resolver')->getType($content->getContentType());
+        $contentType = $this->get('integrated_content.content_type.manager')->getType($content->getContentType());
 
         if (!$this->get('security.authorization_checker')->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
