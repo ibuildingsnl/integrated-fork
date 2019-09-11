@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Integrated\Common\Form\Mapping\Annotations as Type;
 
 /**
@@ -42,7 +43,16 @@ class ContentItemsBlock extends Block
      */
     public function getItems()
     {
-        return $this->items->toArray();
+        $items = [];
+        foreach ($this->items as $item) {
+            try {
+                if ($item->getSlug()) {
+                    $items[] = $item;
+                }
+            } catch (DocumentNotFoundException $exception) {
+            }
+        }
+        return $items;
     }
 
     /**
