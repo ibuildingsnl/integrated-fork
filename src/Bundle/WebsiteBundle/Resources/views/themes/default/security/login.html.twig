@@ -32,7 +32,7 @@
 
             <div id="panel-password-verify" style="display: none;">
                 <label for="password-verify" id="password-verify-label">Repeat password</label>
-                <input type="password" name="password-verify" id="password-verify" class="form-control" required />
+                <input type="password" name="password-verify" id="password-verify" class="form-control" />
             </div>
 
             <div id="panel-remember-me" class="checkbox mb-3" style="display: none;">
@@ -58,11 +58,13 @@
         $('#panel-password-verify').hide();
         $('#panel-remember-me').hide();
         $('#login-form').prop('action', '');
+        $('#panel-password-verify').prop('required', false);
         $.post(Routing.generate('integrated_website_login_verify'), { 'username': username }, function( data ) {
             if (data.status == 1) {
                 $('#password-label').html('Please choose a password');
                 $('#panel-password').show();
                 $('#panel-password-verify').show();
+                $('#panel-password-verify').prop('required', 'required');
                 $('#password').focus();
                 $('#login-submit').prop('onclick', '');
                 $('#login-form').prop('action', Routing.generate('integrated_website_register'));
