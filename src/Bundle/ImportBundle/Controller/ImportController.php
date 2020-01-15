@@ -837,7 +837,7 @@ class ImportController extends Controller
                                     if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass() == Article::class) {
                                         $link = $this->documentManager->getRepository(Content::class)->findOneBy(['title' => $valueName, 'contentType' => $targetContentType->getId()]);
                                     }
-
+/*
                                     if ($targetContentType->getClass() == Image::class) {
                                         $path = false;
                                         foreach ($importDefinition->getChannels() as $channel) {
@@ -853,12 +853,17 @@ class ImportController extends Controller
                                         }
                                         $link = $this->documentManager->getRepository(Image::class)->findOneBy(['metadata.data.externalId' => 'header/'.$valueName, 'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl()]);
                                     }
-
+*/
                                     if (!$link) {
                                         $link = $targetContentType->create();
-                                        $link->setTitle($valueName);
+                                        if (strpos($valueName, 'http') !== false) {
+                                            $link->setTitle(basename($valueName));
+                                        } else {
+                                            $link->setTitle($valueName);
+                                        }
                                         $link->getMetadata()->set('importDate', date('Ymd'));
-                                        $link->getMetadata()->set('externalId', 'header/'.$valueName);
+                                        //$link->getMetadata()->set('externalId', 'header/'.$valueName);
+                                        $link->getMetadata()->set('externalId', $valueName);
                                         $link->getMetadata()->set('importImageBaseUrl', $importDefinition->getImageBaseUrl());
 
                                         foreach ($importDefinition->getChannels() as $channel) {
@@ -869,14 +874,23 @@ class ImportController extends Controller
                                         $this->documentManager->flush();
                                     }
 
-                                    if ($link instanceof Image) {
+                                    if ($link instanceof Image || $link instanceof File) {
                                         $path = false;
+                                        $path = $valueName;
+                                        /*
                                         foreach ($importDefinition->getChannels() as $channel) {
                                             foreach (['header/original', 'header', 'editie/header'] as $folder) {
                                                 if (!file_exists($path)) {
                                                     $path = '/home/testpi-integrated/importfiles/' . $channel->getId() . '/images/' . $folder . '/' . $valueName;
                                                 }
                                             }
+                                        }
+                                        */
+
+                                        if (strpos($path, 'http') === 0) {
+                                            $tmpfile = tempnam('/tmp/', 'file').'.'.pathinfo($path, PATHINFO_EXTENSION);
+                                            file_put_contents($tmpfile, @file_get_contents($path));
+                                            $path = $tmpfile;
                                         }
 
                                         if ($path !== false && file_exists($path)) {
@@ -899,10 +913,7 @@ class ImportController extends Controller
 
                                             $imageAltName = str_replace('_src', '_alt', $name);
                                             if (!empty($row[$imageAltName])) {
-                                                $link->setDescription($row[$imageAltName]);
-                                            }
-                                            if (!empty($row['image_footer'])) {
-                                                $link->setDescription($row['image_footer']);
+                                                //$link->setDescription($row[$imageAltName]);
                                             }
 
                                             $this->documentManager->flush();
