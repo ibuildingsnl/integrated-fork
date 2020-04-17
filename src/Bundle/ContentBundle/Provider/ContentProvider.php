@@ -21,6 +21,7 @@ use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
@@ -48,23 +49,31 @@ class ContentProvider
     private $workflowExtension;
 
     /**
+     * @var AuthorizationChecker
+     */
+    private $authorizationChecker;
+
+    /**
      * ContentProvider constructor.
      *
      * @param Client                $client
      * @param DocumentManager       $dm
      * @param TokenStorageInterface $tokenStorage
+     * @param AuthorizationChecker  $authorizationChecker
      * @param bool                  $workflowExtension
      */
     public function __construct(
         Client $client,
         DocumentManager $dm,
         TokenStorageInterface $tokenStorage,
+        AuthorizationChecker $authorizationChecker,
         $workflowExtension = false
     ) {
         $this->client = $client;
         $this->dm = $dm;
         $this->tokenStorage = $tokenStorage;
         $this->workflowExtension = $workflowExtension;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -177,6 +186,15 @@ class ContentProvider
             }
         }
 
+        $hasFields = $request->query->get('hasFields');
+        if (\is_array($hasFields)) {
+            foreach ($hasFields as $field) {
+                $query
+                    ->createFilterQuery('hasField_'.$field)
+                    ->setQuery($field.':[* TO *]');
+            }
+        }
+
         // sorting
         $sort_default = 'changed';
         $sort_options = [
@@ -186,6 +204,7 @@ class ContentProvider
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
             'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
+            'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
         ];
         $order_options = [
             'asc' => 'asc',
@@ -207,7 +226,7 @@ class ContentProvider
 
         $sort = $request->query->get('sort', $sort_default);
         $sort = trim(strtolower($sort));
-        $sort = array_key_exists($sort, $sort_options) ? $sort : $sort_default;
+        $sort = \array_key_exists($sort, $sort_options) ? $sort : $sort_default;
 
         $query->addSort($sort_options[$sort]['field'], \in_array($request->query->get('order'), $order_options) ? $request->query->get('order') : $sort_options[$sort]['order']);
 
@@ -234,6 +253,11 @@ class ContentProvider
     protected function addWorkflowFilter(Query $query)
     {
         $filterWorkflow = [];
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            //admin is always allowed to do everything
+            return;
+        }
 
         $user = $this->tokenStorage->getToken()->getUser();
 

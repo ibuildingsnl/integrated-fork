@@ -54,7 +54,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     private $dm;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface');
         $this->resolver = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface');
@@ -127,6 +127,9 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     public function testSaveExport()
     {
         $article = new Article();
+        $article->getPublishTime()->setStartDate(new \DateTime());
+        $article->getPublishTime()->setEndDate(new \DateTime('now +10 years'));
+
         $channel = $this->getChannel('channel');
 
         $this->assertInstanceOf(ConnectorInterface::class, $article);

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
+use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +49,9 @@ class MenuController extends Controller
      */
     public function saveAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
 
         $dm = $this->getDocumentManager();
         $data = (array) json_decode($request->getContent(), true);
@@ -81,11 +84,11 @@ class MenuController extends Controller
     }
 
     /**
-     * @return \Integrated\Bundle\MenuBundle\Provider\DatabaseMenuProvider
+     * @return IntegratedMenuProvider
      */
     protected function getMenuProvider()
     {
-        return $this->get('integrated_menu.provider.database_menu_provider');
+        return $this->get('integrated_menu.provider.integrated_menu_provider');
     }
 
     /**

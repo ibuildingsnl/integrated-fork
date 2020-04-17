@@ -78,7 +78,7 @@ class UrlResolver
     {
         return preg_replace_callback(
             '/(#)([\s\S]+?)(#)/',
-            function ($matches) use ($page) {
+            function ($matches) {
                 return sprintf('{%s}', $matches[2]);
             },
             $page->getPath()
@@ -109,9 +109,9 @@ class UrlResolver
             return $this->getContentTypePageUrl($page, $document);
         }
 
-        // fallback /app_*.php/contentType/slug, in production /contentType/slug
+        // fallback /app_*.php/content/contentType/slug, in production /content/contentType/slug
         return sprintf(
-            '%s/%s/%s',
+            '%s/content/%s/%s',
             $this->router->getContext()->getBaseUrl(),
             $document->getContentType(),
             //todo INTEGRATED-440 add Slug to ContentInterface
@@ -170,9 +170,9 @@ class UrlResolver
     {
         $relationIds = [];
 
-        if (preg_match_all('/(#)([\s\S]+?)(#)/', $page->getPath(), $matches)) {
-            foreach ($matches as $match) {
-                $relationIds[] = $match[0];
+        if (preg_match_all('/#([\w]+?)#/', $page->getPath(), $matches)) {
+            foreach ($matches[1] as $match) {
+                $relationIds[] = $match;
             }
         }
 

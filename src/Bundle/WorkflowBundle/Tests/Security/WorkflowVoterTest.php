@@ -63,7 +63,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
      */
     private $state = null;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->manager = $this->createMock('Doctrine\\Common\\Persistence\\ManagerRegistry');
         $this->resolver = $this->createMock('Integrated\\Common\\ContentType\\ResolverInterface');
@@ -119,11 +119,11 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUpManager()
     {
-        if (!array_key_exists('workflow', $this->repository)) {
+        if (!\array_key_exists('workflow', $this->repository)) {
             $this->setUpRepositoryWorkflow();
         }
 
-        if (!array_key_exists('state', $this->repository)) {
+        if (!\array_key_exists('state', $this->repository)) {
             $this->setUpRepositoryState();
         }
 

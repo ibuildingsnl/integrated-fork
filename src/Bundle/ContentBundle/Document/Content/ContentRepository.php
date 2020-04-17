@@ -11,8 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Common\Content\ContentInterface;
+use Solarium\QueryType\Select\Result\DocumentInterface;
 
 /**
  * Class ContentRepository.
@@ -24,26 +28,48 @@ class ContentRepository extends DocumentRepository
     /**
      * Get items which have the current document linked.
      *
-     * @param Content       $content
-     * @param Relation|null $relation
-     * @param Content|null  $excludeContent
-     * @param bool          $filterPublished
+     * @param ArrayCollection $content
+     * @param Relation|null   $relation
+     * @param Content|null    $excludeContent
+     * @param bool            $filterPublished
      *
      * @return \Doctrine\MongoDB\Query\Builder
+     *
+     * @throws \Exception
      */
-    public function getUsedBy(Content $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
+    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
     {
-        if (!$excludeContent) {
-            $excludeContent = $content;
+        if ($excludeContent !== null) {
+            $excludeContent = $excludeContent->getId();
         }
+
+        $contentIds = [];
+        foreach ($content as $contentItem) {
+            if ($contentItem instanceof ContentInterface) {
+                if (!$excludeContent) {
+                    $excludeContent = $contentItem->getId();
+                }
+
+                $contentIds[] = $contentItem->getId();
+            }
+
+            if ($contentItem instanceof DocumentInterface) {
+                if (!$excludeContent) {
+                    $excludeContent = $contentItem->type_id;
+                }
+
+                $contentIds[] = $contentItem->type_id;
+            }
+        }
+
         $query = $this->createQueryBuilder()
-            ->field('relations.references.$id')->equals($content->getId())
-            ->field('id')->notEqual($excludeContent->getId());
+            ->field('relations.references.$id')->in($contentIds)
+            ->field('id')->notEqual($excludeContent);
 
         if ($filterPublished) {
             $query->field('disabled')->equals(false)
-                ->field('publishTime.startDate')->lte(new \DateTime())
-                ->field('publishTime.endDate')->gte(new \DateTime());
+                ->field('publishTime.startDate')->lte(new DateTime())
+                ->field('publishTime.endDate')->gte(new DateTime());
         }
 
         if ($relation) {
@@ -64,7 +90,7 @@ class ContentRepository extends DocumentRepository
 
         /** @var Content $document */
         foreach ($documents as $document) {
-            /** @var \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation $relation */
+            /** @var Embedded\Relation $relation */
             foreach ($document->getRelations() as $relation) {
                 foreach ($relation->getReferences() as $reference) {
                     if ($reference->getId() == $id) {

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 
 /**
@@ -47,7 +47,7 @@ class BlockRepository extends DocumentRepository
             /** @var $metaData \Integrated\Common\Form\Mapping\Metadata\Document */
             $class = $metaData->getClass();
 
-            if (array_key_exists($class, $typeCount) && $typeCount[$class]) {
+            if (\array_key_exists($class, $typeCount) && $typeCount[$class]) {
                 $typeChoices[$metaData->getType().' '.$typeCount[$class]] = $class;
             }
         }

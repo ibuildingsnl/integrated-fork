@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,6 +35,16 @@ class ContentTypeFormType extends AbstractType
             ->add('name', TextType::class, ['label' => 'Name'])
             ->add('channels', ContentTypeChannelsType::class, ['property_path' => 'options[channels]'])
         ;
+
+        $builder->add('options_publication', ChoiceType::class, [
+            'label' => 'Publication',
+            'choices' => [
+                'Publish items on selected channels' => '',
+                'Disable for publication' => 'disabled',
+            ],
+            'property_path' => 'options[publication]',
+            'required' => false,
+        ]);
 
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create('options_'.$option->getName(), $option->getType(), ['label' => ucfirst($option->getName())] + $option->getOptions())

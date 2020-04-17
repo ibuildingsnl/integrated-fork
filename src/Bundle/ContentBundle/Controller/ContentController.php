@@ -79,6 +79,8 @@ class ContentController extends Controller
 
         /** @var $client \Solarium\Client */
         $client = $this->get('solarium.client');
+        $client->getPlugin('postbigrequest');
+
         $query = $client->createSelect();
 
         $facetSet = $query->getFacetSet();
@@ -282,6 +284,7 @@ class ContentController extends Controller
             'created' => ['name' => 'created', 'field' => 'pub_created', 'label' => 'date created', 'order' => 'desc'],
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
+            'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
             'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
         ];
         $order_options = [
@@ -304,7 +307,7 @@ class ContentController extends Controller
 
         $sort = $request->query->get('sort', $sort_default);
         $sort = trim(strtolower($sort));
-        $sort = array_key_exists($sort, $sort_options) ? $sort : $sort_default;
+        $sort = \array_key_exists($sort, $sort_options) ? $sort : $sort_default;
 
         $query->addSort($sort_options[$sort]['field'], \in_array($request->query->get('order'), $order_options) ? $request->query->get('order') : $sort_options[$sort]['order']);
 
@@ -489,14 +492,19 @@ class ContentController extends Controller
 
             if ($locking['new']) {
                 if ($request->isMethod('get')) {
-                    return $this->redirect($this->generateUrl('integrated_content_content_edit', ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]));
+                    $parameters = array_merge($request->query->all(), [
+                        'id' => $content->getId(),
+                        'lock' => $locking['lock']->getId(),
+                    ]);
+
+                    return $this->redirect($this->generateUrl('integrated_content_content_edit', $parameters));
                 }
 
                 $locking['locked'] = false;
             }
         }
 
-        $form = $this->createEditForm($contentType, $content, $locking);
+        $form = $this->createEditForm($contentType, $content, $locking, $request);
 
         if ($request->isMethod('put')) {
             $form->handleRequest($request);
@@ -1019,9 +1027,19 @@ class ContentController extends Controller
      */
     protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request)
     {
+        $parameters = array_merge($request->query->all(), [
+            'type' => $request->get('type'),
+            '_format' => $request->getRequestFormat(),
+            'relation' => $request->get('relation'),
+        ]);
+
         $form = $this->createForm(ContentFormType::class, $content, [
-            'action' => $this->generateUrl('integrated_content_content_new', ['type' => $request->get('type'), '_format' => $request->getRequestFormat(), 'relation' => $request->get('relation')]),
+            'action' => $this->generateUrl('integrated_content_content_new', $parameters),
             'method' => 'POST',
+            'attr' => [
+                'class' => 'content-form',
+                'data-content-type' => $contentType->getId(),
+            ],
             'content_type' => $contentType,
         ]);
 
@@ -1032,26 +1050,38 @@ class ContentController extends Controller
      * @param ContentTypeInterface $contentType
      * @param ContentInterface     $content
      * @param array                $locking
+     * @param Request|null         $request
      *
      * @return FormInterface
      */
-    protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking)
+    protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking, Request $request = null)
     {
-        $form = $this->createForm(ContentFormType::class, $content, [
+        $parameters = ($locking['lock'] ? ['id' => $content->getId(), 'lock' => $locking['lock']->getId()] : ['id' => $content->getId()]);
+
+        if ($request instanceof Request) {
+            $parameters = array_merge($request->query->all(), $parameters);
+        }
+
+        $options = [
             'action' => $this->generateUrl(
                 'integrated_content_content_edit',
-                $locking['lock'] ?
-                ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]
-                :
-                ['id' => $content->getId()]
+                $parameters
             ),
             'method' => 'PUT',
-            'attr' => ['class' => 'content-form', 'data-content-id' => $content->getId()],
-            // don't display error's when the content is locked as the user can't save in the first place
-            'validation_groups' => $locking['locked'] ? false : null,
+            'attr' => [
+                'class' => 'content-form',
+                'data-content-id' => $content->getId(),
+                'data-content-type' => $contentType->getId(),
+            ],
             'content_type' => $contentType,
-        ]);
+        ];
 
+        if ($locking['locked']) {
+            // don't display error's when the content is locked as the user can't save in the first place
+            $options['validation_groups'] = false;
+        }
+
+        $form = $this->createForm(ContentFormType::class, $content, $options);
         $form->add('returnUrl', HiddenType::class, ['required' => false, 'mapped' => false, 'attr' => ['class' => 'return-url']]);
 
         // load a different set of buttons based on the permissions and locking state

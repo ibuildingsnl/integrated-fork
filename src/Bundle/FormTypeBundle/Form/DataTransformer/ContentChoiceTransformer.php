@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Form\DataTransformer;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Content\ContentInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -22,7 +22,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class ContentChoiceTransformer implements DataTransformerInterface
 {
     /**
-     * @var \Doctrine\ODM\MongoDB\DocumentRepository
+     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
      */
     protected $repo;
 
@@ -55,7 +55,7 @@ class ContentChoiceTransformer implements DataTransformerInterface
     /**
      * @param string|null $value
      *
-     * @return null|ContentInterface
+     * @return ContentInterface|null
      *
      * @throws TransformationFailedException
      */

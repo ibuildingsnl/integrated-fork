@@ -55,6 +55,12 @@ class IndexerQueueCommand extends ContainerAwareCommand
                 InputOption::VALUE_NONE,
                 'Delete all the content for the given content types or if none given clear out the whole index'
             )
+            ->addOption(
+                'commit',
+                null,
+                InputOption::VALUE_NONE,
+                'Queue a commit'
+            )
             ->addOption('ignore', 'i', InputOption::VALUE_NONE, 'Ignore content types that do not exist')
             ->setDescription('Queue all the content of the given content type for solr indexing')
             ->setHelp('
@@ -83,6 +89,12 @@ The <info>%command.name%</info> command starts a index of the site.
 
         if ($input->getOption('delete')) {
             return $this->executeDelete($input, $output);
+        }
+
+        if ($input->getOption('commit')) {
+            $this->doIndexCommit();
+
+            return 0;
         }
 
         if (!$input->getArgument('id') && !$input->getOption('full')) {
@@ -174,7 +186,7 @@ The <info>%command.name%</info> command starts a index of the site.
         $builder->select('id', 'contentType', 'class')->hydrate(false);
 
         if ($input->getOption('full')) {
-            $result = $builder->getQuery()->execute();
+            $result = $builder->getQuery()->execute()->immortal();
 
             // The entire site is going to be reindex so everything that is now in the queue
             // will be redone so just clear it so content is not double indexed.
@@ -183,7 +195,7 @@ The <info>%command.name%</info> command starts a index of the site.
         } else {
             $builder->field('contentType')->in($input->getArgument('id'));
 
-            $result = $builder->getQuery()->execute();
+            $result = $builder->getQuery()->execute()->immortal();
         }
 
         if ($count = $result->count()) {

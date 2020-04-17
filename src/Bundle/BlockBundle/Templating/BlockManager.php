@@ -13,7 +13,7 @@ namespace Integrated\Bundle\BlockBundle\Templating;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -71,7 +71,7 @@ class BlockManager
      * @param BlockInterface|string $block
      * @param array                 $options
      *
-     * @return null|string
+     * @return string|null
      */
     public function render($block, array $options = [])
     {
