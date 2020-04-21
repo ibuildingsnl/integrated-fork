@@ -41,33 +41,33 @@
     </form>
 
     <script>
-    var firedRequest = false;
+    var firedRequestUsername = false;
     function updateLogin() {
         var username = $('#username').val();
-        if (firedRequest == username) {
+        if (firedRequestUsername == username) {
             return;
         }
-        firedRequest = username;
+        firedRequestUsername = username;
         $('#login-error').hide();
         $('#panel-password').hide();
         $('#panel-remember-me').hide();
         $.post(Routing.generate('integrated_website_login_verify'), { 'username': username }, function( data ) {
-            if (data.status == 1) {
-                $('#password-label').html('Please choose a password');
-                $('#panel-password').show();
-                $('#password').focus();
-                $('#login-submit').prop('onclick', '');
-            }
-            if (data.status == 2) {
-                $('#password-label').html('Please enter your password');
-                $('#panel-password').show();
-                $('#panel-remember-me').show();
-                $('#password').focus();
-                $('#login-submit').prop('onclick', '');
-            }
-            if (data.status == 3) {
-                $('#login-error').html('Please enter a valid e-mail address');
+            if (data.status == 'INVALID') {
+                $('#login-error').html(data.errorMessage);
                 $('#login-error').show();
+            }
+
+            $('#panel-password').show();
+            $('#password').focus();
+            $('#login-submit').prop('onclick', '');
+
+            if (data.status == 'NEW') {
+                $('#password-label').html('Please choose a password');
+            }
+
+            if (data.status == 'EXISTS') {
+                $('#password-label').html('Please enter your password');
+                $('#panel-remember-me').show();
             }
         }, "json");
     }

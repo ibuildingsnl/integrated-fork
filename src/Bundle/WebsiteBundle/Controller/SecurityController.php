@@ -89,7 +89,19 @@ class SecurityController extends Controller
     {
         $status = $this->userManager->getUsernameStatus($request->request->get('username'));
 
-        return new JsonResponse(['status' => $status]);
+        switch ($status) {
+            case UserManager::STATUS_USERNAME_NEW:
+                $result = ['status' => 'NEW'];
+                break;
+            case UserManager::STATUS_USERNAME_EXISTS:
+                $result = ['status' => 'EXISTS'];
+                break;
+            case UserManager::STATUS_USERNAME_INVALID:
+                $result = ['status' => 'INVALID', 'errorMessage' => 'Please enter a valid e-mail address'];
+                break;
+        }
+
+        return new JsonResponse($result);
     }
 
     public function logout()
