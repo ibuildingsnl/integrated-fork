@@ -62,15 +62,7 @@ class UserManager
             return false;
         }
 
-        if (!$channel instanceof Channel) {
-            return false;
-        }
-
-        if ($channel->getScope() === null) {
-            return false;
-        }
-
-        return true;
+        return $channel instanceof Channel && $channel->getScope() !== null;
     }
 
     /**
@@ -80,13 +72,11 @@ class UserManager
      */
     public function getUsernameStatus(?string $username)
     {
-        $emailConstraint = new Email();
-
         if (!$this->isEnabled()) {
             return $this::STATUS_USERNAME_INVALID;
         }
 
-        // use the validator to validate the value
+        $emailConstraint = new Email();
         if (\count($this->validator->validate($username, $emailConstraint)) > 0) {
             return $this::STATUS_USERNAME_INVALID;
         }

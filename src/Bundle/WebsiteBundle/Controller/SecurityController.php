@@ -18,12 +18,12 @@ class SecurityController extends Controller
     /**
      * @var TwigEngine
      */
-    protected $templating;
+    private $templating;
 
     /**
      * @var ThemeManager
      */
-    protected $themeManager;
+    private $themeManager;
 
     /**
      * @var AuthenticationUtils
@@ -70,13 +70,14 @@ class SecurityController extends Controller
             return $this->redirect($returnUrl);
         }
 
-        $context = [
-            'login_enabled' => $this->userManager->isEnabled(),
-            'last_username' => $this->authenticationUtils->getLastUsername(),
-            'error' => $this->authenticationUtils->getLastAuthenticationError(),
-        ];
-
-        return $this->render($this->themeManager->locateTemplate('security/login.html.twig'), $context);
+        return $this->render(
+            $this->themeManager->locateTemplate('security/login.html.twig'),
+            [
+                'login_enabled' => $this->userManager->isEnabled(),
+                'last_username' => $this->authenticationUtils->getLastUsername(),
+                'error' => $this->authenticationUtils->getLastAuthenticationError(),
+            ]
+        );
     }
 
     /**
