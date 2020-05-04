@@ -16,8 +16,8 @@
         <field field-name="primaryDomainRedirect" type="boolean" />
         <field field-name="options" type="hash" />
         <field field-name="createdAt" type="date" />
-
         <field field-name="scope" type="string" />
+        <field field-name="registrationAllowed" type="boolean" />
 
         <embed-one
                 field="logo"

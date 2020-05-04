@@ -36,9 +36,8 @@ class ChannelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class);
-
         $builder->add('logo', ImageDropzoneType::class);
-        $builder->add('color', ColorType::class);
+        $builder->add('color', ColorType::class, ['required' => false]);
 
         $builder->add('domains', BootstrapCollectionType::class, [
             'label' => 'Domains (example.com)',
@@ -103,6 +102,14 @@ class ChannelType extends AbstractType
                 'choice_label' => 'name',
             ]
         );
+
+        $builder->add('registrationAllowed', CheckboxType::class, [
+            'label' => 'Allow user registration',
+            'required' => false,
+            'attr' => [
+                'align_with_widget' => true,
+            ],
+        ]);
 
         $builder->add('permissions', PermissionsType::class, [
             'required' => false,

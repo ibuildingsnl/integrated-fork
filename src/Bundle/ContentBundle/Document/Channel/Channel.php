@@ -88,6 +88,11 @@ class Channel implements ChannelInterface
     protected $scope = null;
 
     /**
+     * @var bool
+     */
+    protected $registrationAllowed;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -344,5 +349,21 @@ class Channel implements ChannelInterface
         $this->scope = $scope ? $scope->getId() : null;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getRegistrationAllowed()
+    {
+        return $this->registrationAllowed;
+    }
+
+    /**
+     * @param bool $registrationAllowed
+     */
+    public function setRegistrationAllowed($registrationAllowed)
+    {
+        $this->registrationAllowed = $registrationAllowed;
     }
 }

@@ -99,6 +99,9 @@ class SecurityController extends Controller
             case UserManager::STATUS_USERNAME_INVALID:
                 $result = ['status' => 'INVALID', 'errorMessage' => 'Please enter a valid e-mail address'];
                 break;
+            default:
+                $result = ['status' => 'ERROR', 'errorMessage' => 'Unkown status'];
+                break;
         }
 
         return new JsonResponse($result);
