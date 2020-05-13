@@ -3,14 +3,15 @@
 {% block title %}Log in!{% endblock %}
 
 {% block content %}
-    <form method="post">
+    <form method="post" id="login-form" action="{{ path('integrated_website_login') }}">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+        <input type="hidden" id="login-action" name="action" value="{% if lastUsername != null %}login{% endif %}" />
 
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
-        {% if not login_enabled %}
+        {% if not loginEnabled %}
             <div class="mb-3">
                 Login is currently not allowed
             </div>
@@ -23,53 +24,96 @@
 
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
             <label for="username">E-mail address</label>
-            <input type="text" value="{{ last_username }}" name="username" id="username" class="form-control" onblur="updateLogin();" required autofocus />
+            <input type="text" value="{{ lastUsername }}" name="username" id="username" class="form-control" required{% if lastUsername == null %} autofocus{% endif %} />
 
-            <div id="panel-password" style="display: none;">
+            <div id="panel-password"{% if lastUsername == null %} style="display: none;"{% endif %}>
                 <label for="password" id="password-label">Password</label>
-                <input type="password" name="password" id="password" class="form-control" required />
+                <input type="password" name="password" id="password" class="form-control" required{% if lastUsername != null %} autofocus{% endif %} />
             </div>
 
-            <div id="panel-remember-me" class="checkbox mb-3" style="display: none;">
-                <label>
-                    <input type="checkbox" name="_remember_me" /> Remember me
-                </label>
+            <div id="panel-password-verify" style="display: none;">
+                <label for="password-verify" id="password-verify-label">Repeat password</label>
+                <input type="password" name="password-verify" id="password-verify" class="form-control" />
             </div>
 
-            <button class="btn btn-lg btn-primary" id="login-submit" type="submit" onclick="updateLogin();return false;">Next</button>
+            <button class="btn btn-lg btn-primary" id="login-submit" type="submit">Next</button>
     {% endif %}
     </form>
+{% endblock %}
 
-    <script>
-    var firedRequestUsername = false;
-    function updateLogin() {
-        var username = $('#username').val();
-        if (firedRequestUsername == username) {
-            return;
-        }
-        firedRequestUsername = username;
+{% block javascripts %}
+    {{ parent() }}
+<script>
+    $('#username').on('change', function() {
+        $('#username').prop('disabled', true);
         $('#login-error').hide();
+        $('#login-action').val('');
         $('#panel-password').hide();
-        $('#panel-remember-me').hide();
-        $.post(Routing.generate('integrated_website_login_verify'), { 'username': username }, function( data ) {
+        $('#panel-password-verify').hide();
+
+        $.post(Routing.generate('integrated_website_login_verify'), { 'username': $('#username').val() }, function( data ) {
             if (data.status == 'INVALID') {
                 $('#login-error').html(data.errorMessage);
                 $('#login-error').show();
+
+                return;
             }
 
+            $('#username').prop('disabled', false);
             $('#panel-password').show();
             $('#password').focus();
-            $('#login-submit').prop('onclick', '');
+            $('#login-action').val('login');
 
+            {% if registrationEnabled %}
             if (data.status == 'NEW') {
                 $('#password-label').html('Please choose a password');
+                $('#panel-password-verify').show();
+                $('#login-action').val('register');
             }
 
             if (data.status == 'EXISTS') {
                 $('#password-label').html('Please enter your password');
-                $('#panel-remember-me').show();
             }
+            {% endif %}
         }, "json");
-    }
-    </script>
+    });
+
+    $('#login-form').on('submit', function() {
+        if ($('#login-action').val() == 'login') {
+            return true;
+        }
+
+        {% if registrationEnabled %}
+        if ($('#login-action').val() == 'register') {
+
+            $.ajax({
+                type: 'POST',
+                url: Routing.generate('integrated_website_register'),
+                data: {
+                    'username': $('#username').val(),
+                    'password': $('#password').val(),
+                    'password-verify': $('#password-verify').val()
+                },
+                success: function( data ) {
+                    if (data.status == 'ERROR') {
+                        $('#login-error').html(data.errorMessage);
+                        $('#login-error').show();
+
+                        return;
+                    }
+
+                    $('#login-action').val('login');
+                    $('#login-form').submit();
+                },
+                dataType: 'json',
+                'async': false
+            });
+
+            return false;
+        }
+        {% endif %}
+
+        return false;
+    });
+</script>
 {% endblock %}

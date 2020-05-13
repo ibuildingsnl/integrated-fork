@@ -27,6 +27,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
 
+    public const LOGIN_ROUTE = 'integrated_website_login';
+
     /**
      * @var EntityManagerInterface
      */
@@ -77,7 +79,7 @@ class Authenticator extends AbstractFormLoginAuthenticator
      */
     public function supports(Request $request)
     {
-        return 'integrated_website_login' === $request->attributes->get('_route')
+        return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST')
             && ($this->getScope() !== null);
     }
@@ -171,7 +173,7 @@ class Authenticator extends AbstractFormLoginAuthenticator
      */
     protected function getLoginUrl()
     {
-        return $this->urlGenerator->generate('integrated_website_login');
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 
     /**

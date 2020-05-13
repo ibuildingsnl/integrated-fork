@@ -5,6 +5,7 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Security\UserManager;
+use Prophecy\Exception\Prediction\AggregateException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -73,8 +74,9 @@ class SecurityController extends Controller
         return $this->render(
             $this->themeManager->locateTemplate('security/login.html.twig'),
             [
-                'login_enabled' => $this->userManager->isEnabled(),
-                'last_username' => $this->authenticationUtils->getLastUsername(),
+                'loginEnabled' => $this->userManager->isLoginEnabled(),
+                'registrationEnabled' => $this->userManager->isRegistrationEnabled(),
+                'lastUsername' => $this->authenticationUtils->getLastUsername(),
                 'error' => $this->authenticationUtils->getLastAuthenticationError(),
             ]
         );
@@ -107,8 +109,32 @@ class SecurityController extends Controller
         return new JsonResponse($result);
     }
 
-    public function logout()
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function registerAction(Request $request): JsonResponse
     {
-        //This method can be blank - it will be intercepted by the firewall
+        if ($this->getUser()) {
+            return new JsonResponse(['status' => 'ERROR', 'errorMessage' => 'You are already logged in']);
+        }
+
+        if (strlen($request->request->get('password', '')) < 8) {
+            return new JsonResponse(['status' => 'ERROR', 'errorMessage' => 'Please choose a password of at least 8 characters']);
+        }
+
+        if ($request->request->get('password', '')  !== $request->request->get('password-verify', '')) {
+            return new JsonResponse(['status' => 'ERROR', 'errorMessage' => 'The two passwords are not the same']);
+        }
+
+        try {
+            $this->userManager->register($request->request->get('username'), $request->request->get('password'));
+        } catch (\Exception $exception) {
+            return new JsonResponse(['status' => 'ERROR', 'errorMessage' => 'User could not be created']);
+        }
+
+        return new JsonResponse(['status' => 'SUCCESS']);
     }
 }

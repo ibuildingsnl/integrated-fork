@@ -8,7 +8,13 @@
         <default key="_controller">IntegratedWebsiteBundle:Security:login</default>
     </route>
 
+    <route id="integrated_website_register" path="/register">
+        <default key="_controller">IntegratedWebsiteBundle:Security:register</default>
+        <option key="expose">true</option>
+    </route>
+
     <route id="integrated_website_login_check" path="/login-check">
+        <option key="expose">true</option>
     </route>
 
     <route id="integrated_website_login_verify" path="/login-verify">

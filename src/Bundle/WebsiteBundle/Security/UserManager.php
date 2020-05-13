@@ -56,7 +56,7 @@ class UserManager
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isLoginEnabled()
     {
         if (!$channel = $this->channelContext->getChannel()) {
             return false;
@@ -66,13 +66,25 @@ class UserManager
     }
 
     /**
+     * @return bool
+     */
+    public function isRegistrationEnabled()
+    {
+        if (!$channel = $this->channelContext->getChannel()) {
+            return false;
+        }
+
+        return $channel instanceof Channel && $channel->getRegistrationAllowed();
+    }
+
+    /**
      * @param Request $request
      *
      * @return bool
      */
     public function getUsernameStatus(?string $username)
     {
-        if (!$this->isEnabled()) {
+        if (!$this->isLoginEnabled()) {
             return $this::STATUS_USERNAME_INVALID;
         }
 
@@ -92,5 +104,30 @@ class UserManager
         }
 
         return $this::STATUS_USERNAME_EXISTS;
+    }
+
+    /**
+     * @return void
+     */
+    public function register(string $username, string $password)
+    {
+        if (!$this->isRegistrationEnabled()
+            || $this->getUsernameStatus($username) !== $this::STATUS_USERNAME_NEW
+            || !($channel = $this->channelContext->getChannel())
+            || $password == ''
+        ) {
+            throw new \Exception('User registration not allowed');
+        }
+
+        $salt = base64_encode(random_bytes(72));
+
+        $user = new User();
+        $user->setUsername($username);
+        $user->setSalt($salt);
+        $user->setPassword($this->passwordEncoder->encodePassword($user, $password));
+        $user->setScope($channel->getScope());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 }
