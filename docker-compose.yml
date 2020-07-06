@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+
+    php:
+        hostname: php
+        build: docker/php
+        environment:
+            - SSH_AUTH_SOCK
+        volumes:
+            - ./:/var/www/html/
+            - $SSH_AUTH_SOCK:$SSH_AUTH_SOCK
+
+networks:
+    default:
