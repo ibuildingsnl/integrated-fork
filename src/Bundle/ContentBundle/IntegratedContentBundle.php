@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\FormFactoryEven
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\MetadataEventDispatcherPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\PriorityResolverBuilderPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\SetRouterPass;
+use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\StaticContentPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ThemeManagerPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\IntegratedContentExtension;
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
@@ -55,6 +56,7 @@ class IntegratedContentBundle extends Bundle
         $container->addCompilerPass(new ConfigProviderBuilderPass('integrated_content.bulk.form.chain_provider_builder', 'integrated_content.bulk.form.provider'));
         $container->addCompilerPass(new ContentProviderPass());
         $container->addCompilerPass(new BraincraftedFlashMessagePass());
+        $container->addCompilerPass(new StaticContentPass());
 
         $container->addCompilerPass(new RegisterListenersPass(
             'integrated_content.event_dispatcher',
