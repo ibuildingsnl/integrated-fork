@@ -53,7 +53,7 @@ class StaticContentRepository
             return null;
         }
 
-        $key = str_replace('\\', '_', get_class($object));
+        $key = str_replace('\\', '_', \get_class($object));
         if (!isset($this->content[$key])) {
             return null;
         }
