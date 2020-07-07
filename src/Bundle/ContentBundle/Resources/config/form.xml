@@ -97,7 +97,7 @@
         </service>
 
         <service id="integrated_content.form.content_type.channel.type" class="Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChannelType" />
-        
+
         <service id="integrated_content.form.type.channel" class="Integrated\Bundle\ContentBundle\Form\Type\ChannelType">
             <tag name="form.type" />
         </service>
@@ -122,7 +122,7 @@
 
             <tag name="form.type" />
         </service>
-        
+
         <service id="integrated_content.form.search_selection.type" class="Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType">
             <argument type="service" id="security.authorization_checker" />
             <tag name="form.type" />
@@ -185,6 +185,12 @@
         <service id="integrated_content.form.type.channel_permissions" class="Integrated\Bundle\ContentBundle\Form\Type\PermissionsType">
             <argument type="service" id="integrated_user.repository.group" />
             <tag name="form.type" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Form\Extension\AbstractTypeExtension">
+            <argument type="service" id="Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository" />
+
+            <tag name="form.type_extension" extended-type="Symfony\Component\Form\Extension\Core\Type\FormType"/>
         </service>
 
     </services>
