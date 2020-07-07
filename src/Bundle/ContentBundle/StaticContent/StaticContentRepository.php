@@ -38,7 +38,11 @@ class StaticContentRepository
             }
 
             $key = str_replace('\\', '_', $element->class);
-            $this->content[$key][(string) $element->id] = json_decode(json_encode($element->fields), true);
+            $this->content[$key][(string) $element->id] = [
+                'class' => (string) $element->class,
+                'id' => (string) $element->id,
+                'fields' => $element->fields->asXML(),
+                ];
         }
     }
 
@@ -68,6 +72,13 @@ class StaticContentRepository
      */
     public function all()
     {
-        return $this->content;
+        $items = [];
+        foreach ($this->content as $class) {
+            foreach ($class as $item) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 }
