@@ -60,9 +60,9 @@ class AbstractTypeExtension extends BaseAbstractTypeExtension
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder, $data) {
             $form = $event->getForm();
-            foreach ($data['fields'] as $field) {
-                if ($form->has($field['name'])) {
-                    $form->remove($field['name']);
+            foreach ($data['fields'] as $key => $field) {
+                if ($form->has($key)) {
+                    $form->remove($key);
                 }
             }
         });
