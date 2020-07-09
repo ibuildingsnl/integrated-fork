@@ -41,9 +41,32 @@ class StaticContentRepository
             $this->content[$key][(string) $element->id] = [
                 'class' => (string) $element->class,
                 'id' => (string) $element->id,
-                'fields' => $element->fields->asXML(),
+                'fields' => json_decode(json_encode($element->fields, true)),
+                'fields-xml' => $element->fields->asXML(),
+                'defaults-xml' => ($element->defaults->asXML() !== false) ? $element->defaults->asXML() : null,
                 ];
         }
+    }
+
+    /**
+     * @param object|null $object
+     *
+     * @return bool
+     */
+    public function has(?object $object)
+    {
+        if ($object === null) {
+            return false;
+        }
+
+        $key = str_replace('\\', '_', \get_class($object));
+        if (!isset($this->content[$key])) {
+            return false;
+        }
+
+        $id = $object->getId();
+
+        return isset($this->content[$key][$id]);
     }
 
     /**
