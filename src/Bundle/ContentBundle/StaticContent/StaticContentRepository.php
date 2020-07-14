@@ -25,7 +25,7 @@ class StaticContentRepository
         $items = simplexml_load_file($file);
 
         foreach ($items->item as $element) {
-            if (!$element->id) {
+            if (!$element->fields->id) {
                 throw new \Exception(sprintf('id is required in %s', $file));
             }
 
@@ -38,9 +38,9 @@ class StaticContentRepository
             }
 
             $key = str_replace('\\', '_', $element->class);
-            $this->content[$key][(string) $element->id] = [
+            $this->content[$key][(string) $element->fields->id] = [
                 'class' => (string) $element->class,
-                'id' => (string) $element->id,
+                'id' => (string) $element->fields->id,
                 'fields' => json_decode(json_encode($element->fields, true)),
                 'fields-xml' => $element->fields->asXML(),
                 'defaults-xml' => ($element->defaults->asXML() !== false) ? $element->defaults->asXML() : null,
