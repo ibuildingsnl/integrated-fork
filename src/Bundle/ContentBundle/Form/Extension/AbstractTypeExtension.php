@@ -50,7 +50,7 @@ class AbstractTypeExtension extends BaseAbstractTypeExtension
     {
         $object = $options['data'] ?? null;
 
-        if (!is_object($object)) {
+        if (!\is_object($object)) {
             return;
         }
 

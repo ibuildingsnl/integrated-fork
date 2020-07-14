@@ -3,11 +3,8 @@
 namespace Integrated\Bundle\InstallerBundle\Install;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ORM\EntityManager;
-use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;

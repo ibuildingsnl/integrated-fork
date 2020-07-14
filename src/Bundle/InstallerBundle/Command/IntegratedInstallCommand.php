@@ -75,8 +75,7 @@ class IntegratedInstallCommand extends Command
         MongoDBMigrations $mongoDBMigrations,
         StaticContent $staticContent,
         BundleTest $bundleTest
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->documentManager = $documentManager;
         $this->migrations = $migrations;

@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class DocumentNormalizer implements DenormalizerInterface
 {
-
     /**
      * @var DocumentManager
      */
@@ -31,7 +30,7 @@ class DocumentNormalizer implements DenormalizerInterface
     private $objectNormalizer;
 
     const MAPPING = [
-        ContentType::class
+        ContentType::class,
     ];
 
     /**
@@ -63,18 +62,17 @@ class DocumentNormalizer implements DenormalizerInterface
                     continue;
                 }
 
-                if (!in_array($fieldMapping['targetDocument'], $this::MAPPING)) {
+                if (!\in_array($fieldMapping['targetDocument'], $this::MAPPING)) {
                     continue;
                 }
 
                 $conversion[$key] = [
                     'class' => $fieldMapping['targetDocument'],
-                    'ids' => is_array($data[$key]) ? $data[$key] : [$data[$key]],
+                    'ids' => \is_array($data[$key]) ? $data[$key] : [$data[$key]],
                 ];
 
                 unset($data[$key]);
             }
-
         }
 
         $document = $this->objectNormalizer->denormalize($data, $class, $format, $context);
@@ -129,10 +127,5 @@ class DocumentNormalizer implements DenormalizerInterface
         }
 
         return true;
-    }
-
-    protected function supportsdo($class)
-    {
-
     }
 }
