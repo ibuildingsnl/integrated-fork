@@ -3,12 +3,8 @@
 namespace Integrated\Bundle\InstallerBundle\Install;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class StaticContent
@@ -44,14 +40,6 @@ class StaticContent
 
     public function execute()
     {
-        //$encoders = [new XmlEncoder()];
-        //$normalizers = [new ObjectNormalizer()];
-
-        //$serializer = new Serializer($normalizers, $encoders);
-
-        //$rel = $this->documentManager->getRepository(Relation::class)->find('parent_company');
-        //dump($this->serializer->serialize($rel, 'xml'));
-
         foreach ($this->repository->all() as $item) {
             $document = $this->documentManager->getRepository($item['class'])->find($item['id']);
             if ($document === null) {

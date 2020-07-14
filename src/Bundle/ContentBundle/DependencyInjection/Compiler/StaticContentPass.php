@@ -32,7 +32,7 @@ class StaticContentPass implements CompilerPassInterface
         foreach ($container->getParameter('kernel.bundles') as $bundle) {
             $reflection = new ReflectionClass($bundle);
 
-            if (is_file($file = \dirname($reflection->getFilename()).'/Resources/config/integrated/content.xml')) {
+            if (is_file($file = \dirname($reflection->getFilename()).'/Resources/config/integrated/static-content.xml')) {
                 $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);
             }
         }

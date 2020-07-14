@@ -12,7 +12,9 @@
 namespace Integrated\Bundle\InstallerBundle\Serializer\Normalizer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -30,6 +32,7 @@ class DocumentNormalizer implements DenormalizerInterface
     private $objectNormalizer;
 
     const SUPPORTED_DOCUMENTS = [
+        Channel::class,
         ContentType::class,
     ];
 
@@ -58,6 +61,25 @@ class DocumentNormalizer implements DenormalizerInterface
                 }
 
                 $fieldMapping = $meta->getFieldMapping($key);
+
+                if ($class == ContentType::class && $key == 'fields') {
+                    $fields = [];
+                    foreach ($value['field'] as $fieldData) {
+                        $field = new Field();
+                        $field->setName($fieldData['name']);
+
+                        $fields[] = $field;
+                    }
+
+                    $conversion[$key] = [
+                        'items' => $fields,
+                    ];
+
+                    unset($data[$key]);
+
+                    continue;
+                }
+
                 if (!isset($fieldMapping['targetDocument'])) {
                     continue;
                 }
@@ -68,6 +90,7 @@ class DocumentNormalizer implements DenormalizerInterface
 
                 $conversion[$key] = [
                     'class' => $fieldMapping['targetDocument'],
+                    'type' => $fieldMapping['type'],
                     'ids' => \is_array($data[$key]) ? $data[$key] : [$data[$key]],
                 ];
 
@@ -80,10 +103,19 @@ class DocumentNormalizer implements DenormalizerInterface
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         foreach ($conversion as $field => $data) {
-            $items = [];
+            if (isset($data['items'])) {
+                $items = $data['items'];
+            } else {
+                $items = ($data['type'] === 'one') ? null : [];
 
-            foreach ($data['ids'] as $id) {
-                $items[] = $this->documentManager->getRepository($data['class'])->find($id);
+                foreach ($data['ids'] as $id) {
+                    $item = $this->documentManager->getRepository($data['class'])->find($id);
+                    if ($data['type'] === 'one') {
+                        $items = $item;
+                    } elseif ($item !== null) {
+                        $items[] = $item;
+                    }
+                }
             }
 
             $propertyAccessor->setValue($document, $field, $items);
