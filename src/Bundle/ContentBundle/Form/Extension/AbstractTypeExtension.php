@@ -58,7 +58,7 @@ class AbstractTypeExtension extends BaseAbstractTypeExtension
             return;
         }
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder, $data) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($data) {
             $form = $event->getForm();
             foreach ($data['fields'] as $key => $field) {
                 if ($form->has($key)) {

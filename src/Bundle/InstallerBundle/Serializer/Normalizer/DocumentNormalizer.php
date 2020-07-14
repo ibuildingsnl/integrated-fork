@@ -29,7 +29,7 @@ class DocumentNormalizer implements DenormalizerInterface
      */
     private $objectNormalizer;
 
-    const MAPPING = [
+    const SUPPORTED_DOCUMENTS = [
         ContentType::class,
     ];
 
@@ -62,7 +62,7 @@ class DocumentNormalizer implements DenormalizerInterface
                     continue;
                 }
 
-                if (!\in_array($fieldMapping['targetDocument'], $this::MAPPING)) {
+                if (!\in_array($fieldMapping['targetDocument'], $this::SUPPORTED_DOCUMENTS)) {
                     continue;
                 }
 
@@ -81,7 +81,7 @@ class DocumentNormalizer implements DenormalizerInterface
 
         foreach ($conversion as $field => $data) {
             $items = [];
-            dump($data);
+
             foreach ($data['ids'] as $id) {
                 $items[] = $this->documentManager->getRepository($data['class'])->find($id);
             }
