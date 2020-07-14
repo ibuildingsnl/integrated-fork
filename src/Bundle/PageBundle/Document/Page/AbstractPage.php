@@ -78,6 +78,20 @@ abstract class AbstractPage
     }
 
     /**
+     * Set the id of the document.
+     *
+     * @param string $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getPath()
