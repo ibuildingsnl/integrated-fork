@@ -17,6 +17,8 @@ use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Simple\ApcuCache;
+use Symfony\Component\Lock\Factory;
+use Symfony\Component\Lock\Store\SemaphoreStore;
 use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
@@ -154,16 +156,25 @@ class ScraperPageLoader implements LoaderInterface
             return;
         }
 
-        $this->pageList = [];
+        $store = new SemaphoreStore();
+        $factory = new Factory($store);
 
-        $scrapers = $this->entityManager->getRepository(ScraperEntity::class)->findAll();
-        foreach ($scrapers as $scraper) {
-            $this->pageList[$scraper->getChannelId()][] = $scraper->getTemplateName();
+        $lock = $factory->createLock('scraper-pagelist-cache-warmup');
+
+        if ($lock->acquire()) {
+            $this->pageList = [];
+
+            $scrapers = $this->entityManager->getRepository(ScraperEntity::class)->findAll();
+            foreach ($scrapers as $scraper) {
+                $this->pageList[$scraper->getChannelId()][] = $scraper->getTemplateName();
+            }
+
+            $this->lastUpdate = time();
+
+            $this->cache->set(self::CACHEKEY_PAGELIST, $this->pageList);
+            $this->cache->set(self::CACHEKEY_LASTUPDATE, $this->lastUpdate);
+
+            $lock->release();
         }
-
-        $this->lastUpdate = time();
-
-        $this->cache->set(self::CACHEKEY_PAGELIST, $this->pageList);
-        $this->cache->set(self::CACHEKEY_LASTUPDATE, $this->lastUpdate);
     }
 }
