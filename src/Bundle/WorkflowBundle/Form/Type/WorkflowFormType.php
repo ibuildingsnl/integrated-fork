@@ -60,6 +60,8 @@ class WorkflowFormType extends AbstractType
 
         $builder->add('workflow', HiddenType::class, ['data' => $options['workflow'], 'attr' => ['class' => 'workflow-hidden']]);
 
+        $builder->add('contentType', HiddenType::class, ['data' => $options['contentType'], 'attr' => ['class' => 'content-type-hidden']]);
+
         $builder->add(
             'assigned',
             Select2Type::class,
@@ -82,6 +84,10 @@ class WorkflowFormType extends AbstractType
     public function getAssigned()
     {
         $builder = $this->userManager->createQueryBuilder();
+
+        $builder->join('User.scope', 'us');
+        $builder->where('us.admin = 1');
+
         $query = $builder->getQuery();
 
         $users = [];
@@ -99,7 +105,9 @@ class WorkflowFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('workflow');
+        $resolver->setRequired('contentType');
         $resolver->setAllowedTypes('workflow', ['string', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition']);
+        $resolver->setAllowedTypes('contentType', 'string');
     }
 
     /**

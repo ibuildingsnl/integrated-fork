@@ -324,14 +324,19 @@ dump($paginator->getCustomParameter('result')->getFacetSet());
 
             if ($locking['new']) {
                 if ($request->isMethod('get')) {
-                    return $this->redirect($this->generateUrl('integrated_content_content_edit', ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]));
+                    $parameters = array_merge($request->query->all(), [
+                        'id' => $content->getId(),
+                        'lock' => $locking['lock']->getId(),
+                    ]);
+
+                    return $this->redirect($this->generateUrl('integrated_content_content_edit', $parameters));
                 }
 
                 $locking['locked'] = false;
             }
         }
 
-        $form = $this->createEditForm($contentType, $content, $locking);
+        $form = $this->createEditForm($contentType, $content, $locking, $request);
 
         if ($request->isMethod('put')) {
             $form->handleRequest($request);
@@ -854,8 +859,14 @@ dump($paginator->getCustomParameter('result')->getFacetSet());
      */
     protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request)
     {
+        $parameters = array_merge($request->query->all(), [
+            'type' => $request->get('type'),
+            '_format' => $request->getRequestFormat(),
+            'relation' => $request->get('relation'),
+        ]);
+
         $form = $this->createForm(ContentFormType::class, $content, [
-            'action' => $this->generateUrl('integrated_content_content_new', ['type' => $request->get('type'), '_format' => $request->getRequestFormat(), 'relation' => $request->get('relation')]),
+            'action' => $this->generateUrl('integrated_content_content_new', $parameters),
             'method' => 'POST',
             'attr' => [
                 'class' => 'content-form',
@@ -871,15 +882,22 @@ dump($paginator->getCustomParameter('result')->getFacetSet());
      * @param ContentTypeInterface $contentType
      * @param ContentInterface     $content
      * @param array                $locking
+     * @param Request|null         $request
      *
      * @return FormInterface
      */
-    protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking)
+    protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking, Request $request = null)
     {
+        $parameters = ($locking['lock'] ? ['id' => $content->getId(), 'lock' => $locking['lock']->getId()] : ['id' => $content->getId()]);
+
+        if ($request instanceof Request) {
+            $parameters = array_merge($request->query->all(), $parameters);
+        }
+
         $options = [
             'action' => $this->generateUrl(
                 'integrated_content_content_edit',
-                $locking['lock'] ? ['id' => $content->getId(), 'lock' => $locking['lock']->getId()] : ['id' => $content->getId()]
+                $parameters
             ),
             'method' => 'PUT',
             'attr' => [
