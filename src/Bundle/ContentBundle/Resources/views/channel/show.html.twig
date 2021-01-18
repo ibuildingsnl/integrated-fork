@@ -4,7 +4,7 @@
         <div class="container">
             <ol class="breadcrumb">
                 <li>
-                    <a href="{{ path('integrated_content_channel_index') }}">{% trans %}Home{% endtrans %}</a>
+                    <a href="{{ path('integrated_content_channel_index') }}">{% trans %}Channel{% endtrans %}</a>
                 </li>
                 <li class="active">{% trans %}Show{% endtrans %}</li>
             </ol>
@@ -45,7 +45,9 @@
                 <a class="pull-left btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_channel_edit', {'id': channel.id}) }}">
                     {% trans %}Edit{% endtrans %}
                 </a>
-                {{ form(form, { 'style': 'inline' }) }}
+                <a class="btn-danger btn btn-primary" href="{{ path('integrated_content_channel_delete', {'id': channel.id}) }}">
+                    {% trans %}Delete{% endtrans %}
+                </a>
             </section>
         </div>
     </div>
