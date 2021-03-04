@@ -98,15 +98,20 @@ class UrlResolver
     /**
      * @param ContentInterface $document
      * @param null             $channelId
+     * @param bool             $fallback
      *
-     * @return string
+     * @return string|null
      */
-    public function generateUrl(ContentInterface $document, $channelId = null)
+    public function generateUrl(ContentInterface $document, $channelId = null, bool $fallback = true)
     {
         $page = $this->getContentTypePageById($document->getContentType(), $channelId);
 
         if ($page instanceof ContentTypePage) {
             return $this->getContentTypePageUrl($page, $document);
+        }
+
+        if (!$fallback) {
+            return null;
         }
 
         // fallback /app_*.php/content/contentType/slug, in production /content/contentType/slug
@@ -199,10 +204,14 @@ class UrlResolver
             return $this->contentTypePages[$channelId][$contentTypeId];
         }
 
-        return $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage')
+        $page = $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage')
             ->findOneBy([
                 'channel.$id' => $channelId,
                 'contentType.$id' => $contentTypeId,
             ]);
+
+        $this->contentTypePages[$channelId][$contentTypeId] = $page;
+
+        return $page;
     }
 }

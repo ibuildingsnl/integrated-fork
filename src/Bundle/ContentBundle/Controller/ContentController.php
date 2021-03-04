@@ -1011,7 +1011,7 @@ class ContentController extends Controller
             $output[] = [
                 'id' => $contentType->getId(),
                 'name' => $contentType->getName(),
-                'path' => $this->generateUrl('integrated_content_content_new', ['type' => $contentType->getId()]),
+                'path' => $this->generateUrl('integrated_content_content_new', ['type' => $contentType->getId(), '_format' => 'iframe.html']),
             ];
         }
 
@@ -1132,7 +1132,7 @@ class ContentController extends Controller
             foreach ($relation->getReferences() as $reference) {
                 $properties = [
                     'id' => $reference->getId(),
-                    'title' => method_exists($reference, 'getTitle') ? $reference->getTitle() : $reference->getId(),
+                    'title' => (string) $reference,
                 ];
 
                 if ($reference instanceof Image) {
