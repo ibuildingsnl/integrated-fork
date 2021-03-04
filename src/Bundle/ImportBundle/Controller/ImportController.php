@@ -1362,6 +1362,10 @@ class ImportController extends Controller
                         $imgIds[] = $row['meta_thumbnail_id'];
                     }
 
+                    if (isset($row['metamain_image']) && $row['metamain_image'] > 0) {
+                        $imgIds[] = $row['metamain_image'];
+                    }
+
                     //wordpress
                     foreach ($imgIds as $imgId) {
                         if (!$imgId) {
