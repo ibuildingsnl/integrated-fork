@@ -11,30 +11,32 @@ class Doctrine
     /**
      * Doctrine constructor.
      */
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     /**
      * @param ImportDefinition $importDefinition
      *
      * @return mixed[]
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function toArray(ImportDefinition $importDefinition) {
+    public function toArray(ImportDefinition $importDefinition)
+    {
         $config = new Configuration();
 
-        $connectionParams = array(
+        $connectionParams = [
             'url' => $importDefinition->getConnectionUrl(),
             'charset' => 'utf8',
-        );
+        ];
         $connection = DriverManager::getConnection($connectionParams, $config);
 
         $result = $connection->fetchAll($importDefinition->getConnectionQuery());
 
         //add a heading array
         $startRow = [];
-        if (count($result)) {
+        if (\count($result)) {
             foreach ($result[0] as $column => $value) {
                 $startRow[] = $column;
             }

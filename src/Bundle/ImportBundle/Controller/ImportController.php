@@ -317,7 +317,7 @@ class ImportController extends Controller
 
             foreach ($contentTypeFields as $contentTypeField => $contentTypeValue) {
                 $contentTypeFields = [];
-                if (is_array($contentTypeValue)) {
+                if (\is_array($contentTypeValue)) {
                     foreach ($contentTypeValue as $contentTypeField2 => $contentTypeValue2) {
                         $contentTypeFields[] = $contentTypeField.'.'.$contentTypeField2;
                     }
@@ -591,8 +591,8 @@ class ImportController extends Controller
                     if ($mappedField) {
                         if (strpos($mappedField, 'field-') === 0) {
                             $mappedField = str_replace('field-', '', $mappedField);
-                            $mappedFieldParts = explode(".", $mappedField);
-                            if (count($mappedFieldParts) == 2) {
+                            $mappedFieldParts = explode('.', $mappedField);
+                            if (\count($mappedFieldParts) == 2) {
                                 $newData[$mappedFieldParts[0]][$mappedFieldParts[1]] = $value;
                             } else {
                                 $newData[$mappedField] = $value;
@@ -619,8 +619,8 @@ class ImportController extends Controller
             if (isset($newData['start_date'])) {
                 //wordpress
                 //todo: move to WP filter
-                if (strlen($newData['start_date']) == 10) {
-                    $date =  new \DateTime($newData['start_date']);
+                if (\strlen($newData['start_date']) == 10) {
+                    $date = new \DateTime($newData['start_date']);
                     $newData['start_date'] = $date->format(\DateTime::ISO8601);
 //                    $newData['start_date'] = $newData['start_date'].'T00:00:00';
                 }
@@ -630,8 +630,8 @@ class ImportController extends Controller
             if (isset($newData['end_date'])) {
                 //wordpress
                 //todo: move to WP filter
-                if (strlen($newData['end_date']) == 10) {
-                    $date =  new \DateTime($newData['end_date']);
+                if (\strlen($newData['end_date']) == 10) {
+                    $date = new \DateTime($newData['end_date']);
                     $newData['end_date'] = $date->format(\DateTime::ISO8601);
 //                        $newData['end_date'].'T00:00:00';
                 }
@@ -673,7 +673,7 @@ class ImportController extends Controller
                 if ($newObject instanceof Person) {
                     if (strpos($newObject->getLastName(), ' ') !== false
                     &&
-                        (empty($newObject->getFirstName()) ||  strpos($newObject->getLastName(), $newObject->getFirstName()) !== false)
+                        (empty($newObject->getFirstName()) || strpos($newObject->getLastName(), $newObject->getFirstName()) !== false)
                     ) {
                         list($firstName, $lastName) = explode(' ', $newObject->getLastName(), 2);
                         $newObject->setFirstName($firstName);
@@ -691,7 +691,7 @@ class ImportController extends Controller
                                 new MemoryReader(
                                     file_get_contents($path),
                                     new StorageMetadata(
-                                        pathinfo($path, PATHINFO_EXTENSION),
+                                        pathinfo($path, \PATHINFO_EXTENSION),
                                         mime_content_type($path),
                                         new ArrayCollection(),
                                         new ArrayCollection()
@@ -716,8 +716,6 @@ class ImportController extends Controller
                             continue;
                         }
                     }
-
-
 
                     if (isset($row['wp:post_id']) && $importDefinition->getImageBaseUrl()) {
                         //todo image base URL to general base URL
@@ -774,7 +772,7 @@ class ImportController extends Controller
                         $mappedField = $fieldMapping[$data[0][$col]];
 
                         if (strpos($mappedField, 'author-') === 0) {
-                            /** @var $newObject Article */
+                            /* @var $newObject Article */
                             $newObject->getAuthors()->clear();
                             if (trim($value) != '') {
                                 foreach (explode(',', $value) as $auteur) {
@@ -837,23 +835,24 @@ class ImportController extends Controller
                                     if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass() == Article::class) {
                                         $link = $this->documentManager->getRepository(Content::class)->findOneBy(['title' => $valueName, 'contentType' => $targetContentType->getId()]);
                                     }
-/*
-                                    if ($targetContentType->getClass() == Image::class) {
-                                        $path = false;
-                                        foreach ($importDefinition->getChannels() as $channel) {
-                                            foreach (['header/original', 'header', 'editie/header'] as $folder) {
-                                                if (!file_exists($path)) {
-                                                    $path = '/home/testpi-integrated/importfiles/' . $channel->getId() . '/images/' . $folder . '/' . $valueName;
-                                                }
-                                            }
-                                        }
-                                        if ($path === false || !file_exists($path)) {
-                                            $result['warnings'][] = 'File not found 1st: '.$path.' for '.$newObject->getTitle();
-                                            continue;
-                                        }
-                                        $link = $this->documentManager->getRepository(Image::class)->findOneBy(['metadata.data.externalId' => 'header/'.$valueName, 'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl()]);
-                                    }
-*/
+                                    /*
+                                                                        if ($targetContentType->getClass() == Image::class) {
+                                                                            $path = false;
+                                                                            foreach ($importDefinition->getChannels() as $channel) {
+                                                                                foreach (['header/original', 'header', 'editie/header'] as $folder) {
+                                                                                    if (!file_exists($path)) {
+                                                                                        $path = '/home/testpi-integrated/importfiles/' . $channel->getId() . '/images/' . $folder . '/' . $valueName;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            if ($path === false || !file_exists($path)) {
+                                                                                $result['warnings'][] = 'File not found 1st: '.$path.' for '.$newObject->getTitle();
+                                                                                continue;
+                                                                            }
+                                                                            $link = $this->documentManager->getRepository(Image::class)->findOneBy(['metadata.data.externalId' => 'header/'.$valueName,
+                                    'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl()]);
+                                                                        }
+                                    */
                                     if (!$link) {
                                         $link = $targetContentType->create();
                                         if (strpos($valueName, 'http') !== false) {
@@ -888,7 +887,7 @@ class ImportController extends Controller
                                         */
 
                                         if (strpos($path, 'http') === 0) {
-                                            $tmpfile = tempnam('/tmp/', 'file').'.'.pathinfo($path, PATHINFO_EXTENSION);
+                                            $tmpfile = tempnam('/tmp/', 'file').'.'.pathinfo($path, \PATHINFO_EXTENSION);
                                             file_put_contents($tmpfile, @file_get_contents($path));
                                             $path = $tmpfile;
                                         }
@@ -898,7 +897,7 @@ class ImportController extends Controller
                                                 new MemoryReader(
                                                     file_get_contents($path),
                                                     new StorageMetadata(
-                                                        pathinfo($path, PATHINFO_EXTENSION),
+                                                        pathinfo($path, \PATHINFO_EXTENSION),
                                                         mime_content_type($path),
                                                         new ArrayCollection(),
                                                         new ArrayCollection()
@@ -920,7 +919,6 @@ class ImportController extends Controller
                                         } else {
                                             $result['warnings'][] = 'File not found: '.$path.' for '.$newObject->getTitle();
                                         }
-
                                     }
 
                                     $relation2->addReference($link);
@@ -1108,11 +1106,11 @@ class ImportController extends Controller
 
                             if (!$title) {
                                 $title = basename($href);
-                                $title = str_replace('.'.pathinfo($href, PATHINFO_EXTENSION), '', $title);
+                                $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
                             }
 
                             if ($title) {
-                                $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, PATHINFO_EXTENSION);
+                                $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
                                 file_put_contents($tmpfile, @file_get_contents($href));
                                 if (filesize($tmpfile) == 0) {
                                     //echo $file . "\n";
@@ -1125,7 +1123,7 @@ class ImportController extends Controller
                                     new MemoryReader(
                                         file_get_contents($tmpfile),
                                         new StorageMetadata(
-                                            pathinfo($href, PATHINFO_EXTENSION),
+                                            pathinfo($href, \PATHINFO_EXTENSION),
                                             mime_content_type($tmpfile),
                                             new ArrayCollection(),
                                             new ArrayCollection()
@@ -1134,30 +1132,30 @@ class ImportController extends Controller
                                 );
 
                                 //if (stripos($href, '.pdf') !== false) {
-                                    $contentTT = $importDefinition->getFileContentType();
-                                    $file = $this->documentManager->getRepository(File::class)->findOneBy([
+                                $contentTT = $importDefinition->getFileContentType();
+                                $file = $this->documentManager->getRepository(File::class)->findOneBy([
                                         'contentType' => $contentTT,
                                         'file.identifier' => $storage->getIdentifier(),
                                     ]);
 
-                                    if (!$file) {
-                                        $file = new File();
-                                        $file->setContentType($contentTT);
-                                        $file->setTitle($title);
-                                        $file->setFile($storage);
-                                        $file->getMetadata()->set('importDate', date('Ymd'));
+                                if (!$file) {
+                                    $file = new File();
+                                    $file->setContentType($contentTT);
+                                    $file->setTitle($title);
+                                    $file->setFile($storage);
+                                    $file->getMetadata()->set('importDate', date('Ymd'));
 
-                                        $this->documentManager->persist($file);
-                                        $this->documentManager->flush($file);
-                                    }
+                                    $this->documentManager->persist($file);
+                                    $this->documentManager->flush($file);
+                                }
 
-                                    $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
-                                    $relation->setRelationId($importDefinition->getFileRelation()->getId());
-                                    $relation->setRelationType($importDefinition->getFileRelation()->getType());
-                                    $relation->addReference($file);
-                                    $newObject->addRelation($relation);
+                                $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
+                                $relation->setRelationId($importDefinition->getFileRelation()->getId());
+                                $relation->setRelationType($importDefinition->getFileRelation()->getType());
+                                $relation->addReference($file);
+                                $newObject->addRelation($relation);
 
-                                    $element->href = '/storage/'.$file->getId().'.'.pathinfo($href, PATHINFO_EXTENSION);
+                                $element->href = '/storage/'.$file->getId().'.'.pathinfo($href, \PATHINFO_EXTENSION);
 
                                 /*} else {
                                     $file = $this->documentManager->getRepository(Image::class)->findOneBy([
@@ -1267,7 +1265,7 @@ class ImportController extends Controller
                                 $title = str_replace('.gif', '', $title);
                             }
 
-                            $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, PATHINFO_EXTENSION);
+                            $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
                             file_put_contents($tmpfile, @file_get_contents($href));
                             if (filesize($tmpfile) == 0) {
                                 //echo $file . "\n";
@@ -1279,7 +1277,7 @@ class ImportController extends Controller
                                 new MemoryReader(
                                     file_get_contents($tmpfile),
                                     new StorageMetadata(
-                                        pathinfo($href, PATHINFO_EXTENSION),
+                                        pathinfo($href, \PATHINFO_EXTENSION),
                                         mime_content_type($tmpfile),
                                         new ArrayCollection(),
                                         new ArrayCollection()
@@ -1333,7 +1331,7 @@ class ImportController extends Controller
 
                     if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
                         $tmpBaseFile = tempnam('/tmp/', 'img');
-                        $tmpfile = $tmpBaseFile.'.'.pathinfo($row['wp:attachment_url'], PATHINFO_EXTENSION);
+                        $tmpfile = $tmpBaseFile.'.'.pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION);
                         rename($tmpBaseFile, $tmpfile);
                         file_put_contents($tmpfile, @file_get_contents($row['wp:attachment_url']));
                         if (filesize($tmpfile) == 0) {
@@ -1348,7 +1346,7 @@ class ImportController extends Controller
                             new MemoryReader(
                                 file_get_contents($tmpfile),
                                 new StorageMetadata(
-                                    pathinfo($row['wp:attachment_url'], PATHINFO_EXTENSION),
+                                    pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION),
                                     mime_content_type($tmpfile),
                                     new ArrayCollection(),
                                     new ArrayCollection()
@@ -1436,7 +1434,7 @@ class ImportController extends Controller
                         $import_id = $row['wp:post_id'];
                     }
 
-                    $result['success'][] = 'Item '.$import_id.' ('.(string)$newObject.') imported';
+                    $result['success'][] = 'Item '.$import_id.' ('.(string) $newObject.') imported';
                 } catch (\Exception $e) {
                     $result['errors'][] = 'Item '.(string) $newObject.' failed: '.$e->getMessage().' '.nl2br($e->getTraceAsString()).' '.$e->getFile().' '.$e->getLine();
                 } catch (\Throwable $e) {

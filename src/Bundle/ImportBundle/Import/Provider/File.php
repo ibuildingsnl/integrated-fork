@@ -106,7 +106,7 @@ class File
                 break;
             case 'text/xml':
             case 'application/xml':
-                $xmlNode = simplexml_load_file($filePath, 'SimpleXMLElement', LIBXML_NOCDATA);
+                $xmlNode = simplexml_load_file($filePath, 'SimpleXMLElement', \LIBXML_NOCDATA);
                 $alwaysArrayElements = [];
                 $data = $this->xmlToArray($xmlNode, [
                     'alwaysArray' => $alwaysArrayElements,

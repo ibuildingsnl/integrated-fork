@@ -436,7 +436,7 @@ class Article extends Content implements RankableInterface
                     $relation->getReferences()->removeElement($reference);
                 }
             }
-        } elseif (count($authors) > 0) {
+        } elseif (\count($authors) > 0) {
             $relation = new Relation();
             $relation->setRelationId('__authors');
             $relation->setRelationType('author');
