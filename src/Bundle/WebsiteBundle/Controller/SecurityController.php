@@ -89,7 +89,7 @@ class SecurityController extends Controller
      */
     public function verifyUsernameAction(Request $request): Response
     {
-        $status = $this->userManager->getUsernameStatus($request->request->get('username'));
+        $status = $this->userManager->getUsernameStatus($request->request->get('_username'));
 
         switch ($status) {
             case UserManager::STATUS_USERNAME_NEW:

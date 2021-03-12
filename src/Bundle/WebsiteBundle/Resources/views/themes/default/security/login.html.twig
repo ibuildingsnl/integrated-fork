@@ -24,11 +24,11 @@
 
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
             <label for="username">E-mail address</label>
-            <input type="text" value="{{ lastUsername }}" name="username" id="username" class="form-control" required{% if lastUsername == null %} autofocus{% endif %} />
+            <input type="text" value="{{ lastUsername }}" name="_username" id="username" class="form-control" required{% if lastUsername == null %} autofocus{% endif %} />
 
             <div id="panel-password"{% if lastUsername == null %} style="display: none;"{% endif %}>
                 <label for="password" id="password-label">Password</label>
-                <input type="password" name="password" id="password" class="form-control" required{% if lastUsername != null %} autofocus{% endif %} />
+                <input type="password" name="_password" id="password" class="form-control" required{% if lastUsername != null %} autofocus{% endif %} />
             </div>
 
             <div id="panel-password-verify" style="display: none;">
@@ -51,7 +51,7 @@
         $('#panel-password').hide();
         $('#panel-password-verify').hide();
 
-        $.post(Routing.generate('integrated_website_login_verify'), { 'username': $('#username').val() }, function( data ) {
+        $.post(Routing.generate('integrated_website_login_verify'), { '_username': $('#username').val() }, function( data ) {
             if (data.status == 'INVALID') {
                 $('#login-error').html(data.errorMessage);
                 $('#login-error').show();

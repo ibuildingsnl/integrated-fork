@@ -27,7 +27,7 @@ class Authenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'integrated_website_login';
+    public const LOGIN_ROUTE = 'integrated_website_login_check';
 
     /**
      * @var EntityManagerInterface
@@ -92,8 +92,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
+            'username' => $request->request->get('_username'),
+            'password' => $request->request->get('_password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
