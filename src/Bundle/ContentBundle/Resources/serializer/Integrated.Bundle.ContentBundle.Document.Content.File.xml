@@ -13,5 +13,9 @@
                   expose="true"
                   type="string"
         />
+        <property name="credits"
+                  expose="true"
+                  type="string"
+        />
     </class>
 </serializer>

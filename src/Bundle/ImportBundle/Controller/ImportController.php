@@ -537,7 +537,7 @@ class ImportController extends Controller
         }
 
         $totalRowNumber = \count($data);
-        $rowsPerRequest = max(20, min(200, (int) $totalRowNumber / 20));
+        $rowsPerRequest = max(20, min(500, (int) $totalRowNumber / 20));
         if ($start <= 1) {
             $start = 1;
             $rowsPerRequest = 3;
@@ -652,6 +652,19 @@ class ImportController extends Controller
                         $target = $doubleArticle;
                     }
                 }
+
+                if (isset($row['wp:post_id']) && $importDefinition->getImageBaseUrl()) {
+                    //todo image base URL to general base URL
+                    $doubleArticle = $this->documentManager->getRepository(Content::class)->findOneBy([
+                        'metadata.data.wpPostId' => $row['wp:post_id'],
+                        'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
+                    ]);
+                    if ($doubleArticle) {
+                        $result['warnings'][] = 'Wordpress post '.$row['wp:post_id'].' already imported - updating';
+                        $target = $doubleArticle;
+                    }
+                }
+
                 $context->setAttribute('target', $target);
 
                 try {
@@ -705,6 +718,7 @@ class ImportController extends Controller
 
                 try {
                     //todo: move to Wordpress filter
+                    /*
                     if (isset($row['wp:post_id']) && $importDefinition->getImageBaseUrl()) {
                         //todo image base URL to general base URL
                         $doubleArticle = $this->documentManager->getRepository(Content::class)->findOneBy([
@@ -728,7 +742,7 @@ class ImportController extends Controller
                             continue;
                         }
                     }
-
+*/
                     //todo, make optional (or remove)
                     /*
                     $doubleArticle = $this->documentManager->getRepository(Article::class)->findOneBy(['title' => $newObject->getTitle()]);
