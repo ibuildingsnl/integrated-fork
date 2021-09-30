@@ -11,17 +11,21 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\ContentType\Exception\ExceptionInterface;
+use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MemoryResolver;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MemoryResolverTest extends \PHPUnit\Framework\TestCase
+class MemoryResolverTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testGetType()
@@ -33,14 +37,14 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypeNoString()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->getType(['not a string']);
     }
 
     public function testGetTypeNotFound()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('"not found"');
 
         $this->getInstance()->getType('not found');
@@ -56,7 +60,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testHasTypeNoString()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->hasType(['not a string']);
     }
@@ -70,7 +74,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
         $iterator = $this->getInstance($types)->getTypes();
 
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\IteratorInterface', $iterator);
+        self::assertInstanceOf(IteratorInterface::class, $iterator);
         self::assertSame($types, iterator_to_array($iterator));
     }
 
@@ -89,6 +93,6 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType()
     {
-        return $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        return $this->createMock(ContentTypeInterface::class);
     }
 }

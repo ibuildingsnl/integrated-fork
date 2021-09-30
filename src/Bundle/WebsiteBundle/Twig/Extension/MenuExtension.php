@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
 use Doctrine\ODM\MongoDB\Id\UuidGenerator;
 use Integrated\Bundle\MenuBundle\Document\Menu;
 use Integrated\Bundle\MenuBundle\Document\MenuItem;
@@ -25,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class MenuExtension extends \Twig_Extension
+class MenuExtension extends Twig_Extension
 {
     /**
      * @var IntegratedMenuProvider
@@ -106,12 +108,16 @@ class MenuExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new Twig_SimpleFunction(
                 'integrated_menu',
-                [$this, 'renderMenu'],
+                function (array $context, string $name, array $options) : string {
+                    return $this->renderMenu($context, $name, $options);
+                },
                 ['is_safe' => ['html'], 'needs_context' => true]
             ),
-            new \Twig_SimpleFunction('integrated_menu_prepare', [$this, 'prepareMenu'], ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('integrated_menu_prepare', function (?Menu $menu, array $options) : string {
+                return $this->prepareMenu($menu, $options);
+            }, ['is_safe' => ['html']]),
         ];
     }
 
@@ -170,7 +176,7 @@ class MenuExtension extends \Twig_Extension
     {
         $html = '';
 
-        if ($menu) {
+        if ($menu !== null) {
             $this->prepareItems($menu, $options);
 
             $html = $this->helper->render($menu, $options);
@@ -204,7 +210,7 @@ class MenuExtension extends \Twig_Extension
         }
 
         if (isset($options['depth']) && $depth <= (int) $options['depth']) {
-            $uuid = $this->generator->generateV5($this->generator->generateV4(), uniqid(rand(), true));
+            $uuid = $this->generator->generateV5($this->generator->generateV4(), uniqid(random_int(0, mt_getrandmax()), true));
 
             $child = $menu->addChild('+', [
                 'uri' => '#',

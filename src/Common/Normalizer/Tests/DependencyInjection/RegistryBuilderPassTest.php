@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
+class RegistryBuilderPassTest extends TestCase
 {
     public function testProcess()
     {

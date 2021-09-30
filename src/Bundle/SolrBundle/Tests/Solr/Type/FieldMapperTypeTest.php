@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
 use Integrated\Bundle\SolrBundle\Solr\Type\FieldMapperType;
 use Integrated\Bundle\SolrBundle\Tests\Fixtures\TestObject;
 use Integrated\Common\Converter\Container;
@@ -21,11 +23,11 @@ use Integrated\Common\Converter\ContainerInterface;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class FieldMapperTypeTest extends \PHPUnit\Framework\TestCase
+class FieldMapperTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     /**

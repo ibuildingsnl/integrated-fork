@@ -11,13 +11,16 @@
 
 namespace Integrated\Common\Bulk\Tests\Action;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Bulk\Exception\UnexpectedTypeException;
+use Integrated\Common\Bulk\Exception\InvalidArgumentException;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistry;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class HandlerFactoryRegistryTest extends \PHPUnit\Framework\TestCase
+class HandlerFactoryRegistryTest extends TestCase
 {
     /**
      * @var HandlerFactoryInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
@@ -41,7 +44,7 @@ class HandlerFactoryRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testHasFactoryInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->hasFactory(42);
     }
@@ -56,14 +59,14 @@ class HandlerFactoryRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFactoryInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->getFactory(42);
     }
 
     public function testGetFactoryNotFound()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('there-are-no-factories-for-this-class');
 
         $this->getInstance()->getFactory('there-are-no-factories-for-this-class');

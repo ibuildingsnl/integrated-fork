@@ -11,13 +11,22 @@
 
 namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestClass;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestChild4;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestChild3;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestChild2;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestChild1;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestRoot2;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestRoot1;
+use Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Fixtures\TestBase;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\ClassTreeMapResolver;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\ClassLocatorInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
+class ClassTreeMapResolverTest extends TestCase
 {
     /**
      * @var ClassLocatorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,7 +35,7 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->locator = $this->createMock('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\Locator\\ClassLocatorInterface');
+        $this->locator = $this->createMock(ClassLocatorInterface::class);
     }
 
     protected function setUpLocator()
@@ -34,14 +43,14 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
         $this->locator->expects($this->once())
             ->method('getClassNames')
             ->willReturn([
-                Fixtures\TestClass::class,
-                Fixtures\TestChild4::class,
-                Fixtures\TestChild3::class,
-                Fixtures\TestChild2::class,
-                Fixtures\TestChild1::class,
-                Fixtures\TestRoot2::class.
-                Fixtures\TestRoot1::class,
-                Fixtures\TestBase::class,
+                TestClass::class,
+                TestChild4::class,
+                TestChild3::class,
+                TestChild2::class,
+                TestChild1::class,
+                TestRoot2::class.
+                TestRoot1::class,
+                TestBase::class,
             ]);
     }
 
@@ -50,10 +59,10 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
         $this->setUpLocator();
 
         $expected = [
-            Fixtures\TestChild1::class => Fixtures\TestChild1::class,
+            TestChild1::class => TestChild1::class,
         ];
 
-        self::assertEquals($expected, $this->getInstance()->resolve(Fixtures\TestRoot1::class));
+        self::assertEquals($expected, $this->getInstance()->resolve(TestRoot1::class));
     }
 
     public function testResolveChild()
@@ -61,16 +70,16 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
         $this->setUpLocator();
 
         $expected = [
-            Fixtures\TestChild4::class => Fixtures\TestChild4::class,
-            Fixtures\TestChild3::class => Fixtures\TestChild3::class,
-            Fixtures\TestChild2::class => Fixtures\TestChild2::class,
+            TestChild4::class => TestChild4::class,
+            TestChild3::class => TestChild3::class,
+            TestChild2::class => TestChild2::class,
         ];
 
         $resolver = $this->getInstance();
 
-        self::assertEquals($expected, $resolver->resolve(Fixtures\TestChild4::class));
-        self::assertEquals($expected, $resolver->resolve(Fixtures\TestChild3::class));
-        self::assertEquals($expected, $resolver->resolve(Fixtures\TestChild2::class));
+        self::assertEquals($expected, $resolver->resolve(TestChild4::class));
+        self::assertEquals($expected, $resolver->resolve(TestChild3::class));
+        self::assertEquals($expected, $resolver->resolve(TestChild2::class));
     }
 
     public function testResolveNotInRoot()
@@ -80,8 +89,8 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
 
         $resolver = $this->getInstance();
 
-        self::assertNull($resolver->resolve(Fixtures\TestBase::class));
-        self::assertNull($resolver->resolve(Fixtures\TestClass::class));
+        self::assertNull($resolver->resolve(TestBase::class));
+        self::assertNull($resolver->resolve(TestClass::class));
     }
 
     /**
@@ -89,6 +98,6 @@ class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance()
     {
-        return new ClassTreeMapResolver($this->locator, [Fixtures\TestRoot1::class, Fixtures\TestRoot2::class]);
+        return new ClassTreeMapResolver($this->locator, [TestRoot1::class, TestRoot2::class]);
     }
 }

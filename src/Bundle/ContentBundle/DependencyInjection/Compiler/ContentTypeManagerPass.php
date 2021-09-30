@@ -17,7 +17,10 @@ use ReflectionClass;
 
 class ContentTypeManagerPass implements CompilerPassInterface
 {
-    const SERVICE_ID = 'integrated_content.resolver.xml_file.builder';
+    /**
+     * @var string
+     */
+    public const SERVICE_ID = 'integrated_content.resolver.xml_file.builder';
 
     /**
      * {@inheritdoc}

@@ -22,7 +22,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CustomFieldListener implements EventSubscriberInterface
 {
-    const FORM_NAME = 'customFields';
+    /**
+     * @var string
+     */
+    public const FORM_NAME = 'customFields';
 
     /**
      * {@inheritdoc}

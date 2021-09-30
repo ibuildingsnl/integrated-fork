@@ -90,7 +90,7 @@ class WorkflowStateListener implements EventSubscriberInterface
 
         $choices = $this->getChoices($data);
 
-        if (!$choices) {
+        if ($choices === []) {
             return; // seams there are no next states
         }
 
@@ -101,7 +101,7 @@ class WorkflowStateListener implements EventSubscriberInterface
             'choice_value' => 'id',
             'choice_label' => 'name',
 
-            'placeholder' => 'Don\'t change',
+            'placeholder' => "Don't change",
 
             'expanded' => true,
             'mapped' => false,

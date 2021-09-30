@@ -71,7 +71,9 @@ class AssetTokenParser extends AbstractTokenParser
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $body = $this->parser->subparse([$this, 'testEndTag'], true);
+        $body = $this->parser->subparse(function (Token $token) : bool {
+            return $this->testEndTag($token);
+        }, true);
 
         $stream->expect(\Twig_Token::BLOCK_END_TYPE);
 

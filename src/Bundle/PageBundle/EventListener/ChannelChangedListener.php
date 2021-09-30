@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\EventListener;
 
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -146,7 +147,7 @@ class ChannelChangedListener implements EventSubscriberInterface
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getPageRepository()
     {
@@ -154,7 +155,7 @@ class ChannelChangedListener implements EventSubscriberInterface
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getChannelRepository()
     {
@@ -162,7 +163,7 @@ class ChannelChangedListener implements EventSubscriberInterface
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getContentTypeRepository()
     {

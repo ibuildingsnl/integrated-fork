@@ -10,6 +10,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\EventListener;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Form\EventListener\CustomFieldListener;
@@ -22,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CustomFieldListenerTest extends \PHPUnit\Framework\TestCase
+class CustomFieldListenerTest extends TestCase
 {
     /**
      * @var CustomFieldListener
@@ -42,7 +44,7 @@ class CustomFieldListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventSubscriberInterface', $this->listener);
+        $this->assertInstanceOf(EventSubscriberInterface::class, $this->listener);
     }
 
     /**

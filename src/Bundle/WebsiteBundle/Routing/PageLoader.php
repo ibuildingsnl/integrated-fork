@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
+use RuntimeException;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
@@ -22,7 +24,10 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class PageLoader implements LoaderInterface
 {
-    const ROUTE_PREFIX = 'integrated_website_page_';
+    /**
+     * @var string
+     */
+    public const ROUTE_PREFIX = 'integrated_website_page_';
 
     /**
      * @var bool
@@ -47,15 +52,15 @@ class PageLoader implements LoaderInterface
      */
     public function load($resource, $type = null)
     {
-        if (true === $this->loaded) {
-            throw new \RuntimeException('Page loader is already added');
+        if ($this->loaded) {
+            throw new RuntimeException('Page loader is already added');
         }
 
         $routes = new RouteCollection();
 
         $pages = $this->dm->getRepository('IntegratedPageBundle:Page\Page')->findBy(['disabled' => false]);
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\Page $page */
+        /** @var Page $page */
         foreach ($pages as $page) {
             $condition = '';
 

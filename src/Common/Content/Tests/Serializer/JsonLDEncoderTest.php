@@ -11,13 +11,14 @@
 
 namespace Integrated\Common\Content\Tests\Serializer;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Content\Serializer\JsonLDEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JsonLDEncoderTest extends \PHPUnit\Framework\TestCase
+class JsonLDEncoderTest extends TestCase
 {
     public function testInterface()
     {

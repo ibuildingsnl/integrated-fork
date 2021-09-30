@@ -11,6 +11,9 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Exception;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
@@ -81,8 +84,8 @@ class Exporter implements ExporterInterface
                 if ($response instanceof ExporterResponse) {
                     $this->save($content, $response);
                 }
-            } catch (Exception $e) {
-                // @todo probably should log this somewhere
+            } catch (Exception $exception) {
+
             }
         }
     }

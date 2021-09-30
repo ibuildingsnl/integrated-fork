@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\InstallerBundle\Command;
 
+use RuntimeException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations;
@@ -22,6 +23,7 @@ use Symfony\Component\Process\Process;
  */
 class IntegratedInstallCommand extends Command
 {
+    protected static $defaultName = 'integrated:install';
     /**
      * @var MySQLMigrations
      */
@@ -73,9 +75,7 @@ class IntegratedInstallCommand extends Command
 
     protected function configure()
     {
-        $this
-            ->setName('integrated:install')
-            ->setDescription('Run the Integrated installer to set up database scheme etc.')
+        $this->setDescription('Run the Integrated installer to set up database scheme etc.')
             ->addOption(
                 'step',
                 's',
@@ -90,7 +90,7 @@ class IntegratedInstallCommand extends Command
      *
      * @return int|void|null
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $steps = $input->getOption('step');
         $io = new SymfonyStyle($input, $output);
@@ -108,7 +108,7 @@ class IntegratedInstallCommand extends Command
             $io->success('Solr connection successful');
 
             $bundleErrors = $this->bundleTest->execute();
-            if (\count($bundleErrors) > 0) {
+            if ($bundleErrors !== []) {
                 foreach ($bundleErrors as $bundleError) {
                     $io->error($bundleError);
                 }
@@ -139,6 +139,7 @@ class IntegratedInstallCommand extends Command
             $this->migrations->execute();
             $this->mongoDBMigrations->execute();
         }
+        return 0;
     }
 
     /**
@@ -152,7 +153,7 @@ class IntegratedInstallCommand extends Command
 
         $output->writeln(sprintf('Execute %s %s %s', $php, $console, $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
 
-        $process = new Process(sprintf('%s %s %s', $php, $console, $command));
+        $process = new Process([$php, $console, $command]);
 
         $process->setTimeout(0);
         $process->run(function ($type, $buffer) use ($output) {
@@ -177,7 +178,7 @@ class IntegratedInstallCommand extends Command
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'The php executable could not be found, add it to your PATH environment variable and try again'
             );
         }

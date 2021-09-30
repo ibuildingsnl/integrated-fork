@@ -11,13 +11,17 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Extension;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Integrated\Common\Content\Extension\ExtensionInterface;
+use Integrated\Common\Content\Extension\EventSubscriberInterface;
 use Integrated\Bundle\WorkflowBundle\Extension\WorkflowExtension;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
+class WorkflowExtensionTest extends TestCase
 {
     /**
      * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,15 +30,15 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->container = $this->createMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
+        $this->container = $this->createMock(ContainerInterface::class);
     }
 
     public function testInterface()
     {
         $instance = $this->getInstance();
 
-        $this->assertInstanceOf('Symfony\\Component\\DependencyInjection\\ContainerAwareInterface', $instance);
-        $this->assertInstanceOf('Integrated\\Common\\Content\\Extension\\ExtensionInterface', $instance);
+        $this->assertInstanceOf(ContainerAwareInterface::class, $instance);
+        $this->assertInstanceOf(ExtensionInterface::class, $instance);
     }
 
     public function testGetName()
@@ -47,7 +51,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
         $subscribers = $this->getInstance()->getSubscribers();
 
         $this->assertCount(2, $subscribers);
-        $this->assertContainsOnlyInstancesOf('Integrated\\Common\\Content\\Extension\\EventSubscriberInterface', $subscribers);
+        $this->assertContainsOnlyInstancesOf(EventSubscriberInterface::class, $subscribers);
     }
 
     protected function getInstance()

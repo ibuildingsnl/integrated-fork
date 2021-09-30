@@ -11,6 +11,8 @@
 
 namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping;
 
+use PHPUnit\Framework\TestCase;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
@@ -20,7 +22,7 @@ use Integrated\Doctrine\ODM\MongoDB\Mapping\DiscriminatorMapResolverInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
+class DiscriminatorMapMetadataSubscriberTest extends TestCase
 {
     /**
      * @var DiscriminatorMapResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,12 +31,12 @@ class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->resolver = $this->createMock('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\DiscriminatorMapResolverInterface');
+        $this->resolver = $this->createMock(DiscriminatorMapResolverInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->getInstance());
+        self::assertInstanceOf(EventSubscriber::class, $this->getInstance());
     }
 
     public function testGetSubscribedEvents()
@@ -103,7 +105,7 @@ class DiscriminatorMapMetadataSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected function getEvent($metadata)
     {
-        $mock = $this->getMockBuilder('Doctrine\\ODM\\MongoDB\\Event\\LoadClassMetadataEventArgs')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder(LoadClassMetadataEventArgs::class)->disableOriginalConstructor()->getMock();
         $mock->expects($this->atLeastOnce())
             ->method('getClassMetadata')
             ->willReturn($metadata);

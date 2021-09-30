@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\SocialBundle\EventListener;
 
+use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
 use Integrated\Bundle\ChannelBundle\Event\FormConfigEvent;
 use Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent;
@@ -107,7 +108,7 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
      *
      * @param GetResponseConfigEvent $event
      *
-     * @throws \Facebook\Exceptions\FacebookSDKException
+     * @throws FacebookSDKException
      */
     public function onRequest(GetResponseConfigEvent $event)
     {
@@ -119,7 +120,7 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
 
         $token = $this->facebook->getRedirectLoginHelper()->getAccessToken();
 
-        if (!$token) {
+        if ($token === null) {
             return;
         }
 

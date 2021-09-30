@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\Collection;
 
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
+use ArrayAccess;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -27,9 +30,9 @@ class DefaultTransformer implements DataTransformerInterface
     public function transform($fields)
     {
         $return = [];
-        if (\is_array($fields) || $fields instanceof \Traversable) {
+        if (is_iterable($fields)) {
             foreach ($fields as $field) {
-                if ($field instanceof Embedded\Field) {
+                if ($field instanceof Field) {
                     $return[$field->getName()] = $field;
                 }
             }
@@ -45,13 +48,13 @@ class DefaultTransformer implements DataTransformerInterface
      */
     public function reverseTransform($values)
     {
-        if (\is_array($values) || $values instanceof \ArrayAccess) {
+        if (\is_array($values) || $values instanceof ArrayAccess) {
             foreach ($values as $key => $value) {
                 if ($value === null) {
                     unset($values[$key]);
                 }
 
-                if ($value instanceof Embedded\CustomField) {
+                if ($value instanceof CustomField) {
                     unset($values[$key]);
                 }
             }

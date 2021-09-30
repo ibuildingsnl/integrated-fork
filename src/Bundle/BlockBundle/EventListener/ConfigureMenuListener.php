@@ -23,10 +23,25 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ConfigureMenuListener implements EventSubscriberInterface
 {
-    const MENU = 'integrated_menu';
-    const MENU_WEBSITE = 'Website';
-    const ROLE_WEBSITE_MANAGER = 'ROLE_WEBSITE_MANAGER';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
+    /**
+     * @var string
+     */
+    public const MENU = 'integrated_menu';
+
+    /**
+     * @var string
+     */
+    public const MENU_WEBSITE = 'Website';
+
+    /**
+     * @var string
+     */
+    public const ROLE_WEBSITE_MANAGER = 'ROLE_WEBSITE_MANAGER';
+
+    /**
+     * @var string
+     */
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
      * @var AuthorizationCheckerInterface
@@ -94,7 +109,7 @@ class ConfigureMenuListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$label = $menu->getChild(self::MENU_WEBSITE)) {
+        if (($label = $menu->getChild(self::MENU_WEBSITE)) === null) {
             $label = $menu->addChild(self::MENU_WEBSITE);
         }
 

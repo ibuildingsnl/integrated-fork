@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Storage;
 
+use LogicException;
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Storage\Command\CommandInterface;
@@ -23,8 +25,9 @@ interface ManagerInterface
 {
     /**
      * @const string
+     * @var string
      */
-    const LOG_PREFIX = 'IntegratedStorage: ';
+    public const LOG_PREFIX = 'IntegratedStorage: ';
 
     /**
      * The (queued) command (message) bus strategy.
@@ -38,7 +41,7 @@ interface ManagerInterface
      *
      * @param StorageInterface $storage
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return string
      */
@@ -50,7 +53,7 @@ interface ManagerInterface
      * @param ReaderInterface $reader
      * @param ArrayCollection $filesystems
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return StorageInterface
      */

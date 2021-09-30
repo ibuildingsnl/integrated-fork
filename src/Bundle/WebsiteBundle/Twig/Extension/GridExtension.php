@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
+use Twig_Environment;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -20,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class GridExtension extends \Twig_Extension
+class GridExtension extends Twig_Extension
 {
     /**
      * @var OptionsResolver
@@ -48,27 +51,29 @@ class GridExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new Twig_SimpleFunction(
                 'integrated_grid',
-                [$this, 'renderGrid'],
+                function (Twig_Environment $environment, array $context, string $id, array $options) : string {
+                    return $this->renderGrid($environment, $context, $id, $options);
+                },
                 ['is_safe' => ['html'], 'needs_environment' => true, 'needs_context' => true]
             ),
         ];
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Twig_Environment $environment
      * @param array             $context
      * @param string            $id
      * @param array             $options
      *
      * @return string
      */
-    public function renderGrid(\Twig_Environment $environment, $context, $id, array $options = [])
+    public function renderGrid(Twig_Environment $environment, $context, $id, array $options = [])
     {
         $options = $this->resolver->resolve($options);
 
-        $page = isset($context['page']) ? $context['page'] : null;
+        $page = $context['page'] ?? null;
 
         if ($page instanceof AbstractPage) {
             $grid = $page->getGrid($id);

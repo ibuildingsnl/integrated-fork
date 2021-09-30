@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Solr\Type;
 
+use ReflectionClass;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Converter\ContainerInterface;
@@ -45,7 +46,7 @@ class StorageType implements TypeInterface
                     // The stuff we'll be adding in the solr document
                     $json = [];
 
-                    $reflection = new \ReflectionClass($object);
+                    $reflection = new ReflectionClass($object);
                     foreach ($reflection->getProperties() as $property) {
                         // Mandatory, properties might be inaccessible
                         $property->setAccessible(true);

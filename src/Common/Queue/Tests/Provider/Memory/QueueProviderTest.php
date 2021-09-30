@@ -11,13 +11,15 @@
 
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Queue\Provider\QueueProviderInterface;
 use Integrated\Common\Queue\Provider\Memory\QueueMessage;
 use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueProviderTest extends \PHPUnit\Framework\TestCase
+class QueueProviderTest extends TestCase
 {
     /**
      * @var QueueProvider
@@ -31,7 +33,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\Common\Queue\Provider\QueueProviderInterface', $this->provider);
+        $this->assertInstanceOf(QueueProviderInterface::class, $this->provider);
     }
 
     public function testPush()
@@ -52,7 +54,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
-        $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
+        $this->assertContainsOnlyInstancesOf(QueueMessage::class, $result);
         $this->assertEquals(1, $this->provider->count('channel'));
     }
 
@@ -64,7 +66,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $result = $this->provider->pull('channel', 2);
 
         $this->assertCount(2, $result);
-        $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
+        $this->assertContainsOnlyInstancesOf(QueueMessage::class, $result);
         $this->assertEquals(0, $this->provider->count('channel'));
     }
 

@@ -101,7 +101,7 @@ class QueueExporter implements ExporterInterface
 
         try {
             $this->export($request->content, $request->state, $request->channel);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // @todo probably should log this somewhere
         }
 

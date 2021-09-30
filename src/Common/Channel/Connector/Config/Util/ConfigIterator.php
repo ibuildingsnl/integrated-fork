@@ -60,10 +60,6 @@ class ConfigIterator extends ArrayIterator
      */
     protected function accept()
     {
-        if ($this->current() instanceof ConfigInterface) {
-            return true;
-        }
-
-        return false;
+        return $this->current() instanceof ConfigInterface;
     }
 }

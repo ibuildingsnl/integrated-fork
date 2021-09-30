@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Converter;
 
+use SplFileInfo;
 use Integrated\Bundle\ImageBundle\Converter\Format\WebFormat;
 use Integrated\Bundle\StorageBundle\Storage\Cache\AppCache;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -57,7 +58,7 @@ class WebFormatConverter
     /**
      * @param StorageInterface $image
      *
-     * @return \SplFileInfo
+     * @return SplFileInfo
      */
     public function convert(StorageInterface $image)
     {

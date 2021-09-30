@@ -11,13 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded\Storage;
 
+use PHPUnit\Framework\TestCase;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class MetadataTest extends \PHPUnit\Framework\TestCase
+class MetadataTest extends TestCase
 {
     /**
      * Tests the getters (through the constructor) of the object.

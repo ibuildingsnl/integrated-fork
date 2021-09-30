@@ -52,7 +52,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return null;
         }
 
@@ -116,11 +116,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $identifier = $meta->getIdentifierFieldNames();
-
-        if (empty($identifier)) {
-            return false;
-        }
-
-        return true;
+        return !empty($identifier);
     }
 }

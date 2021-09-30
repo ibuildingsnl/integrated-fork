@@ -19,8 +19,11 @@ use Symfony\Component\Validator\Constraint;
 abstract class ManagerConstraint extends Constraint
 {
     public $message = null;
+
     public $manger = null;
+
     public $method = 'findBy';
+
     public $fields = [];
 
     /**

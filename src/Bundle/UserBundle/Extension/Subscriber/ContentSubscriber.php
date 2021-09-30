@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Extension\Subscriber;
 
+use ReflectionClass;
+use Integrated\Common\Content\ContentInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\Extension\Event\ContentEvent;
 use Integrated\Common\Content\Extension\Event\Subscriber\ContentSubscriberInterface;
@@ -23,7 +25,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContentSubscriber implements ContentSubscriberInterface
 {
-    const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
+    /**
+     * @var string
+     */
+    public const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
     /**
      * @var ExtensionInterface
@@ -70,17 +75,12 @@ class ContentSubscriber implements ContentSubscriberInterface
 
     protected function isSupported($object)
     {
-        $class = new \ReflectionClass($object);
+        $class = new ReflectionClass($object);
 
-        if (!$class->implementsInterface('Integrated\\Common\\Content\\ContentInterface')) {
+        if (!$class->implementsInterface(ContentInterface::class)) {
             return false;
         }
-
-        if ($class->isSubclassOf(self::RELATION_CLASS)) {
-            return true;
-        }
-
-        return false;
+        return $class->isSubclassOf(self::RELATION_CLASS);
     }
 
     public function read(ContentEvent $event)

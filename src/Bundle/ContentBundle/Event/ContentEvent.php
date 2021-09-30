@@ -11,14 +11,17 @@
 
 namespace Integrated\Bundle\ContentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
  */
 class ContentEvent extends Event
 {
-    const NAME = 'content.event';
+    /**
+     * @var string
+     */
+    public const NAME = 'content.event';
 
     /**
      * @var string

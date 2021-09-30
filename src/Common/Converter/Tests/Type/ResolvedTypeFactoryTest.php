@@ -11,23 +11,27 @@
 
 namespace Integrated\Common\Converter\Tests\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\ResolvedTypeFactoryInterface;
+use Integrated\Common\Converter\Type\ResolvedType;
+use Integrated\Common\Converter\Type\TypeInterface;
 use Integrated\Common\Converter\Type\ResolvedTypeFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ResolvedTypeFactoryTest extends \PHPUnit\Framework\TestCase
+class ResolvedTypeFactoryTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\ResolvedTypeFactoryInterface', $this->getInstance());
+        self::assertInstanceOf(ResolvedTypeFactoryInterface::class, $this->getInstance());
     }
 
     public function testCreateType()
     {
         $factory = $this->getInstance();
 
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\ResolvedType', $factory->createType($this->createMock('Integrated\\Common\\Converter\\Type\\TypeInterface'), []));
+        self::assertInstanceOf(ResolvedType::class, $factory->createType($this->createMock(TypeInterface::class), []));
     }
 
     /**

@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Provider;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Config\TypeProviderInterface;
+use Integrated\Common\Converter\Exception\ExceptionInterface;
+use ArrayIterator;
 use Integrated\Common\Converter\Config\Provider\XmlProvider;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Symfony\Component\Finder\Finder;
@@ -19,17 +23,17 @@ use Symfony\Component\Finder\SplFileInfo;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class XmlProviderTest extends \PHPUnit\Framework\TestCase
+class XmlProviderTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Config\\TypeProviderInterface', $this->getInstance($this->getFinder()));
+        self::assertInstanceOf(TypeProviderInterface::class, $this->getInstance($this->getFinder()));
     }
 
     public function testFinderFileExtension()
     {
         /** @var Finder|\PHPUnit_Framework_MockObject_MockObject $finder */
-        $finder = $this->getMockBuilder('Symfony\Component\Finder\Finder')->disableOriginalConstructor()->getMock();
+        $finder = $this->getMockBuilder(Finder::class)->disableOriginalConstructor()->getMock();
 
         $finder->expects($this->atLeastOnce())
             ->method('files')
@@ -65,14 +69,14 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypesNoXml()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance($this->getFinder(['mapping.noxml.xml']))->getTypes('class');
     }
 
     public function testGetTypesNonExistingFile()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         // This should probably not happen since it would be weird for the finder to return a not
         // existing file. But it is in theory possible so test for it anyways.
@@ -82,7 +86,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypesInvalidXml()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         // $this->getInstance($this->getFinder(['mapping.invalid.xml']))->getTypes('class');
         $this->markTestSkipped('xsd does not exist yet');
@@ -156,10 +160,10 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
             $files[$index] = new SplFileInfo(__DIR__.'/../../Fixtures/'.$value, '', '');
         }
 
-        $mock = $this->getMockBuilder('Symfony\Component\Finder\Finder')->setMethods(['getIterator'])->getMock();
+        $mock = $this->getMockBuilder(Finder::class)->setMethods(['getIterator'])->getMock();
         $mock->expects($this->any())
             ->method('getIterator')
-            ->willReturn(new \ArrayIterator($files));
+            ->willReturn(new ArrayIterator($files));
 
         return $mock;
     }
@@ -173,7 +177,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
     public static function assertContainsTypes($expected, $actual)
     {
         self::assertIsArray($actual);
-        self::assertContainsOnlyInstancesOf('Integrated\\Common\\Converter\\Config\\TypeConfigInterface', $actual);
+        self::assertContainsOnlyInstancesOf(TypeConfigInterface::class, $actual);
 
         /** @var TypeConfigInterface $type */
         foreach ($actual as $key => $type) {

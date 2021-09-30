@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -55,7 +57,7 @@ class Channel implements ChannelInterface
     /**
      * @var array
      */
-    protected $domains;
+    protected $domains = [];
 
     /**
      * @var string
@@ -65,7 +67,7 @@ class Channel implements ChannelInterface
     /**
      * @var bool
      */
-    protected $primaryDomainRedirect;
+    protected $primaryDomainRedirect = false;
 
     /**
      * @var mixed[]
@@ -73,7 +75,7 @@ class Channel implements ChannelInterface
     protected $options = [];
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
@@ -97,7 +99,7 @@ class Channel implements ChannelInterface
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -270,7 +272,7 @@ class Channel implements ChannelInterface
     /**
      * Get the createdAt of the channel.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -280,11 +282,11 @@ class Channel implements ChannelInterface
     /**
      * Set the createdAt of the channel.
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -366,7 +368,7 @@ class Channel implements ChannelInterface
     public function setScope(Scope $scope = null)
     {
         $this->scopeInstance = $scope;
-        $this->scope = $scope ? $scope->getId() : null;
+        $this->scope = $scope !== null ? $scope->getId() : null;
 
         return $this;
     }

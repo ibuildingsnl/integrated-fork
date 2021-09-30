@@ -30,7 +30,7 @@ class Manager implements ManagerInterface
     /**
      * @var array
      */
-    protected $options;
+    protected $options = [];
 
     /**
      * @var Connection
@@ -58,26 +58,15 @@ class Manager implements ManagerInterface
      */
     public function acquire(RequestInterface $request, $timeout = 0)
     {
-        if ($owner = $request->getOwner()) {
-            if ($owner->getIdentifier() === null) {
-                throw new InvalidArgumentException('The owner identifier can not be null');
-            }
+        if (($owner = $request->getOwner()) !== null && $owner->getIdentifier() === null) {
+            throw new InvalidArgumentException('The owner identifier can not be null');
         }
-
-        // @todo POTENTIAL PROBLEM: this uses current server time which
-        // could not be in sync and that could lead to problems if locks
-        // are created on more then one server.
 
         $created = time();
         $timeout = $request->getTimeout();
         $expires = $timeout === null ? null : $created + $timeout;
 
-        // if the insert succeeds then the lock is made else setting the
-        // lock failed.
-
         try {
-            // have the server created a uuid for this lock
-
             $data = $this->connection->fetchColumn('SELECT '.$this->platform->getGuidExpression());
             $data = [
                 'id' => $data,
@@ -89,8 +78,8 @@ class Manager implements ManagerInterface
             ];
 
             $this->connection->insert($this->options['lock_table_name'], $data);
-        } catch (DBALException $e) {
-            return null; // expected to be a dup key error
+        } catch (DBALException $dbalException) {
+            return null; 
         }
 
         return Lock::factory($data);
@@ -136,12 +125,9 @@ class Manager implements ManagerInterface
                 ->from($this->options['lock_table_name'], 'l')
                 ->where('l.id = '.$builder->createPositionalParameter($lock));
 
-            if ($data = $this->connection->fetchAssoc($builder->getSQL().' '.$this->platform->getForUpdateSQL(), array_values($builder->getParameters()))) {
-                if ($data['timeout'] !== null) {
-                    $data['expires'] = time() + $data['timeout'];
-
-                    $this->connection->update($this->options['lock_table_name'], ['expires' => $data['expires']], ['id' => $data['id']]);
-                }
+            if (($data = $this->connection->fetchAssoc($builder->getSQL().' '.$this->platform->getForUpdateSQL(), array_values($builder->getParameters()))) && $data['timeout'] !== null) {
+                $data['expires'] = time() + $data['timeout'];
+                $this->connection->update($this->options['lock_table_name'], ['expires' => $data['expires']], ['id' => $data['id']]);
             }
 
             $this->connection->commit();
@@ -237,15 +223,17 @@ class Manager implements ManagerInterface
             $where = $builder->expr()->andX();
 
             if (!$filter instanceof Filter) {
-                throw new UnexpectedTypeException($filter, 'Integrated\Common\Locks\Filter');
+                throw new UnexpectedTypeException($filter, Filter::class);
             }
 
             $resources = \is_array($filter->resources) ? $filter->resources : [$filter->resources];
             $resources = array_filter($resources);
 
             if (!empty($resources)) {
-                $resources = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $resources);
-                $resources = array_map([$builder->getConnection(), 'quote'], $resources);
+                $resources = array_map([Resource::class, 'serialize'], $resources);
+                $resources = array_map(function ($value, $type) {
+                    return $builder->getConnection()->quote($value, $type);
+                }, $resources);
 
                 $where->add($builder->expr()->in('l.resource', $resources));
             }
@@ -254,13 +242,15 @@ class Manager implements ManagerInterface
             $owners = array_filter($owners);
 
             if (!empty($owners)) {
-                $owners = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $owners);
-                $owners = array_map([$builder->getConnection(), 'quote'], $owners);
+                $owners = array_map([Resource::class, 'serialize'], $owners);
+                $owners = array_map(function ($value, $type) {
+                    return $builder->getConnection()->quote($value, $type);
+                }, $owners);
 
                 $where->add($builder->expr()->in('l.resource_owner', $owners));
             }
 
-            if ($where->count()) {
+            if ($where->count() !== 0) {
                 $builder->orWhere($where);
             }
         }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ResolverInterface;
@@ -19,7 +20,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContextTest extends \PHPUnit\Framework\TestCase
+class ContextTest extends TestCase
 {
     /**
      * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject

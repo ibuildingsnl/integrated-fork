@@ -62,11 +62,6 @@ class Handler implements HandlerInterface
     {
         $form = $this->factory->create(AuthenticatorFormType::class, null, ['context' => $this->context]);
         $form->handleRequest($this->context->getRequest());
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            return true;
-        }
-
-        return false;
+        return $form->isSubmitted() && $form->isValid();
     }
 }

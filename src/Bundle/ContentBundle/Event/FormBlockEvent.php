@@ -11,17 +11,26 @@
 
 namespace Integrated\Bundle\ContentBundle\Event;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 class FormBlockEvent extends Event
 {
-    const PRE_LOAD = 'form_block.pre_load';
+    /**
+     * @var string
+     */
+    public const PRE_LOAD = 'form_block.pre_load';
 
-    const PRE_FLUSH = 'form_block.pre_flush';
+    /**
+     * @var string
+     */
+    public const PRE_FLUSH = 'form_block.pre_flush';
 
-    const POST_FLUSH = 'form_block.post_flush';
+    /**
+     * @var string
+     */
+    public const POST_FLUSH = 'form_block.post_flush';
 
     /**
      * @var ContentInterface

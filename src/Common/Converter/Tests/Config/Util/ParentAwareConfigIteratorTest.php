@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Util;
 
+use PHPUnit\Framework\TestCase;
+use Iterator;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\Util\ParentAwareConfigIterator;
@@ -25,11 +27,11 @@ use Integrated\Common\Converter\Config\Util\ParentAwareConfigIterator;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
+class ParentAwareConfigIteratorTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Iterator', $this->getInstance());
+        self::assertInstanceOf(Iterator::class, $this->getInstance());
     }
 
     public function testCurrent()
@@ -162,7 +164,7 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface');
+        return $this->createMock(TypeConfigInterface::class);
     }
 
     /**
@@ -173,7 +175,7 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig(array $types = [], ConfigInterface $parent = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\Converter\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
             ->method('getParent')
             ->willReturn($parent);

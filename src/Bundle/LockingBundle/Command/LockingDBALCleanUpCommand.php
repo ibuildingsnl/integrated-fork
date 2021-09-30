@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class LockingDBALCleanUpCommand extends Command
 {
+    protected static $defaultName = 'locking:dbal:clean';
     /**
      * @var ManagerInterface
      */
@@ -43,9 +44,7 @@ class LockingDBALCleanUpCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('locking:dbal:clean')
-            ->setDescription('Clean up the expired locks')
+        $this->setDescription('Clean up the expired locks')
             ->setHelp(<<<EOF
 The <info>%command.name%</info> removes all the expired locks stored in the database
 
@@ -57,8 +56,9 @@ EOF
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->manager->clean();
+        return 0;
     }
 }

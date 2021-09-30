@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\ODM\Migration;
 
+use Exception;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\MongoDB\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -32,7 +35,7 @@ trait RelationHelper
      *
      * @return Relation
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function addRelation($name, $id, $sources, $targets, $multiple = true, $required = false, $type = null)
     {
@@ -44,13 +47,13 @@ trait RelationHelper
             if (\is_array($sources)) {
                 $sources = new ArrayCollection($sources);
             } elseif (!$sources instanceof Collection) {
-                throw new \Exception('sources of relation should be either array or instance of Collection');
+                throw new Exception('sources of relation should be either array or instance of Collection');
             }
 
             if (\is_array($targets)) {
                 $targets = new ArrayCollection($targets);
             } elseif (!$targets instanceof Collection) {
-                throw new \Exception('sources of relation should be either array or instance of Collection');
+                throw new Exception('sources of relation should be either array or instance of Collection');
             }
 
             $relation->setSources($sources)
@@ -127,12 +130,12 @@ trait RelationHelper
     abstract protected function write($message);
 
     /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * @return DocumentManager
      */
     abstract protected function getDocumentManager();
 
     /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     * @return ContainerInterface
      */
     abstract public function getContainer();
 }

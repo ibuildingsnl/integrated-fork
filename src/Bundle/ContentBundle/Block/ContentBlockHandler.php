@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
@@ -63,7 +64,7 @@ class ContentBlockHandler extends BlockHandler
 
         $pagination = $this->getPagination($block, $request, $options);
 
-        if (!\count($pagination)) {
+        if (\count($pagination) === 0) {
             return;
         }
 
@@ -80,7 +81,7 @@ class ContentBlockHandler extends BlockHandler
      * @param Request      $request
      * @param array        $options
      *
-     * @return \Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination
+     * @return SlidingPagination
      */
     public function getPagination(ContentBlock $block, Request $request, array $options = [])
     {

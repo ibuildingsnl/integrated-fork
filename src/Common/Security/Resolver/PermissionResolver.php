@@ -34,7 +34,7 @@ class PermissionResolver
         $hasReadPermissions = false;
         $hasWritePermissions = false;
 
-        if ($groups) {
+        if ($groups !== []) {
             foreach ($permissions as $permission) {
                 if (PermissionInterface::READ === ($permission->getMask() & PermissionInterface::READ)) {
                     $hasReadPermissions = true;

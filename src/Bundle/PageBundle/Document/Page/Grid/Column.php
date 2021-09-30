@@ -28,7 +28,7 @@ class Column implements ItemsInterface
     /**
      * @var Item[]
      */
-    protected $items;
+    protected $items = [];
 
     public function __construct()
     {
@@ -114,7 +114,7 @@ class Column implements ItemsInterface
             'size' => $this->size,
         ];
 
-        if (\count($items)) {
+        if (\count($items) > 0) {
             $array['items'] = $items;
         }
 

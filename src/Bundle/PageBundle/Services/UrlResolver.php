@@ -77,7 +77,7 @@ class UrlResolver
     public function getRoutePath(ContentTypePage $page)
     {
         return preg_replace_callback(
-            '/(#)([\s\S]+?)(#)/',
+            '#(\#)([\s\S]+?)(\#)#',
             function ($matches) {
                 return sprintf('{%s}', $matches[2]);
             },
@@ -175,7 +175,7 @@ class UrlResolver
     {
         $relationIds = [];
 
-        if (preg_match_all('/#([\w]+?)#/', $page->getPath(), $matches)) {
+        if (preg_match_all('#\#([\w]+?)\##', $page->getPath(), $matches)) {
             foreach ($matches[1] as $match) {
                 $relationIds[] = $match;
             }

@@ -11,21 +11,24 @@
 
 namespace Integrated\Common\Content\Tests\Channel;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Channel\ChannelContext;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ChannelContextTest extends \PHPUnit\Framework\TestCase
+class ChannelContextTest extends TestCase
 {
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\Content\\Channel\\ChannelContextInterface', $this->getInstance());
+        $this->assertInstanceOf(ChannelContextInterface::class, $this->getInstance());
     }
 
     public function testSetGetChannel()
     {
-        $channel = $this->createMock('Integrated\\Common\\Content\\Channel\\ChannelInterface');
+        $channel = $this->createMock(ChannelInterface::class);
         $instance = $this->getInstance();
 
         $this->assertNull($instance->getChannel());

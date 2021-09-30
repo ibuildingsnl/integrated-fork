@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\MenuBundle\Provider;
 
+use InvalidArgumentException;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -53,7 +54,7 @@ class MenuProvider implements MenuProviderInterface
     public function get($name, array $options = [])
     {
         if (!$this->has($name, $options)) {
-            throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
+            throw new InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
         }
 
         if (!isset($this->menus[$name])) {
@@ -61,8 +62,8 @@ class MenuProvider implements MenuProviderInterface
         }
 
         $this->eventDispatcher->dispatch(
-            ConfigureMenuEvent::CONFIGURE,
-            new ConfigureMenuEvent($this->factory, $this->menus[$name])
+            new ConfigureMenuEvent($this->factory, $this->menus[$name]),
+            ConfigureMenuEvent::CONFIGURE
         );
 
         return $this->menus[$name];

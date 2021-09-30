@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
+use PHPUnit\Framework\TestCase;
+use DateTime;
 use ArrayIterator;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Exception;
@@ -32,12 +34,12 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ExporterTest extends \PHPUnit\Framework\TestCase
+class ExporterTest extends TestCase
 {
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -56,14 +58,14 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface');
-        $this->resolver = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface');
-        $this->dm = $this->createMock('Doctrine\\ODM\\MongoDB\\DocumentManager');
+        $this->registry = $this->createMock(RegistryInterface::class);
+        $this->resolver = $this->createMock(ResolverInterface::class);
+        $this->dm = $this->createMock(DocumentManager::class);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\Channel\\Exporter\\ExporterInterface', $this->getInstance());
+        $this->assertInstanceOf(ExporterInterface::class, $this->getInstance());
     }
 
     public function testExport()
@@ -127,8 +129,8 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     public function testSaveExport()
     {
         $article = new Article();
-        $article->getPublishTime()->setStartDate(new \DateTime());
-        $article->getPublishTime()->setEndDate(new \DateTime('now +10 years'));
+        $article->getPublishTime()->setStartDate(new DateTime());
+        $article->getPublishTime()->setEndDate(new DateTime('now +10 years'));
 
         $channel = $this->getChannel('channel');
 
@@ -274,7 +276,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);
@@ -287,7 +289,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getExporter()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Exporter\\ExporterInterface');
+        return $this->createMock(ExporterInterface::class);
     }
 
     /**
@@ -298,12 +300,12 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($adaptor, OptionsInterface $options = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->once())
             ->method('getAdapter')
             ->willReturn($adaptor);
 
-        if ($options) {
+        if ($options !== null) {
             $mock
                 ->method('getOptions')
                 ->willReturn($options);
@@ -317,7 +319,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getOptions()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\OptionsInterface');
+        return $this->createMock(OptionsInterface::class);
     }
 
     /**
@@ -328,8 +330,8 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
     {
-        if ($config) {
-            $mock = $this->createMock('Integrated\\Common\\Channel\\Tests\Fixtures\\ExportableInterface');
+        if ($config !== null) {
+            $mock = $this->createMock(\Integrated\Common\Channel\Tests\Fixtures\ExportableInterface::class);
             $mock->expects($this->once())
                 ->method('getExporter')
                 ->with($this->identicalTo($config))
@@ -338,6 +340,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
             return $mock;
         }
 
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\AdapterInterface');
+        return $this->createMock(AdapterInterface::class);
     }
 }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Type;
 
+use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +27,7 @@ class ActionsType extends AbstractType
     /**
      * @var array
      */
-    protected $buttons;
+    protected $buttons = [];
 
     /**
      * Constructor.
@@ -73,6 +74,6 @@ class ActionsType extends AbstractType
      */
     public function getParent()
     {
-        return 'Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType';
+        return FormActionsType::class;
     }
 }

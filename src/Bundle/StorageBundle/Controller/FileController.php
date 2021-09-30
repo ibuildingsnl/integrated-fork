@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Controller;
 
+use LogicException;
 use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ImageBundle\Converter\WebFormatConverter;
@@ -83,8 +84,9 @@ class FileController
                         Response::HTTP_MOVED_PERMANENTLY
                     );
                 }
+
                 // This may never happen, reflection gave an invalid result
-                throw new \LogicException(
+                throw new LogicException(
                     'Invalid instance %s provided trough reflection while %s was expected.',
                     \is_object($storage) ? \get_class($storage) : \gettype($storage),
                     StorageInterface::class

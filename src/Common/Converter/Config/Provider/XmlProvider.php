@@ -76,7 +76,7 @@ class XmlProvider extends AbstractFileProvider
         foreach ($element->type as $type) {
             $options = null;
 
-            if (isset($type->options)) {
+            if (property_exists($type, 'options') && $type->options !== null) {
                 $options = $this->parseOptions($type->options[0]);
             }
 
@@ -95,7 +95,7 @@ class XmlProvider extends AbstractFileProvider
      */
     protected function parseOptions(SimpleXMLElement $element)
     {
-        if (!$element->count()) {
+        if ($element->count() === 0) {
             return []; // empty array if options contains no data
         }
 
@@ -175,8 +175,8 @@ class XmlProvider extends AbstractFileProvider
 
         try {
             $content = $file->getContents();
-        } catch (Exception $e) {
-            throw new RuntimeException($e->getMessage(), 0, $e);
+        } catch (Exception $exception) {
+            throw new RuntimeException($exception->getMessage(), 0, $exception);
         }
 
         $previous = libxml_use_internal_errors(true);

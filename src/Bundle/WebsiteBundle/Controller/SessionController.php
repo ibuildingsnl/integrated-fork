@@ -47,9 +47,9 @@ class SessionController extends AbstractController
         $response = new RedirectResponse($page);
 
         if ($this->getUser() == false) {
-            $sessionId = preg_replace('/[^a-zA-Z0-9]+/', '', $sessionId);
+            $sessionId = preg_replace('#[^a-zA-Z0-9]+#', '', $sessionId);
 
-            $response->headers->setCookie(new Cookie('PHPSESSID', $sessionId));
+            $response->headers->setCookie(Cookie::create('PHPSESSID', $sessionId));
         }
 
         return $response;

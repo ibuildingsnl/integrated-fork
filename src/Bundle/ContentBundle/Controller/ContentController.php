@@ -11,6 +11,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Countable;
+use Integrated\Common\Locks\Resource;
+use Integrated\Common\Locks\Filter;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
@@ -23,7 +28,6 @@ use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Security\Permissions;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,12 +39,12 @@ use Traversable;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentController extends Controller
+class ContentController extends AbstractController
 {
     /**
      * @var string
      */
-    protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+    protected $relationClass = Relation::class;
 
     /**
      * @param Request $request
@@ -149,7 +153,7 @@ class ContentController extends Controller
 
         /** @var Relation $relation */
         foreach ($dm->getRepository($this->relationClass)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
+            $name = preg_replace('#[^a-zA-Z]#', '', $relation->getName());
 
             //create relation facet field
             $facetSet->createFacetField($name)->setField('facet_'.$relation->getId())->addExclude($name);
@@ -166,13 +170,11 @@ class ContentController extends Controller
             }
         }
 
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->addTag('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
-            }
+        if (\is_array($contentType) && \count($contentType)) {
+            $query
+                ->createFilterQuery('contenttypes')
+                ->addTag('contenttypes')
+                ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         }
 
         // If the workflow bundle is loaded then only display the results that the
@@ -197,7 +199,7 @@ class ContentController extends Controller
                     ->setQuery('(*:* -security_workflow_read:[* TO *])');
 
                 // allow content with group access
-                if ($filterWorkflow) {
+                if ($filterWorkflow !== []) {
                     $fq->setQuery(
                         $fq->getQuery().' OR security_workflow_read: ((%1%))',
                         [implode(') OR (', $filterWorkflow)]
@@ -221,43 +223,35 @@ class ContentController extends Controller
 
         // TODO this should be somewhere else:
         $activeChannels = $request->query->get('channels');
-        if (\is_array($activeChannels)) {
-            if (\count($activeChannels)) {
-                $query
-                    ->createFilterQuery('channels')
-                    ->addTag('channels')
-                    ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
-            }
+        if (\is_array($activeChannels) && \count($activeChannels)) {
+            $query
+                ->createFilterQuery('channels')
+                ->addTag('channels')
+                ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
         }
 
         $activeStates = $request->query->get('workflow_state');
-        if (\is_array($activeStates)) {
-            if (\count($activeStates)) {
-                $query
-                    ->createFilterQuery('workflow_state')
-                    ->addTag('workflow_state')
-                    ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
-            }
+        if (\is_array($activeStates) && \count($activeStates)) {
+            $query
+                ->createFilterQuery('workflow_state')
+                ->addTag('workflow_state')
+                ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
         }
 
         $activeAssigned = $request->query->get('workflow_assigned');
-        if (\is_array($activeAssigned)) {
-            if (\count($activeAssigned)) {
-                $query
-                    ->createFilterQuery('workflow_assigned')
-                    ->addTag('workflow_assigned')
-                    ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
-            }
+        if (\is_array($activeAssigned) && \count($activeAssigned)) {
+            $query
+                ->createFilterQuery('workflow_assigned')
+                ->addTag('workflow_assigned')
+                ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
         }
 
         $activeAuthors = $request->query->get('authors');
-        if (\is_array($activeAuthors)) {
-            if (\count($activeAuthors)) {
-                $query
-                    ->createFilterQuery('authors')
-                    ->addTag('authors')
-                    ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
-            }
+        if (\is_array($activeAuthors) && \count($activeAuthors)) {
+            $query
+                ->createFilterQuery('authors')
+                ->addTag('authors')
+                ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
         }
 
         if ($request->isMethod('post')) {
@@ -267,7 +261,7 @@ class ContentController extends Controller
                     $id[] = '';
                 }
 
-                if (\count($id)) {
+                if (\count($id) > 0) {
                     $query
                         ->createFilterQuery('id')
                         ->addTag('id')
@@ -285,7 +279,7 @@ class ContentController extends Controller
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
-            'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
+            'random' => ['name' => 'random', 'field' => 'random_'.random_int(0, mt_getrandmax()), 'label' => 'random', 'order' => 'desc'],
         ];
         $order_options = [
             'asc' => 'asc',
@@ -336,7 +330,7 @@ class ContentController extends Controller
         /** @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
         $dm = $this->get('doctrine_mongodb')->getManager();
         $channels = [];
-        if ($channelResult = $dm->getRepository('Integrated\\Bundle\\ContentBundle\\Document\\Channel\\Channel')->findAll()) {
+        if ($channelResult = $dm->getRepository(Channel::class)->findAll()) {
             /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($channelResult as $channel) {
                 $channels[$channel->getId()] = $channel->getName();
@@ -483,7 +477,7 @@ class ContentController extends Controller
         // get a lock on this content resource.
 
         $locking = $this->getLock($content, 15);
-        $locking['locked'] = $locking['lock'] ? true : false;
+        $locking['locked'] = (bool) $locking['lock'];
 
         if ($locking['lock'] && $locking['owner']) {
             if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
@@ -530,43 +524,36 @@ class ContentController extends Controller
             }
 
             // this is not rest compatible since a button click is required to save
-            if ($form->get('actions')->getData() == 'save') {
-                if (!$locking['locked'] && $form->isValid()) {
-                    if ($this->has('integrated_solr.indexer')) {
-                        //higher priority for content edited in Integrated
-                        $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
-                        $queue = $subscriber->getQueue();
-                        $subscriber->setPriority($queue::PRIORITY_HIGH);
-                    }
-
-                    /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->get('doctrine_mongodb')->getManager();
-                    $dm->flush();
-
-                    // Set flash message
-                    $this->get('braincrafted_bootstrap.flash')->success(
-                        $this->get('translator')->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()])
-                    );
-
-                    if ($this->has('integrated_solr.indexer')) {
-                        $lock = $this->get('integrated_solr.lock.factory')->createLock(self::class);
-                        $lock->acquire(true);
-
-                        try {
-                            $indexer = $this->get('integrated_solr.indexer');
-                            $indexer->setOption('queue.size', 2);
-                            $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                        } finally {
-                            $lock->release();
-                        }
-                    }
-
-                    if (!$locking['locked']) {
-                        $locking['release']();
-                    }
-
-                    return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+            if ($form->get('actions')->getData() == 'save' && (!$locking['locked'] && $form->isValid())) {
+                if ($this->has('integrated_solr.indexer')) {
+                    //higher priority for content edited in Integrated
+                    $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
+                    $queue = $subscriber->getQueue();
+                    $subscriber->setPriority($queue::PRIORITY_HIGH);
                 }
+                /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
+                $dm = $this->get('doctrine_mongodb')->getManager();
+                $dm->flush();
+                // Set flash message
+                $this->get('braincrafted_bootstrap.flash')->success(
+                    $this->get('translator')->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()])
+                );
+                if ($this->has('integrated_solr.indexer')) {
+                    $lock = $this->get('integrated_solr.lock.factory')->createLock(self::class);
+                    $lock->acquire(true);
+
+                    try {
+                        $indexer = $this->get('integrated_solr.indexer');
+                        $indexer->setOption('queue.size', 2);
+                        $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    } finally {
+                        $lock->release();
+                    }
+                }
+                if (!$locking['locked']) {
+                    $locking['release']();
+                }
+                return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
             }
 
             // reload_changed is just submitting without saving so the changes made are
@@ -584,12 +571,8 @@ class ContentController extends Controller
 
                 // we got a basic user name now try to get a better one
 
-                if (method_exists($locking['user'], 'getRelation')) {
-                    if ($relation = $locking['user']->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $user = (string) $relation;
-                        }
-                    }
+                if (method_exists($locking['user'], 'getRelation') && ($relation = $locking['user']->getRelation()) && method_exists($relation, '__toString')) {
+                    $user = (string) $relation;
                 }
 
                 $text = sprintf('The document is currently locked by %s, the document can not be edited until this lock is released.', $user);
@@ -632,7 +615,7 @@ class ContentController extends Controller
         // get a lock on this content resource.
 
         $locking = $this->getLock($content, 15);
-        $locking['locked'] = $locking['lock'] ? true : false;
+        $locking['locked'] = (bool) $locking['lock'];
 
         if ($locking['lock'] && $locking['owner']) {
             if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
@@ -651,7 +634,7 @@ class ContentController extends Controller
         $contentReferenced = $this->get('integrated_content.services.search.content.referenced');
         $referenced = $contentReferenced->getReferenced($content);
 
-        $form = $this->createDeleteForm($content, $locking, \count($referenced) > 0);
+        $form = $this->createDeleteForm($content, $locking, (is_array($referenced) || $referenced instanceof Countable ? \count($referenced) : 0) > 0);
 
         if ($request->isMethod('delete')) {
             $form->handleRequest($request);
@@ -671,38 +654,30 @@ class ContentController extends Controller
             }
 
             // this is not rest compatible since a button click is required to save
-            if ($form->get('actions')->getData() == 'delete') {
-                if ($form->isValid()) {
-                    if ($this->has('integrated_solr.indexer')) {
-                        //higher priority for content edited in Integrated
-                        $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
-                        $queue = $subscriber->getQueue();
-                        $subscriber->setPriority($queue::PRIORITY_HIGH);
-                    }
-
-                    /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->get('doctrine_mongodb')->getManager();
-
-                    $dm->remove($content);
-                    $dm->flush();
-
-                    // Set flash message
-                    $this->get('braincrafted_bootstrap.flash')->success(
-                        $this->get('translator')->trans('The document %name% has been deleted', ['%name%' => $type->getName()])
-                    );
-
-                    if ($this->has('integrated_solr.indexer')) {
-                        $indexer = $this->get('integrated_solr.indexer');
-                        $indexer->setOption('queue.size', 2);
-                        $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                    }
-
-                    if (!$locking['locked']) {
-                        $locking['release']();
-                    }
-
-                    return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+            if ($form->get('actions')->getData() == 'delete' && $form->isValid()) {
+                if ($this->has('integrated_solr.indexer')) {
+                    //higher priority for content edited in Integrated
+                    $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
+                    $queue = $subscriber->getQueue();
+                    $subscriber->setPriority($queue::PRIORITY_HIGH);
                 }
+                /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
+                $dm = $this->get('doctrine_mongodb')->getManager();
+                $dm->remove($content);
+                $dm->flush();
+                // Set flash message
+                $this->get('braincrafted_bootstrap.flash')->success(
+                    $this->get('translator')->trans('The document %name% has been deleted', ['%name%' => $type->getName()])
+                );
+                if ($this->has('integrated_solr.indexer')) {
+                    $indexer = $this->get('integrated_solr.indexer');
+                    $indexer->setOption('queue.size', 2);
+                    $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                }
+                if (!$locking['locked']) {
+                    $locking['release']();
+                }
+                return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
             }
         }
 
@@ -717,12 +692,8 @@ class ContentController extends Controller
 
                 // we got a basic user name now try to get a better one
 
-                if (method_exists($locking['user'], 'getRelation')) {
-                    if ($relation = $locking['user']->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $user = (string) $relation;
-                        }
-                    }
+                if (method_exists($locking['user'], 'getRelation') && ($relation = $locking['user']->getRelation()) && method_exists($relation, '__toString')) {
+                    $user = (string) $relation;
                 }
 
                 $text = sprintf('The document is currently locked by %s, the document can not be deleted until this lock is released.', $user);
@@ -774,11 +745,11 @@ class ContentController extends Controller
         // Remove expired locks
         $service->clean();
 
-        $object = Locks\Resource::fromObject($object);
+        $object = Resource::fromObject($object);
         $owner = null;
 
-        if ($user = $this->getUser()) {
-            $owner = Locks\Resource::fromAccount($user);
+        if (($user = $this->getUser()) !== null) {
+            $owner = Resource::fromAccount($user);
         }
 
         if ($owner) {
@@ -797,7 +768,8 @@ class ContentController extends Controller
                     },
                 ];
             }
-        } // can not acquire a lock if not logged in.
+        }
+         // can not acquire a lock if not logged in.
 
         if ($lock = $service->findByResource($object)) {
             $lock = $lock[0];
@@ -817,14 +789,11 @@ class ContentController extends Controller
             // get the user the locks belongs to.
             $user = null;
 
-            if ($owner = $lock->getRequest()->getOwner()) {
-                if ($this->has('integrated_user.user.manager')) {
-                    /** @var UserManagerInterface $manager */
-                    $manager = $this->get('integrated_user.user.manager');
-
-                    if ($manager->getClassName() === $owner->getType()) {
-                        $user = $manager->findByUsername($owner->getIdentifier());
-                    }
+            if (($owner = $lock->getRequest()->getOwner()) !== null && $this->has('integrated_user.user.manager')) {
+                /** @var UserManagerInterface $manager */
+                $manager = $this->get('integrated_user.user.manager');
+                if ($manager->getClassName() === $owner->getType()) {
+                    $user = $manager->findByUsername($owner->getIdentifier());
                 }
             }
 
@@ -862,10 +831,10 @@ class ContentController extends Controller
             return $results;
         }
 
-        $filter = new Locks\Filter();
+        $filter = new Filter();
 
         foreach ($iterator as $data) {
-            $filter->resources[] = new Locks\Resource($data['type_class'], $data['type_id']);
+            $filter->resources[] = new Resource($data['type_class'], $data['type_id']);
         }
 
         if (!$filter->resources) {
@@ -879,30 +848,23 @@ class ContentController extends Controller
             // get the user the locks belongs to.
             $user = null;
 
-            if ($owner = $lock->getRequest()->getOwner()) {
-                if ($this->has('integrated_user.user.manager')) {
-                    /** @var UserManagerInterface $manager */
-                    $manager = $this->get('integrated_user.user.manager');
-
-                    if ($manager->getClassName() === $owner->getType()) {
-                        $user = $manager->findByUsername($owner->getIdentifier());
-                    }
+            if (($owner = $lock->getRequest()->getOwner()) !== null && $this->has('integrated_user.user.manager')) {
+                /** @var UserManagerInterface $manager */
+                $manager = $this->get('integrated_user.user.manager');
+                if ($manager->getClassName() === $owner->getType()) {
+                    $user = $manager->findByUsername($owner->getIdentifier());
                 }
             }
 
             $text = '';
 
-            if ($user) {
+            if ($user !== null) {
                 $text = $user->getUsername();
 
                 // we got a basic user name now try to get a better one
 
-                if (method_exists($user, 'getRelation')) {
-                    if ($relation = $user->getRelation()) {
-                        if (method_exists($relation, '__toString')) {
-                            $text = (string) $relation;
-                        }
-                    }
+                if (method_exists($user, 'getRelation') && ($relation = $user->getRelation()) && method_exists($relation, '__toString')) {
+                    $text = (string) $relation;
                 }
             }
 
@@ -947,7 +909,7 @@ class ContentController extends Controller
 
         $assignedContent = [];
 
-        if ($user = $this->getUser()) {
+        if (($user = $this->getUser()) !== null) {
             $userId = $user->getId();
 
             $query

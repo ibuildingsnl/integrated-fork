@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Relation;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Tests\Document\Content\ContentTest;
 
@@ -24,7 +25,7 @@ abstract class RelationTest extends ContentTest
      */
     public function testInstanceOfRelation()
     {
-        $this->assertInstanceOf('Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation', $this->getContent());
+        $this->assertInstanceOf(Relation::class, $this->getContent());
     }
 
     /**

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Accessor;
 
+use InvalidArgumentException;
+use LogicException;
 use Doctrine\Common\Util\ClassUtils;
 
 /**
@@ -20,13 +22,15 @@ class DoctrineDocument
 {
     /**
      * @const string
+     * @var string
      */
-    const GET_SIGNATURE = 'get%s';
+    public const GET_SIGNATURE = 'get%s';
 
     /**
      * @const string
+     * @var string
      */
-    const SET_SIGNATURE = 'set%s';
+    public const SET_SIGNATURE = 'set%s';
 
     /**
      * @var object
@@ -47,7 +51,7 @@ class DoctrineDocument
             $this->document = $document;
         } else {
             // We can call methods, so it seems like we've been given something rather unpleasant
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Object of type %s is not a object', \gettype($document))
             );
         }
@@ -90,7 +94,7 @@ class DoctrineDocument
         }
 
         // Well that did not go as planned
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'Required method %s does not exist on class %s.',
                 $method,
@@ -116,7 +120,7 @@ class DoctrineDocument
         }
 
         // We need something to set it, seems like we can't
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'Required method %s does not exist on class %s.',
                 $method,

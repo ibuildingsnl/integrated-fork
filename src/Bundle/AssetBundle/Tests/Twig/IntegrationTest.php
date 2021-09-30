@@ -25,7 +25,7 @@ class IntegrationTest extends IntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    public function getExtensions()
+    protected function getExtensions()
     {
         return [
             new StylesheetExtension(new AssetManager()),
@@ -50,7 +50,7 @@ class IntegrationTest extends IntegrationTestCase
      */
     public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
     {
-        $templates = $templates + [
+        $templates += [
             '@IntegratedAssetBundle/Resources/views/asset/javascripts.html.twig' => file_get_contents(
                 __DIR__.'/../../Resources/views/asset/javascripts.html.twig'
             ),

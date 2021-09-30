@@ -11,18 +11,23 @@
 
 namespace Integrated\Common\Solr\Tests\Task;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Solr\Task\RegistryBuilder;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
+class RegistryBuilderTest extends TestCase
 {
     public function testAddHandler()
     {
         $expected = [
-            'class1' => [$this, 'testAddHandler'],
-            'class2' => [self::class, 'assertTrue'],
+            'class1' => function () {
+                return $this->testAddHandler();
+            },
+            'class2' => function ($condition, string $message) : void {
+                self::assertTrue($condition, $message);
+            },
             'class3' => 'is_object',
             'class4' => function () {
             },
@@ -46,8 +51,12 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     public function testAddHandlers()
     {
         $expected = [
-            'class1' => [$this, 'testAddHandler'],
-            'class2' => [self::class, 'assertTrue'],
+            'class1' => function () {
+                return $this->testAddHandler();
+            },
+            'class2' => function ($condition, string $message) : void {
+                self::assertTrue($condition, $message);
+            },
             'class3' => 'is_object',
             'class4' => function () {
             },

@@ -11,10 +11,12 @@
 
 namespace Integrated\Common\Converter;
 
+use Countable;
+use IteratorAggregate;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface ContainerInterface extends \Countable, \IteratorAggregate
+interface ContainerInterface extends Countable, IteratorAggregate
 {
     /**
      * Add the value to the given container key.

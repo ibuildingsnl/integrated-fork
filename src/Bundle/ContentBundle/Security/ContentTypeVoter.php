@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Security;
 
+use Countable;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -37,7 +38,7 @@ class ContentTypeVoter implements VoterInterface
     /**
      * @var array
      */
-    private $permissions;
+    private $permissions = [];
 
     /**
      * @param ResolverInterface $resolver
@@ -94,19 +95,16 @@ class ContentTypeVoter implements VoterInterface
 
         $permissionGroups = $contentType->getPermissions();
 
-        if ($workflowId = $contentType->getOption('workflow')) {
-            /** @var Definition $workflow */
-            if ($workflow = $this->repository->find($workflowId)) {
-                $state = $workflow->getDefault();
-
-                if (\count($state->getPermissions())) {
-                    // Workflow permissions overrules content type permissions
-                    $permissionGroups = $state->getPermissions();
-                }
+        /** @var Definition $workflow */
+        if (($workflowId = $contentType->getOption('workflow')) && ($workflow = $this->repository->find($workflowId))) {
+            $state = $workflow->getDefault();
+            if ((is_array($state->getPermissions()) || $state->getPermissions() instanceof Countable ? \count($state->getPermissions()) : 0) > 0) {
+                // Workflow permissions overrules content type permissions
+                $permissionGroups = $state->getPermissions();
             }
         }
 
-        if (!\count($permissionGroups)) {
+        if ((is_array($permissionGroups) || $permissionGroups instanceof Countable ? \count($permissionGroups) : 0) === 0) {
             // No permissions available
             return VoterInterface::ACCESS_GRANTED;
         }
@@ -121,16 +119,12 @@ class ContentTypeVoter implements VoterInterface
 
             $result = VoterInterface::ACCESS_GRANTED;
 
-            if ($this->permissions['read'] === $attribute) {
-                if (!$permissions['read']) {
-                    return VoterInterface::ACCESS_DENIED;
-                }
+            if ($this->permissions['read'] === $attribute && !$permissions['read']) {
+                return VoterInterface::ACCESS_DENIED;
             }
 
-            if ($this->permissions['write'] === $attribute) {
-                if (!$permissions['write']) {
-                    return VoterInterface::ACCESS_DENIED;
-                }
+            if ($this->permissions['write'] === $attribute && !$permissions['write']) {
+                return VoterInterface::ACCESS_DENIED;
             }
         }
 

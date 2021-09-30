@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\JobFactory;
@@ -22,7 +23,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
+class ContentTypeQueueTaskHandlerTest extends TestCase
 {
     /**
      * @var ContentTypeProviderInterface|\PHPUnit_Framework_MockObject_MockObject

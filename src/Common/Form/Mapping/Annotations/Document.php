@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Mapping\Annotations;
 
+use BadMethodCallException;
 /**
  * Annotation for defining metadata for a document.
  *
@@ -29,7 +30,7 @@ class Document
      *
      * @param array $data
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __construct(array $data)
     {
@@ -41,8 +42,9 @@ class Document
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
             }
+
             $this->$method($value);
         }
     }

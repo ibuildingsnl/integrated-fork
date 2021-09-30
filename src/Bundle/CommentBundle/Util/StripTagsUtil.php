@@ -16,9 +16,20 @@ namespace Integrated\Bundle\CommentBundle\Util;
  */
 class StripTagsUtil
 {
-    const COMMENT_REPLACEMENT = '<!--integrated-comment=$2-->$3<!--end-integrated-comment-->';
-    const SPAN_REPLACEMENT = '<span class="integrated-comment" data-comment-id="$2">$3</span>';
-    const ONLY_CONTENT_REPLACEMENT = '$3';
+    /**
+     * @var string
+     */
+    public const COMMENT_REPLACEMENT = '<!--integrated-comment=$2-->$3<!--end-integrated-comment-->';
+
+    /**
+     * @var string
+     */
+    public const SPAN_REPLACEMENT = '<span class="integrated-comment" data-comment-id="$2">$3</span>';
+
+    /**
+     * @var string
+     */
+    public const ONLY_CONTENT_REPLACEMENT = '$3';
 
     /**
      * Searches for integrated comment span tag and replaces it with $replacement.
@@ -45,8 +56,7 @@ class StripTagsUtil
      */
     public static function replaceCommentWith($content, $replacement)
     {
-        $pattern = '/(\<\!\-\-integrated\-comment\=([\s\S]+?)\-\-\>)'
-            .'([\s\S]+?)(\<\!\-\-end\-integrated\-comment\-\-\>)/';
+        $pattern = '/(\<\!\-\-integrated\-comment\=([\s\S]+?)\-\-\>)([\s\S]+?)(\<\!\-\-end\-integrated\-comment\-\-\>)/';
 
         return preg_replace($pattern, $replacement, $content);
     }

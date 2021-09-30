@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\SocialBundle\Connector\Twitter;
 
+use Exception;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -33,6 +34,7 @@ class Exporter implements ExporterInterface
      * @var ConfigInterface
      */
     private $config;
+
     /**
      * @var UrlResolver
      */
@@ -81,12 +83,12 @@ class Exporter implements ExporterInterface
                     ),
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             // @todo probably should log this somewhere INTEGRATED-995
             return;
         }
 
-        if (isset($postResponse->id) && $postResponse->id) {
+        if (property_exists($postResponse, 'id') && $postResponse->id !== null && $postResponse->id) {
             $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
             $response->setExternalId($postResponse->id);
         }

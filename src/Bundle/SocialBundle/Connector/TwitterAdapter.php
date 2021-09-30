@@ -22,7 +22,10 @@ use Integrated\Common\Channel\Exporter\ExportableInterface;
  */
 class TwitterAdapter implements AdapterInterface, ConfigurableInterface, ExportableInterface
 {
-    const CONNECTOR_NAME = 'twitter';
+    /**
+     * @var string
+     */
+    public const CONNECTOR_NAME = 'twitter';
 
     /**
      * @var Manifest

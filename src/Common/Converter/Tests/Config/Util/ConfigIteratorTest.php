@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Util;
 
+use PHPUnit\Framework\TestCase;
+use Iterator;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\Util\ConfigIterator;
@@ -18,7 +20,7 @@ use Integrated\Common\Converter\Config\Util\ConfigIterator;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
+class ConfigIteratorTest extends TestCase
 {
     /**
      * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -27,12 +29,12 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->config = $this->createMock('Integrated\\Common\\Converter\\Config\\ConfigInterface');
+        $this->config = $this->createMock(ConfigInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Iterator', $this->getInstance());
+        self::assertInstanceOf(Iterator::class, $this->getInstance());
     }
 
     public function testCurrent()
@@ -122,6 +124,6 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface');
+        return $this->createMock(TypeConfigInterface::class);
     }
 }

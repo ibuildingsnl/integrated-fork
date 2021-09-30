@@ -39,11 +39,6 @@ class ChannelFormActionMatcher implements ActionMatcherInterface
         }
 
         $options = $action->getOptions();
-
-        if (isset($options['channel'])) {
-            return true;
-        }
-
-        return false;
+        return isset($options['channel']);
     }
 }

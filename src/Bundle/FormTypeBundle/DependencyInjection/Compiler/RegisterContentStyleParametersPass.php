@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\FormTypeBundle\DependencyInjection\Compiler;
 
+use DOMElement;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,12 +23,23 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
  */
 class RegisterContentStyleParametersPass implements CompilerPassInterface
 {
-    const STYLE_FORMAT = 'style_formats';
-    const CONTENT_CSS = 'content_css';
-    const PARAMETER_NAME = 'integrated_content_styles';
+    /**
+     * @var string
+     */
+    public const STYLE_FORMAT = 'style_formats';
+
+    /**
+     * @var string
+     */
+    public const CONTENT_CSS = 'content_css';
+
+    /**
+     * @var string
+     */
+    public const PARAMETER_NAME = 'integrated_content_styles';
 
     /** @var array */
-    private $parameters;
+    private $parameters = [];
 
     /**
      * {@inheritdoc}
@@ -63,7 +75,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
             /** @var $option \DOMElement */
             $type = $option->getAttribute('type');
             if (!\in_array($type, [self::STYLE_FORMAT, self::CONTENT_CSS])) {
-                throw new FileException("The file $filePath is not valid");
+                throw new FileException(sprintf('The file %s is not valid', $filePath));
             }
 
             if ($type == self::STYLE_FORMAT) {
@@ -71,13 +83,13 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
 
                 $formatParams = [];
                 foreach ($option->childNodes as $formatParam) {
-                    if (!$formatParam instanceof \DOMElement) {
+                    if (!$formatParam instanceof DOMElement) {
                         continue;
                     }
 
                     /** @var $formatParam \DOMElement */
                     if (!\in_array($formatParam->tagName, $availableFormatParams)) {
-                        throw new FileException("The file $filePath is not valid");
+                        throw new FileException(sprintf('The file %s is not valid', $filePath));
                     }
 
                     $formatParams[$formatParam->tagName] = $formatParam->nodeValue;

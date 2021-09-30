@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Normalizer\Exception\ExceptionInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistry;
 use Integrated\Common\Normalizer\Processor\RegistryInterface;
@@ -18,7 +20,7 @@ use Integrated\Common\Normalizer\Processor\RegistryInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
+class ProcessorRegistryTest extends TestCase
 {
     /**
      * @var ProcessorInterface[][]|\PHPUnit_Framework_MockObject_MockObject[][]
@@ -48,7 +50,7 @@ class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testHasProcessorsInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->hasProcessors(42);
     }
@@ -63,14 +65,14 @@ class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetProcessorsInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->getProcessors(42);
     }
 
     public function testGetProcessorsNotFound()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('there-are-no-processor-for-this-class');
 
         $this->getInstance()->getProcessors('there-are-no-processor-for-this-class');

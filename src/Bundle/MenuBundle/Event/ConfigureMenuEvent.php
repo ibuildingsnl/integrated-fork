@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\MenuBundle\Event;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -23,7 +23,7 @@ class ConfigureMenuEvent extends Event
     /**
      * @var string
      */
-    const CONFIGURE = 'integrated_menu.configure';
+    public const CONFIGURE = 'integrated_menu.configure';
 
     /**
      * @var FactoryInterface

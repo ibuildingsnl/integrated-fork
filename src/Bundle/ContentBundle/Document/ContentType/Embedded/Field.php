@@ -86,6 +86,6 @@ class Field implements ContentTypeFieldInterface
     {
         @trigger_error('The '.__METHOD__.' method is deprecated since version 0.7.', \E_USER_DEPRECATED);
 
-        return isset($this->options['label']) ? $this->options['label'] : ucfirst($this->getName());
+        return $this->options['label'] ?? ucfirst($this->getName());
     }
 }

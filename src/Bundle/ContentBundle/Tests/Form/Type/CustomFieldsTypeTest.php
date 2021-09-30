@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\Type;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Form\Type\CustomFieldsType;
@@ -149,9 +151,9 @@ class CustomFieldsTypeTest extends TypeTestCase
      */
     protected function getExtensions()
     {
-        $validator = $this->createMock('\Symfony\Component\Validator\Validator\ValidatorInterface');
+        $validator = $this->createMock(ValidatorInterface::class);
         $validator->method('validate')->willReturn(new ConstraintViolationList());
-        $validator->method('getMetadataFor')->willReturn($this->getMockBuilder('\Symfony\Component\Validator\Mapping\ClassMetadata')->disableOriginalConstructor()->getMock());
+        $validator->method('getMetadataFor')->willReturn($this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock());
 
         return [new ValidatorExtension($validator)];
     }

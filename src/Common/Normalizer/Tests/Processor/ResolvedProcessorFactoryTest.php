@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\ContainerFactory;
 use Integrated\Common\Normalizer\ContainerFactoryInterface;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessor;
@@ -21,7 +22,7 @@ use ReflectionProperty;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ResolvedProcessorFactoryTest extends \PHPUnit\Framework\TestCase
+class ResolvedProcessorFactoryTest extends TestCase
 {
     /**
      * @var ContainerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject

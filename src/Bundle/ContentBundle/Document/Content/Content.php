@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use DateTime;
+use DateTimeInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\CustomFields;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
@@ -64,12 +67,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $relations;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $updatedAt;
 
@@ -124,9 +127,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
         $this->relations = new ArrayCollection();
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = new DateTime();
         $this->publishTime = new PublishTime();
         $this->channels = new ArrayCollection();
         $this->connectors = new ArrayCollection();
@@ -255,13 +258,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getRelation($relationId)
     {
         return $this->getRelations()->filter(function ($relation) use ($relationId) {
-            if ($relation instanceof RelationInterface) {
-                if ($relation->getRelationId() == $relationId) {
-                    return true;
-                }
-            }
-
-            return false;
+            return $relation instanceof RelationInterface && $relation->getRelationId() == $relationId;
         })->first();
     }
 
@@ -273,13 +270,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getRelationsByRelationType($relationType)
     {
         return $this->getRelations()->filter(function ($relation) use ($relationType) {
-            if ($relation instanceof RelationInterface) {
-                if ($relation->getRelationType() == $relationType) {
-                    return true;
-                }
-            }
-
-            return false;
+            return $relation instanceof RelationInterface && $relation->getRelationType() == $relationType;
         });
     }
 
@@ -316,7 +307,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             $references = array_merge($references, $this->getReferencesByRelationType($relationType));
         }
 
-        if (\count($references) > 0) {
+        if ($references !== []) {
             return $references;
         }
 
@@ -348,18 +339,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getReferencesByRelationId($relationId, $published = true)
     {
         foreach ($this->getRelations() as $relation) {
-            if ($relation instanceof RelationInterface) {
-                if ($relation->getRelationId() == $relationId) {
-                    if ($references = $relation->getReferences()) {
-                        if (true !== $published) {
-                            return $references;
-                        }
-
-                        return $references->filter(function ($content) {
-                            return $content instanceof self ? $content->isPublished() : true;
-                        });
-                    }
+            if ($relation instanceof RelationInterface && $relation->getRelationId() === $relationId && ($references = $relation->getReferences())) {
+                if (!$published) {
+                    return $references;
                 }
+                return $references->filter(function ($content) {
+                    return $content instanceof self ? $content->isPublished() : true;
+                });
             }
         }
 
@@ -384,7 +370,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Get the createdAt of the document.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -394,11 +380,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Set the createdAt of the document.
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -408,7 +394,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Get the updatedAt of the document.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getUpdatedAt()
     {
@@ -418,11 +404,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Set the updatedAt of the document.
      *
-     * @param \DateTime $updatedAt
+     * @param DateTime $updatedAt
      *
      * @return $this
      */
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt(DateTimeInterface $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -565,7 +551,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             $this->channels->add($channel);
         }
 
-        if (null === $this->primaryChannel) {
+        if (!$this->primaryChannel instanceof ChannelInterface) {
             $this->setPrimaryChannel($channel);
         }
 
@@ -595,7 +581,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getPrimaryChannel()
     {
-        if (null === $this->primaryChannel && $this->channels->count()) {
+        if (!$this->primaryChannel instanceof ChannelInterface && $this->channels->count()) {
             return $this->channels->first();
         }
 
@@ -620,7 +606,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getCustomFields()
     {
         if (null === $this->customFields) {
-            $this->customFields = new Embedded\CustomFields();
+            $this->customFields = new CustomFields();
         }
 
         return $this->customFields;
@@ -633,8 +619,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function setCustomFields(RegistryInterface $customFields = null)
     {
-        if (null !== $customFields && !$customFields instanceof Embedded\CustomFields) {
-            $customFields = new Embedded\CustomFields($customFields->toArray());
+        if (null !== $customFields && !$customFields instanceof CustomFields) {
+            $customFields = new CustomFields($customFields->toArray());
         }
 
         $this->customFields = $customFields;
@@ -667,7 +653,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function updateUpdatedAtOnPreUpdate()
     {
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = new DateTime();
     }
 
     /**
@@ -679,12 +665,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             return;
         }
 
-        if (!$this->publishTime->getStartDate() instanceof \DateTime) {
+        if (!$this->publishTime->getStartDate() instanceof DateTime) {
             $this->publishTime->setStartDate($this->createdAt);
         }
 
-        if (!$this->publishTime->getEndDate() instanceof \DateTime) {
-            $this->publishTime->setEndDate(new \DateTime(PublishTimeInterface::DATE_MAX));
+        if (!$this->publishTime->getEndDate() instanceof DateTime) {
+            $this->publishTime->setEndDate(new DateTime(PublishTimeInterface::DATE_MAX));
         }
     }
 

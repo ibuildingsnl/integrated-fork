@@ -30,7 +30,7 @@ class ExtensionRegistryBuilderPass implements CompilerPassInterface
 
         $builder = $container->getDefinition('integrated_content.extension.registry.builder');
 
-        foreach ($container->findTaggedServiceIds('integrated_content.extension') as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_content.extension')) as $service) {
             $builder->addMethodCall('addExtension', [$container->getDefinition($service)]);
         }
     }

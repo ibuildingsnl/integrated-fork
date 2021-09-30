@@ -11,6 +11,11 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Form\DataTransformer;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
@@ -21,10 +26,10 @@ use Integrated\Common\Security\PermissionInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
+class PermissionTransformerTest extends TestCase
 {
     /**
-     * @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectRepository|MockObject
      */
     private $repository;
 
@@ -35,7 +40,7 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Symfony\\Component\\Form\\DataTransformerInterface', $this->getInstance());
+        $this->assertInstanceOf(DataTransformerInterface::class, $this->getInstance());
     }
 
     public function testTransform()
@@ -90,14 +95,14 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testTransformInvalidType()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->getInstance()->transform('invalid');
     }
 
     public function testTransformInvalidArrayContentType()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->getInstance()->transform(['invalid', 'invalid']);
     }
@@ -123,13 +128,13 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->getInstance()->reverseTransform(['read' => [$group1, $group2], 'write' => [$group1, $group3, $group3]]);
 
-        $this->assertInstanceOf('Doctrine\\Common\\Collections\\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
         $this->assertCount(3, $result);
 
         $ids = [];
 
         foreach ($result as $object) {
-            $this->assertInstanceOf('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\Permission', $object);
+            $this->assertInstanceOf(Permission::class, $object);
 
             /** @var Permission $object */
             switch ($object->getGroup()) {
@@ -161,22 +166,22 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->getInstance()->reverseTransform('');
 
-        $this->assertInstanceOf('Doctrine\\Common\\Collections\\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
         $this->assertCount(0, $result);
 
         $result = $this->getInstance()->reverseTransform(null);
 
-        $this->assertInstanceOf('Doctrine\\Common\\Collections\\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
         $this->assertCount(0, $result);
 
         $result = $this->getInstance()->reverseTransform([]);
 
-        $this->assertInstanceOf('Doctrine\\Common\\Collections\\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
         $this->assertCount(0, $result);
 
         $result = $this->getInstance()->reverseTransform(['read' => [], 'write' => []]);
 
-        $this->assertInstanceOf('Doctrine\\Common\\Collections\\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
         $this->assertCount(0, $result);
     }
 
@@ -189,7 +194,7 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ObjectRepository
+     * @return MockObject|ObjectRepository
      */
     protected function getRepository()
     {
@@ -199,7 +204,7 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $id
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject|GroupInterface
+     * @return MockObject|GroupInterface
      */
     protected function getGroup($id)
     {

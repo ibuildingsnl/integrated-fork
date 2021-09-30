@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks\Doctrine\EventListener;
 
+use PHPUnit\Framework\TestCase;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
@@ -23,7 +24,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
+class MongoDBContenTypeListenerTest extends TestCase
 {
     /**
      * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject

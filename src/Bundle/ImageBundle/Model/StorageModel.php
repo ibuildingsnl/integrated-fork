@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Model;
 
+use ArrayAccess;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Extension\LocatableStorageInterfaceTrait;
 use Integrated\Common\Content\Document\Storage\Embedded\MetadataInterface;
@@ -19,7 +20,7 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class StorageModel implements StorageInterface, \ArrayAccess
+class StorageModel implements StorageInterface, ArrayAccess
 {
     use LocatableStorageInterfaceTrait;
 

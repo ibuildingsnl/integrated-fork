@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Doctrine\ODM\MongoDB\Persister;
 
+use RuntimeException;
+use stdClass;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
@@ -39,12 +41,12 @@ class PersistenceBuilder
      *
      * @return array
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function prepareData($document)
     {
         if (!\is_object($document)) {
-            throw new \RuntimeException('The given argument should be an object.');
+            throw new RuntimeException('The given argument should be an object.');
         }
 
         $class = $this->dm->getClassMetadata(\get_class($document));
@@ -58,7 +60,7 @@ class PersistenceBuilder
                 // @Field, @String, @Date, etc.
                 $value2 = Type::getType($mapping['type'])->convertToDatabaseValue($value);
 
-                if ($value2 instanceof \stdClass) {
+                if ($value2 instanceof stdClass) {
                     $value2 = (array) $value2;
                 }
 
@@ -95,8 +97,8 @@ class PersistenceBuilder
             }
         }
 
-        if (isset($class->discriminatorField)) {
-            $data[$class->discriminatorField] = isset($class->discriminatorValue) ? $class->discriminatorValue : $class->name;
+        if ($class->discriminatorField !== null) {
+            $data[$class->discriminatorField] = $class->discriminatorValue ?? $class->name;
         }
 
         return $data;

@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Debug;
 
+use stdClass;
+use Integrated\Common\Converter\Config\Debug\TraceableConfigInterface;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\Debug\TraceableConfig;
 use Integrated\Common\Converter\Tests\Config\ConfigTest;
@@ -20,14 +22,14 @@ use Integrated\Common\Converter\Tests\Config\ConfigTest;
  */
 class TraceableConfigTest extends ConfigTest
 {
-    protected $class = 'stdClass';
+    protected $class = stdClass::class;
 
     public function testInterface()
     {
         $config = $this->getInstance();
 
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Config\\ConfigInterface', $config);
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Config\\Debug\\TraceableConfigInterface', $config);
+        self::assertInstanceOf(ConfigInterface::class, $config);
+        self::assertInstanceOf(TraceableConfigInterface::class, $config);
     }
 
     public function testGetClass()

@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\ContentType\Resolver;
 
+use ReflectionClass;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\ContentType\Exception\ExceptionInterface;
 use Integrated\Common\ContentType\Exception\InvalidArgumentException;
@@ -22,7 +23,10 @@ use Integrated\Common\ContentType\ResolverInterface;
  */
 class MongoDBResolver implements ResolverInterface
 {
-    const CONTENT_TYPE_INTERFACE = 'Integrated\\Common\\ContentType\\ContentTypeInterface';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_INTERFACE = 'Integrated\\Common\\ContentType\\ContentTypeInterface';
 
     /**
      * @var DocumentRepository
@@ -48,7 +52,7 @@ class MongoDBResolver implements ResolverInterface
      */
     public function __construct(DocumentRepository $repository)
     {
-        $reflection = new \ReflectionClass($repository->getClassName());
+        $reflection = new ReflectionClass($repository->getClassName());
 
         if (!$reflection->implementsInterface(self::CONTENT_TYPE_INTERFACE)) {
             throw new InvalidArgumentException(sprintf('The document class "%s" of the DocumentRepository does not implement the "%s" interface.', $repository->getClassName(), self::CONTENT_TYPE_INTERFACE));
@@ -84,9 +88,9 @@ class MongoDBResolver implements ResolverInterface
     {
         try {
             $this->getType($type);
-        } catch (UnexpectedTypeException $e) {
-            throw $e;
-        } catch (ExceptionInterface $e) {
+        } catch (UnexpectedTypeException $unexpectedTypeException) {
+            throw $unexpectedTypeException;
+        } catch (ExceptionInterface $exceptionInterface) {
             return false;
         }
 

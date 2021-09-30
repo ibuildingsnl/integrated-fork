@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer;
 
+use Countable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -78,7 +79,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
             ));
         }
 
-        if (\count($references) != \count($value)) {
+        if ((is_array($references) || $references instanceof Countable ? \count($references) : 0) !== (is_array($value) || $value instanceof Countable ? \count($value) : 0)) {
             throw new TransformationFailedException('Not all Contents could be fetched.');
         }
 

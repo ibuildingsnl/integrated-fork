@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Provider;
 
+use Solarium\QueryType\Select\Query\FilterQuery;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
@@ -93,7 +94,7 @@ class ContentProvider
             $contentType = [];
 
             /** @var Relation $relation */
-            if ($relation = $this->dm->getRepository(Relation::class)->find($relation)) {
+            if (($relation = $this->dm->getRepository(Relation::class)->find($relation)) !== null) {
                 foreach ($relation->getTargets() as $target) {
                     $contentType[] = $target->getType();
                 }
@@ -119,7 +120,7 @@ class ContentProvider
 
         /** @var Relation $relation */
         foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
+            $name = preg_replace('#[^a-zA-Z]#', '', $relation->getName());
             $facetTitles[$name] = $relation->getName();
             $relationfilter = $request->query->get($name);
 
@@ -131,13 +132,11 @@ class ContentProvider
             }
         }
 
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->addTag('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
-            }
+        if (\is_array($contentType) && \count($contentType)) {
+            $query
+                ->createFilterQuery('contenttypes')
+                ->addTag('contenttypes')
+                ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
         }
 
         // If the workflow bundle is loaded then only display the results that the
@@ -147,43 +146,35 @@ class ContentProvider
         }
 
         $activeChannels = $request->query->get('channels');
-        if (\is_array($activeChannels)) {
-            if (\count($activeChannels)) {
-                $query
-                    ->createFilterQuery('channels')
-                    ->addTag('channels')
-                    ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
-            }
+        if (\is_array($activeChannels) && \count($activeChannels)) {
+            $query
+                ->createFilterQuery('channels')
+                ->addTag('channels')
+                ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
         }
 
         $activeStates = $request->query->get('workflow_state');
-        if (\is_array($activeStates)) {
-            if (\count($activeStates)) {
-                $query
-                    ->createFilterQuery('workflow_state')
-                    ->addTag('workflow_state')
-                    ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
-            }
+        if (\is_array($activeStates) && \count($activeStates)) {
+            $query
+                ->createFilterQuery('workflow_state')
+                ->addTag('workflow_state')
+                ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
         }
 
         $activeAssigned = $request->query->get('workflow_assigned');
-        if (\is_array($activeAssigned)) {
-            if (\count($activeAssigned)) {
-                $query
-                    ->createFilterQuery('workflow_assigned')
-                    ->addTag('workflow_assigned')
-                    ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
-            }
+        if (\is_array($activeAssigned) && \count($activeAssigned)) {
+            $query
+                ->createFilterQuery('workflow_assigned')
+                ->addTag('workflow_assigned')
+                ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
         }
 
         $activeAuthors = $request->query->get('authors');
-        if (\is_array($activeAuthors)) {
-            if (\count($activeAuthors)) {
-                $query
-                    ->createFilterQuery('authors')
-                    ->addTag('authors')
-                    ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
-            }
+        if (\is_array($activeAuthors) && \count($activeAuthors)) {
+            $query
+                ->createFilterQuery('authors')
+                ->addTag('authors')
+                ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
         }
 
         $hasFields = $request->query->get('hasFields');
@@ -203,7 +194,7 @@ class ContentProvider
             'created' => ['name' => 'created', 'field' => 'pub_created', 'label' => 'date created', 'order' => 'desc'],
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
-            'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
+            'random' => ['name' => 'random', 'field' => 'random_'.random_int(0, mt_getrandmax()), 'label' => 'random', 'order' => 'desc'],
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
         ];
         $order_options = [
@@ -231,6 +222,7 @@ class ContentProvider
         $query->addSort($sort_options[$sort]['field'], \in_array($request->query->get('order'), $order_options) ? $request->query->get('order') : $sort_options[$sort]['order']);
 
         $query->setRows($limit);
+
         $iterator = $this->client->select($query)->getIterator();
         $contents = [];
 
@@ -239,6 +231,7 @@ class ContentProvider
             if (isset($content['type_id']) && $content = $this->dm->getRepository(Content::class)->find($content['type_id'])) {
                 $contents[$content->getId()] = $content;
             }
+
             $iterator->next();
         }
 
@@ -248,7 +241,7 @@ class ContentProvider
     /**
      * @param Query $query
      *
-     * @return \Solarium\QueryType\Select\Query\FilterQuery
+     * @return FilterQuery
      */
     protected function addWorkflowFilter(Query $query)
     {
@@ -274,7 +267,7 @@ class ContentProvider
             ->setQuery('(*:* -security_workflow_read:[* TO *])');
 
         // allow content with group access
-        if ($filterWorkflow) {
+        if ($filterWorkflow !== []) {
             $fq->setQuery($fq->getQuery().' OR (security_workflow_read: ((%1%)) AND security_workflow_write: ((%1%)))', [implode(') OR (', $filterWorkflow)]);
         }
 

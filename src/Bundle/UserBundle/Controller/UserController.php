@@ -11,7 +11,11 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Form\FormInterface;
+use LogicException;
+use Knp\Component\Pager\Paginator;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +29,7 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UserController extends Controller
+class UserController extends AbstractController
 {
     /**
      * @param Request $request
@@ -101,7 +105,7 @@ class UserController extends Controller
      *
      * @return Response
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
     public function editAction(Request $request)
     {
@@ -181,7 +185,7 @@ class UserController extends Controller
     }
 
     /**
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createNewForm()
     {
@@ -211,7 +215,7 @@ class UserController extends Controller
     /**
      * @param UserInterface $user
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(UserInterface $user)
     {
@@ -241,7 +245,7 @@ class UserController extends Controller
     /**
      * @param UserInterface $user
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm(UserInterface $user)
     {
@@ -271,19 +275,19 @@ class UserController extends Controller
     /**
      * @return UserManagerInterface
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     protected function getManager()
     {
         if (!$this->container->has('integrated_user.user.manager')) {
-            throw new \LogicException('The UserBundle is not registered in your application.');
+            throw new LogicException('The UserBundle is not registered in your application.');
         }
 
         return $this->container->get('integrated_user.user.manager');
     }
 
     /**
-     * @return \Knp\Component\Pager\Paginator
+     * @return Paginator
      */
     protected function getPaginator()
     {

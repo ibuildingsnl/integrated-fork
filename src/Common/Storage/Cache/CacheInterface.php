@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Storage\Cache;
 
+use SplFileInfo;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
 /**
@@ -21,7 +22,7 @@ interface CacheInterface
     /**
      * @param StorageInterface $storage
      *
-     * @return \SplFileInfo $path
+     * @return SplFileInfo $path
      */
     public function path(StorageInterface $storage);
 }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Form\DataTransformer;
 
+use DateTimeInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -24,7 +25,7 @@ class DateTime implements DataTransformerInterface
      */
     public function transform($datetime)
     {
-        if ($datetime instanceof \DateTimeInterface) {
+        if ($datetime instanceof DateTimeInterface) {
             if ($datetime->getTimestamp() <= 0) {
                 return null;
             }

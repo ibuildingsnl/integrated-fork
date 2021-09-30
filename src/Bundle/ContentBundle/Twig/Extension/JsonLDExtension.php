@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFilter;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JsonLDExtension extends \Twig_Extension
+class JsonLDExtension extends Twig_Extension
 {
     /**
      * @var SerializerInterface
@@ -37,7 +39,9 @@ class JsonLDExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('json_ld', [$this, 'encode'], ['is_safe' => ['html']]),
+            new Twig_SimpleFilter('json_ld', function ($value) : string {
+                return $this->encode($value);
+            }, ['is_safe' => ['html']]),
         ];
     }
 

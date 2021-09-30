@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Util;
 
+use PHPUnit\Framework\TestCase;
+use Iterator;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Util\ConfigIterator;
 use stdClass;
@@ -21,11 +23,11 @@ use stdClass;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
+class ConfigIteratorTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Iterator', $this->getInstance());
+        self::assertInstanceOf(Iterator::class, $this->getInstance());
     }
 
     public function testCurrent()
@@ -171,7 +173,7 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);

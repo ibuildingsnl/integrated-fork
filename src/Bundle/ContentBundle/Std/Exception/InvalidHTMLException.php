@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Std\Exception;
 
+use ErrorException;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class InvalidHTMLException extends \ErrorException
+class InvalidHTMLException extends ErrorException
 {
     /**
      * @param string $message

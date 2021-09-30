@@ -11,6 +11,12 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Solr\Exception\OutOfBoundsException;
+use stdClass;
+use Integrated\Common\Solr\Exception\SerializerException;
+use Exception;
+use Integrated\Common\Solr\Exception\ConverterException;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\ConverterInterface;
 use Integrated\Common\Solr\Indexer\CommandFactory;
@@ -27,7 +33,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class CommandFactoryTest extends \PHPUnit\Framework\TestCase
+class CommandFactoryTest extends TestCase
 {
     /**
      * @var ConverterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -52,14 +58,14 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateNoAction()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $this->getInstance()->create($this->getJob());
     }
 
     public function testCreateInvalidAction()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $this->getInstance()->create($this->getJob('does-not-compute'));
     }
@@ -69,7 +75,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateAdd(array $options, array $expected)
     {
-        $document = new \stdClass();
+        $document = new stdClass();
 
         $this->serializer->expects($this->once())
             ->method('deserialize')
@@ -185,11 +191,11 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAddDeserializeError()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\SerializerException::class);
+        $this->expectException(SerializerException::class);
 
         $this->serializer->expects($this->once())
             ->method('deserialize')
-            ->willThrowException(new \Exception());
+            ->willThrowException(new Exception());
 
         $this->getInstance()->create($this->getJob('ADD', [
             'document.data' => 'data',
@@ -200,7 +206,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAddConverterError()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\ConverterException::class);
+        $this->expectException(ConverterException::class);
 
         $this->serializer->expects($this->once())
             ->method('deserialize')
@@ -208,7 +214,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->converter->expects($this->once())
             ->method('convert')
-            ->willThrowException(new \Exception());
+            ->willThrowException(new Exception());
 
         $this->getInstance()->create($this->getJob('ADD', [
             'document.data' => 'data',
@@ -394,7 +400,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         $mock = $this->createMock(JobInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('hasAction')
-            ->willReturn($action ? true : false);
+            ->willReturn((bool) $action);
 
         $mock->expects($this->any())
             ->method('getAction')
@@ -409,7 +415,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback($hasOption);
 
         $getOption = function ($key) use ($options) {
-            return isset($options[$key]) ? $options[$key] : null;
+            return $options[$key] ?? null;
         };
 
         $mock->expects($this->any())

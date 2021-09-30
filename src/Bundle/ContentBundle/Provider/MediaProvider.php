@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Provider;
 
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Filter\ContentTypeFilter;
@@ -47,17 +48,15 @@ class MediaProvider
     /**
      * @param string|null $filter
      *
-     * @return \Integrated\Bundle\ContentBundle\Document\ContentType\ContentType[]
+     * @return ContentType[]
      */
     public function getContentTypes($filter = null)
     {
         $contentTypes = [];
 
         foreach ($this->contentTypeManager->filterInstanceOf(File::class) as $contentType) {
-            if (ContentTypeFilter::match($contentType->getClass(), $filter)) {
-                if ($this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
-                    $contentTypes[] = $contentType;
-                }
+            if (ContentTypeFilter::match($contentType->getClass(), $filter) && $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                $contentTypes[] = $contentType;
             }
         }
 

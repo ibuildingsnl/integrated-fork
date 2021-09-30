@@ -11,6 +11,12 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\ContentType\Exception\ExceptionInterface;
+use stdClass;
+use Integrated\Common\ContentType\Exception\UnexpectedTypeException;
+use Integrated\Common\ContentType\IteratorInterface;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MongoDBResolver;
@@ -18,7 +24,7 @@ use Integrated\Common\ContentType\Resolver\MongoDBResolver;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
+class MongoDBResolverTest extends TestCase
 {
     /**
      * @var DocumentRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -27,9 +33,9 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $class = $this->getMockClass('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $class = $this->getMockClass(ContentTypeInterface::class);
 
-        $this->repository = $this->getMockBuilder('Doctrine\\ODM\\MongoDB\\Repository\\DocumentRepository')->disableOriginalConstructor()->getMock();
+        $this->repository = $this->getMockBuilder(DocumentRepository::class)->disableOriginalConstructor()->getMock();
         $this->repository->expects($this->any())
             ->method('getClassName')
             ->willReturn($class);
@@ -37,17 +43,17 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testInvalidRepository()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
-        $this->repository = $this->getMockBuilder('Doctrine\\ODM\\MongoDB\\Repository\\DocumentRepository')->disableOriginalConstructor()->getMock();
+        $this->repository = $this->getMockBuilder(DocumentRepository::class)->disableOriginalConstructor()->getMock();
         $this->repository->expects($this->any())
             ->method('getClassName')
-            ->willReturn('stdClass');
+            ->willReturn(stdClass::class);
 
         $this->getInstance();
     }
@@ -68,14 +74,14 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypeNoString()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->getType(['not a string']);
     }
 
     public function testGetTypeNotFound()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('"not found"');
 
         $this->repository->expects($this->once())
@@ -104,7 +110,7 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testHasTypeNoString()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->hasType(['not a string']);
     }
@@ -122,7 +128,7 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
         $iterator = $this->getInstance()->getTypes();
 
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\IteratorInterface', $iterator);
+        self::assertInstanceOf(IteratorInterface::class, $iterator);
         self::assertSame(['type 1' => $types[0], 'type 2' => $types[1]], iterator_to_array($iterator));
     }
 
@@ -139,7 +145,7 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType($name = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
 
         if ($name !== null) {
             $mock->expects($this->atLeastOnce())

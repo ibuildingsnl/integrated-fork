@@ -19,7 +19,7 @@ class WhitelistMatcher implements WhitelistMatcherInterface
     /**
      * @var RequestMatcherInterface[]
      */
-    private $matchers;
+    private $matchers = [];
 
     public function __construct(array $matchers)
     {

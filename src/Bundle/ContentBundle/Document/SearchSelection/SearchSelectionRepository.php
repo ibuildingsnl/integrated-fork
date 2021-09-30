@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\SearchSelection;
 
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
 /**
@@ -25,7 +26,7 @@ class SearchSelectionRepository extends DocumentRepository
      *
      * @return mixed
      *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     public function findPublicByUserId($id)
     {

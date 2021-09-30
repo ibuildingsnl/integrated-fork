@@ -11,13 +11,15 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\Resolver\MemoryResolver;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MemoryResolverBuilder;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
+class MemoryResolverBuilderTest extends TestCase
 {
     public function testAddContentType()
     {
@@ -46,7 +48,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetResolver()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\Resolver\\MemoryResolver', $this->getInstance()->getResolver());
+        self::assertInstanceOf(MemoryResolver::class, $this->getInstance()->getResolver());
     }
 
     /**
@@ -64,7 +66,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($name);

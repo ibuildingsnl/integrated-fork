@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Fixtures;
 
+use Exception;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
@@ -34,7 +35,7 @@ class Object1 implements ContentInterface
 
     public function setSlug($slug)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getContentType()
@@ -44,31 +45,31 @@ class Object1 implements ContentInterface
 
     public function setContentType($contentType)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getRelations()
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getRelation($relationId)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function setRelations(Collection $relations)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function addRelation(RelationInterface $relation)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function removeRelation(RelationInterface $relation)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 }

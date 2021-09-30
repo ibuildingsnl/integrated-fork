@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Converter\Tests\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\ResolvedTypeInterface;
+use Integrated\Common\Converter\ContainerInterface;
+use Exception;
 use Integrated\Common\Converter\Type\ResolvedType;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
@@ -18,7 +22,7 @@ use Integrated\Common\Converter\Type\TypeInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
+class ResolvedTypeTest extends TestCase
 {
     /**
      * @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -27,12 +31,12 @@ class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->type = $this->createMock('Integrated\\Common\\Converter\\Type\\TypeInterface');
+        $this->type = $this->createMock(TypeInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface', $this->getInstance());
+        self::assertInstanceOf(ResolvedTypeInterface::class, $this->getInstance());
     }
 
     public function testGetName()
@@ -61,7 +65,7 @@ class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuild()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
 
         $this->type->expects($this->once())
             ->method('build')
@@ -82,19 +86,19 @@ class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildOrder()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Type was called first');
 
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
 
         $this->type->expects($this->any())
             ->method('build')
-            ->willThrowException(new \Exception('Type was called first'));
+            ->willThrowException(new Exception('Type was called first'));
 
         $extension = $this->getTypeExtension();
         $extension->expects($this->any())
             ->method('build')
-            ->willThrowException(new \Exception('Extension was called first'));
+            ->willThrowException(new Exception('Extension was called first'));
 
         $this->getInstance([$extension])->build($container, 'this-is-the-data', []);
     }
@@ -114,6 +118,6 @@ class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getTypeExtension()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface');
+        return $this->createMock(TypeExtensionInterface::class);
     }
 }

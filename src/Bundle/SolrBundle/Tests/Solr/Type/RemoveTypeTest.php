@@ -11,26 +11,30 @@
 
 namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
+use Integrated\Common\Converter\ContainerInterface;
+use stdClass;
 use Integrated\Bundle\SolrBundle\Solr\Type\RemoveType;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RemoveTypeTest extends \PHPUnit\Framework\TestCase
+class RemoveTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     public function testBuild()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->exactly(3))
             ->method('remove')
             ->withConsecutive([$this->equalTo('field1')], [$this->equalTo('field2')], [$this->equalTo('field3')]);
 
-        $this->getInstance()->build($container, new \stdClass(), ['field1', 'field2', 'field3']);
+        $this->getInstance()->build($container, new stdClass(), ['field1', 'field2', 'field3']);
     }
 
     public function testGetName()

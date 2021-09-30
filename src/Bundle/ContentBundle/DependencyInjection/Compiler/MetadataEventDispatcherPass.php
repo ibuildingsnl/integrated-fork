@@ -30,7 +30,7 @@ class MetadataEventDispatcherPass implements CompilerPassInterface
 
         $dispatcher = $container->getDefinition('integrated_content.metadata.factory.event_dispatcher');
 
-        foreach ($container->findTaggedServiceIds('integrated_content.metadata.event_subscriber') as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_content.metadata.event_subscriber')) as $service) {
             $dispatcher->addMethodCall('addSubscriber', [$container->getDefinition($service)]);
         }
     }

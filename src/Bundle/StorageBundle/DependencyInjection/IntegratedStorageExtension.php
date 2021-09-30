@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -35,7 +36,7 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('command.xml');
         $loader->load('controllers.xml');
         $loader->load('database.xml');
@@ -61,14 +62,12 @@ class IntegratedStorageExtension extends Extension implements PrependExtensionIn
      */
     public function prepend(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig(
-                        $name,
-                        ['form_themes' => [$this->formTemplate]]
-                    );
-                    break;
+        foreach (array_keys($container->getExtensions()) as $name) {
+            if ($name === 'twig') {
+                $container->prependExtensionConfig(
+                    $name,
+                    ['form_themes' => [$this->formTemplate]]
+                );
             }
         }
     }

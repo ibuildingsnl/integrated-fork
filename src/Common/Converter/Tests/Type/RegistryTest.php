@@ -11,17 +11,20 @@
 
 namespace Integrated\Common\Converter\Tests\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\RegistryInterface;
+use Integrated\Common\Converter\Exception\ExceptionInterface;
 use Integrated\Common\Converter\Type\Registry;
 use Integrated\Common\Converter\Type\ResolvedTypeInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryTest extends \PHPUnit\Framework\TestCase
+class RegistryTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\RegistryInterface', $this->getInstance());
+        self::assertInstanceOf(RegistryInterface::class, $this->getInstance());
     }
 
     public function testHasType()
@@ -38,7 +41,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testHasTypeInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->hasType(42);
     }
@@ -52,14 +55,14 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypeInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->getType(42);
     }
 
     public function testGetTypeNotFound()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-type-that-does-not-exist');
 
         $this->getInstance()->getType('this-is-a-type-that-does-not-exist');
@@ -80,6 +83,6 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface');
+        return $this->createMock(ResolvedTypeInterface::class);
     }
 }

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Common\Form\Mapping\Annotations as Type;
 
 /**
@@ -121,7 +123,7 @@ class JobPosting extends Article
      *
      * @return $this
      */
-    public function setCompany(Relation\Company $company = null)
+    public function setCompany(Company $company = null)
     {
         $this->company = $company;
 
@@ -141,7 +143,7 @@ class JobPosting extends Article
      *
      * @return $this
      */
-    public function setContact(Relation\Person $contact = null)
+    public function setContact(Person $contact = null)
     {
         $this->contact = $contact;
 

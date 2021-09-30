@@ -11,13 +11,15 @@
 
 namespace Integrated\Common\Form\Tests\Mapping\Annotations;
 
+use PHPUnit\Framework\TestCase;
+use BadMethodCallException;
 use Integrated\Common\Form\Mapping\Annotations\Field;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class FieldTest extends \PHPUnit\Framework\TestCase
+class FieldTest extends TestCase
 {
     /**
      * Test the constructor with valid data.
@@ -40,7 +42,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorWithInvalidData()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         new Field(['Henk' => 'type']);
     }

@@ -11,10 +11,15 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
+use Twig_Environment;
+use DateTime;
+use DateTimeInterface;
 /**
  * @author Koen Prins <koen@e-active.nl>
  */
-class PeriodExtension extends \Twig_Extension
+class PeriodExtension extends Twig_Extension
 {
     /**
      * @return array
@@ -22,22 +27,24 @@ class PeriodExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new Twig_SimpleFunction(
                 'integrated_period_formatter',
-                [$this, 'periodFilter'],
+                function (Twig_Environment $twig, DateTime $startDate, DateTime $endDate) : string {
+                    return $this->periodFilter($twig, $startDate, $endDate);
+                },
                 ['needs_environment' => true]
             ),
         ];
     }
 
     /**
-     * @param \Twig_Environment $twig
-     * @param \DateTime         $startDate
-     * @param \DateTime         $endDate
+     * @param Twig_Environment $twig
+     * @param DateTime $startDate
+     * @param DateTime $endDate
      *
      * @return string
      */
-    public function periodFilter(\Twig_Environment $twig, $startDate, $endDate)
+    public function periodFilter(Twig_Environment $twig, DateTimeInterface $startDate, DateTimeInterface $endDate)
     {
         $filter = $twig->getFilter('localizeddate');
 
@@ -45,7 +52,7 @@ class PeriodExtension extends \Twig_Extension
 
         if ($endDate) {
             $period .= ' - ';
-            $dateFormat = ($startDate->format('Ymd') == $endDate->format('Ymd') ? 'none' : 'long');
+            $dateFormat = ($startDate->format('Ymd') === $endDate->format('Ymd') ? 'none' : 'long');
             $period .= \call_user_func($filter->getCallable(), $twig, $endDate, $dateFormat, 'short');
         }
 

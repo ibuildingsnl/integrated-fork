@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Validator\Constraints;
 
+use ReflectionClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
@@ -51,7 +52,7 @@ class UniqueEntryValidator extends ConstraintValidator
 
         $fields = (array) $constraint->fields;
 
-        if (!\count($fields)) {
+        if (\count($fields) === 0) {
             throw new ConstraintDefinitionException('At least one field has to be specified.');
         }
 
@@ -77,7 +78,7 @@ class UniqueEntryValidator extends ConstraintValidator
                 $values[$fieldName] = $value;
             }
 
-            if (!$values) {
+            if ($values === []) {
                 continue; // don't process empty values
             }
 
@@ -126,7 +127,7 @@ class UniqueEntryValidator extends ConstraintValidator
      */
     private static function fixViolationPath(ConstraintViolationBuilderInterface $builder)
     {
-        $reflection = new \ReflectionClass($builder);
+        $reflection = new ReflectionClass($builder);
 
         if ($reflection->hasProperty('propertyPath')) {
             $prop = $reflection->getProperty('propertyPath');

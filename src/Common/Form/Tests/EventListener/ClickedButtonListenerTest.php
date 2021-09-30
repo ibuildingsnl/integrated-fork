@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Form\Tests\EventListener;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\SubmitButton;
 use ArrayIterator;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
 use Symfony\Component\Form\ClickableInterface;
@@ -21,11 +25,11 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
+class ClickedButtonListenerTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Symfony\\Component\\EventDispatcher\\EventSubscriberInterface', $this->getInstance());
+        self::assertInstanceOf(EventSubscriberInterface::class, $this->getInstance());
     }
 
     public function testGetSubscribedEvents()
@@ -73,7 +77,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getEvent(FormInterface $form)
     {
-        $mock = $this->getMockBuilder('Symfony\\Component\\Form\\FormEvent')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder(FormEvent::class)->disableOriginalConstructor()->getMock();
         $mock->expects($this->once())
             ->method('getForm')
             ->willReturn($form);
@@ -87,7 +91,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     protected function getForm(array $children = null)
     {
         // Form implements FormInterface and has a valid iterator interface
-        $mock = $this->getMockBuilder('Symfony\\Component\\Form\\Form')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder(Form::class)->disableOriginalConstructor()->getMock();
 
         if (null !== $children) {
             $mock->expects($this->once())
@@ -106,7 +110,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     protected function getButton($clicked, $name = null)
     {
         // SubmitButton implements FormInterface and ClickableInterface
-        $mock = $this->getMockBuilder('Symfony\\Component\\Form\\SubmitButton')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder(SubmitButton::class)->disableOriginalConstructor()->getMock();
         $mock->expects($this->once())
             ->method('isClicked')
             ->willReturn($clicked);

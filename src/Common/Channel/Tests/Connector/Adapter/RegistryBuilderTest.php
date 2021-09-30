@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Adapter;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Adapter\RegistryBuilderInterface;
 use Integrated\Common\Channel\Connector\Adapter\ManifestInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryBuilder;
 use Integrated\Common\Channel\Connector\AdapterInterface;
@@ -18,11 +20,11 @@ use Integrated\Common\Channel\Connector\AdapterInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
+class RegistryBuilderTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryBuilderInterface', $this->getInstance());
+        self::assertInstanceOf(RegistryBuilderInterface::class, $this->getInstance());
     }
 
     public function testAddAdaptor()
@@ -79,7 +81,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getAdapter(ManifestInterface $manifest)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\AdapterInterface');
+        $mock = $this->createMock(AdapterInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getManifest')
             ->willReturn($manifest);
@@ -94,7 +96,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getManifest($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Adapter\\ManifestInterface');
+        $mock = $this->createMock(ManifestInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($name);

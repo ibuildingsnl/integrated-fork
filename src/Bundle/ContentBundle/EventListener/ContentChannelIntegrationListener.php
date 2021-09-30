@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
+use Countable;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\EventListener\ChannelDefaultDataListener;
@@ -88,7 +89,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
             $channels = [];
 
             foreach ($options['defaults'] as $channel) {
-                $channels[$channel['id']] = isset($channel['enforce']) ? $channel['enforce'] : false;
+                $channels[$channel['id']] = $channel['enforce'] ?? false;
             }
 
             $choices = $this->getChannels();
@@ -118,7 +119,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                     unset($choices[$index]);
                 }
 
-                if (isset($options['restricted']) && \count($options['restricted']) > 0 && !\in_array($value->getId(), $options['restricted'])) {
+                if (isset($options['restricted']) && (is_array($options['restricted']) || $options['restricted'] instanceof Countable ? \count($options['restricted']) : 0) > 0 && !\in_array($value->getId(), $options['restricted'])) {
                     unset($choices[$index]);
                 }
             }
@@ -127,7 +128,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
             $operand = ChannelEnforcerListener::SET;
 
-            if ($choices) {
+            if ($choices !== []) {
                 $operand = ChannelEnforcerListener::ADD;
 
                 $builder->add('channels', ChoiceType::class, [
@@ -189,7 +190,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
         $criteria = [];
 
-        if ($ids) {
+        if ($ids !== null) {
             $criteria['$or'] = [];
 
             foreach ($ids as $id) {

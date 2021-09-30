@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
+use DateTimeInterface;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -33,6 +34,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class IndexerQueueCommand extends Command
 {
+    protected static $defaultName = 'solr:indexer:queue';
     /**
      * @var DocumentManager
      */
@@ -69,9 +71,7 @@ class IndexerQueueCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('solr:indexer:queue')
-            ->addArgument('id', InputArgument::IS_ARRAY, 'One or more content types that need to be indexed')
+        $this->addArgument('id', InputArgument::IS_ARRAY, 'One or more content types that need to be indexed')
             ->addOption(
                 'full',
                 'f',
@@ -104,15 +104,15 @@ The <info>%command.name%</info> command starts a index of the site.
      *
      * @throws InvalidArgumentException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //  validate the content types unless validation is ignored
 
         if ($input->getArgument('id') && !$input->getOption('ignore')) {
             $code = $this->executeValidation($input, $output);
 
-            if ($code) {
-                return $code;
+            if ($code !== 0) {
+                return (int) $code;
             }
         }
 
@@ -161,7 +161,7 @@ The <info>%command.name%</info> command starts a index of the site.
             }
         }
 
-        if ($invalid) {
+        if ($invalid !== []) {
             $text = sprintf('The content types "%s" do not exists', implode(', ', $invalid));
 
             if ($input->getOption('no-interaction')) {
@@ -277,7 +277,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
             $job = new Job('ADD');
 
-            $contentType = isset($document['contentType']) ? $document['contentType'] : '';
+            $contentType = $document['contentType'] ?? '';
 
             $job->setOption('document.id', $contentType.'-'.$document['_id']);
 
@@ -299,19 +299,15 @@ The <info>%command.name%</info> command starts a index of the site.
      * @param array    $types
      * @param DateTime $date
      */
-    protected function doIndexCleanup(array $types, DateTime $date = null)
+    protected function doIndexCleanup(array $types, DateTimeInterface $date = null)
     {
         $query = [];
 
-        if ($types) {
-            $query[] = 'type_name:("'.implode('" OR "', $types).'")';
-        } else {
-            $query[] = '*:*';
-        }
+        $query[] = $types !== [] ? 'type_name:("'.implode('" OR "', $types).'")' : '*:*';
 
-        if ($date) {
+        if ($date !== null) {
             $date = clone $date;
-            $date->setTimezone(new DateTimeZone('UTC'));
+            $date = $date->setTimezone(new DateTimeZone('UTC'));
 
             $query[] = '-_time_:['.$date->format('Y-m-d\TG:i:s\Z').' TO *]';
         }

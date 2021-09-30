@@ -59,10 +59,8 @@ class PageType extends AbstractType
     {
         $channel = $this->channelContext->getChannel();
 
-        if ($page = $builder->getData()) {
-            if ($page->getChannel()) {
-                $channel = $page->getChannel();
-            }
+        if (($page = $builder->getData()) && $page->getChannel()) {
+            $channel = $page->getChannel();
         }
 
         $builder->add('channel', ChannelChoiceType::class, [

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Extension;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeExtensionInterface;
 use Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
@@ -25,11 +27,11 @@ use stdClass;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
+class ChannelExtensionTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface', $this->getInstance($this->getResolver()));
+        self::assertInstanceOf(TypeExtensionInterface::class, $this->getInstance($this->getResolver()));
     }
 
     /**
@@ -69,7 +71,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNotChannelable()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
 
@@ -100,7 +102,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContent(array $channels)
     {
-        $mock = $this->createMock('Integrated\\Common\\Content\\ChannelableInterface');
+        $mock = $this->createMock(ChannelableInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getChannels')
             ->willReturn($channels);
@@ -115,7 +117,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Content\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);

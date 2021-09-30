@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Handler\TwoFactor;
 
+use InvalidArgumentException;
 use Integrated\Bundle\UserBundle\Security\TwoFactor\Http\Context;
 use Symfony\Component\Form\FormFactory;
 use Twig\Environment;
@@ -20,7 +21,7 @@ class HandlerFactory implements HandlerFactoryInterface
     /**
      * @var string[]
      */
-    private $templates;
+    private $templates = [];
 
     /**
      * @var Environment
@@ -44,7 +45,7 @@ class HandlerFactory implements HandlerFactoryInterface
         $template = $this->templates[$context->getFirewall()] ?? null;
 
         if (!$template) {
-            throw new \InvalidArgumentException(sprintf('No template found for firewall %s', $context->getFirewall()));
+            throw new InvalidArgumentException(sprintf('No template found for firewall %s', $context->getFirewall()));
         }
 
         return new Handler($context, $template, $this->twig, $this->factory);

@@ -11,18 +11,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Integrated\Common\Content\RankableInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\TranslatorInterface;
 
-class RankController extends Controller
+class RankController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -80,13 +80,12 @@ class RankController extends Controller
         $previous = '-first-';
         $previousName = $this->translator->trans('First item');
         foreach ($content as $item) {
-            if ($item instanceof RankableInterface) {
-                if ($item->getRank() == $current) {
-                    $skipItem = $previous;
-                    $skipItemName = $previousName;
-                    $found = true;
-                }
+            if ($item instanceof RankableInterface && $item->getRank() == $current) {
+                $skipItem = $previous;
+                $skipItemName = $previousName;
+                $found = true;
             }
+
             $previous = $item->getRank();
             $previousName = $this->translator->trans('After').' '.(string) $item;
         }
@@ -95,6 +94,7 @@ class RankController extends Controller
         if ($skipItem != '-first-') {
             $result['-first-'] = $this->translator->trans('First item');
         }
+
         foreach ($content as $item) {
             if ($skipItem != $item->getRank()) {
                 $result[$item->getRank()] = ($current == $item->getRank())
@@ -102,6 +102,7 @@ class RankController extends Controller
                     : $this->translator->trans('After').' '.(string) $item;
             }
         }
+
         if (!$found) {
             $result[$current] = '...'.$this->translator->trans('Current position');
         }

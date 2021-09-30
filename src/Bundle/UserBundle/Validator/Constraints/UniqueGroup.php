@@ -19,5 +19,6 @@ use Integrated\Bundle\UserBundle\Validator\ManagerConstraint;
 class UniqueGroup extends ManagerConstraint
 {
     public $message = 'This group name is already in use.';
+
     public $fields = ['name'];
 }

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Doctrine\MongoDB\Query\Builder;
+use Exception;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
@@ -33,9 +35,9 @@ class ContentRepository extends DocumentRepository
      * @param Content|null    $excludeContent
      * @param bool            $filterPublished
      *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return Builder
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
     {
@@ -72,7 +74,7 @@ class ContentRepository extends DocumentRepository
                 ->field('publishTime.endDate')->gte(new DateTime());
         }
 
-        if ($relation) {
+        if ($relation !== null) {
             $query->field('relations.relationId')->equals($relation->getId());
         }
 

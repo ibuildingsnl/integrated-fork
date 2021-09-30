@@ -30,7 +30,7 @@ class ContainerAwareRequestSerializer extends RequestSerializer
     /**
      * @var string[]
      */
-    private $services;
+    private $services = [];
 
     /**
      * Constructor.
@@ -51,7 +51,7 @@ class ContainerAwareRequestSerializer extends RequestSerializer
     /**
      * {@inheritdoc}
      */
-    public function getSerializer()
+    protected function getSerializer()
     {
         if (null === $this->serializer) {
             $this->serializer = $this->container->get($this->services['serializer']);

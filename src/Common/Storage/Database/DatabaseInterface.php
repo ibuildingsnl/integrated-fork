@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Storage\Database;
 
+use MongoCursor;
 use Doctrine\ODM\MongoDB\Cursor;
 
 /**
@@ -19,7 +20,7 @@ use Doctrine\ODM\MongoDB\Cursor;
 interface DatabaseInterface
 {
     /**
-     * @return \MongoCursor
+     * @return MongoCursor
      */
     public function getRows();
 

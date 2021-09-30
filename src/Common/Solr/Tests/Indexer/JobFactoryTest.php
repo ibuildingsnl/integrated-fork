@@ -11,6 +11,11 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Solr\Tests\Fixtures\Object1;
+use Integrated\Common\Solr\Tests\Fixtures\__CG__\ProxyObject;
+use Integrated\Common\Solr\Tests\Fixtures\Object2;
+use Integrated\Common\Solr\Exception\OutOfBoundsException;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Indexer\JobFactoryInterface;
@@ -19,7 +24,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JobFactoryTest extends \PHPUnit\Framework\TestCase
+class JobFactoryTest extends TestCase
 {
     /**
      * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -71,30 +76,30 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'lower case' => [
                 'add',
-                new \Integrated\Common\Solr\Tests\Fixtures\Object1(),
+                new Object1(),
                 'type1-id1',
-                'Integrated\\Common\\Solr\\Tests\\Fixtures\\Object1',
+                Object1::class,
                 'json',
             ],
             'upper case' => [
                 'ADD',
-                new \Integrated\Common\Solr\Tests\Fixtures\Object1(),
+                new Object1(),
                 'type1-id1',
-                'Integrated\\Common\\Solr\\Tests\\Fixtures\\Object1',
+                Object1::class,
                 'json',
             ],
             'doctrine proxy' => [
                 'add',
-                new \Integrated\Common\Solr\Tests\Fixtures\__CG__\ProxyObject(),
+                new ProxyObject(),
                 'proxy-type-proxy-id',
                 'ProxyObject', // everything before and including __GC__ should be stripped
                 'json',
             ],
             'format' => [
                 'ADD',
-                new \Integrated\Common\Solr\Tests\Fixtures\Object2(),
+                new Object2(),
                 'type2-id2',
-                'Integrated\\Common\\Solr\\Tests\\Fixtures\\Object2',
+                Object2::class,
                 'xml',
             ],
         ];
@@ -119,12 +124,12 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'lower case' => [
                 'delete',
-                new \Integrated\Common\Solr\Tests\Fixtures\Object1(),
+                new Object1(),
                 'type1-id1',
             ],
             'upper case' => [
                 'DELETE',
-                new \Integrated\Common\Solr\Tests\Fixtures\Object2(),
+                new Object2(),
                 'type2-id2',
             ],
         ];
@@ -132,7 +137,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateInvalidAction()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $this->getInstance()->create('none-existing-action', $this->getContent());
     }

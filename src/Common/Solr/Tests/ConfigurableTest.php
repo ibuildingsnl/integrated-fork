@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Solr\Tests\Fixtures\Configurable;
 
 /**
@@ -18,7 +19,7 @@ use Integrated\Common\Solr\Tests\Fixtures\Configurable;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends TestCase
 {
     public function testConstructor()
     {

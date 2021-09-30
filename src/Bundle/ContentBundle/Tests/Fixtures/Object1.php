@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Common\Content\ContentInterface;
@@ -33,7 +34,7 @@ class Object1 implements ContentInterface
 
     public function setContentType($contentType)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getRelationsByRelationType()
@@ -43,36 +44,36 @@ class Object1 implements ContentInterface
 
     public function getRelations()
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getRelation($relationId)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function setRelations(Collection $relations)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function addRelation(RelationInterface $relation)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function removeRelation(RelationInterface $relation)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function getSlug()
     {
-        throw new \Exception();
+        throw new Exception();
     }
 
     public function setSlug($slug)
     {
-        throw new \Exception();
+        throw new Exception();
     }
 }

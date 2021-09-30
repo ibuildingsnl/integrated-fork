@@ -11,6 +11,11 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Service;
 
+use Doctrine\ODM\MongoDB\LockException;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -45,11 +50,11 @@ class StateManager
     /**
      * @param string $contentType
      *
-     * @throws \Doctrine\ODM\MongoDB\LockException
-     * @throws \Doctrine\ODM\MongoDB\Mapping\MappingException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws LockException
+     * @throws MappingException
+     * @throws MongoDBException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function ensureWorkflowState(string $contentType)
     {
@@ -60,7 +65,7 @@ class StateManager
         }
 
         $workflow = $this->entityManager->getRepository(Definition::class)->find($contentType->getOption('workflow'));
-        if (!$workflow) {
+        if ($workflow === null) {
             return;
         }
 
@@ -74,7 +79,7 @@ class StateManager
             ->execute();
 
         foreach ($contentIds as $content) {
-            if (!$this->entityManager->getRepository(State::class)->findOneBy(['content_id' => $content['_id'], 'content_class' => $content['class']])) {
+            if ($this->entityManager->getRepository(State::class)->findOneBy(['content_id' => $content['_id'], 'content_class' => $content['class']]) === null) {
                 $content = $this->documentManager->getRepository(Content::class)->find($content['_id']);
 
                 //is disabled field state same as published state? we don't want to change the disabled state without an item review

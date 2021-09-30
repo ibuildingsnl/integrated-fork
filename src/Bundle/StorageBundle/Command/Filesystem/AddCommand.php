@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Command\Filesystem;
 
+use InvalidArgumentException;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Map\ContentReflectionMap;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Map\FileMap;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Walk\DocumentWalk;
@@ -33,6 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class AddCommand extends Command
 {
+    protected static $defaultName = 'storage:filesystem:add';
     /**
      * @var DatabaseInterface
      */
@@ -86,8 +88,7 @@ class AddCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('storage:filesystem:add')
-            ->setDescription('Add files into the filesystem.')
+        $this->setDescription('Add files into the filesystem.')
             ->setDefinition([
                 new InputArgument(
                     'filesystem',
@@ -101,7 +102,7 @@ class AddCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
 
@@ -118,7 +119,8 @@ class AddCommand extends Command
                 ->walk(DocumentWalk::save($this->database))
             ;
         } else {
-            throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
+            throw new InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
         }
+        return 0;
     }
 }

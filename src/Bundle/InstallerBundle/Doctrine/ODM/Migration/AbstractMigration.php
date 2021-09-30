@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\InstallerBundle\Doctrine\ODM\Migration;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AntiMattr\MongoDB\Migrations;
@@ -38,7 +39,7 @@ abstract class AbstractMigration extends Migrations\AbstractMigration implements
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * @return DocumentManager
      */
     protected function getDocumentManager()
     {

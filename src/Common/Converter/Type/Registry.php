@@ -44,12 +44,7 @@ class Registry implements RegistryInterface
         if (!\is_string($name)) {
             throw new UnexpectedTypeException($name, 'string');
         }
-
-        if (isset($this->resolved[$name])) {
-            return true;
-        }
-
-        return false;
+        return isset($this->resolved[$name]);
     }
 
     /**

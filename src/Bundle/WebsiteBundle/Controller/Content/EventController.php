@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller\Content;
 
+use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Document\Content\Event;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -53,7 +54,7 @@ class EventController
      * @param ContentTypePage $page
      * @param Event           $event
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function showAction(ContentTypePage $page, Event $event)
     {

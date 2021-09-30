@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine;
 
+use Integrated\Common\ContentType\IteratorInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -42,7 +43,7 @@ class ContentTypeManager
     /**
      * @var ContentTypeInterface[]
      */
-    private $contentTypes;
+    private $contentTypes = [];
 
     /**
      * @param ResolverInterface $resolver
@@ -95,7 +96,7 @@ class ContentTypeManager
     }
 
     /**
-     * @return \Integrated\Common\ContentType\IteratorInterface|ContentTypeInterface[]
+     * @return IteratorInterface|ContentTypeInterface[]
      */
     public function getAll()
     {
@@ -103,7 +104,7 @@ class ContentTypeManager
             return $this->resolver->getTypes();
         }
 
-        if (null === $this->contentTypes) {
+        if ([] === $this->contentTypes) {
             $contentTypes = [];
 
             foreach ($this->resolver->getResolvers() as $resolver) {

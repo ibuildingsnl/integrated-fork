@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\Exception\ExceptionInterface;
+use Integrated\Common\ContentType\IteratorInterface;
+use Exception;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\Resolver\PriorityResolver;
@@ -19,7 +23,7 @@ use Integrated\Common\ContentType\ResolverInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class PriorityResolverTest extends \PHPUnit\Framework\TestCase
+class PriorityResolverTest extends TestCase
 {
     /**
      * @var ContentTypeInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
@@ -44,7 +48,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testHasResolver()
@@ -73,7 +77,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypeNotFound()
     {
-        $this->expectException(\Integrated\Common\ContentType\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('"type 3"');
 
         $this->getInstance()->getType('type 3');
@@ -92,7 +96,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     {
         $iterator = $this->getInstance()->getTypes();
 
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\IteratorInterface', $iterator);
+        self::assertInstanceOf(IteratorInterface::class, $iterator);
         self::assertSame(['type 1' => $this->types[0], 'type 2' => $this->types[1]], iterator_to_array($iterator));
     }
 
@@ -111,7 +115,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getResolver(ContentTypeInterface $type)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ResolverInterface');
+        $mock = $this->createMock(ResolverInterface::class);
 
         $mock->expects($this->any())
             ->method('hasType')
@@ -126,7 +130,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
                     return $type;
                 }
 
-                throw new \Exception('ERROR ERROR');
+                throw new Exception('ERROR ERROR');
             });
 
         $mock->expects($this->any())
@@ -143,7 +147,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($name);

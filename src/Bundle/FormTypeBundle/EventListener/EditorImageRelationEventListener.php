@@ -77,19 +77,17 @@ class EditorImageRelationEventListener implements EventSubscriberInterface
             // Add the new relations
             foreach ($event->getForm()->all() as $form) {
                 $type = $form->getConfig()->getType()->getInnerType();
-                if ($type instanceof EditorType) {
-                    if ($data = $form->getData()) {
-                        foreach ($this->htmlRelation->read($data) as $id) {
-                            if ($image = $this->documentManager->find(File::class, $id)) {
-                                $relation->addReference($image);
-                            }
+                if ($type instanceof EditorType && ($data = $form->getData())) {
+                    foreach ($this->htmlRelation->read($data) as $id) {
+                        if ($image = $this->documentManager->find(File::class, $id)) {
+                            $relation->addReference($image);
                         }
                     }
                 }
             }
 
             // Only add the relation if there's something
-            if ($relation->getReferences()->count()) {
+            if ($relation->getReferences()->count() !== 0) {
                 $document->addRelation($relation);
             }
         }

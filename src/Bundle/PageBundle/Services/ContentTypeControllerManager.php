@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\PageBundle\Services;
 
+use Exception;
+use InvalidArgumentException;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -35,12 +37,12 @@ class ContentTypeControllerManager
      * @param $serviceId
      * @param $attributes
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function addController($serviceId, $attributes)
     {
         if (!\array_key_exists('class', $attributes)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('class is a required attribute of the tag in service "%s"', $serviceId)
             );
         }
@@ -48,7 +50,7 @@ class ContentTypeControllerManager
         $className = $attributes['class'];
 
         if ($this->controllers->containsKey($className)) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf('You can only define one content controller service for class "%s"', $className)
             );
         }

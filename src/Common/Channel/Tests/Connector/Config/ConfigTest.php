@@ -11,13 +11,15 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Config;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends TestCase
 {
     /**
      * @var OptionsInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,12 +28,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->options = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\OptionsInterface');
+        $this->options = $this->createMock(OptionsInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface', $this->getInstance());
+        self::assertInstanceOf(ConfigInterface::class, $this->getInstance());
     }
 
     public function testGetName()

@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
+use Doctrine\MongoDB\Query\Builder;
+use MongoException;
+use MongoRegex;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
@@ -34,7 +37,7 @@ class FilterQueryProvider
     /**
      * @var bool
      */
-    private $pageBundleInstalled;
+    private $pageBundleInstalled = false;
 
     /**
      * @param ManagerRegistry    $mr
@@ -52,9 +55,9 @@ class FilterQueryProvider
      * @param array|null  $data
      * @param object|null $groupUser
      *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return Builder
      *
-     * @throws \MongoException
+     * @throws MongoException
      */
     public function getBlocksByChannelQueryBuilder($data, ?object $groupUser)
     {
@@ -68,7 +71,7 @@ class FilterQueryProvider
         }
 
         if (isset($data['q'])) {
-            $qb->field('title')->equals(new \MongoRegex('/'.$data['q'].'/i'));
+            $qb->field('title')->equals(new MongoRegex('/'.$data['q'].'/i'));
         }
 
         $channels = isset($data['channels']) ? array_filter($data['channels']) : null;
@@ -95,7 +98,7 @@ class FilterQueryProvider
      *
      * @return array
      *
-     * @throws \MongoException
+     * @throws MongoException
      */
     public function getBlockIds($data, ?object $groupUser)
     {

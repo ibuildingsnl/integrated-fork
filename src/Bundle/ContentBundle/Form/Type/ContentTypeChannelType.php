@@ -50,7 +50,7 @@ class ContentTypeChannelType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['channel']);
-        $resolver->setAllowedTypes('channel', 'Integrated\\Bundle\\ContentBundle\\Document\\Channel\\Channel');
+        $resolver->setAllowedTypes('channel', Channel::class);
     }
 
     /**

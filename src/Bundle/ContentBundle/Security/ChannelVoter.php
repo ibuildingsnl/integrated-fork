@@ -30,7 +30,7 @@ class ChannelVoter implements VoterInterface
     /**
      * @var array
      */
-    private $permissions;
+    private $permissions = [];
 
     /**
      * @param ResolverInterface $resolver
@@ -73,7 +73,7 @@ class ChannelVoter implements VoterInterface
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
-        if (!\count($channel->getPermissions())) {
+        if (\count($channel->getPermissions()) === 0) {
             return VoterInterface::ACCESS_GRANTED;
         }
 
@@ -97,16 +97,12 @@ class ChannelVoter implements VoterInterface
 
             $result = VoterInterface::ACCESS_GRANTED;
 
-            if ($this->permissions['read'] == $attribute) {
-                if (!$permissions['read'] && !$permissions['write']) {
-                    return VoterInterface::ACCESS_DENIED;
-                }
+            if ($this->permissions['read'] == $attribute && (!$permissions['read'] && !$permissions['write'])) {
+                return VoterInterface::ACCESS_DENIED;
             }
 
-            if ($this->permissions['write'] == $attribute) {
-                if (!$permissions['write']) {
-                    return VoterInterface::ACCESS_DENIED;
-                }
+            if ($this->permissions['write'] == $attribute && !$permissions['write']) {
+                return VoterInterface::ACCESS_DENIED;
             }
         }
 

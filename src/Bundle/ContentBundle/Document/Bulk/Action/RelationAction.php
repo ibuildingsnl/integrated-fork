@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Bulk\Action;
 
+use ArrayIterator;
+use Traversable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Bulk\BulkActionInterface;
@@ -85,7 +87,7 @@ class RelationAction implements BulkActionInterface
     }
 
     /**
-     * @return \ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      */
     public function getReferences()
     {
@@ -100,7 +102,7 @@ class RelationAction implements BulkActionInterface
     public function setReferences($references)
     {
         $this->references->clear();
-        if (\is_array($references) || $references instanceof \Traversable) {
+        if (is_iterable($references)) {
             foreach ($references as $reference) {
                 $this->addReference($reference);
             }

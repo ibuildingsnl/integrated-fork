@@ -21,7 +21,7 @@ class Registry
     /**
      * @var callable[]
      */
-    private $handlers;
+    private $handlers = [];
 
     /**
      * Constructor.

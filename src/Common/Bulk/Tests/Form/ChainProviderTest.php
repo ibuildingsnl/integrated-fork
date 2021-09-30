@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Bulk\Tests\Form;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Bulk\Form\ChainProvider;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -19,7 +20,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ChainProviderTest extends \PHPUnit\Framework\TestCase
+class ChainProviderTest extends TestCase
 {
     /**
      * @var ConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ThemeBundle\Scraper;
 
+use Psr\SimpleCache\InvalidArgumentException;
+use Exception;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
@@ -66,19 +68,17 @@ class Scraper
     /**
      * @param ScraperEntity $scraper
      *
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function prepare(ScraperEntity $scraper): void
     {
         try {
             $template = file_get_contents($this->kernel->locateResource($scraper->getTemplateName()));
 
-            preg_match_all('/{% block (.*) %}([\s\S]*){% endblock(.*)%}/msU', $template, $matches);
+            preg_match_all('#{% block (.*) %}([\s\S]*){% endblock(.*)%}#msU', $template, $matches);
 
             $blocks = [];
-            foreach ($matches[1] as $match) {
-                $blocks[] = $match;
-            }
+            $blocks = $matches[1];
 
             foreach ($scraper->getBlocks() as $block) {
                 if (($key = array_search($block->getName(), $blocks)) !== false) {
@@ -99,8 +99,8 @@ class Scraper
             }
 
             $this->entityManager->flush();
-        } catch (\Exception $e) {
-            $scraper->setLastError((string) $e);
+        } catch (Exception $exception) {
+            $scraper->setLastError((string) $exception);
 
             $this->entityManager->flush();
 
@@ -166,7 +166,7 @@ class Scraper
                 $scraper->setTemplate($html);
                 $scraper->setLastModified(time());
                 $scraper->setLastError();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $scraper->setLastError((string) $e);
             }
 
@@ -185,10 +185,10 @@ class Scraper
         $host = parse_url($url, \PHP_URL_SCHEME).'://'.parse_url($url, \PHP_URL_HOST);
 
         // Replace relative URL's
-        $html = preg_replace('/((?:href|src) *= *[\'"](?!(http|mailto|data:|\/\/)))/i', '$1'.$host, $html);
+        $html = preg_replace('#((?:href|src) *= *[\'"](?!(http|mailto|data:|\/\/)))#i', '$1'.$host, $html);
 
         // Remove base
-        $html = preg_replace('|<base href="(.+)"\s?/>|', '', $html);
+        $html = preg_replace('#<base href="(.+)"\s?/>#', '', $html);
 
         return $html;
     }

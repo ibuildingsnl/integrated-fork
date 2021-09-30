@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Queue\Provider\DBAL;
 
+use InvalidArgumentException;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Integrated\Common\Queue\Provider\QueueProviderInterface;
@@ -23,7 +24,7 @@ class QueueProvider implements QueueProviderInterface
     /**
      * @var array
      */
-    protected $options;
+    protected $options = [];
 
     /**
      * @var Connection
@@ -144,7 +145,7 @@ class QueueProvider implements QueueProviderInterface
 
         $where[] = 'time_execute <= '.time();
 
-        if (\count($where)) {
+        if (\count($where) > 0) {
             $query = sprintf('%s WHERE %s', $query, implode(' AND ', $where));
         }
 
@@ -160,7 +161,7 @@ class QueueProvider implements QueueProviderInterface
     public function setOption($name, $value)
     {
         if (isset($this->options[$name])) {
-            throw new \InvalidArgumentException(sprintf('Option %s already set.', $name));
+            throw new InvalidArgumentException(sprintf('Option %s already set.', $name));
         }
 
         $this->options[$name] = $value;

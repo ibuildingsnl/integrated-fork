@@ -114,7 +114,7 @@ class ContentFormType extends AbstractType
                     }
                 }
 
-                if ($config) {
+                if ($config !== null) {
                     $builder->add($config->getName(), $config->getType(), $config->getOptions());
                 }
             }

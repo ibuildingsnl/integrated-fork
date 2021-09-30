@@ -24,12 +24,12 @@ class BulkActionsMapperListener implements EventSubscriberInterface
     /**
      * @var array
      */
-    private $mappings;
+    private $mappings = [];
 
     /**
      * @var bool
      */
-    private $readonly;
+    private $readonly = false;
 
     /**
      * @param array $mappings

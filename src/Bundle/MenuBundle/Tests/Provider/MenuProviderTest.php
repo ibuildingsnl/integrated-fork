@@ -10,6 +10,12 @@
 
 namespace Integrated\Bundle\MenuBundle\Tests\Provider;
 
+use PHPUnit\Framework\TestCase;
+use Knp\Menu\FactoryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Knp\Menu\Provider\MenuProviderInterface;
+use InvalidArgumentException;
+use Knp\Menu\ItemInterface;
 use Integrated\Bundle\MenuBundle\Provider\MenuProvider;
 
 /**
@@ -17,10 +23,17 @@ use Integrated\Bundle\MenuBundle\Provider\MenuProvider;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class MenuProviderTest extends \PHPUnit\Framework\TestCase
+class MenuProviderTest extends TestCase
 {
-    const VALID_MENU = 'integrated_menu';
-    const INVALID_MENU = 'invalid_menu';
+    /**
+     * @var string
+     */
+    public const VALID_MENU = 'integrated_menu';
+
+    /**
+     * @var string
+     */
+    public const INVALID_MENU = 'invalid_menu';
 
     /**
      * @var MenuProvider
@@ -28,12 +41,12 @@ class MenuProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var \Knp\Menu\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $factory;
 
     /**
-     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $eventDispatcher;
 
@@ -42,8 +55,8 @@ class MenuProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->factory = $this->createMock('Knp\Menu\FactoryInterface');
-        $this->eventDispatcher = $this->createMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->factory = $this->createMock(FactoryInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->provider = new MenuProvider($this->factory, $this->eventDispatcher);
     }
 
@@ -52,7 +65,7 @@ class MenuProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Knp\Menu\Provider\MenuProviderInterface', $this->provider);
+        $this->assertInstanceOf(MenuProviderInterface::class, $this->provider);
     }
 
     /**
@@ -76,7 +89,7 @@ class MenuProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetFunctionWithInvalidMenu()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->provider->get(self::INVALID_MENU);
     }
@@ -86,8 +99,8 @@ class MenuProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetFunctionTwiceWithValidMenu()
     {
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
-        $menu = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
+        $menu = $this->createMock(ItemInterface::class);
 
         $this->factory
             ->expects($this->once())

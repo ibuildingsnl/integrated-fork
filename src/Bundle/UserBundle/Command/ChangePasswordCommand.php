@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
  */
 class ChangePasswordCommand extends Command
 {
+    protected static $defaultName = 'user:password:change';
     /**
      * @var UserManagerInterface
      */
@@ -65,10 +66,7 @@ class ChangePasswordCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('user:password:change')
-
-            ->addArgument('username', InputArgument::REQUIRED, 'The username')
+        $this->addArgument('username', InputArgument::REQUIRED, 'The username')
             ->addArgument('password', InputArgument::REQUIRED, 'The password')
             ->addArgument('scope', InputArgument::OPTIONAL, 'The scope')
 
@@ -83,7 +81,7 @@ The <info>%command.name%</info> command replaces the password of the user
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username'); // @todo validate input
         $password = $input->getArgument('password'); // @todo validate input
@@ -93,7 +91,7 @@ The <info>%command.name%</info> command replaces the password of the user
             $scopeName = $input->getArgument('scope') ?: $scopeName;
         }
 
-        if (!$scope = $this->scopeManager->findByName($scopeName)) {
+        if (($scope = $this->scopeManager->findByName($scopeName)) === null) {
             $output->writeln(sprintf('Aborting: scope with name "%s" does not exist', $scopeName));
 
             return 1;
@@ -101,7 +99,7 @@ The <info>%command.name%</info> command replaces the password of the user
 
         $user = $this->findUserByScope($username, $scope);
 
-        if (!$user) {
+        if ($user === null) {
             $output->writeln(sprintf('Aborting: user with username "%s" does not exist', $username));
 
             return 1;
@@ -114,8 +112,8 @@ The <info>%command.name%</info> command replaces the password of the user
 
         try {
             $this->userManager->persist($user);
-        } catch (Exception $e) {
-            $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
+        } catch (Exception $exception) {
+            $output->writeln(sprintf('Aborting: %s', $exception->getMessage()));
 
             return 1;
         }

@@ -11,13 +11,16 @@
 
 namespace Integrated\Common\Form\Tests\DataTransformer;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Integrated\Common\Form\DataTransformer\ValuesToChoicesTransformer;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ValuesToChoicesTransformerTest extends \PHPUnit\Framework\TestCase
+class ValuesToChoicesTransformerTest extends TestCase
 {
     /**
      * @var ChoiceListInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,12 +29,12 @@ class ValuesToChoicesTransformerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->choiceList = $this->createMock('Symfony\\Component\\Form\\ChoiceList\\ChoiceListInterface');
+        $this->choiceList = $this->createMock(ChoiceListInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Symfony\\Component\\Form\\DataTransformerInterface', $this->getInstance());
+        self::assertInstanceOf(DataTransformerInterface::class, $this->getInstance());
     }
 
     public function testTransform()
@@ -54,7 +57,7 @@ class ValuesToChoicesTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testTransformInvalidType()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->getInstance()->transform('this-is-not-a-array');
     }
@@ -79,14 +82,14 @@ class ValuesToChoicesTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testReverseTransformInvalidType()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->getInstance()->reverseTransform('this-is-not-a-array');
     }
 
     public function testReverseTransformInvalidConversion()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->choiceList->expects($this->once())
             ->method('getValuesForChoices')

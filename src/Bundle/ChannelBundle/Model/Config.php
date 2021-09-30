@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ChannelBundle\Model;
 
+use Exception;
+use DateTimeInterface;
+use DateTimeImmutable;
 use DateTime;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
@@ -63,7 +66,7 @@ class Config implements ConfigInterface
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(?int $id = null)
     {
@@ -158,7 +161,7 @@ class Config implements ConfigInterface
 
         $channel = (string) $channel;
 
-        if (false === array_search($channel, $this->channels)) {
+        if (!in_array($channel, $this->channels)) {
             $this->channels[] = $channel;
         }
 
@@ -178,7 +181,7 @@ class Config implements ConfigInterface
 
         $channel = (string) $channel;
 
-        return false === array_search($channel, $this->channels) ? false : true;
+        return in_array($channel, $this->channels);
     }
 
     /**
@@ -242,7 +245,7 @@ class Config implements ConfigInterface
      *
      * @return $this
      */
-    public function setCreated(DateTime $created)
+    public function setCreated(DateTimeInterface $created)
     {
         $this->created = $created;
 
@@ -250,9 +253,9 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|DateTimeImmutable|null
      */
-    public function getPublicationStartDate(): ?DateTime
+    public function getPublicationStartDate(): ?DateTimeInterface
     {
         return $this->publicationStartDate;
     }
@@ -260,7 +263,7 @@ class Config implements ConfigInterface
     /**
      * @param DateTime $publicationStartDate
      */
-    public function setPublicationStartDate(?DateTime $publicationStartDate): void
+    public function setPublicationStartDate(?DateTimeInterface $publicationStartDate): void
     {
         $this->publicationStartDate = $publicationStartDate;
     }
@@ -278,7 +281,7 @@ class Config implements ConfigInterface
      *
      * @return $this
      */
-    public function setUpdated(DateTime $updated)
+    public function setUpdated(DateTimeInterface $updated)
     {
         $this->updated = $updated;
 

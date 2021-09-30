@@ -11,6 +11,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Countable;
+use Integrated\Common\ContentType\ContentTypeInterface;
+use InvalidArgumentException;
+use Symfony\Component\Form\Form;
 use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -21,7 +26,6 @@ use Integrated\Common\ContentType\Events;
 use Integrated\Common\Form\Mapping\MetadataFactory;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,12 +37,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ContentTypeController extends Controller
+class ContentTypeController extends AbstractController
 {
     /**
      * @var string
      */
-    protected $contentTypeClass = 'Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType';
+    protected $contentTypeClass = ContentType::class;
 
     /**
      * @var MetadataFactoryInterface
@@ -152,7 +156,7 @@ class ContentTypeController extends Controller
 
             $this->get('braincrafted_bootstrap.flash')->success('Item created');
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_CREATED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_CREATED);
 
             return $this->redirect($this->generateUrl('integrated_content_content_type_show', ['id' => $contentType->getId()]));
         }
@@ -193,7 +197,7 @@ class ContentTypeController extends Controller
 
             $this->get('braincrafted_bootstrap.flash')->success('Item updated');
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_UPDATED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
 
             return $this->redirect($this->generateUrl('integrated_content_content_type_show', ['id' => $contentType->getId()]));
         }
@@ -230,7 +234,7 @@ class ContentTypeController extends Controller
             $dm = $this->get('doctrine_mongodb')->getManager();
 
             // Only delete ContentType when there are no Content items
-            $count = \count($dm->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()]));
+            $count = is_array($dm->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()])) || $dm->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()]) instanceof Countable ? \count($dm->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()])) : 0;
 
             if ($count > 0) {
                 // Set flash message and redirect to item page
@@ -242,7 +246,7 @@ class ContentTypeController extends Controller
             $dm->remove($contentType);
             $dm->flush();
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_DELETED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_DELETED);
 
             // Set flash message
             $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
@@ -259,7 +263,7 @@ class ContentTypeController extends Controller
     /**
      * @param string $id
      *
-     * @return \Integrated\Common\ContentType\ContentTypeInterface
+     * @return ContentTypeInterface
      *
      * @throws NotFoundHttpException
      */
@@ -267,7 +271,7 @@ class ContentTypeController extends Controller
     {
         try {
             return $this->contentTypeManager->getType($id);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $invalidArgumentException) {
             throw new NotFoundHttpException(sprintf('Content type with id "%s" not found.', $id));
         }
     }
@@ -278,7 +282,7 @@ class ContentTypeController extends Controller
      * @param ContentType       $type
      * @param MetadataInterface $metadata
      *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createNewForm(ContentType $type, MetadataInterface $metadata)
     {
@@ -307,7 +311,7 @@ class ContentTypeController extends Controller
      * @param ContentType       $type
      * @param MetadataInterface $metadata
      *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createEditForm(ContentType $type, MetadataInterface $metadata)
     {
@@ -335,7 +339,7 @@ class ContentTypeController extends Controller
      *
      * @param ContentType $type
      *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createDeleteForm(ContentType $type)
     {

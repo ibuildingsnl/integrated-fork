@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\WorkflowStateListener;
@@ -93,7 +94,7 @@ class WorkflowStateType extends AbstractType
                 throw new InvalidOptionsException(sprintf(
                     'The option "%s" could not be normalized to a valid "%s" object',
                     'workflow',
-                    'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'
+                    Definition::class
                 ));
             }
 
@@ -101,12 +102,12 @@ class WorkflowStateType extends AbstractType
         };
 
         $resolver->setRequired('workflow');
-        $resolver->setAllowedTypes('workflow', ['string', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition']);
+        $resolver->setAllowedTypes('workflow', ['string', Definition::class]);
 
         $resolver->setNormalizer('workflow', $workflowNormalizer);
 
         $resolver->setDefault('empty_data', null);
-        $resolver->setDefault('data_class', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
+        $resolver->setDefault('data_class', State::class);
     }
 
     /**

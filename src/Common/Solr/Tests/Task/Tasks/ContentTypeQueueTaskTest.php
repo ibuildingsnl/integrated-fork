@@ -11,12 +11,13 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentTypeQueueTaskTest extends \PHPUnit\Framework\TestCase
+class ContentTypeQueueTaskTest extends TestCase
 {
     public function testGetId()
     {

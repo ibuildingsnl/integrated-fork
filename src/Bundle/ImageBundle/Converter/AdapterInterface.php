@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Converter;
 
+use SplFileInfo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
@@ -25,7 +26,7 @@ interface AdapterInterface
      * @param string           $outputFormat
      * @param StorageInterface $image
      *
-     * @return \SplFileInfo
+     * @return SplFileInfo
      */
     public function convert($outputFormat, StorageInterface $image);
 

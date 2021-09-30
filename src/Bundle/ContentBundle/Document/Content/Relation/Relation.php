@@ -72,7 +72,7 @@ abstract class Relation extends Content implements RankableInterface
      *      }
      * )
      */
-    protected $addresses;
+    protected $addresses = [];
 
     /**
      * Constructor.

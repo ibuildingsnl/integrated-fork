@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\UserBundle\Model;
 
+use DateTimeInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
@@ -46,7 +49,7 @@ class User implements UserInterface
     protected $email = null;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     protected $createdAt;
 
@@ -91,7 +94,7 @@ class User implements UserInterface
     protected $googleEnabled = false;
 
     /**
-     * @var \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation
+     * @var Relation
      */
     protected $relation_instance = null;
 
@@ -99,7 +102,7 @@ class User implements UserInterface
     {
         $this->groups = new ArrayCollection();
         $this->roles = new ArrayCollection();
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -122,11 +125,7 @@ class User implements UserInterface
     {
         $data = unserialize($serialized);
 
-        list(
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->salt) = $data;
+        [$this->id, $this->username, $this->password, $this->salt] = $data;
     }
 
     /**
@@ -202,7 +201,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getCreatedAt()
     {
@@ -324,18 +323,19 @@ class User implements UserInterface
     }
 
     /**
-     * @param \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation $relation
+     * @param Relation $relation
      */
     public function setRelation($relation = null)
     {
-        $relation = $relation instanceof \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation ? $relation : null;
+        $relation = $relation instanceof Relation ? $relation : null;
 
-        $this->relation = $relation ? $relation->getId() : null;
+        $this->relation = $relation !== null ? $relation->getId() : null;
+
         $this->relation_instance = $relation;
     }
 
     /**
-     * @return \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation
+     * @return Relation
      */
     public function getRelation()
     {

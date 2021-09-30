@@ -40,12 +40,10 @@ class MongoDBProvider implements ContentProviderInterface, ContentTypeProviderIn
      */
     public function getReferenced($id)
     {
-        $iterator = $this->repository->createQueryBuilder()
+        return $this->repository->createQueryBuilder()
             ->field('relations.references.$id')->equals($id)
             ->getQuery()
             ->getIterator();
-
-        return $iterator;
     }
 
     /**
@@ -53,11 +51,9 @@ class MongoDBProvider implements ContentProviderInterface, ContentTypeProviderIn
      */
     public function getContent($id)
     {
-        $iterator = $this->repository->createQueryBuilder()
+        return $this->repository->createQueryBuilder()
             ->field('contentType')->equals($id)
             ->getQuery()
             ->getIterator();
-
-        return $iterator;
     }
 }

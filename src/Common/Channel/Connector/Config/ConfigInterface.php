@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTime;
 
 /**
@@ -29,9 +31,9 @@ interface ConfigInterface
     public function getAdapter();
 
     /**
-     * @return DateTime|null
+     * @return DateTime|DateTimeImmutable|null
      */
-    public function getPublicationStartDate(): ?DateTime;
+    public function getPublicationStartDate(): ?DateTimeInterface;
 
     /**
      * @return OptionsInterface

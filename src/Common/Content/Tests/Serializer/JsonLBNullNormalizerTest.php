@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Tests\Serializer;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Content\Serializer\JsonLBNullNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use stdClass;
@@ -18,7 +19,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JsonLBNullNormalizerTest extends \PHPUnit\Framework\TestCase
+class JsonLBNullNormalizerTest extends TestCase
 {
     public function testInterface()
     {

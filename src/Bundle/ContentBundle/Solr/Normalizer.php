@@ -21,9 +21,9 @@ class Normalizer
      */
     public static function normalize($query)
     {
-        $query = preg_replace('/\p{Mn}/u', '', \Normalizer::normalize($query, \Normalizer::FORM_KD));
+        $query = preg_replace('#\p{Mn}#u', '', \Normalizer::normalize($query, \Normalizer::FORM_KD));
         $query = strtolower(trim($query));
 
-        return preg_replace('/\s+/u', ' ', $query);
+        return preg_replace('#\s+#u', ' ', $query);
     }
 }

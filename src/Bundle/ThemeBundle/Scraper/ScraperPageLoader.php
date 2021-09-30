@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ThemeBundle\Scraper;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
+use Integrated\Bundle\ThemeBundle\Entity\Scraper;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
@@ -84,11 +84,11 @@ class ScraperPageLoader implements LoaderInterface
      */
     public function getSourceContext($name): Source
     {
-        if (!$channel = $this->channelContext->getChannel()) {
+        if (($channel = $this->channelContext->getChannel()) === null) {
             throw new LoaderError(sprintf('Unkown channel for template "%s"', $name));
         }
 
-        if (!$template = $this->entityManager->getRepository(ScraperEntity::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) {
+        if (($template = $this->entityManager->getRepository(Scraper::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) === null) {
             throw new LoaderError(sprintf('Template "%s" does not exist for channel', $name));
         }
 
@@ -104,7 +104,7 @@ class ScraperPageLoader implements LoaderInterface
      */
     public function exists($name): bool
     {
-        if (!$channel = $this->channelContext->getChannel()) {
+        if (($channel = $this->channelContext->getChannel()) === null) {
             return false;
         }
 
@@ -124,7 +124,7 @@ class ScraperPageLoader implements LoaderInterface
      */
     public function getCacheKey($name): string
     {
-        if (!$channel = $this->channelContext->getChannel()) {
+        if (($channel = $this->channelContext->getChannel()) === null) {
             return $name;
         }
 
@@ -141,11 +141,11 @@ class ScraperPageLoader implements LoaderInterface
      */
     public function isFresh($name, $time): bool
     {
-        if (!$channel = $this->channelContext->getChannel()) {
+        if (($channel = $this->channelContext->getChannel()) === null) {
             throw new LoaderError(sprintf('Unkown channel for template "%s"', $name));
         }
 
-        if (!$template = $this->entityManager->getRepository(ScraperEntity::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) {
+        if (($template = $this->entityManager->getRepository(Scraper::class)->findOneBy(['channelId' => $channel->getId(), 'templateName' => $name])) === null) {
             throw new LoaderError(sprintf('Template "%s" does not exist for channel', $name));
         }
 
@@ -165,7 +165,7 @@ class ScraperPageLoader implements LoaderInterface
 
         $this->pageList = [];
 
-        $scrapers = $this->entityManager->getRepository(ScraperEntity::class)->findAll();
+        $scrapers = $this->entityManager->getRepository(Scraper::class)->findAll();
         foreach ($scrapers as $scraper) {
             $this->pageList[$scraper->getChannelId()][] = $scraper->getTemplateName();
         }

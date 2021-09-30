@@ -67,8 +67,8 @@ class Resource implements ResourceInterface
             } elseif (method_exists($object, 'getId')) {
                 return new self(ClassUtils::getRealClass($object), $object->getId());
             }
-        } catch (\InvalidArgumentException $e) {
-            throw new InvalidObjectException($e->getMessage(), 0, $e);
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            throw new InvalidObjectException($invalidArgumentException->getMessage(), 0, $invalidArgumentException);
         }
 
         throw new InvalidObjectException('$object must either implement the ResourceIdentifierInterface, or have a method named "getId".');
@@ -124,7 +124,7 @@ class Resource implements ResourceInterface
         return sprintf(
             'Resource(%s, %s)',
             $this->type,
-            $this->identifier === null ? 'NULL' : $this->identifier
+            $this->identifier ?? 'NULL'
         );
     }
 }

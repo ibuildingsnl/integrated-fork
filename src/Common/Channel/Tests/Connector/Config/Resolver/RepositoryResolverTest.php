@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Exception\ExceptionInterface;
+use Iterator;
 use Integrated\Common\Channel\Connector\Config\ConfigRepositoryInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\RepositoryResolver;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -19,7 +23,7 @@ use Integrated\Common\Converter\Config\ConfigInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
+class RepositoryResolverTest extends TestCase
 {
     /**
      * @var ConfigRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -28,12 +32,12 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigRepositoryInterface');
+        $this->repository = $this->createMock(ConfigRepositoryInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testHasConfig()
@@ -63,7 +67,7 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfigNotFound()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-config-that-does-not-exist');
 
         $this->repository->expects($this->once())
@@ -90,7 +94,7 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
 
         $iterator = $this->getInstance()->getConfigs($channel);
 
-        self::assertInstanceOf('Iterator', $iterator);
+        self::assertInstanceOf(Iterator::class, $iterator);
         self::assertSame($configs, iterator_to_array($iterator));
     }
 
@@ -109,7 +113,7 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(\Integrated\Common\Channel\Connector\Config\ConfigInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);
@@ -122,6 +126,6 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        return $this->createMock(\Integrated\Common\Channel\ChannelInterface::class);
     }
 }

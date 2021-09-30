@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Templating;
 
+use Twig_Environment;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
@@ -44,7 +45,7 @@ class BlockManager
     protected $repository;
 
     /**
-     * @var \Twig_Environment
+     * @var Twig_Environment
      */
     protected $twig;
 
@@ -57,9 +58,9 @@ class BlockManager
      * @param BlockHandlerRegistryInterface $blockRegistry
      * @param ThemeManager                  $themeManager
      * @param DocumentManager               $dm
-     * @param \Twig_Environment             $twig
+     * @param Twig_Environment $twig
      */
-    public function __construct(BlockHandlerRegistryInterface $blockRegistry, ThemeManager $themeManager, DocumentManager $dm, \Twig_Environment $twig)
+    public function __construct(BlockHandlerRegistryInterface $blockRegistry, ThemeManager $themeManager, DocumentManager $dm, Twig_Environment $twig)
     {
         $this->blockRegistry = $blockRegistry;
         $this->themeManager = $themeManager;
@@ -84,7 +85,7 @@ class BlockManager
                 if ($block instanceof Block && (!$block->isPublished() || $block->isDisabled())) {
                     return;
                 }
-            } catch (DocumentNotFoundException $e) {
+            } catch (DocumentNotFoundException $documentNotFoundException) {
                 return;
             }
 
@@ -101,7 +102,7 @@ class BlockManager
                     $handler->configureOptions($resolver = new OptionsResolver());
                     $options = $resolver->resolve($options);
 
-                    if ($template = $this->themeManager->locateTemplate('blocks/'.$block->getType().'/'.$block->getLayout())) {
+                    if (($template = $this->themeManager->locateTemplate('blocks/'.$block->getType().'/'.$block->getLayout())) !== '' && ($template = $this->themeManager->locateTemplate('blocks/'.$block->getType().'/'.$block->getLayout())) !== '0') {
                         $handler->setTemplate($template);
                     }
                 }

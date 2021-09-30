@@ -11,13 +11,16 @@
 
 namespace Integrated\Common\Queue\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Queue\QueueFactoryInterface;
+use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\Provider\QueueProviderInterface;
 use Integrated\Common\Queue\QueueFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueFactoryTest extends \PHPUnit\Framework\TestCase
+class QueueFactoryTest extends TestCase
 {
     /**
      * @var QueueFactory
@@ -31,18 +34,18 @@ class QueueFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->provider = $this->createMock('Integrated\Common\Queue\Provider\QueueProviderInterface');
+        $this->provider = $this->createMock(QueueProviderInterface::class);
         $this->factory = new QueueFactory($this->provider);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueFactoryInterface', $this->factory);
+        $this->assertInstanceOf(QueueFactoryInterface::class, $this->factory);
     }
 
     public function testGetQueue()
     {
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueInterface', $this->factory->getQueue('channel'));
+        $this->assertInstanceOf(QueueInterface::class, $this->factory->getQueue('channel'));
     }
 
     public function getGetQueueRegistry()

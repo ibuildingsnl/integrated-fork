@@ -11,18 +11,19 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\IpListFormType;
 use Integrated\Bundle\UserBundle\Model\IpList;
 use Integrated\Bundle\UserBundle\Model\IpListManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class IpListController extends Controller
+class IpListController extends AbstractController
 {
     /**
      * @var IpListManagerInterface
@@ -178,7 +179,7 @@ class IpListController extends Controller
     }
 
     /**
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createNewForm()
     {
@@ -204,7 +205,7 @@ class IpListController extends Controller
     /**
      * @param IpList $list
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(IpList $list)
     {
@@ -230,7 +231,7 @@ class IpListController extends Controller
     /**
      * @param IpList $list
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm(IpList $list)
     {

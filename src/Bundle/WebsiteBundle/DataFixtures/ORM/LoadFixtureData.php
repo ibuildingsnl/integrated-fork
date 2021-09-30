@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\DataFixtures\ORM;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ChannelBundle\Model\Options;
@@ -33,7 +34,7 @@ class LoadFixtureData implements ContainerAwareInterface, FixtureInterface
     {
         $files = [];
 
-        /** @var \Symfony\Component\Finder\SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach (Finder::create()->in(__DIR__.\DIRECTORY_SEPARATOR.'alice')->name('*.yml')->sortByName() as $file) {
             $files[] = $file->getRealpath();
         }

@@ -11,6 +11,9 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Exception\ExceptionInterface;
+use Iterator;
 use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\Resolver\PriorityResolver;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
@@ -20,7 +23,7 @@ use Integrated\Common\Converter\Config\ConfigInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class PriorityResolverTest extends \PHPUnit\Framework\TestCase
+class PriorityResolverTest extends TestCase
 {
     /**
      * @var ResolverInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
@@ -35,7 +38,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testHasConfig()
@@ -83,7 +86,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfigNotFound()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-config-that-does-not-exist');
 
         $this->getInstance()->getConfig('this-is-a-config-that-does-not-exist');
@@ -113,7 +116,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 
         $iterator = $this->getInstance()->getConfigs($channel);
 
-        self::assertInstanceOf('Iterator', $iterator);
+        self::assertInstanceOf(Iterator::class, $iterator);
         self::assertSame($configs, iterator_to_array($iterator));
     }
 
@@ -130,7 +133,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getResolver()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface');
+        return $this->createMock(ResolverInterface::class);
     }
 
     /**
@@ -140,7 +143,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(\Integrated\Common\Channel\Connector\Config\ConfigInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);
@@ -153,6 +156,6 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        return $this->createMock(\Integrated\Common\Channel\ChannelInterface::class);
     }
 }

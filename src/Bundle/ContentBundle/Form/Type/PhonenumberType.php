@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Phonenumber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,7 +56,7 @@ class PhonenumberType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\Phonenumber',
+            'data_class' => Phonenumber::class,
             'fields' => ['type', 'number'], // @todo validate options (INTEGRATED-627)
             'label_type' => 'Type',
             'label_number' => 'Phone number',

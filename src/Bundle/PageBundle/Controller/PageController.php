@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\PageBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use MongoRegex;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
@@ -21,7 +25,6 @@ use Integrated\Bundle\PageBundle\Form\Type\PageCopyType;
 use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,7 +35,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class PageController extends Controller
+class PageController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -90,8 +93,8 @@ class PageController extends Controller
         $this->displayPathErrors($builder);
 
         if ($query = $filterForm->get('q')->getData()) {
-            $builder->addOr($builder->expr()->field('title')->equals(new \MongoRegex('/'.$query.'/i')));
-            $builder->addOr($builder->expr()->field('path')->equals(new \MongoRegex('/'.$query.'/i')));
+            $builder->addOr($builder->expr()->field('title')->equals(new MongoRegex('/'.$query.'/i')));
+            $builder->addOr($builder->expr()->field('path')->equals(new MongoRegex('/'.$query.'/i')));
         }
 
         if ($channel = $filterForm->get('channel')->getData()) {
@@ -111,13 +114,11 @@ class PageController extends Controller
             25
         );
 
-        $response = $this->render('IntegratedPageBundle:page:index.html.twig', [
+        return $this->render('IntegratedPageBundle:page:index.html.twig', [
             'pages' => $pagination,
             'filterForm' => $filterForm->createView(),
             'lastPage' => $this->getLastEditPage($request->getSession()),
         ]);
-
-        return $response;
     }
 
     /**
@@ -228,8 +229,8 @@ class PageController extends Controller
      *
      * @return Response
      *
-     * @throws \Doctrine\ODM\MongoDB\Mapping\MappingException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MappingException
+     * @throws MongoDBException
      */
     public function copyAction(Request $request)
     {
@@ -345,7 +346,7 @@ class PageController extends Controller
     /**
      * @param Builder $builder
      *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     protected function displayPathErrors(Builder $builder)
     {
@@ -357,7 +358,7 @@ class PageController extends Controller
 
             $settings = $item->getControllerService().$item->getLayout();
             $key = $item->getChannel()->getId().'-'.$item->getPath();
-            if (isset($paths[$key]) && $paths[$key] != $settings) {
+            if (isset($paths[$key]) && $paths[$key] !== $settings) {
                 $this->get('braincrafted_bootstrap.flash')->error('Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
                 continue;
             }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Entity\Workflow;
 
+use DateTimeInterface;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -224,7 +225,7 @@ class State
      *
      * @return $this
      */
-    public function setDeadline(DateTime $deadline = null)
+    public function setDeadline(DateTimeInterface $deadline = null)
     {
         $this->deadline = $deadline;
 

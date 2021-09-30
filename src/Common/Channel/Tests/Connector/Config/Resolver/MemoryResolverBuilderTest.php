@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Exception\ExceptionInterface;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolverBuilder;
@@ -18,7 +20,7 @@ use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolverBuilder;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
+class MemoryResolverBuilderTest extends TestCase
 {
     /**
      * @dataProvider addConfigProvider
@@ -38,6 +40,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
         foreach ($expected['defaults'] as $config) {
             self::assertSame($config, $resolver->getConfig($config->getName()));
         }
+
         foreach ($expected['channels'] as $configSet) {
             foreach ($configSet as $config) {
                 self::assertSame($config, $resolver->getConfig($config->getName()));
@@ -61,6 +64,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
         foreach ($expected['defaults'] as $config) {
             self::assertSame($config, $resolver->getConfig($config->getName()));
         }
+
         foreach ($expected['channels'] as $configSet) {
             foreach ($configSet as $config) {
                 self::assertSame($config, $resolver->getConfig($config->getName()));
@@ -116,7 +120,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testAddConfigInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $builder = $this->getInstance();
         $builder->addConfig($this->getConfig('name'), 42);
@@ -137,7 +141,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);
@@ -152,7 +156,7 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);

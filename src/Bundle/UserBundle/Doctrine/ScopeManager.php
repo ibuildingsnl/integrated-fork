@@ -41,7 +41,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
-        if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\ScopeInterface')) {
+        if (!is_subclass_of($this->repository->getClassName(), ScopeInterface::class)) {
             throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\ScopeInterface', $this->repository->getClassName()));
         }
     }

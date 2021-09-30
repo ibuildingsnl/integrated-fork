@@ -11,25 +11,29 @@
 
 namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
+use Integrated\Common\Converter\ContainerInterface;
+use stdClass;
 use Integrated\Bundle\SolrBundle\Solr\Type\ClearType;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ClearTypeTest extends \PHPUnit\Framework\TestCase
+class ClearTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     public function testBuild()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->once())
             ->method('clear');
 
-        $this->getInstance()->build($container, new \stdClass());
+        $this->getInstance()->build($container, new stdClass());
     }
 
     public function testGetName()

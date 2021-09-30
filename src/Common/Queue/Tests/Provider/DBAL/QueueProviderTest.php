@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Queue\Tests\Provider\DBAL;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Queue\Provider\QueueProviderInterface;
 use Doctrine\DBAL\Connection;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
 use stdClass;
@@ -18,9 +20,13 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueProviderTest extends \PHPUnit\Framework\TestCase
+class QueueProviderTest extends TestCase
 {
-    const PAYLOAD = 'O:8:"stdClass":0:{}'; // serialized stdClass;
+    /**
+     * @var string
+     */
+    public const PAYLOAD = 'O:8:"stdClass":0:{}';
+     // serialized stdClass;
 
     /**
      * @var QueueProvider
@@ -38,13 +44,13 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
             'queue_table_name' => 'queue',
         ];
 
-        $this->connection = $this->createMock('Doctrine\DBAL\Connection');
+        $this->connection = $this->createMock(Connection::class);
         $this->provider = new QueueProvider($this->connection, $options);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\Common\Queue\Provider\QueueProviderInterface', $this->provider);
+        $this->assertInstanceOf(QueueProviderInterface::class, $this->provider);
     }
 
     public function testPush()

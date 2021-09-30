@@ -265,10 +265,8 @@ class Person extends Relation
      */
     public function addJob($job)
     {
-        if ($job instanceof Job) {
-            if (!$this->jobs->contains($job)) {
-                $this->jobs->add($job);
-            }
+        if ($job instanceof Job && !$this->jobs->contains($job)) {
+            $this->jobs->add($job);
         }
 
         return $this;

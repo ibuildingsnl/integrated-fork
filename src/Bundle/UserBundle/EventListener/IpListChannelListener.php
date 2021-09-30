@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\UserBundle\EventListener;
 
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Security\IpListMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class IpListChannelListener implements EventSubscriberInterface
@@ -44,7 +44,7 @@ class IpListChannelListener implements EventSubscriberInterface
         ];
     }
 
-    public function onRequest(GetResponseEvent $event)
+    public function onRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -54,7 +54,7 @@ class IpListChannelListener implements EventSubscriberInterface
 
         if ($channel instanceof Channel && $channel->isIpProtected() && !$this->matcher->match($event->getRequest())) {
             $response = new Response();
-            $response->setStatusCode(403, 'IP address rejected');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN, 'IP address rejected');
 
             $event->setResponse($response);
         }

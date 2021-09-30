@@ -11,12 +11,14 @@
 
 namespace Integrated\Common\Solr\Tests\Task;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Solr\Exception\InvalidArgumentException;
 use Integrated\Common\Solr\Task\Registry;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryTest extends \PHPUnit\Framework\TestCase
+class RegistryTest extends TestCase
 {
     public function testHasHandler()
     {
@@ -57,7 +59,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetHandlerNotFound()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('this-is-a-task-that-does-not-have-a-handler');
 
         $this->getInstance()->getHandler('this-is-a-task-that-does-not-have-a-handler');

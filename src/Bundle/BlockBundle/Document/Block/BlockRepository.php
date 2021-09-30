@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Doctrine\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 
@@ -60,7 +61,7 @@ class BlockRepository extends DocumentRepository
     /**
      * @param Block $block
      *
-     * @return \Doctrine\MongoDB\Query\Query
+     * @return Query
      *
      * @internal heavy query, multiple calls make page slow
      */
@@ -124,6 +125,6 @@ class BlockRepository extends DocumentRepository
      */
     public function isUsed(Block $block)
     {
-        return $this->pagesByBlockQb($block)->getSingleResult() ? true : false;
+        return (bool) $this->pagesByBlockQb($block)->getSingleResult();
     }
 }

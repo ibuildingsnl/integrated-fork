@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Storage;
 
+use Integrated\Common\Storage\FileResolver\FileResolverInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Storage\Reader\ReaderInterface;
@@ -51,7 +52,7 @@ interface ResolverInterface
      * @param string $filesystem
      * @param string $identifier
      *
-     * @return \Integrated\Common\Storage\FileResolver\FileResolverInterface
+     * @return FileResolverInterface
      */
     public function getResolverClass($filesystem, $identifier);
 }

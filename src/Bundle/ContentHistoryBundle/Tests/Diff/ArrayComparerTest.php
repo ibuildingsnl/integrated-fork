@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Tests\Diff;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Bundle\ContentHistoryBundle\Diff\ArrayComparer;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ArrayComparerTest extends \PHPUnit\Framework\TestCase
+class ArrayComparerTest extends TestCase
 {
     public function testAddField()
     {

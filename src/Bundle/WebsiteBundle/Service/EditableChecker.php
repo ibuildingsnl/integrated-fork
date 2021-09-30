@@ -58,7 +58,7 @@ class EditableChecker
      */
     public function checkEditable()
     {
-        if (null === $this->request) {
+        if (!$this->request instanceof Request) {
             return false;
         }
 
@@ -71,14 +71,8 @@ class EditableChecker
         }
 
         $route = $this->request->attributes->get('_route');
-
         //check if route begins with page or contentTypePage prefix
-        if (0 === strpos($route, ContentTypePageLoader::ROUTE_PREFIX) ||
-            0 === strpos($route, PageLoader::ROUTE_PREFIX)
-        ) {
-            return true;
-        }
-
-        return false;
+        return 0 === strpos($route, ContentTypePageLoader::ROUTE_PREFIX) ||
+            0 === strpos($route, PageLoader::ROUTE_PREFIX);
     }
 }

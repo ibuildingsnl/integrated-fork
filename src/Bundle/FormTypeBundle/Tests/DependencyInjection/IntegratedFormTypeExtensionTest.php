@@ -11,12 +11,15 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Tests\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Integrated\Bundle\FormTypeBundle\DependencyInjection\IntegratedFormTypeExtension;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class IntegratedFormTypeExtensionTest extends \PHPUnit\Framework\TestCase
+class IntegratedFormTypeExtensionTest extends TestCase
 {
     /**
      * @var IntegratedFormTypeExtension
@@ -40,10 +43,10 @@ class IntegratedFormTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $config = [];
 
         /* @var $parameterBag \Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $parameterBag = $this->createMock('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface');
+        $parameterBag = $this->createMock(ParameterBagInterface::class);
 
         /* @var $container \Symfony\Component\DependencyInjection\ContainerBuilder | \PHPUnit_Framework_MockObject_MockObject */
-        $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        $container = $this->createMock(ContainerBuilder::class);
 
         // Stub getParameterBag function
         $container->expects($this->once())

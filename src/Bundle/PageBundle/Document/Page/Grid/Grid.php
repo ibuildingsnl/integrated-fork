@@ -28,7 +28,7 @@ class Grid implements ItemsInterface
     /**
      * @var Item[]
      */
-    protected $items;
+    protected $items = [];
 
     /**
      * @param string $id
@@ -118,7 +118,7 @@ class Grid implements ItemsInterface
             'id' => $this->id,
         ];
 
-        if (\count($items)) {
+        if (\count($items) > 0) {
             $array['items'] = $items;
         }
 

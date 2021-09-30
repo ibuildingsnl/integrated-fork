@@ -19,7 +19,10 @@ use Symfony\Component\Form\FormEvents;
 
 class AuthenticatorErrorListener implements EventSubscriberInterface
 {
-    const INVALID_CODE_ERROR = '_integrated_user.authenticator.last_error';
+    /**
+     * @var string
+     */
+    public const INVALID_CODE_ERROR = '_integrated_user.authenticator.last_error';
 
     /**
      * @var Context

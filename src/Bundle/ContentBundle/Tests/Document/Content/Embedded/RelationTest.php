@@ -11,13 +11,16 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
+use PHPUnit\Framework\TestCase;
+use Doctrine\Common\Collections\Collection;
+use Integrated\Common\Content\ContentInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class RelationTest extends \PHPUnit\Framework\TestCase
+class RelationTest extends TestCase
 {
     /**
      * @var Relation
@@ -37,7 +40,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructor()
     {
-        $this->assertInstanceOf('\Doctrine\Common\Collections\Collection', $this->relation->getReferences());
+        $this->assertInstanceOf(Collection::class, $this->relation->getReferences());
     }
 
     /**
@@ -57,7 +60,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
         // Create references and add them
         $references = new ArrayCollection(
             [
-                $this->createMock('\Integrated\Common\Content\ContentInterface'),
+                $this->createMock(ContentInterface::class),
             ]
         );
 
@@ -73,7 +76,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testAddReferenceFunction()
     {
         /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
+        $content = $this->createMock(ContentInterface::class);
 
         // Asserts
         $this->assertEquals($this->relation, $this->relation->addReference($content));
@@ -86,7 +89,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testAddReferenceFunctionWithDuplicateReference()
     {
         /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
+        $content = $this->createMock(ContentInterface::class);
 
         // Add content two times
         $this->relation->addReference($content)->addReference($content);
@@ -101,7 +104,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testRemoveReferenceFunction()
     {
         /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
+        $content = $this->createMock(ContentInterface::class);
 
         // Add content
         $this->relation->addReference($content);
@@ -116,7 +119,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testRemoveReferenceFunctionWithInvalidContent()
     {
         /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
+        $content = $this->createMock(ContentInterface::class);
 
         // Asserts
         $this->assertFalse($this->relation->removeReference($content));

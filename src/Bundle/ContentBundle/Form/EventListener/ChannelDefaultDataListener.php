@@ -27,7 +27,7 @@ class ChannelDefaultDataListener implements EventSubscriberInterface
     /**
      * @var Channel[]
      */
-    private $channels;
+    private $channels = [];
 
     /**
      * @param Channel[] $channels

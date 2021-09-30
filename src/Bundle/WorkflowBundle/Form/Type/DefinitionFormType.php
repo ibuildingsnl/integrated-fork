@@ -95,7 +95,7 @@ class DefinitionFormType extends AbstractType
         };
 
         $resolver->setDefault('empty_data', $emptyData);
-        $resolver->setDefault('data_class', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+        $resolver->setDefault('data_class', Definition::class);
     }
 
     /**

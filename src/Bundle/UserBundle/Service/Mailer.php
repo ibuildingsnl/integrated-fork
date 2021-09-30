@@ -10,10 +10,13 @@
 
 namespace Integrated\Bundle\UserBundle\Service;
 
+use Swift_Mailer;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Error\Error;
+use Swift_Message;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Symfony\Bridge\Twig\TwigEngine;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class Mailer
 {
@@ -23,7 +26,7 @@ class Mailer
     private $userManager;
 
     /**
-     * @var \Swift_Mailer
+     * @var Swift_Mailer
      */
     private $mailer;
 
@@ -56,14 +59,14 @@ class Mailer
      * Password constructor.
      *
      * @param UserManager         $userManager
-     * @param \Swift_Mailer       $mailer
+     * @param Swift_Mailer $mailer
      * @param TwigEngine          $templating
      * @param TranslatorInterface $translator
      * @param KeyGenerator        $keyGenerator
      * @param                     $from
      * @param                     $name
      */
-    public function __construct(UserManager $userManager, \Swift_Mailer $mailer, TwigEngine $templating, TranslatorInterface $translator, KeyGenerator $keyGenerator, $from, $name)
+    public function __construct(UserManager $userManager, Swift_Mailer $mailer, TwigEngine $templating, TranslatorInterface $translator, KeyGenerator $keyGenerator, $from, $name)
     {
         $this->userManager = $userManager;
         $this->mailer = $mailer;
@@ -80,7 +83,7 @@ class Mailer
      *
      * @return bool
      *
-     * @throws \Twig\Error\Error
+     * @throws Error
      */
     public function sendPasswordResetMail(string $email, ScopeInterface $scope = null): bool
     {
@@ -89,19 +92,16 @@ class Mailer
         ];
         $template = 'IntegratedUserBundle::mail/password.reset.notfound.html.twig';
 
-        if ($user = $this->userManager->findByUsernameAndScope($email, $scope)) {
-            if ($user->isEnabled()) {
-                $timestamp = time();
-                $key = $this->keyGenerator->generateKey($timestamp, $user);
-                $template = 'IntegratedUserBundle::mail/password.reset.html.twig';
-
-                $data['user'] = $user;
-                $data['timestamp'] = $timestamp;
-                $data['key'] = $key;
-            }
+        if (($user = $this->userManager->findByUsernameAndScope($email, $scope)) && $user->isEnabled()) {
+            $timestamp = time();
+            $key = $this->keyGenerator->generateKey($timestamp, $user);
+            $template = 'IntegratedUserBundle::mail/password.reset.html.twig';
+            $data['user'] = $user;
+            $data['timestamp'] = $timestamp;
+            $data['key'] = $key;
         }
 
-        $message = (new \Swift_Message())
+        $message = (new Swift_Message())
             ->setSubject($data['subject'])
             ->setFrom($this->from, $this->name)
             ->setTo($email)

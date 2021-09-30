@@ -31,7 +31,7 @@ class RegisterAdapterPass implements CompilerPassInterface
 
         $definition = $container->getDefinition('integrated_channel.adapter.registry_builder');
 
-        foreach ($container->findTaggedServiceIds('integrated_channel.connector') as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_channel.connector')) as $service) {
             $definition->addMethodCall('addAdapter', [new Reference($service)]);
         }
     }

@@ -11,6 +11,9 @@
 
 namespace Integrated\Common\ContentType\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\IteratorInterface;
+use ArrayIterator;
 use Integrated\Common\ContentType\Iterator;
 
 /**
@@ -20,12 +23,12 @@ use Integrated\Common\ContentType\Iterator;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class IteratorTest extends \PHPUnit\Framework\TestCase
+class IteratorTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\IteratorInterface', $this->getInstance());
-        self::assertInstanceOf('ArrayIterator', $this->getInstance());
+        self::assertInstanceOf(IteratorInterface::class, $this->getInstance());
+        self::assertInstanceOf(ArrayIterator::class, $this->getInstance());
     }
 
     /**

@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class AuthorTest extends \PHPUnit\Framework\TestCase
+class AuthorTest extends TestCase
 {
     /**
      * @var Author
@@ -46,7 +48,7 @@ class AuthorTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetPersonFunction()
     {
         /* @var $person \Integrated\Bundle\ContentBundle\Document\Content\Relation\Person | \\PHPUnit_Framework_MockObject_MockObject */
-        $person = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Relation\Person');
+        $person = $this->createMock(Person::class);
         $this->assertSame($person, $this->author->setPerson($person)->getPerson());
     }
 }

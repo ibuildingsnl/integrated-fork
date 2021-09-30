@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\PageBundle\Form\EventListener;
 
+use Exception;
+use Countable;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\ContentTypeControllerManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -60,12 +62,12 @@ class ContentTypePageListener implements EventSubscriberInterface
         $controller = $this->controllerManager->getController($className);
 
         if (!\is_array($controller)) {
-            throw new \Exception(sprintf('Controller service for class "%s" is not defined', $className));
+            throw new Exception(sprintf('Controller service for class "%s" is not defined', $className));
         }
 
         $contentTypePage->setControllerService($controller['service']);
 
-        if (\count($controller['controller_actions']) > 1) {
+        if ((is_array($controller['controller_actions']) || $controller['controller_actions'] instanceof Countable ? \count($controller['controller_actions']) : 0) > 1) {
             $event->getForm()->add('controller_action', 'choice', [
                 'choices' => array_combine($controller['controller_actions'], $controller['controller_actions']),
             ]);

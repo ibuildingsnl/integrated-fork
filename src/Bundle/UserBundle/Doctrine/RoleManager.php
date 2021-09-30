@@ -42,7 +42,7 @@ class RoleManager implements RoleManagerInterface
     /**
      * @var array
      */
-    private $roles;
+    private $roles = [];
 
     /**
      * @var bool
@@ -101,7 +101,7 @@ class RoleManager implements RoleManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function persist(roleInterface $role, $flush = true)
+    public function persist(RoleInterface $role, $flush = true)
     {
         $this->om->persist($role);
 
@@ -113,7 +113,7 @@ class RoleManager implements RoleManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function remove(roleInterface $role, $flush = true)
+    public function remove(RoleInterface $role, $flush = true)
     {
         $this->om->remove($role);
 
@@ -195,8 +195,8 @@ class RoleManager implements RoleManagerInterface
     {
         if (!$this->rolesEventFired) {
             $roles = $this->eventDispatcher->dispatch(
-                ConfigureRolesEvent::CONFIGURE,
-                new ConfigureRolesEvent($this->roles)
+                new ConfigureRolesEvent($this->roles),
+                ConfigureRolesEvent::CONFIGURE
             )->getRoles();
 
             $this->roles = [];

@@ -29,7 +29,7 @@ class RelationRemoveHandler implements HandlerInterface
     /**
      * @var ContentInterface[]
      */
-    private $references;
+    private $references = [];
 
     /**
      * Constructor.
@@ -58,7 +58,7 @@ class RelationRemoveHandler implements HandlerInterface
             $embedded->removeReference($reference);
         }
 
-        if (!\count($embedded->getReferences())) {
+        if (\count($embedded->getReferences()) === 0) {
             $content->removeRelation($embedded);
         }
     }

@@ -29,7 +29,7 @@ class ShorttagFilterExtension implements TypeExtensionInterface
         if ($container->has('content')) {
             $content = $container->get('content');
             if (isset($content[0])) {
-                $content[0] = preg_replace('/\[object.*?\]/', '', $content[0]);
+                $content[0] = preg_replace('#\[object.*?\]#', '', $content[0]);
                 $container->set('content', $content[0]);
             }
         }

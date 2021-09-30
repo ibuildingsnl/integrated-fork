@@ -100,7 +100,7 @@ class ParentAwareConfigIterator implements Iterator
      */
     public function valid()
     {
-        return $this->current ? true : false;
+        return (bool) $this->current;
     }
 
     /**
@@ -131,6 +131,7 @@ class ParentAwareConfigIterator implements Iterator
             if ($this->current = next($this->iterators)) {
                 $this->current->rewind();
             }
+
         } while ($this->current && !$this->current->valid());
     }
 }

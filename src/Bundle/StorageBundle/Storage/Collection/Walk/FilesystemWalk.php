@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Collection\Walk;
 
+use Closure;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
@@ -24,20 +25,22 @@ class FilesystemWalk
 {
     /**
      * @const string
+     * @var string
      */
-    const ADD = 'add';
+    public const ADD = 'add';
 
     /**
      * @const string
+     * @var string
      */
-    const REMOVE = 'remove';
+    public const REMOVE = 'remove';
 
     /**
      * @param ManagerInterface         $storage
      * @param MetadataFactoryInterface $metadata
      * @param string                   $filesystem
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function remove(ManagerInterface $storage, MetadataFactoryInterface $metadata, $filesystem)
     {
@@ -72,7 +75,7 @@ class FilesystemWalk
      * @param MetadataFactoryInterface $metadata
      * @param string                   $filesystem
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function add(ManagerInterface $storage, MetadataFactoryInterface $metadata, $filesystem)
     {

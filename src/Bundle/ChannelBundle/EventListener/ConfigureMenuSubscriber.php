@@ -22,10 +22,25 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
-    const MENU = 'integrated_menu';
-    const MENU_ADMIN = 'Manage';
-    const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
+    /**
+     * @var string
+     */
+    public const MENU = 'integrated_menu';
+
+    /**
+     * @var string
+     */
+    public const MENU_ADMIN = 'Manage';
+
+    /**
+     * @var string
+     */
+    public const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
+
+    /**
+     * @var string
+     */
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
      * @var AuthorizationCheckerInterface
@@ -60,7 +75,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         if ($this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER) ||
             $this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
-            if (!$menuAdmin = $menu->getChild(self::MENU_ADMIN)) {
+            if (($menuAdmin = $menu->getChild(self::MENU_ADMIN)) === null) {
                 $menuAdmin = $menu->addChild(self::MENU_ADMIN);
             }
 

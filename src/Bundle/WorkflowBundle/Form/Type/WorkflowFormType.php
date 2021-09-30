@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\Select2Type;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
@@ -106,7 +107,7 @@ class WorkflowFormType extends AbstractType
     {
         $resolver->setRequired('workflow');
         $resolver->setRequired('contentType');
-        $resolver->setAllowedTypes('workflow', ['string', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition']);
+        $resolver->setAllowedTypes('workflow', ['string', Definition::class]);
         $resolver->setAllowedTypes('contentType', 'string');
     }
 

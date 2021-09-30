@@ -52,7 +52,7 @@ class RelationFormActionMatcher implements ActionMatcherInterface
         $options = $action->getOptions();
 
         if (isset($options['relation'])) {
-            if ($options['relation'] instanceof Relation && $options['relation']->getId() == $this->relation) {
+            if ($options['relation'] instanceof Relation && $options['relation']->getId() === $this->relation) {
                 return true;
             }
 

@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
+use DateTimeInterface;
+use DateTimeImmutable;
 use DateTime;
 
 /**
@@ -46,7 +48,7 @@ class Config implements ConfigInterface
      * @param OptionsInterface $options
      * @param DateTime|null    $publicationStartDate
      */
-    public function __construct($name, $adaptor, OptionsInterface $options, ?DateTime $publicationStartDate)
+    public function __construct($name, $adaptor, OptionsInterface $options, ?DateTimeInterface $publicationStartDate)
     {
         $this->name = $name;
         $this->adaptor = $adaptor;
@@ -80,8 +82,9 @@ class Config implements ConfigInterface
 
     /**
      * {@inheritdoc}
+     * @return DateTime|DateTimeImmutable|null
      */
-    public function getPublicationStartDate(): ?DateTime
+    public function getPublicationStartDate(): ?DateTimeInterface
     {
         return $this->publicationStartDate;
     }

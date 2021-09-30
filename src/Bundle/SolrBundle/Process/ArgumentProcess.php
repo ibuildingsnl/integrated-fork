@@ -21,8 +21,9 @@ class ArgumentProcess
 {
     /**
      * @const string
+     * @var string
      */
-    const FORMAT = '/^(\d):(\d)$/';
+    public const FORMAT = '/^(\d):(\d)$/';
 
     /**
      * @var string

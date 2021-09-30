@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\CommentBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\CommentBundle\Document\Comment;
 use Integrated\Bundle\CommentBundle\Document\Embedded\Reply;
@@ -72,7 +74,7 @@ class DefaultController
      * @param string  $field
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response|JsonResponse
+     * @return Response|JsonResponse
      */
     public function newAction(Request $request, Content $content, $field)
     {
@@ -107,12 +109,12 @@ class DefaultController
      * @param Request $request
      * @param Comment $comment
      *
-     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse|Response
      */
     public function getAction(Request $request, Comment $comment)
     {
         $reply = new Reply();
-        $reply->setDate(new \DateTime());
+        $reply->setDate(new DateTime());
 
         $user = $this->getUser();
         if ($user instanceof User && $relation = $user->getRelation()) {

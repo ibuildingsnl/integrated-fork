@@ -53,6 +53,7 @@ class ContentChoicesTransformer implements DataTransformerInterface
                 if (!$content instanceof ContentInterface) {
                     throw new TransformationFailedException(sprintf('Expected integrated content, "%s" given', \gettype($content)));
                 }
+
                 $values[] = $content->getId();
             }
 
@@ -74,7 +75,8 @@ class ContentChoicesTransformer implements DataTransformerInterface
         if (null === $value || $value == '') {
             return [];
         } elseif (\is_array($value)) {
-            $documents = $ids = [];
+            $documents = [];
+            $ids = [];
 
             foreach ($value as $id) {
                 $ids[] = $id;

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Security;
 
+use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
@@ -57,7 +58,7 @@ class WorkflowVoter implements VoterInterface
     /**
      * @var array
      */
-    private $permissions;
+    private $permissions = [];
 
     /**
      * @param ManagerRegistry          $manager
@@ -108,7 +109,7 @@ class WorkflowVoter implements VoterInterface
             $class = \get_class($class);
         }
 
-        return is_subclass_of($class, 'Integrated\\Bundle\\UserBundle\\Model\\GroupableInterface');
+        return is_subclass_of($class, GroupableInterface::class);
     }
 
     /**
@@ -142,7 +143,7 @@ class WorkflowVoter implements VoterInterface
 
         $contentType = $this->getContentType($object->getContentType());
 
-        if (!$contentType || (!$contentType->hasOption('workflow') && !\count($contentType->getPermissions()))) {
+        if (!$contentType || (!$contentType->hasOption('workflow') && $contentType->getPermissions() === [])) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
@@ -169,13 +170,13 @@ class WorkflowVoter implements VoterInterface
                 return VoterInterface::ACCESS_ABSTAIN;
             }
 
-            if (\count($state->getPermissions())) {
+            if (\count($state->getPermissions()) > 0) {
                 // Workflow permissions overrules content type permissions
                 $permissionGroups = $state->getPermissions();
             }
         }
 
-        if (!\count($permissionGroups)) {
+        if (\count($permissionGroups) === 0) {
             // No permissions available
             return VoterInterface::ACCESS_GRANTED;
         }
@@ -211,28 +212,20 @@ class WorkflowVoter implements VoterInterface
             $result = VoterInterface::ACCESS_GRANTED;
 
             if (!$isAssigned) {
-                if ($this->permissions['view'] == $attribute) {
-                    if (!$permissions['read'] && !$this->isAuthor($token->getUser(), $object)) {
-                        return VoterInterface::ACCESS_DENIED;
-                    }
+                if ($this->permissions['view'] == $attribute && (!$permissions['read'] && !$this->isAuthor($token->getUser(), $object))) {
+                    return VoterInterface::ACCESS_DENIED;
                 }
 
-                if ($this->permissions['create'] == $attribute) {
-                    if (!$permissions['write']) {
-                        return VoterInterface::ACCESS_DENIED;
-                    }
+                if ($this->permissions['create'] == $attribute && !$permissions['write']) {
+                    return VoterInterface::ACCESS_DENIED;
                 }
 
-                if ($this->permissions['edit'] == $attribute) {
-                    if (!$permissions['read'] || !$permissions['write']) {
-                        return VoterInterface::ACCESS_DENIED;
-                    }
+                if ($this->permissions['edit'] == $attribute && (!$permissions['read'] || !$permissions['write'])) {
+                    return VoterInterface::ACCESS_DENIED;
                 }
 
-                if ($this->permissions['delete'] == $attribute) {
-                    if (!$permissions['read'] || !$permissions['write']) {
-                        return VoterInterface::ACCESS_DENIED;
-                    }
+                if ($this->permissions['delete'] == $attribute && (!$permissions['read'] || !$permissions['write'])) {
+                    return VoterInterface::ACCESS_DENIED;
                 }
             }
         }
@@ -271,7 +264,7 @@ class WorkflowVoter implements VoterInterface
      */
     protected function getWorkflow($id)
     {
-        $repository = $this->manager->getRepository('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+        $repository = $this->manager->getRepository(Definition::class);
 
         return $repository->find($id);
     }
@@ -284,9 +277,9 @@ class WorkflowVoter implements VoterInterface
      */
     protected function getState(ContentInterface $content, Definition $workflow)
     {
-        $repository = $this->manager->getRepository('Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State');
+        $repository = $this->manager->getRepository(State::class);
 
-        if ($result = $repository->findOneBy(['content' => $content])) {
+        if (($result = $repository->findOneBy(['content' => $content])) !== null) {
             $result = $result->getState();
         }
 
@@ -352,7 +345,7 @@ class WorkflowVoter implements VoterInterface
                 /** @var Person $person */
                 $person = $author->getPerson();
 
-                if ($person->getId() == $userRelation->getId()) {
+                if ($person->getId() === $userRelation->getId()) {
                     return true;
                 }
             }

@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Bulk\Tests\Form;
 
+use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use Integrated\Common\Bulk\Form\ChainProvider;
 use Integrated\Common\Bulk\Form\ChainProviderBuilder;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
@@ -18,7 +20,7 @@ use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ChainProviderBuilderTest extends \PHPUnit\Framework\TestCase
+class ChainProviderBuilderTest extends TestCase
 {
     public function testAddProvider()
     {
@@ -33,7 +35,7 @@ class ChainProviderBuilderTest extends \PHPUnit\Framework\TestCase
 
         $provider = $builder->getProvider();
 
-        $reflection = new \ReflectionProperty(ChainProvider::class, 'providers');
+        $reflection = new ReflectionProperty(ChainProvider::class, 'providers');
         $reflection->setAccessible(true);
 
         self::assertEquals([$provider1, $provider2], $reflection->getValue($provider));

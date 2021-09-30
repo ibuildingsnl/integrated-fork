@@ -77,19 +77,15 @@ class IntegratedMenuProvider implements MenuProviderInterface
             $channel = $channel->getId();
         }
 
-        if (!isset($this->menus[$name][$channel])) {
-            if ($menu = $this->repository->findOneBy(['name' => $name, 'channel.$id' => $channel])) {
-                if ($menu instanceof ItemInterface) {
-                    $this->resolveParent($menu);
-                }
-
-                if (isset($options['editMode']) && $options['editMode'] === false) {
-                    $this->repository->getDocumentManager()->detach($menu);
-                    $this->parseSearchSelections($menu);
-                }
-
-                $this->menus[$name][$channel] = $menu;
+        if (!isset($this->menus[$name][$channel]) && ($menu = $this->repository->findOneBy(['name' => $name, 'channel.$id' => $channel]))) {
+            if ($menu instanceof ItemInterface) {
+                $this->resolveParent($menu);
             }
+            if (isset($options['editMode']) && $options['editMode'] === false) {
+                $this->repository->getDocumentManager()->detach($menu);
+                $this->parseSearchSelections($menu);
+            }
+            $this->menus[$name][$channel] = $menu;
         }
 
         if (isset($this->menus[$name][$channel])) {
@@ -146,6 +142,7 @@ class IntegratedMenuProvider implements MenuProviderInterface
                 $children[] = $factory->createItem($row['title'], ['uri' => $this->urlExtractor->getUrl($row, $this->channelContext->getChannel()->getId())]);
             }
         }
+
         $menu->setChildren($children);
 
         foreach ($menu->getChildren() as $child) {

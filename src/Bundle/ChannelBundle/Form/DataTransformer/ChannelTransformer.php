@@ -28,7 +28,7 @@ class ChannelTransformer implements DataTransformerInterface
     /**
      * @var bool
      */
-    private $multiple;
+    private $multiple = false;
 
     /**
      * @param ChannelRepository $repository

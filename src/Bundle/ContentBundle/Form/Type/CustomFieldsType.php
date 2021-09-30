@@ -40,7 +40,7 @@ class CustomFieldsType extends AbstractType
             $builder->add(
                 $field->getName(),
                 $field->getType(),
-                $options + ['constraints' => !empty($options['required']) ? [new NotBlank()] : []]
+                $options + ['constraints' => empty($options['required']) ? [] : [new NotBlank()]]
             );
         }
     }

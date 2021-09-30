@@ -61,9 +61,9 @@ class MemoryResolver implements ResolverInterface
     {
         try {
             $this->getType($type);
-        } catch (UnexpectedTypeException $e) {
-            throw $e;
-        } catch (ExceptionInterface $e) {
+        } catch (UnexpectedTypeException $unexpectedTypeException) {
+            throw $unexpectedTypeException;
+        } catch (ExceptionInterface $exceptionInterface) {
             return false;
         }
 

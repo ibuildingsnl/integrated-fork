@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\Locator;
 
+use Exception;
+use InvalidArgumentException;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Storage\Cache\CacheInterface;
 use Symfony\Component\HttpKernel\Config\FileLocator;
@@ -57,8 +59,8 @@ class StorageLocator extends FileLocator
         if ($file instanceof StorageInterface) {
             try {
                 return $this->cache->path($file)->getPathname();
-            } catch (\Exception $e) {
-                throw new \InvalidArgumentException('File not found.');
+            } catch (Exception $exception) {
+                throw new InvalidArgumentException('File not found.', $exception->getCode(), $exception);
             }
         }
 

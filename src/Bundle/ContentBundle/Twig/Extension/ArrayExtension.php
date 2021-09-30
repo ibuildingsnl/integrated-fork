@@ -11,10 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFilter;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ArrayExtension extends \Twig_Extension
+class ArrayExtension extends Twig_Extension
 {
     /**
      * {@inheritdoc}
@@ -22,7 +24,9 @@ class ArrayExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('unset_value', [$this, 'unsetValue']),
+            new Twig_SimpleFilter('unset_value', function (array $array, string $value) : array {
+                return $this->unsetValue($array, $value);
+            }),
         ];
     }
 

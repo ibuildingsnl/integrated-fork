@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
@@ -38,18 +39,20 @@ class SearchSelectionsExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('getSearchSelections', [$this, 'getSearchSelections']),
+            new TwigFunction('getSearchSelections', function () {
+                return $this->getSearchSelections();
+            }),
         ];
     }
 
     /**
      * @return array|mixed
      *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     public function getSearchSelections()
     {
-        if (!$user = $this->getUser()) {
+        if (($user = $this->getUser()) === null) {
             return [];
         }
 
@@ -61,7 +64,7 @@ class SearchSelectionsExtension extends AbstractExtension
      */
     private function getUser()
     {
-        if (!$token = $this->tokenStorage->getToken()) {
+        if (($token = $this->tokenStorage->getToken()) === null) {
             return null;
         }
 

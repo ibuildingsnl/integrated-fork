@@ -10,6 +10,9 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Tests\Twig\Extension;
 
+use PHPUnit\Framework\TestCase;
+use Twig\Extension\AbstractExtension;
+use Knp\Menu\ItemInterface;
 use Integrated\Bundle\MenuBundle\Provider\BreadcrumbMenuProvider;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver;
 use Integrated\Bundle\WebsiteBundle\Twig\Extension\BreadcrumbExtension;
@@ -19,9 +22,12 @@ use Twig\TwigFunction;
 /**
  * Test for BreadcrumbExtension.
  */
-class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
+class BreadcrumbExtensionTest extends TestCase
 {
-    const TEMPLATE = 'default';
+    /**
+     * @var string
+     */
+    public const TEMPLATE = 'default';
 
     /**
      * @var Helper|\PHPUnit_Framework_MockObject_MockObject
@@ -45,23 +51,23 @@ class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->breadcrumbMenuProvider = $this->createMock('Integrated\Bundle\MenuBundle\Provider\BreadcrumbMenuProvider');
-        $this->menuTwigHelper = $this->createMock('Knp\Menu\Twig\Helper');
-        $this->breadcrumbResolver = $this->createMock('Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver');
+        $this->breadcrumbMenuProvider = $this->createMock(BreadcrumbMenuProvider::class);
+        $this->menuTwigHelper = $this->createMock(Helper::class);
+        $this->breadcrumbResolver = $this->createMock(BreadcrumbResolver::class);
 
         $this->breadcrumbExtension = new BreadcrumbExtension($this->breadcrumbMenuProvider, $this->menuTwigHelper, $this->breadcrumbResolver, self::TEMPLATE);
     }
 
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Twig\Extension\AbstractExtension', $this->breadcrumbExtension);
+        $this->assertInstanceOf(AbstractExtension::class, $this->breadcrumbExtension);
     }
 
     public function testRenderBreadcrumb()
     {
-        $this->createMock('Integrated\Bundle\MenuBundle\Provider\BreadcrumbMenuProvider');
+        $this->createMock(BreadcrumbMenuProvider::class);
 
-        $menu = $this->createMock('Knp\Menu\ItemInterface');
+        $menu = $this->createMock(ItemInterface::class);
 
         $this->breadcrumbMenuProvider
             ->expects($this->once())

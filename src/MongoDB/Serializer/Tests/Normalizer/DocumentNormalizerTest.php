@@ -11,13 +11,19 @@
 
 namespace Integrated\MongoDB\Serializer\Tests\Normalizer;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use ReflectionClass;
+use stdClass;
+use Exception;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\MongoDB\Serializer\Normalizer\DocumentNormalizer;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
+class DocumentNormalizerTest extends TestCase
 {
     /**
      * @var DocumentManager|\PHPUnit_Framework_MockObject_MockObject
@@ -31,19 +37,19 @@ class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->manger = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')->disableOriginalConstructor()->getMock();
+        $this->manger = $this->getMockBuilder(DocumentManager::class)->disableOriginalConstructor()->getMock();
         $this->normalizer = new DocumentNormalizer($this->manger);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Symfony\Component\Serializer\Normalizer\NormalizerInterface', $this->normalizer);
-        $this->assertInstanceOf('Symfony\Component\Serializer\Normalizer\DenormalizerInterface', $this->normalizer);
+        $this->assertInstanceOf(NormalizerInterface::class, $this->normalizer);
+        $this->assertInstanceOf(DenormalizerInterface::class, $this->normalizer);
     }
 
     public function testGetDocumentManager()
     {
-        $class = new \ReflectionClass($this->normalizer);
+        $class = new ReflectionClass($this->normalizer);
 
         $method = $class->getMethod('getDocumentManager');
         $method->setAccessible(true);
@@ -53,7 +59,7 @@ class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
 
     public function testDenormalize()
     {
-        $object = new \stdClass();
+        $object = new stdClass();
 
         $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())->method('find')->with($this->identicalTo(['id' => 'data']))->willReturn($object);
@@ -76,7 +82,7 @@ class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
     public function testDenormalizeError()
     {
         $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
-        $repository->expects($this->once())->method('find')->with($this->identicalTo(['id' => 'data']))->will($this->throwException(new \Exception()));
+        $repository->expects($this->once())->method('find')->with($this->identicalTo(['id' => 'data']))->will($this->throwException(new Exception()));
 
         $this->manger->expects($this->once())->method('getRepository')->with($this->identicalTo('class'))->willReturn($repository);
 

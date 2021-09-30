@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
@@ -67,7 +68,7 @@ class ArticleTest extends ContentTest
     public function testAddAuthorFunction()
     {
         /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
-        $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
+        $author = $this->createMock(Author::class);
 
         // Asserts
         $this->assertSame($this->article, $this->article->addAuthor($author));
@@ -80,7 +81,7 @@ class ArticleTest extends ContentTest
     public function testAddAuthorFunctionWithSameAuthor()
     {
         /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
-        $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
+        $author = $this->createMock(Author::class);
 
         // Add author two times
         $this->article->addAuthor($author)->addAuthor($author);
@@ -95,7 +96,7 @@ class ArticleTest extends ContentTest
     public function testRemoveAuthorFunction()
     {
         /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
-        $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
+        $author = $this->createMock(Author::class);
 
         // Add author
         $this->article->addAuthor($author);
@@ -110,7 +111,7 @@ class ArticleTest extends ContentTest
     public function testRemoveAuthorFunctionWithUnknownAuthor()
     {
         /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
-        $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
+        $author = $this->createMock(Author::class);
 
         // Assert
         $this->assertFalse($this->article->removeAuthor($author));

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Filesystem;
 
+use LogicException;
 use Gaufrette\File;
 use Gaufrette\Filesystem;
 use Integrated\Common\Storage\Reader\ReaderInterface;
@@ -37,7 +38,7 @@ class WriteFilesystem
      * @param string          $identifier
      * @param ReaderInterface $reader
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return mixed
      */
@@ -59,7 +60,7 @@ class WriteFilesystem
         }
 
         // Well that escalated quickly
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'A instanceof Gaufrette\File was excepted (given: %s).',
                 \get_class($storage)

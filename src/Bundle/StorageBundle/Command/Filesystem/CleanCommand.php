@@ -24,6 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CleanCommand extends Command
 {
+    protected static $defaultName = 'storage:filesystem:clean';
     /**
      * @var DatabaseInterface
      */
@@ -53,8 +54,7 @@ class CleanCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('storage:filesystem:clean')
-            ->setDescription('Remove unused files from the storage')
+        $this->setDescription('Remove unused files from the storage')
             ->setDefinition([
                 new InputArgument(
                     'filesystem',
@@ -73,7 +73,7 @@ class CleanCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
         $directory = $input->getArgument('directory');
@@ -82,5 +82,6 @@ class CleanCommand extends Command
         $cleanFileSystem->clean($filesystem, $directory);
 
         $output->writeln(sprintf('Cleanable files for %s have been moved to %s', $filesystem, $directory));
+        return 0;
     }
 }

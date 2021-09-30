@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistry;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistryBuilder;
@@ -18,7 +19,7 @@ use Integrated\Common\Normalizer\Processor\ProcessorRegistryBuilder;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ProcessorRegistryBuilderTest extends \PHPUnit\Framework\TestCase
+class ProcessorRegistryBuilderTest extends TestCase
 {
     public function testAddProcessor()
     {

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Entity\Definition;
 
+use DateTime;
+use DateTimeInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 
 /**
@@ -29,7 +31,7 @@ class Log
     protected $workflow;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $time;
 
@@ -69,7 +71,7 @@ class Log
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getTime()
     {
@@ -77,11 +79,11 @@ class Log
     }
 
     /**
-     * @param \DateTime $time
+     * @param DateTime $time
      *
      * @return $this
      */
-    public function setTime($time)
+    public function setTime(DateTimeInterface $time)
     {
         $this->time = $time;
 

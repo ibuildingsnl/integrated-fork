@@ -27,7 +27,7 @@ class ParentRelationExtension implements TypeExtensionInterface
             return;
         }
 
-        if ($parent = $data->getReferenceByRelationType('parent')) {
+        if (($parent = $data->getReferenceByRelationType('parent')) !== null) {
             $container->add('parent_id_string', $parent->getId());
         }
     }

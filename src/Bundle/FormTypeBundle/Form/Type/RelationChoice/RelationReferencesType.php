@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
+use Exception;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use DateTime;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\FormTypeBundle\Form\DataTransformer\CollectionToDocumentTransformer;
@@ -56,7 +60,7 @@ class RelationReferencesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation',
+            'data_class' => Relation::class,
             'options' => [],
         ]);
 
@@ -73,7 +77,7 @@ class RelationReferencesType extends AbstractType
             $resolver->setAllowedTypes('content_types', ['array']);
 
             if (!isset($value['content_types'])) {
-                throw new \Exception('The option "content_types" is a required option for "integrated_relation_choice"');
+                throw new Exception('The option "content_types" is a required option for "integrated_relation_choice"');
             }
 
             $additionalDefaults = [];
@@ -87,14 +91,14 @@ class RelationReferencesType extends AbstractType
                 }
             } else {
                 $additionalDefaults = [
-                    'class' => 'Integrated\Bundle\ContentBundle\Document\Content\Content',
+                    'class' => Content::class,
                     'attr' => ['class' => 'relation_select2'],
                     'query_builder' => function (DocumentRepository $dr) use ($value) {
                         return $dr->createQueryBuilder()
                             ->field('contentType')->in($value['content_types'])
                             ->field('disabled')->equals(false)
-                            ->field('publishTime.startDate')->lte(new \DateTime())
-                            ->field('publishTime.endDate')->gte(new \DateTime())
+                            ->field('publishTime.startDate')->lte(new DateTime())
+                            ->field('publishTime.endDate')->gte(new DateTime())
                             ->sort('title');
                     },
                 ];

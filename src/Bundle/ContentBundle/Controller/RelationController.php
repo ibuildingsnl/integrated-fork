@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,12 +23,12 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class RelationController extends Controller
+class RelationController extends AbstractController
 {
     /**
      * @var string
      */
-    protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+    protected $relationClass = Relation::class;
 
     /**
      * Lists all the Relation documents.
@@ -259,7 +259,7 @@ class RelationController extends Controller
                 'label' => 'Delete',
                 'attr' => [
                     'class' => 'btn-danger',
-                    'onclick' => 'return confirm(\'Are you sure you want to delete this relation?\');',
+                    'onclick' => "return confirm('Are you sure you want to delete this relation?');",
                 ],
             ])
             ->getForm()

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Exception;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -19,7 +20,6 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,8 +30,9 @@ use Symfony\Component\Lock\Lock;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class IndexCommand extends ContainerAwareCommand
+class IndexCommand extends Command
 {
+    protected static $defaultName = 'workflow:index';
     /**
      * @var StateManager
      */
@@ -54,15 +55,12 @@ class IndexCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('workflow:index')
-
-            ->addArgument('id', InputArgument::IS_ARRAY, 'One or more workflow ids that need to be indexed')
+        $this->addArgument('id', InputArgument::IS_ARRAY, 'One or more workflow ids that need to be indexed')
 
             ->addOption('full', 'f', InputOption::VALUE_NONE, 'Do a full index of all the workflow, this will override any given workflow ids')
             ->addOption('ignore', 'i', InputOption::VALUE_NONE, 'Ignore workflow ids that do not exist')
 
-            ->setDescription('Queue the solr indexing of content items of one or more workflow\'s')
+            ->setDescription("Queue the solr indexing of content items of one or more workflow's")
             ->setHelp('
 The <info>%command.name%</info> command starts a index of all the content from the given workflow.
 
@@ -73,7 +71,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$input->getArgument('id') && !$input->getOption('full')) {
             throw new InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
@@ -107,7 +105,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
                         }
                     }
 
-                    if ($invalid) {
+                    if ($invalid !== []) {
                         throw new InvalidArgumentException(sprintf(
                             'The workflow ids "%s" do not exists',
                             implode(', ', $invalid)
@@ -126,29 +124,30 @@ The <info>%command.name%</info> command starts a index of all the content from t
                 $types[] = $row->getType();
             }
 
-            if (!$types) {
-                return 0; // no content type connected to the selected workflow ids.
+            if ($types === []) {
+                return 0; 
             }
 
             $command = null;
 
             try {
                 $command = $this->getApplication()->find('solr:indexer:queue');
-            } catch (Exception $e) {
-                throw new RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
+            } catch (Exception $exception) {
+                throw new RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'), $exception->getCode(), $exception);
             }
 
             try {
                 return $command->run(new ArrayInput(['--ignore' => true, 'id' => $types]), $output);
-            } catch (Exception $e) {
+            } catch (Exception $exception) {
                 throw new RuntimeException(sprintf(
                     'An error occurred when executing the command "%s"',
                     'solr:indexer:queue'
-                ), 0, $e);
+                ), 0, $exception);
             }
         } finally {
             $lock->release();
         }
+        return 0;
     }
 
     /**

@@ -45,9 +45,7 @@ class BulkActionChannelType extends AbstractType
             ->setAllowedTypes('channel_handler', 'string')
             ->setDefault('data_class', ChannelAction::class)
             ->setDefault('empty_data', function (Options $options) {
-                $action = new ChannelAction($options['channel_handler']);
-
-                return $action;
+                return new ChannelAction($options['channel_handler']);
             });
     }
 

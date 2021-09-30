@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Bundle\ContentBundle\Form\DataTransformer\Relations as RelationsTransformer;
+use Integrated\Bundle\ContentBundle\Form\DataTransformer\Relations;
 use Integrated\Bundle\ContentBundle\Validator\Constraints\RelationNotNull;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Symfony\Component\Form\AbstractType;
@@ -29,7 +29,7 @@ class RelationsType extends AbstractType
     /**
      * @var string
      */
-    const REPOSITORY = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+    public const REPOSITORY = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
     /**
      * @var ManagerRegistry
@@ -82,7 +82,7 @@ class RelationsType extends AbstractType
             ]);
         }
 
-        $builder->addModelTransformer(new RelationsTransformer($relations, $this->manager->getManager()));
+        $builder->addModelTransformer(new Relations($relations, $this->manager->getManager()));
     }
 
     /**
@@ -92,7 +92,7 @@ class RelationsType extends AbstractType
     {
         $resolver->setDefaults(['data_class' => null]);
         $resolver->setRequired(['content_type']);
-        $resolver->setAllowedTypes('content_type', 'Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $resolver->setAllowedTypes('content_type', ContentTypeInterface::class);
     }
 
     /**

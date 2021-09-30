@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType;
 
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -32,11 +34,11 @@ class FieldsTransformer implements DataTransformerInterface
             'custom' => [],
         ];
 
-        if (\is_array($fields) || $fields instanceof \Traversable) {
+        if (is_iterable($fields)) {
             foreach ($fields as $field) {
-                if ($field instanceof Embedded\CustomField) {
+                if ($field instanceof CustomField) {
                     $return['custom'][] = $field;
-                } elseif ($field instanceof Embedded\Field) {
+                } elseif ($field instanceof Field) {
                     $return['default'][$field->getName()] = $field;
                 }
             }

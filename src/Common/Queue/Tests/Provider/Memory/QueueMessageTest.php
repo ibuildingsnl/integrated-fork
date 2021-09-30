@@ -11,20 +11,22 @@
 
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Queue\Provider\Memory\QueueMessage;
 use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueMessageTest extends \PHPUnit\Framework\TestCase
+class QueueMessageTest extends TestCase
 {
     public function testInterface()
     {
         $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () {
         });
 
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
+        $this->assertInstanceOf(QueueMessageInterface::class, $message);
     }
 
     public function testGetPayload()
@@ -81,7 +83,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testRelease()
     {
-        $mock = $this->getMockBuilder('stdClass')->setMethods(['callback'])->getMock();
+        $mock = $this->getMockBuilder(\stdClass::class)->setMethods(['callback'])->getMock();
         $mock->expects($this->once())
             ->method('callback');
 
@@ -95,7 +97,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testDelete()
     {
-        $mock = $this->getMockBuilder('stdClass')->setMethods(['callback'])->getMock();
+        $mock = $this->getMockBuilder(\stdClass::class)->setMethods(['callback'])->getMock();
         $mock->expects($this->never())
             ->method('callback');
 

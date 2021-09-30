@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
+use Solarium\Component\Result\FacetSet;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Block\FacetBlock;
@@ -88,7 +89,7 @@ class FacetBlockHandler extends BlockHandler
 
         $facetSet = $result->getFacetSet();
 
-        if (null === $facetSet) {
+        if (!$facetSet instanceof FacetSet) {
             return;
         }
 
@@ -100,7 +101,7 @@ class FacetBlockHandler extends BlockHandler
             ];
         }
 
-        if (!\count($facets)) {
+        if (\count($facets) === 0) {
             return;
         }
 

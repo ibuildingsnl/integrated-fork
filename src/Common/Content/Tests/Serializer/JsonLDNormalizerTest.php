@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Tests\Serializer;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Serializer\JsonLDNormalizer;
 use Integrated\Common\Normalizer\NormalizerInterface;
@@ -20,7 +21,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JsonLDNormalizerTest extends \PHPUnit\Framework\TestCase
+class JsonLDNormalizerTest extends TestCase
 {
     /**
      * @var NormalizerInterface|\PHPUnit_Framework_MockObject_MockObject

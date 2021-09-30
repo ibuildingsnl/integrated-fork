@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\ContentType\Event;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>

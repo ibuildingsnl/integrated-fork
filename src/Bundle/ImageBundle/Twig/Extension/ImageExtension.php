@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\ImageBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
+use Gregwar\ImageBundle\ImageHandler;
+use Exception;
 use Gregwar\ImageBundle\Extensions\ImageTwig;
 use Gregwar\ImageBundle\Services\ImageHandling;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
@@ -21,7 +25,7 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class ImageExtension extends \Twig_Extension
+class ImageExtension extends Twig_Extension
 {
     /**
      * @var ImageHandling
@@ -41,7 +45,7 @@ class ImageExtension extends \Twig_Extension
     /**
      * @var array
      */
-    private $mimicFormats;
+    private $mimicFormats = [];
 
     /**
      * @var ImageHandling
@@ -70,30 +74,40 @@ class ImageExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('integrated_image', [$this, 'image'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('integrated_image_credits', [$this, 'imageCredits'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('integrated_image_description', [$this, 'imageDescription'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('image_json', [$this, 'imageJson'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('web_image', [$this, 'webImage'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('image', [$this, 'image'], ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('integrated_image', function ($image) : ImageHandler {
+                return $this->image($image);
+            }, ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('integrated_image_credits', function ($image) : string {
+                return $this->imageCredits($image);
+            }, ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('integrated_image_description', function ($image) : string {
+                return $this->imageDescription($image);
+            }, ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('image_json', function ($image) : ImageHandler {
+                return $this->imageJson($image);
+            }, ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('web_image', function ($image) : ImageHandler {
+                return $this->webImage($image);
+            }, ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('image', function ($image) : ImageHandler {
+                return $this->image($image);
+            }, ['is_safe' => ['html']]),
         ];
     }
 
     /**
      * @param $image
      *
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return ImageHandler
      */
     public function imageJson($image)
     {
         if ($json = json_decode($image)) {
             $storageModel = StorageModelFactory::json($json);
 
-            // Returns the image in a webformat
             try {
                 $image = $this->webFormatConverter->convert($storageModel)->getPathname();
-            } catch (\Exception $e) {
-                // Set the fallback image
+            } catch (Exception $exception) {
                 $image = false;
             }
 
@@ -108,7 +122,7 @@ class ImageExtension extends \Twig_Extension
     /**
      * @param $image
      *
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return ImageHandler
      */
     public function webImage($image)
     {
@@ -116,7 +130,7 @@ class ImageExtension extends \Twig_Extension
             try {
                 // Returns the image in a webformat
                 return $this->imageHandling->open($this->webFormatConverter->convert($image)->getPathname());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Set the fallback image
                 $image = false;
             }
@@ -128,7 +142,7 @@ class ImageExtension extends \Twig_Extension
     /**
      * @param $image
      *
-     * @return \Gregwar\ImageBundle\ImageHandler
+     * @return ImageHandler
      */
     public function image($image)
     {
@@ -137,8 +151,7 @@ class ImageExtension extends \Twig_Extension
 
             try {
                 $image = $this->webFormatConverter->convert($image)->getPathname();
-            } catch (\Exception $e) {
-                // Set the fallback image
+            } catch (Exception $e) {
                 $image = false;
             }
 

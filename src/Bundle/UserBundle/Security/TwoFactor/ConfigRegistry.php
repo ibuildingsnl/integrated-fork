@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\UserBundle\Security\TwoFactor;
 
+use InvalidArgumentException;
 class ConfigRegistry implements ConfigRegistryInterface
 {
     /**
      * @var Config[]
      */
-    private $configs;
+    private $configs = [];
 
     public function __construct(array $configs = [])
     {
@@ -34,6 +35,6 @@ class ConfigRegistry implements ConfigRegistryInterface
             return $this->configs[$firewall];
         }
 
-        throw new \InvalidArgumentException(sprintf('There is no two-factor config for the firewall %s', $firewall));
+        throw new InvalidArgumentException(sprintf('There is no two-factor config for the firewall %s', $firewall));
     }
 }

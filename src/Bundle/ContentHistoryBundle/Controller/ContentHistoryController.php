@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
@@ -54,7 +55,7 @@ class ContentHistoryController
      * @param Content $content
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function indexAction(Content $content, Request $request)
     {
@@ -77,7 +78,7 @@ class ContentHistoryController
     /**
      * @param ContentHistory $contentHistory
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function showAction(ContentHistory $contentHistory)
     {
@@ -90,7 +91,7 @@ class ContentHistoryController
      * @param Content $content
      * @param int     $limit
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function historyAction(Content $content, $limit = 3)
     {

@@ -62,7 +62,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
     {
         $this->query = $this->normalize($query);
 
-        if (!$this->query) {
+        if ($this->query === '' || $this->query === '0') {
             throw new InvalidArgumentException('A query is required and can not be a empty string.');
         }
 

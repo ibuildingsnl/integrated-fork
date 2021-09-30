@@ -45,9 +45,7 @@ class BulkActionDeleteType extends AbstractType
         $resolver
             ->setDefault('data_class', DeleteAction::class)
             ->setDefault('empty_data', function (Options $options) {
-                $action = new DeleteAction(DeleteHandler::class);
-
-                return $action;
+                return new DeleteAction(DeleteHandler::class);
             });
     }
 

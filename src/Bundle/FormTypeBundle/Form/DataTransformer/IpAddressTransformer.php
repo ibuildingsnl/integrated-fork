@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\FormTypeBundle\Form\DataTransformer;
 
 use Darsyn\IP\Exception\IpException;
-use Darsyn\IP\Version\Multi as IP;
+use Darsyn\IP\Version\Multi;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -22,11 +22,11 @@ class IpAddressTransformer implements DataTransformerInterface
     {
         if (null === $value) {
             return null;
-        } elseif ($value instanceof IP) {
+        } elseif ($value instanceof Multi) {
             return $value->getProtocolAppropriateAddress();
         }
 
-        throw new TransformationFailedException(sprintf('Expected %s, "%s" given', IP::class, \gettype($value)));
+        throw new TransformationFailedException(sprintf('Expected %s, "%s" given', Multi::class, \gettype($value)));
     }
 
     public function reverseTransform($value)
@@ -35,9 +35,9 @@ class IpAddressTransformer implements DataTransformerInterface
             return null;
         } elseif (\is_string($value)) {
             try {
-                return IP::factory($value);
-            } catch (IpException $e) {
-                throw new TransformationFailedException($e->getMessage(), 0, $e);
+                return Multi::factory($value);
+            } catch (IpException $ipException) {
+                throw new TransformationFailedException($ipException->getMessage(), 0, $ipException);
             }
         }
 

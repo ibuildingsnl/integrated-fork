@@ -32,6 +32,7 @@ use Symfony\Component\Process\Process;
  */
 class IndexerRunCommand extends Command
 {
+    protected static $defaultName = 'solr:indexer:run';
     /**
      * @var Indexer
      */
@@ -95,9 +96,7 @@ class IndexerRunCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('solr:indexer:run')
-            ->addOption('full', 'f', InputOption::VALUE_NONE, 'Keep running until the queue is empty')
+        $this->addOption('full', 'f', InputOption::VALUE_NONE, 'Keep running until the queue is empty')
             ->addOption(
                 'daemon',
                 'd',
@@ -137,7 +136,7 @@ The <info>%command.name%</info> command starts a indexer run.
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($argument = $input->getArgument('processes')) {
             return $this->runProcess(new ArgumentProcess($argument), $input, $output);
@@ -169,8 +168,8 @@ The <info>%command.name%</info> command starts a indexer run.
             } finally {
                 $lock->release();
             }
-        } catch (Exception $e) {
-            $output->writeln('Aborting: '.$e->getMessage(), ($e instanceof LockConflictedException) ? OutputInterface::VERBOSITY_VERBOSE : 0);
+        } catch (Exception $exception) {
+            $output->writeln('Aborting: '.$exception->getMessage(), ($exception instanceof LockConflictedException) ? OutputInterface::VERBOSITY_VERBOSE : 0);
 
             return 1;
         }
@@ -187,12 +186,12 @@ The <info>%command.name%</info> command starts a indexer run.
     private function runExternal(InputInterface $input, OutputInterface $output)
     {
         $wait = (int) $input->getOption('wait');
-        $wait = $wait * 1000; // convert from milli to micro
+        $wait *= 1000; // convert from milli to micro
 
         while (true) {
             // Run a external process
             $process = new Process(
-                sprintf('php bin/console solr:indexer:run -e %s', $this->kernel->getEnvironment()),
+                ['php', 'bin/console', 'solr:indexer:run', '-e', $this->kernel->getEnvironment()],
                 $this->workingDirectory
             );
 
@@ -205,10 +204,8 @@ The <info>%command.name%</info> command starts a indexer run.
                 break; // terminate when there is a error
             }
 
-            if (!$input->getOption('daemon')) {
-                if (!$this->indexer->getQueue()->count()) {
-                    break;
-                }
+            if (!$input->getOption('daemon') && !$this->indexer->getQueue()->count()) {
+                break;
             }
 
             usleep($wait);
@@ -247,11 +244,12 @@ The <info>%command.name%</info> command starts a indexer run.
                 while ($pool->count()) {
                     foreach ($pool as $i => $process) {
                         // Read stout for anything to pass thru
-                        if ($processOutput = $process->getIncrementalOutput()) {
+                        if (($processOutput = $process->getIncrementalOutput()) !== '' && ($processOutput = $process->getIncrementalOutput()) !== '0') {
                             $output->writeln(sprintf('Prcocess %d: %s', $i, $processOutput));
                         }
+
                         // Read sterr for anything to pass thru
-                        if ($processOutput = $process->getIncrementalErrorOutput()) {
+                        if (($processOutput = $process->getIncrementalErrorOutput()) !== '' && ($processOutput = $process->getIncrementalErrorOutput()) !== '0') {
                             $output->writeln(sprintf('Prcocess %d: %s', $i, $processOutput));
                         }
 

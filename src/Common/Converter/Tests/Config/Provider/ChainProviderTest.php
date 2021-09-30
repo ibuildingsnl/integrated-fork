@@ -11,17 +11,18 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Provider;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Converter\Config\Provider\ChainProvider;
 use Integrated\Common\Converter\Config\TypeProviderInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ChainProviderTest extends \PHPUnit\Framework\TestCase
+class ChainProviderTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Config\\TypeProviderInterface', $this->getInstance());
+        self::assertInstanceOf(TypeProviderInterface::class, $this->getInstance());
     }
 
     public function testAddProvider()
@@ -112,11 +113,11 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
         $provider->addProvider($providers[2]);
 
         $types = [
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface'),
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface'),
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface'),
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface'),
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface'),
+            $this->createMock(TypeProviderInterface::class),
+            $this->createMock(TypeProviderInterface::class),
+            $this->createMock(TypeProviderInterface::class),
+            $this->createMock(TypeProviderInterface::class),
+            $this->createMock(TypeProviderInterface::class),
         ];
 
         $providers[0]->expects($this->once())
@@ -150,6 +151,6 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getProvider()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Config\\TypeProviderInterface');
+        return $this->createMock(TypeProviderInterface::class);
     }
 }

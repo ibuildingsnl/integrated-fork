@@ -54,10 +54,8 @@ class PermissionTransformer implements DataTransformerInterface
             return $data;
         }
 
-        if (!\is_array($value)) {
-            if (!$value instanceof Collection) {
-                throw new TransformationFailedException('Expected a Doctrine\\Common\\Collections\\Collection object.');
-            }
+        if (!\is_array($value) && !$value instanceof Collection) {
+            throw new TransformationFailedException('Expected a Doctrine\\Common\\Collections\\Collection object.');
         }
 
         foreach ($value as $permission) {
@@ -66,7 +64,7 @@ class PermissionTransformer implements DataTransformerInterface
             }
 
             $group = $permission->getGroup();
-            if (!$group = $this->repository->findOneBy(['id' => $group])) {
+            if (($group = $this->repository->findOneBy(['id' => $group])) === null) {
                 continue;
             }
 

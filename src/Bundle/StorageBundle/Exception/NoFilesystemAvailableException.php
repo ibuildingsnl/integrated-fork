@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\StorageBundle\Exception;
 
+use ErrorException;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class NoFilesystemAvailableException extends \ErrorException
+class NoFilesystemAvailableException extends ErrorException
 {
     /**
      * @param StorageInterface $storage

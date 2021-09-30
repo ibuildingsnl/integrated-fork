@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Validator;
 
+use Iterator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
@@ -44,7 +45,7 @@ abstract class ManagerValidator extends ConstraintValidator
 
         $fields = (array) $constraint->fields;
 
-        if (!\count($fields)) {
+        if (\count($fields) === 0) {
             throw new ConstraintDefinitionException('At least one field has to be specified.');
         }
 
@@ -61,7 +62,7 @@ abstract class ManagerValidator extends ConstraintValidator
 
         $result = $constraint->manger->{$constraint->method}($criteria);
 
-        if (!\is_array($result) && !$result instanceof \Iterator) {
+        if (!\is_array($result) && !$result instanceof Iterator) {
             $result = [$result];
         }
 

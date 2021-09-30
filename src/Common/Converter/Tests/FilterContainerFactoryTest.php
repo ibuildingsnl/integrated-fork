@@ -11,21 +11,24 @@
 
 namespace Integrated\Common\Converter\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\ContainerFactoryInterface;
+use Integrated\Common\Converter\FilterContainer;
 use Integrated\Common\Converter\FilterContainerFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class FilterContainerFactoryTest extends \PHPUnit\Framework\TestCase
+class FilterContainerFactoryTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\ContainerFactoryInterface', $this->getInstance());
+        self::assertInstanceOf(ContainerFactoryInterface::class, $this->getInstance());
     }
 
     public function testCreateContainer()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\FilterContainer', $this->getInstance()->createContainer());
+        self::assertInstanceOf(FilterContainer::class, $this->getInstance()->createContainer());
     }
 
     /**

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\CommentBundle\Document\Embedded;
 
+use DateTime;
+use DateTimeInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 
 /**
@@ -29,7 +31,7 @@ class Reply
     protected $author;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $date;
 
@@ -71,7 +73,7 @@ class Reply
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate()
     {
@@ -79,9 +81,9 @@ class Reply
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      */
-    public function setDate($date)
+    public function setDate(DateTimeInterface $date)
     {
         $this->date = $date;
     }

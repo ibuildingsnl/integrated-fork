@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Extension\EventListener;
 
+use Swift_Message;
+use Countable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -37,7 +39,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContentSubscriber implements ContentSubscriberInterface
 {
-    const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
+    /**
+     * @var string
+     */
+    public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
     /**
      * @var ExtensionInterface
@@ -91,7 +96,7 @@ class ContentSubscriber implements ContentSubscriberInterface
     {
         $content = $event->getContent();
 
-        if (!$this->getWorkflow($content)) {
+        if ($this->getWorkflow($content) === null) {
             return;
         }
 
@@ -100,7 +105,7 @@ class ContentSubscriber implements ContentSubscriberInterface
 
         $data = null;
 
-        if ($state = $this->getState($content)) {
+        if (($state = $this->getState($content)) !== null) {
             $data = [
                 'comment' => '',
                 'state' => $state->getState(),
@@ -119,14 +124,14 @@ class ContentSubscriber implements ContentSubscriberInterface
     {
         $content = $event->getContent();
 
-        if (!$workflow = $this->getWorkflow($content)) {
+        if (($workflow = $this->getWorkflow($content)) === null) {
             return;
         }
 
         $data = \is_array($data = $event->getData()) ? array_filter($data) : []; // filter out empty fields
-        $data = $data + [
+        $data += [
             'comment' => '',
-            'state' => ($state = $this->getState($content)) ? $state->getState() : null,
+            'state' => (($state = $this->getState($content)) !== null) ? $state->getState() : null,
             'assigned' => null,
             'deadline' => null,
         ];
@@ -167,13 +172,13 @@ class ContentSubscriber implements ContentSubscriberInterface
     {
         $content = $event->getContent();
 
-        if (!$this->getWorkflow($content)) {
+        if ($this->getWorkflow($content) === null) {
             return;
         }
 
         $data = $event->getData();
 
-        if (!$state = $this->getState($content)) {
+        if (($state = $this->getState($content)) === null) {
             $state = new State();
             $state->setContent($content);
 
@@ -208,31 +213,28 @@ class ContentSubscriber implements ContentSubscriberInterface
 
             //sent mail when user changed
 
-            if ($data['assigned'] instanceof User) {
-                if ($data['assigned']->getRelation() instanceof Person) {
-                    $person = $data['assigned']->getRelation();
+            if ($data['assigned'] instanceof User && $data['assigned']->getRelation() instanceof Person) {
+                $person = $data['assigned']->getRelation();
+                if ($person->getEmail() !== '' && $person->getEmail() !== '0') {
+                    $title = 'unknown';
+                    if (method_exists($content, 'getTitle')) {
+                        $title = $content->getTitle();
+                    } elseif (method_exists($content, 'getName')) {
+                        $title = $content->getName();
+                    }
 
-                    if ($person->getEmail()) {
-                        $title = 'unknown';
-                        if (method_exists($content, 'getTitle')) {
-                            $title = $content->getTitle();
-                        } elseif (method_exists($content, 'getName')) {
-                            $title = $content->getName();
-                        }
-
-                        $message = (new \Swift_Message())
-                            ->setSubject('[Integrated] "'.$title.'" has been assigned to you')
-                            ->setFrom('mailer@integratedforpublishers.com')
-                            ->setTo($person->getEmail())
-                            ->setBody(
-                                'An item has been assigned to you:
+                    $message = (new Swift_Message())
+                        ->setSubject('[Integrated] "'.$title.'" has been assigned to you')
+                        ->setFrom('mailer@integratedforpublishers.com')
+                        ->setTo($person->getEmail())
+                        ->setBody(
+                            'An item has been assigned to you:
 
 Name: '.$title.'
 E-mail: '.$person->getEmail().'',
-                                'text/plain'
-                            );
-                        $this->getContainer()->get('mailer')->send($message);
-                    }
+                            'text/plain'
+                        );
+                    $this->getContainer()->get('mailer')->send($message);
                 }
             }
         }
@@ -260,11 +262,11 @@ E-mail: '.$person->getEmail().'',
     {
         $content = $event->getContent();
 
-        if (!$this->getWorkflow($content)) {
+        if ($this->getWorkflow($content) === null) {
             return;
         }
 
-        if ($state = $this->getState($content)) {
+        if (($state = $this->getState($content)) !== null) {
             $this->getManager()->remove($state);
         }
 
@@ -283,9 +285,9 @@ E-mail: '.$person->getEmail().'',
      */
     protected function getState(ContentInterface $content)
     {
-        $repository = $this->getManager()->getRepository('Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State');
+        $repository = $this->getManager()->getRepository(State::class);
 
-        if ($entity = $repository->findOneBy(['content' => $content])) {
+        if (($entity = $repository->findOneBy(['content' => $content])) !== null) {
             return $entity;
         }
 
@@ -329,7 +331,7 @@ E-mail: '.$person->getEmail().'',
 
         $type = $object->getContentType();
 
-        if (!$type) {
+        if ($type === '' || $type === '0') {
             return null;
         }
 
@@ -340,9 +342,9 @@ E-mail: '.$person->getEmail().'',
         $type = $this->getResolver()->getType($type);
 
         if ($workflow = $type->getOption('workflow')) {
-            $repository = $this->getManager()->getRepository('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+            $repository = $this->getManager()->getRepository(Definition::class);
 
-            if ($entity = $repository->find($workflow)) {
+            if (($entity = $repository->find($workflow)) !== null) {
                 return $entity;
             }
         }
@@ -405,15 +407,16 @@ E-mail: '.$person->getEmail().'',
             $groups[] = $group->getId();
         }
 
-        if (\count($state->getPermissions()) > 0) {
+        if ($state->getPermissions() !== []) {
             $permissionObject = $state;
         } else {
             //permissions inherited from content type
             $contentType = $this->getContainer()->get('doctrine_mongodb.odm.document_manager')->getRepository(ContentType::class)->find($content->getContentType());
             if ($contentType) {
-                if (\count($contentType->getPermissions()) == 0) {
+                if ((is_array($contentType->getPermissions()) || $contentType->getPermissions() instanceof Countable ? \count($contentType->getPermissions()) : 0) == 0) {
                     return true;
                 }
+
                 $permissionObject = $contentType;
             } else {
                 return false;

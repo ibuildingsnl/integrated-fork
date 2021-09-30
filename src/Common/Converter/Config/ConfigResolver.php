@@ -62,7 +62,7 @@ class ConfigResolver implements ConfigResolverInterface
 
         try {
             $reflection = new ReflectionClass($class);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return $this->setInstance($class, null);
         }
 
@@ -155,6 +155,6 @@ class ConfigResolver implements ConfigResolverInterface
      */
     protected function getInstance($class)
     {
-        return isset($this->resolved[$class]) ? $this->resolved[$class] : null;
+        return $this->resolved[$class] ?? null;
     }
 }

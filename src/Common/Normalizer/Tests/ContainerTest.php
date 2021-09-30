@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Normalizer\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Normalizer\Exception\ExceptionInterface;
 use Integrated\Common\Normalizer\Container;
 use Integrated\Common\Normalizer\ContainerInterface;
 use stdClass;
@@ -18,7 +20,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContainerTest extends \PHPUnit\Framework\TestCase
+class ContainerTest extends TestCase
 {
     public function testInterface()
     {
@@ -55,7 +57,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddInvalid()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $container = $this->getInstance();
         $container->add('key', new stdClass());
@@ -81,7 +83,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testSetInvalid()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $container = $this->getInstance();
         $container->set('key', new stdClass());

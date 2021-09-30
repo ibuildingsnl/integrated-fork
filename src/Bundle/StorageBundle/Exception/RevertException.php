@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\StorageBundle\Exception;
 
+use ErrorException;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class RevertException extends \ErrorException
+class RevertException extends ErrorException
 {
     /**
      * @param string $filesystem

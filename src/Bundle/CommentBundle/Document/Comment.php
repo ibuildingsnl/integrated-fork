@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\CommentBundle\Document;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\CommentBundle\Document\Embedded\Reply;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -32,7 +34,7 @@ class Comment
     protected $author;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $date;
 
@@ -61,7 +63,7 @@ class Comment
      */
     public function __construct()
     {
-        $this->date = new \DateTime();
+        $this->date = new DateTime();
         $this->replies = new ArrayCollection();
     }
 
@@ -114,7 +116,7 @@ class Comment
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate()
     {
@@ -122,9 +124,9 @@ class Comment
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      */
-    public function setDate($date)
+    public function setDate(DateTimeInterface $date)
     {
         $this->date = $date;
     }
@@ -176,7 +178,7 @@ class Comment
      */
     public function removeReplyById($replyId)
     {
-        if ($reply = $this->getReplyById($replyId)) {
+        if (($reply = $this->getReplyById($replyId)) !== null) {
             return $this->replies->removeElement($reply);
         }
 

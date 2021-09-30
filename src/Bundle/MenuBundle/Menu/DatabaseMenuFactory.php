@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\MenuBundle\Menu;
 
+use Integrated\Bundle\MenuBundle\Document\Menu;
+use Integrated\Bundle\MenuBundle\Document\MenuItem;
+use InvalidArgumentException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Knp\Menu\Factory\CoreExtension;
@@ -41,7 +44,7 @@ class DatabaseMenuFactory implements FactoryInterface
     /**
      * @var ExtensionInterface[]
      */
-    private $sorted;
+    private $sorted = [];
 
     /**
      * @var DocumentManager
@@ -65,7 +68,7 @@ class DatabaseMenuFactory implements FactoryInterface
      * @param string $name
      * @param array  $options
      *
-     * @return \Integrated\Bundle\MenuBundle\Document\Menu
+     * @return Menu
      */
     public function createItem($name, array $options = [])
     {
@@ -76,7 +79,7 @@ class DatabaseMenuFactory implements FactoryInterface
      * @param string $name
      * @param array  $options
      *
-     * @return \Integrated\Bundle\MenuBundle\Document\MenuItem
+     * @return MenuItem
      */
     public function createChild($name, array $options = [])
     {
@@ -86,7 +89,7 @@ class DatabaseMenuFactory implements FactoryInterface
     /**
      * @param array $array
      *
-     * @return \Integrated\Bundle\MenuBundle\Document\Menu|null
+     * @return Menu|null
      */
     public function fromArray(array $array = [])
     {
@@ -112,7 +115,7 @@ class DatabaseMenuFactory implements FactoryInterface
 
         foreach ($array as $value) {
             if (isset($value['id'])) {
-                $child = $this->createChild(isset($value['name']) ? $value['name'] : '');
+                $child = $this->createChild($value['name'] ?? '');
                 $child->setId($value['id']);
 
                 if (isset($value['uri'])) {
@@ -150,7 +153,7 @@ class DatabaseMenuFactory implements FactoryInterface
      * @param $name
      * @param array $options
      *
-     * @return \Integrated\Bundle\MenuBundle\Document\MenuItem
+     * @return MenuItem
      */
     protected function getItem($class, $name, array $options = [])
     {
@@ -161,7 +164,7 @@ class DatabaseMenuFactory implements FactoryInterface
         $item = new $class($name, $this);
 
         if (!$item instanceof ItemInterface) {
-            throw new \InvalidArgumentException(sprintf('Class "%s" must be an instanceof "ItemInterface".', $class));
+            throw new InvalidArgumentException(sprintf('Class "%s" must be an instanceof "ItemInterface".', $class));
         }
 
         foreach ($this->getExtensions() as $extension) {
@@ -190,9 +193,9 @@ class DatabaseMenuFactory implements FactoryInterface
      */
     private function getExtensions()
     {
-        if (null === $this->sorted) {
+        if ([] === $this->sorted) {
             krsort($this->extensions);
-            $this->sorted = !empty($this->extensions) ? \call_user_func_array('array_merge', $this->extensions) : [];
+            $this->sorted = empty($this->extensions) ? [] : \call_user_func_array('array_merge', $this->extensions);
         }
 
         return $this->sorted;

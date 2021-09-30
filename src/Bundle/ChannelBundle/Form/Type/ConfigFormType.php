@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
+use Integrated\Bundle\ChannelBundle\Model\Config;
 use Exception;
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\OptionsTransformer;
 use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
@@ -120,7 +121,7 @@ class ConfigFormType extends AbstractType
             if (\is_string($adapter)) {
                 try {
                     $adapter = $this->registry->getAdapter($adapter);
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     $adapter = null;
                 }
             }
@@ -129,7 +130,7 @@ class ConfigFormType extends AbstractType
                 throw new InvalidOptionsException(sprintf(
                     'The option "%s" could not be normalized to a valid "%s" object',
                     'adapter',
-                    'Integrated\\Common\\Channel\\Connector\\AdapterInterface'
+                    AdapterInterface::class
                 ));
             }
 
@@ -137,10 +138,10 @@ class ConfigFormType extends AbstractType
         };
 
         $resolver->setRequired('adapter');
-        $resolver->setAllowedTypes('adapter', ['string', 'Integrated\\Common\\Channel\\Connector\\AdapterInterface']);
+        $resolver->setAllowedTypes('adapter', ['string', AdapterInterface::class]);
         $resolver->setNormalizer('adapter', $adapterNormalizer);
 
-        $resolver->setDefault('data_class', 'Integrated\\Bundle\\ChannelBundle\\Model\\Config');
+        $resolver->setDefault('data_class', Config::class);
     }
 
     /**

@@ -41,7 +41,7 @@ class ChannelProvider
     {
         $channel = $this->dm->getRepository(Channel::class)->find($id);
 
-        if (!$channel) {
+        if ($channel === null) {
             throw DocumentNotFoundException::documentNotFound(Channel::class, $id);
         }
 

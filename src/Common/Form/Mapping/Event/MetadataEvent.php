@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Form\Mapping\Event;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

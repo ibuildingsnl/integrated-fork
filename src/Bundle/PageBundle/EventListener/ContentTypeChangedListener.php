@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\EventListener;
 
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
@@ -99,6 +100,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
                 $this->contentTypePageService->addContentType($contentType, $channel);
             }
         }
+
         if ($newContentTypePage) {
             $this->routeCache->clear();
         }
@@ -131,7 +133,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getPageRepository()
     {
@@ -139,7 +141,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getChannelRepository()
     {

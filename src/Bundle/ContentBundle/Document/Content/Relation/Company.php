@@ -160,10 +160,8 @@ class Company extends Relation
         $items = $this->getReferencesByRelationTypes(['cover', 'embedded']);
         if ($items) {
             foreach ($items as $item) {
-                if ($item instanceof FileInterface) {
-                    if ($item->getFile() instanceof StorageInterface) {
-                        return $item->getFile();
-                    }
+                if ($item instanceof FileInterface && $item->getFile() instanceof StorageInterface) {
+                    return $item->getFile();
                 }
             }
         }

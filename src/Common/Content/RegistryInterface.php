@@ -11,10 +11,13 @@
 
 namespace Integrated\Common\Content;
 
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface RegistryInterface extends \ArrayAccess, \Countable, \IteratorAggregate
+interface RegistryInterface extends ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * @return array

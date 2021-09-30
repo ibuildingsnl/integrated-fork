@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\ImageBundle\Exception;
 
+use ErrorException;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class FormatException extends \ErrorException
+class FormatException extends ErrorException
 {
     /**
      * @param string $inputFormat

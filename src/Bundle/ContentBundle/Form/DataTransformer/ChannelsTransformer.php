@@ -35,14 +35,10 @@ class ChannelsTransformer implements DataTransformerInterface
         if (isset($value['disabled'])) {
             $result['options'] = 'disabled';
 
-            switch ((int) $value['disabled']) {
-                case 0:
-                    $result['options'] = '';
-                    break;
-
-                case 1:
-                    $result['options'] = 'hidden';
-                    break;
+            if ((int) $value['disabled'] == 0) {
+                $result['options'] = '';
+            } elseif ((int) $value['disabled'] == 1) {
+                $result['options'] = 'hidden';
             }
         }
 
@@ -64,6 +60,7 @@ class ChannelsTransformer implements DataTransformerInterface
                 $defaults[$channel]['restrict'] = true;
             }
         }
+
         $result['defaults'] = $defaults;
 
         return $result;
@@ -84,24 +81,21 @@ class ChannelsTransformer implements DataTransformerInterface
             return $result;
         }
 
-        switch ($value['options']) {
-            case 'hidden':
-                $result['disabled'] = 1;
-                break;
-
-            case 'disabled':
-                $result['disabled'] = 2;
-                break;
+        if ($value['options'] == 'hidden') {
+            $result['disabled'] = 1;
+        } elseif ($value['options'] == 'disabled') {
+            $result['disabled'] = 2;
         }
 
         foreach ($value['defaults'] as $id => $options) {
             if ($options['selected']) {
                 $result['defaults'][$id] = [
                     'id' => $id,
-                    'restrict' => $options['restrict'] ? true : false,
-                    'enforce' => $options['enforce'] ? true : false,
+                    'restrict' => (bool) $options['restrict'],
+                    'enforce' => (bool) $options['enforce'],
                 ];
             }
+
             if ($options['restrict'] == true) {
                 $result['restricted'][] = $id;
             }

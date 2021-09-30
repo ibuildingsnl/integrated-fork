@@ -22,11 +22,30 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
-    const MENU = 'integrated_menu';
-    const MENU_CONTENT = 'Content';
-    const MENU_MANAGE = 'Manage';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
-    const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
+    /**
+     * @var string
+     */
+    public const MENU = 'integrated_menu';
+
+    /**
+     * @var string
+     */
+    public const MENU_CONTENT = 'Content';
+
+    /**
+     * @var string
+     */
+    public const MENU_MANAGE = 'Manage';
+
+    /**
+     * @var string
+     */
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
+    /**
+     * @var string
+     */
+    public const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
 
     /**
      * @var AuthorizationCheckerInterface
@@ -61,7 +80,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$menuContent = $menu->getChild(self::MENU_CONTENT)) {
+        if (($menuContent = $menu->getChild(self::MENU_CONTENT)) === null) {
             $menuContent = $menu->addChild(self::MENU_CONTENT);
         }
 
@@ -69,7 +88,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         $menuContent->addChild('Search selections', ['route' => 'integrated_content_search_selection_index']);
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN) || $this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER)) {
-            if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
+            if (($menuManage = $menu->getChild(self::MENU_MANAGE)) === null) {
                 $menuManage = $menu->addChild(self::MENU_MANAGE);
             }
 

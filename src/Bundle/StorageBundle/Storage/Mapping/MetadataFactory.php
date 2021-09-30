@@ -82,7 +82,7 @@ class MetadataFactory implements MetadataFactoryInterface
 
         foreach ($metadata->associationMappings as $mapping) {
             if (!empty($mapping['embedded']) && $mapping['type'] === 'one' && $mapping['targetDocument'] === $this->target) {
-                $properties[] = new EmbedOne(isset($mapping['fieldName']) ? $mapping['fieldName'] : $mapping['name']);
+                $properties[] = new EmbedOne($mapping['fieldName'] ?? $mapping['name']);
             }
         }
 

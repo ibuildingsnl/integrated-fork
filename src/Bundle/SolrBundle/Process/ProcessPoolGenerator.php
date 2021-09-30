@@ -24,8 +24,9 @@ class ProcessPoolGenerator
 {
     /**
      * @const
+     * @var string
      */
-    const COMMAND = 'php bin/console %s %s %d:%d -e %s';
+    public const COMMAND = 'php bin/console %s %s %d:%d -e %s';
 
     /**
      * @var InputInterface
@@ -73,7 +74,7 @@ class ProcessPoolGenerator
             );
         }
 
-        if ($result->count()) {
+        if ($result->count() !== 0) {
             return $result;
         }
 

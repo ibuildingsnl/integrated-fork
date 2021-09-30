@@ -46,6 +46,7 @@ class UpdateAuthorRelationListener implements EventSubscriber
                         $authors[] = $author->getPerson();
                     }
                 }
+
                 if ($relation = $document->getRelation('__authors')) {
                     foreach ($relation->getReferences() as $reference) {
                         if (($key = array_search($reference, $authors)) !== false) {
@@ -54,7 +55,7 @@ class UpdateAuthorRelationListener implements EventSubscriber
                             $relation->getReferences()->removeElement($reference);
                         }
                     }
-                } elseif (\count($authors) > 0) {
+                } elseif ($authors !== []) {
                     $relation = new Relation();
                     $relation->setRelationId('__authors');
                     $relation->setRelationType('author');

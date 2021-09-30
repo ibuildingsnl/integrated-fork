@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Converter\Tests\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\RegistryBuilderInterface;
+use Integrated\Common\Converter\Type\ResolvedTypeInterface;
+use Integrated\Common\Converter\Type\Registry;
 use Integrated\Common\Converter\Type\RegistryBuilder;
 use Integrated\Common\Converter\Type\ResolvedTypeFactoryInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
@@ -19,7 +23,7 @@ use Integrated\Common\Converter\Type\TypeInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
+class RegistryBuilderTest extends TestCase
 {
     /**
      * @var ResolvedTypeFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -28,12 +32,12 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->factory = $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeFactoryInterface');
+        $this->factory = $this->createMock(ResolvedTypeFactoryInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\RegistryBuilderInterface', $this->getInstance());
+        self::assertInstanceOf(RegistryBuilderInterface::class, $this->getInstance());
     }
 
     public function testAddType()
@@ -43,7 +47,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getInstance();
         $builder->addType($type);
 
-        $resolved = $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface');
+        $resolved = $this->createMock(ResolvedTypeInterface::class);
 
         $this->factory->expects($this->once())
             ->method('createType')
@@ -62,7 +66,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getInstance();
         $builder->addTypes([$type1, $type2, $type3]);
 
-        $resolved = $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface');
+        $resolved = $this->createMock(ResolvedTypeInterface::class);
 
         $this->factory->expects($this->exactly(2))
             ->method('createType')
@@ -87,7 +91,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
         $builder->addTypeExtension($extension);
         $builder->addType($type);
 
-        $resolved = $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface');
+        $resolved = $this->createMock(ResolvedTypeInterface::class);
 
         $this->factory->expects($this->once())
             ->method('createType')
@@ -117,7 +121,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
         $builder->addTypeExtensions([$extension1, $extension2]);
         $builder->addType($type);
 
-        $resolved = $this->createMock('Integrated\\Common\\Converter\\Type\\ResolvedTypeInterface');
+        $resolved = $this->createMock(ResolvedTypeInterface::class);
 
         $this->factory->expects($this->once())
             ->method('createType')
@@ -132,7 +136,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getInstance(false);
         $builder->addType($this->getType('test'));
 
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\Registry', $builder->getRegistry());
+        self::assertInstanceOf(Registry::class, $builder->getRegistry());
     }
 
     /**
@@ -156,7 +160,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Converter\\Type\\TypeInterface');
+        $mock = $this->createMock(TypeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($name);
@@ -171,7 +175,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getTypeExtension($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface');
+        $mock = $this->createMock(TypeExtensionInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($name);

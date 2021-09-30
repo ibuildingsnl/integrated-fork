@@ -16,9 +16,18 @@ namespace Integrated\Common\ContentType;
  */
 final class Events
 {
-    const CONTENT_TYPE_CREATED = 'integrated.content_type.created';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_CREATED = 'integrated.content_type.created';
 
-    const CONTENT_TYPE_UPDATED = 'integrated.content_type.updated';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_UPDATED = 'integrated.content_type.updated';
 
-    const CONTENT_TYPE_DELETED = 'integrated.content_type.deleted';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_DELETED = 'integrated.content_type.deleted';
 }

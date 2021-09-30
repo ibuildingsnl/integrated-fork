@@ -41,7 +41,7 @@ class WorkerErrorLogger implements EventSubscriberInterface
      */
     public function onError(ErrorEvent $event)
     {
-        if (null === $this->logger) {
+        if (!$this->logger instanceof LoggerInterface) {
             return;
         }
 

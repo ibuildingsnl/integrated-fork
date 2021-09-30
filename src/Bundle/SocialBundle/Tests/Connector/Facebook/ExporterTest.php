@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\SocialBundle\Tests\Connector\Facebook;
 
+use PHPUnit\Framework\TestCase;
+use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Facebook;
 use Facebook\FacebookResponse;
@@ -28,7 +31,7 @@ use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ContentInterface;
 
-class ExporterTest extends \PHPUnit\Framework\TestCase
+class ExporterTest extends TestCase
 {
     /**
      * @var Facebook|\PHPUnit_Framework_MockObject_MockObject
@@ -142,7 +145,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $facebookResponse = $this->getFacebookResponse();
 
         $facebookResponse->method('getGraphNode')
-            ->willReturn(new \stdClass());
+            ->willReturn(new stdClass());
 
         $this->facebook
             ->method('post')
@@ -230,7 +233,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getArticle()
     {
@@ -238,7 +241,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getFacebookResponse()
     {
@@ -246,7 +249,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getOptions()
     {

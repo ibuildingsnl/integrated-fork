@@ -19,7 +19,9 @@ use Symfony\Component\Validator\Constraint;
 class UniqueEntry extends Constraint
 {
     public $message = 'This value is already used.';
+
     public $fields = [];
+
     public $caseInsensitive = false;
 
     /**

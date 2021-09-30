@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Collection\Map;
 
+use Closure;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -25,7 +26,7 @@ class FileMap
      * @param DecisionInterface $decision
      * @param string            $filesystem
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function documentAllowed(DecisionInterface $decision, $filesystem)
     {
@@ -43,17 +44,15 @@ class FileMap
      * @param MetadataFactoryInterface $metadata
      * @param string                   $filesystem
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function documentFilesystemContains(MetadataFactoryInterface $metadata, $filesystem)
     {
         return function (DoctrineDocument $document) use ($metadata, $filesystem) {
             foreach ($metadata->getMetadata($document->getClassName())->getProperties() as $property) {
                 /** @var StorageInterface|bool $file */
-                if ($file = $document->get($property->getPropertyName())) {
-                    if ($file->getFilesystems()->contains($filesystem)) {
-                        return $document;
-                    }
+                if (($file = $document->get($property->getPropertyName())) && $file->getFilesystems()->contains($filesystem)) {
+                    return $document;
                 }
             }
 

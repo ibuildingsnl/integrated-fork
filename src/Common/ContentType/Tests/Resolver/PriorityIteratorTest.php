@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\Resolver\PriorityIterator;
@@ -21,11 +23,11 @@ use Integrated\Common\ContentType\ResolverInterface;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class PriorityIteratorTest extends \PHPUnit\Framework\TestCase
+class PriorityIteratorTest extends TestCase
 {
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\ContentType\\IteratorInterface', $this->getInstance());
+        $this->assertInstanceOf(IteratorInterface::class, $this->getInstance());
     }
 
     public function testCurrent()
@@ -140,7 +142,7 @@ class PriorityIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getType($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($name);
@@ -155,7 +157,7 @@ class PriorityIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getResolver(array $types = [])
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ResolverInterface');
+        $mock = $this->createMock(ResolverInterface::class);
         $mock->expects($this->any())
             ->method('getTypes')
             ->willReturn(new Iterator($types));

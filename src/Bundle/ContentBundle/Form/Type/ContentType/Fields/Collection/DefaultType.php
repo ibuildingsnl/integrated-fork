@@ -47,7 +47,7 @@ class DefaultType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['metadata']);
-        $resolver->setAllowedTypes('metadata', 'Integrated\\Common\\Form\\Mapping\\MetadataInterface');
+        $resolver->setAllowedTypes('metadata', MetadataInterface::class);
     }
 
     /**

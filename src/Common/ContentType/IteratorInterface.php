@@ -11,12 +11,12 @@
 
 namespace Integrated\Common\ContentType;
 
-use Iterator as BaseIteratorInterface;
+use Iterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface IteratorInterface extends BaseIteratorInterface
+interface IteratorInterface extends Iterator
 {
     /**
      * Return the current content type.

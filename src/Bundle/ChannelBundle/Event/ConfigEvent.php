@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ChannelBundle\Event;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use Integrated\Bundle\ChannelBundle\Model\Config;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

@@ -22,7 +22,7 @@ class QueueMessage implements QueueMessageInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @var mixed|null

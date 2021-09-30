@@ -11,12 +11,16 @@
 
 namespace Integrated\Common\ContentType\Tests\Form\Custom\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\Form\Custom\Type\RegistryInterface;
+use ArrayIterator;
+use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 use Integrated\Common\ContentType\Form\Custom\Type\Registry;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class RegistryTest extends \PHPUnit\Framework\TestCase
+class RegistryTest extends TestCase
 {
     /**
      * @var Registry
@@ -36,7 +40,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\ContentType\\Form\\Custom\\Type\\RegistryInterface', $this->registry);
+        $this->assertInstanceOf(RegistryInterface::class, $this->registry);
     }
 
     /**
@@ -44,7 +48,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetIterator()
     {
-        $this->assertInstanceOf('\ArrayIterator', $this->registry->getIterator());
+        $this->assertInstanceOf(ArrayIterator::class, $this->registry->getIterator());
     }
 
     /**
@@ -52,11 +56,11 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddFunction()
     {
-        /** @var \Integrated\Common\ContentType\Form\Custom\TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock1 */
-        $mock1 = $this->createMock('Integrated\Common\ContentType\Form\Custom\TypeInterface');
+        /** @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock1 */
+        $mock1 = $this->createMock(TypeInterface::class);
 
-        /** @var \Integrated\Common\ContentType\Form\Custom\TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock2 */
-        $mock2 = $this->createMock('Integrated\Common\ContentType\Form\Custom\TypeInterface');
+        /** @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock2 */
+        $mock2 = $this->createMock(TypeInterface::class);
 
         // Add mock1 two times and mock2 one time
         $this->assertSame($this->registry, $this->registry->add($mock1));
@@ -72,11 +76,11 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     public function testHasFunction()
     {
-        /** @var \Integrated\Common\ContentType\Form\Custom\TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock1 */
-        $mock1 = $this->createMock('Integrated\Common\ContentType\Form\Custom\TypeInterface');
+        /** @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock1 */
+        $mock1 = $this->createMock(TypeInterface::class);
 
-        /** @var \Integrated\Common\ContentType\Form\Custom\TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock2 */
-        $mock2 = $this->createMock('Integrated\Common\ContentType\Form\Custom\TypeInterface');
+        /** @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject $mock2 */
+        $mock2 = $this->createMock(TypeInterface::class);
 
         // Add mock1
         $this->assertSame($this->registry, $this->registry->add($mock1));

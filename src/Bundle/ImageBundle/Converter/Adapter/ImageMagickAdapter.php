@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ImageBundle\Converter\Adapter;
 
+use SplFileInfo;
+use Imagick;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ImageBundle\Converter\AdapterInterface;
 use Integrated\Bundle\ImageBundle\Exception\RunTimeFormatException;
@@ -24,8 +26,9 @@ class ImageMagickAdapter implements AdapterInterface
 {
     /**
      * @const string
+     * @var string
      */
-    const NAME = 'Imagick';
+    public const NAME = 'Imagick';
 
     /**
      * @var AppCache
@@ -48,7 +51,7 @@ class ImageMagickAdapter implements AdapterInterface
         $file = $this->cache->path($image);
 
         // Make a reasonable path based on the cache path but in a conversion folder
-        $cache = new \SplFileInfo(sprintf('%s/%s.%s', $file->getPath(), $file->getFilename(), $outputFormat));
+        $cache = new SplFileInfo(sprintf('%s/%s.%s', $file->getPath(), $file->getFilename(), $outputFormat));
 
         // Check if've got a
         if ($cache->isFile()) {
@@ -56,12 +59,12 @@ class ImageMagickAdapter implements AdapterInterface
         }
 
         // Check if've got a video
-        if (preg_match('/^video\/(.*)$/', $image->getMetadata()->getMimeType())) {
+        if (preg_match('#^video\/(.*)$#', $image->getMetadata()->getMimeType())) {
             // Open the file on the tenth frame, this saves a us a hell of a lot memory
             // When no frame is specified Imagick will write every frame on /tmp
-            $imagick = new \Imagick(sprintf('%s[10]', $file->getPathname()));
+            $imagick = new Imagick(sprintf('%s[10]', $file->getPathname()));
 
-            $overlay = new \Imagick(__DIR__.'/../../Resources/images/play-overlay.png');
+            $overlay = new Imagick(__DIR__.'/../../Resources/images/play-overlay.png');
 
             $imageWidth = $imagick->getImageWidth();
             $imageHeight = $imagick->getImageHeight();
@@ -81,10 +84,10 @@ class ImageMagickAdapter implements AdapterInterface
             $x = ($imageWidth - $overlayWidth) / 2;
             $y = ($imageHeight - $overlayHeight) / 2;
 
-            $imagick->compositeImage($overlay, \Imagick::COMPOSITE_OVER, $x, $y);
+            $imagick->compositeImage($overlay, Imagick::COMPOSITE_OVER, $x, $y);
         } else {
             // Open a we should do with anything that is not video
-            $imagick = new \Imagick($file->getPathname());
+            $imagick = new Imagick($file->getPathname());
         }
 
         // Attempt conversion
@@ -110,7 +113,7 @@ class ImageMagickAdapter implements AdapterInterface
     public function formats()
     {
         if (class_exists('\Imagick')) {
-            return new ArrayCollection((new \Imagick())->queryFormats());
+            return new ArrayCollection((new Imagick())->queryFormats());
         }
 
         return new ArrayCollection();

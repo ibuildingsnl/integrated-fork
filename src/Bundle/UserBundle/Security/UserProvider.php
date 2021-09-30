@@ -35,7 +35,7 @@ class UserProvider implements UserProviderInterface
     {
         $this->manager = $manager;
 
-        if (!is_subclass_of($this->manager->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
+        if (!is_subclass_of($this->manager->getClassName(), \Integrated\Bundle\UserBundle\Model\UserInterface::class)) {
             throw new UnsupportedUserException(
                 sprintf(
                     'The user class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface',

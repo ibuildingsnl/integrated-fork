@@ -20,21 +20,48 @@ final class Events
     {
     }
 
-    const METADATA = 'extension.metadata';
+    /**
+     * @var string
+     */
+    public const METADATA = 'extension.metadata';
 
-    const PRE_READ = 'extension.read.pre';
+    /**
+     * @var string
+     */
+    public const PRE_READ = 'extension.read.pre';
 
-    const POST_READ = 'extension.read.post';
+    /**
+     * @var string
+     */
+    public const POST_READ = 'extension.read.post';
 
-    const PRE_CREATE = 'extension.create.pre';
+    /**
+     * @var string
+     */
+    public const PRE_CREATE = 'extension.create.pre';
 
-    const POST_CREATE = 'extension.create.post';
+    /**
+     * @var string
+     */
+    public const POST_CREATE = 'extension.create.post';
 
-    const PRE_UPDATE = 'extension.update.pre';
+    /**
+     * @var string
+     */
+    public const PRE_UPDATE = 'extension.update.pre';
 
-    const POST_UPDATE = 'extension.update.post';
+    /**
+     * @var string
+     */
+    public const POST_UPDATE = 'extension.update.post';
 
-    const PRE_DELETE = 'extension.delete.pre';
+    /**
+     * @var string
+     */
+    public const PRE_DELETE = 'extension.delete.pre';
 
-    const POST_DELETE = 'extension.delete.post';
+    /**
+     * @var string
+     */
+    public const POST_DELETE = 'extension.delete.post';
 }

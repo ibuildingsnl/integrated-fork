@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\DataCollector;
 
+use Serializable;
+use Exception;
 use Solarium\Core\Event\Events;
 use Solarium\Core\Event\PostExecuteRequest;
 use Solarium\Core\Event\PreExecuteRequest;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SolariumDataCollector extends AbstractPlugin implements DataCollectorInterface, \Serializable
+class SolariumDataCollector extends AbstractPlugin implements DataCollectorInterface, Serializable
 {
     /**
      * @var array
@@ -42,14 +44,18 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
     protected function initPluginType()
     {
         $dispatcher = $this->client->getEventDispatcher();
-        $dispatcher->addListener(Events::PRE_EXECUTE_REQUEST, [$this, 'preExecuteRequest'], 1000);
-        $dispatcher->addListener(Events::POST_EXECUTE_REQUEST, [$this, 'postExecuteRequest'], -1000);
+        $dispatcher->addListener(Events::PRE_EXECUTE_REQUEST, function (PreExecuteRequest $event) {
+            return $this->preExecuteRequest($event);
+        }, 1000);
+        $dispatcher->addListener(Events::POST_EXECUTE_REQUEST, function (PostExecuteRequest $event) {
+            return $this->postExecuteRequest($event);
+        }, -1000);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, Exception $exception = null)
     {
         $time = 0;
 
@@ -86,7 +92,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
      */
     public function getQueries()
     {
-        return isset($this->data['queries']) ? $this->data['queries'] : [];
+        return $this->data['queries'] ?? [];
     }
 
     /**
@@ -102,7 +108,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
      */
     public function getTotalTime()
     {
-        return isset($this->data['total_time']) ? $this->data['total_time'] : 0;
+        return $this->data['total_time'] ?? 0;
     }
 
     /**

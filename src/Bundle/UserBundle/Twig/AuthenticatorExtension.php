@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Twig;
 
+use InvalidArgumentException;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Twig\Extension\AbstractExtension;
@@ -31,14 +32,16 @@ class AuthenticatorExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_user_authenticator_qr_code', [$this, 'getQRCode']),
+            new TwigFunction('integrated_user_authenticator_qr_code', function (UserInterface $user) : string {
+                return $this->getQRCode($user);
+            }),
         ];
     }
 
     public function getQRCode(UserInterface $user): string
     {
         if ($user->isGoogleAuthenticatorEnabled()) {
-            throw new \InvalidArgumentException('Can not generate a QR code for the user when a google authenticator is already enabled.');
+            throw new InvalidArgumentException('Can not generate a QR code for the user when a google authenticator is already enabled.');
         }
 
         return $this->authenticator->getQRContent($user);

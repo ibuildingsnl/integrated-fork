@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Relation;
 
+use DOMXPath;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Std\DOMDocument;
 
@@ -29,7 +30,7 @@ class HtmlRelation
         $document = new DOMDocument();
         $document->loadHTML($html);
 
-        $xpath = new \DOMXPath($document);
+        $xpath = new DOMXPath($document);
         foreach ($xpath->query('//img[@data-integrated-id]') as $elm) {
             yield $elm->getAttribute('data-integrated-id');
         }

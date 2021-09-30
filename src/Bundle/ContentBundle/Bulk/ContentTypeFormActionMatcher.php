@@ -39,11 +39,6 @@ class ContentTypeFormActionMatcher implements ActionMatcherInterface
         }
 
         $options = $action->getOptions();
-
-        if (isset($options['contentType'])) {
-            return true;
-        }
-
-        return false;
+        return isset($options['contentType']);
     }
 }

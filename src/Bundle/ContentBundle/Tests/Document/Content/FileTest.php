@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 
 /**
@@ -46,7 +47,7 @@ class FileTest extends ContentTest
     public function testGetAndSetFileFunction()
     {
         $this->assertEquals(
-            $file = $this->createMock('Integrated\Common\Content\Document\Storage\Embedded\StorageInterface'),
+            $file = $this->createMock(StorageInterface::class),
             $this->file->setFile($file)->getFile()
         );
     }

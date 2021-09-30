@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Channel;
 
+use PHPUnit\Framework\TestCase;
+use DateTime;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ChannelTest extends \PHPUnit\Framework\TestCase
+class ChannelTest extends TestCase
 {
     /**
      * @var Channel
@@ -33,7 +35,7 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
 
     public function testDefaultValues()
     {
-        $this->assertInstanceOf('\DateTime', $this->channel->getCreatedAt());
+        $this->assertInstanceOf(DateTime::class, $this->channel->getCreatedAt());
     }
 
     /**
@@ -72,7 +74,7 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAndSetCreatedAtFunction()
     {
-        $createdAt = new \DateTime();
+        $createdAt = new DateTime();
         $this->assertSame($createdAt, $this->channel->setCreatedAt($createdAt)->getCreatedAt());
     }
 }

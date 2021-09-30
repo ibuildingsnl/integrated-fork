@@ -80,7 +80,7 @@ class CollectionSubscriber implements EventSubscriber
     {
         $class = $event->getClassMetadata();
 
-        if ($class->getName() == $this->class) {
+        if ($class->getName() === $this->class) {
             $class->setCollection($this->collection);
         }
     }

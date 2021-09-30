@@ -11,11 +11,18 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
+use Twig_Environment;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig_Error_Loader;
+use Twig_Error_Runtime;
+use Twig_Error_Syntax;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -24,7 +31,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class WebsiteToolbarListener implements EventSubscriberInterface
 {
     /**
-     * @var \Twig_Environment
+     * @var Twig_Environment
      */
     protected $twig;
 
@@ -44,10 +51,10 @@ class WebsiteToolbarListener implements EventSubscriberInterface
     protected $contentItem = null;
 
     /**
-     * @param \Twig_Environment $twig
+     * @param Twig_Environment $twig
      * @param EditableChecker   $websiteEditableChecker
      */
-    public function __construct(\Twig_Environment $twig, EditableChecker $websiteEditableChecker)
+    public function __construct(Twig_Environment $twig, EditableChecker $websiteEditableChecker)
     {
         $this->twig = $twig;
         $this->websiteEditableChecker = $websiteEditableChecker;
@@ -62,9 +69,9 @@ class WebsiteToolbarListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -78,12 +85,12 @@ class WebsiteToolbarListener implements EventSubscriberInterface
     /**
      * @param Response $response
      *
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
      */
     protected function injectToolbar(Response $response)
     {

@@ -11,12 +11,30 @@
 
 namespace Integrated\Bundle\ThemeBundle\Entity\Scraper;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 class Block
 {
-    const MODE_IGNORE = 'ignore';
-    const MODE_REPLACE = 'replace';
-    const MODE_APPEND = 'append';
-    const MODE_REPLACE_INNER = 'replace.inner';
+    /**
+     * @var string
+     */
+    public const MODE_IGNORE = 'ignore';
+
+    /**
+     * @var string
+     */
+    public const MODE_REPLACE = 'replace';
+
+    /**
+     * @var string
+     */
+    public const MODE_APPEND = 'append';
+
+    /**
+     * @var string
+     */
+    public const MODE_REPLACE_INNER = 'replace.inner';
 
     /**
      * @var int
@@ -24,7 +42,7 @@ class Block
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
@@ -45,7 +63,7 @@ class Block
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -57,17 +75,17 @@ class Block
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime|DateTimeImmutable
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      */
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt(DateTimeInterface $createdAt): void
     {
         $this->createdAt = $createdAt;
     }

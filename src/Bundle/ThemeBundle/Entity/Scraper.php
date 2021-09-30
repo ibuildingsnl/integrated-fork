@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ThemeBundle\Entity;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper\Block;
 
@@ -22,7 +25,7 @@ class Scraper
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
@@ -68,7 +71,7 @@ class Scraper
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
         $this->lastModified = time();
         $this->blocks = new ArrayCollection();
     }
@@ -82,17 +85,17 @@ class Scraper
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime|DateTimeImmutable
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      */
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt(DateTimeInterface $createdAt): void
     {
         $this->createdAt = $createdAt;
     }

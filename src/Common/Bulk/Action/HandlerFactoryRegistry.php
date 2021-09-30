@@ -44,12 +44,7 @@ class HandlerFactoryRegistry
         if (!\is_string($class)) {
             throw new UnexpectedTypeException($class, 'string');
         }
-
-        if (isset($this->factories[$class])) {
-            return true;
-        }
-
-        return false;
+        return isset($this->factories[$class]);
     }
 
     /**

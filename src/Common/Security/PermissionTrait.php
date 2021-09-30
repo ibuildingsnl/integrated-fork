@@ -82,13 +82,7 @@ trait PermissionTrait
     public function getPermission($groupId)
     {
         return $this->getPermissions()->filter(function ($permission) use ($groupId) {
-            if ($permission instanceof Permission) {
-                if ($permission->getGroup() == $groupId) {
-                    return true;
-                }
-            }
-
-            return false;
+            return $permission instanceof Permission && $permission->getGroup() == $groupId;
         })->first();
     }
 }

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\EventListener;
 
+use PHPUnit\Framework\TestCase;
+use Knp\Menu\ItemInterface;
 use Integrated\Bundle\ContentBundle\EventListener\ConfigureMenuSubscriber;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -20,7 +22,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
+class ConfigureMenuSubscriberTest extends TestCase
 {
     /**
      * @var ConfigureMenuSubscriber
@@ -33,7 +35,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     protected $authorizationChecker;
 
     /**
-     * @var \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigureMenuEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $event;
 
@@ -60,8 +62,8 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnMenuConfigureFunctionWithInvalidMenu()
     {
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
-        $menu = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
+        $menu = $this->createMock(ItemInterface::class);
 
         $this->event
             ->expects($this->once())
@@ -90,8 +92,8 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $subMenu */
-        $subMenu = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $subMenu */
+        $subMenu = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->once())
@@ -115,8 +117,8 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
+        $menuContent = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->once())
@@ -147,11 +149,10 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
+        $menuContent = $this->createMock(ItemInterface::class);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuManage = $this->createMock('Knp\Menu\ItemInterface');
+        $menuManage = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->exactly(2))
@@ -198,11 +199,10 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
+        $menuContent = $this->createMock(ItemInterface::class);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuManage = $this->createMock('Knp\Menu\ItemInterface');
+        $menuManage = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->exactly(2))
@@ -255,11 +255,10 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $menu = $this->getValidMenu($this->event);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuContent = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
+        $menuContent = $this->createMock(ItemInterface::class);
 
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menuContent */
-        $menuManage = $this->createMock('Knp\Menu\ItemInterface');
+        $menuManage = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->exactly(2))
@@ -311,14 +310,14 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param \Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent|\PHPUnit_Framework_MockObject_MockObject $event
+     * @param ConfigureMenuEvent|\PHPUnit_Framework_MockObject_MockObject $event
      *
-     * @return \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ItemInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getValidMenu($event = null)
     {
-        /** @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
-        $menu = $this->createMock('Knp\Menu\ItemInterface');
+        /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $menu */
+        $menu = $this->createMock(ItemInterface::class);
 
         $menu
             ->expects($this->once())

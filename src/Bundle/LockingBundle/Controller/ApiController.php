@@ -11,15 +11,16 @@
 
 namespace Integrated\Bundle\LockingBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ApiController extends Controller
+class ApiController extends AbstractController
 {
     /**
      * @param Request $request
@@ -37,7 +38,7 @@ class ApiController extends Controller
             return new JsonResponse($response, $response['code']);
         }
 
-        if (!$owner = $this->getUser()) {
+        if (($owner = $this->getUser()) === null) {
             $response = [
                 'code' => 401,
                 'message' => 'Valid user is required',
@@ -46,7 +47,7 @@ class ApiController extends Controller
             return new JsonResponse($response, $response['code']);
         }
 
-        $owner = Locks\Resource::fromAccount($owner);
+        $owner = Resource::fromAccount($owner);
 
         // get the lock and check if the lock is set by the current use else do nothing
 
@@ -77,13 +78,10 @@ class ApiController extends Controller
             'lock' => null,
         ];
 
-        if ($owner->equals($lock->getRequest()->getOwner())) {
-            // only the owner can extends the lock.
-
-            if ($lock = $service->refresh($lock)) {
-                $response['message'] = 'The lock is extended';
-                $response['lock'] = $lock->getId();
-            }
+        // only the owner can extends the lock.
+        if ($owner->equals($lock->getRequest()->getOwner()) && ($lock = $service->refresh($lock))) {
+            $response['message'] = 'The lock is extended';
+            $response['lock'] = $lock->getId();
         }
 
         return new JsonResponse($response, $response['code']);

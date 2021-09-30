@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
+use PHPUnit\Framework\TestCase;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
@@ -22,7 +24,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueListenerTest extends \PHPUnit\Framework\TestCase
+class QueueListenerTest extends TestCase
 {
     /**
      * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -31,12 +33,12 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
+        $this->queue = $this->createMock(QueueInterface::class);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->getInstance());
+        $this->assertInstanceOf(EventSubscriber::class, $this->getInstance());
     }
 
     public function testGetSubscribedEvents()
@@ -50,7 +52,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     public function testSetGetQueue()
     {
         $listener = $this->getInstance();
-        $mock = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
+        $mock = $this->createMock(QueueInterface::class);
 
         $this->assertSame($this->queue, $listener->getQueue());
         $listener->setQueue($mock);
@@ -164,7 +166,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getEvent($object)
     {
-        $instance = $this->getMockBuilder('Doctrine\\ORM\\Event\\LifecycleEventArgs')->disableOriginalConstructor()->getMock();
+        $instance = $this->getMockBuilder(LifecycleEventArgs::class)->disableOriginalConstructor()->getMock();
         $instance->expects($this->any())
             ->method('getObject')
             ->willReturn($object);
@@ -179,7 +181,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getState($id)
     {
-        $instance = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
+        $instance = $this->createMock(State::class);
         $instance->expects($this->any())
             ->method('getWorkflow')
             ->willReturn($this->getDefinition($id));
@@ -194,7 +196,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getDefinition($id)
     {
-        $instance = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+        $instance = $this->createMock(Definition::class);
         $instance->expects($this->any())
             ->method('getId')
             ->willReturn($id);

@@ -37,7 +37,7 @@ class GroupManager implements GroupManagerInterface
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
-        if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\GroupInterface')) {
+        if (!is_subclass_of($this->repository->getClassName(), GroupInterface::class)) {
             throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\GroupInterface', $this->repository->getClassName()));
         }
     }

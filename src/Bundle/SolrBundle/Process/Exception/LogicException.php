@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\SolrBundle\Process\Exception;
 
+use Exception;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class LogicException extends \Exception
+class LogicException extends Exception
 {
     /**
      * @return static

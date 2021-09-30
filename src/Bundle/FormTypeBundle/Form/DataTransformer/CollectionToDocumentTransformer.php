@@ -33,8 +33,9 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
         if (null === $value) {
             return null;
         }
+
         if ($value instanceof Collection) {
-            if ($value->count()) {
+            if ($value->count() !== 0) {
                 $document = $value->first();
 
                 if (!\is_object($document)) {
@@ -48,6 +49,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
 
             return null;
         }
+
         throw new TransformationFailedException(sprintf('Expected a Collection, "%s" given', \gettype($value)));
     }
 
@@ -62,6 +64,7 @@ class CollectionToDocumentTransformer implements DataTransformerInterface
             if (\is_object($value)) {
                 return new ArrayCollection([$value]);
             }
+
             throw new TransformationFailedException(
                 sprintf('Expected an object, "%s" given', \gettype($value))
             );

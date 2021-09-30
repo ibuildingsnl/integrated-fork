@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
@@ -45,15 +47,15 @@ abstract class AbstractPage
     /**
      * @var Grid[]
      */
-    protected $grids;
+    protected $grids = [];
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $updatedAt;
 
@@ -65,8 +67,8 @@ abstract class AbstractPage
     public function __construct()
     {
         $this->grids = new ArrayCollection();
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new DateTime();
+        $this->updatedAt = new DateTime();
     }
 
     /**
@@ -179,7 +181,7 @@ abstract class AbstractPage
     public function getGrid($id)
     {
         foreach ($this->grids as $grid) {
-            if ($grid instanceof Grid && $grid->getId() == $id) {
+            if ($grid instanceof Grid && $grid->getId() === $id) {
                 return $grid;
             }
         }
@@ -188,7 +190,7 @@ abstract class AbstractPage
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -196,11 +198,11 @@ abstract class AbstractPage
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -208,7 +210,7 @@ abstract class AbstractPage
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getUpdatedAt()
     {
@@ -216,11 +218,11 @@ abstract class AbstractPage
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param DateTime $updatedAt
      *
      * @return $this
      */
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt(DateTimeInterface $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -280,12 +282,12 @@ abstract class AbstractPage
             return null;
         }
 
-        if ($channel->getPrimaryDomain()) {
+        if ($channel->getPrimaryDomain() !== '' && $channel->getPrimaryDomain() !== '0') {
             return $channel->getPrimaryDomain();
         }
 
         $domains = $channel->getDomains();
-        if (\count($domains)) {
+        if (\count($domains) > 0) {
             return $domains[0];
         }
 

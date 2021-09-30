@@ -19,9 +19,20 @@ use Integrated\Common\Normalizer\Exception\UnexpectedTypeException;
  */
 class Container implements ContainerInterface
 {
-    const EMPTY_TYPE = 0;
-    const VALUE_TYPE = 1;
-    const ARRAY_TYPE = 2;
+    /**
+     * @var int
+     */
+    public const EMPTY_TYPE = 0;
+
+    /**
+     * @var int
+     */
+    public const VALUE_TYPE = 1;
+
+    /**
+     * @var int
+     */
+    public const ARRAY_TYPE = 2;
 
     /**
      * @var array
@@ -83,7 +94,7 @@ class Container implements ContainerInterface
      */
     public function get($key)
     {
-        return \array_key_exists($key, $this->data) ? $this->data[$key] : null;
+        return $this->data[$key] ?? null;
     }
 
     /**

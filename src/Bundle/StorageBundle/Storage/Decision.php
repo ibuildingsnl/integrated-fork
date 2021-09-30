@@ -29,7 +29,7 @@ class Decision implements DecisionInterface
     /**
      * @var array
      */
-    protected $decisionMap;
+    protected $decisionMap = [];
 
     /**
      * @param FilesystemRegistryInterface $registry

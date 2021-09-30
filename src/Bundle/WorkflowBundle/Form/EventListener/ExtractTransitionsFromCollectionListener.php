@@ -64,7 +64,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     {
         $form = $event->getForm();
 
-        if (!$form->count()) {
+        if ($form->count() === 0) {
             return;
         }
 
@@ -108,7 +108,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     {
         $form = $event->getForm();
 
-        if (!$form->count()) {
+        if ($form->count() === 0) {
             return;
         }
 
@@ -166,7 +166,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     {
         $form = $event->getForm();
 
-        if (!$form->count()) {
+        if ($form->count() === 0) {
             return;
         }
 

@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\AssetBundle\Tests\Manager;
 
+use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class AssetManagerTest extends \PHPUnit\Framework\TestCase
+class AssetManagerTest extends TestCase
 {
     /**
      * @var AssetManager
@@ -51,7 +53,7 @@ class AssetManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionFunction()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
 
         $this->manager->add('script.js', false, 'invalid');
     }

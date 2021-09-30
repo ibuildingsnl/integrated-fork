@@ -80,8 +80,8 @@ class Request implements RequestInterface
         return sprintf(
             "Resource: %s\nResourceOwner: %s\ntimeout: %s",
             (string) $this->resource,
-            $this->owner === null ? 'NULL' : $this->owner,
-            $this->timeout === null ? 'NULL' : $this->timeout
+            $this->owner ?? 'NULL',
+            $this->timeout ?? 'NULL'
         );
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ScraperRunCommand extends Command
 {
+    protected static $defaultName = 'scraper:run';
     /**
      * @var Scraper
      */
@@ -31,16 +32,15 @@ class ScraperRunCommand extends Command
      */
     protected function configure(): void
     {
-        $this
-            ->setName('scraper:run')
-            ->setDescription('Scrape scraper pages');
+        $this->setDescription('Scrape scraper pages');
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->scraper->run();
+        return 0;
     }
 }

@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Menu;
 
+use Knp\Menu\ItemInterface;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use ReflectionClass;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\ContentType\IteratorInterface;
@@ -22,9 +25,20 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ContentTypeMenuBuilder
 {
-    const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content';
-    const CONTENT_TYPE_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType';
-    const ROUTE = 'integrated_content_content_new';
+    /**
+     * @var string
+     */
+    public const CONTENT_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content';
+
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\ContentType\\ContentType';
+
+    /**
+     * @var string
+     */
+    public const ROUTE = 'integrated_content_content_new';
 
     /**
      * @var FactoryInterface
@@ -57,7 +71,7 @@ class ContentTypeMenuBuilder
     }
 
     /**
-     * @return \Knp\Menu\ItemInterface
+     * @return ItemInterface
      */
     public function createMenu()
     {
@@ -69,7 +83,7 @@ class ContentTypeMenuBuilder
             $child = $menu->addChild($key);
             $hasItems = false;
 
-            /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\ContentType $document */
+            /** @var ContentType $document */
             foreach ($documents as $document) {
                 if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $document)) {
                     continue;
@@ -100,13 +114,13 @@ class ContentTypeMenuBuilder
     {
         $menu = [];
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\ContentType $document */
+        /** @var ContentType $document */
         foreach ($result as $document) {
             if (!is_a($document, self::CONTENT_TYPE_CLASS)) {
                 continue;
             }
 
-            $reflectionClass = new \ReflectionClass($document->getClass());
+            $reflectionClass = new ReflectionClass($document->getClass());
 
             if ($parent = $this->getParentClass($reflectionClass)) {
                 $menu[$parent->getShortName()][] = $document;
@@ -121,11 +135,11 @@ class ContentTypeMenuBuilder
     }
 
     /**
-     * @param \ReflectionClass $reflectionClass
+     * @param ReflectionClass $reflectionClass
      *
-     * @return bool|\ReflectionClass
+     * @return bool|ReflectionClass
      */
-    protected function getParentClass(\ReflectionClass $reflectionClass)
+    protected function getParentClass(ReflectionClass $reflectionClass)
     {
         if ($parent = $reflectionClass->getParentClass()) {
             if ($parent->getName() === self::CONTENT_CLASS) {

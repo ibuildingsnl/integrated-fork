@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use PHPUnit\Framework\TestCase;
 use Countable;
 use Integrated\Common\Solr\Indexer\Batch;
 use Integrated\Common\Solr\Indexer\BatchOperation;
@@ -18,7 +19,7 @@ use Integrated\Common\Solr\Indexer\BatchOperation;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class BatchTest extends \PHPUnit\Framework\TestCase
+class BatchTest extends TestCase
 {
     public function testAdd()
     {

@@ -22,7 +22,7 @@ class TargetProvider
     /**
      * @var bool[]
      */
-    private $alwaysUseDefault;
+    private $alwaysUseDefault = [];
 
     public function __construct(array $alwaysUseDefault = [])
     {

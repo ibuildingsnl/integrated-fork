@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -30,7 +31,7 @@ class IntegratedWebsiteExtension extends Extension implements PrependExtensionIn
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('services.xml');
         $loader->load('event_listeners.xml');
@@ -46,14 +47,12 @@ class IntegratedWebsiteExtension extends Extension implements PrependExtensionIn
      */
     public function prepend(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig(
-                        $name,
-                        ['exception_controller' => 'integrated_website.controller.error:showAction']
-                    );
-                    break;
+        foreach (array_keys($container->getExtensions()) as $name) {
+            if ($name === 'twig') {
+                $container->prependExtensionConfig(
+                    $name,
+                    ['exception_controller' => 'integrated_website.controller.error:showAction']
+                );
             }
         }
     }

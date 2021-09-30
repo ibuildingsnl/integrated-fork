@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\Normalizer;
 use Integrated\Common\Normalizer\NormalizerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
@@ -21,7 +22,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class NormalizerTest extends \PHPUnit\Framework\TestCase
+class NormalizerTest extends TestCase
 {
     /**
      * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject

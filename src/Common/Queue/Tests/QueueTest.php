@@ -11,13 +11,17 @@
 
 namespace Integrated\Common\Queue\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Queue\QueueInterface;
+use stdClass;
+use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Queue\Provider\QueueProviderInterface;
 use Integrated\Common\Queue\Queue;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueTest extends \PHPUnit\Framework\TestCase
+class QueueTest extends TestCase
 {
     /**
      * @var Queue
@@ -31,13 +35,13 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->provider = $this->createMock('Integrated\Common\Queue\Provider\QueueProviderInterface');
+        $this->provider = $this->createMock(QueueProviderInterface::class);
         $this->queue = new Queue($this->provider, 'channel');
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueInterface', $this->queue);
+        $this->assertInstanceOf(QueueInterface::class, $this->queue);
     }
 
     public function testPriorityConstants()
@@ -59,7 +63,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testPush()
     {
-        $payload = new \stdClass();
+        $payload = new stdClass();
 
         $this->provider->expects($this->once())
             ->method('push')
@@ -70,7 +74,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testPushWithDelay()
     {
-        $payload = new \stdClass();
+        $payload = new stdClass();
 
         $this->provider->expects($this->once())
             ->method('push')
@@ -81,7 +85,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testPushWithPriority()
     {
-        $payload = new \stdClass();
+        $payload = new stdClass();
 
         $this->provider->expects($this->once())
             ->method('push')
@@ -92,7 +96,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testPull()
     {
-        $message = $this->createMock('Integrated\Common\Queue\QueueMessageInterface');
+        $message = $this->createMock(QueueMessageInterface::class);
 
         $this->provider->expects($this->once())
             ->method('pull')
@@ -104,8 +108,8 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
     public function testPullWithLimit()
     {
-        $message1 = $this->createMock('Integrated\Common\Queue\QueueMessageInterface');
-        $message2 = $this->createMock('Integrated\Common\Queue\QueueMessageInterface');
+        $message1 = $this->createMock(QueueMessageInterface::class);
+        $message2 = $this->createMock(QueueMessageInterface::class);
 
         $this->provider->expects($this->once())
             ->method('pull')

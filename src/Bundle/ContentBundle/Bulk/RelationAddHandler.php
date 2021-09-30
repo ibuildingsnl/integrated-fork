@@ -35,7 +35,7 @@ class RelationAddHandler implements HandlerInterface
     /**
      * @var ContentInterface[]
      */
-    private $references;
+    private $references = [];
 
     /**
      * Constructor.

@@ -27,7 +27,7 @@ class ImageConverterCompilerPass implements CompilerPassInterface
     {
         $definition = $container->getDefinition('integrated_image.container_converter');
 
-        foreach ($container->findTaggedServiceIds('integrated_image.converter') as $id => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_image.converter')) as $id) {
             $definition->addMethodCall('add', [new Reference($id)]);
         }
     }

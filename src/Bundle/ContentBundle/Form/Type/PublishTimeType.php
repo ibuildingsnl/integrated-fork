@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use DateTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\MaxDateTimeTransformer;
 use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
@@ -44,16 +45,14 @@ class PublishTimeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
+            'data_class' => PublishTime::class,
             'constraints' => new Callback(function (PublishTime $publishTime, ExecutionContextInterface $context) {
                 $startDate = $publishTime->getStartDate();
                 $endDate = $publishTime->getEndDate();
 
-                if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
-                    if ($endDate < $startDate) {
-                        $context->buildViolation("The end date can't be earlier than the begin date")
-                            ->atPath('endDate')->addViolation();
-                    }
+                if ($startDate instanceof DateTime && $endDate instanceof DateTime && $endDate < $startDate) {
+                    $context->buildViolation("The end date can't be earlier than the begin date")
+                        ->atPath('endDate')->addViolation();
                 }
             }),
         ]);

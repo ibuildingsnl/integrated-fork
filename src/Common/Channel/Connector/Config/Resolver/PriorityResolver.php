@@ -25,7 +25,7 @@ class PriorityResolver implements ResolverInterface
     /**
      * @var ResolverInterface[]
      */
-    protected $resolvers;
+    protected $resolvers = [];
 
     /**
      * @param ResolverInterface[] $resolvers
@@ -64,11 +64,7 @@ class PriorityResolver implements ResolverInterface
      */
     public function hasConfig($name)
     {
-        if ($this->findResolver($name)) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->findResolver($name);
     }
 
     /**
@@ -76,7 +72,7 @@ class PriorityResolver implements ResolverInterface
      */
     public function getConfig($name)
     {
-        if ($resolver = $this->findResolver($name)) {
+        if (($resolver = $this->findResolver($name)) !== null) {
             return $resolver->getConfig($name);
         }
 

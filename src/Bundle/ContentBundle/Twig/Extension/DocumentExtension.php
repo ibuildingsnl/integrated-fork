@@ -2,6 +2,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
+use Doctrine\ODM\MongoDB\LockException;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Content\ContentInterface;
@@ -30,7 +32,9 @@ class DocumentExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('integrated_document', [$this, 'getDocument']),
+            new TwigFunction('integrated_document', function ($data) : ?ContentInterface {
+                return $this->getDocument($data);
+            }),
         ];
     }
 
@@ -39,8 +43,8 @@ class DocumentExtension extends AbstractExtension
      *
      * @return ContentInterface|null
      *
-     * @throws \Doctrine\ODM\MongoDB\LockException
-     * @throws \Doctrine\ODM\MongoDB\Mapping\MappingException
+     * @throws LockException
+     * @throws MappingException
      */
     public function getDocument($data)
     {

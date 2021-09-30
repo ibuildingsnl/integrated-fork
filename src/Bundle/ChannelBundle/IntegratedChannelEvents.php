@@ -23,8 +23,9 @@ final class IntegratedChannelEvents
      * in the controller.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_CREATE_REQUEST = 'integrated_channel.config.create.request';
+    public const CONFIG_CREATE_REQUEST = 'integrated_channel.config.create.request';
 
     /**
      * The CONFIG_CREATE_SUBMITTED event is fired after the form is successfully submitted.
@@ -33,8 +34,9 @@ final class IntegratedChannelEvents
      * different response to be set instead of the default one.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\FormConfigEvent")
+     * @var string
      */
-    const CONFIG_CREATE_SUBMITTED = 'integrated_channel.config.create.submitted';
+    public const CONFIG_CREATE_SUBMITTED = 'integrated_channel.config.create.submitted';
 
     /**
      * The CONFIG_CREATE_RESPONSE event is fired after the config is persisted.
@@ -42,8 +44,9 @@ final class IntegratedChannelEvents
      * This even allows the access to the response just before it sent.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\FilterResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_CREATE_RESPONSE = 'integrated_channel.config.create.response';
+    public const CONFIG_CREATE_RESPONSE = 'integrated_channel.config.create.response';
 
     /**
      * The CONFIG_EDIT_REQUEST event is fired when a config is edited.
@@ -52,8 +55,9 @@ final class IntegratedChannelEvents
      * in the controller.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_EDIT_REQUEST = 'integrated_channel.config.edit.request';
+    public const CONFIG_EDIT_REQUEST = 'integrated_channel.config.edit.request';
 
     /**
      * The CONFIG_EDIT_SUBMITTED event is fired after the form is successfully submitted.
@@ -62,8 +66,9 @@ final class IntegratedChannelEvents
      * different response to be set instead of the default one.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\FormConfigEvent")
+     * @var string
      */
-    const CONFIG_EDIT_SUBMITTED = 'integrated_channel.config.edit.submitted';
+    public const CONFIG_EDIT_SUBMITTED = 'integrated_channel.config.edit.submitted';
 
     /**
      * The CONFIG_EDIT_RESPONSE event is fired after the config is persisted.
@@ -71,8 +76,9 @@ final class IntegratedChannelEvents
      * This even allows the access to the response just before it sent.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\FilterResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_EDIT_RESPONSE = 'integrated_channel.config.edit.response';
+    public const CONFIG_EDIT_RESPONSE = 'integrated_channel.config.edit.response';
 
     /**
      * The CONFIG_DELETE_REQUEST event is fired when a config is deleted.
@@ -81,8 +87,9 @@ final class IntegratedChannelEvents
      * in the controller.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_DELETE_REQUEST = 'integrated_channel.config.delete.request';
+    public const CONFIG_DELETE_REQUEST = 'integrated_channel.config.delete.request';
 
     /**
      * The CONFIG_DELETE_RESPONSE event is fired after the config is deleted.
@@ -90,6 +97,7 @@ final class IntegratedChannelEvents
      * This even allows the access to the response just before it sent.
      *
      * @Event("Integrated\Bundle\ChannelBundle\Event\FilterResponseConfigEvent")
+     * @var string
      */
-    const CONFIG_DELETE_RESPONSE = 'integrated_channel.config.delete.response';
+    public const CONFIG_DELETE_RESPONSE = 'integrated_channel.config.delete.response';
 }

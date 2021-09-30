@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\EventListener\Doctrine\ODM;
 
+use Closure;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
@@ -22,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContainerAwareFileEventListener extends FileEventListener
 {
     /**
-     * @var \Closure|null
+     * @var Closure|null
      */
     private $initializer;
 

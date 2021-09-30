@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\UserBundle\Security;
 
 use Darsyn\IP\Exception\IpException;
-use Darsyn\IP\Version\Multi as IP;
+use Darsyn\IP\Version\Multi;
 use Integrated\Bundle\UserBundle\Model\IpListManagerInterface;
 use Integrated\Common\Security\IpListMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,15 +32,10 @@ class IpListMatcher implements IpListMatcherInterface
     public function match(Request $request): bool
     {
         try {
-            $ip = IP::factory($request->getClientIp());
-        } catch (IpException $e) {
+            $ip = Multi::factory($request->getClientIp());
+        } catch (IpException $ipException) {
             return false;
         }
-
-        if ($this->manager->findBy(['ip' => $ip])) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->manager->findBy(['ip' => $ip]);
     }
 }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Util;
 
+use Closure;
 use Doctrine\MongoDB\ArrayIterator;
 use Doctrine\MongoDB\Iterator;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -25,8 +26,9 @@ class ProgressIteratorUtil
 {
     /**
      * @const string
+     * @var string
      */
-    const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
+    public const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
 
     /**
      * @var Iterator
@@ -49,13 +51,13 @@ class ProgressIteratorUtil
     }
 
     /**
-     * @param \Closure $closure
+     * @param Closure $closure
      *
      * @return $this
      */
-    public function map(\Closure $closure)
+    public function map(Closure $closure)
     {
-        if ($this->iterator->count()) {
+        if ($this->iterator->count() !== 0) {
             $progress = $this->createProgress();
             $iterator = new ArrayIterator();
 
@@ -77,13 +79,13 @@ class ProgressIteratorUtil
     }
 
     /**
-     * @param \Closure $closure
+     * @param Closure $closure
      *
      * @return $this
      */
-    public function walk(\Closure $closure)
+    public function walk(Closure $closure)
     {
-        if ($this->iterator->count()) {
+        if ($this->iterator->count() !== 0) {
             $progress = $this->createProgress();
 
             foreach ($this->iterator as $item) {

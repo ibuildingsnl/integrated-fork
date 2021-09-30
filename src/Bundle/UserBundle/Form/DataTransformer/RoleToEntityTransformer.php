@@ -55,7 +55,8 @@ class RoleToEntityTransformer implements DataTransformerInterface
         }
 
         foreach ($values as $role) {
-            $roles[] = $role = new Role($role, $role);
+            $roles[] = new Role($role, $role);
+            $role = $roles[];
 
             // <sarcasm>
             //     This is of course the best place to do a import of none existing roles

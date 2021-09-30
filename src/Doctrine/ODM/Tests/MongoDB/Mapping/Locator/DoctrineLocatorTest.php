@@ -11,13 +11,15 @@
 
 namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping\Locator;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\ClassLocatorInterface;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\DoctrineLocator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DoctrineLocatorTest extends \PHPUnit\Framework\TestCase
+class DoctrineLocatorTest extends TestCase
 {
     /**
      * @var MappingDriver|\PHPUnit_Framework_MockObject_MockObject
@@ -31,7 +33,7 @@ class DoctrineLocatorTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\Locator\\ClassLocatorInterface', $this->getInstance());
+        self::assertInstanceOf(ClassLocatorInterface::class, $this->getInstance());
     }
 
     public function testGetClassNames()

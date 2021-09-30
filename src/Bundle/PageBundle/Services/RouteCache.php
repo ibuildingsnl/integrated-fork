@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\Services;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -18,7 +19,10 @@ use Symfony\Component\Finder\Finder;
  */
 class RouteCache
 {
-    const CACHE_PATH_REGEX = '/^app(.*)Url(Matcher|Generator).php/';
+    /**
+     * @var string
+     */
+    public const CACHE_PATH_REGEX = '/^app(.*)Url(Matcher|Generator).php/';
 
     /**
      * @var string
@@ -41,7 +45,7 @@ class RouteCache
     {
         $finder = new Finder();
 
-        /** @var \Symfony\Component\Finder\SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($finder->files()->in($this->cacheDir)->depth(0)->name(self::CACHE_PATH_REGEX) as $file) {
             @unlink($file->getRealPath());
         }

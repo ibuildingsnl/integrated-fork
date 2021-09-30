@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\ImageBundle\Exception;
 
+use ErrorException;
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class RunTimeFormatException extends \ErrorException
+class RunTimeFormatException extends ErrorException
 {
     /**
      * @param $outputFormat

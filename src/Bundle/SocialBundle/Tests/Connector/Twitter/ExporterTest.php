@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SocialBundle\Tests\Connector\Twitter;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -23,7 +25,7 @@ use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ContentInterface;
 
-class ExporterTest extends \PHPUnit\Framework\TestCase
+class ExporterTest extends TestCase
 {
     /**
      * @var TwitterOAuth|\PHPUnit_Framework_MockObject_MockObject
@@ -114,7 +116,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getArticle()
     {
@@ -122,7 +124,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getOptions()
     {

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Block;
 
+use Twig_Environment;
 use Integrated\Common\Block\BlockHandlerInterface;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Block\BlockRequiredItemsInterface;
@@ -23,7 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class BlockHandler implements BlockHandlerInterface
 {
     /**
-     * @var \Twig_Environment
+     * @var Twig_Environment
      */
     private $twig;
 
@@ -38,11 +39,11 @@ class BlockHandler implements BlockHandlerInterface
     private $document;
 
     /**
-     * @param \Twig_Environment $twig
+     * @param Twig_Environment $twig
      *
      * @return $this
      */
-    public function setTwig(\Twig_Environment $twig)
+    public function setTwig(Twig_Environment $twig)
     {
         $this->twig = $twig;
 
@@ -98,7 +99,7 @@ class BlockHandler implements BlockHandlerInterface
      */
     public function render(array $parameters = [])
     {
-        if ($this->getTemplate()) {
+        if ($this->getTemplate() !== '' && $this->getTemplate() !== '0') {
             return $this->twig->render($this->getTemplate(), $parameters);
         }
 
@@ -144,7 +145,7 @@ class BlockHandler implements BlockHandlerInterface
             return true;
         }
 
-        if (!$relation = $block->getRequiredRelation()) {
+        if (($relation = $block->getRequiredRelation()) === null) {
             return true;
         }
 
@@ -159,7 +160,7 @@ class BlockHandler implements BlockHandlerInterface
         if ($relation = $this->getDocument()->getRelation($block->getRequiredRelation()->getId())) {
             foreach ($relation->getReferences() as $reference) {
                 foreach ($block->getRequiredItems() as $requiredItem) {
-                    if ($requiredItem->getId() == $reference->getId()) {
+                    if ($requiredItem->getId() === $reference->getId()) {
                         return true;
                     }
                 }

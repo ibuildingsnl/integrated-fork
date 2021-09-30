@@ -6,12 +6,15 @@ use Symfony\Component\Finder\Finder;
 
 class BundleTest
 {
-    const BUNDLES_DIRECTORY = '/../../';
+    /**
+     * @var string
+     */
+    public const BUNDLES_DIRECTORY = '/../../';
 
     /**
      * @var array
      */
-    private $bundles;
+    private $bundles = [];
 
     /**
      * Migrations constructor.
@@ -41,6 +44,7 @@ class BundleTest
                 //bundle found
                 continue;
             }
+
             $errors[] = 'Integrated'.$directory.' has not been loaded';
         }
 

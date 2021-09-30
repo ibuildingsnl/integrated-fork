@@ -40,7 +40,7 @@ trait PublishTitleTrait
      */
     public function getPublishedTitle()
     {
-        return $this->publishedTitle !== null ? $this->publishedTitle : $this->title;
+        return $this->publishedTitle ?? $this->title;
     }
 
     /**
@@ -48,7 +48,7 @@ trait PublishTitleTrait
      */
     public function setPublishedTitle($publishedTitle)
     {
-        $this->publishedTitle = $publishedTitle === null ? '' : $publishedTitle;
+        $this->publishedTitle = $publishedTitle ?? '';
     }
 
     /**

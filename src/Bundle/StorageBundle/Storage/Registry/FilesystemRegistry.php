@@ -51,7 +51,7 @@ class FilesystemRegistry implements FilesystemRegistryInterface
     {
         $keys = [];
 
-        foreach ($this->getIterator() as $key => $filesystem) {
+        foreach (array_keys($this->getIterator()) as $key) {
             $keys[] = $key;
         }
 
@@ -63,13 +63,7 @@ class FilesystemRegistry implements FilesystemRegistryInterface
      */
     public function exists($key)
     {
-        foreach ($this->getIterator() as $currentKey => $filesystem) {
-            if ($key == $currentKey) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_key_exists($key, $this->getIterator());
     }
 
     /**

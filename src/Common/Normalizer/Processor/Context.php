@@ -26,7 +26,7 @@ class Context implements NormalizerInterface
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var Context

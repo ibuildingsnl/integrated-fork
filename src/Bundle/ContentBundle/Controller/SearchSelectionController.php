@@ -11,10 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Countable;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +29,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SearchSelectionController extends Controller
+class SearchSelectionController extends AbstractController
 {
     /**
      * Lists all the SearchSelection documents.
@@ -127,7 +131,7 @@ class SearchSelectionController extends Controller
         $contentReferenced = $this->get('integrated_content.services.search.content.referenced');
         $referenced = $contentReferenced->getReferenced($searchSelection);
 
-        $form = $this->createDeleteForm($searchSelection->getId(), \count($referenced) > 0);
+        $form = $this->createDeleteForm($searchSelection->getId(), (is_array($referenced) || $referenced instanceof Countable ? \count($referenced) : 0) > 0);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -156,7 +160,7 @@ class SearchSelectionController extends Controller
         /** @var Request $request */
         $request = $this->get('request_stack')->getMasterRequest();
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository $repo */
+        /** @var SearchSelectionRepository $repo */
         $repo = $this->getDocumentManager()->getRepository(SearchSelection::class);
 
         $user = $this->getUser();
@@ -245,7 +249,7 @@ class SearchSelectionController extends Controller
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Query\Builder
+     * @return Builder
      */
     protected function getQueryBuilder()
     {
@@ -259,7 +263,7 @@ class SearchSelectionController extends Controller
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * @return DocumentManager
      */
     protected function getDocumentManager()
     {

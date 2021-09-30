@@ -44,7 +44,7 @@ class BlockFilterType extends AbstractType
     /**
      * @var bool
      */
-    private $pageBundleInstalled;
+    private $pageBundleInstalled = false;
 
     /**
      * @param MetadataFactoryInterface $factory
@@ -143,10 +143,8 @@ class BlockFilterType extends AbstractType
         $channelChoices = [];
         foreach ($channels as $channelId => $blocks) {
             $count = \count(array_intersect($blocks, $blockIds));
-            if ($count) {
-                if ($channel = $this->blockUsageProvider->getChannel($channelId)) {
-                    $channelChoices[$channel->getName().' ('.$count.')'] = $channelId;
-                }
+            if ($count !== 0 && ($channel = $this->blockUsageProvider->getChannel($channelId))) {
+                $channelChoices[$channel->getName().' ('.$count.')'] = $channelId;
             }
         }
 

@@ -21,6 +21,8 @@ final class Events
     }
 
     // don't allow creation
-
-    const METADATA = 'metadata';
+    /**
+     * @var string
+     */
+    public const METADATA = 'metadata';
 }

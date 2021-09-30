@@ -69,7 +69,7 @@ class ProcessorResolver implements ResolverInterface
 
         try {
             $processors = $this->resolve(new ReflectionClass($object));
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $processors = [];
         }
 
@@ -130,6 +130,6 @@ class ProcessorResolver implements ResolverInterface
      */
     protected function getInstance($class)
     {
-        return isset($this->resolved[$class]) ? $this->resolved[$class] : null;
+        return $this->resolved[$class] ?? null;
     }
 }

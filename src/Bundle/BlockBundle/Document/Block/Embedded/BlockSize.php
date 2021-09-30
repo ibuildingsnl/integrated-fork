@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block\Embedded;
 
+use Countable;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 
 /**
@@ -180,23 +181,24 @@ class BlockSize
     public function getSizes()
     {
         $sizes = [];
-        if ($this->getSizeXs()) {
+        if ($this->getSizeXs() !== 0) {
             $sizes['xs'] = $this->getSizeXs();
         }
-        if ($this->getSizeSm()) {
+
+        if ($this->getSizeSm() !== 0) {
             $sizes['sm'] = $this->getSizeSm();
         }
-        if ($this->getSizeMd()) {
+
+        if ($this->getSizeMd() !== 0) {
             $sizes['md'] = $this->getSizeMd();
         }
-        if ($this->getSizeLg()) {
+
+        if ($this->getSizeLg() !== 0) {
             $sizes['lg'] = $this->getSizeLg();
         }
 
-        if (!\count($sizes)) {
-            if ($this->getSize()) {
-                $sizes['sm'] = $this->getSize();
-            }
+        if ((is_array($sizes) || $sizes instanceof Countable ? \count($sizes) : 0) === 0 && $this->getSize()) {
+            $sizes['sm'] = $this->getSize();
         }
 
         return $sizes;

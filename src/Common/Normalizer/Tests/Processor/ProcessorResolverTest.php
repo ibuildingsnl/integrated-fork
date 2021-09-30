@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Normalizer\Exception\ExceptionInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorResolver;
 use Integrated\Common\Normalizer\Processor\RegistryInterface;
@@ -24,7 +26,7 @@ use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
+class ProcessorResolverTest extends TestCase
 {
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -108,7 +110,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetProcessorInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Normalizer\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->getProcessor(42);
     }

@@ -38,7 +38,7 @@ class GridFactory
     /**
      * @param array $array
      *
-     * @return \Integrated\Bundle\PageBundle\Document\Page\Grid\Grid|null
+     * @return Grid|null
      */
     public function fromArray(array $array = [])
     {
@@ -91,7 +91,7 @@ class GridFactory
                         $row->addColumn($column);
                     }
 
-                    if (\count($row->getColumns())) {
+                    if (\count($row->getColumns()) > 0) {
                         $item->setRow($row);
                     }
                 }

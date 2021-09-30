@@ -69,7 +69,7 @@ class WorkflowDefaultDataListener implements EventSubscriberInterface
     {
         $token = $this->storage->getToken();
 
-        if (!$token) {
+        if ($token === null) {
             return null;
         }
 

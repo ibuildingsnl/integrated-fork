@@ -55,13 +55,13 @@ class ContextResolver implements ContextResolverInterface
 
         $token = $this->storage->getToken();
 
-        if (!$token) {
+        if ($token === null) {
             return null;
         }
 
         $config = $this->map->getFirewallConfig($request);
 
-        if (!$config) {
+        if ($config === null) {
             return null;
         }
 

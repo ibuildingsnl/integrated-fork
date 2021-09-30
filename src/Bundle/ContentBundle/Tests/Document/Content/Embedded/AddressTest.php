@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends TestCase
 {
     /**
      * @var Address

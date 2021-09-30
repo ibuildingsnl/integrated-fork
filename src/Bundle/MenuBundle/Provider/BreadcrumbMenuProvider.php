@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\MenuBundle\Provider;
 
+use InvalidArgumentException;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
@@ -43,8 +44,9 @@ class BreadcrumbMenuProvider implements MenuProviderInterface
     public function get($name, array $options = [])
     {
         if ($name !== 'breadcrumb') {
-            throw new \InvalidArgumentException('This provider can be used for menu "breadcrumb" only');
+            throw new InvalidArgumentException('This provider can be used for menu "breadcrumb" only');
         }
+
         $menu = $this->menuFactory->createItem($name, $options);
 
         foreach ($this->breadcrumbResolver->getBreadcrumb() as $breadcrumbItem) {

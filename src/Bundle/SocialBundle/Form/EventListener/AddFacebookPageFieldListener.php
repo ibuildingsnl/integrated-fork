@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\SocialBundle\Form\EventListener;
 
+use Exception;
 use Facebook\Facebook;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -71,9 +72,9 @@ class AddFacebookPageFieldListener implements EventSubscriberInterface
 
                     $form->add('page_token', TextType::class, ['attr' => ['readonly' => 'true']]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $exception) {
                 $formData['token'] = null;
-                $formData['apiStatus'] = 'Token seems to be invalid. Save the form to get a new one. ('.$e->getMessage().')';
+                $formData['apiStatus'] = 'Token seems to be invalid. Save the form to get a new one. ('.$exception->getMessage().')';
             }
         } else {
             $formData['apiStatus'] = 'Save the configuration to connect to Facebook.';

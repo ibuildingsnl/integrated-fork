@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ChannelBundle\Tests\EventListener;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTime;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Integrated\Bundle\ChannelBundle\EventListener\Doctrine\ChannelDistributionListener;
@@ -175,12 +177,12 @@ class ChannelDistributionListenerTest extends TestCase
     }
 
     /**
-     * @param DateTime|null $startDate
-     * @param DateTime|null $endDate
+     * @param DateTime|DateTimeImmutable $startDate
+     * @param DateTime|DateTimeImmutable $endDate
      *
      * @return MockObject
      */
-    private function getDocumentWithPublishTime(DateTime $startDate = null, DateTime $endDate = null): MockObject
+    private function getDocumentWithPublishTime(DateTimeInterface $startDate = null, DateTimeInterface $endDate = null): MockObject
     {
         $document = $this->getDocument();
         $document->method('isPublished')
@@ -188,13 +190,13 @@ class ChannelDistributionListenerTest extends TestCase
 
         $publishTime = $this->createMock(PublishTimeInterface::class);
 
-        if ($startDate) {
+        if ($startDate !== null) {
             $publishTime
                 ->method('getStartDate')
                 ->willReturn($startDate);
         }
 
-        if ($endDate) {
+        if ($endDate !== null) {
             $publishTime
                 ->method('getEndDate')
                 ->willReturn($endDate);

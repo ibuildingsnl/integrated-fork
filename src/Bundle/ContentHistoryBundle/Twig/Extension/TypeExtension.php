@@ -11,10 +11,12 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFilter;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class TypeExtension extends \Twig_Extension
+class TypeExtension extends Twig_Extension
 {
     /**
      * {@inheritdoc}
@@ -22,8 +24,12 @@ class TypeExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('get_type', [$this, 'getType']),
-            new \Twig_SimpleFilter('get_class', [$this, 'getClass']),
+            new Twig_SimpleFilter('get_type', function ($value) : string {
+                return $this->getType($value);
+            }),
+            new Twig_SimpleFilter('get_class', function ($value) : string {
+                return $this->getClass($value);
+            }),
         ];
     }
 

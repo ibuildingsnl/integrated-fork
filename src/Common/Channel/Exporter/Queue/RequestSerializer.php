@@ -92,7 +92,7 @@ class RequestSerializer implements RequestSerializerInterface
             $request->content = $this->getSerializer()->deserialize($data['content']['data'], $data['content']['type'], 'json');
             $request->state = (string) $data['state'];
             $request->channel = $this->getManager()->find($data['channel']);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return null;
         }
 

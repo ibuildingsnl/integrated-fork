@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping\Driver;
 
+use ReflectionClass;
+use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Doctrine\Common\Annotations\Reader;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
 use Metadata\Driver\DriverInterface;
@@ -39,17 +41,17 @@ class AnnotationDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass(\ReflectionClass $class)
+    public function loadMetadataForClass(ReflectionClass $class)
     {
         $classMetadata = new MergeableClassMetadata($class->getName());
 
         foreach ($class->getProperties() as $reflectionProperty) {
             $propertyMetadata = new PropertyMetadata($class->getName(), $reflectionProperty->getName());
 
-            /** @var \Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug $annotation */
+            /** @var Slug $annotation */
             $annotation = $this->reader->getPropertyAnnotation(
                 $reflectionProperty,
-                'Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug'
+                Slug::class
             );
 
             if (null !== $annotation) {

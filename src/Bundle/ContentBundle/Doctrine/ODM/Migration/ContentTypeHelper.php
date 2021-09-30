@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\ODM\Migration;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -99,6 +101,7 @@ trait ContentTypeHelper
                 sprintf('No class metadata defined for class "%s"', $contentType->getClass())
             );
         }
+
         $requiredFields = array_map('strtolower', $requiredFields);
         $optionalFields = array_map('strtolower', $optionalFields);
 
@@ -230,12 +233,12 @@ trait ContentTypeHelper
     abstract protected function write($message);
 
     /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * @return DocumentManager
      */
     abstract protected function getDocumentManager();
 
     /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     * @return ContainerInterface
      */
     abstract public function getContainer();
 }

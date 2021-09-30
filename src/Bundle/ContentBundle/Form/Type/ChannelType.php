@@ -87,9 +87,9 @@ class ChannelType extends AbstractType
                 $domain = trim($domain);
                 $primary = trim($data['primaryDomain']);
 
-                if ($domain == '' && ($primaryChannelIsIteratedAndEmpty || $domain != $primary)) {
+                if ($domain == '' && ($primaryChannelIsIteratedAndEmpty || $domain !== $primary)) {
                     $form->get('domains')->addError(new FormError('Domain name can not be empty (only primary)'));
-                } elseif (preg_match('/[\s\\\[\],;:+\/\?^`=&%"\'#<>@*!()|]/', $domain, $matches)) {
+                } elseif (preg_match('#[\s\\\[\],;:+\/\?^`=&%"\'\#<>@*!()|]#', $domain, $matches)) {
                     $form->get('domains')->addError(
                         new FormError(
                             sprintf('Character "%s" in domain name "%s" is not allowed', $matches[0], $domain)
@@ -97,7 +97,7 @@ class ChannelType extends AbstractType
                     );
                 }
 
-                if ($primary == '' && $domain == $primary) {
+                if ($primary == '' && $domain === $primary) {
                     $primaryChannelIsIteratedAndEmpty = true;
                 }
             }
@@ -118,13 +118,5 @@ class ChannelType extends AbstractType
         $builder->add('permissions', PermissionsType::class, [
             'required' => false,
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return 'channel';
     }
 }

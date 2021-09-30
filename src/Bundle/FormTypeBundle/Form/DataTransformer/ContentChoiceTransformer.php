@@ -22,7 +22,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class ContentChoiceTransformer implements DataTransformerInterface
 {
     /**
-     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @var DocumentRepository
      */
     protected $repo;
 

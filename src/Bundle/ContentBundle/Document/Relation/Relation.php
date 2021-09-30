@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Relation;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -50,26 +52,26 @@ class Relation implements RelationInterface
      * @var ContentTypeInterface[]
      * @Assert\NotBlank()
      */
-    protected $sources;
+    protected $sources = [];
 
     /**
      * @var ContentTypeInterface[]
      * @Assert\NotBlank()
      */
-    protected $targets;
+    protected $targets = [];
 
     /**
      * @var bool
      */
-    protected $multiple;
+    protected $multiple = false;
 
     /**
      * @var bool
      */
-    protected $required;
+    protected $required = false;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
@@ -80,7 +82,7 @@ class Relation implements RelationInterface
     {
         $this->sources = new ArrayCollection();
         $this->targets = new ArrayCollection();
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -304,7 +306,7 @@ class Relation implements RelationInterface
     /**
      * Get the createdAt of the channel.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -314,11 +316,11 @@ class Relation implements RelationInterface
     /**
      * Set the createdAt of the channel.
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 

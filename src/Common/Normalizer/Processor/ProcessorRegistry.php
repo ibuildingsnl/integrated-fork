@@ -22,7 +22,7 @@ class ProcessorRegistry implements RegistryInterface
     /**
      * @var ProcessorInterface[][]
      */
-    private $processors;
+    private $processors = [];
 
     /**
      * @param ProcessorInterface[][] $processors
@@ -40,12 +40,7 @@ class ProcessorRegistry implements RegistryInterface
         if (!\is_string($class)) {
             throw new UnexpectedTypeException($class, 'string');
         }
-
-        if (isset($this->processors[$class])) {
-            return true;
-        }
-
-        return false;
+        return isset($this->processors[$class]);
     }
 
     /**

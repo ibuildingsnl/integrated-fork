@@ -22,7 +22,7 @@ class PriorityResolver implements ResolverInterface
     /**
      * @var ResolverInterface[]
      */
-    private $resolvers;
+    private $resolvers = [];
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ class PriorityResolver implements ResolverInterface
      */
     public function hasResolver(ResolverInterface $resolver)
     {
-        return (bool) (false !== array_search($resolver, $this->resolvers, true));
+        return (bool) (in_array($resolver, $this->resolvers, true));
     }
 
     /**
@@ -91,11 +91,7 @@ class PriorityResolver implements ResolverInterface
      */
     public function hasType($type)
     {
-        if ($this->findResolver($type)) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->findResolver($type);
     }
 
     /**

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ContentType\Fields\Collection\DefaultType;
+use Integrated\Bundle\ContentBundle\Form\Type\ContentType\Fields\CustomType;
 use Braincrafted\Bundle\BootstrapBundle\Form\Type\BootstrapCollectionType;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
 use Integrated\Common\Form\Mapping\MetadataInterface;
@@ -33,7 +35,7 @@ class FieldsType extends AbstractType
 
         $builder->add(
             'default',
-            Fields\Collection\DefaultType::class,
+            DefaultType::class,
             [
                 'label' => false,
                 'metadata' => $metadata,
@@ -45,7 +47,7 @@ class FieldsType extends AbstractType
             BootstrapCollectionType::class,
             [
                 'label' => false,
-                'entry_type' => Fields\CustomType::class,
+                'entry_type' => CustomType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'add_button_text' => 'Add  custom field',
@@ -64,7 +66,7 @@ class FieldsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['metadata']);
-        $resolver->setAllowedTypes('metadata', 'Integrated\\Common\\Form\\Mapping\\MetadataInterface');
+        $resolver->setAllowedTypes('metadata', MetadataInterface::class);
     }
 
     /**

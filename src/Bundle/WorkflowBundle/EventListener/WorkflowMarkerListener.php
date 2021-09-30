@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WorkflowBundle\EventListener;
 
+use Solarium\Core\Event\Events;
+use Solarium\Core\Event\PreExecute;
+use InvalidArgumentException;
 use Integrated\Bundle\UserBundle\Model\User;
 use Solarium\Core\Event;
 use Solarium\QueryType\Select\Query\Query;
@@ -49,14 +52,14 @@ class WorkflowMarkerListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Event\Events::PRE_EXECUTE => 'preExecute',
+            Events::PRE_EXECUTE => 'preExecute',
         ];
     }
 
     /**
      * @param Event\PreExecute $event
      */
-    public function preExecute(Event\PreExecute $event)
+    public function preExecute(PreExecute $event)
     {
         $query = $event->getQuery();
 
@@ -65,7 +68,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         }
 
         if (!$query instanceof Query) {
-            throw new \InvalidArgumentException(sprintf('$query must be of type %s', Query::class));
+            throw new InvalidArgumentException(sprintf('$query must be of type %s', Query::class));
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -74,7 +77,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         }
 
         $user = null;
-        if ($token = $this->tokenStorage->getToken()) {
+        if (($token = $this->tokenStorage->getToken()) !== null) {
             $user = $token->getUser();
         }
 
@@ -95,7 +98,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         ;
 
         // allow content with group access
-        if ($filterWorkflow) {
+        if ($filterWorkflow !== []) {
             $fq->setQuery(
                 $fq->getQuery().' OR security_workflow_read: ((%1%))',
                 [implode(') OR (', $filterWorkflow)]
@@ -105,10 +108,8 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         // always allow access to assinged content
         $fq->setQuery($fq->getQuery().' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
 
-        if ($user instanceof User) {
-            if ($person = $user->getRelation()) {
-                $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
-            }
+        if ($user instanceof User && ($person = $user->getRelation())) {
+            $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
         }
     }
 }

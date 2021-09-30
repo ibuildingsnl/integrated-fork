@@ -11,12 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType\Field;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\CustomTransformer;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CustomTransformerTest extends \PHPUnit\Framework\TestCase
+class CustomTransformerTest extends TestCase
 {
     /**
      * @var CustomTransformer
@@ -36,7 +39,7 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\Form\DataTransformerInterface', $this->customTransformer);
+        $this->assertInstanceOf(DataTransformerInterface::class, $this->customTransformer);
     }
 
     /**
@@ -70,10 +73,10 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function testReverseTransformFunctionWithValidData(array $input)
     {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField $output */
+        /** @var CustomField $output */
         $output = $this->customTransformer->reverseTransform($input);
 
-        $this->assertInstanceOf('\Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField', $output);
+        $this->assertInstanceOf(CustomField::class, $output);
         $this->assertSame($input['label'], $output->getLabel());
         $this->assertSame($input['type'], $output->getType());
 
@@ -99,8 +102,8 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
             'required' => false,
         ];
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $field */
-        $field = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
+        /** @var CustomField|\PHPUnit_Framework_MockObject_MockObject $field */
+        $field = $this->createMock(CustomField::class);
         $field
             ->expects($this->once())
             ->method('getName')

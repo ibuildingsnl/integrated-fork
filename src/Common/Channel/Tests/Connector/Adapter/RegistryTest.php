@@ -11,17 +11,20 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Adapter;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
+use Integrated\Common\Channel\Exception\ExceptionInterface;
 use Integrated\Common\Channel\Connector\Adapter\Registry;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RegistryTest extends \PHPUnit\Framework\TestCase
+class RegistryTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Adapter\\RegistryInterface', $this->getInstance());
+        self::assertInstanceOf(RegistryInterface::class, $this->getInstance());
     }
 
     public function testHasAdaptor()
@@ -38,7 +41,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testHasAdaptorInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->hasAdapter(42);
     }
@@ -52,14 +55,14 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAdaptorInvalidArgument()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->getInstance()->getAdapter(42);
     }
 
     public function testGetAdaptorNotFound()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-adaptor-that-does-not-exist');
 
         $this->getInstance()->getAdapter('this-is-a-adaptor-that-does-not-exist');
@@ -90,6 +93,6 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
      */
     protected function getAdapter()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\Connector\\AdapterInterface');
+        return $this->createMock(AdapterInterface::class);
     }
 }

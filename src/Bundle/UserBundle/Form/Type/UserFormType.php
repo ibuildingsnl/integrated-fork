@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Doctrine\ORM\EntityRepository;
 use Integrated\Bundle\UserBundle\Form\DataMapper\UserMapper;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileExtensionListener;
@@ -67,7 +70,7 @@ class UserFormType extends AbstractType
         if ($options['optional']) {
             $builder->add(
                 'enabled',
-                Type\CheckboxType::class,
+                CheckboxType::class,
                 [
                     'mapped' => false,
                     'required' => false,
@@ -85,7 +88,7 @@ class UserFormType extends AbstractType
             $builder->addEventSubscriber(new UserProfileOptionalListener());
         }
 
-        $builder->add('username', Type\TextType::class, [
+        $builder->add('username', TextType::class, [
             'constraints' => [
                 new NotBlank(),
                 new Length(['min' => 3]),
@@ -94,7 +97,7 @@ class UserFormType extends AbstractType
             'attr' => ['autocomplete' => 'off'],
         ]);
 
-        $builder->add('password', Type\PasswordType::class, [
+        $builder->add('password', PasswordType::class, [
             'mapped' => false,
             'constraints' => [
                 new Length(['min' => 6]),
@@ -105,7 +108,7 @@ class UserFormType extends AbstractType
         if (!$options['optional']) {
             $builder->add(
                 'enabled',
-                Type\CheckboxType::class,
+                CheckboxType::class,
                 [
                     'required' => false,
                     'label' => 'Enable login',
@@ -182,7 +185,7 @@ class UserFormType extends AbstractType
                 // yeah now we are going to cheat as we don't want to rewrite what is already
                 // made by someone else.
 
-                $reflection = new ReflectionClass('Symfony\Component\Form\Extension\Validator\Constraints\FormValidator');
+                $reflection = new ReflectionClass(FormValidator::class);
 
                 $method = $reflection->getMethod('getValidationGroups');
                 $method->setAccessible(true);

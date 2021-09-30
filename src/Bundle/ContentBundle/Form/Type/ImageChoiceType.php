@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ImageTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -23,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class ImageChoiceType extends AbstractType
 {
     /**
-     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @var DocumentRepository
      */
     private $repository;
 

@@ -10,6 +10,7 @@
 
 namespace Integrated\Bundle\PageBundle\Tests\Breadcrumb;
 
+use DateTime;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
@@ -27,7 +28,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class BreadcrumbResolverTest extends TestCase
 {
-    const TEMPLATE = 'default';
+    /**
+     * @var string
+     */
+    public const TEMPLATE = 'default';
 
     /**
      * @var DocumentManager|\PHPUnit_Framework_MockObject_MockObject
@@ -111,8 +115,8 @@ class BreadcrumbResolverTest extends TestCase
         $article->setTitle('My article');
         $article->setSlug('my');
         $article->addChannel($channel);
-        $article->getPublishTime()->setStartDate(new \DateTime());
-        $article->getPublishTime()->setEndDate(new \DateTime('next week'));
+        $article->getPublishTime()->setStartDate(new DateTime());
+        $article->getPublishTime()->setEndDate(new DateTime('next week'));
 
         $pageRepository
             ->expects($this->at(0))

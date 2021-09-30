@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
 use Integrated\Bundle\ContentBundle\Solr\Type\ContentType;
 use Integrated\Bundle\ContentBundle\Tests\Fixtures\__CG__\ProxyObject;
 use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object1;
@@ -25,11 +27,11 @@ use stdClass;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentTypeTest extends \PHPUnit\Framework\TestCase
+class ContentTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     /**
@@ -80,7 +82,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNoContent()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
 

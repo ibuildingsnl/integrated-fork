@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine\EventListener;
 
+use Exception;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -18,13 +19,40 @@ use Integrated\Common\Content\RankableInterface;
 
 class UpdateRankListener implements EventSubscriber
 {
-    const RANK_FIRST_TAG = '-first-';
-    const RANK_MIN_CHAR = 'A';
-    const RANK_MEDIUM_CHAR = 'a';
-    const RANK_MAX_CHAR = 'z';
-    const ASCII_TABLE_POS_LOWER_A = 97;
-    const ASCII_TABLE_POS_UPPER_A = 65;
-    const ALPHABET_LENGTH = 26;
+    /**
+     * @var string
+     */
+    public const RANK_FIRST_TAG = '-first-';
+
+    /**
+     * @var string
+     */
+    public const RANK_MIN_CHAR = 'A';
+
+    /**
+     * @var string
+     */
+    public const RANK_MEDIUM_CHAR = 'a';
+
+    /**
+     * @var string
+     */
+    public const RANK_MAX_CHAR = 'z';
+
+    /**
+     * @var int
+     */
+    public const ASCII_TABLE_POS_LOWER_A = 97;
+
+    /**
+     * @var int
+     */
+    public const ASCII_TABLE_POS_UPPER_A = 65;
+
+    /**
+     * @var int
+     */
+    public const ALPHABET_LENGTH = 26;
 
     /**
      * {@inheritdoc}
@@ -39,7 +67,7 @@ class UpdateRankListener implements EventSubscriber
     /**
      * @param OnFlushEventArgs $args
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function onFlush(OnFlushEventArgs $args)
     {
@@ -67,8 +95,8 @@ class UpdateRankListener implements EventSubscriber
                 if ($document->getRank() == self::RANK_FIRST_TAG) {
                     $min = self::RANK_MIN_CHAR;
                 } else {
-                    if (preg_match('/[^a-zA-Z]/', $document->getRank())) {
-                        throw new \Exception('Rank can only contain [a-zA-Z]: '.$document->getRank());
+                    if (preg_match('#[^a-zA-Z]#', $document->getRank())) {
+                        throw new Exception('Rank can only contain [a-zA-Z]: '.$document->getRank());
                     }
 
                     $rankDocument = $dm->getRepository(Content::class)->findOneBy(['rank' => $document->getRank()]);
@@ -102,11 +130,11 @@ class UpdateRankListener implements EventSubscriber
     private function calculateRank(string $min, string $max)
     {
         while (\strlen($min) < \strlen($max)) {
-            $min = $min.self::RANK_MIN_CHAR;
+            $min .= self::RANK_MIN_CHAR;
         }
 
         while (\strlen($max) < \strlen($min)) {
-            $max = $max.self::RANK_MAX_CHAR;
+            $max .= self::RANK_MAX_CHAR;
         }
 
         $result = '';
@@ -122,7 +150,7 @@ class UpdateRankListener implements EventSubscriber
             $result .= $char;
         }
 
-        if ($result == $min) {
+        if ($result === $min) {
             $result .= self::RANK_MEDIUM_CHAR;
         }
 
@@ -140,9 +168,9 @@ class UpdateRankListener implements EventSubscriber
     {
         $number = \ord($char);
         if ($number >= self::ASCII_TABLE_POS_LOWER_A) {
-            $number = $number - (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
+            $number -= self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH;
         } else {
-            $number = $number - self::ASCII_TABLE_POS_UPPER_A;
+            $number -= self::ASCII_TABLE_POS_UPPER_A;
         }
 
         return $number;
@@ -158,9 +186,9 @@ class UpdateRankListener implements EventSubscriber
     private function numToChar(int $number)
     {
         if ($number < self::ALPHABET_LENGTH) {
-            $number = $number + self::ASCII_TABLE_POS_UPPER_A;
+            $number += self::ASCII_TABLE_POS_UPPER_A;
         } else {
-            $number = $number + (self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH);
+            $number += self::ASCII_TABLE_POS_LOWER_A - self::ALPHABET_LENGTH;
         }
 
         return \chr($number);

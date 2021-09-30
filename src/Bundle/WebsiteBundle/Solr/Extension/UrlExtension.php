@@ -48,7 +48,7 @@ class UrlExtension implements TypeExtensionInterface
             $url = $this->urlResolver->generateUrl($data, $channel->getId());
 
             //remove app_*.php
-            $url = preg_replace('/\/app_(.+?)\.php/', '', $url);
+            $url = preg_replace('#\/app_(.+?)\.php#', '', $url);
 
             $container->set(sprintf('url_%s', $channel->getId()), $url);
         }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -37,7 +38,7 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('controller.xml');
 
@@ -92,14 +93,12 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
      */
     protected function configureTwigBundle(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig(
-                        $name,
-                        ['form_themes' => [$this->formTemplate]]
-                    );
-                    break;
+        foreach (array_keys($container->getExtensions()) as $name) {
+            if ($name === 'twig') {
+                $container->prependExtensionConfig(
+                    $name,
+                    ['form_themes' => [$this->formTemplate]]
+                );
             }
         }
     }

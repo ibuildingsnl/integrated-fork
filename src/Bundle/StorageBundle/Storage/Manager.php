@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage;
 
+use LogicException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gaufrette\Exception\FileNotFound;
 use Gaufrette\Filesystem;
@@ -90,26 +91,22 @@ class Manager implements ManagerInterface
      */
     public function read(StorageInterface $storage)
     {
-        // Walk over all filesystems that should contain the file
         foreach ($storage->getFilesystems() as $key) {
-            // Just log it, when the fan is dirty (shit hit it)
             try {
-                // A filesystem might be down, walk over all to get the best candidate
                 $filesystem = $this->registry->get($key);
 
-                // The file must exist on the storage (might be cached), this is a sanity check
                 if ($filesystem->has($storage->getIdentifier())) {
                     return $filesystem->read($storage->getIdentifier());
                 }
-            } catch (Exception $e) {
-                if ($this->logger) {
+            } catch (Exception $exception) {
+                if ($this->logger !== null) {
                     $this->logger->alert(
                         sprintf(
                             '%sThe filesystem %s did not properly return the file %s: %s',
                             self::LOG_PREFIX,
                             $key,
                             $storage->getIdentifier(),
-                            $e->getMessage()
+                            $exception->getMessage()
                         )
                     );
                 }
@@ -131,12 +128,12 @@ class Manager implements ManagerInterface
         try {
             $filesystems = (new FilesystemValidation($this->registry))->getValidFilesystems($filesystems);
             if (0 == $filesystems->count()) {
-                throw new \LogicException('A file must be at least on one filesystem');
+                throw new LogicException('A file must be at least on one filesystem');
             }
 
             foreach ($filesystems as $key) {
                 // Log it
-                if ($this->logger) {
+                if ($this->logger !== null) {
                     $this->logger->info(
                         sprintf(
                             '%sGoing to write %s in filesystem %s',
@@ -161,7 +158,7 @@ class Manager implements ManagerInterface
             }
         } catch (Exception $e) {
             // Attempt to log it, then just pass along
-            if ($this->logger) {
+            if ($this->logger !== null) {
                 $this->logger->critical(
                     sprintf(
                         '%s%s',
@@ -195,7 +192,7 @@ class Manager implements ManagerInterface
                 // Remove the file out the filesystem
                 $this->registry->get($key)->delete($storage->getIdentifier());
 
-                if ($this->logger) {
+                if ($this->logger !== null) {
                     $this->logger->notice(
                         sprintf(
                             '%sFile %s delete from filesystem %s',
@@ -205,9 +202,9 @@ class Manager implements ManagerInterface
                         )
                     );
                 }
-            } catch (FileNotFound $e) {
+            } catch (FileNotFound $fileNotFound) {
                 // Seems like we're not in sync
-                if ($this->logger) {
+                if ($this->logger !== null) {
                     $this->logger->error(
                         sprintf(
                             '%sRemote filesystem %s does not contain %s file',
@@ -233,7 +230,7 @@ class Manager implements ManagerInterface
         );
 
         // We'll need one atleast
-        if ($filesystems->count()) {
+        if ($filesystems->count() !== 0) {
             try {
                 // Place the file in the storage
                 foreach ($filesystems as $key) {
@@ -272,24 +269,24 @@ class Manager implements ManagerInterface
                     $this->resolver,
                     $storage->getMetadata()
                 );
-            } catch (RevertException $e) {
+            } catch (RevertException $revertException) {
                 // Just log it
-                if ($this->logger) {
+                if ($this->logger !== null) {
                     $this->logger->critical(
                         sprintf(
                             '%s%s',
                             self::LOG_PREFIX,
-                            $e->getMessage()
+                            $revertException->getMessage()
                         )
                     );
                 }
 
-                throw $e;
+                throw $revertException;
             }
         }
 
         // No filesystem defined
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'No filesystems to defined to move the file %s to.',
                 $storage->getIdentifier()
@@ -311,7 +308,7 @@ class Manager implements ManagerInterface
         }
 
         // We must return some sort specialization like Filesystem ainit?
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'A instanceof Gaufrette\Filesystem was expected (given: %s).',
                 \is_object($filesystem) ? \get_class($filesystem) : \gettype($filesystem)

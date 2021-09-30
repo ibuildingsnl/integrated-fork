@@ -97,7 +97,7 @@ class StorageIntentTransformer
                 }
 
                 // Update the document
-                if ($changes) {
+                if ($changes !== 0) {
                     $document->set($property->getPropertyName(), $value);
                 }
             }

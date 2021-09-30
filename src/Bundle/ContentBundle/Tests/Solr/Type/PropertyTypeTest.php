@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Solr\Type\PropertyType;
 use Integrated\Common\Content\ContentInterface;
@@ -20,11 +22,11 @@ use Integrated\Common\Converter\ContainerInterface;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class PropertyTypeTest extends \PHPUnit\Framework\TestCase
+class PropertyTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     /**

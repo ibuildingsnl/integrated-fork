@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Normalizer\Container;
 use Integrated\Common\Normalizer\ContainerFactory;
 use Integrated\Common\Normalizer\ContainerFactoryInterface;
@@ -18,7 +19,7 @@ use Integrated\Common\Normalizer\ContainerFactoryInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContainerFactoryTest extends \PHPUnit\Framework\TestCase
+class ContainerFactoryTest extends TestCase
 {
     public function testInterface()
     {

@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Countable;
+use DateTime;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Exception;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
@@ -19,7 +22,6 @@ use Integrated\Bundle\ContentBundle\Form\Type\BulkConfigureType;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
  */
-class BulkController extends Controller
+class BulkController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -74,7 +76,7 @@ class BulkController extends Controller
         // Fetch Content selection.
         $limit = 1000;
 
-        if ($bulk) {
+        if ($bulk !== null) {
             $request->query->replace($bulk->getFilters());
         }
 
@@ -129,7 +131,7 @@ class BulkController extends Controller
 
         return $this->render('IntegratedContentBundle:bulk:configure.html.twig', [
             'id' => $bulk->getId(),
-            'selection' => \count($bulk->getSelection()),
+            'selection' => is_array($bulk->getSelection()) || $bulk->getSelection() instanceof Countable ? \count($bulk->getSelection()) : 0,
             'form' => $form->createView(),
         ]);
     }
@@ -154,24 +156,24 @@ class BulkController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $this->bulkHandler->execute($bulk->getSelection(), $bulk->getActions());
-                $bulk->setExecutedAt(new \DateTime());
+                $bulk->setExecutedAt(new DateTime());
 
                 $this->dm->flush();
 
                 $this->addFlash('success', 'All bulk actions were executed successfully. Indexing operations will be executed in the background');
 
                 return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
-            } catch (Exception $e) {
+            } catch (Exception $exception) {
                 $this->addFlash(
                     'danger',
-                    'Whoops! It seems something went wrong during the execution of this bulk action! The following error has given: "'.$e->getMessage().'"'
+                    'Whoops! It seems something went wrong during the execution of this bulk action! The following error has given: "'.$exception->getMessage().'"'
                 );
             }
         }
 
         return $this->render('IntegratedContentBundle:bulk:confirm.html.twig', [
             'id' => $bulk->getId(),
-            'selection' => \count($bulk->getSelection()),
+            'selection' => is_array($bulk->getSelection()) || $bulk->getSelection() instanceof Countable ? \count($bulk->getSelection()) : 0,
             'form' => $form->createView(),
         ]);
     }

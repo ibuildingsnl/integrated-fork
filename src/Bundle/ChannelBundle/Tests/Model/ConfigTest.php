@@ -11,9 +11,11 @@
 
 namespace Integrated\Bundle\ChannelBundle\Tests\Model;
 
+use PHPUnit\Framework\TestCase;
+use DateTime;
 use Integrated\Bundle\ChannelBundle\Model\Config;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends TestCase
 {
     /**
      * @var Config
@@ -33,7 +35,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testDefaultValues()
     {
-        $this->assertInstanceOf('\DateTime', $this->config->getCreated());
+        $this->assertInstanceOf(DateTime::class, $this->config->getCreated());
     }
 
     /**
@@ -67,7 +69,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAndSetCreatedFunction()
     {
-        $created = new \DateTime();
+        $created = new DateTime();
         $this->assertSame($created, $this->config->setCreated($created)->getCreated());
     }
 
@@ -76,7 +78,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAndSetUpdatedFunction()
     {
-        $updated = new \DateTime();
+        $updated = new DateTime();
         $this->assertSame($updated, $this->config->setUpdated($updated)->getUpdated());
     }
 }

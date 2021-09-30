@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeInterface;
 use Integrated\Bundle\SolrBundle\Solr\Type\CopyType;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
@@ -21,11 +23,11 @@ use stdClass;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class CopyTypeTest extends \PHPUnit\Framework\TestCase
+class CopyTypeTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
+        self::assertInstanceOf(TypeInterface::class, $this->getInstance());
     }
 
     /**

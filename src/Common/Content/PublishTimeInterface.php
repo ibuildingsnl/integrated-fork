@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Content;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTime;
 
 interface PublishTimeInterface
@@ -18,36 +20,36 @@ interface PublishTimeInterface
     /**
      * @var string
      */
-    const DATE_MAX = '9999-12-31 00:00:00'; // @todo find a better way (INTEGRATED-429)
-
+    public const DATE_MAX = '9999-12-31 00:00:00';
+     // @todo find a better way (INTEGRATED-429)
     /**
-     * @return DateTime|null
+     * @return DateTime|DateTimeImmutable|null
      */
-    public function getStartDate(): ?DateTime;
+    public function getStartDate(): ?DateTimeInterface;
 
     /**
      * @param DateTime $startDate
      *
      * @return $this
      */
-    public function setStartDate(DateTime $startDate = null);
+    public function setStartDate(DateTimeInterface $startDate = null);
 
     /**
-     * @return DateTime|null
+     * @return DateTime|DateTimeImmutable|null
      */
-    public function getEndDate(): ?DateTime;
+    public function getEndDate(): ?DateTimeInterface;
 
     /**
      * @param DateTime $endDate
      *
      * @return $this
      */
-    public function setEndDate(DateTime $endDate = null);
+    public function setEndDate(DateTimeInterface $endDate = null);
 
     /**
      * @param DateTime $date
      *
      * @return bool
      */
-    public function isPublished(DateTime $date = null): bool;
+    public function isPublished(DateTimeInterface $date = null): bool;
 }

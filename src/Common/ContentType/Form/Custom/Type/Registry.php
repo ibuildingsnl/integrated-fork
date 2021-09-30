@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\ContentType\Form\Custom\Type;
 
+use ArrayIterator;
 use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 
 /**
@@ -46,6 +47,6 @@ class Registry implements RegistryInterface
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->types);
+        return new ArrayIterator($this->types);
     }
 }

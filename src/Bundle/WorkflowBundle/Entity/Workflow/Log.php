@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Entity\Workflow;
 
+use DateTimeInterface;
 use DateTime;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -100,7 +101,7 @@ class Log
 
         $this->owner = $state;
 
-        if ($this->owner) {
+        if ($this->owner !== null) {
             $this->owner->addLog($this);
         }
 
@@ -120,7 +121,7 @@ class Log
      *
      * @return $this
      */
-    public function setTimestamp(DateTime $timestamp = null)
+    public function setTimestamp(DateTimeInterface $timestamp = null)
     {
         $this->timestamp = $timestamp;
 
@@ -220,7 +221,7 @@ class Log
      *
      * @return $this
      */
-    public function setDeadline(DateTime $deadline = null)
+    public function setDeadline(DateTimeInterface $deadline = null)
     {
         $this->deadline = $deadline;
 

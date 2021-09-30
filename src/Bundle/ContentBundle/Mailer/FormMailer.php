@@ -11,10 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Mailer;
 
+use Swift_Mailer;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
+use Twig\Error\Error;
+use Swift_Message;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bridge\Twig\TwigEngine;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -27,7 +31,7 @@ class FormMailer
     protected $template = 'email/block/form.html.twig';
 
     /**
-     * @var \Swift_Mailer
+     * @var Swift_Mailer
      */
     protected $mailer;
 
@@ -62,15 +66,15 @@ class FormMailer
     protected $name;
 
     /**
-     * @param \Swift_Mailer           $mailer
+     * @param Swift_Mailer $mailer
      * @param ChannelContextInterface $channelContext
      * @param TwigEngine              $twigEngine
      * @param ThemeManager            $themeManager
-     * @param TranslatorInterface     $translator
+     * @param TranslatorInterface $translator
      * @param string                  $from
      * @param string                  $name
      */
-    public function __construct(\Swift_Mailer $mailer, ChannelContextInterface $channelContext, TwigEngine $twigEngine, ThemeManager $themeManager, TranslatorInterface $translator, $from, $name)
+    public function __construct(Swift_Mailer $mailer, ChannelContextInterface $channelContext, TwigEngine $twigEngine, ThemeManager $themeManager, TranslatorInterface $translator, $from, $name)
     {
         $this->mailer = $mailer;
         $this->twigEngine = $twigEngine;
@@ -86,26 +90,27 @@ class FormMailer
      * @param array       $emailAddresses
      * @param string|null $title
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
-     * @throws \Twig\Error\Error
+     * @throws CircularFallbackException
+     * @throws Error
      */
     public function send(array $data, array $emailAddresses = [], ?string $title = null)
     {
-        if (!\count($emailAddresses)) {
+        if (\count($emailAddresses) === 0) {
             return;
         }
 
         $subject = $this->translator->trans('Form submitted');
-        if ($channel = $this->channelContext->getChannel()) {
+        if (($channel = $this->channelContext->getChannel()) !== null) {
             $subject = '['.$channel->getName().'] '.$subject;
         }
+
         if ($title) {
             $subject .= ' - '.$title;
         }
 
         $body = $this->twigEngine->render($this->themeManager->locateTemplate($this->template), ['data' => $data]);
 
-        $message = (new \Swift_Message($subject))
+        $message = (new Swift_Message($subject))
             ->setBcc($emailAddresses)
             ->setFrom($this->from, $this->name)
             ->setBody($body, 'text/html');

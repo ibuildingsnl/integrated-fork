@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Task;
 
+use PHPUnit\Framework\TestCase;
 use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
@@ -25,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkerTest extends \PHPUnit\Framework\TestCase
+class WorkerTest extends TestCase
 {
     /**
      * @var Registry|\PHPUnit_Framework_MockObject_MockObject
@@ -98,7 +99,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(2))
             ->method('getHandler')
-            ->with($this->equalTo('stdClass'))
+            ->with($this->equalTo(\stdClass::class))
             ->willReturnOnConsecutiveCalls($callback[0], $callback[1]);
 
         $callback = function (WorkerEvent $event) use ($instance) {
@@ -164,7 +165,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(2))
             ->method('getHandler')
-            ->with($this->equalTo('stdClass'))
+            ->with($this->equalTo(\stdClass::class))
             ->willReturnOnConsecutiveCalls($this->throwException($exception = new Exception()), $callback);
 
         $callback = [
@@ -208,7 +209,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly($count))
             ->method('getHandler')
-            ->with($this->equalTo('stdClass'))
+            ->with($this->equalTo(\stdClass::class))
             ->willReturn(function () {
             });
 

@@ -21,8 +21,15 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class JobFactory implements JobFactoryInterface
 {
-    const ADD = 'ADD';
-    const DELETE = 'DELETE';
+    /**
+     * @var string
+     */
+    public const ADD = 'ADD';
+
+    /**
+     * @var string
+     */
+    public const DELETE = 'DELETE';
 
     /**
      * @var SerializerInterface

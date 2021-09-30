@@ -14,7 +14,7 @@ final class Version20200615124024 extends AbstractMigration
     {
         $manager = $this->getEntityManager();
         $repository = $manager->getRepository(Scope::class);
-        if (!$scope = $repository->findOneBy(['admin' => true])) {
+        if (($scope = $repository->findOneBy(['admin' => true])) === null) {
             $scope = new Scope();
             $scope
                 ->setName('Integrated')

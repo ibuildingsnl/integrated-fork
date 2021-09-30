@@ -24,6 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ListCommand extends Command
 {
+    protected static $defaultName = 'storage:list';
     /**
      * @var FilesystemRegistry
      */
@@ -51,16 +52,14 @@ class ListCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('storage:list')
-            ->setDescription('Lists the configured filesystem(s).')
+        $this->setDescription('Lists the configured filesystem(s).')
             ->setHelp('The <info>%command.name%</info> lists the existing filesystem(s).');
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->registry->getIterator() as $key => $filesystem) {
             $output->writeln(
@@ -86,5 +85,6 @@ class ListCommand extends Command
                 );
             }
         }
+        return 0;
     }
 }

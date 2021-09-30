@@ -66,7 +66,7 @@ class BreadcrumbResolver
      */
     public function getBreadcrumb()
     {
-        if (isset($this->breadcrumbItems)) {
+        if ($this->breadcrumbItems !== null) {
             return $this->breadcrumbItems;
         }
 
@@ -91,7 +91,7 @@ class BreadcrumbResolver
             }
 
             //support Page
-            if ($page = $pageRepository->findOneBy(['path' => $url, 'channel.$id' => $channel->getId()])) {
+            if (($page = $pageRepository->findOneBy(['path' => $url, 'channel.$id' => $channel->getId()])) !== null) {
                 /* @var Page $page */
                 $this->breadcrumbItems[] = new BreadcrumbItem($page->getTitle(), $page->getPath());
                 continue;
@@ -103,6 +103,7 @@ class BreadcrumbResolver
                 if ($content->isPublished() && strpos($this->urlResolver->generateUrl($content), $url) !== false) {
                     $this->breadcrumbItems[] = new BreadcrumbItem((string) $content, $url);
                 }
+
                 continue;
             }
         }

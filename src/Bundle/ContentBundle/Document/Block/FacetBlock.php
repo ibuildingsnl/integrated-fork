@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Block;
 
+use Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Common\Form\Mapping\Annotations as Type;
@@ -81,7 +82,7 @@ class FacetBlock extends Block
     }
 
     /**
-     * @return \Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField[]
+     * @return FacetField[]
      */
     public function getFields()
     {

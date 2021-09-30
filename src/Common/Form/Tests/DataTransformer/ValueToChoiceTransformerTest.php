@@ -11,13 +11,16 @@
 
 namespace Integrated\Common\Form\Tests\DataTransformer;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Integrated\Common\Form\DataTransformer\ValueToChoiceTransformer;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ValueToChoiceTransformerTest extends \PHPUnit\Framework\TestCase
+class ValueToChoiceTransformerTest extends TestCase
 {
     /**
      * @var ChoiceListInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,12 +29,12 @@ class ValueToChoiceTransformerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->choiceList = $this->createMock('Symfony\\Component\\Form\\ChoiceList\\ChoiceListInterface');
+        $this->choiceList = $this->createMock(ChoiceListInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Symfony\\Component\\Form\\DataTransformerInterface', $this->getInstance());
+        self::assertInstanceOf(DataTransformerInterface::class, $this->getInstance());
     }
 
     public function testTransform()
@@ -61,7 +64,7 @@ class ValueToChoiceTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testReverseTransformInvalidConversion()
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
 
         $this->choiceList->expects($this->once())
             ->method('getValuesForChoices')

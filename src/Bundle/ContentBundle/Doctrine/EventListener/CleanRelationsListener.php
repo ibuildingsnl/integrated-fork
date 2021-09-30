@@ -23,7 +23,10 @@ use Integrated\Common\ContentType\ContentTypeInterface;
  */
 class CleanRelationsListener implements EventSubscriber
 {
-    const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
+    /**
+     * @var string
+     */
+    public const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
 
     /**
      * {@inheritdoc}

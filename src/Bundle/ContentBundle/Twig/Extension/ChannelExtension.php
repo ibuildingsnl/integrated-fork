@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
+use RuntimeException;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -53,7 +54,7 @@ class ChannelExtension extends AbstractExtension implements GlobalsInterface
         $context = $this->container->get('channel.context');
 
         if (!$context instanceof ChannelContextInterface) {
-            throw new \RuntimeException('Unable to get channel context.');
+            throw new RuntimeException('Unable to get channel context.');
         }
 
         return $context->getChannel();

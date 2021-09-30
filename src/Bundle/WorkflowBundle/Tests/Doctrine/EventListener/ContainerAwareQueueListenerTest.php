@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
+use Integrated\Common\Queue\QueueInterface;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\ContainerAwareQueueListener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,7 +20,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContainerAwareQueueListenerTest extends QueueListenerTest
 {
-    const SERVICE_NAME = 'the.queue.service.name';
+    /**
+     * @var string
+     */
+    public const SERVICE_NAME = 'the.queue.service.name';
 
     /**
      * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -30,7 +34,7 @@ class ContainerAwareQueueListenerTest extends QueueListenerTest
     {
         parent::setUp();
 
-        $this->container = $this->createMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->container->expects($this->any())
             ->method('get')
             ->with($this->equalTo(self::SERVICE_NAME))
@@ -39,14 +43,14 @@ class ContainerAwareQueueListenerTest extends QueueListenerTest
 
     public function testSetGetQueue()
     {
-        $this->container = $this->createMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->container->expects($this->atLeastOnce())
             ->method('get')
             ->with($this->equalTo(self::SERVICE_NAME))
             ->willReturn($this->queue);
 
         $listener = $this->getInstance();
-        $mock = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
+        $mock = $this->createMock(QueueInterface::class);
 
         $this->assertSame($this->queue, $listener->getQueue());
         $listener->setQueue($mock);

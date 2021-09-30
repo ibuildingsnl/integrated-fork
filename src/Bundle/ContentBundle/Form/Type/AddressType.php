@@ -26,8 +26,9 @@ class AddressType extends AbstractType
 {
     /**
      * @const array
+     * @var string[]
      */
-    const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city'];
+    public const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city'];
 
     /**
      * {@inheritdoc}
@@ -38,26 +39,22 @@ class AddressType extends AbstractType
             // Variables
             $type = TextType::class;
             $default = ['required' => $builder->getRequired()];
-            $override = isset($options['options'][$field]) ? $options['options'][$field] : [];
+            $override = $options['options'][$field] ?? [];
 
-            // Spec may vary per field, but not per se
-            switch ($field) {
-                case 'type':
-                    $type = ChoiceType::class;
-                    $default = [
-                        'placeholder' => '',
-                        'required' => false,
-                        'choices' => [
-                            'postal' => 'Postal address',
-                            'visiting' => 'Visiting address',
-                            'mailing' => 'Mailing address',
-                        ],
-                    ];
-                    break;
-                case 'country':
-                    $type = CountryType::class;
-                    $default['placeholder'] = '';
-                    break;
+            if ($field == 'type') {
+                $type = ChoiceType::class;
+                $default = [
+                    'placeholder' => '',
+                    'required' => false,
+                    'choices' => [
+                        'postal' => 'Postal address',
+                        'visiting' => 'Visiting address',
+                        'mailing' => 'Mailing address',
+                    ],
+                ];
+            } elseif ($field == 'country') {
+                $type = CountryType::class;
+                $default['placeholder'] = '';
             }
 
             // Add into the form

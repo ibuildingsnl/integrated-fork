@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Location;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class LocationTest extends \PHPUnit\Framework\TestCase
+class LocationTest extends TestCase
 {
     /**
      * @var Location

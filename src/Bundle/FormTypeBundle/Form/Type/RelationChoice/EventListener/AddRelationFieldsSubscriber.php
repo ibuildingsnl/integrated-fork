@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Form\Type\RelationChoice\EventListener;
 
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -35,7 +37,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @var DocumentRepository
      */
     protected $repo;
 
@@ -52,7 +54,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
     /**
      * @var array
      */
-    protected $options;
+    protected $options = [];
 
     /**
      * @param DocumentManager $dm
@@ -77,14 +79,14 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function ensureRelations(FormEvent $event)
     {
         $relations = $event->getData();
 
         if (!$relations instanceof Collection) {
-            throw new \Exception(sprintf('Relations should implement Collection, "%s" given', \gettype($relations)));
+            throw new Exception(sprintf('Relations should implement Collection, "%s" given', \gettype($relations)));
         }
 
         //get all relation ids
@@ -118,13 +120,13 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
      *
      * @return Relation|object
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function findRelation($relationId, $formData)
     {
         $relation = $this->repo->find($relationId);
         if (!$relation instanceof Relation) {
-            throw new \Exception(sprintf('RelationId "%s" is not found', $relationId));
+            throw new Exception(sprintf('RelationId "%s" is not found', $relationId));
         }
 
         $relationSourceClasses = [];
@@ -137,7 +139,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         $formClass = \get_class($formData);
 
         if (!\in_array($formClass, $relationSourceClasses)) {
-            throw new \Exception(sprintf('RelationId "%s" does not have "%s" defined as source, perhaps you have chosen a wrong relation?', $relationId, $formClass));
+            throw new Exception(sprintf('RelationId "%s" does not have "%s" defined as source, perhaps you have chosen a wrong relation?', $relationId, $formClass));
         }
 
         $this->setRelation($relationId, $relation);
@@ -163,12 +165,10 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
                 $contentTypes[] = $target->getId();
             }
 
-            $relationOptions = isset($this->options['options'][$embeddedRelation->getRelationId()]) ?
-                $this->options['options'][$embeddedRelation->getRelationId()] : [];
+            $relationOptions = $this->options['options'][$embeddedRelation->getRelationId()] ?? [];
 
             $relationOptions['content_types'] = $contentTypes;
-            $relationOptions['multiple'] = isset($relationOptions['multiple']) ?
-                $relationOptions['multiple'] : $relation->isMultiple();
+            $relationOptions['multiple'] = $relationOptions['multiple'] ?? $relation->isMultiple();
 
             if (!isset($relationOptions['label'])) {
                 $relationOptions['label'] = $relation->getName();

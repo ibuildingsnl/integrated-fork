@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use DateTime;
+use DateTimeInterface;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Common\Block\BlockInterface;
@@ -43,23 +45,23 @@ abstract class Block implements BlockInterface
     protected $layout;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $updatedAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $publishedAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType",
      *      options={
@@ -96,9 +98,10 @@ abstract class Block implements BlockInterface
         if ($id) {
             $this->id = $id;
         }
-        $this->createdAt = new \DateTime();
-        $this->publishedAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+
+        $this->createdAt = new DateTime();
+        $this->publishedAt = new DateTime();
+        $this->updatedAt = new DateTime();
     }
 
     /**
@@ -158,7 +161,7 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -166,11 +169,11 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -178,7 +181,7 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getUpdatedAt()
     {
@@ -186,11 +189,11 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param DateTime $updatedAt
      *
      * @return $this
      */
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt(DateTimeInterface $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -198,7 +201,7 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getPublishedAt()
     {
@@ -206,11 +209,11 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $publishedAt
+     * @param DateTime $publishedAt
      *
      * @return $this
      */
-    public function setPublishedAt(\DateTime $publishedAt = null)
+    public function setPublishedAt(DateTimeInterface $publishedAt = null)
     {
         $this->publishedAt = $publishedAt;
 
@@ -218,7 +221,7 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getPublishedUntil()
     {
@@ -226,11 +229,11 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $publishedUntil
+     * @param DateTime $publishedUntil
      *
      * @return Block
      */
-    public function setPublishedUntil(\DateTime $publishedUntil = null)
+    public function setPublishedUntil(DateTimeInterface $publishedUntil = null)
     {
         $this->publishedUntil = $publishedUntil;
 
@@ -238,14 +241,14 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return bool
      */
-    public function isPublished(\DateTime $date = null)
+    public function isPublished(DateTimeInterface $date = null)
     {
         if (null === $date) {
-            $date = new \DateTime();
+            $date = new DateTime();
         }
 
         $published = true;
@@ -316,11 +319,7 @@ abstract class Block implements BlockInterface
      */
     public function hasGroup(int $group)
     {
-        if (\in_array($group, $this->groups)) {
-            return true;
-        }
-
-        return false;
+        return \in_array($group, $this->groups);
     }
 
     /**
@@ -350,6 +349,7 @@ abstract class Block implements BlockInterface
             if ($group instanceof GroupInterface) {
                 $group = $group->getId();
             }
+
             $this->groups[] = (int) $group;
         }
     }

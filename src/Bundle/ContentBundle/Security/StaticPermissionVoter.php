@@ -24,7 +24,7 @@ class StaticPermissionVoter implements VoterInterface
     /**
      * @var array
      */
-    private $permissions;
+    private $permissions = [];
 
     /**
      * @var int

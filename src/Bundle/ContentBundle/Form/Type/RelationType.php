@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
@@ -76,7 +77,7 @@ class RelationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
+            'data_class' => Relation::class,
         ]);
     }
 

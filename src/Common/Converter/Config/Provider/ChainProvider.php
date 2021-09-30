@@ -58,11 +58,7 @@ class ChainProvider implements TypeProviderInterface
      */
     public function hasProvider(TypeProviderInterface $provider)
     {
-        if (false !== array_search($provider, $this->providers, true)) {
-            return true;
-        }
-
-        return false;
+        return in_array($provider, $this->providers, true);
     }
 
     /**

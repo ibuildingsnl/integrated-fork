@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\MenuBundle\Document;
 
+use InvalidArgumentException;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
@@ -25,13 +26,15 @@ class MenuItem extends KnpMenuItem
 {
     /**
      * Use an URI als link.
+     * @var int
      */
-    const TYPE_LINK_URI = 0;
+    public const TYPE_LINK_URI = 0;
 
     /**
      * Use a search selection for the links.
+     * @var int
      */
-    const TYPE_LINK_SEARCH_SELECTION = 1;
+    public const TYPE_LINK_SEARCH_SELECTION = 1;
 
     /**
      * @var string
@@ -154,7 +157,7 @@ class MenuItem extends KnpMenuItem
     public function setFactory(FactoryInterface $factory)
     {
         if (!$factory instanceof DatabaseMenuFactory) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Factory must be an instance of "Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory".'
             );
         }
@@ -170,7 +173,7 @@ class MenuItem extends KnpMenuItem
     public function addChild($child, array $options = [])
     {
         if ($child instanceof Menu) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Cannot add an instance of "Integrated\Bundle\MenuBundle\Document\Menu" as child, '.
                 'use "Integrated\Bundle\MenuBundle\Document\MenuItem" instead.'
             );
@@ -179,7 +182,7 @@ class MenuItem extends KnpMenuItem
         if (!$child instanceof ItemInterface) {
             $child = $this->factory->createChild($child, $options);
         } elseif (null !== $child->getParent()) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Cannot add menu item as child, it already belongs to another menu (e.g. has a parent).'
             );
         }
@@ -206,7 +209,7 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @return \Knp\Menu\ItemInterface[]
+     * @return ItemInterface[]
      */
     public function getChildren()
     {
@@ -218,7 +221,7 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @return \Knp\Menu\ItemInterface
+     * @return ItemInterface
      */
     public function getFirstChild()
     {
@@ -228,7 +231,7 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @return \Knp\Menu\ItemInterface
+     * @return ItemInterface
      */
     public function getLastChild()
     {
@@ -246,23 +249,23 @@ class MenuItem extends KnpMenuItem
     {
         $array = [];
 
-        if ($this->getId()) {
+        if ($this->getId() !== '' && $this->getId() !== '0') {
             $array['id'] = $this->getId();
         }
 
-        if ($this->getTypeLink()) {
+        if ($this->getTypeLink() !== 0) {
             $array['typeLink'] = $this->getTypeLink();
         }
 
-        if ($this->getName()) {
+        if ($this->getName() !== '' && $this->getName() !== '0') {
             $array['name'] = $this->getName();
         }
 
-        if ($this->getUri()) {
+        if ($this->getUri() !== '' && $this->getUri() !== '0') {
             $array['uri'] = $this->getUri();
         }
 
-        if ($this->getSearchSelection()) {
+        if ($this->getSearchSelection() !== null) {
             $array['searchSelection'] = $this->getSearchSelection()->getId();
         }
 
@@ -270,7 +273,7 @@ class MenuItem extends KnpMenuItem
             $array['maxItems'] = $this->getMaxItems();
         }
 
-        if (true === $nested) {
+        if ($nested) {
             $children = [];
 
             /** @var MenuItem $child */
@@ -278,7 +281,7 @@ class MenuItem extends KnpMenuItem
                 $children[] = $child->toArray($nested);
             }
 
-            if (\count($children)) {
+            if (\count($children) > 0) {
                 $array['children'] = $children;
             }
         }

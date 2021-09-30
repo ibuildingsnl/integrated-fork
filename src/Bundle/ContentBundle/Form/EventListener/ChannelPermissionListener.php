@@ -21,7 +21,7 @@ class ChannelPermissionListener implements EventSubscriberInterface
     /**
      * @var Channel[]
      */
-    private $notPermittedChannels;
+    private $notPermittedChannels = [];
 
     /**
      * @param Channel[] $notPermittedChannels
@@ -46,7 +46,7 @@ class ChannelPermissionListener implements EventSubscriberInterface
      */
     public function onPreSubmit(FormEvent $event)
     {
-        if (!\count($this->notPermittedChannels)) {
+        if (\count($this->notPermittedChannels) === 0) {
             return;
         }
 

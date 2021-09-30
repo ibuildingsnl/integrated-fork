@@ -24,7 +24,7 @@ class Asset
     /**
      * @var bool
      */
-    protected $inline;
+    protected $inline = false;
 
     /**
      * @param string $content

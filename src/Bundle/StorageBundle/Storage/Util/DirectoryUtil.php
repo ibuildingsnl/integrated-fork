@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Util;
 
+use SplFileInfo;
+use LogicException;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
 /**
@@ -23,12 +25,12 @@ class DirectoryUtil
      * @param StorageInterface $storage
      * @param string|null      $overwriteExtension
      *
-     * @return \SplFileInfo
+     * @return SplFileInfo
      */
     public static function cachePathFile($directory, StorageInterface $storage, $overwriteExtension = null)
     {
         // Create the filename
-        $file = new \SplFileInfo(
+        $file = new SplFileInfo(
             sprintf(
                 '%s/%s/%s/%s',
                 $directory,
@@ -47,7 +49,7 @@ class DirectoryUtil
     /**
      * @param string $directory
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public static function createDirectory($directory)
     {
@@ -62,7 +64,7 @@ class DirectoryUtil
 
                 // You might wanna read is as check as follows: if it exists, make it, check if it did
                 if (!is_dir($dir) && !@mkdir($dir) && !is_dir($dir)) {
-                    throw new \LogicException(sprintf('Can not create directory %s', $dir));
+                    throw new LogicException(sprintf('Can not create directory %s', $dir));
                 }
             }
         }

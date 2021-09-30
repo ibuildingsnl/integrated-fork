@@ -22,7 +22,10 @@ use Integrated\Common\Channel\Exporter\ExportableInterface;
  */
 class FacebookAdapter implements AdapterInterface, ConfigurableInterface, ExportableInterface
 {
-    const CONNECTOR_NAME = 'facebook';
+    /**
+     * @var string
+     */
+    public const CONNECTOR_NAME = 'facebook';
 
     /**
      * @var Manifest

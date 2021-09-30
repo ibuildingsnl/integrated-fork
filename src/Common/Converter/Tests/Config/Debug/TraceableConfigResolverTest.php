@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Converter\Tests\Config\Debug;
 
+use Integrated\Common\Converter\Config\Debug\TraceableConfigInterface;
 use Integrated\Common\Converter\Config\Debug\TraceableConfigResolver;
 use Integrated\Common\Converter\Tests\Config\ConfigResolverTest;
 
@@ -19,7 +20,7 @@ use Integrated\Common\Converter\Tests\Config\ConfigResolverTest;
  */
 class TraceableConfigResolverTest extends ConfigResolverTest
 {
-    protected $CONFIG_INTERFACE = 'Integrated\\Common\\Converter\\Config\\Debug\\TraceableConfigInterface';
+    protected $CONFIG_INTERFACE = TraceableConfigInterface::class;
 
     protected function getInstance()
     {

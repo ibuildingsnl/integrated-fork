@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Bulk;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Bulk\BulkActionInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -26,12 +28,12 @@ class BulkAction
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $executedAt;
 
@@ -55,7 +57,7 @@ class BulkAction
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
         $this->selection = new ArrayCollection();
         $this->actions = new ArrayCollection();
     }
@@ -69,7 +71,7 @@ class BulkAction
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -77,11 +79,11 @@ class BulkAction
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -89,7 +91,7 @@ class BulkAction
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getExecutedAt()
     {
@@ -97,11 +99,11 @@ class BulkAction
     }
 
     /**
-     * @param \DateTime $executedAt
+     * @param DateTime $executedAt
      *
      * @return $this
      */
-    public function setExecutedAt(\DateTime $executedAt)
+    public function setExecutedAt(DateTimeInterface $executedAt)
     {
         $this->executedAt = $executedAt;
 
@@ -140,7 +142,7 @@ class BulkAction
     public function setSelection($contents)
     {
         $this->selection->clear();
-        if (\is_array($contents) || $contents instanceof \Traversable) {
+        if (is_iterable($contents)) {
             foreach ($contents as $content) {
                 $this->addSelection($content);
             }
@@ -191,7 +193,7 @@ class BulkAction
     public function setActions($actions)
     {
         $this->actions->clear();
-        if (\is_array($actions) || $actions instanceof \Traversable) {
+        if (is_iterable($actions)) {
             foreach ($actions as $action) {
                 $this->addAction($action);
             }

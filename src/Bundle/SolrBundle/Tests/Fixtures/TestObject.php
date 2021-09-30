@@ -28,14 +28,17 @@ class TestObject
      * @var bool
      */
     public $bool0 = false;
+
     /**
      * @var bool
      */
     public $bool1 = true;
+
     /**
      * @var int
      */
     public $int = 42;
+
     /**
      * @var float
      */
@@ -45,14 +48,17 @@ class TestObject
      * @var string
      */
     protected $field1 = 'field1';
+
     /**
      * @var string
      */
     protected $field2 = 'field2';
+
     /**
      * @var string
      */
     protected $field3 = 'field3';
+
     /**
      * @var string
      */

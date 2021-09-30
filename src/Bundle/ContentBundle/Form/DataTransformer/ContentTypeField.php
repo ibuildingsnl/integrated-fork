@@ -59,15 +59,11 @@ class ContentTypeField implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        if (\is_array($value)) {
-            if (!empty($value['enabled'])) {
-                $field = new Field();
-
-                $field->setName($this->field->getName());
-                $field->setOptions(['required' => !empty($value['required'])]);
-
-                return $field;
-            }
+        if (\is_array($value) && !empty($value['enabled'])) {
+            $field = new Field();
+            $field->setName($this->field->getName());
+            $field->setOptions(['required' => !empty($value['required'])]);
+            return $field;
         }
 
         return null;

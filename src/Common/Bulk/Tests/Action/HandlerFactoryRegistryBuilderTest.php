@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Bulk\Tests\Action;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistry;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistryBuilder;
@@ -18,7 +19,7 @@ use Integrated\Common\Bulk\Action\HandlerFactoryRegistryBuilder;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class HandlerFactoryRegistryBuilderTest extends \PHPUnit\Framework\TestCase
+class HandlerFactoryRegistryBuilderTest extends TestCase
 {
     public function testAddFactory()
     {

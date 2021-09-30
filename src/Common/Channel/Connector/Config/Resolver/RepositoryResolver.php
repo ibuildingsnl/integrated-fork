@@ -42,7 +42,7 @@ class RepositoryResolver implements ResolverInterface
      */
     public function hasConfig($name)
     {
-        return ($this->repository->find($name)) ? true : false;
+        return (bool) $this->repository->find($name);
     }
 
     /**

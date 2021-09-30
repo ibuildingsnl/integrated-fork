@@ -76,7 +76,7 @@ class Permission implements PermissionInterface
      */
     public function addMask($mask)
     {
-        $this->mask = $this->mask | (int) $mask;
+        $this->mask |= (int) $mask;
 
         return $this;
     }
@@ -88,7 +88,7 @@ class Permission implements PermissionInterface
      */
     public function removeMask($mask)
     {
-        $this->mask = $this->mask - ($this->mask & (int) $mask);
+        $this->mask -= $this->mask & (int) $mask;
 
         return $this;
     }

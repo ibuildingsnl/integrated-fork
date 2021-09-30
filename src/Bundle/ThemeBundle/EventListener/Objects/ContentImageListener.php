@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ThemeBundle\EventListener\Objects;
 
+use Exception;
 use Doctrine\Common\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Event\ContentEvent;
@@ -72,13 +73,13 @@ class ContentImageListener
     /**
      * @param ContentEvent $contentEvent
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function replaceImages(ContentEvent $contentEvent)
     {
         try {
             $content = preg_replace_callback(
-                '/\<img.*?data\-integrated\-id\="(.+?)".*?\>/',
+                '#\<img.*?data\-integrated\-id\="(.+?)".*?\>#',
                 function ($matches) {
                     return $this->findImages($matches);
                 },
@@ -86,9 +87,9 @@ class ContentImageListener
             );
 
             $contentEvent->setContent($content);
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             if ('prod' !== $this->env) {
-                throw $e;
+                throw $exception;
             }
         }
     }
@@ -100,9 +101,9 @@ class ContentImageListener
      */
     protected function findImages($matches)
     {
-        if ($file = $this->objectManager->find(Content::class, $matches[1])) {
+        if (($file = $this->objectManager->find(Content::class, $matches[1])) !== null) {
             $class = '';
-            if (preg_match('/class="(.*?)"/', $matches[0], $imgClass)) {
+            if (preg_match('#class="(.*?)"#', $matches[0], $imgClass)) {
                 $class = $imgClass[1];
             }
 
@@ -120,7 +121,7 @@ class ContentImageListener
      */
     protected function getTemplate(Content $file, $class = '')
     {
-        if ($template = $this->getViewFromClass($class)) {
+        if (($template = $this->getViewFromClass($class)) !== '' && ($template = $this->getViewFromClass($class)) !== '0') {
             return $this->templating->renderResponse(
                 $template,
                 ['document' => $file, 'class' => $class]
@@ -137,10 +138,10 @@ class ContentImageListener
      */
     protected function getViewFromClass($class = '')
     {
-        if (preg_match('/template-image-(.*?)(\s|$)/', $class, $views)) {
+        if (preg_match('#template-image-(.*?)(\s|$)#', $class, $views)) {
             $view = $this->slugger->slugify($views[1], '_');
 
-            if ($template = $this->themeManager->locateTemplate('objects/image/'.$view.'.html.twig')) {
+            if (($template = $this->themeManager->locateTemplate('objects/image/'.$view.'.html.twig')) !== '' && ($template = $this->themeManager->locateTemplate('objects/image/'.$view.'.html.twig')) !== '0') {
                 return $template;
             }
         }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
+use InvalidArgumentException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Form\EventListener\ContentTypePageListener;
@@ -57,7 +58,7 @@ class ContentTypePageType extends AbstractType
         $contentTypePage = $builder->getData();
 
         if (!$contentTypePage instanceof ContentTypePage) {
-            throw new \InvalidArgumentException(sprintf('Form needs an instance of %s', ContentTypePage::class));
+            throw new InvalidArgumentException(sprintf('Form needs an instance of %s', ContentTypePage::class));
         }
 
         $builder->add('channel', ChannelChoiceType::class, [
@@ -69,12 +70,12 @@ class ContentTypePageType extends AbstractType
             'label' => 'URL',
         ]);
 
-        if (!preg_match('/Content\\\(.+)Controller$/', \get_class($options['controller']), $matchController)) {
-            throw new \InvalidArgumentException(sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', \get_class($options['controller'])));
+        if (!preg_match('#Content\\\(.+)Controller$#', \get_class($options['controller']), $matchController)) {
+            throw new InvalidArgumentException(sprintf('The %s class is not a contentTypeController class (the namespace must contain Controller\Content and the class name must end with Controller)', \get_class($options['controller'])));
         }
 
-        if (!preg_match('/^(.+)Action$/', $contentTypePage->getControllerAction(), $matchAction)) {
-            throw new \InvalidArgumentException(sprintf('The %s method does not look like an action method (it does not end with Action)', $contentTypePage->getControllerAction()));
+        if (!preg_match('#^(.+)Action$#', $contentTypePage->getControllerAction(), $matchAction)) {
+            throw new InvalidArgumentException(sprintf('The %s method does not look like an action method (it does not end with Action)', $contentTypePage->getControllerAction()));
         }
 
         $builder->add('layout', LayoutChoiceType::class, [

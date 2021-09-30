@@ -23,7 +23,7 @@ class Row
     /**
      * @var Column[]
      */
-    protected $columns;
+    protected $columns = [];
 
     public function __construct()
     {
@@ -87,7 +87,7 @@ class Row
 
         $array = [];
 
-        if (\count($columns)) {
+        if (\count($columns) > 0) {
             $array['columns'] = $columns;
         }
 

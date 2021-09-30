@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Locks\Provider\DBAL;
 
+use DateTimeInterface;
 use DateTime;
 use Integrated\Common\Locks\LockInterface;
 use Integrated\Common\Locks\RequestInterface;
@@ -46,7 +47,7 @@ class Lock implements LockInterface
      * @param DateTime         $created
      * @param DateTime         $expires
      */
-    public function __construct($id, RequestInterface $request, DateTime $created, DateTime $expires = null)
+    public function __construct($id, RequestInterface $request, DateTimeInterface $created, DateTimeInterface $expires = null)
     {
         $this->id = (string) $id;
         $this->request = $request;

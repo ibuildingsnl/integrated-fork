@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Symfony\Component\Form\AbstractType;
@@ -25,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SearchSelectionChoiceType extends AbstractType
 {
     /**
-     * @var \Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository
+     * @var SearchSelectionRepository
      */
     private $repository;
 
@@ -50,7 +51,7 @@ class SearchSelectionChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $choices = [];
-        if ($user = $this->getUser()) {
+        if (($user = $this->getUser()) !== null) {
             $choices = $this->repository->findPublicByUserId($user->getId());
         }
 
@@ -67,7 +68,7 @@ class SearchSelectionChoiceType extends AbstractType
      */
     private function getUser()
     {
-        if ($token = $this->tokenStorage->getToken()) {
+        if (($token = $this->tokenStorage->getToken()) !== null) {
             $user = $token->getUser();
 
             if ($user instanceof UserInterface) {

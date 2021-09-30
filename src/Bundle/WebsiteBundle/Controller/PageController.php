@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -43,7 +44,7 @@ class PageController
     /**
      * @param Page $page
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function showAction(Page $page)
     {

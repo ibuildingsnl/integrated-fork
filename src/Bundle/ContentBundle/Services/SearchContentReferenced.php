@@ -11,10 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
+use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
+use Exception;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
-use Doctrine\ODM\MongoDB\Types\Type as MongoType;
+use Doctrine\ODM\MongoDB\Types\Type;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 
 /**
@@ -26,8 +29,9 @@ class SearchContentReferenced
 {
     /**
      * @const IGNORE_CLASSES
+     * @var array<class-string<BulkAction>>
      */
-    const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
+    public const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
 
     /**
      * @var DocumentManager
@@ -49,7 +53,7 @@ class SearchContentReferenced
      *
      * @return array
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getReferenced($document)
     {
@@ -73,7 +77,7 @@ class SearchContentReferenced
             foreach ($associations as $assocFieldName) {
                 $assocClassName = $classMetadata->getAssociationTargetClass($assocFieldName);
 
-                if (!$assocClassName) {
+                if ($assocClassName === '' || $assocClassName === '0') {
                     continue; // Skip empty class
                 }
 
@@ -84,7 +88,7 @@ class SearchContentReferenced
                         ->getQuery()
                         ->toArray();
 
-                    if ($items) {
+                    if ($items !== []) {
                         foreach ($items as $item) {
                             $referenced[] = $item;
                         }
@@ -102,7 +106,7 @@ class SearchContentReferenced
                                 ->getQuery()
                                 ->toArray();
 
-                            if ($items) {
+                            if ($items !== []) {
                                 foreach ($items as $item) {
                                     $referenced[] = $item;
                                 }
@@ -122,8 +126,8 @@ class SearchContentReferenced
      *
      * @return array
      *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Exception
+     * @throws MappingException
+     * @throws Exception
      */
     public function getDeletedInfo($document, ClassMetadataFactory $metadataFactory)
     {
@@ -135,11 +139,11 @@ class SearchContentReferenced
         $deleted['idField'] = current($deleted['metadata']->getIdentifier());
         $deleted['idValue'] = $deleted['metadata']->getFieldValue($document, $deleted['idField']);
 
-        if (MongoType::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
-            $typeClass = MongoType::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
+        if (Type::hasType($deleted['metadata']->getTypeOfField($deleted['idField']))) {
+            $typeClass = Type::getType($deleted['metadata']->getTypeOfField($deleted['idField']));
             $deleted['idValue'] = $typeClass->convertToDatabaseValue($deleted['idValue']);
         } else {
-            throw new \Exception('The identifer of the deleted object must have a valid Doctrine field type');
+            throw new Exception('The identifer of the deleted object must have a valid Doctrine field type');
         }
 
         return $deleted;

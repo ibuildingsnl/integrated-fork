@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ThemeBundle\Templating;
 
+use InvalidArgumentException;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -54,12 +55,12 @@ class ThemeManager
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function registerTheme($id, array $paths, array $fallback = [])
     {
         if ($this->hasTheme($id)) {
-            throw new \InvalidArgumentException(sprintf('Theme "%s" already exists.', $id));
+            throw new InvalidArgumentException(sprintf('Theme "%s" already exists.', $id));
         }
 
         $this->themes[$id] = new Theme($id, $paths, $fallback);
@@ -99,12 +100,12 @@ class ThemeManager
      *
      * @return Theme
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getTheme($id)
     {
         if (!$this->hasTheme($id)) {
-            throw new \InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
+            throw new InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
         }
 
         return $this->themes[$id];
@@ -131,12 +132,12 @@ class ThemeManager
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setActiveTheme($id)
     {
         if (!$this->hasTheme($id)) {
-            throw new \InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
+            throw new InvalidArgumentException(sprintf('Theme "%s" not exists.', $id));
         }
 
         $this->activeTheme = $id;
@@ -159,7 +160,7 @@ class ThemeManager
             return $template;
         }
 
-        $theme = $this->getTheme(null === $theme ? $this->getActiveTheme() : $theme);
+        $theme = $this->getTheme($theme ?? $this->getActiveTheme());
 
         $this->fallbackStack[$theme->getId()] = 1;
 
@@ -179,7 +180,7 @@ class ThemeManager
                 );
             }
 
-            if ($resource = $this->locateTemplate($template, $fallback)) {
+            if (($resource = $this->locateTemplate($template, $fallback)) !== '' && ($resource = $this->locateTemplate($template, $fallback)) !== '0') {
                 return $resource;
             }
         }

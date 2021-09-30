@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ThemeBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -28,7 +29,7 @@ class IntegratedThemeExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('controller.xml');
         $loader->load('event_listener.xml');
         $loader->load('services.xml');

@@ -162,25 +162,20 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
         if (!$document instanceof ContentInterface || !$document->getContentType() || !$document->getId()) {
             return;
         }
+
         // @codeCoverageIgnoreEnd
 
         $job = new Job($action);
 
-        switch ($job->getAction()) {
-            case 'ADD':
-                // probably should make a solr document id generator service or something like that
-                $job->setOption('document.id', $document->getContentType().'-'.$document->getId());
-
-                $job->setOption('document.data', $this->getSerializer()->serialize($document, $this->getSerializerFormat()));
-                $job->setOption('document.class', ClassUtils::getRealClass($document));
-                $job->setOption('document.format', $this->getSerializerFormat());
-
-                break;
-
-            case 'DELETE':
-                // probably should make a solr document id generator service or something like that
-                $job->setOption('id', $document->getContentType().'-'.$document->getId());
-                break;
+        if ($job->getAction() == 'ADD') {
+            // probably should make a solr document id generator service or something like that
+            $job->setOption('document.id', $document->getContentType().'-'.$document->getId());
+            $job->setOption('document.data', $this->getSerializer()->serialize($document, $this->getSerializerFormat()));
+            $job->setOption('document.class', ClassUtils::getRealClass($document));
+            $job->setOption('document.format', $this->getSerializerFormat());
+        } elseif ($job->getAction() == 'DELETE') {
+            // probably should make a solr document id generator service or something like that
+            $job->setOption('id', $document->getContentType().'-'.$document->getId());
         }
 
         $this->getQueue()->push($job, 0, $this->priority);

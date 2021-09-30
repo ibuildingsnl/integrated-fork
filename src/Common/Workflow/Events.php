@@ -16,5 +16,8 @@ namespace Integrated\Common\Workflow;
  */
 final class Events
 {
-    const STATE_CHANGED = 'integrated.workflow_state.changed';
+    /**
+     * @var string
+     */
+    public const STATE_CHANGED = 'integrated.workflow_state.changed';
 }

@@ -11,6 +11,8 @@
 
 namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Doctrine\ODM\MongoDB\Mapping\ClassTreeMapResolver;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\ClassTreeMapResolverBuilder;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\ClassLocatorInterface;
 use ReflectionClass;
@@ -18,7 +20,7 @@ use ReflectionClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ClassTreeMapResolverBuilderTest extends \PHPUnit\Framework\TestCase
+class ClassTreeMapResolverBuilderTest extends TestCase
 {
     /**
      * @var ClassLocatorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -27,7 +29,7 @@ class ClassTreeMapResolverBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->locator = $this->createMock('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\Locator\\ClassLocatorInterface');
+        $this->locator = $this->createMock(ClassLocatorInterface::class);
     }
 
     public function testAddClass()
@@ -37,7 +39,7 @@ class ClassTreeMapResolverBuilderTest extends \PHPUnit\Framework\TestCase
         $builder->addClass('class1');
         $builder->addClass('class2');
 
-        $reflection = new ReflectionClass('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\ClassTreeMapResolver');
+        $reflection = new ReflectionClass(ClassTreeMapResolver::class);
 
         $prop = $reflection->getProperty('map_roots');
         $prop->setAccessible(true);
@@ -47,7 +49,7 @@ class ClassTreeMapResolverBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testConstructor()
     {
-        $reflection = new ReflectionClass('Integrated\\Doctrine\\ODM\\MongoDB\\Mapping\\ClassTreeMapResolver');
+        $reflection = new ReflectionClass(ClassTreeMapResolver::class);
 
         $prop = $reflection->getProperty('locator');
         $prop->setAccessible(true);

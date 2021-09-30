@@ -11,6 +11,10 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use Integrated\Common\Channel\Exception\ExceptionInterface;
+use Iterator;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolver;
@@ -18,16 +22,16 @@ use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolver;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MemoryResolverTest extends \PHPUnit\Framework\TestCase
+class MemoryResolverTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Config\\ResolverInterface', $this->getInstance());
+        self::assertInstanceOf(ResolverInterface::class, $this->getInstance());
     }
 
     public function testConstructorWithInvalidChannels()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-config-that-does-not-exist');
 
         $this->getInstance([], ['this-is-a-config-that-does-not-exist' => null]);
@@ -50,7 +54,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfigNotFound()
     {
-        $this->expectException(\Integrated\Common\Channel\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
         $this->expectExceptionMessage('this-is-a-config-that-does-not-exist');
 
         $this->getInstance()->getConfig('this-is-a-config-that-does-not-exist');
@@ -81,17 +85,17 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
         $iterator = $resolver->getConfigs($this->getChannel('channel1'));
 
-        self::assertInstanceOf('Iterator', $iterator);
+        self::assertInstanceOf(Iterator::class, $iterator);
         self::assertSame(['config4' => $configs['config4'], 'config1' => $configs['config1'], 'config3' => $configs['config3']], iterator_to_array($iterator));
 
         $iterator = $resolver->getConfigs($this->getChannel('channel2'));
 
-        self::assertInstanceOf('Iterator', $iterator);
+        self::assertInstanceOf(Iterator::class, $iterator);
         self::assertSame(['config4' => $configs['config4'], 'config2' => $configs['config2'], 'config3' => $configs['config3']], iterator_to_array($iterator));
 
         $iterator = $resolver->getConfigs($this->getChannel('channel3'));
 
-        self::assertInstanceOf('Iterator', $iterator);
+        self::assertInstanceOf(Iterator::class, $iterator);
         self::assertSame(['config4' => $configs['config4']], iterator_to_array($iterator));
     }
 
@@ -113,7 +117,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig($name)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\Connector\\Config\\ConfigInterface');
+        $mock = $this->createMock(ConfigInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);
@@ -128,7 +132,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);

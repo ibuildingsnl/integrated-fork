@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ChannelBundle\EventListener\Doctrine;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTime;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
@@ -133,11 +135,11 @@ class ChannelDistributionListener implements EventSubscriber
     }
 
     /**
-     * @param DateTime|null $date
+     * @param DateTime|DateTimeImmutable $date
      *
      * @return int
      */
-    private function getDelay(DateTime $date = null): int
+    private function getDelay(DateTimeInterface $date = null): int
     {
         $now = DateTime::createFromFormat('U', time()); // Needed for testing
 

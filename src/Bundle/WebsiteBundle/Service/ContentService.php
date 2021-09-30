@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Service;
 
+use Symfony\Component\HttpFoundation\Response;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
+use Twig\Error\Error;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener;
@@ -58,10 +61,10 @@ class ContentService
     /**
      * @param Content $content
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
-     * @throws \Twig\Error\Error
+     * @throws CircularFallbackException
+     * @throws Error
      */
     public function prepare(Content $content)
     {

@@ -43,9 +43,7 @@ class BulkActionContentTypeType extends AbstractType
         $resolver
             ->setDefault('data_class', ContentTypeAction::class)
             ->setDefault('empty_data', function (Options $options) {
-                $action = new ContentTypeAction(ContentTypeHandler::class);
-
-                return $action;
+                return new ContentTypeAction(ContentTypeHandler::class);
             });
     }
 

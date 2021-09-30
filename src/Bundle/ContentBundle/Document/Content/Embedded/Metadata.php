@@ -23,5 +23,5 @@ class Metadata extends Registry
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 }

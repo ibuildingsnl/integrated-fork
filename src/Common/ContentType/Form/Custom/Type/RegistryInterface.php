@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\ContentType\Form\Custom\Type;
 
+use ArrayIterator;
 use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 
 /**
@@ -33,7 +34,7 @@ interface RegistryInterface
     public function has(TypeInterface $type);
 
     /**
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
     public function getIterator();
 }

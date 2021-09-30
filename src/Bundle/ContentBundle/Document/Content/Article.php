@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
@@ -212,7 +213,7 @@ class Article extends Content implements RankableInterface
      *
      * @return $this
      */
-    public function addAuthor(Embedded\Author $author)
+    public function addAuthor(Author $author)
     {
         if (!$this->authors->contains($author)) {
             $this->authors->add($author);
@@ -226,7 +227,7 @@ class Article extends Content implements RankableInterface
      *
      * @return bool true if this collection contained the specified element, false otherwise
      */
-    public function removeAuthor(Embedded\Author $author)
+    public function removeAuthor(Author $author)
     {
         return $this->authors->removeElement($author);
     }
@@ -388,7 +389,7 @@ class Article extends Content implements RankableInterface
      *
      * @return $this
      */
-    public function setAddress(Embedded\Address $address = null)
+    public function setAddress(Address $address = null)
     {
         $this->address = $address;
 
@@ -405,10 +406,8 @@ class Article extends Content implements RankableInterface
         $items = $this->getReferencesByRelationTypes(['cover', 'embedded']);
         if ($items) {
             foreach ($items as $item) {
-                if ($item instanceof FileInterface) {
-                    if ($item->getFile() instanceof StorageInterface) {
-                        return $item->getFile();
-                    }
+                if ($item instanceof FileInterface && $item->getFile() instanceof StorageInterface) {
+                    return $item->getFile();
                 }
             }
         }

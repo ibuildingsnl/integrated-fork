@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Model;
 
-use Darsyn\IP\Version\Multi as IP;
+use Darsyn\IP\Version\Multi;
 
 interface IpListManagerInterface extends ManagerInterface
 {
@@ -20,7 +20,7 @@ interface IpListManagerInterface extends ManagerInterface
      *
      * @return IpList
      */
-    public function create(IP $ip, string $description);
+    public function create(Multi $ip, string $description);
 
     /**
      * Change or add the ip list to the manager.

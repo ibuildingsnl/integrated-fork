@@ -50,7 +50,7 @@ class ConfigProviderBuilderPass implements CompilerPassInterface
 
         $builder = $container->getDefinition($this->service);
 
-        foreach ($container->findTaggedServiceIds($this->tag) as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds($this->tag)) as $service) {
             $builder->addMethodCall('addProvider', [$container->getDefinition($service)]);
         }
     }

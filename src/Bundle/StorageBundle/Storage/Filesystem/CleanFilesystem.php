@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Filesystem;
 
+use RuntimeException;
 use Integrated\Bundle\StorageBundle\Storage\Registry\FilesystemRegistry;
 use Integrated\Common\Storage\Database\DatabaseInterface;
 
@@ -52,12 +53,12 @@ class CleanFilesystem
         $keys = array_flip($keys['keys']);
 
         if ($targetDirectory && !is_dir($targetDirectory)) {
-            throw new \RuntimeException(sprintf('Directory %s does not exists', $targetDirectory));
+            throw new RuntimeException(sprintf('Directory %s does not exists', $targetDirectory));
         }
 
         $objects = $this->database->getStorageKeys();
 
-        foreach ($keys as $key => $value) {
+        foreach (array_keys($keys) as $key) {
             if (substr($key, 0, 1) === '.') {
                 continue;
             }
@@ -66,13 +67,13 @@ class CleanFilesystem
                 continue;
             }
 
-            if (!$targetDirectory) {
+            if ($targetDirectory === '' || $targetDirectory === '0') {
                 continue;
             }
 
             $targetFile = rtrim($targetDirectory, '/').'/'.$key;
             if (file_exists($targetFile)) {
-                throw new \RuntimeException(sprintf('File %s does already exists', $targetFile));
+                throw new RuntimeException(sprintf('File %s does already exists', $targetFile));
             }
 
             if (file_put_contents($targetFile, $filesystem->read($key)) !== false) {

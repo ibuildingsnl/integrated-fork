@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Extension;
 
+use LogicException;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -26,7 +27,7 @@ trait RegistryTrait
         $name = $extension->getName();
 
         if (isset($this->extensions[$name])) {
-            throw new \LogicException();
+            throw new LogicException();
         }
 
         $this->extensions[$name] = $extension;

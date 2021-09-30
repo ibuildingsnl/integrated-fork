@@ -11,13 +11,15 @@
 
 namespace Integrated\Common\ContentType\Tests\Resolver;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\Resolver\PriorityResolver;
 use Integrated\Common\ContentType\Resolver\PriorityResolverBuilder;
 use Integrated\Common\ContentType\ResolverInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class PriorityResolverBuilderTest extends \PHPUnit\Framework\TestCase
+class PriorityResolverBuilderTest extends TestCase
 {
     public function testAddResolver()
     {
@@ -68,7 +70,7 @@ class PriorityResolverBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetResolver()
     {
-        self::assertInstanceOf('Integrated\\Common\\ContentType\\Resolver\\PriorityResolver', $this->getInstance()->getResolver());
+        self::assertInstanceOf(PriorityResolver::class, $this->getInstance()->getResolver());
     }
 
     /**
@@ -84,6 +86,6 @@ class PriorityResolverBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getResolver()
     {
-        return $this->createMock('Integrated\\Common\\ContentType\\ResolverInterface');
+        return $this->createMock(ResolverInterface::class);
     }
 }

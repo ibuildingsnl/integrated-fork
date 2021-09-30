@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage;
 
+use LogicException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\StorageBundle\Storage\Registry\FilesystemRegistry;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -65,15 +66,13 @@ class Resolver implements ResolverInterface
 
         // Attempt to find a URL by the defined priority (or something like that)
         foreach ($priority as $key) {
-            if (isset($this->resolverMap[$key])) {
-                if ($this->registry->get($key)->has($storage->getIdentifier())) {
-                    return $this->getResolverClass($key, $storage->getIdentifier())->getLocation();
-                }
+            if (isset($this->resolverMap[$key]) && $this->registry->get($key)->has($storage->getIdentifier())) {
+                return $this->getResolverClass($key, $storage->getIdentifier())->getLocation();
             }
         }
 
         // Show never happen, a resolver can not fail and at least one resolver must be defined in the configuration
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'No valid public path found for %s in filesystems: %s',
                 $storage->getIdentifier(),
@@ -114,7 +113,7 @@ class Resolver implements ResolverInterface
             return $resolver;
         }
 
-        throw new \LogicException(
+        throw new LogicException(
             sprintf(
                 'Class %s must implement Integrated\Bundle\StorageBundle\Storage\Resolver\ResolverInterface',
                 \get_class($resolver)

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
+use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
@@ -49,7 +51,7 @@ class UserManager implements UserManagerInterface
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
-        if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
+        if (!is_subclass_of($this->repository->getClassName(), UserInterface::class)) {
             throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
         }
 
@@ -185,7 +187,7 @@ class UserManager implements UserManagerInterface
             ->where('User.username = :username')
             ->setParameter('username', $username);
 
-        if ($scope) {
+        if ($scope !== null) {
             $builder->andWhere('(User.scope = :scope)');
             $builder->setParameter('scope', (int) $scope->getId());
         } else {
@@ -196,7 +198,7 @@ class UserManager implements UserManagerInterface
     }
 
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     public function createQueryBuilder()
     {
@@ -209,7 +211,7 @@ class UserManager implements UserManagerInterface
      *
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function changePassword(int $id, string $password): bool
     {

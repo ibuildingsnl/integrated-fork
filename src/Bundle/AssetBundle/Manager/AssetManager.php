@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\AssetBundle\Manager;
 
+use InvalidArgumentException;
 use Integrated\Bundle\AssetBundle\Asset\Asset;
 
 /**
@@ -18,8 +19,15 @@ use Integrated\Bundle\AssetBundle\Asset\Asset;
  */
 class AssetManager
 {
-    const MODE_APPEND = 'append';
-    const MODE_PREPEND = 'prepend';
+    /**
+     * @var string
+     */
+    public const MODE_APPEND = 'append';
+
+    /**
+     * @var string
+     */
+    public const MODE_PREPEND = 'prepend';
 
     /**
      * @var array
@@ -36,12 +44,12 @@ class AssetManager
      * @param bool         $inline
      * @param string       $mode
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function add($asset, $inline = false, $mode = self::MODE_APPEND)
     {
         if (!\in_array($mode, [self::MODE_APPEND, self::MODE_PREPEND])) {
-            throw new \InvalidArgumentException(sprintf('Invalid mode "%s".', $mode));
+            throw new InvalidArgumentException(sprintf('Invalid mode "%s".', $mode));
         }
 
         $function = self::MODE_PREPEND === $mode ? 'array_unshift' : 'array_push';

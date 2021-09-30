@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Command;
 
+use LogicException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Bundle\StorageBundle\Storage\Database\Translation\StorageTranslation;
@@ -32,6 +33,7 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class MigrateCommand extends Command
 {
+    protected static $defaultName = 'storage:migrate';
     /**
      * @var DatabaseInterface
      */
@@ -66,9 +68,7 @@ class MigrateCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('storage:migrate')
-            ->setDescription('Imports the old file notation in the new notation and places the files in configured storage.')
+        $this->setDescription('Imports the old file notation in the new notation and places the files in configured storage.')
             ->setHelp('The <info>%command.name%</info> migrates all the old style notation files into the new notation.')
             ->setDefinition([
                 new InputArgument(
@@ -100,7 +100,7 @@ class MigrateCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Fetch all data from database
         $data = $this->database->getRows();
@@ -146,29 +146,24 @@ class MigrateCommand extends Command
                                 )
                             )
                         );
-
                         // Convert the property
                         $row[$property->getPropertyName()] = (new StorageTranslation($storage))->toArray();
-
                         // Write it down, some where
                         $this->database->saveRow($row);
-
                         // Check for a delete
                         if ($input->getOption('delete')) {
                             @unlink($file->getPathname());
                         }
-                    } else {
-                        if (isset($row[$property->getPropertyName()])) {
-                            // If the property exists, the only valid count is one, what else?
-                            throw new \LogicException(
-                                sprintf(
-                                    'The file %s was found zero times for document %s and property %s.',
-                                    $filename,
-                                    $row['_id'],
-                                    $property->getPropertyName()
-                                )
-                            );
-                        }
+                    } elseif (isset($row[$property->getPropertyName()])) {
+                        // If the property exists, the only valid count is one, what else?
+                        throw new LogicException(
+                            sprintf(
+                                'The file %s was found zero times for document %s and property %s.',
+                                $filename,
+                                $row['_id'],
+                                $property->getPropertyName()
+                            )
+                        );
                     }
                 }
             }
@@ -179,6 +174,7 @@ class MigrateCommand extends Command
 
         // Release the output
         $progress->finish();
+        return 0;
     }
 
     /**
@@ -226,7 +222,7 @@ class MigrateCommand extends Command
             }
 
             // This can not be done
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'The file %s (for document: %s) has been found %d times on the given path.',
                 $fileId,
                 $documentId,

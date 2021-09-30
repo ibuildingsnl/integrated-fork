@@ -11,6 +11,9 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use Integrated\Common\Solr\Exception\InvalidArgumentException;
 use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
@@ -39,7 +42,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @covers \Integrated\Common\Solr\Indexer\Indexer
  */
-class IndexerTest extends \PHPUnit\Framework\TestCase
+class IndexerTest extends TestCase
 {
     /**
      * @var CommandFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -87,7 +90,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $instance = $this->getInstance();
 
-        $class = new \ReflectionClass($instance);
+        $class = new ReflectionClass($instance);
 
         $property = $class->getProperty('batch');
         $property->setAccessible(true);
@@ -376,7 +379,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteNoClient()
     {
-        $this->expectException(\Integrated\Common\Solr\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->client = null;
 
@@ -779,8 +782,8 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         try {
             $instance->execute();
-        } catch (ClientException $ex) {
-            self::assertSame($exception, $ex->getPrevious());
+        } catch (ClientException $clientException) {
+            self::assertSame($exception, $clientException->getPrevious());
         }
 
         self::assertEquals(0, $this->batch->count());

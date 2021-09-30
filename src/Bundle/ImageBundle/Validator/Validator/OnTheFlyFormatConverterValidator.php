@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ImageBundle\Validator\Validator;
 
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ImageBundle\Converter\Container;
 use Integrated\Bundle\ImageBundle\Exception\FormatException;
@@ -80,9 +81,9 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
         } catch (FormatException $formatException) {
             // There's something wrong with the format or no converter that supports it
             $this->context->buildViolation($formatException->getMessage())->addViolation();
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             // Pass the error along
-            $this->context->buildViolation($e->getMessage())->addViolation();
+            $this->context->buildViolation($exception->getMessage())->addViolation();
         }
     }
 }

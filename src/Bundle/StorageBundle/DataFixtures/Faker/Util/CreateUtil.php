@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\DataFixtures\Faker\Util;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
@@ -41,7 +42,7 @@ class CreateUtil
                     // Use the file_get_contents to support local and remote (http) protocols
                     file_get_contents($path),
                     // Metadata
-                    new Storage\Metadata(
+                    new Metadata(
                         substr($path, strrpos($path, '.') + 1),
                         mime_content_type($path),
                         new ArrayCollection(),

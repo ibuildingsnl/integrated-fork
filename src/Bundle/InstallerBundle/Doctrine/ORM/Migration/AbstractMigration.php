@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\InstallerBundle\Doctrine\ORM\Migration;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Migrations;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,7 +23,7 @@ abstract class AbstractMigration extends Migrations\AbstractMigration implements
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManager
      */
     protected function getEntityManager()
     {

@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Bundle\ContentBundle\Solr\Normalizer;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
  */
-class NormalizerTest extends \PHPUnit\Framework\TestCase
+class NormalizerTest extends TestCase
 {
     /**
      * @dataProvider normalizeProvider

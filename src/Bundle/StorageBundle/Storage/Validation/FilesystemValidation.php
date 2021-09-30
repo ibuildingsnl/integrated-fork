@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Validation;
 
+use InvalidArgumentException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Common\Storage\FilesystemRegistryInterface;
 
@@ -39,7 +40,7 @@ class FilesystemValidation
      *
      * @return ArrayCollection $filesystems
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getValidFilesystems(ArrayCollection $filesystems = null)
     {
@@ -49,7 +50,7 @@ class FilesystemValidation
 
         foreach ($filesystems as $key) {
             if (!$this->registry->exists($key)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'The filesystem %s does not exist.',
                         $key

@@ -82,7 +82,7 @@ class RequestAwareChannelContext implements ChannelContextInterface
             return; // no request so can not store the channel
         }
 
-        if ($channel) {
+        if ($channel !== null) {
             $request->attributes->set($this->attribute, $channel->getId());
         } else {
             $request->attributes->remove($this->attribute);

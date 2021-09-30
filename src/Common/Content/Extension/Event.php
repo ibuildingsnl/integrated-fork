@@ -16,15 +16,27 @@ use Symfony\Component\EventDispatcher\Event as BaseEvent;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class Event extends BaseEvent
+class Event extends \Symfony\Contracts\EventDispatcher\Event
 {
-    const CONTENT = 'extension.event.content';
+    /**
+     * @var string
+     */
+    public const CONTENT = 'extension.event.content';
 
-    const CONTENT_TYPE = 'extension.event.contenttype';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE = 'extension.event.contenttype';
 
-    const METADATA = 'extension.event.medadata';
+    /**
+     * @var string
+     */
+    public const METADATA = 'extension.event.medadata';
 
-    const UNKNOWN = 'extension.event.unknown';
+    /**
+     * @var string
+     */
+    public const UNKNOWN = 'extension.event.unknown';
 
     /**
      * @var string

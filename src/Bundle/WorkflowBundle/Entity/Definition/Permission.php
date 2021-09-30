@@ -37,7 +37,7 @@ class Permission extends CommonPermission
 
         $this->state = $state;
 
-        if ($this->state) {
+        if ($this->state !== null) {
             $this->state->addPermission($this);
         }
 

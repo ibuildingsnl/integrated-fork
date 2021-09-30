@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\PageBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Form\Type\ContentTypePageType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Johan Liefers <johan@e-active.nl>
  */
-class ContentTypePageController extends Controller
+class ContentTypePageController extends AbstractController
 {
     /**
      * @var DocumentManager

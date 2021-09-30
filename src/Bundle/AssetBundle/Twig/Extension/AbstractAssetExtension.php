@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\AssetBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
+use Twig_Environment;
+use Twig_Template;
 use Doctrine\Common\Inflector\Inflector;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\AssetBundle\Twig\TokenParser\AssetTokenParser;
@@ -18,7 +22,7 @@ use Integrated\Bundle\AssetBundle\Twig\TokenParser\AssetTokenParser;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-abstract class AbstractAssetExtension extends \Twig_Extension
+abstract class AbstractAssetExtension extends Twig_Extension
 {
     /**
      * @var AssetManager
@@ -49,22 +53,24 @@ abstract class AbstractAssetExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new Twig_SimpleFunction(
                 $this->getTag(),
-                [$this, 'render'],
+                function (Twig_Environment $environment) : string {
+                    return $this->render($environment);
+                },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
         ];
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Twig_Environment $environment
      *
      * @return string
      */
-    public function render(\Twig_Environment $environment)
+    public function render(Twig_Environment $environment)
     {
-        /** @var \Twig_Template $template */
+        /** @var Twig_Template $template */
         $template = $environment->loadTemplate($this->getTemplate());
 
         $html = [];

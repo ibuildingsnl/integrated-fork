@@ -11,12 +11,14 @@
 
 namespace Integrated\Common\ContentType\Tests\Form\Custom;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 use Integrated\Common\ContentType\Form\Custom\Type;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends TestCase
 {
     /**
      * @var Type|\PHPUnit_Framework_MockObject_MockObject
@@ -36,7 +38,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testInterface()
     {
-        $this->assertInstanceOf('Integrated\\Common\\ContentType\\Form\\Custom\\TypeInterface', $this->type);
+        $this->assertInstanceOf(TypeInterface::class, $this->type);
     }
 
     /**

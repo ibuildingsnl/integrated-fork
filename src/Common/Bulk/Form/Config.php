@@ -34,7 +34,7 @@ class Config implements ConfigInterface
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var ActionMatcherInterface

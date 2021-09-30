@@ -28,7 +28,7 @@ class FieldEvent extends FormEvent
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var bool

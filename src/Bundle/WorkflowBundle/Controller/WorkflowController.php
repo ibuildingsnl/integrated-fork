@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Countable;
+use Symfony\Component\Form\FormInterface;
 use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -24,7 +28,6 @@ use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionFormType;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Integrated\Common\Security\PermissionInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowController extends Controller
+class WorkflowController extends AbstractController
 {
     /**
      * Generate a list of workflow definitions.
@@ -52,7 +55,7 @@ class WorkflowController extends Controller
         /** @var $pager \Knp\Component\Pager\Paginator */
         $pager = $this->get('knp_paginator');
         $pager = $pager->paginate(
-            $em->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')->createQueryBuilder('item'),
+            $em->getRepository(Definition::class)->createQueryBuilder('item'),
             $request->query->get('page', 1),
             15
         );
@@ -102,7 +105,7 @@ class WorkflowController extends Controller
      *
      * @return Response
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
     public function editAction(Request $request)
     {
@@ -111,7 +114,7 @@ class WorkflowController extends Controller
         /** @var Definition $workflow */
         $workflow = $this->getDoctrine()
             ->getManager()
-            ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
+            ->getRepository(Definition::class)
             ->find($request->get('id'));
 
         if (!$workflow) {
@@ -158,7 +161,7 @@ class WorkflowController extends Controller
         /** @var Definition $workflow */
         $workflow = $this->getDoctrine()
             ->getManager()
-            ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
+            ->getRepository(Definition::class)
             ->find($request->get('id'));
 
         if (!$workflow) {
@@ -232,12 +235,12 @@ class WorkflowController extends Controller
         $currentUserCanWrite = false;
 
         $permissionObject = false;
-        if (\count($state->getPermissions()) > 0) {
+        if ((is_array($state->getPermissions()) || $state->getPermissions() instanceof Countable ? \count($state->getPermissions()) : 0) > 0) {
             $permissionObject = $state;
         } else {
             //permissions inherited from content type
             $contentType = $this->get('doctrine_mongodb.odm.document_manager')->getRepository(ContentType::class)->find($request->get('contentType'));
-            if ($contentType && \count($contentType->getPermissions()) > 0) {
+            if ($contentType && (is_array($contentType->getPermissions()) || $contentType->getPermissions() instanceof Countable ? \count($contentType->getPermissions()) : 0) > 0) {
                 $permissionObject = $contentType;
             }
         }
@@ -308,7 +311,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createNewForm()
     {
@@ -334,7 +337,7 @@ class WorkflowController extends Controller
     /**
      * @param Definition $workflow
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(Definition $workflow)
     {
@@ -360,7 +363,7 @@ class WorkflowController extends Controller
     /**
      * @param Definition $workflow
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm(Definition $workflow)
     {

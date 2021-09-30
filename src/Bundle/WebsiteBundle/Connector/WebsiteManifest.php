@@ -18,7 +18,10 @@ use Integrated\Common\Channel\Connector\Adapter\ManifestInterface;
  */
 class WebsiteManifest implements ManifestInterface
 {
-    const NAME = 'website';
+    /**
+     * @var string
+     */
+    public const NAME = 'website';
 
     /**
      * {@inheritdoc}

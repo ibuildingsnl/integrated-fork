@@ -118,7 +118,7 @@ class FieldMapperType implements TypeInterface
         }
 
         $value = trim($value);
-        $value = preg_replace('/\s+/u', ' ', $value);
+        $value = preg_replace('#\s+#u', ' ', $value);
 
         $container->add($field, $value);
     }
@@ -155,9 +155,6 @@ class FieldMapperType implements TypeInterface
     {
         $extracted = [];
 
-        // Check if there is a separator in the path config and if so extract it and then remove it
-        // from the path config.
-
         if (\array_key_exists('separator', $paths) && !\is_array($paths['separator'])) {
             $separator = (string) $paths['separator'];
             unset($paths['separator']);
@@ -165,29 +162,23 @@ class FieldMapperType implements TypeInterface
 
         foreach ($paths as $index => $path) {
             if (\is_array($path)) {
-                // Since $path is a array the $index with be treated as a path and the result of that
-                // path is treated as a array. If the result is not a array then it will be placed in
-                // a array to simulate that the result is a array.
-
                 try {
                     $array = $this->accessor->getValue($data, (string) $index);
 
                     if (!\is_array($array) && !$array instanceof Traversable) {
                         $array = [$array];
                     }
-                } catch (ExceptionInterface $e) {
+                } catch (ExceptionInterface $exceptionInterface) {
                     $array = [];
                 }
 
                 $results = [];
 
                 foreach ($array as $value) {
-                    if ($path) {
+                    if ($path !== []) {
                         $results = array_merge($results, $this->readArray($value, $path, $separator));
-                    } else {
-                        if ($value = $this->convert($value)) {
-                            $results[] = $value;
-                        }
+                    } elseif ($value = $this->convert($value)) {
+                        $results[] = $value;
                     }
                 }
 
@@ -196,8 +187,6 @@ class FieldMapperType implements TypeInterface
                 $extracted[] = $this->readString($data, $path);
             }
         }
-
-        // The data is extracted so now its time to combine all the data into strings.
 
         return $this->combine($extracted, $separator);
     }
@@ -210,7 +199,7 @@ class FieldMapperType implements TypeInterface
     {
         $path = (string) $path;
 
-        if (!$path) {
+        if ($path === '' || $path === '0') {
             return null;
         }
 

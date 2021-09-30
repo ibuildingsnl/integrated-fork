@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
+use RuntimeException;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Symfony\Component\Config\Loader\Loader;
@@ -22,7 +25,10 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class ContentTypePageLoader extends Loader
 {
-    const ROUTE_PREFIX = 'integrated_website_content_type_page';
+    /**
+     * @var string
+     */
+    public const ROUTE_PREFIX = 'integrated_website_content_type_page';
 
     /**
      * @var bool
@@ -54,17 +60,17 @@ class ContentTypePageLoader extends Loader
      */
     public function load($resource, $type = null)
     {
-        if (true === $this->loaded) {
-            throw new \RuntimeException('Page loader is already added');
+        if ($this->loaded) {
+            throw new RuntimeException('Page loader is already added');
         }
 
         $routes = new RouteCollection();
 
         $pages = $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage')->findAll();
 
-        /** @var \Integrated\Bundle\PageBundle\Document\Page\ContentTypePage $page */
+        /** @var ContentTypePage $page */
         foreach ($pages as $page) {
-            if (!$page->getControllerService()) {
+            if ($page->getControllerService() === '' || $page->getControllerService() === '0') {
                 continue;
             }
 
@@ -81,13 +87,14 @@ class ContentTypePageLoader extends Loader
 
             $routes->add($this->urlResolver->getRouteName($page), $route);
         }
+
         $this->loaded = true;
 
         return $routes;
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
+     * @return DocumentRepository
      */
     protected function getContentTypeRepo()
     {

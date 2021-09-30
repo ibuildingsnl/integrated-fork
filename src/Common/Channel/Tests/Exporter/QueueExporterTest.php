@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
+use PHPUnit\Framework\TestCase;
 use Exception;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterInterface;
@@ -24,12 +25,12 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueExporterTest extends \PHPUnit\Framework\TestCase
+class QueueExporterTest extends TestCase
 {
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
      * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -48,14 +49,14 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
-        $this->serializer = $this->createMock('Integrated\\Common\\Channel\\Exporter\\Queue\\RequestSerializerInterface');
-        $this->exporter = $this->createMock('Integrated\\Common\\Channel\\Exporter\\ExporterInterface');
+        $this->queue = $this->createMock(QueueInterface::class);
+        $this->serializer = $this->createMock(RequestSerializerInterface::class);
+        $this->exporter = $this->createMock(ExporterInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Exporter\\ExporterInterface', $this->getInstance());
+        self::assertInstanceOf(ExporterInterface::class, $this->getInstance());
     }
 
     public function testGetQueue()
@@ -200,7 +201,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance($method = null)
     {
-        return $this->getMockBuilder('Integrated\\Common\\Channel\\Exporter\\QueueExporter')
+        return $this->getMockBuilder(QueueExporter::class)
             ->setConstructorArgs([$this->queue, $this->serializer, $this->exporter])
             ->setMethods($method ? [$method] : null)
             ->getMock();
@@ -211,7 +212,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMessage()
     {
-        return $this->createMock('Integrated\\Common\\Queue\\QueueMessageInterface');
+        return $this->createMock(QueueMessageInterface::class);
     }
 
     /**
@@ -219,6 +220,6 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        return $this->createMock(ChannelInterface::class);
     }
 }

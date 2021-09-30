@@ -21,7 +21,7 @@ class Configurable
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var OptionsResolver
@@ -94,7 +94,7 @@ class Configurable
      */
     public function getOption($key)
     {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
+        return $this->options[$key] ?? null;
     }
 
     /**

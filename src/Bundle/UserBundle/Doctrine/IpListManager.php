@@ -11,7 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Darsyn\IP\Version\Multi as IP;
+use InvalidArgumentException;
+use Darsyn\IP\Version\Multi;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\IpList;
@@ -39,7 +40,7 @@ class IpListManager implements IpListManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_a($this->repository->getClassName(), IpList::class, true)) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
+            throw new InvalidArgumentException(sprintf('The class "%s" is not a instance of %s', $this->repository->getClassName(), IpList::class));
         }
     }
 
@@ -59,7 +60,7 @@ class IpListManager implements IpListManagerInterface
         return $this->repository;
     }
 
-    public function create(IP $ip, string $description)
+    public function create(Multi $ip, string $description)
     {
         $class = $this->getClassName();
 

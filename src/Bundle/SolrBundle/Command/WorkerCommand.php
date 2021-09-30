@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Integrated\Common\Solr\Task\Worker;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,8 +21,9 @@ use Symfony\Component\Lock\Factory;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkerCommand extends ContainerAwareCommand
+class WorkerCommand extends Command
 {
+    protected static $defaultName = 'solr:worker:run';
     /**
      * @var Factory
      */
@@ -50,10 +51,7 @@ class WorkerCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('solr:worker:run')
-
-            ->addOption('tasks', 't', InputOption::VALUE_REQUIRED, 'The maximum number of tasks to execute in one worker run', null)
+        $this->addOption('tasks', 't', InputOption::VALUE_REQUIRED, 'The maximum number of tasks to execute in one worker run', null)
 
             ->setDescription('Execute worker task from the queue.')
             ->setHelp('
@@ -66,12 +64,12 @@ The <info>%command.name%</info> command starts a solr worker run.
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $lock = $this->factory->createLock(self::class.md5(__DIR__));
 
         if (!$lock->acquire()) {
-            return;
+            return 0;
         }
 
         try {
@@ -83,5 +81,6 @@ The <info>%command.name%</info> command starts a solr worker run.
         } finally {
             $lock->release();
         }
+        return 0;
     }
 }

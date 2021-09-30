@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller\Content;
 
+use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Document\Content\JobPosting;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
@@ -53,7 +54,7 @@ class JobPostingController
      * @param ContentTypePage $page
      * @param JobPosting      $jobPosting
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function showAction(ContentTypePage $page, JobPosting $jobPosting)
     {

@@ -11,12 +11,13 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks\Doctrine;
 
+use Integrated\Common\Solr\Tests\Task\Tasks\ReferenceQueueTaskTest;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\MongoDBReferenceQueueTask;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MongoDBReferenceQueueTaskTest extends \Integrated\Common\Solr\Tests\Task\Tasks\ReferenceQueueTaskTest
+class MongoDBReferenceQueueTaskTest extends ReferenceQueueTaskTest
 {
     protected function getInstance($id)
     {

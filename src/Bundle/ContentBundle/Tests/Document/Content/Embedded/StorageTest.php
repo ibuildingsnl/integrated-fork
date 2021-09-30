@@ -11,21 +11,24 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Storage\ResolverInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends TestCase
 {
     /**
      * Test the post write method used to create an object.
      */
     public function testPostWriteMethod()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Integrated\Common\Storage\ResolverInterface $resolver */
-        $resolver = $this->createMock('Integrated\Common\Storage\ResolverInterface');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ResolverInterface $resolver */
+        $resolver = $this->createMock(ResolverInterface::class);
         $resolver->expects($this->once())
             ->method('resolve')
             ->willReturn($path = md5(time()));
@@ -34,7 +37,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
             $identifier = md5(time()),
             $filesystems = new ArrayCollection(['local', 'private']),
             $resolver,
-            $metadata = new Storage\Metadata(
+            $metadata = new Metadata(
                 '.jpg',
                 'image/jpeg',
                 new ArrayCollection(),

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Relation;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 
@@ -56,7 +58,7 @@ class CompanyTest extends RelationTest
     public function testGetAndSetAddressesFunction()
     {
         $addresses = new ArrayCollection([
-            $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
+            $this->createMock(Address::class),
         ]);
         $this->assertSame($addresses, $this->company->setAddresses($addresses)->getAddresses());
     }
@@ -76,7 +78,7 @@ class CompanyTest extends RelationTest
     public function testGetAndSetLogoFunction()
     {
         /* @var $logo \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $logo = $this->createMock('Integrated\Common\Content\Document\Storage\Embedded\StorageInterface');
+        $logo = $this->createMock(StorageInterface::class);
         $this->assertSame($logo, $this->company->setLogo($logo)->getLogo());
     }
 

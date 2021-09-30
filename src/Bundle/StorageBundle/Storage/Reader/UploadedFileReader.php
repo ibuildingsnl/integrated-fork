@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Reader;
 
+use SplFileObject;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Common\Storage\Identifier\IdentifierInterface;
@@ -54,11 +55,12 @@ class UploadedFileReader implements ReaderInterface
     public function read()
     {
         if (null == $this->data) {
-            $file = new \SplFileObject($this->uploadedFile->getPathname(), 'r');
+            $file = new SplFileObject($this->uploadedFile->getPathname(), 'r');
             // Read the file buffered
             while ($data = $file->fread(1024)) {
                 $this->data .= $data;
             }
+
             // Cleanup
             unset($file);
         }

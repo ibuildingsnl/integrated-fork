@@ -11,16 +11,18 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Connector\Config\Options;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Connector\\Config\\OptionsInterface', $this->getInstance());
+        self::assertInstanceOf(OptionsInterface::class, $this->getInstance());
     }
 
     public function testConstructor()

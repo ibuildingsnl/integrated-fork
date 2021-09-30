@@ -67,11 +67,9 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
      */
     protected function configureTwigBundle(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig($name, ['form_themes' => ['IntegratedWorkflowBundle:form:form_div_layout.html.twig']]);
-                    break;
+        foreach (array_keys($container->getExtensions()) as $name) {
+            if ($name === 'twig') {
+                $container->prependExtensionConfig($name, ['form_themes' => ['IntegratedWorkflowBundle:form:form_div_layout.html.twig']]);
             }
         }
     }

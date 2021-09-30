@@ -113,14 +113,12 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
      */
     public function prepend(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig(
-                        $name,
-                        ['form_themes' => ['IntegratedChannelBundle:form:options.html.twig']]
-                    );
-                    break;
+        foreach (array_keys($container->getExtensions()) as $name) {
+            if ($name === 'twig') {
+                $container->prependExtensionConfig(
+                    $name,
+                    ['form_themes' => ['IntegratedChannelBundle:form:options.html.twig']]
+                );
             }
         }
     }

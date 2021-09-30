@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use DateTime;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Common\Form\Mapping\Annotations as Type;
 
@@ -43,12 +44,12 @@ class InlineTextBlock extends Block
     protected $title;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $publishedAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $publishedUntil;
 

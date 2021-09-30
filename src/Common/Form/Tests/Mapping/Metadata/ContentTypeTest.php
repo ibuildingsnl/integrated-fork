@@ -11,15 +11,19 @@
 
 namespace Integrated\Common\Form\Tests\Mapping\Metadata;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Form\Mapping\Metadata\Document;
 use Integrated\Common\Form\Mapping\Metadata\Field;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ContentTypeTest extends \PHPUnit\Framework\TestCase
+class ContentTypeTest extends TestCase
 {
-    const CONTENT_TYPE_CLASS = 'class';
+    /**
+     * @var string
+     */
+    public const CONTENT_TYPE_CLASS = 'class';
 
     /**
      * @var Document

@@ -133,7 +133,7 @@ class SearchSelection
      */
     public function getFilter($key)
     {
-        return isset($this->filters[$key]) ? $this->filters[$key] : null;
+        return $this->filters[$key] ?? null;
     }
 
     /**

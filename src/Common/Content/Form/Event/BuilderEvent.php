@@ -28,7 +28,7 @@ class BuilderEvent extends FormEvent
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var string|null

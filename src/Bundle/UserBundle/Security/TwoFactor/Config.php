@@ -16,12 +16,12 @@ class Config
     /**
      * @var bool
      */
-    private $required;
+    private $required = false;
 
     /**
      * @var string[]
      */
-    private $path;
+    private $path = [];
 
     public function __construct(bool $required, string $formPath, string $checkPath, string $targetPath)
     {

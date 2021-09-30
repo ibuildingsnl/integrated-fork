@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\Locator;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Component\Finder\Finder;
 
@@ -27,7 +28,7 @@ class LayoutLocator
     /**
      * @var array
      */
-    private $layouts;
+    private $layouts = [];
 
     /**
      * @param ThemeManager $themeManager
@@ -45,7 +46,7 @@ class LayoutLocator
      */
     public function getLayouts($theme, $directory = null)
     {
-        if (null === $this->layouts) {
+        if ([] === $this->layouts) {
             $this->layouts = [];
             foreach ($this->themeManager->getThemes() as $id => $theme2) {
                 if ($theme === $id
@@ -57,7 +58,7 @@ class LayoutLocator
                             $finder = new Finder();
                             $finder->files()->in($path)->depth(0)->name('*.html.twig');
 
-                            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+                            /** @var SplFileInfo $file */
                             foreach ($finder as $file) {
                                 if (!\in_array($file->getRelativePathname(), $this->layouts)) {
                                     $this->layouts[] = $file->getRelativePathname();

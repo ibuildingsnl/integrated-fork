@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\DataFixtures\Faker\Provider;
 
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Exception;
 use Integrated\Bundle\StorageBundle\DataFixtures\Faker\Util\CreateUtil;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
 
@@ -77,9 +79,9 @@ class VideoProvider
     /**
      * @param string|null $type
      *
-     * @return \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface
+     * @return StorageInterface
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function createVideo($type = null)
     {
@@ -94,7 +96,7 @@ class VideoProvider
      *
      * @return bool|string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getVideo($type = null)
     {
@@ -125,7 +127,7 @@ class VideoProvider
 
         //check extension
         if (!isset(self::$mimeTypes[$mimeType])) {
-            throw new \Exception(sprintf('No video extension found for mimetype "%s"', $mimeType));
+            throw new Exception(sprintf('No video extension found for mimetype "%s"', $mimeType));
         }
 
         $extension = \is_array(self::$mimeTypes[$mimeType]) ? self::$mimeTypes[$mimeType][0] : self::$mimeTypes[$mimeType];

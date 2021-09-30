@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine\Subscriber;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -61,6 +62,6 @@ class OrmRelationSubscriber implements EventSubscriber
 
         $prop = $metadata->getReflectionClass()->getProperty('relation_instance');
         $prop->setAccessible(true);
-        $prop->setValue($object, $this->dm->getManager()->getRepository('Integrated\\Bundle\\ContentBundle\\Document\\Content\\Content')->find($id));
+        $prop->setValue($object, $this->dm->getManager()->getRepository(Content::class)->find($id));
     }
 }

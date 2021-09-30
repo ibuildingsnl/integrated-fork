@@ -19,7 +19,7 @@ class Config implements ConfigInterface
     /**
      * @var TypeConfigInterface[]
      */
-    private $types;
+    private $types = [];
 
     /**
      * @var ConfigInterface|null

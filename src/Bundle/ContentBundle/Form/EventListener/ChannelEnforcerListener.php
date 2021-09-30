@@ -27,19 +27,21 @@ class ChannelEnforcerListener implements EventSubscriberInterface
     /**
      * The channels will be set the to content and completely overriding
      * the currently set channels.
+     * @var string
      */
-    const SET = 'set';
+    public const SET = 'set';
 
     /**
      * The channels will be added to the content with out overriding the
      * currently set channels.
+     * @var string
      */
-    const ADD = 'add';
+    public const ADD = 'add';
 
     /**
      * @var Channel[]
      */
-    private $channels;
+    private $channels = [];
 
     /**
      * @var string
@@ -94,16 +96,13 @@ class ChannelEnforcerListener implements EventSubscriberInterface
         $data = $event->getData();
 
         if ($data instanceof ChannelableInterface) {
-            switch ($this->operand) {
-                case self::SET:
-                    $data->setChannels(new ArrayCollection($this->channels));
-                    break;
-
-                case self::ADD:
-                    foreach ($this->channels as $channel) {
-                        $data->addChannel($channel);
-                    }
-                    break;
+            if ($this->operand == self::SET) {
+                $data->setChannels(new ArrayCollection($this->channels));
+            } elseif ($this->operand == self::ADD) {
+                foreach ($this->channels as $channel) {
+                    $data->addChannel($channel);
+                }
+                
             }
         }
     }

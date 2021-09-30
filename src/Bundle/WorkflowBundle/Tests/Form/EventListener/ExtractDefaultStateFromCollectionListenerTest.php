@@ -11,6 +11,12 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Form\EventListener;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvent;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use stdClass;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractDefaultStateFromCollectionListener;
 use Symfony\Component\Form\FormEvents;
@@ -18,20 +24,20 @@ use Symfony\Component\Form\FormEvents;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\TestCase
+class ExtractDefaultStateFromCollectionListenerTest extends TestCase
 {
     /**
-     * @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $form;
 
     /**
-     * @var \Symfony\Component\Form\FormEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     private $event;
 
     /**
-     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @var Definition|\PHPUnit_Framework_MockObject_MockObject
      */
     private $definition;
 
@@ -40,9 +46,9 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      */
     protected function setUp(): void
     {
-        $this->event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $this->definition = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition');
+        $this->event = $this->getMockBuilder(FormEvent::class)->disableOriginalConstructor()->getMock();
+        $this->form = $this->createMock(FormInterface::class);
+        $this->definition = $this->createMock(Definition::class);
 
         $this->event
             ->expects($this->any())
@@ -57,7 +63,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     public function testInstanceOf()
     {
         $instance = $this->getInstance();
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventSubscriberInterface', $instance);
+        $this->assertInstanceOf(EventSubscriberInterface::class, $instance);
     }
 
     /**
@@ -108,7 +114,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     {
         $instance = $this->getInstance();
 
-        $invalidDefinition = $this->createMock('stdClass');
+        $invalidDefinition = $this->createMock(stdClass::class);
         $invalidDefinition
             ->expects($this->never())
             ->method($this->anything())
@@ -155,7 +161,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      */
     public function testOnPostSetDataWithInvalidState()
     {
-        $child = $this->getChild($this->createMock('stdClass'));
+        $child = $this->getChild($this->createMock(stdClass::class));
         $child
             ->expects($this->never())
             ->method('has')
@@ -341,14 +347,14 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
 
         $states = $this->getForm();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state1 */
-        $state1 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
+        /** @var State|\PHPUnit_Framework_MockObject_MockObject $state1 */
+        $state1 = $this->createMock(State::class);
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state2 */
-        $state2 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
+        /** @var State|\PHPUnit_Framework_MockObject_MockObject $state2 */
+        $state2 = $this->createMock(State::class);
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state3 */
-        $state3 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
+        /** @var State|\PHPUnit_Framework_MockObject_MockObject $state3 */
+        $state3 = $this->createMock(State::class);
 
         // Get three different form types
         $child1 = $this->getFormChild();
@@ -391,8 +397,8 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      */
     protected function getFormChild(State $state = null, $withDefaultState = null, $getOrSet = 'get')
     {
-        /** @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject $child1 */
-        $child = $this->createMock('Symfony\Component\Form\FormInterface');
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $child1 */
+        $child = $this->createMock(FormInterface::class);
 
         // Stub getData, returns $state
         $child
@@ -407,55 +413,52 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
                 ->expects($this->never())
                 ->method('has')
             ;
+        } elseif (null === $withDefaultState) {
+            // Stub has, returns false
+            $child
+                ->expects($this->once())
+                ->method('has')
+                ->with('default')
+                ->willReturn(false)
+            ;
+            // Stub get, must never be called
+            $child
+                ->expects($this->never())
+                ->method('get')
+            ;
         } else {
-            if (null === $withDefaultState) {
-                // Stub has, returns false
-                $child
-                    ->expects($this->once())
-                    ->method('has')
-                    ->with('default')
-                    ->willReturn(false)
-                ;
+            // Stub has, returns true
+            $child
+                ->expects($this->once())
+                ->method('has')
+                ->with('default')
+                ->willReturn(true)
+            ;
 
-                // Stub get, must never be called
-                $child
-                    ->expects($this->never())
-                    ->method('get')
+            /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $default */
+            $default = $this->createMock(FormInterface::class);
+
+            // Stub get, returns $default
+            $child
+                ->expects($this->once())
+                ->method('get')
+                ->with('default')
+                ->willReturn($default)
+            ;
+
+            // Stub get or setData
+            if ($getOrSet == 'get') {
+                $default
+                    ->expects($this->once())
+                    ->method('getData')
+                    ->willReturn($withDefaultState)
                 ;
             } else {
-                // Stub has, returns true
-                $child
+                $default
                     ->expects($this->once())
-                    ->method('has')
-                    ->with('default')
-                    ->willReturn(true)
+                    ->method('setData')
+                    ->with(true)
                 ;
-
-                /** @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject $default */
-                $default = $this->createMock('Symfony\Component\Form\FormInterface');
-
-                // Stub get, returns $default
-                $child
-                    ->expects($this->once())
-                    ->method('get')
-                    ->with('default')
-                    ->willReturn($default)
-                ;
-
-                // Stub get or setData
-                if ($getOrSet == 'get') {
-                    $default
-                        ->expects($this->once())
-                        ->method('getData')
-                        ->willReturn($withDefaultState)
-                    ;
-                } else {
-                    $default
-                        ->expects($this->once())
-                        ->method('setData')
-                        ->with(true)
-                    ;
-                }
             }
         }
 
@@ -473,11 +476,11 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     /**
      * @param mixed $default
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
+     * @return \PHPUnit_Framework_MockObject_MockObject|State
      */
     protected function getState($default = null)
     {
-        $mock = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
+        $mock = $this->createMock(State::class);
 
         if (null !== $default) {
             $mock
@@ -493,11 +496,11 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     /**
      * @param mixed $data
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject | \Symfony\Component\Form\FormInterface'
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface '
      */
     protected function getForm($data = null)
     {
-        $mock = $this->createMock('Symfony\Component\Form\FormInterface');
+        $mock = $this->createMock(FormInterface::class);
         $mock
             ->expects($this->any())
             ->method('getData')
@@ -511,7 +514,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      * @param mixed $state
      * @param mixed $default
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
+     * @return \PHPUnit_Framework_MockObject_MockObject|State
      */
     protected function getChild($state = null, $default = null)
     {

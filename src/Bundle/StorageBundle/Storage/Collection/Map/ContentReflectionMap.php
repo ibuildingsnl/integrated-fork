@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Collection\Map;
 
+use Closure;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Bundle\StorageBundle\Storage\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -24,7 +25,7 @@ class ContentReflectionMap
     /**
      * @param MetadataFactoryInterface $metadata
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function storageProperties(MetadataFactoryInterface $metadata)
     {

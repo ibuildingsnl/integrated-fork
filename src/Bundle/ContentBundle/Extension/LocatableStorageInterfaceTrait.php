@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Extension;
 
+use Exception;
 /**
  * This trait is a implementation of \ArrayAccess in the std library of php.
  * To force the image handling to treat this as a locatable object a path must start with @.
@@ -56,20 +57,20 @@ trait LocatableStorageInterfaceTrait
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function offsetSet($offset, $value)
     {
-        throw new \Exception('Setting properties is forbidden');
+        throw new Exception('Setting properties is forbidden');
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function offsetUnset($offset)
     {
-        throw new \Exception('Setting properties is forbidden');
+        throw new Exception('Setting properties is forbidden');
     }
 }

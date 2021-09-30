@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\DataFixtures\Faker\Provider;
 
+use Exception;
 use Faker\Provider\Image;
 use Integrated\Bundle\StorageBundle\DataFixtures\Faker\Util\CreateUtil;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -39,7 +40,7 @@ class ImageProvider
      *
      * @return StorageInterface
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function createImage($width = 640, $height = 480, $category = null, $dir = '/tmp')
     {

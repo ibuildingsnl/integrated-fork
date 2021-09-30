@@ -36,7 +36,7 @@ class ContentChannelVoter implements VoterInterface
     /**
      * @var array
      */
-    private $permissions;
+    private $permissions = [];
 
     /**
      * @param ResolverInterface              $resolver
@@ -96,7 +96,7 @@ class ContentChannelVoter implements VoterInterface
             return VoterInterface::ACCESS_GRANTED;
         }
 
-        if (!\count($content->getChannels())) {
+        if (\count($content->getChannels()) === 0) {
             // Give everyone access if no channels are added
             return VoterInterface::ACCESS_ABSTAIN;
         }
@@ -118,6 +118,7 @@ class ContentChannelVoter implements VoterInterface
                             return VoterInterface::ACCESS_GRANTED;
                         }
                     }
+
                     break;
 
                 case $this->permissions['create']:
@@ -129,6 +130,7 @@ class ContentChannelVoter implements VoterInterface
                             return VoterInterface::ACCESS_DENIED;
                         }
                     }
+
                     break;
             }
         }

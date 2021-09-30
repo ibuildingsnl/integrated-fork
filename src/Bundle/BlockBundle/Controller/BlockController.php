@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Form\FormInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
@@ -19,7 +23,6 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class BlockController extends Controller
+class BlockController extends AbstractController
 {
     /**
      * @var MetadataFactoryInterface
@@ -62,7 +65,7 @@ class BlockController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function indexAction(Request $request)
     {
@@ -99,7 +102,7 @@ class BlockController extends Controller
      * @param Request $request
      * @param Block   $block
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function showAction(Request $request, Block $block)
     {
@@ -117,7 +120,7 @@ class BlockController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function newAction(Request $request)
     {
@@ -165,7 +168,7 @@ class BlockController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function newChannelBlockAction(Request $request)
     {
@@ -190,6 +193,7 @@ class BlockController extends Controller
 
         $block->setTitle($name);
         $block->setLayout('default.html.twig');
+
         $this->documentManager->persist($block);
         $this->documentManager->flush();
 
@@ -200,7 +204,7 @@ class BlockController extends Controller
      * @param Request $request
      * @param Block   $block
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return array|RedirectResponse|Response
      */
     public function editAction(Request $request, Block $block)
     {
@@ -248,7 +252,7 @@ class BlockController extends Controller
      * @param Request $request
      * @param Block   $block
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function deleteAction(Request $request, Block $block)
     {
@@ -261,10 +265,8 @@ class BlockController extends Controller
         }
 
         /* check if current Block not used on some page */
-        if ($this->container->has('integrated_page.form.type.page')) {
-            if ($this->documentManager->getRepository(Block::class)->isUsed($block)) {
-                throw $this->createNotFoundException(sprintf('Block "%s" is used.', $block->getId()));
-            }
+        if ($this->container->has('integrated_page.form.type.page') && $this->documentManager->getRepository(Block::class)->isUsed($block)) {
+            throw $this->createNotFoundException(sprintf('Block "%s" is used.', $block->getId()));
         }
 
         $form = $this->createDeleteForm($block->getId());
@@ -288,7 +290,7 @@ class BlockController extends Controller
     /**
      * @param $id
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm($id)
     {

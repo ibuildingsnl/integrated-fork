@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Command\Filesystem;
 
+use InvalidArgumentException;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Map\ContentReflectionMap;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Map\FileMap;
 use Integrated\Bundle\StorageBundle\Storage\Collection\Walk\DocumentWalk;
@@ -32,6 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RemoveCommand extends Command
 {
+    protected static $defaultName = 'storage:filesystem:remove';
     /**
      * @var DatabaseInterface
      */
@@ -74,8 +76,7 @@ class RemoveCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('storage:filesystem:remove')
-            ->setDescription('Removes the filesystem from the database and copies the files to the other filesystem.')
+        $this->setDescription('Removes the filesystem from the database and copies the files to the other filesystem.')
             ->setDefinition([
                 new InputArgument(
                     'filesystem',
@@ -89,7 +90,7 @@ class RemoveCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
 
@@ -106,7 +107,8 @@ class RemoveCommand extends Command
                 ->walk(DocumentWalk::save($this->database))
             ;
         } else {
-            throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
+            throw new InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
         }
+        return 0;
     }
 }

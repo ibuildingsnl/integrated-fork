@@ -11,12 +11,15 @@
 
 namespace Integrated\Bundle\ThemeBundle\Twig\Extension;
 
+use Twig_Extension;
+use Twig_SimpleFunction;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ThemeExtension extends \Twig_Extension
+class ThemeExtension extends Twig_Extension
 {
     /**
      * @var ThemeManager
@@ -37,7 +40,9 @@ class ThemeExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('integrated_active_theme', [$this, 'getActiveTheme']),
+            new Twig_SimpleFunction('integrated_active_theme', function (string $template) : string {
+                return $this->getActiveTheme($template);
+            }),
         ];
     }
 
@@ -46,7 +51,7 @@ class ThemeExtension extends \Twig_Extension
      *
      * @return string
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
+     * @throws CircularFallbackException
      */
     public function getActiveTheme($template)
     {

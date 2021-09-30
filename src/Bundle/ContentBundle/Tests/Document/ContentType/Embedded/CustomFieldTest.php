@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType\Embedded;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CustomFieldTest extends \PHPUnit\Framework\TestCase
+class CustomFieldTest extends TestCase
 {
     /**
      * @var CustomField
@@ -36,6 +38,6 @@ class CustomFieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field', $this->field);
+        $this->assertInstanceOf(Field::class, $this->field);
     }
 }

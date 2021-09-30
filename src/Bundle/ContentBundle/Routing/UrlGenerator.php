@@ -109,7 +109,7 @@ class UrlGenerator implements UrlGeneratorInterface
         $url = '//'.$this->context->getHost().$port.$url;
 
         if ($referenceType === self::ABSOLUTE_URL) {
-            return "$scheme:".$url;
+            return sprintf('%s:', $scheme).$url;
         }
 
         return $url;

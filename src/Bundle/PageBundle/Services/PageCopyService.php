@@ -11,9 +11,11 @@
 
 namespace Integrated\Bundle\PageBundle\Services;
 
+use Exception;
+use DateTime;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\MappingException as MappingExceptionAlias;
-use Doctrine\ODM\MongoDB\MongoDBException as MongoDBExceptionAlias;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
@@ -52,7 +54,7 @@ class PageCopyService
     {
         $targetChannel = $this->documentManager->getRepository(Channel::class)->find($data['targetChannel']);
         if ($targetChannel === null) {
-            throw new \Exception('Channel not found');
+            throw new Exception('Channel not found');
         }
 
         $result = $this->documentManager->getRepository(Page::class)->findBy(
@@ -79,7 +81,7 @@ class PageCopyService
 
                 /** @var Page $copiedPage */
                 $copiedPage = clone $page;
-                $copiedPage->setCreatedAt(new \DateTime());
+                $copiedPage->setCreatedAt(new DateTime());
                 $copiedPage->setChannel($targetChannel);
 
                 foreach ($copiedPage->getGrids() as $key => $grid) {
@@ -98,7 +100,7 @@ class PageCopyService
      * @param ItemsInterface $grid
      * @param array          $data
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function copyGridBlocks(ItemsInterface $grid, array $data)
     {
@@ -110,17 +112,13 @@ class PageCopyService
 
             $block = $item->getBlock();
 
-            if ($block instanceof Block) {
-                //copy block
-                if (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone') {
-                    $copiedBlock = clone $block;
-                    $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
-                    $copiedBlock->setCreatedAt(new \DateTime());
-
-                    $this->documentManager->persist($copiedBlock);
-
-                    $item->setBlock($copiedBlock);
-                }
+            //copy block
+            if ($block instanceof Block && (isset($data['block_'.$block->getId()]['operation']) && $data['block_'.$block->getId()]['operation'] == 'clone')) {
+                $copiedBlock = clone $block;
+                $copiedBlock->setId($data['block_'.$block->getId()]['newBlockId']);
+                $copiedBlock->setCreatedAt(new DateTime());
+                $this->documentManager->persist($copiedBlock);
+                $item->setBlock($copiedBlock);
             }
 
             if ($item->getRow()) {

@@ -10,12 +10,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\DataTransformerInterface;
+use stdClass;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
+use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
+class FieldsTransformerTest extends TestCase
 {
     /**
      * @var FieldsTransformer
@@ -35,7 +41,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\Form\DataTransformerInterface', $this->fieldTransformer);
+        $this->assertInstanceOf(DataTransformerInterface::class, $this->fieldTransformer);
     }
 
     /**
@@ -100,7 +106,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
                 'string',
             ],
             'invalidDataStdClass' => [
-                $this->createMock('stdClass'),
+                $this->createMock(stdClass::class),
             ],
             'invalidDataArray' => [
                 [],
@@ -113,35 +119,35 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function getValidTransformData()
     {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $default1 */
-        $default1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
+        /** @var Field|\PHPUnit_Framework_MockObject_MockObject $default1 */
+        $default1 = $this->createMock(Field::class);
         $default1
             ->expects($this->once())
             ->method('getName')
             ->willReturn('name')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $default2 */
-        $default2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
+        /** @var Field|\PHPUnit_Framework_MockObject_MockObject $default2 */
+        $default2 = $this->createMock(Field::class);
         $default2
             ->expects($this->once())
             ->method('getName')
             ->willReturn('name2')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $duplicateDefault */
-        $duplicateDefault = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
+        /** @var Field|\PHPUnit_Framework_MockObject_MockObject $duplicateDefault */
+        $duplicateDefault = $this->createMock(Field::class);
         $duplicateDefault
             ->expects($this->once())
             ->method('getName')
             ->willReturn('name')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $custom1 */
-        $custom1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
+        /** @var CustomField|\PHPUnit_Framework_MockObject_MockObject $custom1 */
+        $custom1 = $this->createMock(CustomField::class);
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $custom2 */
-        $custom2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
+        /** @var CustomField|\PHPUnit_Framework_MockObject_MockObject $custom2 */
+        $custom2 = $this->createMock(CustomField::class);
 
         return [
             'validData' => [
@@ -215,8 +221,8 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
             'onlyDefaultValues' => [
                 [
                     'default' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        $this->createMock(ContentTypeFieldInterface::class),
+                        $this->createMock(ContentTypeFieldInterface::class),
                     ],
                     'custom' => [],
                 ],
@@ -225,18 +231,18 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
                 [
                     'default' => [],
                     'custom' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        $this->createMock(ContentTypeFieldInterface::class),
                     ],
                 ],
             ],
             'defaultAndCustomValues' => [
                 [
                     'default' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        $this->createMock(ContentTypeFieldInterface::class),
+                        $this->createMock(ContentTypeFieldInterface::class),
                     ],
                     'custom' => [
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface'),
+                        $this->createMock(ContentTypeFieldInterface::class),
                     ],
                 ],
             ],

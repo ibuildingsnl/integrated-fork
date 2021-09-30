@@ -91,6 +91,7 @@ class ContentChoiceType extends AbstractType
             $view->vars['full_name'] .= '[]';
             $view->vars['attr']['multiple'] = 'multiple';
         }
+
         $view->vars['attr']['data-placeholder'] = $options['placeholder'];
     }
 

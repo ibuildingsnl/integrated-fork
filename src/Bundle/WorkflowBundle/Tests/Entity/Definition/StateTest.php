@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Entity\Definition;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends TestCase
 {
     /**
      * Test isDefault function.
@@ -27,8 +29,8 @@ class StateTest extends \PHPUnit\Framework\TestCase
         $state1 = $this->getInstance();
         $state2 = $this->getInstance();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|\PHPUnit_Framework_MockObject_MockObject $definition */
-        $definition = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition');
+        /** @var Definition|\PHPUnit_Framework_MockObject_MockObject $definition */
+        $definition = $this->createMock(Definition::class);
 
         // Set workflow Mock for the two states
         $state1->setWorkflow($definition);

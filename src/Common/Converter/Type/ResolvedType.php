@@ -26,7 +26,7 @@ class ResolvedType implements ResolvedTypeInterface
     /**
      * @var TypeExtensionInterface[]
      */
-    private $extensions;
+    private $extensions = [];
 
     /**
      * Constructor.

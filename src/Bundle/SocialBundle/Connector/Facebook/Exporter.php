@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\SocialBundle\Connector\Facebook;
 
+use Exception;
 use Facebook\Facebook;
 use Facebook\GraphNodes\GraphNode;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
@@ -84,7 +85,7 @@ class Exporter implements ExporterInterface
             );
 
             $graphNode = $postResponse->getGraphNode();
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             // @todo probably should log this somewhere INTEGRATED-995
             return;
         }

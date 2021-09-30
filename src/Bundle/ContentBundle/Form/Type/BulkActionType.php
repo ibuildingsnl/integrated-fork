@@ -31,7 +31,7 @@ class BulkActionType extends AbstractType
         $config = $options['config'];
 
         $label = $config->getOptions();
-        $label = isset($label['label']) ? $label['label'] : $config->getName();
+        $label = $label['label'] ?? $config->getName();
 
         $builder->add('active', CheckboxType::class, ['label' => $label, 'required' => false]);
         $builder->add('action', $config->getType(), $config->getOptions());

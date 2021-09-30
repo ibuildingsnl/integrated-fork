@@ -16,9 +16,15 @@ use Integrated\Common\Channel\Exporter\ExporterResponse;
 
 interface ExporterInterface
 {
-    const STATE_ADD = 'add';
+    /**
+     * @var string
+     */
+    public const STATE_ADD = 'add';
 
-    const STATE_DELETE = 'delete';
+    /**
+     * @var string
+     */
+    public const STATE_DELETE = 'delete';
 
     /**
      * @param object                  $content

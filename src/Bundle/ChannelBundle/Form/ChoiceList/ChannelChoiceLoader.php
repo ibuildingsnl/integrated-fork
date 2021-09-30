@@ -67,7 +67,7 @@ class ChannelChoiceLoader implements ChoiceLoaderInterface
      */
     public function loadChoicesForValues(array $values, $value = null)
     {
-        if (!$values) {
+        if ($values === []) {
             return [];
         }
 
@@ -79,7 +79,7 @@ class ChannelChoiceLoader implements ChoiceLoaderInterface
      */
     public function loadValuesForChoices(array $choices, $value = null)
     {
-        if (!$choices) {
+        if ($choices === []) {
             return [];
         }
 

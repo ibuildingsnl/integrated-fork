@@ -40,22 +40,16 @@ class StateRepository extends EntityRepository
 
     protected function convertCriteria(array $criteria)
     {
-        if (isset($criteria['content'])) {
-            if ($criteria['content'] instanceof ContentInterface) {
-                $criteria['content_id'] = $criteria['content']->getId();
-                $criteria['content_class'] = ClassUtils::getRealClass($criteria['content']);
-
-                unset($criteria['content']);
-            }
+        if (isset($criteria['content']) && $criteria['content'] instanceof ContentInterface) {
+            $criteria['content_id'] = $criteria['content']->getId();
+            $criteria['content_class'] = ClassUtils::getRealClass($criteria['content']);
+            unset($criteria['content']);
         }
 
-        if (isset($criteria['assigned'])) {
-            if ($criteria['assigned'] instanceof UserInterface || $criteria['assigned'] instanceof GroupInterface) {
-                $criteria['assigned_id'] = $criteria['assigned']->getId();
-                $criteria['assigned_class'] = ClassUtils::getRealClass($criteria['assigned']);
-
-                unset($criteria['assigned']);
-            }
+        if (isset($criteria['assigned']) && ($criteria['assigned'] instanceof UserInterface || $criteria['assigned'] instanceof GroupInterface)) {
+            $criteria['assigned_id'] = $criteria['assigned']->getId();
+            $criteria['assigned_class'] = ClassUtils::getRealClass($criteria['assigned']);
+            unset($criteria['assigned']);
         }
 
         return $criteria;

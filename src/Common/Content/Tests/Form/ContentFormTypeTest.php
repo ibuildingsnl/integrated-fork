@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Tests\Form;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Event\FieldEvent;
@@ -36,7 +37,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
+class ContentFormTypeTest extends TestCase
 {
     /**
      * @var ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -501,7 +502,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getBuilder()
     {
-        return $this->createMock('Symfony\\Component\\Form\\FormBuilderInterface');
+        return $this->createMock(FormBuilderInterface::class);
     }
 
     /**
@@ -509,7 +510,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getView()
     {
-        return $this->createMock('Symfony\\Component\\Form\\FormView');
+        return $this->createMock(FormView::class);
     }
 
     /**
@@ -517,7 +518,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getForm()
     {
-        return $this->createMock('Symfony\\Component\\Form\\FormInterface');
+        return $this->createMock(FormInterface::class);
     }
 
     /**
@@ -525,7 +526,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getResolver()
     {
-        return $this->createMock('Symfony\\Component\\OptionsResolver\\OptionsResolver');
+        return $this->createMock(OptionsResolver::class);
     }
 
     /**
@@ -537,7 +538,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getAttribute($name, $type, array $options = [])
     {
-        $mock = $this->createMock('Integrated\\Common\\Form\\Mapping\\AttributeInterface');
+        $mock = $this->createMock(AttributeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($name);
@@ -561,7 +562,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getField($name, array $options = [])
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeFieldInterface');
+        $mock = $this->createMock(ContentTypeFieldInterface::class);
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);

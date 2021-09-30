@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Converter\Tests\Config;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Converter\Config\Config;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
@@ -18,7 +19,7 @@ use Integrated\Common\Converter\Config\TypeConfigInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends TestCase
 {
     /**
      * @var TypeConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
@@ -28,14 +29,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->types = [
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface'),
-            $this->createMock('Integrated\\Common\\Converter\\Config\\TypeConfigInterface'),
+            $this->createMock(TypeConfigInterface::class),
+            $this->createMock(TypeConfigInterface::class),
         ];
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Config\\ConfigInterface', $this->getInstance());
+        self::assertInstanceOf(ConfigInterface::class, $this->getInstance());
     }
 
     public function testGetTypes()
@@ -72,6 +73,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig()
     {
-        return $this->createMock('Integrated\\Common\\Converter\\Config\\ConfigInterface');
+        return $this->createMock(ConfigInterface::class);
     }
 }

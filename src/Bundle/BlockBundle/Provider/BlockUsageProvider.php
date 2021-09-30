@@ -76,7 +76,7 @@ class BlockUsageProvider
         }
 
         if (null !== $blockId) {
-            return \array_key_exists($blockId, $this->blockPages) ? $this->blockPages[$blockId] : null;
+            return $this->blockPages[$blockId] ?? null;
         }
 
         return $this->blockPages;
@@ -146,6 +146,7 @@ class BlockUsageProvider
                 if (!\array_key_exists('items', $grid)) {
                     continue;
                 }
+
                 $this->filterItems($grid['items']);
             }
         }

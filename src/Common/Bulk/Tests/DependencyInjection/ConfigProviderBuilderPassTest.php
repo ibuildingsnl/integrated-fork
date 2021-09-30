@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Bulk\Tests\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigProviderBuilderPassTest extends \PHPUnit\Framework\TestCase
+class ConfigProviderBuilderPassTest extends TestCase
 {
     public function testProcess()
     {

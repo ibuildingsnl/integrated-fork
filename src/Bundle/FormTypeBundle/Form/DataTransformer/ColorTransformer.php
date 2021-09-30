@@ -52,7 +52,7 @@ class ColorTransformer implements DataTransformerInterface
 
         $value = strtolower(trim($value));
 
-        if (!$value) {
+        if ($value === '' || $value === '0') {
             return '';
         }
 

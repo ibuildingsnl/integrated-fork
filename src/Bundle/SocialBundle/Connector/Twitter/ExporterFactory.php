@@ -29,6 +29,7 @@ class ExporterFactory implements ExportableInterface
      * @var TwitterFactory
      */
     private $factory;
+
     /**
      * @var UrlResolver
      */

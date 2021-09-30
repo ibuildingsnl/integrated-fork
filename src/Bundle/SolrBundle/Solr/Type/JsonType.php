@@ -58,19 +58,17 @@ class JsonType extends FieldMapperType
                     if (!\is_array($array) && !$array instanceof Traversable) {
                         $array = [$array];
                     }
-                } catch (ExceptionInterface $e) {
+                } catch (ExceptionInterface $exceptionInterface) {
                     $array = [];
                 }
 
                 $results = [];
 
                 foreach ($array as $value) {
-                    if ($path) {
+                    if ($path !== []) {
                         $results[] = $this->readValues($value, $path);
-                    } else {
-                        if ($value = $this->convert($value)) {
-                            $results[] = $value;
-                        }
+                    } elseif ($value = $this->convert($value)) {
+                        $results[] = $value;
                     }
                 }
 

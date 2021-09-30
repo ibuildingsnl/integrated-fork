@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
+use Countable;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 
@@ -47,7 +48,7 @@ class ContentTypeInformation
                 continue;
             }
 
-            if (isset($channelOption['restricted']) && (\count($channelOption['restricted']) > 0) && !\in_array($channelId, $channelOption['restricted'])) {
+            if (isset($channelOption['restricted']) && ((is_array($channelOption['restricted']) || $channelOption['restricted'] instanceof Countable ? \count($channelOption['restricted']) : 0) > 0) && !\in_array($channelId, $channelOption['restricted'])) {
                 continue;
             }
 

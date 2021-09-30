@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Countable;
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
@@ -74,7 +77,7 @@ class RelatedContentBlockHandler extends BlockHandler
 
         $pagination = $this->getPagination($block, $request);
 
-        if (null === $pagination || !\count($pagination)) {
+        if (!$pagination instanceof PaginationInterface || !(is_array($pagination) || $pagination instanceof Countable ? \count($pagination) : 0)) {
             return null;
         }
 
@@ -90,9 +93,9 @@ class RelatedContentBlockHandler extends BlockHandler
      * @param RelatedContentBlock $block
      * @param Request             $request
      *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface|null
+     * @return PaginationInterface|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getPagination(RelatedContentBlock $block, Request $request)
     {
@@ -118,7 +121,7 @@ class RelatedContentBlockHandler extends BlockHandler
     /**
      * @param RelatedContentBlock $block
      *
-     * @return \Doctrine\MongoDB\Query\Builder|\Doctrine\Common\Collections\ArrayCollection|null
+     * @return \Doctrine\MongoDB\Query\Builder|ArrayCollection|null
      */
     protected function getQuery(RelatedContentBlock $block)
     {
@@ -131,8 +134,8 @@ class RelatedContentBlockHandler extends BlockHandler
 
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request === null || !$request->attributes->has('_channel')) {
-            throw new \Exception('Channel not set');
+        if (!$request instanceof Request || !$request->attributes->has('_channel')) {
+            throw new Exception('Channel not set');
         }
 
         switch ($block->getTypeBlock()) {
@@ -162,7 +165,7 @@ class RelatedContentBlockHandler extends BlockHandler
 
         if ($block->getSortBy() == 'linked' && $block->getTypeBlock() == RelatedContentBlock::SHOW_LINKED_BY) {
             return $this->getSortedLinkedByItems($query, $document, $block);
-        } elseif ($block->getSortBy()) {
+        } elseif ($block->getSortBy() !== '' && $block->getSortBy() !== '0') {
             $query->sort($block->getSortBy(), $block->getSortDirection());
         }
 

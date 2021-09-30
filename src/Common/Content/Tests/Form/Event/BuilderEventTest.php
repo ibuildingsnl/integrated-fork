@@ -33,7 +33,7 @@ class BuilderEventTest extends FormEventTest
     {
         parent::setUp();
 
-        $this->builder = $this->createMock('Symfony\\Component\\Form\\FormBuilderInterface');
+        $this->builder = $this->createMock(FormBuilderInterface::class);
     }
 
     public function testGetBuilder()

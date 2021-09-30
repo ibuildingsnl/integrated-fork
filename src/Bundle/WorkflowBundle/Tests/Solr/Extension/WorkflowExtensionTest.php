@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Solr\Extension;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\Type\TypeExtensionInterface;
+use Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
@@ -28,7 +31,7 @@ use stdClass;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
+class WorkflowExtensionTest extends TestCase
 {
     /**
      * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -54,7 +57,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeExtensionInterface', $this->getInstance());
+        self::assertInstanceOf(TypeExtensionInterface::class, $this->getInstance());
     }
 
     /**
@@ -123,7 +126,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNoContent()
     {
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
 
@@ -331,7 +334,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContent()
     {
-        $mock = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
+        $mock = $this->createMock(ContentInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getContentType')
             ->willReturn('this-is-the-content-type');
@@ -346,7 +349,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContentType($workflow = null)
     {
-        $mock = $this->createMock('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $mock = $this->createMock(ContentTypeInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getOption')
             ->with($this->equalTo('workflow'))
@@ -366,7 +369,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getWorkflow(Definition\State $state = null)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State');
+        $mock = $this->createMock(State::class);
         $mock->expects($this->atLeastOnce())
             ->method('getState')
             ->willReturn($state);
@@ -381,7 +384,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getDefinition(Definition\State $state = null)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition');
+        $mock = $this->createMock(Definition::class);
         $mock->expects($this->atLeastOnce())
             ->method('getDefault')
             ->willReturn($state);
@@ -396,7 +399,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getState(array $permissions)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
+        $mock = $this->createMock(\Integrated\Bundle\WorkflowBundle\Entity\Definition\State::class);
         $mock->expects($this->atLeastOnce())
             ->method('getPermissions')
             ->willReturn($permissions);
@@ -413,7 +416,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getPermission($group, $read, $write)
     {
-        $mock = $this->createMock('Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\Permission');
+        $mock = $this->createMock(Permission::class);
         $mock->expects($this->atLeastOnce())
             ->method('getGroup')
             ->willReturn($group);

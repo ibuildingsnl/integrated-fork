@@ -11,13 +11,14 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Solr\Indexer\Job;
 use Integrated\Common\Solr\Indexer\JobInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class JobTest extends \PHPUnit\Framework\TestCase
+class JobTest extends TestCase
 {
     public function testInterface()
     {

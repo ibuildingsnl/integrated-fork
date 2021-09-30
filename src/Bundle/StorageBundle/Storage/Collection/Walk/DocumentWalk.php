@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Collection\Walk;
 
+use Closure;
 use Integrated\Bundle\StorageBundle\Storage\Accessor\DoctrineDocument;
 use Integrated\Common\Storage\Database\DatabaseInterface;
 
@@ -22,7 +23,7 @@ class DocumentWalk
     /**
      * @param DatabaseInterface $database
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function save(DatabaseInterface $database)
     {

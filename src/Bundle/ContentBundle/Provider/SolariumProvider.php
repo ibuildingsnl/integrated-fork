@@ -11,6 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Provider;
 
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Solarium\QueryType\Select\Result\Document;
+use RuntimeException;
+use Countable;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Exception;
@@ -64,7 +68,7 @@ class SolariumProvider
      * @param Request                      $request
      * @param array                        $options
      *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface
+     * @return PaginationInterface
      *
      * @throws Exception
      */
@@ -99,8 +103,8 @@ class SolariumProvider
             ]
         );
 
-        if (true === $exclude) {
-            /** @var \Solarium\QueryType\Select\Result\Document $document */
+        if ($exclude) {
+            /** @var Document $document */
             foreach ($pagination as $document) {
                 $this->registry[$document->offsetGet('type_id')] = true; // exclude already shown items
             }
@@ -122,7 +126,7 @@ class SolariumProvider
         // @todo cleanup (INTEGRATED-431)
 
         if (!$channel = $request->attributes->get('_channel')) {
-            throw new \RuntimeException('Channel is required'); // @todo improve (INTEGRATED-431)
+            throw new RuntimeException('Channel is required'); // @todo improve (INTEGRATED-431)
         }
 
         $query = $this->client->createSelect();
@@ -154,7 +158,7 @@ class SolariumProvider
                     }
                 }
             }
-        } catch (DocumentNotFoundException $e) {
+        } catch (DocumentNotFoundException $documentNotFoundException) {
             // search selection is removed
         }
 
@@ -190,25 +194,25 @@ class SolariumProvider
         $suffix = isset($options['search_selection']) && true === $options['search_selection'] ? '_search_selection' : null;
         $facetFields = $subject instanceof ContentBlock ? $subject->getFacetFields() : [];
 
-        $contentTypes = isset($request['contenttypes']) ? $request['contenttypes'] : [];
+        $contentTypes = $request['contenttypes'] ?? [];
 
-        if (\count($contentTypes) && !\in_array('type_name', $facetFields)) {
+        if ((is_array($contentTypes) || $contentTypes instanceof Countable ? \count($contentTypes) : 0) && !\in_array('type_name', $facetFields)) {
             $facetFields[] = 'type_name';
             $request['type_name'] = $contentTypes; // @hack
         }
 
-        $properties = isset($request['properties']) ? $request['properties'] : [];
+        $properties = $request['properties'] ?? [];
 
-        if (\count($properties) && !\in_array('facet_properties', $facetFields)) {
+        if ((is_array($properties) || $properties instanceof Countable ? \count($properties) : 0) && !\in_array('facet_properties', $facetFields)) {
             $facetFields[] = 'facet_properties';
             $request['facet_properties'] = $properties; // @hack
         }
 
         foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-            $filters = isset($request[$name]) ? $request[$name] : [];
+            $name = preg_replace('#[^a-zA-Z]#', '', $relation->getName());
+            $filters = $request[$name] ?? [];
 
-            if (\count($filters)) {
+            if ((is_array($filters) || $filters instanceof Countable ? \count($filters) : 0) > 0) {
                 if (!\in_array('facet_'.$relation->getId(), $facetFields)) {
                     $facetFields[] = 'facet_'.$relation->getId();
                 }
@@ -222,7 +226,7 @@ class SolariumProvider
             return $helper->escapePhrase($param);
         };
 
-        if (\count($facetFields)) {
+        if (\count($facetFields) > 0) {
             $facetSet = $query->getFacetSet();
 
             foreach ($facetFields as $field) {
@@ -235,7 +239,7 @@ class SolariumProvider
                     $facet->addExclude($field);
                 }
 
-                $param = isset($request[$field]) ? $request[$field] : null;
+                $param = $request[$field] ?? null;
 
                 if ($param) {
                     ++$count; // facet fields count
@@ -257,14 +261,14 @@ class SolariumProvider
             }
         }
 
-        $sort = isset($request['sort']) ? $request['sort'] : null;
+        $sort = $request['sort'] ?? null;
 
         if (null !== $suffix || null !== $sort) {
             // always add default sorting with search selections
             $sortDefault = $options['sort_default'] ?? 'changed';
             $sortOptions = $this->getSortOptions();
 
-            $order = isset($request['order']) ? $request['order'] : null;
+            $order = $request['order'] ?? null;
             $orderOptions = [
                 'asc' => 'asc',
                 'desc' => 'desc',
@@ -296,7 +300,7 @@ class SolariumProvider
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
-            'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
+            'random' => ['name' => 'random', 'field' => 'random_'.random_int(0, mt_getrandmax()), 'label' => 'random', 'order' => 'desc'],
         ];
     }
 }

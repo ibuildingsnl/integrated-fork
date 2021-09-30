@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Locator;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Component\Finder\Finder;
 
@@ -27,7 +28,7 @@ class LayoutLocator
     /**
      * @var array
      */
-    private $layouts;
+    private $layouts = [];
 
     /**
      * @param ThemeManager $themeManager
@@ -55,7 +56,7 @@ class LayoutLocator
                         $finder = new Finder();
                         $finder->files()->in($path)->name('*.html.twig');
 
-                        /** @var \Symfony\Component\Finder\SplFileInfo $file */
+                        /** @var SplFileInfo $file */
                         foreach ($finder as $file) {
                             $this->layouts[$type][] = $file->getRelativePathname();
                         }

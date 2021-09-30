@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\ContentType;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
@@ -58,7 +60,7 @@ class ContentType implements ContentTypeInterface
     protected $options = [];
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
@@ -72,7 +74,7 @@ class ContentType implements ContentTypeInterface
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -176,7 +178,7 @@ class ContentType implements ContentTypeInterface
     public function getField($name)
     {
         foreach ($this->getFields() as $field) {
-            if ($field->getName() == $name) {
+            if ($field->getName() === $name) {
                 return $field;
             }
         }
@@ -280,7 +282,7 @@ class ContentType implements ContentTypeInterface
     /**
      * Get the createdAt of the content type.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -290,11 +292,11 @@ class ContentType implements ContentTypeInterface
     /**
      * Set the createdAt of the content type.
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTimeInterface $createdAt)
     {
         $this->createdAt = $createdAt;
 

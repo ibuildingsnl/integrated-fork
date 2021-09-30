@@ -11,16 +11,19 @@
 
 namespace Integrated\Common\Converter\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Converter\ContainerInterface;
+use Integrated\Common\Converter\Exception\ExceptionInterface;
 use Integrated\Common\Converter\Container;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContainerTest extends \PHPUnit\Framework\TestCase
+class ContainerTest extends TestCase
 {
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Converter\\ContainerInterface', $this->getInstance());
+        self::assertInstanceOf(ContainerInterface::class, $this->getInstance());
     }
 
     public function testAddAndGet()
@@ -44,7 +47,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddInvalid()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $container = $this->getInstance();
         $container->add('key', []);
@@ -70,7 +73,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testSetInvalid()
     {
-        $this->expectException(\Integrated\Common\Converter\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $container = $this->getInstance();
         $container->set('key', []);

@@ -124,17 +124,17 @@ class CommandFactory implements CommandFactoryInterface
                 $job->getOption('document.class'),
                 $job->getOption('document.format')
             );
-        } catch (Exception $e) {
-            throw new SerializerException($e->getMessage(), $e->getCode(), $e);
+        } catch (Exception $exception) {
+            throw new SerializerException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         try {
             $document = $this->converter->convert($document);
-        } catch (Exception $e) {
-            throw new ConverterException($e->getMessage(), $e->getCode(), $e);
+        } catch (Exception $exception) {
+            throw new ConverterException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        if (!$document->count()) {
+        if ($document->count() === 0) {
             return null;
         }
 
@@ -144,6 +144,7 @@ class CommandFactory implements CommandFactoryInterface
         if ($job->hasOption('overwrite')) {
             $command->setOverwrite((bool) $job->getOption('overwrite'));
         }
+
         if ($job->hasOption('commitwithin')) {
             $command->setCommitWithin((bool) $job->getOption('commitwithin'));
         }

@@ -21,7 +21,7 @@ class Registry implements RegistryInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @param array $data
@@ -72,7 +72,7 @@ class Registry implements RegistryInterface
      */
     public function get($key)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : null;
+        return $this->data[$key] ?? null;
     }
 
     /**

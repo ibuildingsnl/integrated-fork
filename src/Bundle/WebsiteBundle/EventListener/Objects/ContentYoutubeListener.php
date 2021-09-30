@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener\Objects;
 
+use Exception;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ContentBundle\Event\ContentEvent;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -53,13 +55,13 @@ class ContentYoutubeListener
     /**
      * @param ContentEvent $contentEvent
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function process(ContentEvent $contentEvent)
     {
         try {
             $content = preg_replace_callback(
-                '/\[object.*?type=\"youtube\".*?id\="(.+?)".*?\]/',
+                '#\[object.*?type=\"youtube\".*?id\="(.+?)".*?\]#',
                 function ($matches) {
                     return $this->getTemplate($matches[1]);
                 },
@@ -67,9 +69,9 @@ class ContentYoutubeListener
             );
 
             $contentEvent->setContent($content);
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             if ('prod' !== $this->env) {
-                throw $e;
+                throw $exception;
             }
         }
     }
@@ -79,7 +81,7 @@ class ContentYoutubeListener
      *
      * @return string|null
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
+     * @throws CircularFallbackException
      */
     protected function getTemplate(string $youtubeId)
     {

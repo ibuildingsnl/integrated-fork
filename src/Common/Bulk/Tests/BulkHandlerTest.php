@@ -11,6 +11,9 @@
 
 namespace Integrated\Common\Bulk\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Bulk\Exception\UnexpectedTypeException;
+use Integrated\Common\Bulk\Exception\ExceptionInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistry;
 use Integrated\Common\Bulk\Action\HandlerInterface;
@@ -24,7 +27,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class BulkHandlerTest extends \PHPUnit\Framework\TestCase
+class BulkHandlerTest extends TestCase
 {
     /**
      * @var HandlerFactoryRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -89,35 +92,35 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteInvalidContent()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->execute('not a array or iterator', []);
     }
 
     public function testExecuteInvalidContentClass()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->execute([new stdClass()], []);
     }
 
     public function testExecuteInvalidActions()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->execute([], 'not a array or iterator');
     }
 
     public function testExecuteInvalidActionClass()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
 
         $this->getInstance()->execute([], [new stdClass()]);
     }
 
     public function testExecuteActionNotFound()
     {
-        $this->expectException(\Integrated\Common\Bulk\Exception\ExceptionInterface::class);
+        $this->expectException(ExceptionInterface::class);
 
         $this->registry->expects($this->once())
             ->method('getFactory')

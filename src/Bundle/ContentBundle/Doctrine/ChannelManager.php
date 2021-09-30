@@ -37,7 +37,7 @@ class ChannelManager implements ChannelManagerInterface
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
-        if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Common\\Content\\Channel\\ChannelInterface')) {
+        if (!is_subclass_of($this->repository->getClassName(), ChannelInterface::class)) {
             throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Common\\Content\\Channel\\ChannelInterface', $this->repository->getClassName()));
         }
     }
@@ -122,7 +122,7 @@ class ChannelManager implements ChannelManagerInterface
     public function findByDomain($criteria)
     {
         $channel = $this->repository->findOneBy(['domains' => $criteria]);
-        if (!$channel) {
+        if ($channel === null) {
             //find a fallback with/without www.
             $channel = $this->repository->findOneBy(
                 ['domains' => (stripos($criteria, 'www.')) ? str_ireplace('www.', '', $criteria) : 'www.'.$criteria]

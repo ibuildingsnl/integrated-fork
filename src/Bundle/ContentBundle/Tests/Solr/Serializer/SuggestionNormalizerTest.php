@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Serializer;
 
+use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ContentBundle\Solr\Serializer\SuggestionNormalizer;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -27,9 +29,12 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 /**
  * @author Michael Jongman <michael@e-active.nl>
  */
-class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
+class SuggestionNormalizerTest extends TestCase
 {
-    const ROUTE = 'this-is-the-route';
+    /**
+     * @var string
+     */
+    public const ROUTE = 'this-is-the-route';
 
     /**
      * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -103,21 +108,21 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
 
     public function testNormalizeWithInvalidObject()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->getInstance()->normalize('invalid');
     }
 
     public function testNormalizeWithOutQuery()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->getInstance()->normalize($this->getQueryResult(new Query()));
     }
 
     public function testNormalizeWithInvalidQuery()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->getInstance()->normalize($this->getQueryResult(new Query()));
     }

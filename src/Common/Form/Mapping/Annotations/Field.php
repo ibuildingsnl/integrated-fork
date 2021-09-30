@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Mapping\Annotations;
 
+use BadMethodCallException;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
@@ -36,15 +37,16 @@ class Field
      *
      * @param array $data
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
             }
+
             $this->$method($value);
         }
     }

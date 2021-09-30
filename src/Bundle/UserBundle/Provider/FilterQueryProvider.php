@@ -96,7 +96,7 @@ class FilterQueryProvider
 
     private function formatChoices($query, $data)
     {
-        $query->setParameter('scope', (isset($data['scope'])) ? $data['scope'] : 0);
+        $query->setParameter('scope', $data['scope'] ?? 0);
         $query->setParameter('groups', (isset($data['groups'])) ? array_filter($data['groups']) : 0);
 
         $choices = [];

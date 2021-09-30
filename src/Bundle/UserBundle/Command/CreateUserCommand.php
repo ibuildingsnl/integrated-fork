@@ -28,6 +28,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class CreateUserCommand extends Command
 {
+    protected static $defaultName = 'user:create';
     /**
      * @var ScopeManager
      */
@@ -81,10 +82,7 @@ class CreateUserCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('user:create')
-
-            ->addArgument('username', InputArgument::REQUIRED, 'The username')
+        $this->addArgument('username', InputArgument::REQUIRED, 'The username')
             ->addArgument('password', InputArgument::REQUIRED, 'The password')
             ->addArgument('scope', InputArgument::OPTIONAL, 'The scope')
             ->addArgument('roles', InputArgument::OPTIONAL, 'Roles')
@@ -101,7 +99,7 @@ The <info>%command.name%</info> command creates a new user
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
@@ -131,7 +129,7 @@ The <info>%command.name%</info> command creates a new user
             $scopeName = $input->getArgument('scope') ?: $scopeName;
         }
 
-        if (!$scope = $this->scopeManager->findByName($scopeName)) {
+        if (($scope = $this->scopeManager->findByName($scopeName)) === null) {
             $scope = new Scope();
             $scope
                 ->setName($scopeName)
@@ -156,7 +154,7 @@ The <info>%command.name%</info> command creates a new user
             $allRoles = $this->roleManager->getRolesFromSources();
 
             foreach ($roles as $role) {
-                if ($objectRole = $roleRepository->findOneBy(['role' => $role])) {
+                if (($objectRole = $roleRepository->findOneBy(['role' => $role])) !== null) {
                     $user->addRole($objectRole);
                 } elseif (isset($allRoles[$role])) {
                     $objectRole = $this->roleManager->create($role);
@@ -170,8 +168,8 @@ The <info>%command.name%</info> command creates a new user
 
         try {
             $this->userManager->persist($user);
-        } catch (Exception $e) {
-            $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
+        } catch (Exception $exception) {
+            $output->writeln(sprintf('Aborting: %s', $exception->getMessage()));
 
             return 1;
         }

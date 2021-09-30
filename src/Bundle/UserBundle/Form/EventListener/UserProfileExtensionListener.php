@@ -50,7 +50,7 @@ class UserProfileExtensionListener implements EventSubscriberInterface
      */
     public function preSetData(FormEvent $event)
     {
-        if (!$parent = $event->getForm()->getParent()) {
+        if (($parent = $event->getForm()->getParent()) === null) {
             return;
         }
 
@@ -66,7 +66,7 @@ class UserProfileExtensionListener implements EventSubscriberInterface
      */
     public function postSubmit(FormEvent $event)
     {
-        if (!$parent = $event->getForm()->getParent()) {
+        if (($parent = $event->getForm()->getParent()) === null) {
             return;
         }
 

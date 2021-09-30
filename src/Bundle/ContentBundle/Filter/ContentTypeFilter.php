@@ -16,8 +16,15 @@ namespace Integrated\Bundle\ContentBundle\Filter;
  */
 class ContentTypeFilter
 {
-    const FILTER_IMAGE = 'image';
-    const FILTER_VIDEO = 'video';
+    /**
+     * @var string
+     */
+    public const FILTER_IMAGE = 'image';
+
+    /**
+     * @var string
+     */
+    public const FILTER_VIDEO = 'video';
 
     /**
      * @param string      $class
@@ -31,6 +38,6 @@ class ContentTypeFilter
             return true;
         }
 
-        return $filter == strtolower(substr($class, strrpos($class, '\\') + 1));
+        return $filter === strtolower(substr($class, strrpos($class, '\\') + 1));
     }
 }

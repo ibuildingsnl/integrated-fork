@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
+use DateTime;
+use DateTimeInterface;
 use Integrated\Common\Form\Mapping\Annotations as Type;
 
 /**
@@ -21,13 +23,13 @@ use Integrated\Common\Form\Mapping\Annotations as Type;
 class Event extends Article
 {
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $startDate;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $endDate;
@@ -39,7 +41,7 @@ class Event extends Article
     protected $website;
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getStartDate()
     {
@@ -47,11 +49,11 @@ class Event extends Article
     }
 
     /**
-     * @param \DateTime $startDate
+     * @param DateTime $startDate
      *
      * @return $this
      */
-    public function setStartDate(\DateTime $startDate = null)
+    public function setStartDate(DateTimeInterface $startDate = null)
     {
         $this->startDate = $startDate;
 
@@ -59,7 +61,7 @@ class Event extends Article
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getEndDate()
     {
@@ -67,11 +69,11 @@ class Event extends Article
     }
 
     /**
-     * @param \DateTime $endDate
+     * @param DateTime $endDate
      *
      * @return $this
      */
-    public function setEndDate(\DateTime $endDate = null)
+    public function setEndDate(DateTimeInterface $endDate = null)
     {
         $this->endDate = $endDate;
 

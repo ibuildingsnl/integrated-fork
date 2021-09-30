@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Cache;
 
+use LogicException;
+use InvalidArgumentException;
+use SplFileObject;
 use Integrated\Bundle\StorageBundle\Exception\NoFilesystemAvailableException;
 use Integrated\Bundle\StorageBundle\Storage\Util\DirectoryUtil;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -25,8 +28,9 @@ class AppCache implements CacheInterface
 {
     /**
      * @const
+     * @var string
      */
-    const CACHE_PATH = '%s/integrated/storage/file';
+    public const CACHE_PATH = '%s/integrated/storage/file';
 
     /**
      * @var ManagerInterface
@@ -58,7 +62,7 @@ class AppCache implements CacheInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function path(StorageInterface $storage)
     {
@@ -78,13 +82,13 @@ class AppCache implements CacheInterface
         try {
             // Read it
             $content = $this->fileManager->read($storage);
-        } catch (NoFilesystemAvailableException $exception) {
-            throw new \InvalidArgumentException($exception->getMessage());
+        } catch (NoFilesystemAvailableException $noFilesystemAvailableException) {
+            throw new InvalidArgumentException($noFilesystemAvailableException->getMessage(), $noFilesystemAvailableException->getCode(), $noFilesystemAvailableException);
         }
 
         // Do not put an empty file in cache, otherwise GD will throw a fatal
-        if (!$content) {
-            throw new \InvalidArgumentException('File is empty');
+        if ($content === '' || $content === '0') {
+            throw new InvalidArgumentException('File is empty');
         }
 
         // Open a file with write permission
@@ -97,7 +101,7 @@ class AppCache implements CacheInterface
         }
 
         // Let's give it to the requestee, we failed
-        throw new \LogicException(
+        throw new LogicException(
             'The directory %s is not writable or the cache directory does not exist.',
             $this->directory
         );
@@ -106,18 +110,18 @@ class AppCache implements CacheInterface
     /**
      * @param StorageInterface $storage
      *
-     * @return bool|\SplFileObject
+     * @return bool|SplFileObject
      */
     private function getLocalFile(StorageInterface $storage)
     {
-        if (!$storage->getPathname()) {
+        if ($storage->getPathname() === '' || $storage->getPathname() === '0') {
             return false;
         }
 
-        if ($request = $this->requestStack->getMasterRequest()) {
+        if (($request = $this->requestStack->getMasterRequest()) !== null) {
             $file = $request->server->get('DOCUMENT_ROOT').$request->getBasePath().$storage->getPathname();
             if (file_exists($file)) {
-                return new \SplFileObject($file, 'r');
+                return new SplFileObject($file, 'r');
             }
         }
 

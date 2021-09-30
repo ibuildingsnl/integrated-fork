@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\DependencyInjection;
 
+use Integrated\Bundle\StorageBundle\Storage\Identifier\FileIdentifier;
+use Integrated\Bundle\StorageBundle\Storage\Resolver\LocalResolver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -25,8 +27,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('integrated_storage');
+        $treeBuilder = new TreeBuilder('integrated_storage');
+        $rootNode = $treeBuilder->getRootNode();
 
         $this->addRootConfig($rootNode);
         $this->addResolverConfig($rootNode);
@@ -45,7 +47,7 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->scalarNode('identifier_class')
-                ->defaultValue('Integrated\Bundle\StorageBundle\Storage\Identifier\FileIdentifier')
+                ->defaultValue(FileIdentifier::class)
                 ->end();
     }
 
@@ -68,7 +70,7 @@ class Configuration implements ConfigurationInterface
                             ->isRequired()
                             ->end()
                         ->scalarNode('resolver_class')
-                            ->defaultValue('Integrated\Bundle\StorageBundle\Storage\Resolver\LocalResolver')
+                            ->defaultValue(LocalResolver::class)
                             ->end()
                     ->end()
                 ->end()

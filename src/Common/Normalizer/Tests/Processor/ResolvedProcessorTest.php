@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
+use PHPUnit\Framework\TestCase;
 use Exception;
 use Integrated\Common\Normalizer\ContainerFactoryInterface;
 use Integrated\Common\Normalizer\ContainerInterface;
@@ -23,7 +24,7 @@ use stdClass;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
+class ResolvedProcessorTest extends TestCase
 {
     /**
      * @var ContainerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject

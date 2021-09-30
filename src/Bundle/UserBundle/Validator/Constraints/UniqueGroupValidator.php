@@ -31,7 +31,7 @@ class UniqueGroupValidator extends ManagerValidator
         }
 
         if (!$constraint->manger instanceof GroupManagerInterface) {
-            throw new UnexpectedTypeException($constraint->manger, 'Integrated\\Bundle\\UserBundle\\Model\\GroupManagerInterface');
+            throw new UnexpectedTypeException($constraint->manger, GroupManagerInterface::class);
         }
 
         parent::validate($object, $constraint);

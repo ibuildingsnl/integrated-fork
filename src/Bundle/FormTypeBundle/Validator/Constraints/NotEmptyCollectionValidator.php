@@ -29,7 +29,7 @@ class NotEmptyCollectionValidator extends ConstraintValidator
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         } elseif ($value instanceof Collection) {
-            if (!$value->count()) {
+            if ($value->count() === 0) {
                 $this->context->buildViolation($constraint->message)
                     ->addViolation();
             }

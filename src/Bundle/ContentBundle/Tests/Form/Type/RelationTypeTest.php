@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Form\Type;
 
+use Integrated\Common\ContentType\ContentTypeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
@@ -53,7 +54,7 @@ class RelationTypeTest extends TypeTestCase
         $form->submit($data);
 
         $this->assertTrue($form->isSynchronized());
-        $this->assertInstanceOf('\Integrated\Bundle\ContentBundle\Document\Relation\Relation', $form->getData());
+        $this->assertInstanceOf(Relation::class, $form->getData());
 
         $children = $form->createView()->children;
 
@@ -81,10 +82,10 @@ class RelationTypeTest extends TypeTestCase
                     'name' => 'Relation with  sources and targets',
                     'type' => 'type',
                     'sources' => new ArrayCollection([
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeInterface'),
+                        $this->createMock(ContentTypeInterface::class),
                     ]),
                     'targets' => new ArrayCollection([
-                        $this->createMock('Integrated\Common\ContentType\ContentTypeInterface'),
+                        $this->createMock(ContentTypeInterface::class),
                     ]),
                 ],
             ],

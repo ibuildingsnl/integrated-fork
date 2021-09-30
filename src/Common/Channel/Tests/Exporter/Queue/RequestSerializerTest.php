@@ -11,6 +11,8 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Exception;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
@@ -22,12 +24,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RequestSerializerTest extends \PHPUnit\Framework\TestCase
+class RequestSerializerTest extends TestCase
 {
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
      * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -41,13 +43,13 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->serializer = $this->createMock('Symfony\\Component\\Serializer\\SerializerInterface');
-        $this->manager = $this->createMock('Integrated\\Common\\Channel\\ChannelManagerInterface');
+        $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->manager = $this->createMock(ChannelManagerInterface::class);
     }
 
     public function testInterface()
     {
-        self::assertInstanceOf('Integrated\\Common\\Channel\\Exporter\\Queue\\RequestSerializerInterface', $this->getInstance());
+        self::assertInstanceOf(RequestSerializerInterface::class, $this->getInstance());
     }
 
     public function testSerialize()
@@ -89,7 +91,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $this->serializer->expects($this->once())
             ->method('deserialize')
-            ->with($this->equalTo('serialized-data'), $this->equalTo('stdClass'), $this->equalTo('json'))
+            ->with($this->equalTo('serialized-data'), $this->equalTo(\stdClass::class), $this->equalTo('json'))
             ->willReturn($content);
 
         $this->manager->expects($this->once())
@@ -159,7 +161,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(\Integrated\Common\Channel\ChannelInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($id);
@@ -177,7 +179,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
         $data = [
             'content' => [
                 'data' => 'serialized-data',
-                'type' => 'stdClass',
+                'type' => \stdClass::class,
             ],
             'state' => self::TEST_STATE,
             'channel' => 'channel',

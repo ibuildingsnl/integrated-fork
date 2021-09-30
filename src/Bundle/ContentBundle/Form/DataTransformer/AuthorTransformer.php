@@ -53,8 +53,10 @@ class AuthorTransformer implements DataTransformerInterface
             if (!($author instanceof Author) || !$author->getPerson()) {
                 continue;
             }
+
             $authorNameCount[] = (string) $author->getPerson();
         }
+
         $authorNameCount = array_count_values($authorNameCount);
 
         foreach ($arrayCollection as $author) {

@@ -11,12 +11,14 @@
 
 namespace Integrated\Common\Form\Tests\Mapping\Annotations;
 
+use PHPUnit\Framework\TestCase;
+use BadMethodCallException;
 use Integrated\Common\Form\Mapping\Annotations\Document;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class DocumentTest extends \PHPUnit\Framework\TestCase
+class DocumentTest extends TestCase
 {
     /**
      * Test the constructor with valid data.
@@ -32,7 +34,7 @@ class DocumentTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorWithInvalidData()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         new Document(['henk' => 'de vries']);
     }

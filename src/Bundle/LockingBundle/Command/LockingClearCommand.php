@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class LockingClearCommand extends Command
 {
+    protected static $defaultName = 'locking:clear';
     /**
      * @var ManagerInterface
      */
@@ -43,9 +44,7 @@ class LockingClearCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('locking:clear')
-            ->setDescription('Clear up all locks')
+        $this->setDescription('Clear up all locks')
             ->setHelp(<<<EOF
 The <info>%command.name%</info> removes all the locks that are set
 
@@ -57,8 +56,9 @@ EOF
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->manager->clear();
+        return 0;
     }
 }

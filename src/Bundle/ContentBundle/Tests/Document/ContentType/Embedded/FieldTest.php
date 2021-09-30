@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType\Embedded;
 
+use PHPUnit\Framework\TestCase;
+use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class FieldTest extends \PHPUnit\Framework\TestCase
+class FieldTest extends TestCase
 {
     /**
      * @var Field
@@ -36,7 +38,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Integrated\Common\ContentType\ContentTypeFieldInterface', $this->field);
+        $this->assertInstanceOf(ContentTypeFieldInterface::class, $this->field);
     }
 
     /**

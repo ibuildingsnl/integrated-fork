@@ -35,10 +35,8 @@ class UrlGenerator
             return $this->generateImageUrl($content);
         }
 
-        if ($content instanceof Content) {
-            if (method_exists($content, 'getSlug')) {
-                return $this->generateContentUrl($content);
-            }
+        if ($content instanceof Content && method_exists($content, 'getSlug')) {
+            return $this->generateContentUrl($content);
         }
 
         return null;
@@ -57,7 +55,7 @@ class UrlGenerator
             return null;
         }
 
-        if ($channel = $content->getPrimaryChannel()) {
+        if (($channel = $content->getPrimaryChannel()) !== null) {
             $domain = $channel->getPrimaryDomain();
 
             if (!$domain && \count($channel->getDomains())) {
@@ -86,7 +84,7 @@ class UrlGenerator
     {
         $domain = null;
 
-        if ($channel = $content->getPrimaryChannel()) {
+        if (($channel = $content->getPrimaryChannel()) !== null) {
             $domain = $channel->getPrimaryDomain();
 
             if (!$domain && \count($channel->getDomains())) {

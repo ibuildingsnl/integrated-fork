@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping\Driver;
 
+use ReflectionClass;
+use RuntimeException;
 use Metadata\Driver\DriverInterface;
 
 /**
@@ -23,8 +25,8 @@ class YamlDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass(\ReflectionClass $class)
+    public function loadMetadataForClass(ReflectionClass $class)
     {
-        throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
+        throw new RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
     }
 }

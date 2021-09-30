@@ -46,10 +46,10 @@ class ErrorController extends ExceptionController
     {
         if (!$showException) {
             try {
-                if ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $code, $format))) {
+                if (($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $code, $format))) !== '' && ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $code, $format))) !== '0') {
                     return $template;
                 }
-            } catch (CircularFallbackException $e) {
+            } catch (CircularFallbackException $circularFallbackException) {
             }
         }
 

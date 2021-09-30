@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
+use ArrayAccess;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Extension\LocatableStorageInterfaceTrait;
 use Integrated\Common\Content\Document\Storage\Embedded\MetadataInterface;
@@ -24,7 +25,7 @@ use Integrated\Common\Storage\ResolverInterface;
  *
  * @author Johnny Borg <johnny@e-active.nl>
  */
-class Storage implements StorageInterface, \ArrayAccess
+class Storage implements StorageInterface, ArrayAccess
 {
     use LocatableStorageInterfaceTrait;
 

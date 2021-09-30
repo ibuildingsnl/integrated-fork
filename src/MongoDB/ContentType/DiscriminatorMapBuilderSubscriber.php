@@ -32,7 +32,7 @@ class DiscriminatorMapBuilderSubscriber implements EventSubscriber
     /**
      * @var string[]
      */
-    private $classes;
+    private $classes = [];
 
     /**
      * @var ClassMetadataInfo[]
@@ -75,7 +75,7 @@ class DiscriminatorMapBuilderSubscriber implements EventSubscriber
 
     public function hasClasses()
     {
-        return \count($this->classes) ? true : false;
+        return (bool) \count($this->classes);
     }
 
     public function setClasses(array $classes)
@@ -102,7 +102,7 @@ class DiscriminatorMapBuilderSubscriber implements EventSubscriber
      */
     public function hasChanges()
     {
-        return \count($this->changes) ? true : false;
+        return (bool) \count($this->changes);
     }
 
     /**
@@ -188,13 +188,14 @@ class DiscriminatorMapBuilderSubscriber implements EventSubscriber
         if (isset($this->parents[$class->rootDocumentName])) {
             return $this->parents[$class->rootDocumentName];
         }
+        $this->parents[$class->rootDocumentName] = $this->factory->getMetadataFor($class->rootDocumentName);
 
         // The metadata should already be cashed but in case its not we first
         // set the parent so that no infinite is possible.
 
         /* @var ClassMetadataInfo $parent */
 
-        $this->parents[$class->rootDocumentName] = $parent = $this->factory->getMetadataFor($class->rootDocumentName);
+        $parent = $this->parents[$class->rootDocumentName];
         $this->children[$class->rootDocumentName] = [];
 
         foreach ($parent->subClasses as $class) {
@@ -258,7 +259,7 @@ class DiscriminatorMapBuilderSubscriber implements EventSubscriber
             $child->setDiscriminatorMap($parent->discriminatorMap);
         }
 
-        $this->changes = $this->changes + $this->children[$parent->name];
+        $this->changes += $this->children[$parent->name];
         $this->changes[$parent->name] = $parent;
     }
 }

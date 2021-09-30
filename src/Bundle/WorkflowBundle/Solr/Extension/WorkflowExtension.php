@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Solr\Extension;
 
+use Countable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
@@ -79,7 +80,7 @@ class WorkflowExtension implements TypeExtensionInterface
             $container->add('workflow_state', $state->getName());
             $container->add('facet_workflow_state', $state->getName());
 
-            if (\count($state->getPermissions())) {
+            if ((is_array($state->getPermissions()) || $state->getPermissions() instanceof Countable ? \count($state->getPermissions()) : 0) > 0) {
                 // Workflow permissions overrules content type permissions
                 $permissions = $state->getPermissions();
             }
@@ -110,7 +111,7 @@ class WorkflowExtension implements TypeExtensionInterface
         }
 
         foreach ($permissions as $permission) {
-            if (!\count($channelGroups) || isset($channelGroups[$permission->getGroup()])) {
+            if ($channelGroups === [] || isset($channelGroups[$permission->getGroup()])) {
                 if ($permission->hasMask(PermissionInterface::READ)) {
                     $container->add('security_workflow_read', $permission->getGroup());
                 }
@@ -121,18 +122,13 @@ class WorkflowExtension implements TypeExtensionInterface
             }
         }
 
-        if ($assignee = $this->getAssigned($data)) {
-            if ($assignee instanceof User) {
-                if ($relation = $assignee->getRelation()) {
-                    if ($relation instanceof Person) {
-                        $container->add('workflow_assigned', $relation->getFirstname().' '.$relation->getLastname());
-                        $container->add('facet_workflow_assigned', $relation->getFirstname().' '.$relation->getLastname());
-                    }
-                }
-
-                $container->add('workflow_assigned_id', $assignee->getId());
-                $container->add('facet_workflow_assigned_id', $assignee->getId());
+        if (($assignee = $this->getAssigned($data)) && $assignee instanceof User) {
+            if (($relation = $assignee->getRelation()) && $relation instanceof Person) {
+                $container->add('workflow_assigned', $relation->getFirstname().' '.$relation->getLastname());
+                $container->add('facet_workflow_assigned', $relation->getFirstname().' '.$relation->getLastname());
             }
+            $container->add('workflow_assigned_id', $assignee->getId());
+            $container->add('facet_workflow_assigned_id', $assignee->getId());
         }
     }
 
@@ -171,7 +167,7 @@ class WorkflowExtension implements TypeExtensionInterface
         // check if there is a state for this content else get the default state for this
         // workflow.
 
-        if ($entity = $this->workflow->findOneBy(['content' => $content])) {
+        if (($entity = $this->workflow->findOneBy(['content' => $content])) !== null) {
             if ($entity = $entity->getState()) {
                 return $entity;
             }
@@ -179,7 +175,7 @@ class WorkflowExtension implements TypeExtensionInterface
             // seams that the workflow state does not have a definition state connected.
         }
 
-        if ($entity = $this->definition->find($type->getOption('workflow'))) {
+        if (($entity = $this->definition->find($type->getOption('workflow'))) !== null) {
             return $entity->getDefault();
         }
 
@@ -209,7 +205,7 @@ class WorkflowExtension implements TypeExtensionInterface
 
         // return the assigned instance
 
-        if ($entity = $this->workflow->findOneBy(['content' => $content])) {
+        if (($entity = $this->workflow->findOneBy(['content' => $content])) !== null) {
             return $entity->getAssigned();
         }
 

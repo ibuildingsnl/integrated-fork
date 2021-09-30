@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
+use Countable;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Relation\RelationInterface;
@@ -65,7 +66,7 @@ class RelationHandlerFactory implements HandlerFactoryInterface
         $options = $this->resolver->resolve($options);
         $class = $this->class;
 
-        if (!\count($options['references'])) {
+        if ((is_array($options['references']) || $options['references'] instanceof Countable ? \count($options['references']) : 0) === 0) {
             $class = RelationNoopHandler::class;
         }
 

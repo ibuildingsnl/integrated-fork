@@ -31,11 +31,11 @@ class RegisterTypePass implements CompilerPassInterface
 
         $definition = $container->getDefinition('integrated_solr.converter.type.registry_builder');
 
-        foreach ($container->findTaggedServiceIds('integrated_solr.type') as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_solr.type')) as $service) {
             $definition->addMethodCall('addType', [new Reference($service)]);
         }
 
-        foreach ($container->findTaggedServiceIds('integrated_solr.type_extension') as $service => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('integrated_solr.type_extension')) as $service) {
             $definition->addMethodCall('addTypeExtension', [new Reference($service)]);
         }
     }

@@ -11,12 +11,13 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Tasks;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTask;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ReferenceQueueTaskTest extends \PHPUnit\Framework\TestCase
+class ReferenceQueueTaskTest extends TestCase
 {
     public function testGetId()
     {

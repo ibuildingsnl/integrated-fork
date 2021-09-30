@@ -11,10 +11,13 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface OptionsInterface extends \ArrayAccess, \Countable, \IteratorAggregate
+interface OptionsInterface extends ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * @return array

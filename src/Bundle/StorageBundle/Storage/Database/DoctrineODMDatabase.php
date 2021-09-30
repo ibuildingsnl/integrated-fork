@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Database;
 
+use Doctrine\Persistence\Mapping\MappingException;
+use ReflectionException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -91,8 +93,8 @@ class DoctrineODMDatabase implements DatabaseInterface
     /**
      * @return array
      *
-     * @throws \Doctrine\Persistence\Mapping\MappingException
-     * @throws \ReflectionException
+     * @throws MappingException
+     * @throws ReflectionException
      */
     public function getStorageKeys()
     {
@@ -110,7 +112,7 @@ class DoctrineODMDatabase implements DatabaseInterface
             foreach ($associations as $assocFieldName) {
                 $assocClassName = $classMetadata->getAssociationTargetClass($assocFieldName);
 
-                if (!$assocClassName) {
+                if ($assocClassName === '' || $assocClassName === '0') {
                     continue;
                 }
 
@@ -122,17 +124,15 @@ class DoctrineODMDatabase implements DatabaseInterface
                         ->getQuery()
                         ->toArray();
 
-                    if ($items) {
+                    if ($items !== []) {
                         foreach ($items as $item) {
                             $keys[$item[$assocFieldName]['identifier']] = true;
                         }
                     }
                 } elseif ($fieldMetaData = $metadataFactory->getMetadataFor($assocClassName)) {
                     $fieldAssociations = $fieldMetaData->getAssociationNames();
-                    if ($fieldMetaData instanceof ClassMetadata) {
-                        if (!$fieldMetaData->isEmbeddedDocument) {
-                            continue;
-                        }
+                    if ($fieldMetaData instanceof ClassMetadata && !$fieldMetaData->isEmbeddedDocument) {
+                        continue;
                     }
 
                     foreach ($fieldAssociations as $fieldAssociation) {
@@ -146,7 +146,7 @@ class DoctrineODMDatabase implements DatabaseInterface
                                 ->getQuery()
                                 ->toArray();
 
-                            if ($items) {
+                            if ($items !== []) {
                                 foreach ($items as $item) {
                                     if (\is_array($item[$assocFieldName])) {
                                         foreach ($item[$assocFieldName] as $subItem) {

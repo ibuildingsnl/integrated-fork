@@ -19,7 +19,7 @@ class ChainProvider implements ConfigProviderInterface
     /**
      * @var ConfigProviderInterface[]
      */
-    private $providers;
+    private $providers = [];
 
     /**
      * @param ConfigProviderInterface[] $providers

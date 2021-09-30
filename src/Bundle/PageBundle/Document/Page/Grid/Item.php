@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\PageBundle\Document\Page\Grid;
 
+use RuntimeException;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 
 /**
@@ -76,7 +77,7 @@ class Item
     public function setBlock(Block $block = null)
     {
         if ($block && $this->row) {
-            throw new \RuntimeException('Row is already defined');
+            throw new RuntimeException('Row is already defined');
         }
 
         $this->block = $block;
@@ -100,7 +101,7 @@ class Item
     public function setRow(Row $row = null)
     {
         if ($row && $this->block) {
-            throw new \RuntimeException('Block is already defined');
+            throw new RuntimeException('Block is already defined');
         }
 
         $this->row = $row;

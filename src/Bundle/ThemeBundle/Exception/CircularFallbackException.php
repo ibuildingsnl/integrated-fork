@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\ThemeBundle\Exception;
 
+use ErrorException;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class CircularFallbackException extends \ErrorException
+class CircularFallbackException extends ErrorException
 {
     /**
      * @param string $template

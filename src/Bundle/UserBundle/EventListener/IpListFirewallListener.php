@@ -11,11 +11,11 @@
 
 namespace Integrated\Bundle\UserBundle\EventListener;
 
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Integrated\Common\Security\IpListMatcherInterface;
 use Symfony\Bundle\SecurityBundle\Security\FirewallMap;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\FirewallMapInterface;
 
@@ -44,7 +44,7 @@ class IpListFirewallListener implements EventSubscriberInterface
         ];
     }
 
-    public function onRequest(GetResponseEvent $event)
+    public function onRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -52,13 +52,10 @@ class IpListFirewallListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if ($this->map instanceof FirewallMap && $config = $this->map->getFirewallConfig($request)) {
-            if (\in_array('ip_list', $config->getListeners(), true) && !$this->matcher->match($request)) {
-                $response = new Response();
-                $response->setStatusCode(403, 'IP address rejected');
-
-                $event->setResponse($response);
-            }
+        if ($this->map instanceof FirewallMap && $config = $this->map->getFirewallConfig($request) && (\in_array('ip_list', $config->getListeners(), true) && !$this->matcher->match($request))) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_FORBIDDEN, 'IP address rejected');
+            $event->setResponse($response);
         }
     }
 }

@@ -25,7 +25,7 @@ class MemoryResolver implements ResolverInterface
     /**
      * @var ConfigInterface[]
      */
-    private $configs;
+    private $configs = [];
 
     /**
      * @var ConfigInterface[][]

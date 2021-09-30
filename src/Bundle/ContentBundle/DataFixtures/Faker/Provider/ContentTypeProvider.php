@@ -41,7 +41,7 @@ class ContentTypeProvider
     {
         $contentType = $this->dm->getRepository(ContentType::class)->find($id);
 
-        if (!$contentType) {
+        if ($contentType === null) {
             throw DocumentNotFoundException::documentNotFound(ContentType::class, $id);
         }
 

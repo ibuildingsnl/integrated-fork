@@ -11,6 +11,9 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
@@ -32,7 +35,7 @@ class StateType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', Type\TextType::class, [
+        $builder->add('name', TextType::class, [
             'constraints' => [
                 new NotBlank(),
                 new Length(['min' => 3]),
@@ -44,7 +47,7 @@ class StateType extends AbstractType
 
         $builder->add(
             'publishable',
-            Type\CheckboxType::class,
+            CheckboxType::class,
             [
                 'label' => 'Publish',
                 'required' => false,
@@ -56,7 +59,7 @@ class StateType extends AbstractType
 
         $builder->add(
             'default',
-            Type\CheckboxType::class,
+            CheckboxType::class,
             [
                 'required' => false,
                 'mapped' => false,
@@ -73,17 +76,17 @@ class StateType extends AbstractType
             'Disabled' => StateVisibleConfig::DISABLED,
         ];
 
-        $builder->add('comment', Type\ChoiceType::class, [
+        $builder->add('comment', ChoiceType::class, [
             'expanded' => true,
             'choices' => $choiceFlags,
         ]);
 
-        $builder->add('assignee', Type\ChoiceType::class, [
+        $builder->add('assignee', ChoiceType::class, [
             'expanded' => true,
             'choices' => $choiceFlags,
         ]);
 
-        $builder->add('deadline', Type\ChoiceType::class, [
+        $builder->add('deadline', ChoiceType::class, [
             'expanded' => true,
             'choices' => $choiceFlags,
         ]);
@@ -99,7 +102,7 @@ class StateType extends AbstractType
         }
 
         if ($options['transitions'] == 'empty') {
-            $builder->add('transitions', Type\ChoiceType::class, [
+            $builder->add('transitions', ChoiceType::class, [
                 'required' => false,
                 'mapped' => false,
 
@@ -121,7 +124,7 @@ class StateType extends AbstractType
         };
 
         $resolver->setDefault('empty_data', $emptyData);
-        $resolver->setDefault('data_class', 'Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition\\State');
+        $resolver->setDefault('data_class', State::class);
         $resolver->setDefault('transitions', 'data');
 
         $resolver->setAllowedValues('transitions', ['data', 'empty', 'none']);

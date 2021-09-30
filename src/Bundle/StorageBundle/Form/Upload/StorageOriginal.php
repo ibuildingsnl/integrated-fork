@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Form\Upload;
 
+use SplFileInfo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -22,7 +23,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class StorageOriginal extends File implements StorageInterface
 {
     /**
-     * @var \SplFileInfo
+     * @var SplFileInfo
      */
     protected $file;
 
@@ -32,10 +33,10 @@ class StorageOriginal extends File implements StorageInterface
     private $original;
 
     /**
-     * @param \SplFileInfo     $file
+     * @param SplFileInfo $file
      * @param StorageInterface $original
      */
-    public function __construct(\SplFileInfo $file, StorageInterface $original)
+    public function __construct(SplFileInfo $file, StorageInterface $original)
     {
         $this->file = $file;
         $this->original = $original;

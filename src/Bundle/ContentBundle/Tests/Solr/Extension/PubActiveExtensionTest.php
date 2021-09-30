@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Extension;
 
+use PHPUnit\Framework\TestCase;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Solr\Extension\PubActiveExtension;
 use Integrated\Common\Content\ContentInterface;
@@ -26,7 +27,7 @@ use stdClass;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
+class PubActiveExtensionTest extends TestCase
 {
     public function testInterface()
     {
@@ -67,7 +68,7 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildNoContent()
     {
         /* @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->never())
             ->method($this->anything());
 
@@ -123,9 +124,7 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getContentType(string $name)
     {
-        $mock = $this->createMock(ContentTypeInterface::class);
-
-        return $mock;
+        return $this->createMock(ContentTypeInterface::class);
     }
 
     /**

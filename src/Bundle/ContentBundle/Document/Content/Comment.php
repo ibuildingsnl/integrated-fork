@@ -123,7 +123,7 @@ class Comment extends Content
      */
     public function getDescriptor()
     {
-        if ($this->title) {
+        if ($this->title !== '' && $this->title !== '0') {
             return $this->title;
         }
 
