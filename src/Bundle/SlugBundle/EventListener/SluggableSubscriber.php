@@ -20,6 +20,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use Metadata\MetadataFactoryInterface;
@@ -220,17 +222,17 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager|EntityManager $documentManager
-     * @param object                        $object
-     * @param string                        $field
-     * @param string                        $slug
-     * @param string                        $separator
-     * @param string                        $id
-     * @param array                         $slugFields
+     * @param ObjectManager|DocumentManager|EntityManager $om
+     * @param object                                      $object
+     * @param string                                      $field
+     * @param string                                      $slug
+     * @param string                                      $separator
+     * @param string                                      $id
+     * @param array                                       $slugFields
      *
      * @return string
      */
-    protected function generateUniqueSlug($documentManager, $object, $field, $slug, $separator = '-', $id = null, $slugFields = [])
+    protected function generateUniqueSlug(ObjectManager $om, $object, $field, $slug, $separator = '-', $id = null, $slugFields = [])
     {
         if (!trim($slug)) {
             return null;
@@ -238,7 +240,7 @@ class SluggableSubscriber implements EventSubscriber
 
         $class = \get_class($object);
 
-        if ($this->isUniqueSlug($documentManager, $class, $field, $slug, $id)) {
+        if ($this->isUniqueSlug($om, $class, $field, $slug, $id)) {
             return $slug;
         }
 
@@ -253,7 +255,7 @@ class SluggableSubscriber implements EventSubscriber
             }
         }
 
-        $objects = $this->findSimilarSlugs($documentManager, $class, $field, $slug, $separator);
+        $objects = $this->findSimilarSlugs($om, $class, $field, $slug, $separator);
 
         if (\count($objects)) {
             $oid = spl_object_hash($object);
@@ -281,15 +283,15 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager|EntityManager $om
-     * @param string                        $class
-     * @param string                        $field
-     * @param string                        $slug
-     * @param string                        $id
+     * @param ObjectManager|DocumentManager|EntityManager $om
+     * @param string                                      $class
+     * @param string                                      $field
+     * @param string                                      $slug
+     * @param string                                      $id
      *
      * @return bool
      */
-    protected function isUniqueSlug($om, $class, $field, $slug, $id = null)
+    protected function isUniqueSlug(ObjectManager $om, $class, $field, $slug, $id = null)
     {
         // check in document manager
         foreach ($this->getScheduledObjects($om) as $object) {
@@ -321,15 +323,15 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager|EntityManager $om
-     * @param string                        $class
-     * @param string                        $field
-     * @param string                        $slug
-     * @param string                        $separator
+     * @param ObjectManager|DocumentManager|EntityManager $om
+     * @param string                                      $class
+     * @param string                                      $field
+     * @param string                                      $slug
+     * @param string                                      $separator
      *
      * @return array
      */
-    protected function findSimilarSlugs($om, $class, $field, $slug, $separator = '-')
+    protected function findSimilarSlugs(ObjectManager $om, $class, $field, $slug, $separator = '-')
     {
         $objects = $this->getScheduledObjects($om);
         $uow = $om->getUnitOfWork();
@@ -346,11 +348,11 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param EntityManagerInterface|DocumentManager $om
+     * @param ObjectManager|EntityManagerInterface|DocumentManager $om
      *
      * @return array
      */
-    protected function getScheduledObjects($om)
+    protected function getScheduledObjects(ObjectManager $om)
     {
         $uow = $om->getUnitOfWork();
 
@@ -362,12 +364,12 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager|EntityManager $om
-     * @param string                        $class
+     * @param ObjectManager|DocumentManager|EntityManager $om
+     * @param string                                      $class
      *
-     * @return DocumentRepository|EntityRepository
+     * @return ObjectRepository|DocumentRepository|EntityRepository
      */
-    protected function getRepository($om, $class)
+    protected function getRepository(ObjectManager $om, $class)
     {
         $uow = $om->getUnitOfWork();
 
@@ -395,10 +397,10 @@ class SluggableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager|EntityManager $om
-     * @param object                        $object
+     * @param ObjectManager|DocumentManager|EntityManager $om
+     * @param object                                      $object
      */
-    protected function recomputeSingleObjectChangeSet($om, $object)
+    protected function recomputeSingleObjectChangeSet(ObjectManager $om, $object)
     {
         if ($om->contains($object)) {
             $classMetadata = $om->getClassMetadata(\get_class($object));

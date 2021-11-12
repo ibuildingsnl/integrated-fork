@@ -21,7 +21,6 @@
         "ext-json": "*",
         "abraham/twitteroauth": "^0.7.4",
         "braincrafted/bootstrap-bundle": "dev-develop",
-        "alcaeus/mongo-php-adapter": "~1.1",
         "darsyn/ip": "^4.0",
         "doctrine/data-fixtures": ">= 1.5.1",
         "doctrine/doctrine-bundle": "^2.4.3",
