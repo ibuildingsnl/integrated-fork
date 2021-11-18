@@ -140,9 +140,7 @@ class ConfigController extends AbstractController
             );
 
             if (!$response = $event->getResponse()) {
-                if ($message = $this->getFlashMessage()) {
-                    $message->success(sprintf('The config %s is saved', $data->getName()));
-                }
+                $this->addFlash('success', sprintf('The config %s is saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -209,9 +207,7 @@ class ConfigController extends AbstractController
             $this->manager->persist($data);
 
             if (!$response = $event->getResponse()) {
-                if ($message = $this->getFlashMessage()) {
-                    $message->success(sprintf('The changes to the config %s are saved', $data->getName()));
-                }
+                $this->addFlash('success', sprintf('The changes to the config %s are saved', $data->getName()));
 
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
@@ -241,7 +237,7 @@ class ConfigController extends AbstractController
         $session = new Session();
 
         if (!$id = $session->get('externalReturnId')) {
-            $this->getFlashMessage()->error('Config not found in session');
+            $this->addFlash('danger', 'Config not found in session');
 
             return $this->index($request);
         }
@@ -288,9 +284,7 @@ class ConfigController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->remove($data);
 
-            if ($message = $this->getFlashMessage()) {
-                $message->success(sprintf('The config %s is removed', $data->getName()));
-            }
+            $this->addFlash('success', sprintf('The config %s is removed', $data->getName()));
 
             $response = $this->redirectToRoute('integrated_channel_config_index');
 
@@ -373,13 +367,5 @@ class ConfigController extends AbstractController
     protected function getPaginator()
     {
         return $this->get('knp_paginator');
-    }
-
-    /**
-     * @return FlashMessage
-     */
-    protected function getFlashMessage()
-    {
-        return $this->get('braincrafted_bootstrap.flash');
     }
 }

@@ -13,7 +13,7 @@ namespace Integrated\Bundle\UserBundle\Controller;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
@@ -77,7 +77,7 @@ class GroupController extends AbstractController
                 $user = $form->getData();
 
                 $this->getManager()->persist($user);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The group %s is created', $user->getName()));
+                $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -119,7 +119,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->getManager()->persist($group);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The changes to the group %s are saved', $group->getName()));
+                $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }
@@ -160,7 +160,7 @@ class GroupController extends AbstractController
 
             if ($form->isValid()) {
                 $this->getManager()->remove($group);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The group %s is removed', $group->getName()));
+                $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
             }

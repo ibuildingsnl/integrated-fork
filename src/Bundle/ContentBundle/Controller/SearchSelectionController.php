@@ -69,7 +69,7 @@ class SearchSelectionController extends AbstractController
             $this->getDocumentManager()->persist($searchSelection);
             $this->getDocumentManager()->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
             return $this->redirectToRoute('integrated_content_search_selection_index');
         }
@@ -101,7 +101,7 @@ class SearchSelectionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDocumentManager()->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
             return $this->redirectToRoute('integrated_content_search_selection_index');
         }
@@ -137,7 +137,7 @@ class SearchSelectionController extends AbstractController
             $this->getDocumentManager()->remove($searchSelection);
             $this->getDocumentManager()->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Item deleted');
 
             return $this->redirectToRoute('integrated_content_search_selection_index');
         }

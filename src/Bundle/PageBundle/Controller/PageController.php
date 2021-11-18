@@ -144,7 +144,7 @@ class PageController extends AbstractController
 
             $this->get('integrated_page.services.route_cache')->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success(sprintf('Page "%s" has been created', $page->getTitle()));
+            $this->addFlash('success', sprintf('Page "%s" has been created', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
@@ -176,7 +176,7 @@ class PageController extends AbstractController
 
             $this->get('integrated_page.services.route_cache')->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success(sprintf('Page "%s" has been updated', $page->getTitle()));
+            $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
@@ -214,7 +214,7 @@ class PageController extends AbstractController
 
             $this->get('integrated_page.services.route_cache')->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Page deleted');
+            $this->addFlash('success', 'Page deleted');
 
             return $this->redirectToRoute('integrated_page_page_index');
         }
@@ -266,7 +266,7 @@ class PageController extends AbstractController
             if ($data['action'] != 'refresh') {
                 $this->pageCopyService->copyPages($form->getData());
 
-                $this->get('braincrafted_bootstrap.flash')->success('Pages copied');
+                $this->addFlash('success', 'Pages copied');
 
                 return $this->redirectToRoute('integrated_page_page_index');
             }
@@ -360,7 +360,7 @@ class PageController extends AbstractController
             $settings = $item->getControllerService().$item->getLayout();
             $key = $item->getChannel()->getId().'-'.$item->getPath();
             if (isset($paths[$key]) && $paths[$key] != $settings) {
-                $this->get('braincrafted_bootstrap.flash')->error('Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
+                $this->addFlash('danger', 'Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
                 continue;
             }
 
