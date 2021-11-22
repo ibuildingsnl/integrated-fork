@@ -5,12 +5,28 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="Integrated\Bundle\ContentBundle\Controller\ContentController">
+            <argument type="service" id="integrated.form.resolver" />
+
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+        </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\ContentTypeController">
             <argument type="service" id="integrated_content.content_type.manager" />
             <argument type="service" id="integrated_content.event_dispatcher" />
             <argument type="service" id="integrated_content.metadata.factory" />
+
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\ChannelController">

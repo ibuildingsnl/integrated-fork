@@ -9,6 +9,7 @@
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
         </service>

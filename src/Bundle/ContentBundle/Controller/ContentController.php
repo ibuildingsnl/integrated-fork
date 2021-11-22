@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks\Filter;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -45,6 +46,19 @@ class ContentController extends AbstractController
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
     /**
+     * @var ResolverInterface
+     */
+    private $resolver;
+
+    /**
+     * ContentController constructor.
+     */
+    public function __construct(ResolverInterface $resolver)
+    {
+        $this->resolver = $resolver;
+    }
+
+    /**
      * @param Request $request
      *
      * @return Response
@@ -70,7 +84,7 @@ class ContentController extends AbstractController
         }
 
         /** @var $type \Integrated\Common\ContentType\ContentTypeInterface */
-        foreach ($this->get('integrated.form.resolver')->getTypes() as $type) {
+        foreach ($this->resolver->getTypes() as $type) {
             $types[$type->getClass()][$type->getId()] = $type;
             $displayTypes[$type->getId()] = $type->getName();
         }
