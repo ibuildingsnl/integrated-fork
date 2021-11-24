@@ -102,7 +102,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_login');
         }
 
-        return $this->render('IntegratedUserBundle:security:password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form->createView()]);
     }
 
     /**
@@ -145,6 +145,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_login');
         }
 
-        return $this->render('IntegratedUserBundle:security:password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedUser/security/password_reset.html.twig', ['form' => $form->createView()]);
     }
 }
