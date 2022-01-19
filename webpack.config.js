@@ -8,7 +8,7 @@ Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/public')
         './src/Bundle/CommentBundle/Resources/assets/css/comments.css',
         './src/Bundle/StorageBundle/Resources/assets/css/drag-drop.css',
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
-        'select2/dist/js/select2.full.js'
+        './src/Bundle/ContentBundle/Resources/assets/js/main.js',
     ])
     .addEntry('iframe', [
         './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
