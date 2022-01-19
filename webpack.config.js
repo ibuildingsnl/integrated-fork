@@ -17,6 +17,7 @@ Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/public')
         './src/Bundle/FormTypeBundle/Resources/assets/css/tinymce.content.css',
         './src/Bundle/FormTypeBundle/Resources/assets/css/tinymce.editor.css',
     ])
+    .autoProvidejQuery()
     .cleanupOutputBeforeBuild()
     .enableSassLoader()
     .enableSourceMaps(false)
