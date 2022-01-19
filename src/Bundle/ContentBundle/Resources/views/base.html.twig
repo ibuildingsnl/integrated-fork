@@ -5,16 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
 {% block style %}
-    {# TODO: migrate to Webpack Encore and remove temporary integratedfordevelopers.com + other CSS in INTEGRATED-1675
-    {% stylesheets "@integrated_css" %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
-    #}
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-
-    <link rel="stylesheet" href="https://integratedfordevelopers.com/css/boostrap.css" />
-    <link rel="stylesheet" href="https://integratedfordevelopers.com/css/09a61d6.css" />
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
     {{ integrated_stylesheets() }}
 
@@ -111,7 +102,7 @@
 
 {% block javascript %}
     <script src="//code.jquery.com/jquery.js"></script>
-    <script src="https://integratedfordevelopers.com/js/bootstrap.js"></script>
+    <script src="{{ asset('/js/bootstrap.js') }}"></script>
 
 {# TODO: migrate to Webpack Encore
     {% javascripts
