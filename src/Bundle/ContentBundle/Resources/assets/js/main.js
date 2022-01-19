@@ -1,9 +1,9 @@
+global.$ = global.jQuery = require('jquery');
 require('bootstrap-sass/assets/javascripts/bootstrap')
 require('select2')
 require('./bulk_relation')
 require('./channel')
 require('./contact_persons')
-require('./handlebars.helpers')
 require('./primary_channel')
 require('./relation')
 require('./scripts')

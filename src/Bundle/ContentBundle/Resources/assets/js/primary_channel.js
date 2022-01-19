@@ -1,3 +1,5 @@
+$ = require('jquery');
+
 $(function() {
     var $primaryChannel = $('.primary-channel'),
         $channelInputs = $('.channel-options input'),

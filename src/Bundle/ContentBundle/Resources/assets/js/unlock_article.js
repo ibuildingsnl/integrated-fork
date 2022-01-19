@@ -1,3 +1,5 @@
+$ = require('jquery');
+
 var form = $('form.content-form');
 var modal = $("#content-edit-modal");
 

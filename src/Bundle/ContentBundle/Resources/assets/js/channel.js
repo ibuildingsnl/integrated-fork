@@ -1,3 +1,5 @@
+$ = require('jquery');
+
 $(function() {
     var $domains_collection = $('.channel-domains');
     var $primary_domain_input = $('.primary-domain-input');

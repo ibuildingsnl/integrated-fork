@@ -1,3 +1,5 @@
+$ = require('jquery');
+
 //Substitute SVG with PNG for non-svg browsers
 if (!Modernizr.svg) {
     $('.svg-img').each(function () {
