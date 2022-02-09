@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
@@ -31,6 +33,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -46,7 +49,7 @@ class WorkflowController extends AbstractController
      */
     public function index(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -69,7 +72,7 @@ class WorkflowController extends AbstractController
      */
     public function new(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createNewForm();
 
@@ -106,7 +109,7 @@ class WorkflowController extends AbstractController
      */
     public function edit(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         /** @var Definition $workflow */
         $workflow = $this->getDoctrine()
@@ -153,7 +156,7 @@ class WorkflowController extends AbstractController
      */
     public function delete(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         /** @var Definition $workflow */
         $workflow = $this->getDoctrine()
@@ -197,7 +200,7 @@ class WorkflowController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function changeState(Request $request)
+    public function changeState(Request $request, TokenStorageInterface $tokenStorage, DocumentManager $documentManager, UserManager $userManager)
     {
         $stateId = $request->get('state');
 
@@ -220,7 +223,7 @@ class WorkflowController extends AbstractController
         }
 
         /** @var User $currentUser */
-        $currentUser = $this->get('security.token_storage')->getToken()->getUser();
+        $currentUser = $tokenStorage->getToken()->getUser();
 
         $currentUserGroups = [];
         /** @var Group $group */
@@ -236,7 +239,7 @@ class WorkflowController extends AbstractController
             $permissionObject = $state;
         } else {
             //permissions inherited from content type
-            $contentType = $this->get('doctrine_mongodb.odm.document_manager')->getRepository(ContentType::class)->find($request->get('contentType'));
+            $contentType = $documentManager->getRepository(ContentType::class)->find($request->get('contentType'));
             if ($contentType && \count($contentType->getPermissions()) > 0) {
                 $permissionObject = $contentType;
             }
@@ -257,7 +260,7 @@ class WorkflowController extends AbstractController
         }
 
         /** @var EntityRepository $userRepository */
-        $userRepository = $this->get('integrated_user.user.manager.doctrine')->getRepository();
+        $userRepository = $userManager->getRepository();
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $userRepository->createQueryBuilder('u');
 

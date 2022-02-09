@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig\Error\Error;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Form\Type\LoginFormType;
@@ -50,11 +51,12 @@ class SecurityController extends AbstractController
      * @param Mailer       $mailer
      * @param KeyGenerator $keyGenerator
      */
-    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator)
+    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, ContainerInterface $container)
     {
         $this->userManager = $userManager;
         $this->mailer = $mailer;
         $this->keyGenerator = $keyGenerator;
+        $this->setContainer($container);
     }
 
     /**

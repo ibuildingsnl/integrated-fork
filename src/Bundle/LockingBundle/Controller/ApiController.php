@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\LockingBundle\Controller;
 
+use Integrated\Common\Locks\ManagerInterface;
+use Integrated\Common\Locks\Provider\DBAL\Manager;
 use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,17 +29,8 @@ class ApiController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function refresh(Request $request)
+    public function refresh(Request $request, ManagerInterface $lockingManager)
     {
-        if (!$this->has('integrated_locking.dbal.manager')) {
-            $response = [
-                'code' => 403,
-                'message' => 'Locking is not enabled',
-            ];
-
-            return new JsonResponse($response, $response['code']);
-        }
-
         if (!$owner = $this->getUser()) {
             $response = [
                 'code' => 401,
@@ -60,10 +53,7 @@ class ApiController extends AbstractController
             return new JsonResponse($response, $response['code']);
         }
 
-        /** @var Locks\ManagerInterface $service */
-        $service = $this->get('integrated_locking.dbal.manager');
-
-        if (!$lock = $service->find($lock)) {
+        if (!$lock = $lockingManager->find($lock)) {
             $response = [
                 'code' => 404,
                 'message' => 'The lock could not be found',
@@ -81,7 +71,7 @@ class ApiController extends AbstractController
         if ($owner->equals($lock->getRequest()->getOwner())) {
             // only the owner can extends the lock.
 
-            if ($lock = $service->refresh($lock)) {
+            if ($lock = $lockingManager->refresh($lock)) {
                 $response['message'] = 'The lock is extended';
                 $response['lock'] = $lock->getId();
             }

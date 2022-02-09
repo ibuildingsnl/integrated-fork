@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ class SearchSelectionController extends AbstractController
      *
      * @return array
      */
-    public function rss(Request $request, SearchSelection $selection)
+    public function rss(Request $request, SearchSelection $selection, SolariumProvider $provider)
     {
         $block = new ContentBlock();
         $block->setSearchSelection($selection);
@@ -42,7 +43,7 @@ class SearchSelectionController extends AbstractController
 
         return $this->render('@IntegratedWebsite/search_selection/rss.'.$request->getRequestFormat('xml').'.twig', [
             'selection' => $selection,
-            'documents' => $this->get('integrated_content.provider.solarium')->execute($block, $request),
+            'documents' => $provider->execute($block, $request),
         ]);
     }
 }

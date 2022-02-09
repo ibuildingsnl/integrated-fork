@@ -69,7 +69,7 @@ class IntegratedMenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, array $options = [])
+    public function get(string $name, array $options = []): ItemInterface
     {
         $channel = $this->channelContext->getChannel();
 
@@ -100,7 +100,7 @@ class IntegratedMenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function has($name, array $options = [])
+    public function has(string $name, array $options = []): bool
     {
         return null !== $this->get($name, $options);
     }

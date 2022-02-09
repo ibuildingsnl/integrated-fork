@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,13 +31,13 @@ class MenuController extends AbstractController
      *
      * @return Response
      */
-    public function renderMenu(Request $request)
+    public function renderMenu(Request $request, DatabaseMenuFactory $menuFactory)
     {
         $data = (array) json_decode($request->getContent(), true);
         $menu = null;
 
         if (isset($data['data'])) {
-            $menu = $this->getMenuFactory()->fromArray($data['data']);
+            $menu = $menuFactory->fromArray($data['data']);
         }
 
         return $this->render('@IntegratedWebsite/menu/render.'.$request->getRequestFormat('json').'.twig', [
@@ -50,63 +51,30 @@ class MenuController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function save(Request $request)
+    public function save(Request $request, DocumentManager $documentManager, IntegratedMenuProvider $menuProvider, DatabaseMenuFactory $menuFactory, ChannelContextInterface $channelContext)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $dm = $this->getDocumentManager();
         $data = (array) json_decode($request->getContent(), true);
 
         if (isset($data['menu'])) {
             foreach ((array) $data['menu'] as $array) { // support multiple menu's
-                if ($menu = $this->getMenuFactory()->fromArray((array) $array)) {
-                    if ($menu2 = $this->getMenuProvider()->get($menu->getName())) {
+                if ($menu = $menuFactory->fromArray((array) $array)) {
+                    if ($menu2 = $menuProvider->get($menu->getName())) {
                         $menu2->setChildren($menu->getChildren());
                     } else {
-                        $menu->setChannel($this->getChannel());
+                        $menu->setChannel($channelContext->getChannel());
 
-                        $dm->persist($menu);
+                        $documentManager->persist($menu);
                     }
                 }
             }
 
-            $dm->flush();
+            $documentManager->flush();
         }
 
         return new JsonResponse();
-    }
-
-    /**
-     * @return DocumentManager
-     */
-    protected function getDocumentManager()
-    {
-        return $this->get('doctrine_mongodb')->getManager();
-    }
-
-    /**
-     * @return IntegratedMenuProvider
-     */
-    protected function getMenuProvider()
-    {
-        return $this->get('integrated_menu.provider.integrated_menu_provider');
-    }
-
-    /**
-     * @return DatabaseMenuFactory
-     */
-    protected function getMenuFactory()
-    {
-        return $this->get('integrated_menu.menu.database_menu_factory');
-    }
-
-    /**
-     * @return ChannelInterface|null
-     */
-    protected function getChannel()
-    {
-        return $this->get('channel.context')->getChannel();
     }
 }

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
+use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\FormInterface;
@@ -67,7 +68,7 @@ class BlockController extends AbstractController
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request, FilterQueryProvider $queryProvider)
     {
         $user = null;
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
@@ -75,7 +76,6 @@ class BlockController extends AbstractController
         }
 
         $data = $request->get('integrated_block_filter');
-        $queryProvider = $this->get('integrated_block.provider.filter_query');
 
         $facetFilter = $this->createForm(BlockFilterType::class, null, [
             'blockIds' => $queryProvider->getBlockIds($data, $user),
