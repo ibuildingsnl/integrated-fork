@@ -365,7 +365,7 @@ class Product extends Content
     /**
      * @return string
      */
-    public function __toString(): ?string
+    public function __toString(): string
     {
         return $this->title;
     }
