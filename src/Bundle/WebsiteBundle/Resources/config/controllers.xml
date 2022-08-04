@@ -31,6 +31,7 @@
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\ErrorController" public="true">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="error_controller" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

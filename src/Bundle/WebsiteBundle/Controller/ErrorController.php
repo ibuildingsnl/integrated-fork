@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
+use Exception;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ErrorController as TwigErrorController;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -29,25 +31,30 @@ class ErrorController extends AbstractController
     protected $themeManager;
 
     /**
-     * @param ThemeManager $themeManager
+     * @var TwigErrorController
      */
-    public function __construct(ThemeManager $themeManager)
-    {
-        $this->themeManager = $themeManager;
-    }
+    protected $controller;
 
     /**
-     * {@inheritdoc}
+     * @param ThemeManager $themeManager
+     * @param TwigErrorController $controller
      */
-    public function show(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
+    public function __construct(ThemeManager $themeManager, TwigErrorController $controller)
     {
+        $this->themeManager = $themeManager;
+        $this->controller = $controller;
+    }
+
+    public function show(Request $request, Exception $exception): Response
+    {
+        $flattened = FlattenException::create($exception);
         try {
-            if ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $exception->getStatusCode(), $request->getPreferredFormat()))) {
+            if ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $flattened->getStatusCode(), $request->getPreferredFormat()))) {
                 return $this->render($template);
             }
-        } catch (CircularFallbackException $e) {
+        } catch (CircularFallbackException) {
         }
 
-        return $this->render($this->themeManager->locateTemplate('error/error.html.twig'));
+        return $this->controller->__invoke($exception);
     }
 }
