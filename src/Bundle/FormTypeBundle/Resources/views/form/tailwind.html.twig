@@ -19,8 +19,8 @@
         {% set showlabel = showlabel|default(tailwind_get_show_label()) %}
         {% set showplaceholder = showplaceholder|default(tailwind_get_show_placeholder()) %}
 
-        {% debug(showlabel) %}
-        {% debug(showplaceholder) %}
+{#        {% debug(showlabel) %}#}
+{#        {% debug(showplaceholder) %}#}
 
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
