@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Content types{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -11,11 +12,15 @@
     </div>
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
+    <div class="row flex flex-wrap">
+        <div class="page-title">
+            <h1 class="heading">{% trans %}Content types{% endtrans %}</h1>
+            <ul class="options-no-bg">
                 <li class="dropdown">
-                    <a href="#" data-toggle="dropdown" role="button" id="drop_1">{% trans %}Create new{% endtrans %} <b class="caret"></b></a>
+                    <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                        <span>{% trans %}New{% endtrans %} {% trans %}content type{% endtrans %}</span>
+                        <i class="fa-regular fa-plus"></i>
+                    </a>
                     <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                         {% for type in documentTypes %}
                             {% if type.type %}
@@ -29,26 +34,46 @@
                     </ul>
                 </li>
             </ul>
-
-            <section class="section-white section-padding section-shadow section-radius">
+        </div>
+        <div class="w-full mb-4 md:mb-0">
+            <section class="section-white section-radius">
                 <table class="table table-hover">
                     <thead>
-                        <tr>
-                            <th>{% trans %}ID{% endtrans %}</th>
-                            <th>{% trans %}Name{% endtrans %}</th>
-                            <th>{% trans %}Document type{% endtrans %}</th>
-                            <th>{% trans %}Created{% endtrans %}</th>
-                            <th>{% trans %}Actions{% endtrans %}</th>
-                        </tr>
+                    <tr>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>{% trans %}ID{% endtrans %}</th>
+                        <th>{% trans %}Document type{% endtrans %}</th>
+                        <th>{% trans %}Created{% endtrans %}</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for document in documents %}
-                        <tr>
+                    {% for document in documents %}
+                        <tr class="has-options">
                             <td>
-                                {{ document.id }}
+                                <strong>
+                                    <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
+                                        {{ document.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_content_content_type_show', {'id': document.id}) }}"
+                                       title="{% trans %}Information{% endtrans %}">
+                                        {% trans %}Information{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a class="color-red"
+                                       href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}"
+                                       title="{% trans %}Delete{% endtrans %}">
+                                        {#                                    {{ icon('trash') }} #}
+                                        {% trans %}Delete{% endtrans %}
+                                    </a>
+                                </div>
                             </td>
                             <td>
-                                {{ document.name }}
+                                {{ document.id }}
                             </td>
                             <td>
                                 {% for type in documentTypes %}
@@ -60,25 +85,14 @@
                             <td>
                                 {{ document.createdAt|format_date("medium", "none") }}
                             </td>
-                            <td>
-                                <a href="{{ path('integrated_content_content_type_show', {'id': document.id}) }}" title="{% trans %}Information{% endtrans %}">
-                                    {{ icon('info-sign') }}
-                                </a>
-                                <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
-                                    {{ icon('pencil') }}
-                                </a>
-                                <a class="href-red" href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}" title="{% trans %}Remove{% endtrans %}">
-                                    {{ icon('trash') }}
-                                </a>
-                            </td>
                         </tr>
-                        {% else %}
+                    {% else %}
                         <tr>
                             <td colspan="4">
                                 {% trans %}No content types added{% endtrans %}
                             </td>
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
                     </tbody>
                 </table>
             </section>

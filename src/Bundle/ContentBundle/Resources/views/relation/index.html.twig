@@ -1,15 +1,19 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li>
-                    <a href="{{ path('integrated_content_relation_new') }}">
-                        {% trans %}Create new{% endtrans %}
-                    </a>
-                </li>
-            </ul>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Relations{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_content_relation_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}relation{% endtrans %}</span>
+                            <i class="fa-regular fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <section class="section-white section-radius">
                 {{ include('@IntegratedContent/relation/partial/list.html.twig', { 'documents': documents }) }}
             </section>
         </div>

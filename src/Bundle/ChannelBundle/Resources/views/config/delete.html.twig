@@ -1,4 +1,5 @@
 {% extends '@IntegratedChannel/base.html.twig' %}
+{% block title %}{% trans %}Delete connector{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -13,14 +14,11 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular">
-                {% trans %}Edit{% endtrans %}
-                <small>
-                    {{ adapter.manifest.label|default(data.adapter) }} {% trans %}configuration{% endtrans %}
-                </small>
-            </h1>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Delete{% endtrans %} {{ adapter.manifest.label|default(data.adapter) }} {% trans %}connector{% endtrans %}</h1>
+            </div>
+            <section class="section-white section-padding section-radius">
                 <p>
                     {% trans with {'%name%':  data.name} %}You are about to delete the configuration "%name%", click the delete button below to confirm the action.{% endtrans %}
                 </p>

@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Scrapers{% endtrans %} {% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -12,14 +13,20 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li class="dropdown">
-                    <a href="{{ path('integrated_theme_scraper_new') }}"  role="button">{% trans %}Create new{% endtrans %}</a>
-                </li>
-            </ul>
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Scrapers{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_theme_scraper_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}scraper{% endtrans %}</span>
+                            <i class="fa-regular fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-            <section class="section-white section-padding section-shadow section-radius">
+            <section class="section-white section-radius">
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -28,14 +35,31 @@
                         <th>{% trans %}Template{% endtrans %}</th>
                         <th>{% trans %}URL{% endtrans %}</th>
                         <th>{% trans %}Updated{% endtrans %}</th>
-                        <th>{% trans %}Actions{% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for scraper in result %}
-                        <tr>
+                        <tr class="has-options">
                             <td>
-                                {{ scraper.name }}
+                                <strong>
+                                    <a href="{{ path('integrated_theme_scraper_edit', {'id': scraper.id}) }}">
+                                        {{ scraper.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_theme_scraper_edit', {'id': scraper.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a class="color-red"
+                                       href="{{ path('integrated_theme_scraper_delete', {'id': scraper.id}) }}"
+                                       title="{% trans %}Delete{% endtrans %}">
+                                        {#                                    {{ icon('trash') }} #}
+                                        {% trans %}Delete{% endtrans %}
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
                             </td>
                             <td>
                                 {{ scraper.channelId }}
@@ -49,18 +73,10 @@
                             <td>
                                 {{ scraper.lastModified|format_date("medium", "none") }}
                             </td>
-                            <td>
-                                <a href="{{ path('integrated_theme_scraper_edit', {'id': scraper.id}) }}" title="{% trans %}Edit{% endtrans %}">
-                                    {{ icon('pencil') }}
-                                </a>
-                                <a class="href-red" href="{{ path('integrated_theme_scraper_delete', {'id': scraper.id}) }}" title="{% trans %}Remove{% endtrans %}">
-                                    {{ icon('trash') }}
-                                </a>
-                            </td>
                         </tr>
                         {% if scraper.lastError %}
                             <tr>
-                                <td colspan="6">
+                                <td colspan="5">
                                     <pre>{{ scraper.lastError }}</pre>
                                 </td>
                             </tr>

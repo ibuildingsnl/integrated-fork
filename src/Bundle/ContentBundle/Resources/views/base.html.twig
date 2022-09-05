@@ -1,54 +1,56 @@
 <!DOCTYPE html>
 <html class="no-js">
 <head>
-    <title>{% block title %}{% trans %}Integrated{% endtrans %}{% endblock title %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>{% block title %}{% trans %}Integrated{% endtrans %}{% endblock title %} | Integrated</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <script src="https://kit.fontawesome.com/8af8ed7fb4.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    {% block style %}
+        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
-{% block style %}
-    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
+        {{ integrated_stylesheets() }}
 
-    {{ integrated_stylesheets() }}
+        <script>
+            var loadedScripts = [],
+                callbacks = [];
 
-    <script>
-        var loadedScripts = [],
-            callbacks = [];
-        function require(url, callback){
+            function require(url, callback) {
 
-            callbacks.push(callback);
+                callbacks.push(callback);
 
-            if (loadedScripts[url]) {
-                script = loadedScripts[url];
-            } else {
-                var script = document.createElement("script")
-                script.type = "text/javascript";
+                if (loadedScripts[url]) {
+                    script = loadedScripts[url];
+                } else {
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
 
-                script.src = url;
-                document.getElementsByTagName("head")[0].appendChild(script);
+                    script.src = url;
+                    document.getElementsByTagName('head')[0].appendChild(script);
 
-                loadedScripts[url] = script;
+                    loadedScripts[url] = script;
+                }
+
+                if (script.readyState) {  //IE
+                    script.onreadystatechange = function() {
+                        if (script.readyState == 'loaded' ||
+                            script.readyState == 'complete') {
+                            script.onreadystatechange = null;
+                            callback();
+                        }
+                    };
+                } else {  //Others
+                    script.onload = function() {
+                        for (var key in callbacks) {
+                            callbacks[key]();
+                        }
+                    };
+                }
             }
-
-            if (script.readyState){  //IE
-                script.onreadystatechange = function(){
-                    if (script.readyState == "loaded" ||
-                            script.readyState == "complete"){
-                        script.onreadystatechange = null;
-                        callback();
-                    }
-                };
-            } else {  //Others
-                script.onload = function(){
-                    for (var key in callbacks) {
-                        callbacks[key]();
-                    }
-                };
-            }
-        }
-    </script>
-{% endblock style %}
+        </script>
+    {% endblock style %}
 
 </head>
-<body>
+<body style="overflow: hidden;">
 {% block form_theme %}
     {% if form is defined %}
         {% form_theme form with ['@IntegratedContent/form/form_div_layout.html.twig'] %}
@@ -56,42 +58,55 @@
 {% endblock %}
 
 {% block header %}
-    <nav class="navbar megamenu">
-        <div class="container">
-            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+    <nav class="navbar">
+        <div class="flex justify-between sm:px-4 w-full" style="">
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
-            {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+            <div class="flex wrap w-full">
+                {% block navbar_content_type %}
 
-            {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                    <div class="new-contenttype hover">
+                        <a href="#" class="btn btn-green"
+                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="fa-regular fa-plus"></i></a>
+                        {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+                    </div>
+                {% endblock navbar_content_type %}
+                {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+            </div>
         </div>
     </nav>
 {% endblock %}
 
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="active">
-                    {% trans %}Home{% endtrans %}
-                </li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{# {% block crumbs %} #}
+{#    <div class="breadcrumb-holder"> #}
+{#        <div class="container mx-auto sm:px-4"> #}
+{#            <ol class="flex flex-wrap list-reset pt-3 pb-3 py-4 px-4 mb-4 bg-gray-200 rounded"> #}
+{#                <li class="active"> #}
+{#                    {% trans %}Home{% endtrans %} #}
+{#                </li> #}
+{#            </ol> #}
+{#        </div> #}
+{#    </div> #}
+{# {% endblock %} #}
 
 <div id="wrapper-holder">
     {% block body %}
-        <div class="container">
-            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
+        <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
+        <div class="sidebar">
+            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+        </div>
+        <div class="content-wrapper">
+
+            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
                 {% for message in messages %}
                     {% if label == 'alert' %}
                         {% set label = 'warning' %}
-                    {% elseif label == 'error' %}
-                        {% set label = 'danger' %}
                     {% endif %}
-                    <div class="alert alert-{{ label }} alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <div class="relative px-3 py-3 mb-4 border rounded alert-{{ label }} ">
+                        <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" data-dismiss="alert">
+                            &times;
+                        </button>
                         {{ message|trans }}
                     </div>
                 {% endfor %}
@@ -103,24 +118,71 @@
 </div>
 
 {% block javascript %}
-    {% block webpack_js %}
-        <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-    {% endblock %}
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}
 
-    {% if app.request.locale %}
-    <script>
-        moment.locale('{{ app.request.locale }}');
-    </script>
+{% if app.request.locale %}
+<script>
+    moment.locale('{{ app.request.locale }}');
+</script>
+{% endif %}
+
+{{ integrated_javascripts() }}
+
+{% block locking %}
+    {% if locking is defined and locking.lock is defined and locking.locked == false %}
+        {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
     {% endif %}
-
-    {{ integrated_javascripts() }}
-
-    {% block locking %}
-        {% if locking is defined and locking.lock is defined and locking.locked == false %}
-            {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
-        {% endif %}
-    {% endblock locking %}
+{% endblock locking %}
 {% endblock javascript %}
+<script>
 
+    //DROPDOWN MENU
+    function initMenu() {
+
+        var menus = [
+            document.querySelector('div.new-contenttype'),
+            document.querySelector('li.dropdown-queue'),
+            document.querySelector('li.dropdown-profile'),
+            document.querySelector('li.dropdown-assigned-to-me')];
+        menus.forEach((menu) => {
+            if (menu != null) {
+                for (var i = 0; i < menu.children.length; i++) {
+                    var menuClasses = menu.children[i];
+                    var cList = menuClasses.classList;
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') || cList.contains('dropdown-menu-right')) {
+                        menu.addEventListener('mouseenter', showDropDownBackGround, false);
+                        menu.addEventListener('mouseleave', hideDropDownBackGround, false);
+                    }
+                }
+            }
+        });
+    }
+
+    jQuery('.search-form .form-control').focus(function () {
+        showDropDownBackGround();
+    });
+
+    jQuery(".search-form .form-control").blur(function () {
+        hideDropDownBackGround();
+    });
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        var menuItemZindexFix = document.querySelector('#wrapper-holder');
+        menuItemDropDownUnderlay.classList.remove('hide');
+        menuItemZindexFix.classList.add('hide');
+    }
+
+    function hideDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        var menuItemZindexFix = document.querySelector('#wrapper-holder');
+        menuItemDropDownUnderlay.classList.add('hide');
+        menuItemZindexFix.classList.remove('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+</script>
 </body>
 </html>
