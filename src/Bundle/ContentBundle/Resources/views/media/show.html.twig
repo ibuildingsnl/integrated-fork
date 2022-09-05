@@ -1,0 +1,9 @@
+<div class="breadcrumb-holder">
+    <div class="container">
+        <h1> hi there</h1>
+        {% for media in items %}
+            {{ media.title|default('geen title') }}
+        {% endfor %}
+
+    </div>
+</div>

@@ -38,4 +38,19 @@ class MediaController extends AbstractController
             'items' => $items,
         ]);
     }
+
+    /**
+     * This function shows 1 media item and gives the user a few actions
+     * @param Request $request
+     * @return Response
+     */
+
+    public function show(Request $request) {
+        $request->query->set('class', File::class);
+        $items = $this->provider->getContentFromSolr($request, 10);
+
+        return $this->render('@IntegratedContent/media/show.html.twig', [
+            'items' => $items,
+        ]);
+    }
 }
