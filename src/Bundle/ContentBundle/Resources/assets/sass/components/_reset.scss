@@ -1,10 +1,10 @@
 /* Reset styles */
-section {
-	padding: 25px 0;
-	@include respond-to(phones) {
-		padding: 15px;
-	}
-}
+//section {
+//	padding: 25px 0;
+//	@include media(max-md) {
+//		padding: 15px;
+//	}
+//}
 
 .section-white {
 	background: $color-white;
@@ -13,16 +13,13 @@ section {
 	background: $color-alabaster;
 }
 .section-padding {
-	padding: 25px 30px;
-	@include respond-to(phones) {
-		padding: 15px;
+	padding: 2rem;
+	@include media(max-md) {
+		padding: 1rem;
 	}
 }
-.section-shadow {
-	box-shadow: 0px 0px 2px 0px rgba($color-dove-gray, .2);
-}
 .section-radius {
-	border-radius: 4px;
+	border-radius: 1rem;
 }
 
 * {
@@ -51,22 +48,22 @@ ul {
 }
 
 .mobile-text-center {
-	@include respond-to(phones) {
+	@include media(max-md) {
 		text-align: center;
 	}
 }
 .push-md-down {
-	@include respond-to(tablets-large) {
+	@include media(max-xl) {
   		margin-bottom: 15px;
 	}
 }
-.push-sm-down {
-	@include respond-to(tablets-small) {
+.mb-4 md:mb-0 {
+	@include media(max-lg) {
   		margin-bottom: 15px;
 	}
 }
 .push-down {
-	@include respond-to(phones) {
+	@include media(max-md) {
   		margin-bottom: 15px;
 	}
 }
@@ -90,13 +87,13 @@ ul {
 
 .custom-col-left {
 	padding-right: 0;
-	@include respond-to(phones) {
+	@include media(max-md) {
   		padding-right: 15px;
 	}
 }
 .custom-col-right {
 	padding-left: 0;
-	@include respond-to(phones) {
+	@include media(max-md) {
 		padding-left: 15px;
 	}
 }
@@ -104,7 +101,7 @@ ul {
 .same-height {
 	@include display(flex);
 	@include align-items(center);
-	@include respond-to(phones) {
+	@include media(max-md) {
 		display: block;
 	}
 }

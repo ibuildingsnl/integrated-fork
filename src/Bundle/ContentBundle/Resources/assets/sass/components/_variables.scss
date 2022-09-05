@@ -25,20 +25,33 @@ $color-green-haze: #01ac32; //Green color
 /* Orange group */
 $color-ecstasy: #f6740e; //Orange btn bg
 
-/* TYPEAHEAD */
-$typeahead-color: $dropdown-link-color !default;
-$typeahead-hover-color: $dropdown-link-hover-color !default;
-$typeahead-list-color: $dropdown-link-disabled-color !default;
-$typeahead-hint-color: #ccc !default;
-$typeahead-divider-color: $color-boston-blue !default;
+//Integrated 2022 - TD Colors
+$gray: #737A86;
+$dark-gray: #3B4049;
+$orange: #FFA620;
+$green: #00AE93;
+$navbar-green: #335767;
+$sidebar-green: #18303B;
+$sidebar-green-active: #335767;
 
-$typeahead-bg: $dropdown-bg !default;
-$typeahead-hover-bg: $dropdown-link-hover-bg !default;
-$typeahead-border: $dropdown-border !default;
-$typeahead-fallback-border: $dropdown-fallback-border !default;
+$border-color: #DEE3E9;
+$bg-gray: #f2f2f2;
+
+
+/* TYPEAHEAD */
+$typeahead-color: #000 !default;
+$typeahead-hover-color: #000 !default;
+$typeahead-list-color: rgba(0,0,0,0.7) !default;
+$typeahead-hint-color: #ccc !default;
+$typeahead-divider-color: #000 !default;
+
+$typeahead-bg: #fff !default;
+$typeahead-hover-bg: $bg-gray !default;
+$typeahead-border: $border-color !default;
+$typeahead-fallback-border: $border-color !default;
 
 /* Font VARIABLES */
-$font-family: 'PT Sans', sans-serif;
+$font-family: 'Poppins', sans-serif;
 
 $font-light: 300;
 $font-regular: 400;
@@ -47,7 +60,7 @@ $font-bold: 700;
 
 
 //Body VARIABLES
-$main-text-color: $color-dusty-gray;
+$main-text-color: $color-black;
 $body-font-size: 14px;
 $body-line-height: 24px;
 $body-main-font: $font-family;
@@ -62,11 +75,7 @@ $input-color-placeholder-focus: transparent;
 $input-color-placeholder: $color-dusty-gray;
 $input-font-size-placeholder: $input-font-size;
 $input-line-height-placeholder: $body-line-height;
-
-
-
 /* Sections VARIABLES */
-
 
 //Header variables
 $header-bg: $color-allports;

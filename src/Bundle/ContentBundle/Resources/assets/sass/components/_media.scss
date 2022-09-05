@@ -26,7 +26,7 @@
 	margin-top: -13px;
 	color: $color-dove-gray;
 	font-weight: $font-medium;
-	@include respond-to(tablets-large) {
+	@include media(max-xl) {
 		position: static;
 	}
 }

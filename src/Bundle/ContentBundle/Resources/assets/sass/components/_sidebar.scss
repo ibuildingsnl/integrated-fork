@@ -1,0 +1,28 @@
+#wrapper-holder {
+    display: flex;
+    height: calc(100vh - 50px);
+    overflow: hidden;
+    padding-bottom: 0px !important;
+    position: relative;
+    z-index:1060;
+    &.hide {
+        z-index: 1000;
+    }
+    .sidebar {
+        background-color: $sidebar-green;
+        width: 250px;
+        height: calc(100vh - 50px);
+        ul.sidebar-menu {
+            padding:2rem;
+            a {
+                color:white;
+            }
+            li.menu-label {
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+                margin-top: 10px;
+            }
+        }
+    }
+}
