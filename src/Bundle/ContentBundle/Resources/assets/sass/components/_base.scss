@@ -1,0 +1,41 @@
+.content-wrapper {
+    padding-bottom: 120px;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: calc(100vw - 200px);
+    padding: 25px;
+    background-color: $bg-gray;
+}
+
+.page-title {
+    display: flex;
+    margin-bottom:1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    h1.heading {
+        margin-bottom: 0;
+        display: inline-block;
+        margin-right:1rem;
+    }
+    ul.create {
+        list-style: none;
+        display: inline-block;
+        li {
+            display: inline-block;
+        }
+    }
+    .options {
+        height: 49px;
+        background-color: white;
+        border-radius: 1rem;
+        padding: 0.5rem;
+        display: flex;
+        margin-top: 1rem;    width: 100%;
+    }
+    .options-no-bg {
+        border-radius: 1rem;
+        height: 34px;
+        margin-bottom: 0;
+    }
+}

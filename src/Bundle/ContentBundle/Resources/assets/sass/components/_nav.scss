@@ -1,90 +1,182 @@
 /* NAV */
-.navbar {
-	background: $header-bg;
-	border-radius: 0;
-	border: none;
-	margin-bottom: 0;
-	.nav {
-		@include respond-to(phones) {
-			float: left;
-			margin: 0 10px 0 0;
-		}
-	}
+nav.navbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    align-content: space-between;
+    height: 60px;
+    background-color: $navbar-green;
+    flex-wrap: wrap;
+    z-index: 1050;
+
+    .integrated-logo {
+        flex: 0 0 200px;
+        padding: 10px 0;
+
+        img {
+            height: 40px;
+        }
+    }
+
+    //ul.dropdown-menu {
+    //    visibility: hidden;
+    //    opacity: 0;
+    //    position: absolute;
+    //    background-color: white;
+    //    z-index: 9;
+    //    padding: 1rem;
+    //    border-radius: 8px;
+    //    margin-top:0px;
+    //    top: 50px;
+    //    transition: top .15s linear, visibility .15s, opacity .15s linear;
+    //    .megamenu-content {
+    //        display: flex;
+    //    }
+    //}
+    .new-contenttype {
+        margin-left: 70px;
+    }
+
+    ul.header-nav {
+        display: flex;
+
+        .dropdown-profile {
+            .profile-image {
+                border-radius: 50%;
+                height: 40px;
+                width: 40px;
+            }
+
+            a {
+                color: white;
+                display: flex;
+                align-items: center;
+
+                span.user-name {
+                    font-weight: bold;
+                    text-transform: capitalize;
+                    margin-right: 10px;
+                }
+
+                img {
+                    margin-right: 1rem;
+                }
+            }
+
+            .megamenu-content {
+                a {
+                    color: black;
+                }
+            }
+        }
+
+        li.dropdown-queue {
+            .progress {
+                background-color: #f2f2f2;
+                height: 5px;
+                border-radius: 8px;
+                margin-top: 1rem;
+                margin-bottom: 2rem;
+
+                .progress-bar-success {
+                    background-color: #00d100;
+                    height: 5px;
+                    border-radius: 20px;
+
+                    span {
+                        padding-top: 13px;
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        li.divider-nav {
+            width: 2px;
+            background-color: white;
+            display: block;
+            margin: 10px 20px 0;
+            height: 40px;
+            margin-top: 10px;
+        }
+    }
 }
-.nav {
-	>li {
-		&.open {
-			>a {
-				background: lighten($color-danube, 10%);
-				&:hover, &:focus {
-					background: lighten($color-danube, 10%);
-				}
-			}
-			.dropdown-menu {
-				position: absolute;
-				background: $color-white;
-				border: 1px solid rgba(0, 0, 0, 0.15);
-				.dropdown-header {
-					@include respond-to(phones) {
-						padding: 5px 15px;
-					}
-				}
-				&.dropdown-top-fixed {
-					@include respond-to(phones) {
-						margin-top: 8px;
-					}
-				}
-			}
-		}
-		>a {
-			color: $color-white;
-			&:hover, &:focus {
-				background: lighten($color-danube, 10%);
-			}
-			&.btn {
-				margin-top: 8px;
-				padding: 7px 20px;
-				margin-left: 10px;
-				margin-right: 10px;
-				@include respond-to(tablets-small) {
-					margin-left: 2.5px;
-					margin-right: 2.5px;
-				}
-				@include respond-to(phones) {
-					padding: 7px 10px;
-				}
-			}
-		}
-	}
+
+div#dropdown_overlay {
+    background-color: rgba(0, 0, 0, 1);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 60px;
+    z-index: 1040;
 }
-.navbar-brand {
-	color: $color-white;
-	font-size: 24px;
-	&:hover, &:focus {
-		color: $color-white;
-	}
+
+body div#dropdown_overlay {
+    opacity: 0.3;
+    -webkit-transition: opacity .15s linear, visibility .15s linear;
+    -o-transition: opacity .15s linear, visibility .15s linear;
+    transition: opacity .15s linear, visibility .15s linear;
+    visibility: visible;
+
+    &.hide {
+        opacity: 0;
+        -webkit-transition: opacity .15s linear, visibility .15s linear;
+        -o-transition: opacity .15s linear, visibility .15s linear;
+        transition: opacity .15s linear, visibility .15s linear;
+        visibility: hidden;
+    }
 }
-.nav-left {
-	float: left;
-	margin-right: 5px;
-	>li {
-		>a {
-			padding: 10px;
-			>i {
-				font-size: 20px;
-				line-height: 30px;
-			}
-		}
-	}
+
+.hover {
+    padding: 10px 0;
+    padding-bottom: 30px;
+    display: block;
+    position: relative;
+
+    &:hover {
+        ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
+            visibility: visible;
+            opacity: 1;
+            top: 70px;
+            position: absolute;
+            background: white;
+            z-index: 9;
+            display: flex;
+        }
+    }
+
+    ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        min-width: 200px;
+        background-color: white;
+        z-index: 9;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 0px;
+        top: 50px;
+        border:none;
+        transition: top .15s linear, visibility .15s, opacity .15s linear;
+
+        .megamenu-content {
+            display: flex;
+        }
+    }
+    ul.dropdown-menu-left {
+        left: 0;
+        li {
+            width:100%;
+        }
+    }
+
+    ul.dropdown-menu-right {
+        right: 0;
+        li {
+            width:100%;
+        }
+    }
 }
-.divider-nav {
-	margin: 8px 10px 0 10px;
-	width: 1px;
-	background: rgba($color-white, .2);
-	height: 34px;
-	@include respond-to(tablets-small) {
-		margin-left: 2.5px;
-		margin-right: 2.5px;
-	}
-}
+
 
