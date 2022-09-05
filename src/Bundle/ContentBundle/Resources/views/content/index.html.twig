@@ -298,6 +298,127 @@
             </aside>
         </div>
     </div>
+    <script>
+
+        function asideItemsSearch(el) {
+            // Declare variables
+
+            var input, filter, ul, li, a, i, txtValue;
+            input = el;
+            filter = input.value.toUpperCase();
+            ul = el.parentNode.parentNode.querySelector('.aside-item-list > ul.filters_list');
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName('label')[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = '';
+                } else {
+                    li[i].style.display = 'none';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var filterElements = document.getElementsByClassName('aside-item-list');
+
+            for (var ii = 0; ii < filterElements.length; ii++) {
+                openSelectedOptions(filterElements[ii]);
+            }
+
+            function openSelectedOptions(elem) {
+                var textinputs = elem.querySelectorAll('input[type=checkbox]');
+                console.log(elem);
+                var chev = elem.parentNode.querySelector('.fa-chevron-up');
+                console.log(chev);
+                var empty = [].filter.call(textinputs, function(elem) {
+                    return !elem.checked;
+                });
+                if (textinputs.length != empty.length) {
+                    show(elem, chev);
+                }
+            }
+        });
+
+        // JS
+        var filter = document.getElementsByClassName('aside-item-header');
+
+        for (var i = 0; i < filter.length; i++) {
+            filter[i].addEventListener('click', options, false);
+        }
+
+        function options(event) {
+            var options = this.parentNode.querySelector('.aside-item-list');
+            var chev = this.querySelector('.fa-chevron-up');
+            // Prevent default link behavior
+            event.preventDefault();
+
+            if (!options) return;
+
+            // Toggle the content
+            toggle(options, chev);
+        }
+
+        // Show an element
+        var show = function(elem, chev) {
+
+            // Get the natural height of the element
+            var getHeight = function() {
+                elem.style.display = 'block'; // Make it visible
+                var height = elem.scrollHeight + 'px'; // Get it's height
+                elem.style.display = ''; //  Hide it again
+                return height;
+            };
+
+            var height = getHeight(); // Get the natural height
+            // elem.classList.add('show'); // Make the element visible
+            elem.parentNode.classList.add('show'); // Make the element visible
+            elem.style.height = height; // Update the max-height
+
+            // Once the transition is complete, remove the inline max-height so the content can scale responsively
+            window.setTimeout(function() {
+                elem.style.height = '';
+            }, 350);
+
+        };
+
+        // Hide an element
+        var hide = function(elem, chev) {
+
+            // Give the element a height to change from
+            elem.style.height = elem.scrollHeight + 'px';
+
+            // Set the height back to 0
+            window.setTimeout(function() {
+                elem.style.height = '0';
+            }, 1);
+
+            console.log(elem.parentNode);
+
+            // When the transition is complete, hide it
+            window.setTimeout(function() {
+                elem.classList.remove('show');
+                elem.parentNode.classList.remove('show');
+            }, 350);
+
+        };
+
+        // Toggle element visibility
+        var toggle = function(elem, chev, timing) {
+
+            // If the element is visible, hide it
+            if (elem.parentNode.classList.contains('show')) {
+                hide(elem, chev);
+                return;
+            }
+
+            // Otherwise, show it
+            show(elem, chev);
+
+        };
+    </script>
 {% endblock %}
 {% block javascript %}
 {{ parent() }}
