@@ -1,4 +1,4 @@
-{% use "@IntegratedFormType/form/bootstrap.html.twig" %}
+{% use "@IntegratedFormType/form/tailwind.html.twig" %}
 
 {% block integrated_ace_widget %}
     <style type="text/css" media="screen">
@@ -66,7 +66,7 @@
 {% block integrated_editor_row  %}
     {% apply spaceless %}
     <div class="form-group">
-        <div class="col-sm-12">
+        <div class="w-full">
             <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                     data-content_css="{{ content_styles.content_css|merge([asset('/bundles/integratedformtype/css/tinymce.content.css')])|join(',') }}"
@@ -86,7 +86,7 @@
 
 {% block checkbox_row %}
     {% apply spaceless %}
-        {% set style = style|default(bootstrap_get_style()) %}
+        {% set style = style|default(tailwind_get_style()) %}
         {% if style == 'horizontal' and (align_widget is defined or attr.align_widget is defined) %}
             {% set align_with_widget = true %}
         {% endif %}
@@ -97,7 +97,7 @@
 
 {% block radio_row %}
     {% apply spaceless %}
-        {% set style = style|default(bootstrap_get_style()) %}
+        {% set style = style|default(tailwind_get_style()) %}
         {% if style == 'horizontal' and (align_widget is defined or attr.align_widget is defined) %}
             {% set align_with_widget = true %}
         {% endif %}
@@ -176,11 +176,11 @@
             {% if style is defined %}
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
-            {% set prototype_html = '<div class="col-xs-' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
+            {% set prototype_html = '<div class="w-full ' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__" title="' ~ form.vars.delete_button_text|trans({}, translation_domain)|raw ~ '"><span class="glyphicon glyphicon-remove"></span></a></div>' %}
+                {% set prototype_html = prototype_html ~ '<div class="w-full ' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__" title="' ~ form.vars.delete_button_text|trans({}, translation_domain)|raw ~ '"><span class="glyphicon glyphicon-remove"></span></a></div>' %}
             {% endif %}
-            {% set prototype_html = '<div class="section-white section-padding section-shadow section-radius"><div class="row">' ~ prototype_html ~ '</div></div>' %}
+            {% set prototype_html = '<div class="section-white section-padding section-radius"><div class="row">' ~ prototype_html ~ '</div></div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
@@ -189,7 +189,7 @@
             <ul class="bc-collection list-unstyled">
                 {% for field in form %}
                     <li>
-                        <div class="section-white section-padding section-shadow section-radius">
+                        <div class="section-white section-padding section-radius">
                             <div class="row">
                                 <div class="col-xs-{{ form.vars.sub_widget_col }}">
                                     {{ form_widget(field) }}
