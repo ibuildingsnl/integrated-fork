@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}New page{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -14,11 +15,11 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular">
-                {% trans %}New{% endtrans %} <small>{% trans %}Page{% endtrans %}</small>
-            </h1>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}</h1>
+            </div>
+            <section class="section-white section-padding section-radius">
                 {% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig'] %}
 
                 {{ form(form, { 'style': 'horizontal' }) }}

@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Blocks{% endtrans %}{% endblock title %}
 
 {% form_theme facetFilter '@IntegratedBlock/form/form_div_filter.html.twig' %}
 
@@ -14,31 +15,38 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-8 push-sm-down">
-            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER') %}
-                <ul class="list-inline">
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" role="button">{% trans %}Create new{% endtrans %} <b class="caret"></b></a>
-                        <ul role="menu" class="dropdown-menu">
-                            {% for metadata in factory.allMetadata %}
-                                {% if 'InlineTextBlock' not in metadata.class %}
-                                    <li role="presentation">
-                                        <a href="{{ path('integrated_block_block_new') }}?class={{ metadata.class }}">{{ metadata.type|default(metadata.class) }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
-`           {% endif %}
+        <div class="w-full md:w-2/3 mb-4 md:mb-0">
+
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Blocks{% endtrans %}</h1>
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER') %}
+                    <ul class="options-no-bg">
+                        <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                                <span>{% trans %}New{% endtrans %} {% trans %}Block{% endtrans %}</span>
+                                <i class="fa-regular fa-plus"></i>
+                            </a>
+                            <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                                {% for metadata in factory.allMetadata %}
+                                    {% if 'InlineTextBlock' not in metadata.class %}
+                                        <li role="presentation">
+                                            <a href="{{ path('integrated_block_block_new') }}?class={{ metadata.class }}">{{ metadata.type|default(metadata.class) }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
 
             {% include '@IntegratedBlock/block/partials/block_list.html.twig' %}
 
         </div>
 
-        <div class="col-sm-4">
+        <div class="w-4/5">
             <aside>
-                <div class="aside-holder section-gray section-shadow section-radius">
+                <div class="aside-holder section-gray section-radius">
                     {{ form_start(facetFilter) }}
 
                     <div class="aside-item-holder">
@@ -46,7 +54,7 @@
                             {{ form_widget(facetFilter.q) }}
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-primary">
-                                    <span class="glyphicon glyphicon-search"></span>
+                                    <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
                             </span>
                         </div>
@@ -56,7 +64,8 @@
                         {{ form_row(facetFilter.type) }}
                     </div>
 
-                    <div class="aside-item-holder{% if facetFilter.channels.vars.choices|length == 0 %} hidden{% endif %}">
+                    <div
+                        class="aside-item-holder{% if facetFilter.channels.vars.choices|length == 0 %} hidden{% endif %}">
                         {{ form_row(facetFilter.channels) }}
                     </div>
 
@@ -70,14 +79,14 @@
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script type="text/javascript">
-        $(function () {
-            $('[data-toggle="popover"]').popover();
+{{ parent() }}
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
 
-            $('form[name="integrated_block_filter"]').on('change', function () {
-                $(this).trigger('submit');
-            });
+        $('form[name="integrated_block_filter"]').on('change', function () {
+            $(this).trigger('submit');
         });
-    </script>
+    });
+</script>
 {% endblock %}

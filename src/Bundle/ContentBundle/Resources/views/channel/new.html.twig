@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}New channel{% endtrans %}{% endblock title %}
 {% block style %}
     {{ parent() }}
 
@@ -20,9 +20,11 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular">{% trans %}New{% endtrans %}</h1>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}channel{% endtrans %}</h1>
+            </div>
+            <section class="section-white section-padding section-radius">
                 {{ form(form, {'style': 'horizontal'}) }}
             </section>
         </div>

@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}Delete{% endtrans %} {{ scraper.name }}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -14,14 +14,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="main-title font-regular">
-        {% trans %}Delete{% endtrans %} {{ scraper.name }}
-        <i class="integrate-icon-edit"></i>
-    </h1>
+    <div class="page-title">
+        <h1 class="heading">{% trans %}Delete{% endtrans %} {{ scraper.name }}</h1>
+    </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full">
+            <section class="section-white section-padding section-radius">
                 <p>
                     {% trans with {'%name%': scraper.name} %}
                         You are about to delete "%name%", click the delete button below to confirm the action.

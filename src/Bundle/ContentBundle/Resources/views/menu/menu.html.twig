@@ -3,7 +3,7 @@
 {% block list %}
     {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
         {% if item.level == 0 %}
-            <ul class="dropdown-menu dropdown-top-fixed">
+            <ul class="sidebar-menu">
                 <li>
                     <div class="megamenu-content">
                         {{ block('children') }}
@@ -19,8 +19,8 @@
 {% block item %}
     {% if item.displayed %}
         {% if item.level == 1 %}
-            <ul class="list">
-                <li class="dropdown-header">
+            <ul class="sub-menu">
+                <li class="menu-label">
                     {{ block('label') }}
                 </li>
                 {{ block('list') }}

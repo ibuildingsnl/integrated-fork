@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Delete channel{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -13,9 +14,11 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular"><h1>{% trans %}Delete{% endtrans %} <small>{% trans %}Channel{% endtrans %}</small></h1></h1>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Delete{% endtrans %} {% trans %}channel{% endtrans %}</h1>
+            </div>
+            <section class="section-white section-padding section-radius">
                 <p>
                     {% trans with {'%name%':  channel.name} %}You are about to delete "%name%", click the delete button below to confirm the action.{% endtrans %}
                 </p>

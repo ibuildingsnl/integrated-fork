@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}Pages{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -21,6 +21,7 @@
             {% set lastUrl = '//'~lastPage.domain~path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': lastPage.path}) %}
             {% set editUrl = '//'~lastPage.domain~path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': lastPage.path ~ '?integrated_website_edit=1'}) %}
         {% endif %}
+{#        //TODO: FIX THIS#}
         <div class="alert alert-info">
         <div class="clearfix">
             {% trans %}Last changed{% endtrans %}: "{{ lastPage.title }}" {% trans %}on{% endtrans %} "{{ lastPage.channel.name }}"
@@ -41,23 +42,25 @@
     </div>
     {% endif %}
 
-    <section>
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('integrated_page_page_new') }}';">{% trans %}New page{% endtrans %}</button>
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="{{ path('integrated_page_page_new') }}">{% trans %}New page{% endtrans %}</a></li>
-                <li><a href="{{ path('integrated_page_page_copy') }}">{% trans %}Copy pages{% endtrans %}</a></li>
-            </ul>
-        </div>
-    </section>
+    <div class="page-title">
+        <h1 class="heading">{% trans %}Pages{% endtrans %}</h1>
+        <ul class="create">
+            <li>
+                <a class="btn btn-create-new" href="{{ path('integrated_page_page_new') }}">
+                    <span>{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}</span>
+                    <i class="fa-regular fa-plus"></i>
+                </a>
+                <a class="btn btn-create-new" href="{{ path('integrated_page_page_copy') }}">
+                    <span>{% trans %}Copy{% endtrans %} {% trans %}page{% endtrans %}</span>
+                    <i class="fa-regular fa-copy"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
 
-    <div class="row">
-        <div class="col-md-9">
-            <section class="section-white section-padding section-shadow section-radius">
+    <div class="row flex flex-wrap">
+        <div class="w-full md:w-4/5 pr-4">
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
                     <colgroup>
@@ -65,7 +68,6 @@
                         <col />
                         <col />
                         <col />
-                        <col style="width: 5em" />
                     </colgroup>
 
                     <thead>
@@ -74,14 +76,14 @@
                             <th>{% trans %}Title{% endtrans %}</th>
                             <th>{% trans %}Channel{% endtrans %}</th>
                             <th>{% trans %}Layout{% endtrans %}</th>
-                            <th>{% trans %}Actions{% endtrans %}</th>
                         </tr>
                     </thead>
                     <tbody>
 
                     {% for page in pages %}
-                        <tr>
+                        <tr class="has-options">
                             <td>
+                                <strong>
                                 {% if page.type == 'page' and page.domain != "" %}
                                     {% if (page.domain == app.request.httphost) %}
                                         <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
@@ -93,6 +95,18 @@
                                 {% if page.type == 'page' and page.domain != "" %}
                                     </a>
                                 {% endif %}
+                                        </a>
+                                </strong>
+                                    <div class="row-options">
+                                        <a href="{{ path('integrated_page_'~page.type~'_edit', { 'id': page.id}) }}" title="{% trans %}Edit page properties{% endtrans %}">
+                                            {% trans %}Edit page properties{% endtrans %}
+                                        </a>
+                                        {% if not page.locked %}
+                                            | <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}" class="color-red" title="{% trans %}Delete{% endtrans %}">
+                                                {% trans %}Delete{% endtrans %}
+                                            </a>
+                                        {% endif %}
+                                    </div>
                             </td>
                             <td>
                                 {{ page.title }}
@@ -102,19 +116,6 @@
                             </td>
                             <td>
                                 {{ page.layout|split('/')|last|replace({'.html.twig': ''}) }}
-                            </td>
-                            <td>
-                                <a href="{{ path('integrated_page_'~page.type~'_edit', { 'id': page.id}) }}" title="{% trans %}Edit page properties{% endtrans %}">
-                                    {{ icon('pencil') }}
-                                </a>
-
-                                &nbsp;
-
-                                {% if not page.locked %}
-                                    <a href="{{ path('integrated_page_page_delete', { 'id': page.id }) }}" title="{% trans %}Delete{% endtrans %}">
-                                        {{ icon('remove-circle') }}
-                                    </a>
-                                {% endif %}
                             </td>
                         </tr>
 
@@ -134,9 +135,9 @@
                 {{ knp_pagination_render(pages) }}
             </section>
         </div>
-        <div class="col-md-3">
+        <div class="pl-4 w-1/5">
             <aside>
-                <div class="aside-holder section-gray section-shadow section-radius">
+                <div class="aside-holder section-gray section-radius">
                     <div class="aside-item-holder">
                         {{ form(filterForm) }}
                     </div>
