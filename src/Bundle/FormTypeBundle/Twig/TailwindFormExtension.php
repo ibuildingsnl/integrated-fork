@@ -226,7 +226,6 @@ class TailwindFormExtension extends AbstractExtension
     {
         $settings = [
             'style' => $this->style,
-            'responsiveSize' => $this->responsiveSize,
             'widgetCol' => $this->widgetCol,
             'labelCol' => $this->labelCol,
             'simpleCol' => $this->simpleCol,
@@ -253,7 +252,6 @@ class TailwindFormExtension extends AbstractExtension
         $settings = array_pop($this->settingsStack);
 
         $this->style = $settings['style'];
-        $this->responsiveSize = $settings['responsiveSize'];
         $this->widgetCol = $settings['widgetCol'];
         $this->labelCol = $settings['labelCol'];
         $this->simpleCol = $settings['simpleCol'];
