@@ -65,6 +65,12 @@ class Relation implements RelationInterface
     protected $location;
 
     /**
+     * @var string
+     * @Assert\NotBlank()
+     */
+    protected $icon;
+
+    /**
      * @var bool
      */
     protected $multiple;
@@ -146,6 +152,27 @@ class Relation implements RelationInterface
     public function setLocation($location)
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Used to show an icon for this relationship on the Editor page.
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
 
         return $this;
     }
