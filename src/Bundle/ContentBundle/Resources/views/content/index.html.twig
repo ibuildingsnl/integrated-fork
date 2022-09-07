@@ -243,7 +243,7 @@
                                                     {% endif %}
                                                 </span>
                                             </h3>
-                                            <i class="fa-regular fa-chevron-up"></i>
+                                            <i class="fa-regular {% if (key == 'contenttypes') or (key =='channels') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
                                         </div>
                                         <div class="aside-item-list">
                                             <div class="aside-item-list-container">
@@ -330,13 +330,13 @@
             function openSelectedOptions(elem) {
                 var textinputs = elem.querySelectorAll('input[type=checkbox]');
                 console.log(elem);
-                var chev = elem.parentNode.querySelector('.fa-chevron-up');
-                console.log(chev);
+                var chevUp = this.querySelector('.fa-chevron-down');
+                var chevDown = this.querySelector('.fa-chevron-up');
                 var empty = [].filter.call(textinputs, function(elem) {
                     return !elem.checked;
                 });
                 if (textinputs.length != empty.length) {
-                    show(elem, chev);
+                    show(elem, chevUp, chevDown);
                 }
             }
         });
@@ -350,18 +350,19 @@
 
         function options(event) {
             var options = this.parentNode.querySelector('.aside-item-list');
-            var chev = this.querySelector('.fa-chevron-up');
+            var chevUp = this.querySelector('.fa-chevron-down');
+            var chevDown = this.querySelector('.fa-chevron-up');
             // Prevent default link behavior
             event.preventDefault();
 
             if (!options) return;
 
             // Toggle the content
-            toggle(options, chev);
+            toggle(options, chevUp, chevDown);
         }
 
         // Show an element
-        var show = function(elem, chev) {
+        var show = function(elem, chevUp, chevDown) {
 
             // Get the natural height of the element
             var getHeight = function() {
@@ -371,9 +372,12 @@
                 return height;
             };
 
+
             var height = getHeight(); // Get the natural height
             // elem.classList.add('show'); // Make the element visible
             elem.parentNode.classList.add('show'); // Make the element visible
+            chevUp.classList.add('fa-chevron-up'); // turn the chev
+            chevUp.classList.remove('fa-chevron-down'); // turn the chev
             elem.style.height = height; // Update the max-height
 
             // Once the transition is complete, remove the inline max-height so the content can scale responsively
@@ -384,7 +388,7 @@
         };
 
         // Hide an element
-        var hide = function(elem, chev) {
+        var hide = function(elem, chevUp, chevDown) {
 
             // Give the element a height to change from
             elem.style.height = elem.scrollHeight + 'px';
@@ -394,7 +398,8 @@
                 elem.style.height = '0';
             }, 1);
 
-            console.log(elem.parentNode);
+            chevDown.classList.remove('fa-chevron-up'); // turn the chev
+            chevDown.classList.add('fa-chevron-down'); // turn the chev
 
             // When the transition is complete, hide it
             window.setTimeout(function() {
@@ -405,16 +410,16 @@
         };
 
         // Toggle element visibility
-        var toggle = function(elem, chev, timing) {
+        var toggle = function(elem, chevUp, chevDown, timing) {
 
             // If the element is visible, hide it
             if (elem.parentNode.classList.contains('show')) {
-                hide(elem, chev);
+                hide(elem, chevUp, chevDown);
                 return;
             }
 
             // Otherwise, show it
-            show(elem, chev);
+            show(elem, chevUp, chevDown);
 
         };
     </script>
