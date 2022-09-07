@@ -11,11 +11,22 @@
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
             <div class="back">
-
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
             </div>
             <div class="options">
                 <div class="convert">
-                    <a href="#">Naar concept omzetten</a>
+                    {% if content is defined %}
+                        {% if content.isPublished and content.getChannels|length > 0 %}
+                            <a href="#">Naar concept omzetten</a>
+                        {% endif %}
+                    {% endif %}
                 </div>
                 <div class="preview">
                     {% block content_website_links %}
@@ -51,7 +62,15 @@
                 </div>
                 <div class="form-actions">
                     {% block form_actions %}
-                        {{ form_row(form.actions) }}
+                        {% if form.actions.save is defined %}
+                            {{ form_row(form.actions.save) }}
+                        {% endif %}
+                        {% if form.actions.reload is defined %}
+                            {{ form_row(form.actions.reload) }}
+                        {% endif %}
+                        {% if form.actions.create is defined %}
+                            {{ form_row(form.actions.create) }}
+                        {% endif %}
                     {% endblock %}
                 </div>
             </div>
@@ -64,6 +83,9 @@
                     {% endif %}
                     {% if form.title is defined %}
                         {{ form_row(form.title) }}
+                    {% endif %}
+                    {% if form.file is defined %}
+                        {{ form_row(form.file) }}
                     {% endif %}
                     {% if form.subtitle is defined %}
                         {{ form_row(form.subtitle) }}
@@ -83,7 +105,7 @@
                             <div class="aside-item-wrapper show">
                                 <div class="aside-item-header">
                                     <h3 class="aside-item-title">
-                                        <i class="fa-regular fa-clock"></i>
+                                        <i class="fa-regular fa-circle-info"></i>
                                         <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                                     </h3>
                                     <i class="fa-regular fa-chevron-up"></i>
@@ -96,12 +118,13 @@
                                             {% endif %}
                                         </div>
                                         <div class="status-options">
-{#                                            {% dump(content) %}#}
+                                            {#                                            {% dump(content) %} #}
                                             {% if content.isPublished and content.getChannels|length > 0 %}
                                                 <div class="status published">
                                                     <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
                                                 </div>
-                                                <a class="delete" href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
                                                     <i class="fa-regular fa-trash-can"></i>
                                                 </a>
                                             {% else %}
@@ -125,42 +148,41 @@
                             {% endif %}
                         {% endblock %}
 
-{#                        {% dump(form) %}#}
+                        {#                        {% dump(form) %} #}
 
                         {% block content_meta %}
                             {% if form.channels is defined %}
-                                {{ form_row(form.channels, {'style': 'sidebar'}) }}
+                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.slug is defined %}
-                                {{ form_row(form.slug, {'style': 'sidebar'}) }}
+                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'fa-link'}) }}
                             {% endif %}
-
                             {% if form.description is defined %}
-                                {{ form_row(form.description, {'style': 'sidebar'}) }}
+                                {{ form_row(form.description, {'style': 'sidebar', 'icon':'fa-input-text'}) }}
                             {% endif %}
 
                             {% if form.address is defined %}
-                                {{ form_row(form.address, {'style': 'sidebar'}) }}
+                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'fa-map-location-dot'}) }}
                             {% endif %}
                             {% if form.copyrightRestrictions is defined %}
-                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar'}) }}
+                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'fa-copyright'}) }}
                             {% endif %}
 
                             {% if form.authors is defined %}
-                                {{ form_row(form.authors, {'style': 'sidebar'}) }}
+                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather'}) }}
                             {% endif %}
                             {% if form.source is defined %}
-                                {{ form_row(form.source, {'style': 'sidebar'}) }}
+                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'fa-megaphone'}) }}
                             {% endif %}
                             {% if form.sourceUrl is defined %}
-                                {{ form_row(form.sourceUrl, {'style': 'sidebar'}) }}
+                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'fa-arrow-up-right-from-square'}) }}
                             {% endif %}
                             {% if form.relations is defined %}
-                                {{ form_row(form.relations, {'style': 'sidebar'}) }}
+                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
                             {% endif %}
 
                             {% if form.rank is defined %}
-                                {{ form_row(form.rank, {'style': 'sidebar'}) }}
+                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
                             {% endif %}
                         {% endblock %}
 
@@ -169,17 +191,19 @@
                             {% if form.offsetGet('relations').count() %}
                                 <input type="hidden" id="default_references" value="{{ references }}">
                                 {% for relation in form.relations %}
-                                    <div class="aside-item-wrapper">
+                                    <div class="aside-item-wrapper relations">
                                         <div class="aside-item-header">
                                             <h3 class="aside-item-title">
-                                                <i class="fa-regular fa-clock"></i>
-                                                <span
-                                                    class="aside-item-icon">{{ relation.vars.attr['data-title'] }}</span>
+                                                {% dump(relation) %}
+                                                <i class="fa-regular"></i>
+                                                <label
+                                                    class="aside-item-icon"
+                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                             </h3>
-                                            <i class="fa-regular fa-chevron-up"></i>
+                                            <i class="fa-regular fa-chevron-down"></i>
                                         </div>
                                         <div class="aside-item-list">
-                                            <div class="aside-item-list-container">
+                                            <div class="aside-item-list-container relation">
                                                 <div class="input-group relative flex items-stretch w-full">
                                                     <select
                                                         multiple
@@ -239,7 +263,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
                                 <h4 class="modal-title">{% endverbatim %}{% trans %}Add{% endtrans %}{% verbatim %}</h4>
                             </div>
                             <iframe width="100%" height="400">{% endverbatim %}{% trans %}Loading{% endtrans %}{% verbatim %}</iframe>
@@ -330,122 +354,6 @@
             iframe.attr('height', height);
         }, false);
     });
-    function asideItemsSearch(el) {
-            // Declare variables
-
-            var input, filter, ul, li, a, i, txtValue;
-            input = el;
-            filter = input.value.toUpperCase();
-            ul = el.parentNode.parentNode.querySelector('.aside-item-list > ul.filters_list');
-            li = ul.getElementsByTagName('li');
-
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName('label')[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = '';
-                } else {
-                    li[i].style.display = 'none';
-                }
-            }
-        }
-
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     var filterElements = document.getElementsByClassName('aside-item-list');
-        //
-        //     for (var ii = 0; ii < filterElements.length; ii++) {
-        //         openSelectedOptions(filterElements[ii]);
-        //     }
-        //
-        //     function openSelectedOptions(elem) {
-        //         var textinputs = elem.querySelectorAll('input[type=checkbox]');
-        //         console.log(elem);
-        //         var chev = elem.parentNode.querySelector('.fa-chevron-up');
-        //         console.log(chev);
-        //         var empty = [].filter.call(textinputs, function(elem) {
-        //             return !elem.checked;
-        //         });
-        //         if (textinputs.length != empty.length) {
-        //             show(elem, chev);
-        //         }
-        //     }
-        // });
-
-        // JS
-        var filter = document.getElementsByClassName('aside-item-header');
-
-        for (var i = 0; i < filter.length; i++) {
-            filter[i].addEventListener('click', options, false);
-        }
-
-        function options(event) {
-            var options = this.parentNode.querySelector('.aside-item-list');
-            var chev = this.querySelector('.fa-chevron-up');
-            // Prevent default link behavior
-            event.preventDefault();
-
-            if (!options) return;
-
-            // Toggle the content
-            toggle(options, chev);
-        }
-
-        // Show an element
-        var show = function(elem, chev) {
-
-            // Get the natural height of the element
-            var getHeight = function() {
-                elem.style.display = 'block'; // Make it visible
-                var height = elem.scrollHeight + 'px'; // Get it's height
-                elem.style.display = ''; //  Hide it again
-                return height;
-            };
-
-            var height = getHeight(); // Get the natural height
-            // elem.classList.add('show'); // Make the element visible
-            elem.parentNode.classList.add('show'); // Make the element visible
-            elem.style.height = height; // Update the max-height
-
-            // Once the transition is complete, remove the inline max-height so the content can scale responsively
-            window.setTimeout(function() {
-                elem.style.height = '';
-            }, 350);
-
-        };
-
-        // Hide an element
-        var hide = function(elem, chev) {
-
-            // Give the element a height to change from
-            elem.style.height = elem.scrollHeight + 'px';
-
-            // Set the height back to 0
-            window.setTimeout(function() {
-                elem.style.height = '0';
-            }, 1);
-
-            // When the transition is complete, hide it
-            window.setTimeout(function() {
-                elem.classList.remove('show');
-                elem.parentNode.classList.remove('show');
-            }, 350);
-
-        };
-
-        // Toggle element visibility
-        var toggle = function(elem, chev, timing) {
-
-            // If the element is visible, hide it
-            if (elem.parentNode.classList.contains('show')) {
-                hide(elem, chev);
-                return;
-            }
-
-            // Otherwise, show it
-            show(elem, chev);
-
-        };
 </script>
 
 {% if editable %}
@@ -453,7 +361,7 @@
         var formInvalid = {{ form.vars.valid ? '0' : '1' }};
     </script>
 
-    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>
+{#    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>#}
 {% endif %}
 {% endif %}
 
@@ -486,6 +394,7 @@
             width: 100%;
             min-height: 10px;
             border: none;
+            min-height: 50vh;
         }
     </style>
 {% endblock %}

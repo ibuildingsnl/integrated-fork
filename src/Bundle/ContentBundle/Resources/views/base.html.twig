@@ -50,8 +50,9 @@
     {% endblock style %}
 
 </head>
-{#{% dump(app.request.attributes.get('_route')) %}#}
-<body style="overflow: hidden;" class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
+{# {% dump(app.request.attributes.get('_route')) %} #}
+<body style="overflow: hidden;"
+      class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
 {% block form_theme %}
     {% if form is defined %}
         {% form_theme form with ['@IntegratedContent/form/form_div_layout.html.twig'] %}
@@ -68,7 +69,8 @@
 
                     <div class="new-contenttype hover">
                         <a href="#" class="btn btn-green"
-                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="fa-regular fa-plus"></i></a>
+                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
+                                class="fa-regular fa-plus"></i></a>
                         {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
                     </div>
                 {% endblock navbar_content_type %}
@@ -94,9 +96,11 @@
 <div id="wrapper-holder">
     {% block body %}
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-        <div class="sidebar">
-            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
-        </div>
+{#        {% block sidebar %}#}
+            <div class="sidebar">
+                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+            </div>
+{#        {% endblock sidebar %}#}
         <div class="content-wrapper">
 
             {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
@@ -104,9 +108,8 @@
                     {% if label == 'alert' %}
                         {% set label = 'warning' %}
                     {% endif %}
-                    <div class="relative px-3 py-3 mb-4 border rounded alert-{{ label }} ">
-                        <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" data-dismiss="alert">
-                            &times;
+                    <div class="alert alert-{{ label }} alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert"><i class="fa-regular fa-xmark"></i>
                         </button>
                         {{ message|trans }}
                     </div>
@@ -154,7 +157,8 @@
                 for (var i = 0; i < menu.children.length; i++) {
                     var menuClasses = menu.children[i];
                     var cList = menuClasses.classList;
-                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') || cList.contains('dropdown-menu-right')) {
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
+                        cList.contains('dropdown-menu-right')) {
                         menu.addEventListener('mouseenter', showDropDownBackGround, false);
                         menu.addEventListener('mouseleave', hideDropDownBackGround, false);
                     }
@@ -163,11 +167,11 @@
         });
     }
 
-    jQuery('.search-form .form-control').focus(function () {
+    jQuery('.search-form .form-control').focus(function() {
         showDropDownBackGround();
     });
 
-    jQuery(".search-form .form-control").blur(function () {
+    jQuery('.search-form .form-control').blur(function() {
         hideDropDownBackGround();
     });
 
@@ -186,6 +190,105 @@
     }
 
     document.addEventListener('DOMContentLoaded', initMenu);
+
+    function asideItemsSearch(el) {
+        // Declare variables
+
+        var input, filter, ul, li, a, i, txtValue;
+        input = el;
+        filter = input.value.toUpperCase();
+        ul = el.parentNode.parentNode.querySelector('.aside-item-list > ul.filters_list');
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName('label')[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
+    };
+
+    // JS
+    var filter = document.getElementsByClassName('aside-item-header');
+
+    for (var i = 0; i < filter.length; i++) {
+        filter[i].addEventListener('click', options, false);
+    };
+
+    function options(event) {
+        var options = this.parentNode.querySelector('.aside-item-list');
+        var chevUp = this.querySelector('.fa-chevron-down');
+        var chevDown = this.querySelector('.fa-chevron-up');
+        // Prevent default link behavior
+        event.preventDefault();
+
+        if (!options) return;
+
+        // Toggle the content
+        toggle(options, chevUp, chevDown);
+    };
+
+    // Show an element
+    var show = function(elem, chevUp, chevDown) {
+
+        // Get the natural height of the element
+        var getHeight = function() {
+            elem.style.display = 'block'; // Make it visible
+            var height = elem.scrollHeight + 'px'; // Get it's height
+            elem.style.display = ''; //  Hide it again
+            return height;
+        };
+
+        var height = getHeight(); // Get the natural height
+        // elem.classList.add('show'); // Make the element visible
+        elem.parentNode.classList.add('show'); // Make the element visible
+        chevUp.classList.add('fa-chevron-up'); // turn the chev
+        chevUp.classList.remove('fa-chevron-down'); // turn the chev
+        elem.style.height = height; // Update the max-height
+
+        // Once the transition is complete, remove the inline max-height so the content can scale responsively
+        window.setTimeout(function() {elem.style.height = '';}, 350);
+    };
+
+    // Hide an element
+    var hide = function(elem, chevUp, chevDown) {
+
+        // Give the element a height to change from
+        elem.style.height = elem.scrollHeight + 'px';
+
+        // Set the height back to 0
+        window.setTimeout(function() {
+            elem.style.height = '0';
+        }, 1);
+
+        chevDown.classList.remove('fa-chevron-up'); // turn the chev
+        chevDown.classList.add('fa-chevron-down'); // turn the chev
+
+        // When the transition is complete, hide it
+        window.setTimeout(function() {
+            elem.classList.remove('show');
+            elem.parentNode.classList.remove('show');
+        }, 350);
+
+    };
+
+    // Toggle element visibility
+    var toggle = function(elem, chevUp, chevDown, timing) {
+
+        // If the element is visible, hide it
+        if (elem.parentNode.classList.contains('show')) {
+            hide(elem, chevUp, chevDown);
+            return;
+        }
+
+        // Otherwise, show it
+        show(elem, chevUp, chevDown);
+
+    };
 </script>
 </body>
 </html>

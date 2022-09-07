@@ -1,8 +1,9 @@
 {% block integrated_file_dropzone_row %}
     {% apply spaceless %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
         <div class="form-group{% if not form.vars.valid %} has-error{% endif %}">
             {{ form_label(form) }}
-            <div class="w-full sm:w-2/3">
+            <div class="w-full {{ widget_col }}">
                 {% set changeInput %}
                     <div class="jFiler-input-inner dropzone-empty">
                         <div class="jFiler-input-icon">

@@ -6,7 +6,7 @@
     <services>
 
         <service id="Integrated\Bundle\FormTypeBundle\Twig\TailwindIconExtension">
-            <argument>glyphicon</argument>
+            <argument>fa</argument>
             <argument>span</argument>
 
             <tag name="twig.extension" />
