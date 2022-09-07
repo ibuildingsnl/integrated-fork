@@ -1,6 +1,8 @@
 /* ASIDE */
 .aside-holder {
 	margin-bottom: 20px;
+    padding-bottom: 50px;
+    background: white;
 	&:last-child {
 		margin-bottom: 0;
 	}
@@ -47,6 +49,9 @@
         justify-content: space-between;
         align-items: center;
         border-radius: 8px 8px 0 0;
+        > svg {
+            width: 13px;
+        }
         h3.aside-item-title {
             margin-bottom: 0;
             font-weight: 300;
@@ -56,6 +61,7 @@
                 color: #BDCCDE;
                 margin-right: 5px;
                 font-size: 20px;
+                width: 30px;
             }
         }
     }
@@ -101,6 +107,9 @@
         .checkbox {
             label {
                 font-weight: 300;
+                &.is-primary-channel {
+                    font-weight: 700;
+                }
             }
         }
     }
@@ -150,6 +159,7 @@
     height: calc(100vh - 110px);
     width:350px;
     border-left: 1px solid #dde2e8;
+    overflow: auto;
     .aside-item-wrapper {
         border-radius: 0;
         border:0;

@@ -166,7 +166,10 @@
         background-color: #fff;
         border-radius: 1rem;
         background-clip: padding-box;
-        outline: 0
+        outline: 0;
+        min-width: 50vw;
+        min-height: 50vh;
+        overflow: auto;
     }
 
     .modal-title {
