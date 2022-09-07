@@ -3,6 +3,7 @@
     <tr>
         <th>{% trans %}Name{% endtrans %}</th>
         <th>{% trans %}Type{% endtrans %}</th>
+        <th>{% trans %}Location{% endtrans %}</th>
         <th>{% trans %}Created{% endtrans %}</th>
     </tr>
     </thead>
@@ -23,6 +24,9 @@
             </td>
             <td>
                 {{ document.type }}
+            </td>
+            <td>
+                {{ document.location }}
             </td>
             <td>
                 {{ document.createdAt|date }}
