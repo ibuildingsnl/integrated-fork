@@ -224,15 +224,21 @@
 
     &.btn-select {
         background: #fff;
-        border-width: 1px;
         font-size: 13px;
         border-color: #DDE2E8;
         color: #515865;
         height: 34px;
         line-height: 34px;
     }
+    &.btn-dropdown {
+        background: #fff;
+        font-size: 13px;
+        border:none;
+        color: #01ae93;
+        height: 34px;
+        line-height: 34px;
+    }
     &.btn-create-new {
-        border-width: 1px;
         font-size: 13px;
         padding: 0 1rem;
         height: 30px;

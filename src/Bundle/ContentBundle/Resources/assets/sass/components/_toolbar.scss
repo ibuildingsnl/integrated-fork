@@ -1,0 +1,26 @@
+#toolbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: white;
+    height: 50px;
+    position: absolute;
+    top: 0;
+
+    .options {
+        display: flex;
+        .convert, .preview, .form-actions {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .preview {
+            padding: 9px;
+            align-items: unset;
+        }
+    }
+
+    a {
+        color:$green;
+    }
+}

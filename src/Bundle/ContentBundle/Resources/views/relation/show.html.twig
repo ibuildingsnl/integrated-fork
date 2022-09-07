@@ -18,7 +18,7 @@
             <div class="page-title">
                 <h1 class="heading">{% trans %}Show{% endtrans %} {{ relation.name }}</h1>
             </div>
-            <section class="section-white section-padding section-radius">
+            <section class="section-white section-radius">
                 <dl class="dl-horizontal">
                     <dt>
                         {% trans %}Name{% endtrans %}
@@ -59,6 +59,12 @@
                         </ul>
                     </dd>
                     <dt>
+                        {% trans %}Location{% endtrans %}
+                    </dt>
+                    <dd>
+                        {{ relation.location }}
+                    </dd>
+                    <dt>
                         {% trans %}Multiple{% endtrans %}
                     </dt>
                     <dd>
@@ -81,6 +87,9 @@
                 </dl>
                 <a class="pull-left btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_relation_edit', {'id': relation.id}) }}">
                     {% trans %}Edit{% endtrans %}
+                </a>
+                <a class="btn-danger btn btn-primary" href="{{ path('integrated_content_relation_delete', {'id': relation.id}) }}">
+                    {% trans %}Delete{% endtrans %}
                 </a>
                 {{ form(form, { 'style': 'inline' }) }}
             </section>

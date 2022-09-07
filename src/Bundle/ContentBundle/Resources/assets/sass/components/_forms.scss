@@ -2,7 +2,7 @@
 .form-control {
     border: 1px solid #d1d1d1;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
     padding: 1rem;
     width: 100%;
 	box-shadow: none;
@@ -23,6 +23,7 @@
 }
 
 .form-group {
+    position: relative;
 	&:last-child {
 		margin-bottom: 0;
 	}
@@ -331,7 +332,11 @@ label {
     }
 }
 
-
+.content-form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
 
 
 
