@@ -88,8 +88,8 @@
             <tag name="form.type" />
         </service>
 
-        <service id="Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType">
-            <tag name="form.type" alias="bootstrap_collection" />
+        <service id="Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType">
+            <tag name="form.type" alias="tailwind_collection" />
         </service>
 
         <service id="Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType">

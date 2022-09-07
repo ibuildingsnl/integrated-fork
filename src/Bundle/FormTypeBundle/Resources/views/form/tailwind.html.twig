@@ -16,11 +16,8 @@
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
 
-        {% set showlabel = showlabel|default(tailwind_get_show_label()) %}
-        {% set showplaceholder = showplaceholder|default(tailwind_get_show_placeholder()) %}
-
-{#        {% debug(showlabel) %}#}
-{#        {% debug(showplaceholder) %}#}
+        {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
 
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
@@ -32,15 +29,13 @@
             {% set style = attr.style %}
         {% endif %}
 
-        {%  dump(showplaceholder) %}
-
         {% if simple_col is defined and simple_col %}
             <div class="w-full {{ simple_col }}">
         {% endif %}
 
         {% set type = type|default('text') %}
 
-        {% if style == 'inline' and (attr.placeholder is not defined or attr.placeholder is empty)  and label is not same as (false) %}
+        {% if (style == 'inline' and (attr.placeholder is not defined or attr.placeholder is empty) and label is not same as (false)) or (show_placeholder is not same as (false)) %}
             {% if label is empty %}
                 {% set attr = attr|merge({ 'placeholder': name|humanize }) %}
             {% else %}
@@ -52,7 +47,8 @@
             <p id="{{ id }}" {%- for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ value }}</p>
         {%- else -%}
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
-            <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
+            <input
+                type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
         {%- endif %}
         {% if simple_col is defined %}
             </div>
@@ -81,7 +77,7 @@
     {% endapply %}
 {% endblock collection_widget %}
 
-{% block tailwind_collection_widget %}
+{% block bootstrap_collection_widget %}
     {% apply spaceless %}
         {% set delete_button_text = form.vars.delete_button_text %}
         {% set add_button_text = form.vars.add_button_text %}
@@ -114,7 +110,9 @@
                             </div>
                             {% if form.vars.allow_delete %}
                                 <div class="w-full {{ form.vars.button_col }}">
-                                    <a href="#" class="{{ form.vars.delete_button_class }}" data-removefield="collection" data-field="{{ field.vars.id }}">{{ delete_button_text|parse_icons|raw }}</a>
+                                    <a href="#" class="{{ form.vars.delete_button_class }}"
+                                       data-removefield="collection"
+                                       data-field="{{ field.vars.id }}">{{ delete_button_text|parse_icons|raw }}</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -122,11 +120,13 @@
                 {% endfor %}
             </ul>
             {% if form.vars.allow_add %}
-                <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
+                <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection"
+                   data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
             {% endif %}
         </div>
     {% endapply %}
-{% endblock tailwind_collection_widget %}
+{% endblock bootstrap_collection_widget %}
 
 {% block textarea_widget %}
     {% apply spaceless %}
@@ -150,7 +150,6 @@
 
 {% block file_widget %}
     {% apply spaceless %}
-
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
         {% endif  %}
@@ -197,7 +196,8 @@
 
         <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
             {% if placeholder is not none %}
-                <option {% if required %} disabled="disabled"{% if value is empty %} selected="selected"{% endif %}{% endif %} value="">{{ placeholder|trans({}, translation_domain) }}</option>
+                <option {% if required %} disabled="disabled"{% if value is empty %} selected="selected"{% endif %}{% endif %}
+                    value="">{{ placeholder|trans({}, translation_domain) }}</option>
             {% endif %}
             {% if preferred_choices|length > 0 %}
                 {% set options = preferred_choices %}
@@ -216,7 +216,8 @@
     {% apply spaceless %}
         {% for group_label, choice in options %}
             {% if choice is iterable %}
-                <optgroup label="{{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? group_label : group_label|trans({}, choice_translation_domain)) : group_label|trans({}, translation_domain) }}">
+                <optgroup
+                    label="{{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? group_label : group_label|trans({}, choice_translation_domain)) : group_label|trans({}, translation_domain) }}">
                     {% set options = choice %}
                     {{ block('choice_widget_options') }}
                 </optgroup>
@@ -258,7 +259,7 @@
             <div class="form-group{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
 
-        {%set checkboxdata %}
+        {% set checkboxdata %}
             {% if label is not same as (false) %}
                 {% if not compound %}
                     {% set label_attr = label_attr|merge({'for': id}) %}
@@ -284,7 +285,7 @@
 
         {% if inline is defined and inline %}
             {{ checkboxdata|raw }}
-        {% else%}
+        {% else %}
             <div class="checkbox">{{ checkboxdata|raw }}</div>
         {% endif %}
 
@@ -297,7 +298,7 @@
             </div>
         {% endif %}
 
-        {% if style == 'inline' %}&nbsp;{% endif %}
+        {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
     {% endapply %}
 {% endblock checkbox_row %}
 
@@ -322,7 +323,7 @@
             <div class="form-group{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
 
-        {%set radiodata %}
+        {% set radiodata %}
             {% if label is not same as (false) %}
                 {% if not compound %}
                     {% set label_attr = label_attr|merge({'for': id}) %}
@@ -348,7 +349,7 @@
 
         {% if inline is defined and inline %}
             {{ radiodata|raw }}
-        {% else%}
+        {% else %}
             <div class="radio">{{ radiodata|raw }}</div>
         {% endif %}
 
@@ -365,13 +366,15 @@
 
 {% block checkbox_widget %}
     {% apply spaceless %}
-        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        <input
+            type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
     {% endapply %}
 {% endblock checkbox_widget %}
 
 {% block radio_widget %}
     {% apply spaceless %}
-        <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        <input
+            type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
     {% endapply %}
 {% endblock radio_widget %}
 
@@ -512,7 +515,8 @@
         {% if as_link is defined and as_link == true %}
             <a {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif -%}{{ label }}</a>
         {% else %}
-            <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}{{ label }}</button>
+            <button
+                type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}{{ label }}</button>
         {% endif %}
     {% endapply %}
 {% endblock button_widget %}
@@ -534,7 +538,7 @@
 {% block form_actions_widget %}
     {% for button in form.children %}
         {{ form_widget(button) }}&nbsp; {# this needs to be here due to https://github.com/twbs/tailwind/issues/3245 #}
-    {% endfor  %}
+    {% endfor %}
 {% endblock %}
 
 {% block bs_static_widget %}
@@ -554,6 +558,7 @@
             {% set widget_col = attr.widget_col %}
         {% endif %}
 
+        {#        {% if label is not same as (false) and show_label is not same as (false) %} #}
         {% if label is not same as (false) %}
             {% set style = style|default(tailwind_get_style()) %}
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
@@ -619,24 +624,49 @@
 
         {% set label_col = label_col|default(tailwind_get_label_col()) %}
         {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
 
-        <div class="form-group{% if form.vars.errors|length > 0 %} has-error{% endif %} flex flex-wrap">
+        <div
+            class="{% if style == 'sidebar' %}aside-item-wrapper{% else %}flex flex-wrap form-group{% endif %}{% if form.vars.errors|length > 0 %} has-error show{% endif %}">
             {% if style == 'horizontal' %}
-                {{ form_label(form) }}
+                {% if show_label != false %}
+                    {{ form_label(form) }}
+                {% endif %}
                 <div class="w-full {{ widget_col }}">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
                 </div>
+            {% elseif style == 'sidebar' %}
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        <i class="fa-regular fa-clock"></i>
+                        <span class="aside-item-icon">
+                                {{ form_label(form) }}
+                            </span>
+                    </h3>
+                    <i class="fa-regular fa-chevron-up"></i>
+                </div>
+                <div class="aside-item-list">
+                    <div class="aside-item-list-container">
+                        <div class="input-group relative flex items-stretch w-full">
+                            {{ block('form_input_group') }}
+                            {{ block('form_help') }}
+                            {{ form_errors(form) }}
+                        </div>
+                    </div>
+                </div>
             {% else %}
-                {{ form_label(form) }}
+                {% if show_label != false %}
+                    {{ form_label(form) }}
+                {% endif %}
                 {{ block('form_input_group') }}
                 {{ block('form_help') }}
                 {{ form_errors(form) }}
             {% endif %}
         </div>
 
-        {% if style == 'inline' %}&nbsp;{% endif %}
+        {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
     {% endapply %}
 {% endblock form_row %}
 
@@ -650,10 +680,10 @@
             {% set ig_size_class = '' %}
             {% if input_group.size is defined and input_group.size == 'large' %}
                 {% set ig_size_class = ' input-group-lg' %}
-            {% endif  %}
+            {% endif %}
             {% if input_group.size is defined and input_group.size == 'small' %}
                 {% set ig_size_class = ' input-group-sm' %}
-            {% endif  %}
+            {% endif %}
             <div class="input-group{{ ig_size_class }}">
                 {% if input_group.prepend is defined and input_group.prepend is not empty %}
                     <span class="input-group-addon">{{ input_group.prepend|raw|parse_icons }}</span>
@@ -723,7 +753,7 @@
 {% endblock hidden_row %}
 
 {% block form_actions_row %}
-    {{ block('button_row')  }}
+    {{ block('button_row') }}
 {% endblock %}
 
 {# Misc #}
@@ -762,18 +792,26 @@
         {% if label_col is defined %}
             {{ tailwind_set_label_col(label_col) }}
         {% endif %}
+        {% if show_label is defined %}
+            {{ tailwind_set_show_label(show_label) }}
+        {% endif %}
 
         {% if simple_col is defined %}
             {{ tailwind_set_simple_col(simple_col) }}
+        {% endif %}
+
+        {% if show_placeholder is defined %}
+            {{ tailwind_set_show_placeholder(show_placeholder) }}
         {% endif %}
 
         {% if attr.role is not defined or attr.role is empty %}
             {% set attr = attr|merge({ 'role': 'form' }) %}
         {% endif %}
 
-        <form  name="{{ form.vars.name }}" method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
+        <form  name="{{ form.vars.name }}"
+               method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
         {% if form_method != method %}
-            <input type="hidden" name="_method" value="{{ method }}" />
+            <input type="hidden" name="_method" value="{{ method }}"/>
         {% endif %}
     {% endapply %}
 {% endblock form_start %}
@@ -787,14 +825,20 @@
         {% if tailwind_get_style() %}
             {{ tailwind_set_style('') }}
         {% endif %}
-        {% if tailwind_get_widget_col() %}
-            {{ tailwind_set_widget_col(10) }}
-        {% endif %}
         {% if tailwind_get_label_col() %}
-            {{ tailwind_set_label_col(2) }}
+            {{ tailwind_set_label_col('sm:w-2/12 2xl:w-1/12') }}
+        {% endif %}
+        {% if tailwind_get_widget_col() %}
+            {{ tailwind_set_widget_col('sm:w-10/12 2xl:w-11/12') }}
+        {% endif %}
+        {% if tailwind_get_show_placeholder() %}
+            {{ tailwind_set_show_placeholder(true) }}
         {% endif %}
         {% if tailwind_get_simple_col() %}
             {{ tailwind_set_simple_col(false) }}
+        {% endif %}
+        {% if tailwind_get_show_label() %}
+            {{ tailwind_set_show_label(true) }}
         {% endif %}
         {{ tailwind_restore_form_settings() }}
     {% endapply %}
@@ -842,6 +886,7 @@
     {% apply spaceless %}
         {% for child in form %}
             {% if not child.rendered %}
+                {% dump(child) %}
                 {{ form_row(child) }}
             {% endif %}
         {% endfor %}
@@ -860,8 +905,15 @@
             {% if attr.label_col is defined %}
                 {% set childAttr = childAttr|merge({ 'label_col': attr.label_col }) %}
             {% endif %}
+            {% if attr.show_placeholder is defined %}
+                {% set childAttr = childAttr|merge({ 'show_placeholder': attr.show_placeholder }) %}
+            {% endif %}
+
             {% if attr.simple_col is defined %}
                 {% set childAttr = childAttr|merge({ 'simple_col': attr.simple_col }) %}
+            {% endif %}
+            {% if attr.show_label is defined %}
+                {% set childAttr = childAttr|merge({ 'show_label': attr.show_label }) %}
             {% endif %}
             {% if attr.style is defined %}
                 {% set childAttr = childAttr|merge({ 'style': attr.style }) %}
