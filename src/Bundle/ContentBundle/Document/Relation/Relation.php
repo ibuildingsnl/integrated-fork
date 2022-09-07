@@ -42,7 +42,7 @@ class Relation implements RelationInterface
 
     /**
      * @var string
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
     protected $type;
 
@@ -57,6 +57,12 @@ class Relation implements RelationInterface
      * @Assert\NotBlank()
      */
     protected $targets;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     */
+    protected $location;
 
     /**
      * @var bool
@@ -119,6 +125,27 @@ class Relation implements RelationInterface
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Used to identify the location on which we need to show this field on the editor page.
+     * {@inheritdoc}
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
 
         return $this;
     }

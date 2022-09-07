@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -29,8 +30,25 @@ class RelationType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('type')
             ->add(
+                'type',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'Embedded' => 'embedded',
+                        'Cover' => 'cover',
+                        'Taxonomy' => 'taxonomy',
+                        'Category' => 'category',
+                        'Edition' => 'edition',
+                        'Commercial' => 'commercial',
+                        'Parent' => 'parent',
+                        'Subscriptiontypes' => 'subscriptiontypes',
+                        'Author' => 'author',
+                        'File' => 'file',
+                        'Slider' => 'slider',
+                    ]
+                ]
+            )->add(
                 'sources',
                 DocumentType::class,
                 [
@@ -47,6 +65,15 @@ class RelationType extends AbstractType
                     'choice_label' => 'name',
                     'multiple' => true,
                     'required' => false,
+                ]
+            )->add(
+                'location',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'Sidebar' => 'sidebar',
+                        'Editor' => 'editor',
+                    ]
                 ]
             )->add(
                 'multiple',
@@ -76,8 +103,8 @@ class RelationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
-        ]);
+                                   'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
+                               ]);
     }
 
     /**
