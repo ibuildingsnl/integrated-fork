@@ -1135,7 +1135,7 @@ class ContentController extends AbstractController
             // Removed cancel button which will be added by default as a back button
         }
 
-        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+        return $form->add('actions', ActionsType::class, ['buttons' => ['save']]);
     }
 
     /**
