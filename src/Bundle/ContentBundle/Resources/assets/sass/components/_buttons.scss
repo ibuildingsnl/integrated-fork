@@ -276,4 +276,13 @@
             border-color: darken($green, 20%);
         }
     }
+    &.btn-white {
+        background-color: white;
+        border-color: $border-color;
+        color: #637281;
+        &:hover, &:focus {
+            color: #637281;
+            background-color: $border-color;
+        }
+    }
 }

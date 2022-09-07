@@ -318,13 +318,13 @@ label {
     }
     /* On mouse-over, add a grey background color */
     &:hover input ~ .checkmark {
-        background-color: #515864;
-        border-color: #515864;
+        background-color: #00B2EE;
+        border-color: #00B2EE;
     }
     /* When the checkbox is checked, add a blue background */
     input:checked ~ .checkmark {
-        background-color: #515864;
-        border-color: #515864;
+        background-color: #00B2EE;
+        border-color: #00B2EE;
     }
     /* Show the checkmark when checked */
     input:checked ~ .checkmark:after {
