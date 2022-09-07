@@ -1131,11 +1131,11 @@ class ContentController extends AbstractController
         }
 
         if ($locking['locked']) {
-            return $form->add('actions', ActionsType::class, ['buttons' => ['reload']]);
+            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'back']]);
             // Removed cancel button which will be added by default as a back button
         }
 
-        return $form->add('actions', ActionsType::class, ['buttons' => ['save']]);
+        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'back']]);
     }
 
     /**

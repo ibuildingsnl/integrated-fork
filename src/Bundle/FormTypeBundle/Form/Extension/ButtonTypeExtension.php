@@ -26,16 +26,18 @@ class ButtonTypeExtension extends AbstractTypeExtension
     {
         $view->vars['button_class'] = $form->getConfig()->getOption('button_class');
         $view->vars['as_link'] = $form->getConfig()->getOption('as_link');
+        $view->vars['icon'] = $form->getConfig()->getOption('icon');
     }
 
     /**
      * Add the button_class option
      * Add the as_link option
+     * Add the icon option
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefined(['button_class', 'as_link']);
+        $resolver->setDefined(['button_class', 'as_link', 'icon']);
     }
 
     /**
