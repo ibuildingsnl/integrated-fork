@@ -75,6 +75,7 @@ class RelationType extends AbstractType
                         'Editor' => 'editor',
                     ]
                 ]
+            )->add('icon'
             )->add(
                 'multiple',
                 null,
