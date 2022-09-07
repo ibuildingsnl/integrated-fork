@@ -35,6 +35,12 @@ class TailwindFormExtension extends AbstractExtension
     /** @var int */
     private $simpleCol = false;
 
+    /** @var string */
+    private $icon = '';
+
+    /** @var string */
+    private $state = '';
+
     /** @var bool */
     private $showPlaceholder = true;
 
@@ -58,6 +64,10 @@ class TailwindFormExtension extends AbstractExtension
             //NEW FUNCTIONS
             new TwigFunction('tailwind_set_show_label', [$this, 'setShowLabel']),
             new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
+            new TwigFunction('tailwind_set_icon', [$this, 'setIcon']),
+            new TwigFunction('tailwind_get_icon', [$this, 'getIcon']),
+            new TwigFunction('tailwind_set_state', [$this, 'setState']),
+            new TwigFunction('tailwind_get_state', [$this, 'getState']),
             new TwigFunction('tailwind_set_show_placeholder', [$this, 'setShowPlaceholder']),
             new TwigFunction('tailwind_get_show_placeholder', [$this, 'getShowPlaceholder']),
             new TwigFunction('tailwind_backup_form_settings', [$this, 'backupFormSettings']),
@@ -174,6 +184,47 @@ class TailwindFormExtension extends AbstractExtension
     }
 
     /**
+     * Sets the value of Icon
+     *
+     * @param string $icon
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+    }
+
+    /**
+     * Returns the value of Icon.
+     *
+     * @param bool $icon true or false
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * Sets the value of State to open or close settings by default
+     *
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * Returns the value of State.
+     *
+     * @param bool $state true or false
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+
+    /**
      * Sets the value of Placeholders to true or false.
      *
      * @param bool $showPlaceholder true or false
@@ -193,7 +244,7 @@ class TailwindFormExtension extends AbstractExtension
         return $this->showPlaceholder;
     }
 
-        /**
+    /**
      * Sets the number of columns of simple widgets.
      *
      * @param int $simpleCol number of columns
@@ -228,6 +279,8 @@ class TailwindFormExtension extends AbstractExtension
             'widgetCol' => $this->widgetCol,
             'labelCol' => $this->labelCol,
             'simpleCol' => $this->simpleCol,
+            'icon' => $this->icon,
+            'state' => $this->state,
             'showLabel' => $this->showLabel,
             'showPlaceholder' => $this->showPlaceholder,
         ];
@@ -252,6 +305,8 @@ class TailwindFormExtension extends AbstractExtension
         $this->style = $settings['style'];
         $this->widgetCol = $settings['widgetCol'];
         $this->labelCol = $settings['labelCol'];
+        $this->icon = $settings['icon'];
+        $this->state = $settings['state'];
         $this->simpleCol = $settings['simpleCol'];
         $this->showLabel = $settings['showLabel'];
         $this->showPlaceholder = $settings['showPlaceholder'];
