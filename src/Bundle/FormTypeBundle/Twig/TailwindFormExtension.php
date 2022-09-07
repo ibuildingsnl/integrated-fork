@@ -29,14 +29,14 @@ class TailwindFormExtension extends AbstractExtension
     /** @var int */
     private $labelCol = 'sm:w-2/12 2xl:w-1/12';
 
-    /** @var boolean */
+    /** @var bool */
     private $showLabel = true;
-
-    /** @var boolean */
-    private $showPlaceholder = true;
 
     /** @var int */
     private $simpleCol = false;
+
+    /** @var bool */
+    private $showPlaceholder = true;
 
     /** @var array */
     private $settingsStack = [];
@@ -60,7 +60,6 @@ class TailwindFormExtension extends AbstractExtension
             new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
             new TwigFunction('tailwind_set_show_placeholder', [$this, 'setShowPlaceholder']),
             new TwigFunction('tailwind_get_show_placeholder', [$this, 'getShowPlaceholder']),
-            //TODO: FINISH THIS
             new TwigFunction('tailwind_backup_form_settings', [$this, 'backupFormSettings']),
             new TwigFunction('tailwind_restore_form_settings', [$this, 'restoreFormSettings']),
             new TwigFunction(
@@ -91,7 +90,7 @@ class TailwindFormExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'twindigital_tailwind_form';
+        return 'braincrafted_tailwind_form';
     }
 
     /**
@@ -194,8 +193,7 @@ class TailwindFormExtension extends AbstractExtension
         return $this->showPlaceholder;
     }
 
-
-    /**
+        /**
      * Sets the number of columns of simple widgets.
      *
      * @param int $simpleCol number of columns
@@ -214,6 +212,7 @@ class TailwindFormExtension extends AbstractExtension
     {
         return $this->simpleCol;
     }
+
 
     /**
      * Backup the form settings to the stack.
@@ -250,7 +249,6 @@ class TailwindFormExtension extends AbstractExtension
         }
 
         $settings = array_pop($this->settingsStack);
-
         $this->style = $settings['style'];
         $this->widgetCol = $settings['widgetCol'];
         $this->labelCol = $settings['labelCol'];
