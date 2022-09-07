@@ -20,9 +20,6 @@
                 {% if attr.widget_col is defined and attr.widget_col is not empty %}
                     {% set widget_col = attr.widget_col %}
                 {% endif %}
-                {% if attr.responsive_size is defined and attr.responsive_size is not empty %}
-                    {% set responsive_size = attr.responsive_size %}
-                {% endif %}
 
                 {% set label_col = label_col|default(tailwind_get_label_col()) %}
                 {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
