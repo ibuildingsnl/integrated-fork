@@ -5,12 +5,20 @@
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <!--- Op deze pagina wordt alle content getoond-->
-    <route id="integrated_content_media_index" path="/" methods="GET, POST">
+    <route id="integrated_content_media_index" path="/" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index</default>
     </route>
 
-    <route id="integrated_content_media_show" path="/show" methods="GET, POST">
+    <route id="integrated_content_media_show" path="/show/{id}" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::show</default>
+    </route>
+
+    <route id="integrated_content_media_edit" path="/edit/{id}" methods="GET">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::edit</default>
+    </route>
+
+    <route id="integrated_content_media_save" path="/edit" methods="POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::save</default>
     </route>
 
 </routes>

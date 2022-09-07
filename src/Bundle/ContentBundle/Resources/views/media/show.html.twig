@@ -1,9 +1,23 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% block content %}
+
 <div class="breadcrumb-holder">
     <div class="container">
-        <h1> hi there</h1>
-        {% for media in items %}
-            {{ media.title|default('geen title') }}
-        {% endfor %}
+        <h1>Show</h1>
+        <div>id given {{ id }}</div>
+        <h3>Todo:</h3>
+        <ol>
+            <li>Show image, show properties, link to edit mode</li>
+            <li>Right menu: Edit properties</li>
+            <li>Delete</li>
+            <li>Later:</li>
+            <li>Save as new image, copy</li>
+            <li>remove image</li>
+        </ol>
 
+        <a href="../edit/{{ id }}">Edit image</a>
     </div>
 </div>
+
+{% endblock %}
