@@ -19,6 +19,8 @@
 
         {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
 
+        {% set state = state|default(tailwind_get_state()) %}
+
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
         {% endif %}
