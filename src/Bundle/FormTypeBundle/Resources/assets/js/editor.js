@@ -24,7 +24,6 @@ import 'tinymce/plugins/paste';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/code';
-
 $('.integrated_tinymce').each(function(key, elem){
     let element = $(elem);
 
@@ -55,7 +54,7 @@ $('.integrated_tinymce').each(function(key, elem){
         },
         add_unload_trigger: false,
         schema: "html5",
-        menubar: false,
+        menubar: true,
         toolbar: "styleselect | bold italic underline | bullist numlist | link integratedImage integratedVideo integratedColumn image media print preview fullpage table | charmap pagebreak | pastetext searchreplace | code fullscreen",
         statusbar: true,
         statusbar_size: "small",
@@ -75,3 +74,4 @@ $('.integrated_tinymce').each(function(key, elem){
         style_formats: style_formats
     });
 });
+
