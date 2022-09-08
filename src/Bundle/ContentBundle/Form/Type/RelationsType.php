@@ -76,6 +76,8 @@ class RelationsType extends AbstractType
                 'data-title' => $relation->getName(),
                 'data-relation' => $relation->getId(),
                 'data-multiple' => $relation->isMultiple(),
+                'data-icon' => $relation->getIcon(),
+                'data-location' => $relation->getLocation(),
                 'data-types' => json_encode($contentTypes),
                 ],
                 'constraints' => $constraints,
