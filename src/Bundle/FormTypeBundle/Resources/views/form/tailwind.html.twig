@@ -19,6 +19,8 @@
         {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
         {% set show_label = show_label|default(tailwind_get_show_label()) %}
 
+        {% set state = state|default(tailwind_get_state()) %}
+
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
         {% endif %}
@@ -47,8 +49,9 @@
             <p id="{{ id }}" {%- for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ value }}</p>
         {%- else -%}
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
-            <input
-                type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
+            <{% if state == 'title_tinymce' %}textarea {% else %}input {% endif %}
+                type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}
+                value="{{ value }}" {% endif %}>{% if state == 'title_tinymce' %}{{ value }}</textarea>{% endif %}
         {%- endif %}
         {% if simple_col is defined %}
             </div>
