@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type\Job;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -39,7 +39,7 @@ class ContactPersonsType extends AbstractType
      */
     public function getParent()
     {
-        return BootstrapCollectionType::class;
+        return TailwindCollectionType::class;
     }
 
     /**

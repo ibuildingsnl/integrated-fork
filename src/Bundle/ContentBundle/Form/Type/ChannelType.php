@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -43,7 +43,7 @@ class ChannelType extends AbstractType
         $builder->add('logo', ImageDropzoneType::class);
         $builder->add('color', ColorType::class, ['required' => false]);
 
-        $builder->add('domains', BootstrapCollectionType::class, [
+        $builder->add('domains', TailwindCollectionType::class, [
             'label' => 'Domains (example.com)',
             'allow_add' => true,
             'allow_delete' => true,

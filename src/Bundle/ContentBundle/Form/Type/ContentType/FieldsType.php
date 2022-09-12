@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\Form\AbstractType;
@@ -42,13 +42,13 @@ class FieldsType extends AbstractType
 
         $builder->add(
             'custom',
-            BootstrapCollectionType::class,
+            TailwindCollectionType::class,
             [
                 'label' => false,
                 'entry_type' => Fields\CustomType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'add_button_text' => 'Add  custom field',
+                'add_button_text' => 'Add custom field',
                 'delete_button_text' => 'Delete field',
                 'sub_widget_col' => 9,
                 'button_col' => 3,
