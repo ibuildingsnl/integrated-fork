@@ -48,7 +48,8 @@ abstract class Relation extends Content implements RankableInterface
      *      options={
      *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType",
      *          "allow_add"=true,
-     *          "allow_delete"=true
+     *          "allow_delete"=true,
+     *          "add_button_text"="Add Phonenumber"
      *      }
      * )
      */
@@ -68,7 +69,8 @@ abstract class Relation extends Content implements RankableInterface
      *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\AddressType",
      *          "default_title"="New address",
      *          "allow_add"=true,
-     *          "allow_delete"=true
+     *          "allow_delete"=true,
+     *          "add_button_text"="Add Address"
      *      }
      * )
      */
@@ -83,6 +85,30 @@ abstract class Relation extends Content implements RankableInterface
 
         $this->phonenumbers = new ArrayCollection();
         $this->addresses = new ArrayCollection();
+    }
+
+    /**
+     * Get the content of the document.
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set the content of the document.
+     *
+     * @param string $content
+     *
+     * @return $this
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
     }
 
     /**
