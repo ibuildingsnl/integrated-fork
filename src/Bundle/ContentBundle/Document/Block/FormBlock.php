@@ -76,7 +76,7 @@ class FormBlock extends Block
      *     @Assert\Email
      * })
      * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType",
+     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType",
      *      options={
      *          "label"="Sent form to e-mail address(es)",
      *          "type"="email",
