@@ -298,25 +298,26 @@
     </div>
     <script>
 
-        function asideItemsSearch(el) {
-            // Declare variables
+        document.addEventListener('DOMContentLoaded', function() {
+            var filterElements = document.getElementsByClassName('aside-item-list');
 
-            var input, filter, ul, li, a, i, txtValue;
-            input = el;
-            filter = input.value.toUpperCase();
-            ul = el.parentNode.parentNode.querySelector('.aside-item-list > ul.filters_list');
-            li = ul.getElementsByTagName('li');
+            for (var ii = 0; ii < filterElements.length; ii++) {
+                openSelectedOptions(filterElements[ii]);
+            }
 
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName('label')[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = '';
-                } else {
-                    li[i].style.display = 'none';
+            function openSelectedOptions(elem) {
+                var textinputs = elem.querySelectorAll('input[type=checkbox]');
+                console.log(elem);
+                var chevUp = this.querySelector('.fa-chevron-down');
+                var chevDown = this.querySelector('.fa-chevron-up');
+                var empty = [].filter.call(textinputs, function(elem) {
+                    return !elem.checked;
+                });
+                if (textinputs.length != empty.length) {
+                    show(elem, chevUp, chevDown);
                 }
             }
-        }
+        });
+
     </script>
 {% endblock %}
