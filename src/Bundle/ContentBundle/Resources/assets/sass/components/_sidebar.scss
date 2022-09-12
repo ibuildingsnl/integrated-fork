@@ -12,6 +12,7 @@
         background-color: $sidebar-green;
         width: 250px;
         height: calc(100vh - 50px);
+        flex-shrink: 0;
         ul.sidebar-menu {
             padding:2rem;
             a {

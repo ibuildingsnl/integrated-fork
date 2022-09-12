@@ -5,3 +5,61 @@
 .mce-tinymce.mce-container.mce-panel {
 	border-color: $color-silver;
 }
+
+.mce-tinymce {
+    //max-height: calc(100vh - 200px);
+    //overflow: hidden;
+    border: 0 !important;
+}
+
+body {
+    .mce-panel {
+        background-color: #ffffff;
+        border: 0 !important;
+    }
+    .mce-menubar {
+        border: 1px solid #dde2e8;
+    }
+    .mce-tinymce.mce-container.mce-panel {
+        border-color: #dde2e8;
+    }
+    .mce-btn {
+        background-color: #fff;
+    }
+    div.mce-edit-area {
+        background: #fff;
+        filter: none;
+        padding-top: 110px;
+        //max-height: calc(100vh - 350px);
+        //overflow: auto;
+    }
+    div.mce-edit-area iframe {
+        //max-width: 768px;
+        //margin: 0 auto;
+        position: relative;
+    }
+    .mce-menubar {
+        position: sticky;
+        width: 100%;
+        background-color: white;
+        top: 0;
+        z-index: 9;
+        padding-left: 23px;
+    }
+
+    .mce-toolbar-grp {
+        position: sticky;
+        width: 100%;
+        top: 35px;
+        z-index: 9;
+        padding-left: 23px;
+        border-bottom: 1px solid #dee2e8 !important;
+        border-radius: 0;
+    }
+}
+
+.mce-fullscreen {
+    div.mce-edit-area {
+        padding-top:50px !important;
+    }
+}

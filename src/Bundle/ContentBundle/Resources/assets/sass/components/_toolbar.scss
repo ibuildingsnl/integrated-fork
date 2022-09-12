@@ -6,26 +6,30 @@
     height: 50px;
     position: absolute;
     top: 0;
+    border-bottom: 1px solid #dee2e8;
 
     .options {
         display: flex;
+
         .convert, .preview, .form-actions {
             display: flex;
             align-items: center;
             margin-right: 20px;
         }
+
         .preview {
             padding: 9px;
             align-items: unset;
         }
     }
+
     .back {
-            align-items: center;
-            display: flex;
-            margin-left: 38px;
+        align-items: center;
+        display: flex;
+        margin-left: 33px;
     }
 
     a {
-        color:$green;
+        color: $green;
     }
 }
