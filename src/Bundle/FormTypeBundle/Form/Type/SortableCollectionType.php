@@ -49,7 +49,7 @@ class SortableCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return BootstrapCollectionType::class;
+        return TailwindCollectionType::class;
     }
 
     /**
