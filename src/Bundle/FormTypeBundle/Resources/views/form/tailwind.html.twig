@@ -26,7 +26,7 @@
         {% endif %}
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
-        {% endif  %}
+        {% endif %}
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
@@ -49,9 +49,9 @@
             <p id="{{ id }}" {%- for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ value }}</p>
         {%- else -%}
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
-            <{% if state == 'title_tinymce' %}textarea {% else %}input {% endif %}
-                type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}
-                value="{{ value }}" {% endif %}>{% if state == 'title_tinymce' %}{{ value }}</textarea>{% endif %}
+            <{% if state == 'title_tinymce' %}textarea class="title_tinymce_input form-control"{% else %}input {% endif %}
+            type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}
+            value="{{ value }}" {% endif %}>{% if state == 'title_tinymce' %}{{ value }}</textarea>{% endif %}
         {%- endif %}
         {% if simple_col is defined %}
             </div>
@@ -61,7 +61,7 @@
 
 {% block form_widget_compound %}
     {% apply spaceless %}
-        <div {{ block('widget_container_attributes') }}>
+        <div {{ block('widget_container_attributes') }} class="form-wrapper">
             {% if form.parent is empty %}
                 {{ block('global_form_errors') }}
             {% endif %}
@@ -80,7 +80,7 @@
     {% endapply %}
 {% endblock collection_widget %}
 
-{% block bootstrap_collection_widget %}
+{% block tailwind_collection_widget %}
     {% apply spaceless %}
         {% set delete_button_text = form.vars.delete_button_text %}
         {% set add_button_text = form.vars.add_button_text %}
@@ -102,7 +102,7 @@
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }}>
+        <div {{ block('widget_container_attributes') }} class="collection-widget">
             <ul class="bc-collection list-unstyled">
                 {% for field in form %}
                     <li>
@@ -129,13 +129,13 @@
             {% endif %}
         </div>
     {% endapply %}
-{% endblock bootstrap_collection_widget %}
+{% endblock tailwind_collection_widget %}
 
 {% block textarea_widget %}
     {% apply spaceless %}
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
-        {% endif  %}
+        {% endif %}
 
         {% if simple_col is defined %}
             <div class="w-full {{ simple_col }}">
@@ -143,7 +143,7 @@
 
         {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
 
-        <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+        <textarea {{ block('widget_attributes') }} placeholder="{{ label|raw }}">{{ value }}</textarea>
 
         {% if simple_col is defined %}
             </div>
@@ -155,7 +155,7 @@
     {% apply spaceless %}
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
-        {% endif  %}
+        {% endif %}
 
         {% if simple_col is defined %}
             <div class="w-full {{ simple_col }}">
@@ -276,7 +276,8 @@
                 {% if label is empty %}
                     {% set label = name|humanize %}
                 {% endif %}
-                <label class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                <label
+                    class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
 
                 {{ block('checkbox_widget') }}
                 {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
@@ -521,7 +522,8 @@
             <a {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif -%}{{ label }}</a>
         {% else %}
             <button
-                type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}<span>{{ label }}</span></button>
+                type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}
+                <span>{{ label }}</span></button>
         {% endif %}
     {% endapply %}
 {% endblock button_widget %}
@@ -613,7 +615,6 @@
 {% block form_row %}
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
-
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
         {% endif %}
@@ -632,9 +633,8 @@
         {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% set icon = icon|default(tailwind_get_icon()) %}
         {% set state = state|default(tailwind_get_icon()) %}
-        <div
-            class="{% if style == 'sidebar' %}aside-item-wrapper{% else %}flex flex-wrap form-group{% endif %}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
-            {% if style == 'horizontal' %}
+        {% if style == 'horizontal' %}
+            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}
@@ -643,7 +643,9 @@
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
                 </div>
-            {% elseif style == 'sidebar' %}
+            </div>
+        {% elseif style == 'sidebar' %}
+            <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
@@ -662,15 +664,37 @@
                         </div>
                     </div>
                 </div>
-            {% else %}
+            </div>
+        {% elseif style == 'editor' %}
+            <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="editor-item-header">
+                    <h3 class="editor-item-title">
+                        <span class="editor-item-icon">
+                            {{ form_label(form) }}
+                        </span>
+                    </h3>
+                    <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                </div>
+                <div class="editor-item-list">
+                    <div class="editor-item-list-container">
+                        <div class="input-group relative flex items-stretch w-full">
+                            {{ block('form_input_group') }}
+                            {{ block('form_help') }}
+                            {{ form_errors(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}
                 {{ block('form_input_group') }}
                 {{ block('form_help') }}
                 {{ form_errors(form) }}
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
 
         {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
     {% endapply %}
@@ -890,11 +914,14 @@
 
 {% block form_rest %}
     {% apply spaceless %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% set state = state|default(tailwind_get_state()) %}
         {% for child in form %}
             {% if not child.rendered %}
-                {{ form_row(child) }}
+                {{ form_row(child, {'style': style, 'state': state}) }}
             {% endif %}
         {% endfor %}
+        {#        {% endif %} #}
     {% endapply %}
 {% endblock form_rest %}
 
