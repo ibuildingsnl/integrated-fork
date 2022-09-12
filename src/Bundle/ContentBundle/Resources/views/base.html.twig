@@ -213,14 +213,22 @@
     };
 
     // JS
-    var filter = document.getElementsByClassName('aside-item-header');
+    var sidebarfilter = document.getElementsByClassName('aside-item-header');
+    var editorsettings = document.getElementsByClassName('editor-item-header');
 
-    for (var i = 0; i < filter.length; i++) {
-        filter[i].addEventListener('click', options, false);
+    for (var i = 0; i < sidebarfilter.length; i++) {
+        sidebarfilter[i].addEventListener('click', options, false);
+    };
+
+    for (var ii = 0; ii < editorsettings.length; ii++) {
+        editorsettings[ii].addEventListener('click', options, false);
     };
 
     function options(event) {
         var options = this.parentNode.querySelector('.aside-item-list');
+        if (!options) {
+            var options = this.parentNode.querySelector('.editor-item-list');
+        }
         var chevUp = this.querySelector('.fa-chevron-down');
         var chevDown = this.querySelector('.fa-chevron-up');
         // Prevent default link behavior
