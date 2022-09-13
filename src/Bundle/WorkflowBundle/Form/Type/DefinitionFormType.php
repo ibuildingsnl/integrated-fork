@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractDefaultStateFromCollectionListener;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromCollectionListener;
@@ -43,7 +43,7 @@ class DefinitionFormType extends AbstractType
             ],
         ]);
 
-        $builder->add('states', BootstrapCollectionType::class, [
+        $builder->add('states', TailwindCollectionType::class, [
             'label' => 'Statuses',
             'entry_type' => StateType::class,
             'allow_add' => true,

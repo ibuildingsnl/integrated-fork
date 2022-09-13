@@ -3,7 +3,7 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-12 push-sm-down">
+        <div class="w-full mb-4 md:mb-0">
 
             <ul class="list-inline">
                 <li>
@@ -11,7 +11,7 @@
                 </li>
             </ul>
 
-            <section class="section-white section-padding section-shadow section-radius">
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
 
@@ -34,8 +34,8 @@
                         <tr>
                             <td>{{ workflow.name }} <small>({{ workflow.id }})</small></td>
                             <td>
-                                <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                <a href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                                <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="fa fa-edit"></span></a>
+                                <a href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="fa fa-circle-xmark"></span></a>
                             </td>
                         </tr>
 

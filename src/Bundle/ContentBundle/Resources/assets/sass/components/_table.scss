@@ -1,6 +1,211 @@
 /* TABLE */
 .table {
+    width:100%;
     &.table-fixed {
         table-layout: fixed;
+    }
+    a {
+        text-decoration: none;
+    }
+
+    button.button-link {
+        text-decoration: none;
+    }
+
+    td {
+        padding: 8px 10px;
+        vertical-align: middle;
+        font-size: 13px;
+        line-height: 1.5em;
+        padding: .8rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        ol {
+            font-size: 13px;
+            line-height: 1.5em;
+        }
+
+        p {
+            font-size: 13px;
+            line-height: 1.5em;
+        }
+
+        ul {
+            font-size: 13px;
+            line-height: 1.5em;
+        }
+
+        a {
+            color: #2271b1;
+            &:hover {
+                color: darken(#2271b1, 20%);
+            }
+            &.color-red {
+                color: #c90000;
+            }
+        }
+    }
+
+    th {
+        padding: 8px 10px;
+        text-align: left;
+        line-height: 1.3em;
+        font-size: 13px;
+        padding: .8rem;
+        padding: 1rem;
+    }
+
+    thead {
+        td {
+            border-bottom: 1px solid #DDE2E8;
+            text-align: left;
+            line-height: 1.3em;
+            font-size: 13px;
+        }
+
+        th {
+            border-bottom: 1px solid #DDE2E8;
+        }
+
+        tr {
+            th {
+                font-size: .8rem;
+                color: rgba(0, 0, 0, 0.5);
+                border-bottom: 1px solid #DDE2E8;
+            }
+        }
+    }
+
+    tfoot {
+        td {
+            border-top: 1px solid #DDE2E8;
+            border-bottom: none;
+            text-align: left;
+            line-height: 1.3em;
+            font-size: 13px;
+        }
+
+        th {
+            border-top: 1px solid #DDE2E8;
+            border-bottom: none;
+        }
+    }
+
+    .no-items {
+        td {
+            border-bottom-width: 0;
+        }
+    }
+
+    tr {
+        > th {
+            &:first-child {
+                padding: .8rem .8rem .8rem 2rem;
+            }
+        }
+
+        > td {
+            &:first-child {
+                padding: .8rem .8rem .8rem 2rem;
+            }
+        }
+    }
+    .row-options {
+        color: #a7aaad;
+        font-size: 13px;
+        padding: 2px 0 0;
+        position: relative;
+        left: -9999em;
+    }
+
+    tr {
+        &.has-options {
+            &:hover {
+                div.row-options {
+                    position: static;
+                }
+            }
+        }
+    }
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+
+    span {
+        border: 0;
+        clip: rect(1px, 1px, 1px, 1px);
+        -webkit-clip-path: inset(50%);
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+        word-wrap: normal !important;
+    }
+}
+
+.ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+thead {
+    text-transform: uppercase;
+    font-size: .8rem;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        width: 100%;
+    }
+    thead {
+        display: none;
+    }
+    tr {
+        &:nth-of-type(2n) {
+            background-color: inherit;
+        }
+
+        td {
+            &:first-child {
+                background: $bg-gray;
+                font-weight: bold;
+                font-size: 1.3em;
+            }
+        }
+    }
+    tbody {
+        td {
+            display: block;
+            text-align: center;
+
+            &:before {
+                content: attr(data-th);
+                display: block;
+                text-align: center;
+            }
+        }
     }
 }

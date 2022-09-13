@@ -1,21 +1,21 @@
-<div class="col-sm-3 col-md-2 sidebar_left">
-    <div id="left_side_menu" class="navbar-collapse collapse left_side_menu">
+<div class="sm:w-1/4 pr-4 pl-4 md:w-1/5 pr-4 pl-4 sidebar_left">
+    <div id="left_side_menu" class="flex-grow items-center hidden left_side_menu">
 
         <div class="edited_site_title_holder">
             {#<h3 class="edited_site_title">Title</h3>#}
         </div>
 
-        <ul class="nav left_sidebar_menu">
+        <ul class="flex flex-wrap list-none pl-0 mb-0 left_sidebar_menu">
 
             <li>
                 <a href="{{ path('integrated_content_content_index') }}">
-                    <i class="glyphicon glyphicon-list"></i>{% trans %}Content navigator{% endtrans %}
+                    <i class="fa fa-list"></i>{% trans %}Content navigator{% endtrans %}
                 </a>
             </li>
 
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-wrench"></i>{% trans %}Manage{% endtrans %}</a>
-                <ul class="dropdown-menu">
+                <a class=" inline-block w-0 h-0 ml-1 align border-b-0 border-t-1 border-r-1 border-l-1" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i>{% trans %}Manage{% endtrans %}</a>
+                <ul class=" dropdown-menu">
                     <li>
                         <a href="{{ path('integrated_content_content_type_index') }}">{% trans %}Content types{% endtrans %}</a>
                     </li>

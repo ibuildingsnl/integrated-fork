@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of BraincraftedBootstrapBundle.
+ * This file is part of BraincraftedTailwindBundle.
  *
  * (c) 2012-2013 by Florian Eckerstorfer
  */
@@ -11,7 +11,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * BootstrapLabelExtension.
+ * TailwindLabelExtension.
  *
  * @category   TwigExtension
  *
@@ -19,9 +19,9 @@ use Twig\TwigFunction;
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
  *
- * @see       http://bootstrap.braincrafted.com Bootstrap for Symfony2
+ * @see       http://tailwind.braincrafted.com Tailwind for Symfony2
  */
-class BootstrapLabelExtension extends AbstractExtension
+class TailwindLabelExtension extends AbstractExtension
 {
     /**
      * {@inheritDoc}
@@ -116,6 +116,6 @@ class BootstrapLabelExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'braincrafted_bootstrap_label';
+        return 'braincrafted_tailwind_label';
     }
 }

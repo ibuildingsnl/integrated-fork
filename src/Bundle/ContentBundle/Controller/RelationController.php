@@ -141,6 +141,7 @@ class RelationController extends AbstractController
 
         return $this->render('@IntegratedContent/relation/edit.html.twig', [
             'form' => $form->createView(),
+            'relation' => $relation,
         ]);
     }
 

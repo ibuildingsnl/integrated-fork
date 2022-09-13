@@ -1,121 +1,217 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="active">{% trans %}Content navigator{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{# {% block crumbs %} #}
+{#    <div class="breadcrumb-holder"> #}
+{#        <div class="container mx-auto sm:px-4"> #}
+{#            <ol class="flex flex-wrap list-reset pt-3 pb-3 py-4 px-4 mb-4 bg-gray-200 rounded"> #}
+{#                <li class="active">{% trans %}Content navigator{% endtrans %}</li> #}
+{#            </ol> #}
+{#        </div> #}
+{#    </div> #}
+{# {% endblock %} #}
 
 {% block content %}
-    <div class="row">
+    <div class="flex flex-wrap ">
 
-        <div class="col-md-8 push-sm-down">
-            <ul class="list-inline">
-
-                <li class="dropdown">
-                    <a href data-toggle="dropdown" role="button" id="sorting-list">{% trans %}Sort by{% endtrans %}: {{ params.sort.options[params.sort.current].label|trans }} <b class="caret"></b></a>
-
-                    <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-
-                        {% for sort in params.sort.options %}
-
-                            <li {% if sort.name == params.sort.current %}class="active" {% endif %}role="presentation">
-                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == params.sort.default ? null : sort.name })) }}" tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
-                            </li>
-
-                        {% endfor %}
-
-                    </ul>
-                </li>
-
-                {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
-
-                <li class="dropdown">
-                    <a href data-toggle="dropdown" role="button">{% trans %}Tools{% endtrans %} <b class="caret"></b></a>
-
-                    <ul role="menu" class="dropdown-menu">
-                        <li role="presentation">
-                            <a href="{{ path('integrated_content_bulk_select', app.request.query.all) }}" tabindex="-1" role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+        <div class="md:w-4/5 pr-4 pl-4 mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
+                <div class="options">
+                    <ul class="">
+                        <li class="dropdown">
+                            <a href data-toggle="dropdown" role="button" id="sorting-list"
+                               class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
+                                : {{ params.sort.options[params.sort.current].label|trans }}</span> <i
+                                    class="fa-regular fa-angle-down"></i></a>
+                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                                {% for sort in params.sort.options %}
+                                    <li {% if sort.name == params.sort.current %}class="active"
+                                        {% endif %}role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == params.sort.default ? null : sort.name })) }}"
+                                           tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </li>
-                    </ul>
-                </li>
+                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
+                        <li class="dropdown">
+                            <a href data-toggle="dropdown" role="button"
+                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span> <i
+                                    class="fa-regular fa-angle-down"></i></a>
 
-            </ul>
-            <section class="section-white section-padding section-shadow section-radius">
-                <ul class="list-unstyled list-content">
-                    {% for content in pager %}
-                        <li>
-                            <h3>
-                                <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
-                                    {{ content.title|default }}
-                                </a>
-                            </h3>
-
-                            {% if locks[content.type_id] is defined %}
-                                {% if locks[content.type_id].user is defined %}
-                                    <div class="alert alert-danger">
-                                        {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}
-                                    </div>
-                                {% else %}
-                                    <div class="alert alert-danger">
-                                        {% trans %}This item is locked{% endtrans %}
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-
-                            {% if content.intro is defined and content.intro|join('...')|trim is not empty %}
-                                 <p>{{ content.intro|join('...')|slice(0, 200)|striptags|raw }}</p>
-                            {% elseif content.content is defined and content.content|join('...')|trim is not empty %}
-                                 <p>{{ content.content|join('...')|slice(0, 200)|striptags|raw }}</p>
-                            {% endif %}
-
-                            <ul class="list-inline">
-                                <li>
-                                    {% if content.workflow_state is defined %}
-                                        {{ content.workflow_state|default }} |
-                                    {% endif %}
-                                    {% if content.workflow_assigned is defined %}
-                                        {{ content.workflow_assigned|first|default }} |
-                                    {% endif %}
-                                    {% if contentTypes[content.type_name] is defined %}
-                                        {{ contentTypes[content.type_name] }}
-                                    {% else %}
-                                        {{ content.type_name }}
-                                    {% endif %}
-                                    {% if content.pub_time is defined %}
-                                        |
-                                        {{ content.pub_time|format_date('medium') }}
-                                    {% endif %}
-                                    {% if content.pub_edited is defined %}
-                                        {% if content.pub_time is not defined or content.pub_edited != content.pub_time %}
-                                        |
-                                        {% if content.pub_time is defined %}
-                                            {% trans %}Updated{% endtrans %}
-                                        {% endif %}
-                                        {{ content.pub_edited|format_date('medium') }}
-                                        {% endif %}
-                                    {% endif %}
-                                </li>
-
-                                <li class="dropdown">
-                                    <a href="#" data-toggle="dropdown" role="button"><b class="caret"></b></a>
-                                    <ul role="menu" class="dropdown-menu">
-                                        <li role="presentation"><a href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}" tabindex="-1" role="menuitem">{% trans %}Delete item{% endtrans %}</a></li>
-                                    </ul>
+                            <ul role="menu" class=" dropdown-menu">
+                                <li role="presentation">
+                                    <a href="{{ path('integrated_content_bulk_select', app.request.query.all) }}"
+                                       tabindex="-1"
+                                       role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
                                 </li>
                             </ul>
                         </li>
-                    {% else %}
-                        <li class="text-danger">
-                           {% trans %}No items found{% endtrans %}
-                        </li>
-                    {% endfor %}
-                </ul>
+                    </ul>
+                </div>
+            </div>
+            <section class="section-white section-radius">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        {#                            <th id="cb"> #}
+                        {#                                <label for="cb-select-all-1" class="screen-reader-text">Select all</label> #}
+                        {#                                <input id="cb-select-all-1" type="checkbox"> #}
+                        {#                            </th> #}
+                        <th class="title">
+                            <span>Titel</span>
+                        </th>
+                        <th class="content-type">
+                            <span>ContentType</span>
+                        </th>
+                        <th class="pub-date">
+                            <span>Publication Date</span>
+                        </th>
+                        <th class="state">
+                            <span>Status</span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="post-list">
+                    {% for content in pager %}
+                        {#                        {{ dump(content) }} #}
+                        <tr class="has-options">
+                            {#                            <th class="checkbox"></th> #}
+                            <td class="title">
+                                {% if locks[content.type_id] is defined %}
+                                    {% if locks[content.type_id].user is defined %}
+                                        <div class="locked-info">
+                                            <span
+                                                class="locked-text"><i
+                                                    class="fa-regular fa-lock"></i>&nbsp;{% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}</span>
+                                        </div>
+                                    {% else %}
 
-                <div class="row">
+                                        <div class="locked-info">
+                                            <span
+                                                class="locked-text"><i
+                                                    class="fa-regular fa-lock"></i>&nbsp;{% trans %}This item is locked{% endtrans %}</span>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <strong>
+                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
+                                        {{ content.title|default }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"
+                                       role="option">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a class="color-red"
+                                       href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
+                                       tabindex="-1" role="option">
+                                        {% trans %}Delete{% endtrans %}
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="content-type">
+                                {% if contentTypes[content.type_name] is defined %}
+                                    {{ contentTypes[content.type_name] }}
+                                {% else %}
+                                    {{ content.type_name }}
+                                {% endif %}
+                            </td>
+                            <td class="publication-date">
+                                {% if content.pub_time is defined %}
+                                    {{ content.pub_time|format_date('long') }}
+                                {% endif %}
+                            </td>
+                            <td class="content-status">
+                                {% if content.workflow_state is defined %} #}
+                                    {{ content.workflow_state|default }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="title">{% trans %}No items found{% endtrans %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {#                <ul class="list-unstyled list-content"> #}
+                {#                    {% for content in pager %} #}
+                {#                        <li> #}
+                {#                            <h3> #}
+                {#                                <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"> #}
+                {#                                    {{ content.title|default }} #}
+                {#                                </a> #}
+                {#                            </h3> #}
+
+                {#                            {% if locks[content.type_id] is defined %} #}
+                {#                                {% if locks[content.type_id].user is defined %} #}
+                {#                                    <div #}
+                {#                                        class="relative px-3 py-3 mb-4 border rounded bg-red-200 border-red-300 text-red-800"> #}
+                {#                                        {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }} #}
+                {#                                    </div> #}
+                {#                                {% else %} #}
+                {#                                    <div #}
+                {#                                        class="relative px-3 py-3 mb-4 border rounded bg-red-200 border-red-300 text-red-800"> #}
+                {#                                        {% trans %}This item is locked{% endtrans %} #}
+                {#                                    </div> #}
+                {#                                {% endif %} #}
+                {#                            {% endif %} #}
+
+                {#                            {% if content.intro is defined and content.intro|join('...')|trim is not empty %} #}
+                {#                                <p>{{ content.intro|join('...')|slice(0, 200)|striptags|raw }}</p> #}
+                {#                            {% elseif content.content is defined and content.content|join('...')|trim is not empty %} #}
+                {#                                <p>{{ content.content|join('...')|slice(0, 200)|striptags|raw }}</p> #}
+                {#                            {% endif %} #}
+
+                {#                            <ul class="list-inline"> #}
+                {#                                <li> #}
+                {#                                    {% if content.workflow_state is defined %} #}
+                {#                                        {{ content.workflow_state|default }} | #}
+                {#                                    {% endif %} #}
+                {#                                    {% if content.workflow_assigned is defined %} #}
+                {#                                        {{ content.workflow_assigned|first|default }} | #}
+                {#                                    {% endif %} #}
+                {#                                    {% if contentTypes[content.type_name] is defined %} #}
+                {#                                        {{ contentTypes[content.type_name] }} #}
+                {#                                    {% else %} #}
+                {#                                        {{ content.type_name }} #}
+                {#                                    {% endif %} #}
+                {#                                    {% if content.pub_time is defined %} #}
+                {#                                        | #}
+                {#                                        {{ content.pub_time|format_date('medium') }} #}
+                {#                                    {% endif %} #}
+                {#                                    {% if content.pub_edited is defined %} #}
+                {#                                        {% if content.pub_time is not defined or content.pub_edited != content.pub_time %} #}
+                {#                                            | #}
+                {#                                            {% if content.pub_time is defined %} #}
+                {#                                                {% trans %}Updated{% endtrans %} #}
+                {#                                            {% endif %} #}
+                {#                                            {{ content.pub_edited|format_date('medium') }} #}
+                {#                                        {% endif %} #}
+                {#                                    {% endif %} #}
+                {#                                </li> #}
+
+                {#                                <li class="dropdown"> #}
+                {#                                    <a href="#" data-toggle="dropdown" role="button"><b class="caret"></b></a> #}
+                {#                                    <ul role="menu" class=" dropdown-menu"> #}
+                {#                                        <li role="presentation"><a #}
+                {#                                                href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}" #}
+                {#                                                tabindex="-1" role="menuitem">{% trans %}Delete item{% endtrans %}</a> #}
+                {#                                        </li> #}
+                {#                                    </ul> #}
+                {#                                </li> #}
+                {#                            </ul> #}
+                {#                        </li> #}
+                {#                    {% else %} #}
+                {#                        <li class="text-red-600"> #}
+                {#                            {% trans %}No items found{% endtrans %} #}
+                {#                        </li> #}
+                {#                    {% endfor %} #}
+                {#                </ul> #}
+
+                <div class="flex flex-wrap ">
                     <div class="pull-right">
                         {{ knp_pagination_render(pager) }}
                     </div>
@@ -123,53 +219,76 @@
             </section>
         </div>
 
-        <div class="col-sm-4">
+        <div class="sm:w-1/5 pr-4 pl-4">
             <aside>
-                <div class="aside-holder section-gray section-shadow section-radius">
+                <div class="aside-holder bg-white section-radius">
+                    <div class="aside-header"><span>Filteren</span><a href="#"><span>Verwijder actieve filters </span><i
+                                class="fa-regular fa-xmark"></i></a>
+                    </div>
                     <form>
-                        <input type="hidden" value="{{ app.request.query.get('q') }}" name="q" />
-                        <input type="hidden" value="{{ app.request.query.get('sort') }}" name="sort" />
+                        <input type="hidden" value="{{ app.request.query.get('q') }}" name="q"/>
+                        <input type="hidden" value="{{ app.request.query.get('sort') }}" name="sort"/>
                         {% for key, facet in facets %}
                             {% if facet|length > 0 %}
-                            <div class="aside-item-holder">
-                                <h3 class="font-medium">
-                                    {% if key == 'contenttypes' %}
-                                        {% trans %}Content types{% endtrans %}
-                                    {% elseif facetTitles[key]|default %}
-                                        {{ facetTitles[key]|default|trans }}
-                                    {% else %}
-                                        {{ key|capitalize }}
-                                    {% endif %}
-                                </h3>
-                                <ul class="filters_list">
-                                    {% for title, count in facet %}
-                                    <li class="checkbox{% if (loop.index >= 8) and (not (title in active[key]|default)) %} to_show{% endif %}">
-                                        <label>
-                                            <input {% if title in active[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
-                                            {% if key == 'contenttypes' %}
-                                                {% if contentTypes[title] is defined %}
-                                                    {{ contentTypes[title] }}
-                                                {% else %}
-                                                    {{ title }}
-                                                {% endif %}
-                                            {% elseif key == 'channels' %}
-                                                {% if channels[title] is defined %}
-                                                    {{ channels[title] }}
-                                                {% else %}
-                                                    {{ title }}
-                                                {% endif %}
-                                            {% else %}
-                                                {{ title }}
+                                <div class="aside-item-holder">
+                                    <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="fa-regular fa-clock"></i>
+                                                <span class="aside-item-icon">
+                                                    {% if key == 'contenttypes' %}
+                                                        {% trans %}Content types{% endtrans %}
+                                                    {% elseif facetTitles[key]|default %}
+                                                        {{ facetTitles[key]|default|trans }}
+                                                    {% else %}
+                                                        {{ key|capitalize }}
+                                                    {% endif %}
+                                                </span>
+                                            </h3>
+                                            <i class="fa-regular {% if (key == 'contenttypes') or (key =='channels') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            {% if (facet|length >= 3) %}
+                                                <div class="aside-item-search">
+                                                    <input type="text" class="list-search"
+                                                           onchange="asideItemsSearch(this)"
+                                                           onkeyup="asideItemsSearch(this)"
+                                                           placeholder="{% trans %}Search in{% endtrans %} {% if key == 'contenttypes' %}{% trans %}Content types{% endtrans %}{% elseif facetTitles[key]|default %}{{ facetTitles[key]|default|trans }}{% else %}{{ key|capitalize }}{% endif %}">
+                                                </div>
                                             {% endif %}
-                                            <span class="value">{{ count }}</span>
-                                        </label>
-                                    </li>
-                                    {% endfor %}
-                                    {% if (facet|length >= 8) %}
-                                        <li><a href="#" class="btn_show_more">{% trans %}More{% endtrans %} <i class="glyphicon"></i></a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                                            <ul class="filters_list">
+                                                {% for title, count in facet %}
+                                                    <li class="checkbox{% if (loop.index >= 6) and (not (title in active[key]|default)) %} to_show{% endif %}">
+                                                        <label class="checkbox-container">
+                                                            <input
+                                                                {% if title in active[key]|default %}checked="checked"{% endif %}
+                                                                onclick="form.submit();" type="checkbox"
+                                                                name="{{ key }}[]"
+                                                                value="{{ title }}"/>
+                                                            <span class="checkmark"></span>
+                                                            {% if key == 'contenttypes' %}
+                                                                {% if contentTypes[title] is defined %}
+                                                                    {{ contentTypes[title] }}
+                                                                {% else %}
+                                                                    {{ title }}
+                                                                {% endif %}
+                                                            {% elseif key == 'channels' %}
+                                                                {% if channels[title] is defined %}
+                                                                    {{ channels[title] }}
+                                                                {% else %}
+                                                                    {{ title }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {{ title }}
+                                                            {% endif %}
+                                                            <span class="value">({{ count }})</span>
+                                                        </label>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             {% endif %}
                         {% endfor %}
                     </form>
@@ -177,4 +296,28 @@
             </aside>
         </div>
     </div>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var filterElements = document.getElementsByClassName('aside-item-list');
+
+            for (var ii = 0; ii < filterElements.length; ii++) {
+                openSelectedOptions(filterElements[ii]);
+            }
+
+            function openSelectedOptions(elem) {
+                var textinputs = elem.querySelectorAll('input[type=checkbox]');
+                console.log(elem);
+                var chevUp = this.querySelector('.fa-chevron-down');
+                var chevDown = this.querySelector('.fa-chevron-up');
+                var empty = [].filter.call(textinputs, function(elem) {
+                    return !elem.checked;
+                });
+                if (textinputs.length != empty.length) {
+                    show(elem, chevUp, chevDown);
+                }
+            }
+        });
+
+    </script>
 {% endblock %}

@@ -4,7 +4,7 @@
 .megamenu .dropup,
 .megamenu .dropdown {
   	position: static;
-  	@include respond-to(phones) {
+  	@include media(max-md) {
   		position: relative;
   	}
 }
@@ -13,14 +13,14 @@
 }
 .megamenu .dropdown-menu {
   	left: auto;
-  	@include respond-to(phones) {
+  	@include media(max-md) {
 		left: 0;
 	}
 }
 .megamenu .megamenu-content {
   	padding: 5px 0;
   	@include display(flex);
-  	@include respond-to(phones) {
+  	@include media(max-md) {
   		display: block;
   	}
 }

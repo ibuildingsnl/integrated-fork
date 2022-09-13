@@ -3,28 +3,33 @@
     <tr>
         <th>{% trans %}Name{% endtrans %}</th>
         <th>{% trans %}Type{% endtrans %}</th>
+        <th>{% trans %}Location{% endtrans %}</th>
         <th>{% trans %}Created{% endtrans %}</th>
-        <th>{% trans %}Actions{% endtrans %}</th>
     </tr>
     </thead>
     <tbody>
     {% for document in documents %}
-        <tr>
+        <tr class="has-options">
             <td>
-                <a href="{{ path('integrated_content_relation_show', {'id': document.id}) }}">
-                    {{ document.name }}
-                </a>
+                <strong>
+                    <a href="{{ path('integrated_content_relation_show', {'id': document.id}) }}">
+                        {{ document.name }}
+                    </a>
+                </strong>
+                <div class="row-options">
+                    <a href="{{ path('integrated_content_relation_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
+                        {% trans %}Edit{% endtrans %}
+                    </a>
+                </div>
             </td>
             <td>
                 {{ document.type }}
             </td>
             <td>
-                {{ document.createdAt|date }}
+                {{ document.location }}
             </td>
             <td>
-                <a href="{{ path('integrated_content_relation_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
-                    {{ icon('pencil') }}
-                </a>
+                {{ document.createdAt|date }}
             </td>
         </tr>
     {% else %}

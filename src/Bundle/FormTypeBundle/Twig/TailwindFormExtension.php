@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of BraincraftedBootstrapBundle.
+ * This file is part of BraincraftedtailwindBundle.
  * (c) 2012-2013 by Florian Eckerstorfer.
  */
 
@@ -10,30 +10,39 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * BootstrapFormExtension.
+ * tailwindFormExtension.
  *
  * @author     Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
  *
- * @see       http://bootstrap.braincrafted.com Bootstrap for Symfony2
+ * @see       http://tailwind.braincrafted.com tailwind for Symfony2
  */
-class BootstrapFormExtension extends AbstractExtension
+class TailwindFormExtension extends AbstractExtension
 {
     /** @var string */
     private $style;
 
-    /** @var string */
-    private $colSize = 'lg';
+    /** @var int */
+    private $widgetCol = 'sm:w-10/12 2xl:w-11/12';
 
     /** @var int */
-    private $widgetCol = 10;
+    private $labelCol = 'sm:w-2/12 2xl:w-1/12';
 
-    /** @var int */
-    private $labelCol = 2;
+    /** @var bool */
+    private $showLabel = true;
 
     /** @var int */
     private $simpleCol = false;
+
+    /** @var string */
+    private $icon = '';
+
+    /** @var string */
+    private $state = '';
+
+    /** @var bool */
+    private $showPlaceholder = true;
 
     /** @var array */
     private $settingsStack = [];
@@ -44,18 +53,25 @@ class BootstrapFormExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('bootstrap_set_style', [$this, 'setStyle']),
-            new TwigFunction('bootstrap_get_style', [$this, 'getStyle']),
-            new TwigFunction('bootstrap_set_col_size', [$this, 'setColSize']),
-            new TwigFunction('bootstrap_get_col_size', [$this, 'getColSize']),
-            new TwigFunction('bootstrap_set_widget_col', [$this, 'setWidgetCol']),
-            new TwigFunction('bootstrap_get_widget_col', [$this, 'getWidgetCol']),
-            new TwigFunction('bootstrap_set_label_col', [$this, 'setLabelCol']),
-            new TwigFunction('bootstrap_get_label_col', [$this, 'getLabelCol']),
-            new TwigFunction('bootstrap_set_simple_col', [$this, 'setSimpleCol']),
-            new TwigFunction('bootstrap_get_simple_col', [$this, 'getSimpleCol']),
-            new TwigFunction('bootstrap_backup_form_settings', [$this, 'backupFormSettings']),
-            new TwigFunction('bootstrap_restore_form_settings', [$this, 'restoreFormSettings']),
+            new TwigFunction('tailwind_set_style', [$this, 'setStyle']),
+            new TwigFunction('tailwind_get_style', [$this, 'getStyle']),
+            new TwigFunction('tailwind_set_widget_col', [$this, 'setWidgetCol']),
+            new TwigFunction('tailwind_get_widget_col', [$this, 'getWidgetCol']),
+            new TwigFunction('tailwind_set_label_col', [$this, 'setLabelCol']),
+            new TwigFunction('tailwind_get_label_col', [$this, 'getLabelCol']),
+            new TwigFunction('tailwind_set_simple_col', [$this, 'setSimpleCol']),
+            new TwigFunction('tailwind_get_simple_col', [$this, 'getSimpleCol']),
+            //NEW FUNCTIONS
+            new TwigFunction('tailwind_set_show_label', [$this, 'setShowLabel']),
+            new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
+            new TwigFunction('tailwind_set_icon', [$this, 'setIcon']),
+            new TwigFunction('tailwind_get_icon', [$this, 'getIcon']),
+            new TwigFunction('tailwind_set_state', [$this, 'setState']),
+            new TwigFunction('tailwind_get_state', [$this, 'getState']),
+            new TwigFunction('tailwind_set_show_placeholder', [$this, 'setShowPlaceholder']),
+            new TwigFunction('tailwind_get_show_placeholder', [$this, 'getShowPlaceholder']),
+            new TwigFunction('tailwind_backup_form_settings', [$this, 'backupFormSettings']),
+            new TwigFunction('tailwind_restore_form_settings', [$this, 'restoreFormSettings']),
             new TwigFunction(
                 'checkbox_row',
                 null,
@@ -84,7 +100,7 @@ class BootstrapFormExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'braincrafted_bootstrap_form';
+        return 'braincrafted_tailwind_form';
     }
 
     /**
@@ -105,26 +121,6 @@ class BootstrapFormExtension extends AbstractExtension
     public function getStyle()
     {
         return $this->style;
-    }
-
-    /**
-     * Sets the column size.
-     *
-     * @param string $colSize Column size (xs, sm, md or lg)
-     */
-    public function setColSize($colSize)
-    {
-        $this->colSize = $colSize;
-    }
-
-    /**
-     * Returns the column size.
-     *
-     * @return string Column size (xs, sm, md or lg)
-     */
-    public function getColSize()
-    {
-        return $this->colSize;
     }
 
     /**
@@ -168,6 +164,87 @@ class BootstrapFormExtension extends AbstractExtension
     }
 
     /**
+     * Sets the value of Labels to true or false.
+     *
+     * @param bool $showLabel true or false
+     */
+    public function setShowLabel($showLabel)
+    {
+        $this->showLabel = $showLabel;
+    }
+
+    /**
+     * Returns the value of true or false to show or hide Labels.
+     *
+     * @param bool $showLabel true or false
+     */
+    public function getShowLabel()
+    {
+        return $this->showLabel;
+    }
+
+    /**
+     * Sets the value of Icon
+     *
+     * @param string $icon
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+    }
+
+    /**
+     * Returns the value of Icon.
+     *
+     * @param bool $icon true or false
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * Sets the value of State to open or close settings by default
+     *
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * Returns the value of State.
+     *
+     * @param bool $state true or false
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+
+    /**
+     * Sets the value of Placeholders to true or false.
+     *
+     * @param bool $showPlaceholder true or false
+     */
+    public function setShowPlaceholder($showPlaceholder)
+    {
+        $this->showPlaceholder = $showPlaceholder;
+    }
+
+    /**
+     * Returns the value of true or false to show or hide Placeholders.
+     *
+     * @param bool $showPlaceholder true or false
+     */
+    public function getShowPlaceholder()
+    {
+        return $this->showPlaceholder;
+    }
+
+    /**
      * Sets the number of columns of simple widgets.
      *
      * @param int $simpleCol number of columns
@@ -187,6 +264,7 @@ class BootstrapFormExtension extends AbstractExtension
         return $this->simpleCol;
     }
 
+
     /**
      * Backup the form settings to the stack.
      *
@@ -198,10 +276,13 @@ class BootstrapFormExtension extends AbstractExtension
     {
         $settings = [
             'style' => $this->style,
-            'colSize' => $this->colSize,
             'widgetCol' => $this->widgetCol,
             'labelCol' => $this->labelCol,
             'simpleCol' => $this->simpleCol,
+            'icon' => $this->icon,
+            'state' => $this->state,
+            'showLabel' => $this->showLabel,
+            'showPlaceholder' => $this->showPlaceholder,
         ];
 
         $this->settingsStack[] = $settings;
@@ -221,12 +302,14 @@ class BootstrapFormExtension extends AbstractExtension
         }
 
         $settings = array_pop($this->settingsStack);
-
         $this->style = $settings['style'];
-        $this->colSize = $settings['colSize'];
         $this->widgetCol = $settings['widgetCol'];
         $this->labelCol = $settings['labelCol'];
+        $this->icon = $settings['icon'];
+        $this->state = $settings['state'];
         $this->simpleCol = $settings['simpleCol'];
+        $this->showLabel = $settings['showLabel'];
+        $this->showPlaceholder = $settings['showPlaceholder'];
     }
 
     /**
@@ -238,7 +321,7 @@ class BootstrapFormExtension extends AbstractExtension
     public function formControlStaticFunction($label, $value)
     {
         return sprintf(
-            '<div class="form-group"><label class="col-sm-%s control-label">%s</label><div class="col-sm-%s"><p class="form-control-static">%s</p></div></div>',
+            '<div class="form-group"><label class="w-full %s control-label">%s</label><div class="w-full %s"><p class="form-control-static">%s</p></div></div>',
             $this->getLabelCol(),
             $label,
             $this->getWidgetCol(),

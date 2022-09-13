@@ -36,23 +36,23 @@
 
         {% set listClass = '' %}
         {% if options.style is defined and options.style == 'tabs' %}
-            {% set listClass = 'nav-tabs' %}
+            {% set listClass = 'border border-t-0 border-r-0 border-l-0 border-b-1 border-gray-200' %}
         {% elseif options.style is defined and options.style == 'stacked-tabs' %}
-            {% set listClass = 'nav-tabs nav-stacked' %}
+            {% set listClass = 'border border-t-0 border-r-0 border-l-0 border-b-1 border-gray-200 nav-stacked' %}
         {% elseif options.style is defined and options.style == 'justified-tabs' %}
-            {% set listClass = 'nav-tabs nav-justified' %}
+            {% set listClass = 'border border-t-0 border-r-0 border-l-0 border-b-1 border-gray-200 ' %}
         {% elseif options.style is defined and options.style == 'pills' %}
-            {% set listClass = 'nav-pills' %}
+            {% set listClass = '' %}
         {% elseif options.style is defined and options.style == 'justified-pills' %}
-            {% set listClass = 'nav-pills nav-justified' %}
+            {% set listClass = ' ' %}
         {% elseif options.style is defined and options.style == 'stacked-pills' %}
-            {% set listClass = 'nav-pills nav-stacked' %}
+            {% set listClass = ' nav-stacked' %}
         {% elseif options.style is defined and options.style == 'list' %}
             {% set listClass = 'nav-list' %}
         {% elseif options.style is defined and options.style == 'navbar' %}
-            {% set listClass = 'navbar-nav' %}
+            {% set listClass = 'flex flex-wrap list-reset pl-0 mb-0' %}
         {% elseif options.style is defined and options.style == 'navbar-right' %}
-            {% set listClass = 'navbar-nav navbar-right' %}
+            {% set listClass = 'flex flex-wrap list-reset pl-0 mb-0 navbar-right' %}
         {% endif %}
 
         {% if options.pull is defined and options.pull == 'right' %}
@@ -113,6 +113,7 @@
     {% if item.displayed %}
         {# building the class of the item #}
         {%- set classes = item.attribute('class') is not empty ? [item.attribute('class')] : [] %}
+
         {%- if (matcher is defined and matcher.isCurrent(item)) or (item.current is defined and item.current) %}
             {%- set classes = classes|merge([options.currentClass]) %}
         {%- elseif (matcher is defined and matcher.isAncestor(item, options.depth)) or (item.currentAncestor is defined and item.currentAncestor) %}
@@ -129,6 +130,7 @@
         {%- elseif item.hasChildren and options.style is defined and options.style in ['tabs', 'justified-tabs', 'pills', 'justified-pills', 'navbar', 'navbar-right', 'navbar_justified'] and ((item.extras.dropdown is not defined and item.displayChildren is same as (true) or item.extras.dropdown is defined and item.extras.dropdown is same as (true) and item.displayChildren is same as (true))) %}
             {%- set classes = classes|merge(['dropdown']) %}
         {%- endif %}
+
 
         {%- set attributes = item.attributes %}
 

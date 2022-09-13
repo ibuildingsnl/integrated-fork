@@ -116,7 +116,7 @@ $(function () {
             var comment = $('<div>').addClass('added-comment-line')
                 .attr('data-comment-id', commentId).data('comment-id', commentId)
                 .data('parent', $parent)
-                .append($('<span>').addClass('glyphicon glyphicon-comment'));
+                .append($('<span>').addClass('fa fa-comment'));
 
             if ($label) {
                 //if input has label place it inside label

@@ -1,7 +1,72 @@
 /*TINEMCE*/
 .mce-tinymce {
-	border-radius: 0 !important;
+    border-radius: 0 !important;
 }
+
 .mce-tinymce.mce-container.mce-panel {
-	border-color: $color-silver;
+    border-color: $color-silver;
 }
+
+.fancy_tinymce {
+    .mce-container-body {
+        overflow: hidden;
+    }
+
+    .mce-tinymce {
+        border: 0 !important;
+
+        .mce-menubar {
+            border: 1px solid #dde2e8;
+        }
+        &.mce-container {
+            &.mce-panel {
+                border-color: #dde2e8;
+            }
+        }
+        .mce-edit-area {
+             background: #fff;
+             filter: none;
+             padding-top: 110px;
+             iframe {
+                 position: relative;
+             }
+         }
+        .mce-menubar {
+            position: sticky;
+            width: 100%;
+            background-color: white;
+            top: 0;
+            z-index: 9;
+            padding-left: 23px;
+        }
+
+        .mce-toolbar-grp {
+            position: sticky;
+            width: 100%;
+            top: 35px;
+            z-index: 9;
+            padding-left: 23px;
+            border-bottom: 1px solid #dee2e8 !important;
+            border-radius: 0;
+        }
+
+        .mce-panel {
+            background-color: #ffffff;
+            border: 0 !important;
+        }
+
+
+        .mce-btn {
+            background-color: #fff;
+        }
+    }
+}
+
+.mce-fullscreen {
+    .fancy_tinymce {
+        div.mce-edit-area {
+            padding-top: 50px !important;
+        }
+    }
+}
+

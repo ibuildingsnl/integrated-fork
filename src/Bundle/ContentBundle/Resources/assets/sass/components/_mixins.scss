@@ -1,17 +1,50 @@
 /* MIXINS */
 // Different devices resolutions
-@mixin respond-to($media) {
-    @if $media == phones {
-        @media only screen and (max-width: $screen-xs-max) { @content; }
-    }
-    @else if $media == tablets-small {
-        @media only screen and (max-width: $screen-sm-max) { @content; }
-    }
-    @else if $media == tablets-large {
-        @media only screen and (max-width: $screen-md-max) { @content; }
-    }
-    @else if $media == desktops {
-        @media only screen and (min-width: $screen-lg-min) { @content; }
+@mixin media($size) {
+    @if ($size == "sm") {
+        @media only screen and (min-width: 640px) {
+            @content;
+        }
+    } @else if ($size == "max-sm") {
+        @media only screen and (max-width: 640px) {
+            @content;
+        }
+    } @else if ($size == "max-md") {
+        @media only screen and (max-width: 768px) {
+            @content;
+        }
+    } @else if ($size == "md") {
+        @media only screen and (min-width: 768px) {
+            @content;
+        }
+    } @else if ($size == "max-lg") {
+        @media only screen and (max-width: 1024px) {
+            @content;
+        }
+    } @else if ($size == "lg") {
+        @media only screen and (min-width: 1024px) {
+            @content;
+        }
+    } @else if ($size == "max-xl") {
+        @media only screen and (max-width: 1280px) {
+            @content;
+        }
+    } @else if ($size == "xl") {
+        @media only screen and (min-width: 1280px) {
+            @content;
+        }
+    } @else if ($size == "2xl") {
+        @media only screen and (min-width: 1536px) {
+            @content;
+        }
+    } @else if ($size == "3xl") {
+        @media only screen and (min-width: 1768px) {
+            @content;
+        }
+    } @else if ($size == "4xl") {
+        @media only screen and (min-width: 1921px) {
+            @content;
+        }
     }
 }
 
@@ -41,4 +74,579 @@
         line-height: $line-height;
         opacity: 1;
     }
+}
+
+// Vendor Prefixes
+//
+// All vendor mixins are deprecated as of v3.2.0 due to the introduction of
+// Autoprefixer in our Gruntfile. They have been removed in v4.
+
+// - Animations
+// - Backface visibility
+// - Box shadow
+// - Box sizing
+// - Content columns
+// - Hyphens
+// - Placeholder text
+// - Transformations
+// - Transitions
+// - User Select
+
+
+// Animations
+@mixin animation($animation) {
+    -webkit-animation: $animation;
+    -o-animation: $animation;
+    animation: $animation;
+}
+@mixin animation-name($name) {
+    -webkit-animation-name: $name;
+    animation-name: $name;
+}
+@mixin animation-duration($duration) {
+    -webkit-animation-duration: $duration;
+    animation-duration: $duration;
+}
+@mixin animation-timing-function($timing-function) {
+    -webkit-animation-timing-function: $timing-function;
+    animation-timing-function: $timing-function;
+}
+@mixin animation-delay($delay) {
+    -webkit-animation-delay: $delay;
+    animation-delay: $delay;
+}
+@mixin animation-iteration-count($iteration-count) {
+    -webkit-animation-iteration-count: $iteration-count;
+    animation-iteration-count: $iteration-count;
+}
+@mixin animation-direction($direction) {
+    -webkit-animation-direction: $direction;
+    animation-direction: $direction;
+}
+@mixin animation-fill-mode($fill-mode) {
+    -webkit-animation-fill-mode: $fill-mode;
+    animation-fill-mode: $fill-mode;
+}
+
+// Backface visibility
+// Prevent browsers from flickering when using CSS 3D transforms.
+// Default value is `visible`, but can be changed to `hidden`
+
+@mixin backface-visibility($visibility) {
+    -webkit-backface-visibility: $visibility;
+    -moz-backface-visibility: $visibility;
+    backface-visibility: $visibility;
+}
+
+// Drop shadows
+//
+// Note: Deprecated `.box-shadow()` as of v3.1.0 since all of Bootstrap's
+// supported browsers that have box shadow capabilities now support it.
+
+@mixin box-shadow($shadow...) {
+    -webkit-box-shadow: $shadow; // iOS <4.3 & Android <4.1
+    box-shadow: $shadow;
+}
+
+// Box sizing
+@mixin box-sizing($boxmodel) {
+    -webkit-box-sizing: $boxmodel;
+    -moz-box-sizing: $boxmodel;
+    box-sizing: $boxmodel;
+}
+
+// CSS3 Content Columns
+@mixin content-columns($column-count, $column-gap: $grid-gutter-width) {
+    -webkit-column-count: $column-count;
+    -moz-column-count: $column-count;
+    column-count: $column-count;
+    -webkit-column-gap: $column-gap;
+    -moz-column-gap: $column-gap;
+    column-gap: $column-gap;
+}
+
+// Optional hyphenation
+@mixin hyphens($mode: auto) {
+    -webkit-hyphens: $mode;
+    -moz-hyphens: $mode;
+    -ms-hyphens: $mode; // IE10+
+    -o-hyphens: $mode;
+    hyphens: $mode;
+    word-wrap: break-word;
+}
+
+// Placeholder text
+@mixin placeholder($color: $input-color-placeholder) {
+    // Firefox
+    &::-moz-placeholder {
+        color: $color;
+        opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+    }
+    &:-ms-input-placeholder { color: $color; } // Internet Explorer 10+
+    &::-webkit-input-placeholder  { color: $color; } // Safari and Chrome
+}
+
+// Transformations
+@mixin scale($ratio...) {
+    -webkit-transform: scale($ratio);
+    -ms-transform: scale($ratio); // IE9 only
+    -o-transform: scale($ratio);
+    transform: scale($ratio);
+}
+
+@mixin scaleX($ratio) {
+    -webkit-transform: scaleX($ratio);
+    -ms-transform: scaleX($ratio); // IE9 only
+    -o-transform: scaleX($ratio);
+    transform: scaleX($ratio);
+}
+@mixin scaleY($ratio) {
+    -webkit-transform: scaleY($ratio);
+    -ms-transform: scaleY($ratio); // IE9 only
+    -o-transform: scaleY($ratio);
+    transform: scaleY($ratio);
+}
+@mixin skew($x, $y) {
+    -webkit-transform: skewX($x) skewY($y);
+    -ms-transform: skewX($x) skewY($y); // See https://github.com/twbs/bootstrap/issues/4885; IE9+
+    -o-transform: skewX($x) skewY($y);
+    transform: skewX($x) skewY($y);
+}
+@mixin translate($x, $y) {
+    -webkit-transform: translate($x, $y);
+    -ms-transform: translate($x, $y); // IE9 only
+    -o-transform: translate($x, $y);
+    transform: translate($x, $y);
+}
+@mixin translate3d($x, $y, $z) {
+    -webkit-transform: translate3d($x, $y, $z);
+    transform: translate3d($x, $y, $z);
+}
+@mixin rotate($degrees) {
+    -webkit-transform: rotate($degrees);
+    -ms-transform: rotate($degrees); // IE9 only
+    -o-transform: rotate($degrees);
+    transform: rotate($degrees);
+}
+@mixin rotateX($degrees) {
+    -webkit-transform: rotateX($degrees);
+    -ms-transform: rotateX($degrees); // IE9 only
+    -o-transform: rotateX($degrees);
+    transform: rotateX($degrees);
+}
+@mixin rotateY($degrees) {
+    -webkit-transform: rotateY($degrees);
+    -ms-transform: rotateY($degrees); // IE9 only
+    -o-transform: rotateY($degrees);
+    transform: rotateY($degrees);
+}
+@mixin perspective($perspective) {
+    -webkit-perspective: $perspective;
+    -moz-perspective: $perspective;
+    perspective: $perspective;
+}
+@mixin perspective-origin($perspective) {
+    -webkit-perspective-origin: $perspective;
+    -moz-perspective-origin: $perspective;
+    perspective-origin: $perspective;
+}
+@mixin transform-origin($origin) {
+    -webkit-transform-origin: $origin;
+    -moz-transform-origin: $origin;
+    -ms-transform-origin: $origin; // IE9 only
+    transform-origin: $origin;
+}
+
+
+// Transitions
+
+@mixin transition($transition...) {
+    -webkit-transition: $transition;
+    -o-transition: $transition;
+    transition: $transition;
+}
+@mixin transition-property($transition-property...) {
+    -webkit-transition-property: $transition-property;
+    transition-property: $transition-property;
+}
+@mixin transition-delay($transition-delay) {
+    -webkit-transition-delay: $transition-delay;
+    transition-delay: $transition-delay;
+}
+@mixin transition-duration($transition-duration...) {
+    -webkit-transition-duration: $transition-duration;
+    transition-duration: $transition-duration;
+}
+@mixin transition-timing-function($timing-function) {
+    -webkit-transition-timing-function: $timing-function;
+    transition-timing-function: $timing-function;
+}
+@mixin transition-transform($transition...) {
+    -webkit-transition: -webkit-transform $transition;
+    -moz-transition: -moz-transform $transition;
+    -o-transition: -o-transform $transition;
+    transition: transform $transition;
+}
+
+
+// User select
+// For selecting text on the page
+
+@mixin user-select($select) {
+    -webkit-user-select: $select;
+    -moz-user-select: $select;
+    -ms-user-select: $select; // IE10+
+    user-select: $select;
+}
+
+@mixin hide-text() {
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+// New mixin to use as of v3.0.1
+@mixin text-hide() {
+    @include hide-text;
+}
+
+@mixin center-block() {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@mixin clearfix {
+    &::after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+}
+
+// CSS3 Flexible Box Model and property defaults
+
+// Custom shorthand notation for flexbox
+@mixin box($orient: inline-axis, $pack: start, $align: stretch) {
+    @include display-box;
+    @include box-orient($orient);
+    @include box-pack($pack);
+    @include box-align($align);
+}
+
+@mixin display-box {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox; // IE 10
+    display: box;
+}
+
+@mixin box-orient($orient: inline-axis) {
+    // horizontal|vertical|inline-axis|block-axis|inherit
+    @include prefixer(box-orient, $orient, webkit moz spec);
+}
+
+@mixin box-pack($pack: start) {
+    // start|end|center|justify
+    @include prefixer(box-pack, $pack, webkit moz spec);
+    -ms-flex-pack: $pack; // IE 10
+}
+
+@mixin box-align($align: stretch) {
+    // start|end|center|baseline|stretch
+    @include prefixer(box-align, $align, webkit moz spec);
+    -ms-flex-align: $align; // IE 10
+}
+
+@mixin box-direction($direction: normal) {
+    // normal|reverse|inherit
+    @include prefixer(box-direction, $direction, webkit moz spec);
+    -ms-flex-direction: $direction; // IE 10
+}
+
+@mixin box-lines($lines: single) {
+    // single|multiple
+    @include prefixer(box-lines, $lines, webkit moz spec);
+}
+
+@mixin box-ordinal-group($int: 1) {
+    @include prefixer(box-ordinal-group, $int, webkit moz spec);
+    -ms-flex-order: $int; // IE 10
+}
+
+@mixin box-flex($value: 0) {
+    @include prefixer(box-flex, $value, webkit moz spec);
+    -ms-flex: $value; // IE 10
+}
+
+@mixin box-flex-group($int: 1) {
+    @include prefixer(box-flex-group, $int, webkit moz spec);
+}
+
+// CSS3 Flexible Box Model and property defaults
+// Unified attributes for 2009, 2011, and 2012 flavours.
+
+// 2009 - display (box | inline-box)
+// 2011 - display (flexbox | inline-flexbox)
+// 2012 - display (flex | inline-flex)
+@mixin display($value) {
+    // flex | inline-flex
+    @if $value == "flex" {
+        // 2009
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+
+        // 2012
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox; // 2011 (IE 10)
+        display: flex;
+    } @else if $value == "inline-flex" {
+        display: -webkit-inline-box;
+        display: -moz-inline-box;
+        display: inline-box;
+
+        display: -webkit-inline-flex;
+        display: -moz-inline-flex;
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+    } @else {
+        display: $value;
+    }
+}
+
+// 2009 - box-flex (integer)
+// 2011 - flex (decimal | width decimal)
+// 2012 - flex (integer integer width)
+@mixin flex($value) {
+
+    // Grab flex-grow for older browsers.
+    $flex-grow: nth($value, 1);
+
+    // 2009
+    @include prefixer(box-flex, $flex-grow, webkit moz spec);
+
+    // 2011 (IE 10), 2012
+    @include prefixer(flex, $value, webkit moz ms spec);
+}
+
+// 2009 - box-orient ( horizontal | vertical | inline-axis | block-axis)
+//      - box-direction (normal | reverse)
+// 2011 - flex-direction (row | row-reverse | column | column-reverse)
+// 2012 - flex-direction (row | row-reverse | column | column-reverse)
+@mixin flex-direction($value: row) {
+
+    // Alt values.
+    $value-2009: $value;
+    $value-2011: $value;
+    $direction: normal;
+
+    @if $value == row {
+        $value-2009: horizontal;
+    } @else if $value == "row-reverse" {
+        $value-2009: horizontal;
+        $direction: reverse;
+    } @else if $value == column {
+        $value-2009: vertical;
+    } @else if $value == "column-reverse" {
+        $value-2009: vertical;
+        $direction: reverse;
+    }
+
+    // 2009
+    @include prefixer(box-orient, $value-2009, webkit moz spec);
+    @include prefixer(box-direction, $direction, webkit moz spec);
+
+    // 2012
+    @include prefixer(flex-direction, $value, webkit moz spec);
+
+    // 2011 (IE 10)
+    -ms-flex-direction: $value;
+}
+
+// 2009 - box-lines (single | multiple)
+// 2011 - flex-wrap (nowrap | wrap | wrap-reverse)
+// 2012 - flex-wrap (nowrap | wrap | wrap-reverse)
+@mixin flex-wrap($value: nowrap) {
+    // Alt values
+    $alt-value: $value;
+    @if $value == nowrap {
+        $alt-value: single;
+    } @else if $value == wrap {
+        $alt-value: multiple;
+    } @else if $value == "wrap-reverse" {
+        $alt-value: multiple;
+    }
+
+    @include prefixer(box-lines, $alt-value, webkit moz spec);
+    @include prefixer(flex-wrap, $value, webkit moz ms spec);
+}
+
+// 2009 - TODO: parse values into flex-direction/flex-wrap
+// 2011 - TODO: parse values into flex-direction/flex-wrap
+// 2012 - flex-flow (flex-direction || flex-wrap)
+@mixin flex-flow($value) {
+    @include prefixer(flex-flow, $value, webkit moz spec);
+}
+
+// 2009 - box-ordinal-group (integer)
+// 2011 - flex-order (integer)
+// 2012 - order (integer)
+@mixin order($int: 0) {
+    // 2009
+    @include prefixer(box-ordinal-group, $int, webkit moz spec);
+
+    // 2012
+    @include prefixer(order, $int, webkit moz spec);
+
+    // 2011 (IE 10)
+    -ms-flex-order: $int;
+}
+
+// 2012 - flex-grow (number)
+@mixin flex-grow($number: 0) {
+    @include prefixer(flex-grow, $number, webkit moz spec);
+    -ms-flex-positive: $number;
+}
+
+// 2012 - flex-shrink (number)
+@mixin flex-shrink($number: 1) {
+    @include prefixer(flex-shrink, $number, webkit moz spec);
+    -ms-flex-negative: $number;
+}
+
+// 2012 - flex-basis (number)
+@mixin flex-basis($width: auto) {
+    @include prefixer(flex-basis, $width, webkit moz spec);
+    -ms-flex-preferred-size: $width;
+}
+
+// 2009 - box-pack (start | end | center | justify)
+// 2011 - flex-pack (start | end | center | justify)
+// 2012 - justify-content (flex-start | flex-end | center | space-between | space-around)
+@mixin justify-content($value: flex-start) {
+
+    // Alt values.
+    $alt-value: $value;
+    @if $value == "flex-start" {
+        $alt-value: start;
+    } @else if $value == "flex-end" {
+        $alt-value: end;
+    } @else if $value == "space-between" {
+        $alt-value: justify;
+    } @else if $value == "space-around" {
+        $alt-value: distribute;
+    }
+
+    // 2009
+    @include prefixer(box-pack, $alt-value, webkit moz spec);
+
+    // 2012
+    @include prefixer(justify-content, $value, webkit moz ms o spec);
+
+    // 2011 (IE 10)
+    -ms-flex-pack: $alt-value;
+}
+
+// 2009 - box-align (start | end | center | baseline | stretch)
+// 2011 - flex-align (start | end | center | baseline | stretch)
+// 2012 - align-items (flex-start | flex-end | center | baseline | stretch)
+@mixin align-items($value: stretch) {
+
+    $alt-value: $value;
+
+    @if $value == "flex-start" {
+        $alt-value: start;
+    } @else if $value == "flex-end" {
+        $alt-value: end;
+    }
+
+    // 2009
+    @include prefixer(box-align, $alt-value, webkit moz spec);
+
+    // 2012
+    @include prefixer(align-items, $value, webkit moz ms o spec);
+
+    // 2011 (IE 10)
+    -ms-flex-align: $alt-value;
+}
+
+// 2011 - flex-item-align (auto | start | end | center | baseline | stretch)
+// 2012 - align-self (auto | flex-start | flex-end | center | baseline | stretch)
+@mixin align-self($value: auto) {
+
+    $value-2011: $value;
+    @if $value == "flex-start" {
+        $value-2011: start;
+    } @else if $value == "flex-end" {
+        $value-2011: end;
+    }
+
+    // 2012
+    @include prefixer(align-self, $value, webkit moz spec);
+
+    // 2011 (IE 10)
+    -ms-flex-item-align: $value-2011;
+}
+
+// 2011 - flex-line-pack (start | end | center | justify | distribute | stretch)
+// 2012 - align-content (flex-start | flex-end | center | space-between | space-around | stretch)
+@mixin align-content($value: stretch) {
+
+    $value-2011: $value;
+    @if $value == "flex-start" {
+        $value-2011: start;
+    } @else if $value == "flex-end" {
+        $value-2011: end;
+    } @else if $value == "space-between" {
+        $value-2011: justify;
+    } @else if $value == "space-around" {
+        $value-2011: distribute;
+    }
+
+    // 2012
+    @include prefixer(align-content, $value, webkit moz spec);
+
+    // 2011 (IE 10)
+    -ms-flex-line-pack: $value-2011;
+}
+
+
+@mixin prefixer($property, $value, $prefixes) {
+    @each $prefix in $prefixes {
+        @if $prefix == webkit {
+            @if $prefix-for-webkit {
+                -webkit-#{$property}: $value;
+            }
+        } @else if $prefix == moz {
+            @if $prefix-for-mozilla {
+                -moz-#{$property}: $value;
+            }
+        } @else if $prefix == ms {
+            @if $prefix-for-microsoft {
+                -ms-#{$property}: $value;
+            }
+        } @else if $prefix == o {
+            @if $prefix-for-opera {
+                -o-#{$property}: $value;
+            }
+        } @else if $prefix == spec {
+            @if $prefix-for-spec {
+                #{$property}: $value;
+            }
+        } @else  {
+            @warn "Unrecognized prefix: #{$prefix}";
+        }
+    }
+}
+
+@mixin disable-prefix-for-all() {
+    $prefix-for-webkit:    false !global;
+    $prefix-for-mozilla:   false !global;
+    $prefix-for-microsoft: false !global;
+    $prefix-for-opera:     false !global;
+    $prefix-for-spec:      false !global;
 }

@@ -9,10 +9,10 @@ namespace Integrated\Bundle\FormTypeBundle\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class BootstrapButtonExtension extends AbstractExtension
+class TailwindButtonExtension extends AbstractExtension
 {
     /**
-     * @var BootstrapIconExtension
+     * @var TailwindIconExtension
      */
     private $iconExtension;
 
@@ -25,9 +25,9 @@ class BootstrapButtonExtension extends AbstractExtension
     ];
 
     /**
-     * @param BootstrapIconExtension $iconExtension
+     * @param TailwindIconExtension $iconExtension
      */
-    public function __construct(BootstrapIconExtension $iconExtension)
+    public function __construct(TailwindIconExtension $iconExtension)
     {
         $this->iconExtension = $iconExtension;
     }
@@ -98,6 +98,6 @@ class BootstrapButtonExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'braincrafted_bootstrap_button';
+        return 'braincrafted_tailwind_button';
     }
 }

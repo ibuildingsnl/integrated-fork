@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of BraincraftedBootstrapBundle.
+ * This file is part of BraincraftedTailwindBundle.
  * (c) 2012-2013 by Florian Eckerstorfer.
  */
 
@@ -11,15 +11,15 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 /**
- * BootstrapIconExtension.
+ * TailwindIconExtension.
  *
  * @author     Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
  *
- * @see       http://bootstrap.braincrafted.com Bootstrap for Symfony2
+ * @see       http://tailwind.braincrafted.com Tailwind for Symfony2
  */
-class BootstrapIconExtension extends AbstractExtension
+class TailwindIconExtension extends AbstractExtension
 {
     /**
      * @var string
@@ -35,7 +35,7 @@ class BootstrapIconExtension extends AbstractExtension
      * @param string $iconPrefix
      * @param string $iconTag
      */
-    public function __construct($iconPrefix, $iconTag = 'span')
+    public function __construct($iconPrefix, $iconTag = 'i')
     {
         $this->iconPrefix = $iconPrefix;
         $this->iconTag = $iconTag;
@@ -112,6 +112,6 @@ class BootstrapIconExtension extends AbstractExtension
      */
     public function getName()
     {
-        return 'braincrafted_bootstrap_icon';
+        return 'braincrafted_tailwind_icon';
     }
 }

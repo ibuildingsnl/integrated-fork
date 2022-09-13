@@ -1,7 +1,8 @@
 $(function() {
     $('.sortable-collection').sortable({
-        axis: 'y',
-        containment: 'parent'
+        // axis: 'y',
+        // containment: 'parent'
+        placeholder: "ui-state-highlight"
     });
 
     $('.sortable-collection').closest('form').submit(function() {

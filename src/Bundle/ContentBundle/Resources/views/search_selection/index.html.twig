@@ -1,9 +1,9 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}Search selections{% endtrans %}{% endblock title %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <section class="section-white section-radius">
                 <table class="table table-hover">
                     <colgroup>
                         <col />
@@ -27,8 +27,8 @@
                                 <td>{{ searchSelection.id|default }}</td>
                                 <td>
                                     {% if not searchSelection.locked %}
-                                    <a href="{{ path('integrated_content_search_selection_edit', { 'id': searchSelection.id }) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                    <a href="{{ path('integrated_content_search_selection_delete', { 'id': searchSelection.id }) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                                    <a href="{{ path('integrated_content_search_selection_edit', { 'id': searchSelection.id }) }}" title="{% trans %}Edit{% endtrans %}"><span class="fa fa-edit"></span></a>
+                                    <a href="{{ path('integrated_content_search_selection_delete', { 'id': searchSelection.id }) }}" title="{% trans %}Delete{% endtrans %}"><span class="fa fa-xmark-circle"></span></a>
                                     {% endif %}
                                 </td>
                             </tr>
