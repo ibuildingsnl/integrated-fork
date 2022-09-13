@@ -65,7 +65,8 @@
 
 {% block integrated_editor_row  %}
     {% apply spaceless %}
-    <div class="form-group">
+    {% set state = state|default(tailwind_get_state()) %}
+    <div class="form-group {% if state is not empty %}{{ state }}{% endif %}">
         <div class="w-full">
             <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
