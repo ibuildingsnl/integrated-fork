@@ -15,6 +15,8 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu"></service>
+
         <service id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
