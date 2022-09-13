@@ -53,8 +53,7 @@
             </call>
         </service>
 
-        <service id="Integrated\Bundle\ContentBundle\Controller\MediaController" autowire="true" autoconfigure="true">
-        </service>
+        <service id="Integrated\Bundle\ContentBundle\Controller\MediaController" autowire="true" autoconfigure="true"></service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\RankController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />

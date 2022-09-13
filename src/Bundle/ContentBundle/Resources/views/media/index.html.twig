@@ -1,10 +1,62 @@
-<div>Linker menu</div>
+<body>
+    <div class="grid-container">
+        <div class="menu">
+{#        <h3>Linker menu</h3>#}
+            <div class="menu">
+                <div class="menu-item">
+                    <a>Alle bestanden</a>
+                </div>
+                <div class="menu-item">
+                    <input type="search" placeholder="Voer de naam van de map in">
+                </div>
+                {% for menu_item in menu %}
+                    <div class="menu-item">
+                    {{ menu_item }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
 
-<div>Top menu</div>
+        <div class="header">
+            <h3>Top menu</h3>
+        </div>
 
-<div>Gallery</div>
-<div>
-{% for media in items %}
-    {{ media.title|default('geen title') }}
-{% endfor %}
-</div>
+        <div class="main">
+            <div>Gallery</div>
+            <div>
+                {% for media in items %}
+                    {{ media.title|default('geen title') }}
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</body>
+
+<style>
+    .menu {
+        background-color: #cccccc;
+        padding: 7px;
+    }
+    .menu-item {
+        padding: 2px;
+    }
+    body {
+        margin: 40px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-areas:
+    'menu header header header header header'
+    'menu main main main main main';
+        gap: 10px;
+        background-color: #bbb;
+        padding: 10px;
+    }
+    .menu { grid-area: menu; }
+    .main { grid-area: main; }
+    .header { grid-area: header; }
+    .menu {
+        grid-area: menu;
+        max-width: 230px;
+    }
+</style>

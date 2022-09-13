@@ -12,15 +12,20 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends AbstractController
 {
-    public function __construct(private ContentProvider $provider)
+
+    private $mediaGalleryMenu;
+    public function __construct(private ContentProvider $provider, MediaGalleryMenu $mediaGalleryMenu)
     {
+        $this->mediaGalleryMenu = $mediaGalleryMenu;
     }
 
     /**
@@ -30,11 +35,22 @@ class MediaController extends AbstractController
      */
     public function index(Request $request)
     {
+        //I think this is correct Autowiring:
+        //Include the Service in services.xml
+        //Pass the Service as an argument in controller.xml
+        $menu = $this->mediaGalleryMenu->get();
+
+        //this sets this in the request:
+        // "class" => "Integrated\Bundle\ContentBundle\Document\Content\File"
         $request->query->set('class', File::class);
+        $request->query->set('class', Article::class);
+        //weird, File and Article both give the same result with me
+
         $items = $this->provider->getContentFromSolr($request, 20);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
+            'menu' => $menu
         ]);
     }
 }
