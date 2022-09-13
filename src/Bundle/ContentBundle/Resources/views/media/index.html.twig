@@ -1,53 +1,10 @@
-{% extends '@IntegratedContent/base.html.twig' %}
+<div>Linker menu</div>
 
-{% block content %}
+<div>Top menu</div>
 
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: auto auto auto auto ;
-            /*background-color: #fff;*/
-            padding: 10px;
-            border: 1px solid rgba(0, 0, 0, 0.4);*/
-        }
-
-        .grid-item {
-            /*background-color: rgba(255, 255, 255, 0.8);*/
-            /*border: 1px solid rgba(0, 0, 0, 0.8);*/
-            padding: 20px;
-            font-size: 30px;
-            text-align: center;
-        }
-    </style>
-    <h1>Media gallery</h1>
-
-<h3>Todo:</h3>
-<ol>
-    <li>left menu: Filter by channel / category</li>
-    <li>On top: Search by name, tag, within selection</li>
-    <li>Later:</li>
-    <li>Sorteren: op datum:</li>
-    <li>Canvas: Drop new images</li>
-    <li>Right menu: Actions: delete</li>
-    <li>Canvas: Multi select (ctrl / shift)</li>
-</ol>
-
+<div>Gallery</div>
+<div>
 {% for media in items %}
-    <h2>media item</h2>
     {{ media.title|default('geen title') }}
 {% endfor %}
-
-<div class="grid-container">
-    {% for movie in movies %}
-        <div class="grid-item">
-            <h3>{{ movie[1]|default('geen title') }}</h3>
-            <h6><span>{{ movie[3]|default('geen genre') }}</span> - <span>{{ movie[4]|default('geen ...') }}</span></h6>
-            <a href="show/{{ movie[0] }}">
-                <img height="150px" width="150px"
-                     src="https://media.istockphoto.com/photos/bonsai-tree-isolated-on-white-background-picture-id680145102?k=20&m=680145102&s=612x612&w=0&h=UpDMmfYFr2ZCVO30RY9IvTAH_CbyGI4v54Ptjk2BGDA=">
-            </a>
-        </div>
-
-    {% endfor %}
 </div>
-{% endblock %}
