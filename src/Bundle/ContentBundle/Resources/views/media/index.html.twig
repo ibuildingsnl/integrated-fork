@@ -1,0 +1,10 @@
+<div>Linker menu</div>
+
+<div>Top menu</div>
+
+<div>Gallery</div>
+<div>
+{% for media in items %}
+    {{ media.title|default('geen title') }}
+{% endfor %}
+</div>

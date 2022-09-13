@@ -86,6 +86,13 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
+        if ($class = $request->query->get('class')) {
+            $query
+                ->createFilterQuery('class')
+                ->addTag('class')
+                ->setQuery('locale: "es_VE"');
+        }
+
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
         $relation = $request->query->get('relation');
