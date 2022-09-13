@@ -224,9 +224,9 @@
                         {{ form_row(form.name, {'state':'title_tinymce'}) }}
                     {% endif %}
                     {% if form.content is defined %}
-                        {{ form_row(form.content, {'style':'editor'}) }}
+                        {{ form_row(form.content, {'style':'editor','state':'fancy_tinymce'}) }}
                     {% else %}
-                        {{ form_row(form.description, {'style':'editor'}) }}
+                        {{ form_row(form.description, {'style':'editor','state':'fancy_tinymce'}) }}
                     {% endif %}
                     {% if form.file is defined %}
                         {{ form_row(form.file, {'style':'editor'}) }}
