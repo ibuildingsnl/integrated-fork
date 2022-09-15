@@ -231,7 +231,8 @@
                         {% for key, facet in facets %}
                             {% if facet|length > 0 %}
                                 <div class="aside-item-holder">
-                                    <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+                                    <div
+                                        class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
                                         <div class="aside-item-header">
                                             <h3 class="aside-item-title">
                                                 <i class="fa-regular fa-clock"></i>
@@ -248,44 +249,47 @@
                                             <i class="fa-regular {% if (key == 'contenttypes') or (key =='channels') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
                                         </div>
                                         <div class="aside-item-list">
-                                            {% if (facet|length >= 3) %}
-                                                <div class="aside-item-search">
-                                                    <input type="text" class="list-search"
-                                                           onchange="asideItemsSearch(this)"
-                                                           onkeyup="asideItemsSearch(this)"
-                                                           placeholder="{% trans %}Search in{% endtrans %} {% if key == 'contenttypes' %}{% trans %}Content types{% endtrans %}{% elseif facetTitles[key]|default %}{{ facetTitles[key]|default|trans }}{% else %}{{ key|capitalize }}{% endif %}">
-                                                </div>
-                                            {% endif %}
-                                            <ul class="filters_list">
-                                                {% for title, count in facet %}
-                                                    <li class="checkbox{% if (loop.index >= 6) and (not (title in active[key]|default)) %} to_show{% endif %}">
-                                                        <label class="checkbox-container">
-                                                            <input
-                                                                {% if title in active[key]|default %}checked="checked"{% endif %}
-                                                                onclick="form.submit();" type="checkbox"
-                                                                name="{{ key }}[]"
-                                                                value="{{ title }}"/>
-                                                            <span class="checkmark"></span>
-                                                            {% if key == 'contenttypes' %}
-                                                                {% if contentTypes[title] is defined %}
-                                                                    {{ contentTypes[title] }}
+                                            <div class="aside-item-list-container">
+                                                {% if (facet|length >= 3) %}
+                                                    <div class="aside-item-search">
+                                                        <i class="fa fa-search"></i>
+                                                        <input type="text" class="list-search"
+                                                               onchange="asideItemsSearch(this)"
+                                                               onkeyup="asideItemsSearch(this)"
+                                                               placeholder="{% trans %}Search in{% endtrans %} {% if key == 'contenttypes' %}{% trans %}Content types{% endtrans %}{% elseif facetTitles[key]|default %}{{ facetTitles[key]|default|trans }}{% else %}{{ key|capitalize }}{% endif %}">
+                                                    </div>
+                                                {% endif %}
+                                                <ul class="filters_list">
+                                                    {% for title, count in facet %}
+                                                        <li class="checkbox{% if (loop.index >= 6) and (not (title in active[key]|default)) %} to_show{% endif %}">
+                                                            <label class="checkbox-container">
+                                                                <input
+                                                                    {% if title in active[key]|default %}checked="checked"{% endif %}
+                                                                    onclick="form.submit();" type="checkbox"
+                                                                    name="{{ key }}[]"
+                                                                    value="{{ title }}"/>
+                                                                <span class="checkmark"></span>
+                                                                {% if key == 'contenttypes' %}
+                                                                    {% if contentTypes[title] is defined %}
+                                                                        {{ contentTypes[title] }}
+                                                                    {% else %}
+                                                                        {{ title }}
+                                                                    {% endif %}
+                                                                {% elseif key == 'channels' %}
+                                                                    {% if channels[title] is defined %}
+                                                                        {{ channels[title] }}
+                                                                    {% else %}
+                                                                        {{ title }}
+                                                                    {% endif %}
                                                                 {% else %}
                                                                     {{ title }}
                                                                 {% endif %}
-                                                            {% elseif key == 'channels' %}
-                                                                {% if channels[title] is defined %}
-                                                                    {{ channels[title] }}
-                                                                {% else %}
-                                                                    {{ title }}
-                                                                {% endif %}
-                                                            {% else %}
-                                                                {{ title }}
-                                                            {% endif %}
-                                                            <span class="value">({{ count }})</span>
-                                                        </label>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
+                                                                <span class="value">({{ count }})</span>
+                                                            </label>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
