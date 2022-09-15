@@ -40,13 +40,11 @@ class MediaController extends AbstractController
         //Pass the Service as an argument in controller.xml
         $menu = $this->mediaGalleryMenu->get();
 
-        //this sets this in the request:
-        // "class" => "Integrated\Bundle\ContentBundle\Document\Content\File"
-        $request->query->set('class', File::class);
-        $request->query->set('class', Article::class);
-        //weird, File and Article both give the same result with me
+        //TODO get class_string value from request
+        $request->query->set('class_string', 'File');
 
         $items = $this->provider->getContentFromSolr($request, 20);
+
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
