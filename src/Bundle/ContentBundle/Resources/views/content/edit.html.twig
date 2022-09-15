@@ -1,13 +1,24 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
+
+{% dump(type.class) %}
+
 {% block content %}
+    {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
+       {% set title_state = 'title_tinymce' %}
+       {% set tinymce_state = 'fancy_tinymce' %}
+    {% else %}
+        {% set title_state = '' %}
+        {% set tinymce_state = '' %}
+    {% endif %}
+
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
     <div class="flex flex-wrap">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal', 'label_col': '', 'widget_col': '', 'placeholder': true, 'label': true }) }}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
             <div class="back">
@@ -91,11 +102,10 @@
                                 <div class="aside-item-list-container">
                                     <div class="status-info">
                                         {% if form.publishTime is defined %}
-                                            {{ form_row(form.publishTime, {'show_placeholder': true}) }}
+                                            {{ form_row(form.publishTime, {show_placeholder: true}) }}
                                         {% endif %}
                                     </div>
                                     <div class="status-options">
-                                        {#                                            {% dump(content) %} #}
                                         {% if content is defined and (content.isPublished and content.getChannels|length > 0) %}
                                             <div class="status published">
                                                 <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
@@ -124,16 +134,17 @@
                             {% endif %}
                         {% endblock %}
 
-                        {#                        {% dump(form) %} #}
-
                         {% block content_meta %}
+
                             {% if form.channels is defined %}
-                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}
                             {% endif %}
+
                             {% if form.slug is defined %}
                                 {{ form_row(form.slug, {'style': 'sidebar', 'icon':'fa-link'}) }}
                             {% endif %}
 
+                            <!-- If description is available and Content is also, show it in the sidebar -->
                             {% if form.content is defined %}
                                 {% if form.description is defined %}
                                     {{ form_row(form.description, {'style': 'sidebar', 'icon':'fa-input-text'}) }}
@@ -149,7 +160,7 @@
                             {% endif %}
 
                             {% if form.authors is defined %}
-                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather'}) }}
+                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather', 'widget_col': '', 'label_col':''}) }}
                             {% endif %}
 
                             {% if form.source is defined %}
@@ -218,25 +229,33 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
+                    <!-- Styling of these elements to make sure they are lined out vertically have been done with css. Making functionality for this specificialy makes it complicated without the need for it because horizontal fields in the sidebar don't have a use. -->
                     {% if form.title is defined %}
-                        {{ form_row(form.title, {'state':'title_tinymce'}) }}
-                    {% else %}
-                        {{ form_row(form.name, {'state':'title_tinymce'}) }}
+                        {{ form_row(form.title, {'state': title_state}) }}
+                    {% elseif form.name is defined %}
+                        {{ form_row(form.name, {'state': title_state}) }}
                     {% endif %}
+
                     {% if form.content is defined %}
-                        {{ form_row(form.content, {'style':'editor','state':'fancy_tinymce'}) }}
-                    {% else %}
-                        {{ form_row(form.description, {'style':'editor','state':'fancy_tinymce'}) }}
+                        {{ form_row(form.content, {'style':'editor','state':tinymce_state}) }}
+                    {% elseif form.description is defined %}
+                        {{ form_row(form.description, {'style':'editor','state':tinymce_state}) }}
+                    {% elseif form.comment is defined %}
+                        {{ form_row(form.comment, {'style':'editor','state':tinymce_state}) }}
                     {% endif %}
+
                     {% if form.file is defined %}
                         {{ form_row(form.file, {'style':'editor'}) }}
                     {% endif %}
+
                     {% if form.subtitle is defined %}
                         {{ form_row(form.subtitle, {'style':'editor'}) }}
                     {% endif %}
+
                     {% if form.intro is defined %}
                         {{ form_row(form.intro, {'style':'editor'}) }}
                     {% endif %}
+
                     {{ form_rest(form, {'style':'editor', 'state':'show'})}}
                 {% endblock %}
                 {% block content_relations_editor %}

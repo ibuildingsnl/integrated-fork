@@ -89,10 +89,10 @@
 {% block checkbox_row %}
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
+        {% set state = state|default(tailwind_get_state()) %}
         {% if style == 'horizontal' and (align_widget is defined or attr.align_widget is defined) %}
             {% set align_with_widget = true %}
         {% endif %}
-
         {{ parent() }}
     {% endapply %}
 {% endblock %}
@@ -138,7 +138,6 @@
                                     <a data-toggle="collapse" href="#{{ field.vars.id }}">
                                         <i class="fa-regular fa-grip-dots-vertical"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
                                     </a>
-                                    {% dump(field) %}
                                     {% if form.vars.allow_delete %}
                                         <a href="javascript:;" class="remove" title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}" data-removefield="collection" data-field="{{ field.vars.id }}">
                                             <i class="fa fa-xmark"></i>
@@ -292,6 +291,104 @@
     {% endapply %}
 {% endblock %}
 
+{% block form_row %}
+    {% apply spaceless %}
+        {% set label_col = label_col|default(tailwind_get_label_col()) %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% set icon = icon|default(tailwind_get_icon()) %}
+        {% set state = state|default(tailwind_get_icon()) %}
+
+        {% if attr.label_col is defined and attr.label_col is not empty %}
+            {% set label_col = attr.label_col %}
+        {% endif %}
+        {% if attr.widget_col is defined and attr.widget_col is not empty %}
+            {% set widget_col = attr.widget_col %}
+            {% if label is same as (false) and label_col is defined %}
+                {% set widget_col = widget_col + label_col %}
+            {% endif %}
+        {% endif %}
+        {% if attr.style is defined and attr.style is not empty %}
+            {% set style = attr.style %}
+        {% endif %}
+        {% if style == 'horizontal' %}
+            <div
+                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                {% if show_label != false %}
+                    {{ form_label(form) }}
+                {% endif %}
+                <div class="w-full {{ widget_col }}">
+                    {{ block('form_input_group') }}
+                    {{ block('form_help') }}
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+            {#        {% elseif style == 'vertical' %}#}
+            {#            <div#}
+            {#                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
+            {#                {% if show_label != false %}#}
+            {#                    {{ form_label(form) }}#}
+            {#                {% endif %}#}
+            {#                <div class="w-full">#}
+            {#                    {{ block('form_input_group') }}#}
+            {#                    {{ block('form_help') }}#}
+            {#                    {{ form_errors(form) }}#}
+            {#                </div>#}
+            {#            </div>#}
+        {% elseif style == 'sidebar' %}
+            <div
+                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
+                        <span class="aside-item-icon">
+                            {{ form_label(form) }}
+                        </span>
+                    </h3>
+                    <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                </div>
+                <div class="aside-item-list">
+                    <div class="aside-item-list-container">
+                        {{ block('form_input_group') }}
+                        {{ block('form_help') }}
+                        {{ form_errors(form) }}
+                    </div>
+                </div>
+            </div>
+        {% elseif style == 'editor' %}
+            <div
+                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="editor-item-header">
+                    <h3 class="editor-item-title">
+                        <span class="editor-item-icon">
+                            {{ form_label(form) }}
+                        </span>
+                    </h3>
+                    <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                </div>
+                <div class="editor-item-list">
+                    <div class="editor-item-list-container">
+                        {{ block('form_input_group') }}
+                        {{ block('form_help') }}
+                        {{ form_errors(form) }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+                {% if show_label != false %}
+                    {{ form_label(form) }}
+                {% endif %}
+                {{ block('form_input_group') }}
+                {{ block('form_help') }}
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
+    {% endapply %}
+{% endblock form_row %}
 
 {#{% block integrated_sidebar_row %}#}
 {#    {% apply spaceless %}#}
