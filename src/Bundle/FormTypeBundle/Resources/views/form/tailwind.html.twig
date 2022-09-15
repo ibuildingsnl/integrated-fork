@@ -19,8 +19,6 @@
 
         {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
 
-        {% set state = state|default(tailwind_get_state()) %}
-
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
         {% endif %}
@@ -635,7 +633,13 @@
 
 {% block form_row %}
     {% apply spaceless %}
+        {% set label_col = label_col|default(tailwind_get_label_col()) %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% set style = style|default(tailwind_get_style()) %}
+        {% set icon = icon|default(tailwind_get_icon()) %}
+        {% set state = state|default(tailwind_get_icon()) %}
+
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
         {% endif %}
@@ -648,14 +652,9 @@
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
-
-        {% set label_col = label_col|default(tailwind_get_label_col()) %}
-        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        {% set show_label = show_label|default(tailwind_get_show_label()) %}
-        {% set icon = icon|default(tailwind_get_icon()) %}
-        {% set state = state|default(tailwind_get_icon()) %}
         {% if style == 'horizontal' %}
-            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}
@@ -665,8 +664,21 @@
                     {{ form_errors(form) }}
                 </div>
             </div>
+{#        {% elseif style == 'vertical' %}#}
+{#            <div#}
+{#                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
+{#                {% if show_label != false %}#}
+{#                    {{ form_label(form) }}#}
+{#                {% endif %}#}
+{#                <div class="w-full">#}
+{#                    {{ block('form_input_group') }}#}
+{#                    {{ block('form_help') }}#}
+{#                    {{ form_errors(form) }}#}
+{#                </div>#}
+{#            </div>#}
         {% elseif style == 'sidebar' %}
-            <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
@@ -678,16 +690,15 @@
                 </div>
                 <div class="aside-item-list">
                     <div class="aside-item-list-container">
-                        <div class="input-group relative flex items-stretch w-full">
                             {{ block('form_input_group') }}
                             {{ block('form_help') }}
                             {{ form_errors(form) }}
-                        </div>
                     </div>
                 </div>
             </div>
         {% elseif style == 'editor' %}
-            <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">
@@ -698,11 +709,9 @@
                 </div>
                 <div class="editor-item-list">
                     <div class="editor-item-list-container">
-                        <div class="input-group relative flex items-stretch w-full">
                             {{ block('form_input_group') }}
                             {{ block('form_help') }}
                             {{ form_errors(form) }}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -988,6 +997,10 @@
 {#            {% else %}#}
 {#                {% set childAttr = childAttr|merge({ 'state': state|default(tailwind_get_state()) }) %}#}
             {% endif %}
+            {% if attr.state is defined %}
+                {% set childAttr = childAttr|merge({ 'state': attr.state }) %}
+            {% endif %}
+            {% dump(childAttr) %}
             {{ form_row(child, childAttr) }}
         {% endfor %}
     {% endapply %}
