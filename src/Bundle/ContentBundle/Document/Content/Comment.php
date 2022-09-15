@@ -42,7 +42,7 @@ class Comment extends Content
 
     /**
      * @var string
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
+     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
     protected $comment;
 
