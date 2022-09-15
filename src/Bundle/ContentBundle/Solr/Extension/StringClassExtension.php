@@ -49,6 +49,8 @@ class StringClassExtension implements TypeExtensionInterface
             $container->add('class_string', 'Image');
         } else if ($data instanceof Video) {
             $container->add('class_string', 'Video');
+        } else {
+            $container->add('class_string', 'NonMedia');
         }
 
         //TODO *1
