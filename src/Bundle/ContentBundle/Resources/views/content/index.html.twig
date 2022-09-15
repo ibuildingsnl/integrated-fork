@@ -311,14 +311,13 @@
 
             function openSelectedOptions(elem) {
                 var textinputs = elem.querySelectorAll('input[type=checkbox]');
-                console.log(elem);
-                var chevUp = this.querySelector('.fa-chevron-down');
-                var chevDown = this.querySelector('.fa-chevron-up');
-                var empty = [].filter.call(textinputs, function(elem) {
-                    return !elem.checked;
-                });
-                if (textinputs.length != empty.length) {
-                    show(elem, chevUp, chevDown);
+                if (!elem.parentNode.classList.contains('show')) {
+                    var empty = [].filter.call(textinputs, function(elem) {
+                        return !elem.checked;
+                    });
+                    if (textinputs.length != empty.length) {
+                        show(elem);
+                    }
                 }
             }
         });

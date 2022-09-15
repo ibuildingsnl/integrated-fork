@@ -44,6 +44,10 @@ webpackConfig = Encore.setOutputPath(
         from: './node_modules/tinymce/skins',
         to: 'skins/[path][name].[ext]',
     }).
+    copyFiles({
+        from: './src/Bundle/ContentBundle/Resources/assets/images',
+        to: 'images/[path][name].[ext]'
+    }).
     cleanupOutputBeforeBuild().
     autoProvidejQuery().
     enableSassLoader().

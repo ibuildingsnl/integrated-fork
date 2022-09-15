@@ -40,8 +40,13 @@
     overflow: hidden;
 
     &.show {
+        border: 1px solid #ecf6ff;
         .aside-item-header {
-            background-color: #f2f2f2;
+            background-color: #ECF6FE;
+            & > svg {
+                transition: transform .3s ease;
+                transform: rotate(180deg);
+            }
         }
 
         .aside-item-list {
@@ -52,7 +57,7 @@
 
     .aside-item-header {
         background-color: #ffffff;
-        padding: .5rem 1.5rem;
+        padding: 1rem 1.5rem;
         display: flex;
         transition: background-color .15s ease-in;
         justify-content: space-between;
@@ -62,6 +67,7 @@
 
         > svg {
             width: 13px;
+            transition: transform .3s ease;
         }
 
         h3.aside-item-title {
@@ -73,9 +79,9 @@
 
             svg {
                 color: #bdccde;
-                margin-right: 5px;
                 font-size: 20px;
-                width: 30px;
+                margin-right: 10px;
+                width: 20px;
             }
         }
     }
@@ -85,7 +91,14 @@
         height: 0;
         overflow: hidden;
         transition: height .35s ease-in-out;
-
+        .form-item {
+            .widget {
+                width: 100%;
+            }
+            label {
+                width: 100%;
+            }
+        }
         .aside-item-list-container {
             ul {
                 padding: 0.5rem 1.5rem;
@@ -136,7 +149,7 @@
 
     .aside-item-search {
         align-items: center;
-        background-color: #f2f2f2;
+        background-color: #ECF6FE;
         display: flex;
         justify-content: space-between;
         padding: 0.5rem 1rem;
