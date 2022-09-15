@@ -1,53 +1,127 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
 {% block content %}
 
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: auto auto auto auto ;
-            /*background-color: #fff;*/
-            padding: 10px;
-            border: 1px solid rgba(0, 0, 0, 0.4);*/
-        }
-
-        .grid-item {
-            /*background-color: rgba(255, 255, 255, 0.8);*/
-            /*border: 1px solid rgba(0, 0, 0, 0.8);*/
-            padding: 20px;
-            font-size: 30px;
-            text-align: center;
-        }
-    </style>
-    <h1>Media gallery</h1>
-
-<h3>Todo:</h3>
-<ol>
-    <li>left menu: Filter by channel / category</li>
-    <li>On top: Search by name, tag, within selection</li>
-    <li>Later:</li>
-    <li>Sorteren: op datum:</li>
-    <li>Canvas: Drop new images</li>
-    <li>Right menu: Actions: delete</li>
-    <li>Canvas: Multi select (ctrl / shift)</li>
-</ol>
-
-{% for media in items %}
-    <h2>media item</h2>
-    {{ media.title|default('geen title') }}
-{% endfor %}
-
 <div class="grid-container">
-    {% for movie in movies %}
-        <div class="grid-item">
-            <h3>{{ movie[1]|default('geen title') }}</h3>
-            <h6><span>{{ movie[3]|default('geen genre') }}</span> - <span>{{ movie[4]|default('geen ...') }}</span></h6>
-            <a href="show/{{ movie[0] }}">
-                <img height="150px" width="150px"
-                     src="https://media.istockphoto.com/photos/bonsai-tree-isolated-on-white-background-picture-id680145102?k=20&m=680145102&s=612x612&w=0&h=UpDMmfYFr2ZCVO30RY9IvTAH_CbyGI4v54Ptjk2BGDA=">
-            </a>
+    <div class="menu">
+        {#        <h3>Linker menu</h3> #}
+        <div class="menu">
+            <div class="menu-item">
+                <a>Alle bestanden</a>
+            </div>
+            <div class="menu-item">
+                <input type="search" placeholder="Voer de naam van de map in">
+            </div>
+            {% for menu_item in menu %}
+                <div class="menu-item">
+                    {{ menu_item }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="header" style="padding-bottom: 20px">
+        <div><a class="menulink">Alle mediabestanden</a>
+            <a class="menulink">Images</a>
+            <a class="menulink">Videos</a>
+            <a class="menulink">Files</a>
+            <input type="search" placeholder="Zoeken"></div>
+
+    </div>
+
+    <div class="main">
+        <div class="flex">
+            {% for media in items %}
+
+                <div class="flex-item">
+                    <div class="flex-content">
+                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+{#                            <div class="image-title">{{ media.title|default('geen title') }}</div>#}
+                            {% if media.contentType == 'image' %}
+                                <img src="{{ integrated_image(media.file).zoomCrop(150, 100) }}" alt="test"/>
+
+                            {% elseif media.contentType == 'video' %}
+                                {#                TODO add stills for images #}
+                                <img width="150px" height="100"
+                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg=="
+                                     alt="test"/>
+
+                            {% elseif media.contentType == 'file' %}
+                                {#                TODO add stills for files #}
+                                <img width="150px" height="100"
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU"
+                                     alt="test"/>
+                            {% else %}
+{#                                TODO How to handle custom ContentTypes that can be anything?#}
+{#                                We could check pathname / identifier, but that is not so elegant##}
+                                <img width="150px" height="100"
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU"
+                                     alt="test"/>
+                            {% endif %}
+
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
 
-    {% endfor %}
-</div>
-{% endblock %}
+    </div>
+
+
+    <style>
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 4px;
+        }
+
+        .flex-item {
+            flex: 25%;
+            max-width: 25%;
+            padding: 0 4px 20px;
+
+        }
+
+        .menu {
+            background-color: #cdd;
+            padding: 7px;
+        }
+
+        .menu-item {
+            padding: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-areas:
+    'menu header header header header header'
+    'menu main main main main main';
+            gap: 10px;
+            background-color: #eee;
+            padding: 10px;
+        }
+
+        .menu {
+            grid-area: menu;
+        }
+
+        .main {
+            grid-area: main;
+            padding-top: 20px;
+        }
+
+        .header {
+            background-color: #cdd;
+            padding: 10px;
+            grid-area: header;
+        }
+
+        .header a {
+            padding-right: 8px;
+        }
+
+        .menu {
+            grid-area: menu;
+            max-width: 230px;
+        }
+    </style>
+    {% endblock %}
