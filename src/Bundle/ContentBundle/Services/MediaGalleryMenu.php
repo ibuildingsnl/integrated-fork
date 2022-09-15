@@ -18,11 +18,11 @@ namespace Integrated\Bundle\ContentBundle\Services;
 class MediaGalleryMenu
 {
     public function getChannels() {
-        return [1, 2, 3];
+        return ["Alea Publischers", "Bakkers in Bedrijf", "Hardcoded channel"];
     }
 
     public function getTaxonomyItems() {
-        return [4, 5, 6];
+        return ["Custom TaxItem 1", "Custom TaxItem 2", "Custom TaxItem 3"];
     }
 
     public function get() {

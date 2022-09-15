@@ -86,11 +86,12 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
-        if ($class = $request->query->get('class')) {
+        // Why would I add a Tag?
+        if ($class = $request->query->get('class_string')) {
             $query
-                ->createFilterQuery('class')
-                ->addTag('class')
-                ->setQuery('locale: "es_VE"');
+                ->createFilterQuery('class_string')
+//                ->addTag('class_string')
+                ->setQuery('class_string: '.$class);
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
