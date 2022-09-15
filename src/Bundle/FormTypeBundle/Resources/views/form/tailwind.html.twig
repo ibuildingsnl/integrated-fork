@@ -15,11 +15,10 @@
 {% block form_widget_simple %}
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
+        {% set state = state|default(tailwind_get_state()) %}
 
         {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
         {% set show_label = show_label|default(tailwind_get_show_label()) %}
-
-        {% set state = state|default(tailwind_get_state()) %}
 
         {% if simple_col is not defined and tailwind_get_simple_col() %}
             {% set simple_col = tailwind_get_simple_col() %}
@@ -61,7 +60,8 @@
 
 {% block form_widget_compound %}
     {% apply spaceless %}
-        <div {{ block('widget_container_attributes') }} class="form-wrapper">
+        {% set style = style|default(tailwind_get_style()) %}
+        <div {{ block('widget_container_attributes') }} class="form-wrapper compound">
             {% if form.parent is empty %}
                 {{ block('global_form_errors') }}
             {% endif %}
@@ -181,15 +181,29 @@
 
 {% block choice_widget_expanded %}
     {% apply spaceless %}
-        <div {{ block('widget_container_attributes') }}>
+        {% set state = state|default(tailwind_get_state()) %}
+        {% if 'search' in state %}
+            <div class="aside-item-search">
+                <i class="fa fa-search"></i>
+                <input type="text" class="list-search"
+                       onchange="asideItemsSearch(this)"
+                       onkeyup="asideItemsSearch(this)"
+                       placeholder="{% trans %}Search in{% endtrans %} {{ label }}">
+            </div>
+        {% endif %}
+        <ul {{ block('widget_container_attributes') }}>
             {% for child in form %}
                 {% if multiple %}
-                    {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
+                    <li>
+                        {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
+                    </li>
                 {% else %}
-                    {{ radio_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr  }) }}
+                    <li>
+                        {{ radio_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
+                    </li>
                 {% endif %}
             {% endfor %}
-        </div>
+        </ul>
     {% endapply %}
 {% endblock choice_widget_expanded %}
 
@@ -239,7 +253,6 @@
 
 {% block checkbox_row %}
     {% apply spaceless %}
-        {% set style = style|default(tailwind_get_style()) %}
 
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
@@ -249,6 +262,9 @@
         {% endif %}
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
+        {% endif %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
         {% endif %}
 
         {% set class = '' %}
@@ -614,7 +630,13 @@
 
 {% block form_row %}
     {% apply spaceless %}
+        {% set label_col = label_col|default(tailwind_get_label_col()) %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% set style = style|default(tailwind_get_style()) %}
+        {% set icon = icon|default(tailwind_get_icon()) %}
+        {% set state = state|default(tailwind_get_icon()) %}
+
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
         {% endif %}
@@ -627,14 +649,9 @@
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
-
-        {% set label_col = label_col|default(tailwind_get_label_col()) %}
-        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        {% set show_label = show_label|default(tailwind_get_show_label()) %}
-        {% set icon = icon|default(tailwind_get_icon()) %}
-        {% set state = state|default(tailwind_get_icon()) %}
         {% if style == 'horizontal' %}
-            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}
@@ -644,8 +661,21 @@
                     {{ form_errors(form) }}
                 </div>
             </div>
+{#        {% elseif style == 'vertical' %}#}
+{#            <div#}
+{#                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
+{#                {% if show_label != false %}#}
+{#                    {{ form_label(form) }}#}
+{#                {% endif %}#}
+{#                <div class="w-full">#}
+{#                    {{ block('form_input_group') }}#}
+{#                    {{ block('form_help') }}#}
+{#                    {{ form_errors(form) }}#}
+{#                </div>#}
+{#            </div>#}
         {% elseif style == 'sidebar' %}
-            <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
@@ -657,16 +687,15 @@
                 </div>
                 <div class="aside-item-list">
                     <div class="aside-item-list-container">
-                        <div class="input-group relative flex items-stretch w-full">
                             {{ block('form_input_group') }}
                             {{ block('form_help') }}
                             {{ form_errors(form) }}
-                        </div>
                     </div>
                 </div>
             </div>
         {% elseif style == 'editor' %}
-            <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+            <div
+                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">
@@ -677,11 +706,9 @@
                 </div>
                 <div class="editor-item-list">
                     <div class="editor-item-list-container">
-                        <div class="input-group relative flex items-stretch w-full">
                             {{ block('form_input_group') }}
                             {{ block('form_help') }}
                             {{ form_errors(form) }}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -815,6 +842,10 @@
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' has-global-errors')|trim }) %}
         {% endif %}
 
+        {% if state is defined %}
+            {{ tailwind_set_state(state) }}
+        {% endif %}
+
         {% if widget_col is defined %}
             {{ tailwind_set_widget_col(widget_col) }}
         {% endif %}
@@ -854,6 +885,9 @@
         </form>
         {% if tailwind_get_style() %}
             {{ tailwind_set_style('') }}
+        {% endif %}
+        {% if tailwind_get_state() %}
+            {{ tailwind_set_state('') }}
         {% endif %}
         {% if tailwind_get_label_col() %}
             {{ tailwind_set_label_col('sm:w-2/12 2xl:w-1/12') }}
@@ -931,6 +965,10 @@
     {% apply spaceless %}
         {% for child in form %}
             {% set childAttr = {} %}
+            {% set style = style|default(tailwind_get_style()) %}
+            {% set state = state|default(tailwind_get_state()) %}
+            {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+            {% set label_col = label_col|default(tailwind_get_label_col()) %}
             {% if attr.widget_col is defined %}
                 {% set childAttr = childAttr|merge({ 'widget_col': attr.widget_col }) %}
             {% endif %}
@@ -940,7 +978,6 @@
             {% if attr.show_placeholder is defined %}
                 {% set childAttr = childAttr|merge({ 'show_placeholder': attr.show_placeholder }) %}
             {% endif %}
-
             {% if attr.simple_col is defined %}
                 {% set childAttr = childAttr|merge({ 'simple_col': attr.simple_col }) %}
             {% endif %}
@@ -950,6 +987,10 @@
             {% if attr.style is defined %}
                 {% set childAttr = childAttr|merge({ 'style': attr.style }) %}
             {% endif %}
+            {% if attr.state is defined %}
+                {% set childAttr = childAttr|merge({ 'state': attr.state }) %}
+            {% endif %}
+            {% dump(childAttr) %}
             {{ form_row(child, childAttr) }}
         {% endfor %}
     {% endapply %}
