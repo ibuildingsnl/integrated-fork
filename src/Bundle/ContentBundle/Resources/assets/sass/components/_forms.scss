@@ -338,6 +338,27 @@ label {
     flex-wrap: wrap;
 }
 
+.input-group {
+    &.form_datetime {
+        position: relative;
+        .remove {
+            align-items: center;
+            background-color: #c6422f;
+            border: 2px solid #c6422f;
+            border-radius: 4px;
+            color: #fff;
+            display: flex;
+            height: 20px;
+            justify-content: center;
+            width: 20px;
+            position: absolute;
+            right: 0;
+            top: 6px;
+            right: 6px;
+            cursor: pointer;
+        }
+    }
+}
 
 
 
