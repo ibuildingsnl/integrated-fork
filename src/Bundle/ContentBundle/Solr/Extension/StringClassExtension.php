@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Extension;
 
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
-//use Integrated\Bundle\ContentBundle\Document\Content\File; not needed,
+use Integrated\Bundle\ContentBundle\Document\Content\File; //not needed,
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Common\Content\Document\Storage\FileInterface;
@@ -30,8 +30,7 @@ class StringClassExtension implements TypeExtensionInterface
         //TODO *1
         //get custom class from data and add this.
 
-        //File of FileInterface?
-        if (!$data instanceof FileInterface) {
+        if (!$data instanceof File) {
             return;
         }
 
@@ -44,7 +43,6 @@ class StringClassExtension implements TypeExtensionInterface
         //We always add these
         $container->set('class_string', 'ContentType');
         $container->add('class_string', 'File');
-
         if ($data instanceof Image) {
             $container->add('class_string', 'Image');
         } else if ($data instanceof Video) {
