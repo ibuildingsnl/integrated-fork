@@ -35,6 +35,7 @@ class MediaController extends AbstractController
      */
     public function index(Request $request)
     {
+        //TODO: Check output, currently receiving more than just files -> company for example.
         $class_string = $request->query->get('class_string');
 
         if ($class_string === true || $class_string === null) {
@@ -63,6 +64,20 @@ class MediaController extends AbstractController
                 ],
                 'current' => $class_string,
                 'default' => 'File'
+            ],
+            'types' => [
+                "Image" => [
+                    'type' => 'image',
+                    'label' => 'Image'
+                ],
+                "Video"  => [
+                    'type' => 'video',
+                    'label' => 'Video'
+                ],
+                "File"  => [
+                    'type' => 'file',
+                    'label' => 'File'
+                ],
             ]
         ];
 
