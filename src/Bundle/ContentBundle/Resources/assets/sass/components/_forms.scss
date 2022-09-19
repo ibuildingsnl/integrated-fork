@@ -1,23 +1,23 @@
 /* FORMS */
 .form-control {
-    border: 1px solid #d1d1d1;
+    border: 1px solid;
     border-radius: 8px;
     font-size: 13px;
     padding: 1rem;
     width: 100%;
 	box-shadow: none;
-	border-color: $color-silver;
+	border-color: $border-color;
 	@include custom-placeholder($color: $input-color-placeholder, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 	&:focus {
 		box-shadow: none;
-		border-color: $color-silver;
+		border-color: $border-color-focus;
 		@include custom-placeholder($color: $input-color-placeholder-focus, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 	}
 	&.field-transparent {
 		border: none;
 		border-radius: 3px;
 		&:focus {
-			border: 1px solid $color-silver;
+			border: 1px solid $border-color-focus;
 		}
 	}
 }
@@ -159,7 +159,7 @@ label {
 			.form-control {
 				border-right: none;
 				@include media(max-md) {
-					border-right: 1px solid $color-silver;
+					border-right: 1px solid $border-color;
 				}
 			}
 		}
@@ -167,7 +167,7 @@ label {
 			.form-control {
 				border-left: none;
 				@include media(max-md) {
-					border-left: 1px solid $color-silver;
+					border-left: 1px solid $border-color;
 				}
 			}
 		}
@@ -229,7 +229,7 @@ label {
 
 /* List group form */
 .form-list-group {
-	border: 1px solid $color-silver;
+	border: 1px solid $border-color;
 	border-bottom: none;
 	margin-bottom: 0;
 	padding: 10px 15px;
@@ -242,7 +242,7 @@ label {
 		border-radius: 4px 4px 0 0;
 	}
 	&:last-child {
-		border: 1px solid $color-silver;
+		border: 1px solid $border-color;
 		border-radius: 0 0 4px 4px;
 	}
 	label {
@@ -261,7 +261,7 @@ label {
         color: $color-mine-shaft;
         height: 100%;
         box-sizing: content-box;
-        border: 1px solid $color-silver;
+        border: 1px solid $border-color;
     }
 }
 
@@ -359,6 +359,4 @@ label {
         }
     }
 }
-
-
 

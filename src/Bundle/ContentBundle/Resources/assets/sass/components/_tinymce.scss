@@ -4,7 +4,7 @@
 }
 
 .mce-tinymce.mce-container.mce-panel {
-    border-color: $color-silver;
+    border-color: $border-color;
 }
 
 .fancy_tinymce {
@@ -16,11 +16,11 @@
         border: 0 !important;
 
         .mce-menubar {
-            border: 1px solid #dde2e8;
+            border: 1px solid $border-color;
         }
         &.mce-container {
             &.mce-panel {
-                border-color: #dde2e8;
+                border-color: $border-color;
             }
         }
         .mce-edit-area {
@@ -46,13 +46,13 @@
             top: 35px;
             z-index: 9;
             padding-left: 23px;
-            border-bottom: 1px solid #dee2e8 !important;
+            border-bottom: 1px solid $border-color !important;
             border-radius: 0;
         }
 
         .mce-panel {
             background-color: #ffffff;
-            border: 0 !important;
+            border: 0;
         }
 
 
