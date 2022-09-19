@@ -134,6 +134,109 @@
 </script>
 {% endif %}
 
+<script>
+
+function asideItemsSearch(elem) {
+    // Declare variables
+
+    var input, filter, ul, li, a, i, txtValue;
+    input = elem;
+    filter = input.value.toUpperCase();
+    ul = elem.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
+    li = ul.getElementsByTagName('li');
+
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName('label')[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = '';
+        } else {
+            li[i].style.display = 'none';
+        }
+    }
+};
+
+// JS
+var sidebarfilter = document.getElementsByClassName('aside-item-header');
+var editorsettings = document.getElementsByClassName('editor-item-header');
+
+for (var i = 0; i < sidebarfilter.length; i++) {
+    sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
+};
+
+for (var ii = 0; ii < editorsettings.length; ii++) {
+    editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
+};
+
+function toggleOptionsElement(event) {
+    var options = this.parentNode.querySelector('.aside-item-list');
+    if (!options) {
+        var options = this.parentNode.querySelector('.editor-item-list');
+    }
+    // Prevent default link behavior
+    event.preventDefault();
+
+    if (!options) return;
+
+    // Toggle the content
+    toggleElement(options);
+};
+
+// Show an element
+var showElement = function(elem) {
+
+    // Get the natural height of the element
+    var getHeight = function() {
+        elem.style.display = 'block'; // Make it visible
+        var height = elem.scrollHeight + 'px'; // Get it's height
+        elem.style.display = ''; //  Hide it again
+        return height;
+    };
+
+    var height = getHeight(); // Get the natural height
+    // elem.classList.add('show'); // Make the element visible
+    elem.parentNode.classList.add('show'); // Make the element visible
+    elem.style.height = height; // Update the max-height
+
+    // Once the transition is complete, remove the inline max-height so the content can scale responsively
+    window.setTimeout(function() {elem.style.height = '';}, 350);
+};
+
+// Hide an element
+var hideElement = function(elem) {
+
+    // Give the element a height to change from
+    elem.style.height = elem.scrollHeight + 'px';
+
+    // Set the height back to 0
+    window.setTimeout(function() {
+        elem.style.height = '0';
+    }, 1);
+
+    // When the transition is complete, hide it
+    window.setTimeout(function() {
+        elem.classList.remove('show');
+        elem.parentNode.classList.remove('show');
+    }, 350);
+
+};
+
+// Toggle element visibility
+var toggleElement = function(elem, timing) {
+
+    // If the element is visible, hide it
+    if (elem.parentNode.classList.contains('show')) {
+        hideElement(elem);
+        return;
+    }
+
+    // Otherwise, show it
+    showElement(elem);
+
+};
+</script>
+
 {{ integrated_javascripts() }}
 
 {% block locking %}
@@ -142,153 +245,5 @@
     {% endif %}
 {% endblock locking %}
 {% endblock javascript %}
-<script>
-
-    //DROPDOWN MENU
-    function initMenu() {
-
-        var menus = [
-            document.querySelector('div.new-contenttype'),
-            document.querySelector('li.dropdown-queue'),
-            document.querySelector('li.dropdown-profile'),
-            document.querySelector('li.dropdown-assigned-to-me')];
-        menus.forEach((menu) => {
-            if (menu != null) {
-                for (var i = 0; i < menu.children.length; i++) {
-                    var menuClasses = menu.children[i];
-                    var cList = menuClasses.classList;
-                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
-                        cList.contains('dropdown-menu-right')) {
-                        menu.addEventListener('mouseenter', showDropDownBackGround, false);
-                        menu.addEventListener('mouseleave', hideDropDownBackGround, false);
-                    }
-                }
-            }
-        });
-    }
-
-    jQuery('.search-form .form-control').focus(function() {
-        showDropDownBackGround();
-    });
-
-    jQuery('.search-form .form-control').blur(function() {
-        hideDropDownBackGround();
-    });
-
-    function showDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.remove('hide');
-        menuItemZindexFix.classList.add('hide');
-    }
-
-    function hideDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.add('hide');
-        menuItemZindexFix.classList.remove('hide');
-    }
-
-    document.addEventListener('DOMContentLoaded', initMenu);
-
-    function asideItemsSearch(el) {
-        // Declare variables
-
-        var input, filter, ul, li, a, i, txtValue;
-        input = el;
-        filter = input.value.toUpperCase();
-        ul = el.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
-        li = ul.getElementsByTagName('li');
-
-        // Loop through all list items, and hide those who don't match the search query
-        for (i = 0; i < li.length; i++) {
-            a = li[i].getElementsByTagName('label')[0];
-            txtValue = a.textContent || a.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = '';
-            } else {
-                li[i].style.display = 'none';
-            }
-        }
-    };
-
-    // JS
-    var sidebarfilter = document.getElementsByClassName('aside-item-header');
-    var editorsettings = document.getElementsByClassName('editor-item-header');
-
-    for (var i = 0; i < sidebarfilter.length; i++) {
-        sidebarfilter[i].addEventListener('click', options, false);
-    };
-
-    for (var ii = 0; ii < editorsettings.length; ii++) {
-        editorsettings[ii].addEventListener('click', options, false);
-    };
-
-    function options(event) {
-        var options = this.parentNode.querySelector('.aside-item-list');
-        if (!options) {
-            var options = this.parentNode.querySelector('.editor-item-list');
-        }
-        // Prevent default link behavior
-        event.preventDefault();
-
-        if (!options) return;
-
-        // Toggle the content
-        toggle(options);
-    };
-
-    // Show an element
-    var show = function(elem) {
-
-        // Get the natural height of the element
-        var getHeight = function() {
-            elem.style.display = 'block'; // Make it visible
-            var height = elem.scrollHeight + 'px'; // Get it's height
-            elem.style.display = ''; //  Hide it again
-            return height;
-        };
-
-        var height = getHeight(); // Get the natural height
-        // elem.classList.add('show'); // Make the element visible
-        elem.parentNode.classList.add('show'); // Make the element visible
-        elem.style.height = height; // Update the max-height
-
-        // Once the transition is complete, remove the inline max-height so the content can scale responsively
-        window.setTimeout(function() {elem.style.height = '';}, 350);
-    };
-
-    // Hide an element
-    var hide = function(elem) {
-
-        // Give the element a height to change from
-        elem.style.height = elem.scrollHeight + 'px';
-
-        // Set the height back to 0
-        window.setTimeout(function() {
-            elem.style.height = '0';
-        }, 1);
-
-        // When the transition is complete, hide it
-        window.setTimeout(function() {
-            elem.classList.remove('show');
-            elem.parentNode.classList.remove('show');
-        }, 350);
-
-    };
-
-    // Toggle element visibility
-    var toggle = function(elem, timing) {
-
-        // If the element is visible, hide it
-        if (elem.parentNode.classList.contains('show')) {
-            hide(elem);
-            return;
-        }
-
-        // Otherwise, show it
-        show(elem);
-
-    };
-</script></body>
+</body>
 </html>
