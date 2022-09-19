@@ -2,7 +2,7 @@
     {% set divided = false %}
 
     {% block navbar_assignee %}
-        {% if assignedContent|length == 0 %}
+        {% if assignedContent|length > 0 %}
             <li class="divider-nav hidden-xs"></li>
             {% set divided = true %}
 
