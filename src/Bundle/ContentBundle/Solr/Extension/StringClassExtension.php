@@ -43,17 +43,28 @@ class StringClassExtension implements TypeExtensionInterface
         //We always add these
         $container->set('class_string', 'ContentType');
         $container->add('class_string', 'File');
+
+        //We add 1 more, based on the ContentType
+        //Image --> Image
+        //Video --> Video
+        //File --> NonMedia (to be able to distinguish from file)
+        //Other --> [variable: name of Other class]
         if ($data instanceof Image) {
             $container->add('class_string', 'Image');
         } else if ($data instanceof Video) {
             $container->add('class_string', 'Video');
         } else {
-            $container->add('class_string', 'NonMedia');
+            //first we check if it isnt one of the regular types
+            //if that is true, we set it to the custom string
+            if ($data->getRelations()->getOwner()->getContentType() !== 'video' &&
+                $data->getRelations()->getOwner()->getContentType() !== 'image' &&
+                $data->getRelations()->getOwner()->getContentType() !== 'file') {
+                $container->add('class_string', $data->getRelations()->getOwner()->getContentType());
+            } else {
+                //if it is, we set the custom class
+                $container->add('class_string', 'NonMedia');
+            }
         }
-
-        //TODO *1
-        //If $data is custom class
-        //$container->add('class_string', $customclass);
     }
 
     /**
