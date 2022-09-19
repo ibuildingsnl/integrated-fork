@@ -142,8 +142,58 @@
     {% endif %}
 {% endblock locking %}
 {% endblock javascript %}
-<script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+<script>
+    (function($){
+        $(function () {
+
+            let $gallery = $("#gallery")
+            let $trash = $(".media_category");
+
+            $("li", $gallery).draggable({
+                // cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+                containment: "document",
+                helper: "clone",
+                cursor: "move",
+            });
+
+            // Let the trash be droppable, accepting the gallery items
+            $trash.droppable({
+                accept: "#gallery > li",
+                classes: {
+                    "ui-droppable-active": "ui-state-highlight"
+                },
+                drop: function (event, ui) {
+                    current_id = this.id
+                    moveImage(ui.draggable, event, current_id);
+                },
+                over: function(event, ui) {
+                    $('.display').html( this.id );
+                }
+            });
+
+            function moveImage($item, event, category_id = null) {
+
+                let media_id = $item[0].id || null
+
+                console.log("Media ID: " + media_id)
+                console.log("Category ID: " + category_id)
+
+                if (media_id !== null && category_id !== null) {
+                    $('.display').html( media_id + " verplaatst naar: " +  category_id);
+                }
+
+                $('#'+category_id).addClass("flash");
+            }
+        });
+    })(jQuery);
+</script>
+
+
+<script>
     //DROPDOWN MENU
     function initMenu() {
 
