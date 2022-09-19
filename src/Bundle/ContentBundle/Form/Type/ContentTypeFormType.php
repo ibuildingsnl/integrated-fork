@@ -15,6 +15,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\ContentType\FieldsType;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -47,7 +48,6 @@ class ContentTypeFormType extends AbstractType
             'property_path' => 'options[publication]',
             'required' => false,
         ]);
-
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create('options_'.$option->getName(), $option->getType(), ['label' => ucfirst($option->getName())] + $option->getOptions())
                 ->setPropertyPath('options['.$option->getName().']');
@@ -55,9 +55,16 @@ class ContentTypeFormType extends AbstractType
             $builder->add($ype);
         }
 
-        $builder->add('permissions', PermissionsType::class, [
-            'required' => false,
-        ]);
+        $builder->add(
+            $builder->create('permissions', FormType::class, ['by_reference' => true])
+                    ->add(
+                        'permissions',
+                        PermissionsType::class,
+                        [
+                            'required' => false,
+                        ]
+                    )
+        );
     }
 
     /**

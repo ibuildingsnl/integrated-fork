@@ -1126,16 +1126,16 @@ class ContentController extends AbstractController
         // load a different set of buttons based on the permissions and locking state
 
         if (!$this->isGranted(Permissions::EDIT, $content)) {
-            return $form->add('actions', ActionsType::class, ['buttons' => ['back']]);
+            return $form->add('actions', ActionsType::class, ['buttons' => ['cancel']]);
             //TODO: Check if we can add update or publish button which is disabled?
         }
 
         if ($locking['locked']) {
-            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'back']]);
+            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
             // Removed cancel button which will be added by default as a back button
         }
 
-        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'back']]);
+        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
     }
 
     /**

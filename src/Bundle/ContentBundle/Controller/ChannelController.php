@@ -19,7 +19,7 @@ use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -225,6 +225,10 @@ class ChannelController extends AbstractController
         $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_content_channel_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid() && $form->has('submit') && $form->get('submit')->isClicked()) {
             $this->documentManager->remove($channel);
             $this->documentManager->flush();
@@ -261,7 +265,7 @@ class ChannelController extends AbstractController
             ]
         );
 
-        $form->add('submit', SubmitType::class, ['label' => 'Save']);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -280,7 +284,7 @@ class ChannelController extends AbstractController
             'method' => 'PUT',
         ]);
 
-        $form->add('submit', SubmitType::class, ['label' => 'Save']);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -298,11 +302,10 @@ class ChannelController extends AbstractController
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))
             ->setMethod('DELETE');
-
         if ($deleteAllowed) {
-            $form->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+            $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
         } else {
-            $form->add('reload', SubmitType::class, ['label' => 'Reload', 'attr' => ['class' => 'btn-default']]);
+            $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
         }
 
         return $form->getForm();
