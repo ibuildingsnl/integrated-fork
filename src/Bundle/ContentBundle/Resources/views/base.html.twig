@@ -147,6 +147,77 @@
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <script>
+    //BULKSELECTION FUNCTIONALITY
+    let bulkSelectionEnabled = false //this controls if we show an icon with each image
+    let bulkSelection = [] //this keeps track which items are selected
+    let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
+
+    $( "#bulkselection" ).on( "click", function() {
+        if (bulkSelectionEnabled) {
+            disableBulkSelection()
+        } else {
+            enableBulkSelection()
+        }
+        bulkSelectionEnabled =! bulkSelectionEnabled
+    });
+
+    $( ".bulkselectionbutton" ).on( "click", function(event) {
+        handleBulkItemClick(event)
+    });
+
+    function enableBulkSelection() {
+        $('.bulkselectionbutton').removeClass('bulkselected')
+        // $('.check .fa-check').addClass('fa-folders')
+        // $('.check .fa-check').removeClass('fa-check')
+        $('.check').addClass('checkunchecked')
+        $('.check').removeClass('check')
+    }
+
+    function handleBulkItemClick(event) {
+        let media_id = null
+
+        if (event.shiftKey === true) {
+            //SHIFT CLICK
+            if (latestBulkSelectionItemClicked === null) {
+                latestBulkSelectionItemClicked = 1
+            }
+
+            let step_from = latestBulkSelectionItemClicked * 1
+                step_to = event.currentTarget.getAttribute('data-media_id') * 1
+
+            for (let step = step_from; step <= step_to; step++) {
+                console.log(step)
+                let element = document.querySelector('.bulkselectionbutton[data-media_id="'+step+'"]')
+
+                media_id = element.getAttribute('data-id')
+
+                bulkSelection.push(media_id)
+                $('#'+element.id).addClass('bulkselected')
+            }
+        } else {
+            //SINGLE CLICK
+            media_id = event.currentTarget.getAttribute('data-id')
+            if (bulkSelection.includes(media_id)) {
+                bulkSelection = bulkSelection.filter(item => item !== media_id)
+                $('#' + event.currentTarget.id).removeClass('bulkselected')
+            } else {
+                bulkSelection.push(media_id)
+                $('#' + event.currentTarget.id).addClass('bulkselected')
+            }
+        }
+
+        latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
+    }
+
+    function disableBulkSelection() {
+        bulkSelection = []
+        $('.checkunchecked').addClass('check')
+        $('.checkunchecked').removeClass('checkunchecked')
+        // $('.check .fa-folders').addClass('fa-check')
+        // $('.check .fa-folders').removeClass('fa-folders')
+    }
+
+    //DRAG AND DROP FUNCTIONALITY
     (function($){
         $(function () {
 
@@ -175,9 +246,18 @@
                 }
             });
 
+            function onlyUnique(value, index, self) {
+                return self.indexOf(value) === index;
+            }
+
             function moveImage($item, event, category_id = null) {
                 let media_id = $item[0].id || null
 
+                if (bulkSelection.length > 0) {
+                    console.log("Were bulk moving!")
+                    let duplicatesRemoved = bulkSelection.filter(onlyUnique);
+                    console.log(duplicatesRemoved)
+                }
                 //So here we want to send something to the server
 
                 $('.media_category').removeClass('flash')

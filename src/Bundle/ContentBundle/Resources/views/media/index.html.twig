@@ -104,6 +104,7 @@
                             </ul>
                         </li>
                     </ul>
+                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">Bulkselectie</button>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
                             <input type="text" name="q" class="form-control"
@@ -147,13 +148,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="button" class="check" tabindex="-1">
-                                            <span class="media-modal-icon">
+                                    </a>
+                                    <button data-media_id="{{ loop.index }}" data-id="{{ media.id }}" id="bulkselection_{{ media.id }}" type="button" class="check bulkselectionbutton" tabindex="-1">
+                                            <span class="media-modal-icwon py-2 px-3">
                                                 <i class="fa-regular fa-check"></i>
                                             </span>
-                                            <span class="screen-reader-text">Deselecteren</span>
-                                        </button>
-                                    </a>
+                                        <span class="screen-reader-text">Deselecteren</span>
+                                    </button>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -165,7 +166,7 @@
 
 
     <style>
-        .ui-droppable-hover {
+        .ui-droppable-hover, .bulkselected {
             background-color: lightskyblue ;
         }
 
