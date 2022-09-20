@@ -171,21 +171,16 @@
                     moveImage(ui.draggable, event, current_id);
                 },
                 over: function(event, ui) {
-                    $('.display').html( this.id );
+                    // $('.display').html( this.id );
                 }
             });
 
             function moveImage($item, event, category_id = null) {
-
                 let media_id = $item[0].id || null
 
-                console.log("Media ID: " + media_id)
-                console.log("Category ID: " + category_id)
+                //So here we want to send something to the server
 
-                if (media_id !== null && category_id !== null) {
-                    $('.display').html( media_id + " verplaatst naar: " +  category_id);
-                }
-
+                $('.media_category').removeClass('flash')
                 $('#'+category_id).addClass("flash");
             }
         });

@@ -84,7 +84,17 @@ class MediaController extends AbstractController
         //I think this is correct Autowiring:
         //Include the Service in services.xml
         //Pass the Service as an argument in controller.xml
-        $menu = $this->mediaGalleryMenu->get();
+        $newMenu = $this->mediaGalleryMenu->getSimulation();
+
+        //Get facetlist of class_string:
+        $facetRequest = new Request;
+        $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
+        $facetRequest->query->set('class_string_facets', $q);
+        $facets = $this->provider->getContentFromSolr($facetRequest, 20);
+//        dd($facets);
+        $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
+
+
 
         //TODO get class_string value from request
 //        $request->query->set('class_string', $params["sort"]["options"][$class_string]["name"];);
@@ -93,8 +103,8 @@ class MediaController extends AbstractController
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
-            'menu' => $menu,
-            'params' => $params
+            'params' => $params,
+            'newMenu' => $newMenu
         ]);
     }
 }

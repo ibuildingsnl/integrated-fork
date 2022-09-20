@@ -27,9 +27,6 @@ class StringClassExtension implements TypeExtensionInterface
      */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
-        //TODO *1
-        //get custom class from data and add this.
-
         if (!$data instanceof File) {
             return;
         }

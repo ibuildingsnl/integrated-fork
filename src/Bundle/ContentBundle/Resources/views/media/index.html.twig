@@ -5,9 +5,8 @@
     <div class="flex flex-wrap media-library">
         <div class="sm:w-3/12 p-2 pr-4 pl-4">
             <aside>
-                <h2 class="heading " >{% trans %}Mappen{% endtrans %}</h2>
+                <h2 class="heading ">{% trans %}Mappen{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
-                    <div class="display">Current</div>
                     <div
                         class="aside-item-wrapper">
                         <div class="aside-item-header">
@@ -23,15 +22,39 @@
                                    onkeyup="asideItemsSearch(this)"
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
-                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default " id="trash" >
-                            {% for key, menu_item in menu %}
+                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
+                            {% for key, menu_item in newMenu %}
                                 <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
-                                <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 15px" id="category_{{ key }}">
-                                    <i class="fa-regular fa-folders"></i>
-                                    <span>{{ menu_item }}</span>
+                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                                id="category_{{ key }}">
+                                <i class="fa-regular fa-folders"></i>
+                                <span>{{ menu_item.title }}</span>
+                                {% if menu_item.children %}
+
+                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                    <li class="menu-parent media_category"
+                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
+                                        <i class="fa-regular fa-folders"></i>
+                                        <span>{{ menu_item_1.title }}</span>
+                                        {% if menu_item_1.children %}
+
+                                            {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                <li class="menu-parent media_category"
+                                                    style="margin-bottom: 1px; padding-left: 33px"
+                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
+                                                    <i class="fa-regular fa-folders"></i>
+                                                    <span>{{ menu_item_2.title }}</span>
+                                                </li>
+                                            {% endfor %}
+
+                                        {% endif %}
+                                        </li>
+                                    {% endfor %}
+
+                                {% endif %}
                                 </li>
                             {% endfor %}
-                        </li>
+                        </lu>
                     </div>
                 </div>
             </aside>
@@ -100,7 +123,7 @@
                                 {% if media.contentType == 'image' %}
                                     {# TODO add stills for images #}
                                     {% set thumbnail = integrated_image(media.file).zoomCrop(100, 100) %}
-{#                                    {% set thumbnail = integrated_image(media.file) %}#}
+                                    {#                                    {% set thumbnail = integrated_image(media.file) %} #}
                                 {% elseif media.contentType == 'video' %}
                                     {% set thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg==' %}
                                 {% elseif media.contentType == 'file' %}
@@ -112,13 +135,14 @@
                                     {# We could check pathname / identifier, but that is not so elegant# #}
                                 {% endif %}
                                 <!-- simply add selected class to visualy show a selected state -->
-                                <li class="media-item ui-widget-content ui-corner-tr {{ media.contentType }}" id="{{ media.id }}" data-id="{{ media.id }}">
+                                <li class="media-item ui-widget-content ui-corner-tr {{ media.contentType }}"
+                                    id="{{ media.id }}" data-id="{{ media.id }}">
                                     <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
                                         <div class="media-preview">
                                             <div class="thumbnail">
                                                 <div class="centered">
                                                     <img src="{{ thumbnail }}"
-                                                        {# alt="{{ media.title }}">#}
+                                                        {# alt="{{ media.title }}"> #}
                                                          alt="">
                                                 </div>
                                             </div>
@@ -141,6 +165,9 @@
 
 
     <style>
+        .ui-droppable-hover {
+            background-color: lightskyblue ;
+        }
 
         .flash {
             -moz-animation: flash 1s ease-out;
@@ -154,39 +181,51 @@
         }
 
         @keyframes flash {
-            0% { background-color: transparent; }
-            50% { background-color: #fbf8b2; }
-            100% { background-color: transparent; }
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
         @-webkit-keyframes flash {
-            0% { background-color: transparent; }
-            50% { background-color: #fbf8b2; }
-            100% { background-color: transparent; }
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
         @-moz-keyframes flash {
-            0% { background-color: transparent; }
-            50% { background-color: #fbf8b2; }
-            100% { background-color: transparent; }
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
         @-ms-keyframes flash {
-            0% { background-color: transparent; }
-            50% { background-color: #fbf8b2; }
-            100% { background-color: transparent; }
-        }
-
-        .ui-droppable-active {
-            background: yellow;
-        }
-
-        .ui-state-highlight {
-            background: indianred;
-        }
-
-        .custom-state-active {
-            background: lightgreen;
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
         .media-container {
@@ -291,7 +330,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform: translate(50%,50%);
+            transform: translate(50%, 50%);
         }
 
         .media-library .media-item .thumbnail:after {
