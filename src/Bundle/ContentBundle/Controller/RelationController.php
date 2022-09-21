@@ -33,10 +33,7 @@ class RelationController extends AbstractController
      */
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
+    private $documentManager;
 
     public function __construct(DocumentManager $documentManager)
     {
@@ -94,9 +91,7 @@ class RelationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $relation = new Relation();
-
-        $form = $this->createCreateForm($relation);
+        $form = $this->createNewForm(new Relation());
 
         return $this->render('@IntegratedContent/relation/new.html.twig', [
             'form' => $form->createView(),
