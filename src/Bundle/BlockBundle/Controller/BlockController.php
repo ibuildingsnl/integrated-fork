@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Controller;
 
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\FormInterface;
@@ -153,6 +154,10 @@ class BlockController extends AbstractController
         );
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_block_block_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->persist($block);
             $this->documentManager->flush();
@@ -231,6 +236,10 @@ class BlockController extends AbstractController
         );
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_block_block_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 
@@ -248,6 +257,7 @@ class BlockController extends AbstractController
         $metadata = $this->metadataFactory->getMetadata(\get_class($block));
 
         return $this->render(sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
+            'block' => $block,
             'form' => $form->createView(),
             'blockType' => $metadata->getType(),
         ]);
@@ -279,6 +289,10 @@ class BlockController extends AbstractController
         $form = $this->createDeleteForm($block->getId());
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_block_block_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->remove($block);
             $this->documentManager->flush();
@@ -305,7 +319,7 @@ class BlockController extends AbstractController
 
         $builder->setAction($this->generateUrl('integrated_block_block_delete', ['id' => $id]));
         $builder->setMethod('DELETE');
-        $builder->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+        $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $builder->getForm();
     }

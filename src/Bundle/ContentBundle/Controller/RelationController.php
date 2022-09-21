@@ -12,7 +12,9 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -31,7 +33,10 @@ class RelationController extends AbstractController
      */
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
-    private $documentManager;
+    /**
+     * @var DocumentManager
+     */
+    protected $documentManager;
 
     public function __construct(DocumentManager $documentManager)
     {
@@ -89,7 +94,9 @@ class RelationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createNewForm(new Relation());
+        $relation = new Relation();
+
+        $form = $this->createCreateForm($relation);
 
         return $this->render('@IntegratedContent/relation/new.html.twig', [
             'form' => $form->createView(),
@@ -111,6 +118,10 @@ class RelationController extends AbstractController
 
         $form = $this->createNewForm($relation);
         $form->handleRequest($request);
+
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_content_relation_index');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->persist($relation);
@@ -183,19 +194,31 @@ class RelationController extends AbstractController
      */
     public function delete(Request $request, Relation $relation)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
 
         $form = $this->createDeleteForm($relation);
 
         $form->handleRequest($request);
+
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_content_relation_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->remove($relation);
             $this->documentManager->flush();
 
-            $this->addFlash('success', 'Item deleted');
+            $this->addFlash('success', 'Relation deleted');
+
+            return $this->redirectToRoute('integrated_content_relation_index');
         }
 
-        return $this->redirectToRoute('integrated_content_relation_index');
+        return $this->render('@IntegratedContent/relation/delete.html.twig', [
+            'relation' => $relation,
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -216,7 +239,7 @@ class RelationController extends AbstractController
             ]
         );
 
-        $form->add('submit', SubmitType::class, ['label' => 'Create']);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -239,7 +262,7 @@ class RelationController extends AbstractController
             ]
         );
 
-        $form->add('submit', SubmitType::class, ['label' => 'Update']);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -253,17 +276,13 @@ class RelationController extends AbstractController
      */
     protected function createDeleteForm(Relation $relation)
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('integrated_content_relation_delete', ['id' => $relation->getId()]))
-            ->setMethod('DELETE')
-            ->add('submit', SubmitType::class, [
-                'label' => 'Delete',
-                'attr' => [
-                    'class' => 'btn-danger',
-                    'onclick' => 'return confirm(\'Are you sure you want to delete this relation?\');',
-                ],
-            ])
-            ->getForm()
-        ;
+        $form = $this->createFormBuilder()
+                     ->setAction($this->generateUrl('integrated_content_relation_delete', ['id' => $relation->getId()]))
+                     ->setMethod('DELETE');
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
+
+
+        return $form->getForm();
     }
 }

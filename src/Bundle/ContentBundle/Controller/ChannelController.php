@@ -190,6 +190,10 @@ class ChannelController extends AbstractController
         $form = $this->createEditForm($channel);
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_content_channel_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 

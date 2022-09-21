@@ -36,7 +36,7 @@ class ActionsType extends BaseActionsType
                 ],
                 'delete' => [
                     'type' => SubmitType::class,
-                    'options' => ['label' => 'Delete', 'button_class' => 'orange']
+                    'options' => ['label' => 'Delete', 'button_class' => 'orange no-icon']
                 ],
                 'back' => [
                     'type' => SubmitType::class,
