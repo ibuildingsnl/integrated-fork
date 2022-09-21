@@ -3,34 +3,49 @@
 {% block content %}
     <div class="row">
         <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Search selections{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_content_content_index') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}search selection{% endtrans %}</span>
+                            <i class="fa-regular fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <section class="section-white section-radius">
                 <table class="table table-hover">
                     <colgroup>
                         <col />
                         <col />
-                        <col style="width: 5em" />
                     </colgroup>
 
                     <thead>
                         <tr>
                             <th>{% trans %}Search selections{% endtrans %}</th>
                             <th>{% trans %}Short code{% endtrans %}</th>
-                            <th>{% trans %}Actions{% endtrans %}</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {% for searchSelection in searchSelections %}
 
-                            <tr>
-                                <td>{{ searchSelection.title }}</td>
-                                <td>{{ searchSelection.id|default }}</td>
+                            <tr class="has-options">
                                 <td>
-                                    {% if not searchSelection.locked %}
-                                    <a href="{{ path('integrated_content_search_selection_edit', { 'id': searchSelection.id }) }}" title="{% trans %}Edit{% endtrans %}"><span class="fa fa-edit"></span></a>
-                                    <a href="{{ path('integrated_content_search_selection_delete', { 'id': searchSelection.id }) }}" title="{% trans %}Delete{% endtrans %}"><span class="fa fa-xmark-circle"></span></a>
-                                    {% endif %}
+                                    <strong>
+                                        <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}">
+                                            {{ searchSelection.title }}
+                                        </a>
+                                    </strong>
+                                    <div class="row-options">
+                                        <a href="{{ path('integrated_content_search_selection_edit', {'id': searchSelection.id}) }}"
+                                           title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                                        <a href="{{ path('integrated_content_search_selection_delete', {'id': searchSelection.id}) }}"
+                                           class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                    </div>
                                 </td>
+                                <td>{{ searchSelection.id|default }}</td>
                             </tr>
 
                         {% endfor %}

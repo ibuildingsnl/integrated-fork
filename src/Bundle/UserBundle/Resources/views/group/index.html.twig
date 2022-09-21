@@ -13,19 +13,6 @@
                         </a>
                     </li>
                 </ul>
-{#                <div class="options">#}
-{#                    <ul class="">#}
-{#                        <li class="dropdown">#}
-{#                            <a href="#" data-toggle="dropdown" class="btn btn-select space-between" role="button"#}
-{#                               id="drop_1">Options <i#}
-{#                                    class="fa-regular fa-angle-down"></i></a>#}
-{#                            <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">#}
-{#                                <li role="presentation"><a href="{{ path('integrated_user_group_new') }}" tabindex="-1"#}
-{#                                                           role="menuitem">New</a></li>#}
-{#                            </ul>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </div>#}
             </div>
             <section class="section-white section-radius">
 
@@ -34,14 +21,12 @@
                     <colgroup>
                         <col style="width: 3em"/>
                         <col/>
-                        <col style="width: 5em"/>
                     </colgroup>
 
                     <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Actions</th>
                     </tr>
                     </thead>
 
@@ -63,9 +48,6 @@
                                     <a href="{{ path('integrated_user_group_delete', {'id': group.id}) }}"
                                        class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
                                 </div>
-                            </td>
-                            <td>
-
                             </td>
                         </tr>
 

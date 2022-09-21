@@ -9,7 +9,6 @@
                     <col />
                     <col />
                     <col style="width: 60px;" />
-                    <col style="width: 60px;" />
                 </colgroup>
 
                 <thead>
@@ -18,15 +17,31 @@
                     <th>{{ knp_pagination_sortable(blocks, 'Short code'|trans, 'id') }}</th>
                     <th>{{ knp_pagination_sortable(blocks, 'Type'|trans, 'type') }}</th>
                     <th>{% trans %}Usage{% endtrans %}</th>
-                    <th>{% trans %}Actions{% endtrans %}</th>
                 </tr>
                 </thead>
                 <tbody>
 
                 {% for block in blocks %}
-                    <tr>
-                        <td class="break-word">
-                            {{ block.title }}
+                    <tr class="has-options">
+                        <td>
+                            <strong>
+                                <a href="{{ path('integrated_block_block_edit', {id: block.id}) }}">
+                                    {{ block.title }}
+                                </a>
+                            </strong>
+                            <div class="row-options">
+                                <a href="{{ path('integrated_block_block_edit', { 'id': block.id}) }}"
+                                   title="{% trans %}Edit{% endtrans %}">
+                                    {% trans %}Edit{% endtrans %}
+                                </a>
+                                {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
+                                    {% if not integrated_find_pages(block) %}
+                                        | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}" class="color-red" title="{% trans %}Delete{% endtrans %}">
+                                            {% trans %}Delete{% endtrans %}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                         </td>
                         <td class="break-word">
                             {{ block.id }}
@@ -58,19 +73,6 @@
 
                             {% if pageList|trim %}
                                 <span class="fa fa-list-alt" data-toggle="popover" data-trigger="hover" data-content="{{ pageList|e }}" data-html="true" data-placement="left"></span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ path('integrated_block_block_edit', { 'id': block.id }) }}"  title="{% trans %}Edit{% endtrans %}">
-                                {{ icon('pencil') }}
-                            </a>
-                            &nbsp;
-                            {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
-                                {% if not integrated_find_pages(block) %}
-                                    <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}" title="{% trans %}Delete{% endtrans %}">
-                                        {{ icon('remove-circle') }}
-                                    </a>
-                                {% endif %}
                             {% endif %}
                         </td>
                     </tr>

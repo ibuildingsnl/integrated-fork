@@ -13,20 +13,27 @@
         position: relative;
         background-color: white;
         padding-bottom: 100px;
+        .editor-wrapped {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+        }
     }
     .edit-form {
         .editor-wrapper {
             background-color: $bg-gray;
             padding: 2rem;
-            .form-item, .editor-item-wrapper {
-                margin-bottom: 2rem;
-                border-radius: 15px;
-                border: 0;
-            }
-            .form-item {
-                input {
+            .editor:not(.editor-wrapped) {
+                .form-item, .editor-item-wrapper {
+                    margin-bottom: 2rem;
                     border-radius: 15px;
-                    padding: 1rem 2rem;
+                    border: 0;
+                }
+                .form-item {
+                    input {
+                        border-radius: 15px;
+                        padding: 1rem 2rem;
+                    }
                 }
             }
         }
@@ -54,7 +61,7 @@
     }
 }
 
-body[class*="_edit"], body[class*="_new"] {
+body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"] {
     .content-wrapper {
         padding: 50px 0 0;
     }
@@ -194,4 +201,27 @@ body[class*="_edit"], body[class*="_new"] {
             color: black;
         }
     }
+}
+
+.sr-only {
+    clip: rect(0,0,0,0);
+    border-width: 0;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px !important;
+}
+
+span.help-block {
+    background-color: #e0e3e9;
+    color: #283c53;
+    padding: 1rem 1rem .3rem 1rem;
+    width: 100%;
+    display: block;
+    margin-top: -11px;
+    border-radius: 0 0 8px 8px;
+    font-size: 12px;
 }

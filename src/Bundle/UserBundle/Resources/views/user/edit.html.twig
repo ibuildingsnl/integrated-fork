@@ -1,23 +1,48 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_user_user_index') }}">{% trans %}Users{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}Edit{% endtrans %}</li>
-            </ol>
+
+    {% block content %}
+        <div class="flex flex-wrap edit-form">
+            {% block form_start %}
+                {{ form_start(form, { 'style': 'horizontal' }) }}
+            {% endblock %}
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="back">
+                    {% block form_return %}
+                        {% if form.actions.back is defined %}
+                            {{ form_row(form.actions.back) }}
+                        {% endif %}
+                        {% if form.actions.cancel is defined %}
+                            {{ form_row(form.actions.cancel) }}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+                <div class="options">
+                    <div class="form-actions">
+                        {% block form_actions %}
+                            {% if form.actions.save is defined %}
+                                {{ form_row(form.actions.save) }}
+                            {% endif %}
+                            {% if form.actions.reload is defined %}
+                                {{ form_row(form.actions.reload) }}
+                            {% endif %}
+                            {% if form.actions.create is defined %}
+                                {{ form_row(form.actions.create) }}
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div class="aside-options"></div>
+            <div class="editor-wrapper">
+                <div class="page-title">
+                    <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}user{% endtrans %}</h1>
+                </div>
+                <section class="editor editor-wrapped">
+                    {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+                </section>
+            </div>
+            {% block form_end %}
+                {{ form_end(form) }}
+            {% endblock %}
         </div>
-    </div>
-{% endblock %}
-{% block content %}
-    <div class="row">
-        <div class="w-full mb-4 md:mb-0">
-            <h1 class="main-title font-regular">{% trans %}Edit{% endtrans %} <small>{% trans %}user{% endtrans %}</small></h1>
-            <section class="section-white section-padding section-radius">
-                {{ form(form, { 'style': 'horizontal' }) }}
-            </section>
-        </div>
-    </div>
 {% endblock %}

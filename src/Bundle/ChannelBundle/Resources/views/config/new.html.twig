@@ -1,27 +1,88 @@
 {% extends '@IntegratedChannel/base.html.twig' %}
 {% block title %}{% trans %}New connector{% endtrans %}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_channel_config_index') }}">{% trans %}Home{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}New{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="w-full mb-4 md:mb-0">
-            <div class="page-title test">
-                <h1 class="heading">{% trans %}New{% endtrans %} {{ adapter.manifest.label }} {% trans %}connector{% endtrans %}
-                </h1>
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        <div id="toolbar" class="w-full flex justify-between">
+            <div class="back">
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
             </div>
-            <section class="section-white section-padding section-radius">
-                {{ form(form, { 'style': 'horizontal' }) }}
+            <div class="options">
+                <div class="form-actions">
+                    {% block form_actions %}
+                        {% if form.actions.save is defined %}
+                            {{ form_row(form.actions.save) }}
+                        {% endif %}
+                        {% if form.actions.reload is defined %}
+                            {{ form_row(form.actions.reload) }}
+                        {% endif %}
+                        {% if form.actions.create is defined %}
+                            {{ form_row(form.actions.create) }}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <div class="aside-options">
+            <aside>
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                            <i class="fa-regular fa-circle-info"></i>
+                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                        </h3>
+                        <i class="fa-regular fa-chevron-up"></i>
+                    </div>
+                    <div class="aside-item-list">
+                        <div class="aside-item-list-container">
+                            <div class="status-info">
+                                {% if form.publicationStartDate is defined %}
+                                    {{ form_row(form.publicationStartDate) }}
+                                {% endif %}
+                            </div>
+                            <div class="status-options">
+                                {% if relation is defined and relation.createdAt is defined %}
+                                    <div class="status published">
+                                        <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
+                                    </div>
+                                    <!-- TODO: Delete button not working -->
+                                    <a class="delete"
+                                       href="{{ path('integrated_content_relation_delete', {'id': relation.id}) }}">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </a>
+                                {% else %}
+                                    <div class="status draft">
+                                        <i class="fa-regular fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if form.channels is defined %}
+                    {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                {% endif %}
+            </aside>
+        </div>
+        <div class="editor-wrapper">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}connector{% endtrans %}</h1>
+            </div>
+            <section class="editor editor-wrapped">
+                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
             </section>
         </div>
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
 {% endblock %}

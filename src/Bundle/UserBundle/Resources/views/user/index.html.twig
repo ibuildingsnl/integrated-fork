@@ -49,13 +49,13 @@
 
                     {% block user_filter_groups %}
                     <div class="aside-item-holder {% if facetFilter.groups|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.groups) }}
+                        {{ form_row(facetFilter.groups, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 
                     {% block user_filter_scope %}
                     <div class="aside-item-holder {% if facetFilter.scope|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.scope) }}
+                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 
