@@ -6,6 +6,23 @@
     width: calc(100vw - 200px);
     padding: 2rem;
     background-color: $bg-gray;
+
+    &.iframe {
+        width: 100vw;
+
+        .aside-options {
+            height: 100vh
+        }
+
+        .editor-wrapper {
+            height: 100vh
+        }
+
+        .edit-form {
+            height: 100vh
+        }
+    }
+
     .editor-wrapper {
         width: calc(100% - 350px);
         max-height: calc(100vh - 110px);
@@ -13,22 +30,26 @@
         position: relative;
         background-color: white;
         padding-bottom: 100px;
+
         .editor-wrapped {
             background-color: white;
             padding: 2rem;
             border-radius: 15px;
         }
     }
+
     .edit-form {
         .editor-wrapper {
             background-color: $bg-gray;
             padding: 2rem;
+
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
                     border-radius: 15px;
                     border: 0;
                 }
+
                 .form-item {
                     input {
                         border-radius: 15px;
@@ -37,11 +58,13 @@
                 }
             }
         }
+
         form {
             display: flex;
             flex-wrap: wrap;
             width: 100%;
         }
+
         .editor-item-wrapper {
             &.show {
                 .editor-item-header {
@@ -49,19 +72,20 @@
                     margin-bottom: 1rem;
                 }
             }
+
             h3.editor-item-title {
                 label {
                     font-weight: 600;
                     font-size: .8rem;
                     text-transform: uppercase;
-                    color: rgba(0,0,0,.5);
+                    color: rgba(0, 0, 0, .5);
                 }
             }
         }
     }
 }
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"] {
+body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
     .content-wrapper {
         padding: 50px 0 0;
     }
@@ -122,6 +146,7 @@ body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_d
             display: block;
             height: auto;
         }
+
         .editor-item-header {
             & > i {
                 transition: transform .3s ease;
@@ -153,12 +178,14 @@ body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_d
             font-size: 13px;
             display: flex;
             cursor: pointer;
+
             label {
                 font-weight: 400;
                 font-size: 13px;
                 color: #1b3149;
                 cursor: pointer;
             }
+
             i {
                 color: #bdccde;
                 margin-right: 5px;
@@ -204,7 +231,7 @@ body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_d
 }
 
 .sr-only {
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     border-width: 0;
     height: 1px;
     margin: -1px;
