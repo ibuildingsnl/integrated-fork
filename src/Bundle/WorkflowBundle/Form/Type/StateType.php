@@ -46,7 +46,7 @@ class StateType extends AbstractType
             'publishable',
             Type\CheckboxType::class,
             [
-                'label' => 'Publish',
+                'label' => 'Publish when this status is selected',
                 'required' => false,
                 'attr' => [
                     'align_with_widget' => true,
@@ -58,6 +58,7 @@ class StateType extends AbstractType
             'default',
             Type\CheckboxType::class,
             [
+                'label' => 'This is the default Status',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
