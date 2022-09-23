@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ThemeBundle\Controller;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
@@ -20,6 +21,7 @@ use Integrated\Bundle\ThemeBundle\Scraper\Scraper as ScraperService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,7 +76,7 @@ class ScraperController extends AbstractController
 
         $scraper = new Scraper();
 
-        $form = $this->createForm(ScraperType::class, $scraper);
+        $form = $this->createNewForm($scraper);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -105,7 +107,7 @@ class ScraperController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(ScraperType::class, $scraper);
+        $form = $this->createEditForm($scraper);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -115,7 +117,7 @@ class ScraperController extends AbstractController
 
             $this->addFlash('success', 'Item updated');
 
-            return $this->redirectToRoute('integrated_theme_scraper_index');
+//            return $this->redirectToRoute('integrated_theme_scraper_index');
         }
 
         return $this->render('@IntegratedTheme/scraper/edit.html.twig', [
@@ -131,12 +133,17 @@ class ScraperController extends AbstractController
      *
      * @return Response
      */
-    public function deleteAction(Scraper $scraper, Request $request): Response
+    public function delete(Scraper $scraper, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createDeleteForm($scraper);
         $form->handleRequest($request);
+
+
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_theme_scraper_index');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($scraper);
@@ -153,7 +160,51 @@ class ScraperController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    /**
+     * Creates a form to edit a Scraper.
+     *
+     * @param Scraper $scraper
+     *
+     * @return FormInterface
+     */
+    protected function createEditForm(Scraper $scraper)
+    {
+        $form = $this->createForm(
+            ScraperType::class,
+            $scraper,
+            [
+                'action' => $this->generateUrl('integrated_theme_scraper_edit', ['id' => $scraper->getId()]),
+                'method' => 'PUT',
+            ]
+        );
 
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+
+        return $form;
+    }
+
+    /**
+     * Creates a form to create a Scraper.
+     *
+     * @param Scraper $scraper
+     *
+     * @return FormInterface
+     */
+    protected function createNewForm(Scraper $scraper)
+    {
+        $form = $this->createForm(
+            ScraperType::class,
+            $scraper,
+            [
+                'action' => $this->generateUrl('integrated_theme_scraper_new'),
+                'method' => 'POST',
+            ]
+        );
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
+
+        return $form;
+    }
     /**
      * Creates a form to delete a Scraper.
      *
@@ -172,11 +223,8 @@ class ScraperController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]],
-            ],
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }
