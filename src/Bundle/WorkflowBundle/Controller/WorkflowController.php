@@ -129,7 +129,7 @@ class WorkflowController extends AbstractController
 
         /** @var Definition $workflow */
         $workflow = $this->entityManager
-            ->getManager()
+//            ->getManager()
             ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
             ->find($request->get('id'));
 
