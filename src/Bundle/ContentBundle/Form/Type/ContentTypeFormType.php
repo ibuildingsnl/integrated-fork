@@ -56,7 +56,7 @@ class ContentTypeFormType extends AbstractType
         }
 
         $builder->add(
-            $builder->create('permissions', FormType::class, ['by_reference' => true])
+            $builder->create('permissions', FormType::class, ['inherit_data' => true])
                     ->add(
                         'permissions',
                         PermissionsType::class,

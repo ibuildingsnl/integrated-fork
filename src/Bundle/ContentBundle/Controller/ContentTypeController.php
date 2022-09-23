@@ -171,7 +171,7 @@ class ContentTypeController extends AbstractController
 
                 $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_CREATED);
 
-                return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
+                return $this->redirectToRoute('integrated_content_content_type_edit', ['id' => $contentType->getId()]);
             }
         }
 
@@ -216,7 +216,7 @@ class ContentTypeController extends AbstractController
 
                 $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
 
-                return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
+                return $this->redirectToRoute('integrated_content_content_type_edit', ['id' => $contentType->getId()]);
             }}
 
         return $this->render('@IntegratedContent/content_type/edit.html.twig', [
@@ -266,7 +266,7 @@ class ContentTypeController extends AbstractController
                     $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
 
                     return $this->redirectToRoute(
-                        'integrated_content_content_type_show',
+                        'integrated_content_content_type_edit',
                         ['id' => $contentType->getId()]
                     );
                 }

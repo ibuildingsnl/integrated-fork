@@ -87,28 +87,29 @@ class RelationType extends AbstractType
                 ]
             )
             ->add(
-                'multiple',
-                CheckboxType::class,
-                [
-                    'label' => 'Allow multiselect',
-                    'required' => false,
-                    'attr' => [
-                        'align_with_widget' => true,
-                    ],
-                    'by_reference' => true,
-                ]
-            )
-            ->add(
-                'required',
-                CheckboxType::class,
-                [
-                    'label' => 'This relation is required',
-                    'required' => false,
-                    'attr' => [
-                        'align_with_widget' => true,
-                    ],
-                    'by_reference' => true,
-                ]
+                $builder->create('options', FormType::class, ['inherit_data' => true])
+                        ->add(
+                            'multiple',
+                            CheckboxType::class,
+                            [
+                                'label' => 'Allow multiselect',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
+                        ->add(
+                            'required',
+                            CheckboxType::class,
+                            [
+                                'label' => 'This relation is required',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
             );
     }
 

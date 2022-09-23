@@ -58,7 +58,7 @@ class ChannelType extends AbstractType
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
 
         $builder->add(
-            $builder->create('options', FormType::class, ['by_reference' => true])
+            $builder->create('options', FormType::class, ['inherit_data' => true])
                     ->add(
                         'primaryDomainRedirect',
                         CheckboxType::class,
@@ -68,7 +68,6 @@ class ChannelType extends AbstractType
                             'attr' => [
                                 'align_with_widget' => true,
                             ],
-                            'by_reference' => true,
                         ]
                     )
                     ->add(
@@ -79,7 +78,6 @@ class ChannelType extends AbstractType
                             'attr' => [
                                 'align_with_widget' => true,
                             ],
-                            'by_reference' => true,
                         ]
                     )
         );
@@ -129,7 +127,7 @@ class ChannelType extends AbstractType
         );
 
         $builder->add(
-            $builder->create('permissions', FormType::class, ['by_reference' => true])
+            $builder->create('permissions', FormType::class, ['inherit_data' => true])
                     ->add(
                         'permissions',
                         PermissionsType::class,

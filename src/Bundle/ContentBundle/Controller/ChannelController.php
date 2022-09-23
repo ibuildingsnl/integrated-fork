@@ -136,6 +136,10 @@ class ChannelController extends AbstractController
         $form = $this->createCreateForm($channel);
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_content_channel_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->persist($channel);
             $this->documentManager->flush();
@@ -144,7 +148,7 @@ class ChannelController extends AbstractController
 
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_CREATED);
 
-            return $this->redirectToRoute('integrated_content_channel_show', ['id' => $channel->getId()]);
+            return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
         }
 
         return $this->render('@IntegratedContent/channel/new.html.twig', [
@@ -201,7 +205,7 @@ class ChannelController extends AbstractController
 
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
 
-            return $this->redirectToRoute('integrated_content_channel_show', ['id' => $channel->getId()]);
+//            return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
         }
 
         return $this->render('@IntegratedContent/channel/edit.html.twig', [

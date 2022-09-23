@@ -527,7 +527,7 @@ class ContentController extends AbstractController
                 // Set flash message
                 $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
-                return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
+                return $this->redirectToRoute('integrated_content_content_index', ['id' => $content->getId(), 'remember' => 1]);
             }
         }
 
@@ -634,7 +634,7 @@ class ContentController extends AbstractController
                         $locking['release']();
                     }
 
-                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
+//                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
 

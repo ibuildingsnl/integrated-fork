@@ -22,7 +22,9 @@
                 </td>
                 <td>
                     <div class="checkbox">
-                        <label>{{ form_widget(field.required) }}</label>
+                        <label class="checkbox-container">
+                            {{ form_widget(field.required) }}
+                        </label>
                     </div>
                 </td>
             </tr>
@@ -63,8 +65,9 @@
     {% apply spaceless %}
         <div class="checkbox">
             {% if element.vars.label is not same as(false) %}
-                <label for="{{ element.vars.id }}">
+                <label class="checkbox-container" for="{{ element.vars.id }}">
                     <input id="{{ element.vars.id }}" name="{{ element.vars.full_name  }}" type="checkbox" {% if element.vars.value is defined %} value="{{ element.vars.value }}"{% endif %}{% if element.vars.checked %} checked="checked"{% endif %}/>
+                    <span class="checkmark"></span>
                     {{ element.vars.label|trans({}, translation_domain) }}
                 </label>
             {% else %}
@@ -168,12 +171,16 @@
                 </td>
                 <td>
                     <div class="checkbox">
-                        <label>{{ form_widget(channel.restrict) }}</label>
+                        <label class="checkbox-container">
+                        {{ form_widget(channel.restrict) }}
+                        </label>
                     </div>
                 </td>
                 <td>
                     <div class="checkbox">
-                        <label>{{ form_widget(channel.enforce) }}</label>
+                        <label class="checkbox-container">
+                            {{ form_widget(channel.enforce) }}
+                        </label>
                     </div>
                 </td>
             </tr>

@@ -168,7 +168,7 @@ class BlockController extends AbstractController
 
             $this->addFlash('success', 'Block created');
 
-            return $this->redirectToRoute('integrated_block_block_index');
+            return $this->redirectToRoute('integrated_block_block_edit', ['id' => $block->getId()]);
         }
 
         return $this->render(sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
@@ -251,7 +251,7 @@ class BlockController extends AbstractController
 
             $this->addFlash('success', 'Block updated');
 
-            return $this->redirectToRoute('integrated_block_block_index');
+//            return $this->redirectToRoute('integrated_block_block_index');
         }
 
         $metadata = $this->metadataFactory->getMetadata(\get_class($block));
