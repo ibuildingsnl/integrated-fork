@@ -1,4 +1,4 @@
-{% block integrated_workflow_row  %}
+{% block integrated_workflow_row %}
     {% set attr = attr|merge({
         'class': (attr.class|default('') ~ ' workflow')|trim,
         'data-workflow-state-change': path('integrated_workflow_change_state')
@@ -34,10 +34,11 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<div class="lg:w-5/6 pr-4 pl-4">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
+            {% set prototype_html = '<div class="lg:w-11/12">' ~ form_widget(prototype, prototype_vars) %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="lg:w-1/6 pr-4 pl-4"><a href class="btn btn-danger btn-small" data-removefield="collection" data-field="__id__"><span class="fa fa-xmark"></span></a></div>' %}
+                {% set prototype_html = prototype_html ~ '<a href class="remove" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
             {% endif %}
+            {% set prototype_html = prototype_html ~ '</div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
@@ -45,17 +46,15 @@
         <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget">
             <ul class="integrated-collection">
                 {% for field in form %}
-                    <li>
-                        <div class="lg:w-5/6 pr-4 pl-4">
+                    <li class="workflow-state">
+                        <div class="lg:w-11/12">
                             {{ form_widget(field) }}
                             {{ form_errors(field) }}
                         </div>
                         {% if form.vars.allow_delete %}
-                            <div class="lg:w-1/6 pr-4 pl-4">
-                                <div class="form-group">
-                                    <a href class="btn btn-danger btn-small state_delete_button" data-removefield="collection" data-field="{{ field.vars.id }}"><span class="fa fa-xmark"></span></a>
-                                </div>
-                            </div>
+                            <a href class="remove" data-removefield="collection" data-field="{{ field.vars.id }}">
+                                <i class="fa fa-xmark"></i>
+                            </a>
                         {% endif %}
                     </li>
                 {% endfor %}
@@ -63,7 +62,9 @@
 
             {% if form.vars.allow_add %}
                 <div class="integrated-collection-button">
-                    <a href class="btn btn-success btn-small state_add_button" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}"><span class="fa fa-plus"></a>
+                    <a href class="btn btn-green icon-left state_add_button" data-addfield="collection"
+                       data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">
+                        <i class="fa fa-plus"></i><span>Add Status</span></a>
                 </div>
             {% endif %}
 

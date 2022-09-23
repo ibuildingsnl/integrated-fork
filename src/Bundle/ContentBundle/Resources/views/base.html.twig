@@ -80,8 +80,8 @@
     </nav>
 {% endblock %}
 
-<div id="wrapper-holder">
-    {% block body %}
+{% block body %}
+    <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
         {#        {% block sidebar %} #}
         <div class="sidebar">
@@ -107,29 +107,29 @@
 
             {% block content %}{% endblock content %}
         </div>
-    {% endblock body %}
-</div>
+    </div>
+{% endblock body %}
 
 {% block edit_modal %}{% endblock edit_modal %}
 
 {% block javascript %}
-    {% block webpack_js %}
-        <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-    {% endblock %}
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}
 
-    {% if app.request.locale %}
-    <script>
-        moment.locale('{{ app.request.locale }}');
-    </script>
+{% if app.request.locale %}
+<script>
+    moment.locale('{{ app.request.locale }}');
+</script>
+{% endif %}
+
+{{ integrated_javascripts() }}
+
+{% block locking %}
+    {% if locking is defined and locking.lock is defined and locking.locked == false %}
+        {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
     {% endif %}
-
-    {{ integrated_javascripts() }}
-
-    {% block locking %}
-        {% if locking is defined and locking.lock is defined and locking.locked == false %}
-            {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
-        {% endif %}
-    {% endblock locking %}
+{% endblock locking %}
 {% endblock javascript %}
 
 <script>
@@ -209,11 +209,13 @@
 
     for (var i = 0; i < sidebarfilter.length; i++) {
         sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
-    };
+    }
+    ;
 
     for (var ii = 0; ii < editorsettings.length; ii++) {
         editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
-    };
+    }
+    ;
 
     function toggleOptionsElement(event) {
         var options = this.parentNode.querySelector('.aside-item-list');
@@ -246,7 +248,9 @@
         elem.style.height = height; // Update the max-height
 
         // Once the transition is complete, remove the inline max-height so the content can scale responsively
-        window.setTimeout(function() {elem.style.height = '';}, 350);
+        window.setTimeout(function() {
+            elem.style.height = '';
+        }, 350);
     };
 
     // Hide an element

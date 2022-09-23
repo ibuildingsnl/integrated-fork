@@ -66,7 +66,7 @@
 {% block integrated_editor_row  %}
     {% apply spaceless %}
     {% set state = state|default(tailwind_get_state()) %}
-    <div class="form-group {% if state is not empty %}{{ state }}{% endif %}">
+    <div class="form-group {% if state is not empty %}{{ state }}{% endif %} widget">
         <div class="w-full">
             <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
@@ -180,7 +180,7 @@
             {% endif %}
             {% set prototype_html = '<div class="w-full ' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="w-full ' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__" title="' ~ form.vars.delete_button_text|trans({}, translation_domain)|raw ~ '"><span class="fa fa-xmark"></span></a></div>' %}
+                {% set prototype_html = prototype_html ~ '<div class="w-full ' ~ form.vars.button_col ~ '"><a href="#" class="remove" data-removefield="collection" data-field="__id__" title="' ~ form.vars.delete_button_text|trans({}, translation_domain)|raw ~ '"><i class="fa fa-xmark"></i></a></div>' %}
             {% endif %}
             {% set prototype_html = '<div class="section-white section-padding section-radius"><div class="row">' ~ prototype_html ~ '</div></div>' %}
 
@@ -199,8 +199,8 @@
                                 </div>
                                 {% if form.vars.allow_delete %}
                                     <div class="col-xs-{{ form.vars.button_col }}">
-                                        <a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="{{ field.vars.id }}" title="{{ form.vars.delete_button_text|trans({}, translation_domain)|raw }}">
-                                            <span class="fa fa-xmark"></span>
+                                        <a href="#" class="remove" data-removefield="collection" data-field="{{ field.vars.id }}" title="{{ form.vars.delete_button_text|trans({}, translation_domain)|raw }}">
+                                            <i class="fa fa-xmark"></i>
                                         </a>
                                     </div>
                                 {% endif %}
@@ -210,7 +210,7 @@
                 {% endfor %}
             </ul>
             {% if form.vars.allow_add %}
-                <a href="#" class="btn btn-primary btn-sm" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
+                <a href="#" class="btn btn-green" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
             {% endif %}
         </div>
     {% endapply %}

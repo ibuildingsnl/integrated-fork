@@ -1,8 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
-{% dump(type.class) %}
-
 {% block content %}
     {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
         {% set title_state = 'title_tinymce' %}

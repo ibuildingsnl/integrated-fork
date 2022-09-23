@@ -82,6 +82,8 @@
                 </h1>
             </div>
             <section class="editor editor-wrapped">
+                {{ form_errors(form) }}
+
                 {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
             </section>
         </div>
