@@ -66,7 +66,7 @@
             <div class="flex wrap w-full">
                 {% block navbar_content_type %}
 
-                    <div class="new-contenttype hover">
+                    <div class="new-contenttype dropdown top-bar">
                         <a href="#" class="btn btn-green"
                            data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
                                 class="fa-regular fa-plus"></i></a>
@@ -133,16 +133,10 @@
 {% endblock javascript %}
 
 <script>
-
-
     //DROPDOWN MENU
     function initMenu() {
 
-        var menus = [
-            document.querySelector('div.new-contenttype'),
-            document.querySelector('li.dropdown-queue'),
-            document.querySelector('li.dropdown-profile'),
-            document.querySelector('li.dropdown-assigned-to-me')];
+        var menus = document.querySelectorAll('.dropdown.top-bar');
         menus.forEach((menu) => {
             if (menu != null) {
                 for (var i = 0; i < menu.children.length; i++) {
@@ -150,37 +144,42 @@
                     var cList = menuClasses.classList;
                     if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
                         cList.contains('dropdown-menu-right')) {
-                        menu.addEventListener('mouseenter', showDropDownBackGround, false);
-                        menu.addEventListener('mouseleave', hideDropDownBackGround, false);
+                        menu.addEventListener('click', showDropDownBackGround, false);
                     }
                 }
             }
         });
     }
 
+    function hideDropDownBackgroud(event) {
+        var searchMenu = document.querySelector('.search-form .form-control');
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        menuItemDropDownUnderlay.classList.remove('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+    window.addEventListener('click', function(event) {
+        if (!event.srcElement.classList.contains('tt-input')) {
+            hideDropDownBackgroud();
+        }
+    });
+
+
     jQuery('.search-form .form-control').focus(function() {
         showDropDownBackGround();
     });
 
     jQuery('.search-form .form-control').blur(function() {
-        hideDropDownBackGround();
+        hideDropDownBackgroud();
     });
-
-    function showDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.remove('hide');
-        menuItemZindexFix.classList.add('hide');
-    }
-
-    function hideDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.add('hide');
-        menuItemZindexFix.classList.remove('hide');
-    }
-
-    document.addEventListener('DOMContentLoaded', initMenu);
 
     function asideItemsSearch(elem) {
         // Declare variables

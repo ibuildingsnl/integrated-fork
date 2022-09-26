@@ -50,13 +50,13 @@
                                 {% endif %}
                             </div>
                             <div class="status-options">
-                                {% if form.publicationStartDate is defined %}
+                                {% if workflow is defined %}
                                     <div class="status published">
                                         <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
                                     </div>
                                     <!-- TODO: Delete button not working -->
                                     <a class="delete"
-                                       href="{{ path('integrated_channel_config_delete', {'id': data.id}) }}">
+                                       href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}">
                                         <i class="fa-regular fa-trash-can"></i>
                                     </a>
                                 {% else %}
@@ -92,6 +92,8 @@
         {% endblock %}
     </div>
 {% endblock %}
+{#{% block webpack_js %}#}
+{#{% endblock %}#}
 
 {% block javascript %}
     {{ parent() }}

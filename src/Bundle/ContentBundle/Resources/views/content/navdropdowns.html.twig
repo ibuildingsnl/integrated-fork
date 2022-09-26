@@ -6,7 +6,7 @@
             <li class="divider-nav hidden-xs"></li>
             {% set divided = true %}
 
-            <li class="dropdown-assigned-to-me hover hidden-xs">
+            <li class="dropdown-assigned-to-me dropdown top-bar hidden-xs">
                 <a href="#" class="btn btn-orange icon-left" data-toggle="dropdown">
                     <i class="fa-regular fa-bell"></i>
                     <span>{{ assignedContent|length }}</span>
@@ -15,14 +15,23 @@
                     <li>
                         <div class="megamenu-content">
                             <ul class="list list-large list-border">
-                                <li class="block py-2 px-6 mb-0 text-sm text-gray-800 whitespace-no-wrap">{% trans %}Assigned to me{% endtrans %}
-                                    :
+                                <li class="header">
+                                    {% trans %}Assigned to me{% endtrans %}:
                                 </li>
                                 {% for doc in assignedContent %}
-                                    <li>
+                                    {% dump(doc) %}
+                                    <li class="assigned-item">
                                         <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
-                                            <i class="integrate-icon-plus-circled"></i>
-                                            {{ doc.title|default }}
+                                            {% if doc.workflow_color_string is defined %}
+                                                {% set status_color = doc.workflow_color_string|first %}
+                                            {% endif %}
+                                            {% if doc.workflow_icon_string is defined %}
+                                                {% set status_icon = doc.workflow_icon_string|first %}
+                                            {% endif %}
+                                            <div class="workflow-status" style="background-color:{{ status_color }};">
+                                                <i class="fa-regular {{ status_icon }}"></i>
+                                            </div>
+                                            <span class="item-title">{{ doc.title|default }}</span>
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -40,7 +49,7 @@
                 <li class="divider-nav hidden-xs"></li>
             {% endif %}
 
-            <li class="dropdown-queue hover hidden-xs">
+            <li class="dropdown-queue dropdown top-bar hidden-xs">
                 <a href="#" class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="fa-regular fa-database"></i>
                     <span class="">{{ queuecount }}</span>
@@ -71,7 +80,7 @@
         <li class="divider-nav hidden-xs"></li>
 
         {% if app.user %}
-            <li class="hover dropdown-profile hidden-xs">
+            <li class="dropdown-profile dropdown top-bar hidden-xs">
                 <a href="#" class="flex" data-toggle="dropdown">
                     <img src="{{ avatarurl }}" class="profile-image"/>
 

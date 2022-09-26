@@ -100,7 +100,7 @@
 
 {% block integrated_file_row %}
     {% apply spaceless %}
-        <div class="form-group{% if not form.vars.valid %} has-error{% endif %}">
+        <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
             {{ form_label(form) }}
             <div class="w-full {{ widget_col }}">
                 {% set preview = form.vars.preview|default %}
@@ -122,7 +122,7 @@
 {% block integrated_image_row %}
     {% apply spaceless %}
         {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        <div class="form-group{% if not form.vars.valid %} has-error{% endif %}">
+        <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
             {{ form_label(form) }}
             <div class="w-full {{ widget_col }}">
                 {% set preview = form.vars.preview|default %}
@@ -201,7 +201,7 @@
             {% endif %}
         </select>
         <span class="input-group-btn">
-            <button id="types-btn" class="btn btn-default" type="button">
+            <button id="types-btn" type="button">
                 <i class="fa-regular fa-chevron-down"></i>
             </button>
         </span>
@@ -368,8 +368,11 @@
     {% apply spaceless %}
         {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
         <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-        <label>
-            <input class="primary-domain-radio" type="radio" name="check_primary_domain" disabled> {{ 'Primary domain'|trans }}
+        <label class="radiobutton-container">
+            <input class="primary-domain-radio" type="radio" name="check_primary_domain" disabled>
+            <span class="radiobutton"></span>
+            <div class="background"></div>
+            <span>{{ 'Primary domain'|trans }}</span>
         </label>
     {% endapply %}
 {% endblock %}
@@ -408,7 +411,7 @@
 
 {% block integrated_content_bulk_action_row %}
 {% apply spaceless %}
-    <div class="form-group">
+    <div class="form-group w-full flex flex-wrap">
 
         <div class="sm:w-1/4" data-action-toggle="1">
             {{ form_row(form.active, {'no_form_group': true}) }}
@@ -424,7 +427,7 @@
 
 {% block integrated_content_bulk_action_readonly_row %}
 {% apply spaceless %}
-    <div class="form-group">
+    <div class="form-group w-full flex flex-wrap">
         {{ form_label(form.active) }}
 
         <div class="w-full sm:w-3/4">

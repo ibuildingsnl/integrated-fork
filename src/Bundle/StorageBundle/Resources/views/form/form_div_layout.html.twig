@@ -83,7 +83,7 @@
                 </div>
             </div>
         {% else %}
-            <div class="form-group{% if not form.vars.valid %} has-error{% endif %}">
+            <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
                 {{ form_label(form) }}
                 <div class="w-full {{ widget_col }}">
                     {% set changeInput %}

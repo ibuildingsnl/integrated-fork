@@ -74,29 +74,30 @@
                     </thead>
                     <tbody id="post-list">
                     {% for content in pager %}
-                        {#                        {{ dump(content) }} #}
                         <tr class="has-options">
                             {#                            <th class="checkbox"></th> #}
                             <td class="title">
                                 {% if locks[content.type_id] is defined %}
                                     {% if locks[content.type_id].user is defined %}
                                         <div class="locked-info">
-                                            <span
-                                                class="locked-text"><i
-                                                    class="fa-regular fa-lock"></i>&nbsp;{% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}</span>
+                                            <span class="locked-text">
+                                                <i class="fa-regular fa-lock"></i>&nbsp;
+                                                {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}
+                                            </span>
                                         </div>
                                     {% else %}
-
                                         <div class="locked-info">
-                                            <span
-                                                class="locked-text"><i
-                                                    class="fa-regular fa-lock"></i>&nbsp;{% trans %}This item is locked{% endtrans %}</span>
+                                            <span class="locked-text">
+                                                <i class="fa-regular fa-lock"></i>&nbsp;
+                                                {% trans %}This item is locked{% endtrans %}
+                                            </span>
                                         </div>
                                     {% endif %}
                                 {% endif %}
                                 <strong>
                                     <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
                                         {{ content.title|default }}
+
                                     </a>
                                 </strong>
                                 <div class="row-options">
@@ -124,8 +125,14 @@
                                 {% endif %}
                             </td>
                             <td class="content-status">
-                                {% if content.workflow_state is defined %} #}
+                                {% if content.workflow_state is defined %}
+                                    {% if content.workflow_color_string is defined %}
+                                        {% set status_color = content.workflow_color_string|first %}
+                                    {% endif %}
+                                    <div class="workflow-status" style="background-color:{{ status_color }};">
                                     {{ content.workflow_state|default }}
+                                    </div>
+                                    {% set status_color = '' %}
                                 {% endif %}
                             </td>
                         </tr>
@@ -139,40 +146,14 @@
                 {#                <ul class="list-unstyled list-content"> #}
                 {#                    {% for content in pager %} #}
                 {#                        <li> #}
-                {#                            <h3> #}
-                {#                                <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"> #}
-                {#                                    {{ content.title|default }} #}
-                {#                                </a> #}
-                {#                            </h3> #}
-
-                {#                            {% if locks[content.type_id] is defined %} #}
-                {#                                {% if locks[content.type_id].user is defined %} #}
-                {#                                    <div #}
-                {#                                        class="relative px-3 py-3 mb-4 border rounded bg-red-200 border-red-300 text-red-800"> #}
-                {#                                        {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }} #}
-                {#                                    </div> #}
-                {#                                {% else %} #}
-                {#                                    <div #}
-                {#                                        class="relative px-3 py-3 mb-4 border rounded bg-red-200 border-red-300 text-red-800"> #}
-                {#                                        {% trans %}This item is locked{% endtrans %} #}
-                {#                                    </div> #}
-                {#                                {% endif %} #}
-                {#                            {% endif %} #}
-
-                {#                            {% if content.intro is defined and content.intro|join('...')|trim is not empty %} #}
-                {#                                <p>{{ content.intro|join('...')|slice(0, 200)|striptags|raw }}</p> #}
-                {#                            {% elseif content.content is defined and content.content|join('...')|trim is not empty %} #}
-                {#                                <p>{{ content.content|join('...')|slice(0, 200)|striptags|raw }}</p> #}
-                {#                            {% endif %} #}
-
                 {#                            <ul class="list-inline"> #}
                 {#                                <li> #}
                 {#                                    {% if content.workflow_state is defined %} #}
                 {#                                        {{ content.workflow_state|default }} | #}
                 {#                                    {% endif %} #}
-                {#                                    {% if content.workflow_assigned is defined %} #}
-                {#                                        {{ content.workflow_assigned|first|default }} | #}
-                {#                                    {% endif %} #}
+                {#                                                    {% if content.workflow_assigned is defined %} #}
+                {#                                                        {{ content.workflow_assigned|first|default }} | #}
+                {#                                                    {% endif %} #}
                 {#                                    {% if contentTypes[content.type_name] is defined %} #}
                 {#                                        {{ contentTypes[content.type_name] }} #}
                 {#                                    {% else %} #}

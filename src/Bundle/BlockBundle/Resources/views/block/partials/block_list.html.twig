@@ -55,7 +55,7 @@
                                     <h3>
                                         {% trans %}Channels{% endtrans %}
                                     </h3>
-                                    <ul class="list-bullet">
+                                    <ul>
                                         {% for channel in integrated_find_channels(block) %}
                                             <li>{{ channel.name }}</li>
                                         {% endfor %}
@@ -63,7 +63,7 @@
                                     <h3>
                                         {% trans %}Pages{% endtrans %}
                                     </h3>
-                                    <ul class="list-bullet">
+                                    <ul>
                                         {% for page in integrated_find_pages(block) %}
                                             <li>{{ page.title }}</li>
                                         {% endfor %}
