@@ -77,6 +77,9 @@ class WorkflowExtension implements TypeExtensionInterface
 
         if ($state) {
             $container->add('workflow_state', $state->getName());
+            //TODO: Figure out how to get workflow color and string working
+            $container->add('workflow_color_string', $state->getColor());
+            $container->add('workflow_icon_string', $state->getIcon());
             $container->add('facet_workflow_state', $state->getName());
 
             if (\count($state->getPermissions())) {

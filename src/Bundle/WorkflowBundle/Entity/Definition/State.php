@@ -39,6 +39,16 @@ class State
     protected $workflow = null;
 
     /**
+     * @var string
+     */
+    private $color;
+
+    /**
+     * @var string
+     */
+    private $icon;
+
+    /**
      * @var int
      */
     protected $order = 0;
@@ -153,6 +163,47 @@ class State
     public function getName()
     {
         return $this->name;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param string $color
+     *
+     * @return $this
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     *
+     * @return $this
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
     }
 
     /**

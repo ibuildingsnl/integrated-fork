@@ -11,11 +11,13 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -65,6 +67,21 @@ class StateType extends AbstractType
                     'class' => 'state_default_input_field',
                     'align_with_widget' => true,
                 ],
+            ]
+        );
+
+        $builder->add('color', ColorType::class, ['label' => 'Status Color', 'required' => false]);
+
+        $builder->add(
+            'icon',
+            TextType::class,
+            [
+                'label' => 'Status Icon',
+                'required' => false,
+                'attr' =>
+                    [
+                        'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',
+                    ]
             ]
         );
 
