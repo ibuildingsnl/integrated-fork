@@ -40,18 +40,14 @@
 
 {% block integrated_color_row %}
     {% apply spaceless %}
-        {% integrated_javascripts inline=true %}
-            $('.colorpicker-component').colorpicker();
-        {% endintegrated_javascripts %}
-
         {{ block("form_row") }}
     {% endapply %}
 {% endblock %}
 
 {% block integrated_color_widget %}
     {% apply spaceless %}
-        <div class="input-group colorpicker-component">
-            <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}">
+        <div class="input-group coloris">
+            <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}" data-coloris>
             <span class="input-group-addon"><i></i></span>
         </div>
     {% endapply %}
