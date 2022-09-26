@@ -261,7 +261,6 @@ class SearchSelectionController extends AbstractController
             ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
             ->setMethod('DELETE');
 
-        //TODO: This still uses an old type of delete form.
         if ($notDelete) {
             $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
         } else {
