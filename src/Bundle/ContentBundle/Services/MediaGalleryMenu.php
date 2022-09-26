@@ -10,6 +10,8 @@
  */
 
 namespace Integrated\Bundle\ContentBundle\Services;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+
 /**
  * Class MediaGalleryMenu.
  *

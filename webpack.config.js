@@ -10,6 +10,12 @@ webpackConfig = Encore.setOutputPath(
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
         './src/Bundle/ContentBundle/Resources/assets/js/main.js',
     ]).
+    addEntry('mediagallery', [
+        './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
+        './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
+        './src/Bundle/ContentBundle/Resources/assets/js/main.js',
+        './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
+    ]).
     addEntry('edit', [
         './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
         './src/Bundle/ContentBundle/Resources/assets/js/edit.js',

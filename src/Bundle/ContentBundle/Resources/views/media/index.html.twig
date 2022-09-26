@@ -69,7 +69,6 @@
                             <i class="fa-regular fa-plus"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                            {% dump(params) %}
                             {% for type in params.types %}
                                 {% if type %}
                                     <li role="presentation">
@@ -382,4 +381,8 @@
 
 
     </style>
+{% endblock %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
 {% endblock %}

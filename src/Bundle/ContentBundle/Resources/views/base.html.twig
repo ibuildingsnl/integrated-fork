@@ -143,9 +143,6 @@
 {% endblock locking %}
 {% endblock javascript %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-
 <script>
     //BULKSELECTION FUNCTIONALITY
     let bulkSelectionEnabled = false //this controls if we show an icon with each image
@@ -253,12 +250,15 @@
             function moveImage($item, event, category_id = null) {
                 let media_id = $item[0].id || null
 
+                //So here we want to send something to the server
                 if (bulkSelection.length > 0) {
                     console.log("Were bulk moving!")
                     let duplicatesRemoved = bulkSelection.filter(onlyUnique);
                     console.log(duplicatesRemoved)
+                } else {
+                    console.log("We`re single moving:")
+                    console.log(media_id)
                 }
-                //So here we want to send something to the server
 
                 $('.media_category').removeClass('flash')
                 $('#'+category_id).addClass("flash");
