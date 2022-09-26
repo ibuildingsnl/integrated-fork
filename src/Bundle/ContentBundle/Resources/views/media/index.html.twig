@@ -22,8 +22,43 @@
                                    onkeyup="asideItemsSearch(this)"
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
+                        <div class="p-2 text-red-600">CHANNELS</div>
                         <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
                             {% for key, menu_item in newMenu %}
+                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
+                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                                id="category_{{ key }}">
+                                <i class="fa-regular fa-folders"></i>
+                                <span>{{ menu_item.title }}</span>
+                                {% if menu_item.children %}
+
+                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                    <li class="menu-parent media_category"
+                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
+                                        <i class="fa-regular fa-folders"></i>
+                                        <span>{{ menu_item_1.title }}</span>
+                                        {% if menu_item_1.children %}
+
+                                            {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                <li class="menu-parent media_category"
+                                                    style="margin-bottom: 1px; padding-left: 33px"
+                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
+                                                    <i class="fa-regular fa-folders"></i>
+                                                    <span>{{ menu_item_2.title }}</span>
+                                                </li>
+                                            {% endfor %}
+
+                                        {% endif %}
+                                        </li>
+                                    {% endfor %}
+
+                                {% endif %}
+                                </li>
+                            {% endfor %}
+                        </lu>
+                        <div class="p-2 text-red-600">CATEGORIES</div>
+                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
+                            {% for key, menu_item in menuResult %}
                                 <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
                             <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                                 id="category_{{ key }}">

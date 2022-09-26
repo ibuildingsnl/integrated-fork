@@ -143,6 +143,12 @@
 {% endblock locking %}
 {% endblock javascript %}
 
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script
+        src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+        integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0="
+        crossorigin="anonymous"></script>
+
 <script>
     //BULKSELECTION FUNCTIONALITY
     let bulkSelectionEnabled = false //this controls if we show an icon with each image
@@ -183,7 +189,6 @@
                 step_to = event.currentTarget.getAttribute('data-media_id') * 1
 
             for (let step = step_from; step <= step_to; step++) {
-                console.log(step)
                 let element = document.querySelector('.bulkselectionbutton[data-media_id="'+step+'"]')
 
                 media_id = element.getAttribute('data-id')
@@ -259,7 +264,7 @@
                     console.log("We`re single moving:")
                     console.log(media_id)
                 }
-
+                console.log("To: " + category_id)
                 $('.media_category').removeClass('flash')
                 $('#'+category_id).addClass("flash");
             }

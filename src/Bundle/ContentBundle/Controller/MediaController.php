@@ -39,7 +39,7 @@ class MediaController extends AbstractController
     private $repository;
     private $authorizationChecker;
 
-    public function __construct( MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->provider = $provider;
         $this->userManager = $userManager;
@@ -47,6 +47,8 @@ class MediaController extends AbstractController
         $this->repository = $repository;
         $this->authorizationChecker = $authorizationChecker;
     }
+
+
 
     /**
      * @param Request $request
@@ -80,29 +82,36 @@ class MediaController extends AbstractController
 //            }
         }
 
-        //Alle MediaGalleryMenu items ophalen
+        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
         $menuItems = [];
-        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenu'])) {
+        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
+//        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findAll()) {
+
+//            dd($mediaGalleryMenuResult);
             /** @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($mediaGalleryMenuResult as $menuItem) {
-//                dd($menuItem);
-                $menuItems[menuItem->getId()] = $channel->getName();
+              $menuItems[] = [
+                "ID" => $menuItem->getId(),
+                "title" => $menuItem->getTitle(),
+                'parent_id' => $menuItem->getParentId()
+              ];
             }
         }
+
+        $menuResult = [];
+        $this->makeParentChildRelations($menuItems, $menuResult);
 
         //Alle content typen ophalen, ook custom
         $contentTypes = [];
         if ($dbContentTypes = $dm->getRepository(File::class)->findAll()) {
-//            dd($dbContentTypes);
-            foreach ($mediaGalleryMenuResult as $menuItem) {
-                dd($menuItem);
-                $menuItems[menuItem->getId()] = $channel->getName();
+            foreach ($dbContentTypes as $menuItem) {
+                $contentTypes[] = $menuItem->getContentType();
             }
         }
+        $uniqueContentTypes = array_unique($contentTypes);
 
-        //TODO: rebuild this into a KPN Menu? NO!
+        //Get current selected value
         $class_string = $request->query->get('class_string');
-
         if ($class_string === true || $class_string === null) {
             $class_string = 'Alle mediabestanden';
         }
@@ -119,11 +128,11 @@ class MediaController extends AbstractController
                         'name' => 'Image',
                         'label' => 'Images'
                     ],
-                    "Video"  => [
+                    "Video" => [
                         'name' => 'Video',
                         'label' => 'Videos'
                     ],
-                    "NonMedia"  => [
+                    "NonMedia" => [
                         'name' => 'NonMedia',
                         'label' => 'Files'
                     ],
@@ -131,21 +140,36 @@ class MediaController extends AbstractController
                 'current' => $class_string,
                 'default' => 'File'
             ],
+            //NEW ITEMS
             'types' => [
                 "Image" => [
                     'type' => 'image',
                     'label' => 'Image'
                 ],
-                "Video"  => [
+                "Video" => [
                     'type' => 'video',
                     'label' => 'Video'
                 ],
-                "File"  => [
+                "File" => [
                     'type' => 'file',
                     'label' => 'File'
                 ],
             ]
         ];
+
+        foreach ($uniqueContentTypes as $uniqueContentType) {
+            //For new items:
+            $params['sort']['options'][$uniqueContentType] = [
+                'name' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+
+            //For filtering:
+            $params['types'][$uniqueContentType] = [
+                'type' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+        }
 
         //I think this is correct Autowiring:
         //Include the Service in services.xml
@@ -161,15 +185,65 @@ class MediaController extends AbstractController
             $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
         }
 
-        //TODO get class_string value from request
 //        $request->query->set('class_string', $params["sort"]["options"][$class_string]["name"];);
+
+//        dd($request);
 
         $items = $this->provider->getContentFromSolr($request, 20);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
             'params' => $params,
-            'newMenu' => $newMenu
+            'newMenu' => $newMenu,
+            'menuResult' => $menuResult
         ]);
+    }
+
+    public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0) {
+        if(!is_array($inArray)) {
+            return;
+        }
+
+        if(!is_array($outArray)) {
+            return;
+        }
+
+        foreach($inArray as $key => $tuple) {
+            if($tuple['parent_id'] == $currentParentId) {
+                $tuple['children'] = array();
+                $this->makeParentChildRelations($inArray, $tuple['children'], $tuple['ID']);
+                $outArray[] = $tuple;
+            }
+        }
+    }
+
+    public function menu()
+    {
+        $dm = $this->getDoctrineODM()->getManager();
+        $channels = [];
+        if ($channelResult = $dm->getRepository(Channel::class)->findAll()) {
+            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
+            foreach ($channelResult as $channel) {
+                $channels[$channel->getId()] = $channel->getName();
+            }
+        }
+
+        $menuItems = [];
+        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
+            /** @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
+            foreach ($mediaGalleryMenuResult as $menuItem) {
+//                dd($menuItem);
+                $menuItems[menuItem->getId()] = $channel->getName();
+            }
+        }
+
+        return $this->render('@IntegratedContent/media/menu.html.twig', [
+            'channels' => $channels,
+//            'params' => $params,
+//            'newMenu' => $newMenu
+        ]);
+
+//        return $this->redirectToRoute();
+//        return $this->redirect(''));
     }
 }
