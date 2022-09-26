@@ -428,6 +428,10 @@ label {
     -ms-user-select: none;
     user-select: none;
     font-weight: 300;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #dfe3e9;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;
@@ -467,7 +471,7 @@ label {
     input:checked ~ .radiobutton {
         background-color: #00b2ee;
         border: 2px solid white;
-        outline: 1px solid #00b2ee;
+        outline: 1px solid #00b2ee !important;
     }
 
     /* Show the checkmark when checked */
@@ -536,29 +540,32 @@ label {
         border: #902b1d;
         color: #fff;
     }
+
+    &:focus {
+        color: white;
+    }
 }
 
 
-.integrated-collection .widget .choice {
-    display: flex;
-    justify-content: space-between;
-    margin: -.5rem;
+.definition-state-collection-widget .widget {
+    //display: flex;
+    //margin: -.5rem;
+    ul[id^='integrated_workflow_definition_states'] {
+        display: flex;
+        margin: -.5rem;
 
-    li {
-        display: inline-block;
-        width: 33%;
-        padding: .5rem;
+        li {
+            display: inline-block;
+            width: 33.333%;
+            padding: .5rem;
 
-        .radio {
-            background-color: white;
-            border-radius: 8px;
-            border: 1px solid #e0e3e9;
-
-            label {
-                width: 100%;
-                padding: 1rem;
-                cursor: pointer;
-                margin-bottom: 0;
+            .radio {
+                label {
+                    width: 100%;
+                    padding: 1rem;
+                    cursor: pointer;
+                    margin-bottom: 0;
+                }
             }
         }
     }
@@ -577,7 +584,7 @@ label {
     }
 }
 
-.facetFields, .integrated_collection {
+.facetFields {
     background-color: #f2f2f2;
     padding: 2rem;
     border-radius: 8px;
@@ -588,4 +595,76 @@ label {
     padding: 1rem;
     border-radius: 8px;
     background-color: rgb(255 0 0 / 10%);
+}
+
+.channel-domains {
+    .row {
+        input {
+            padding-left: 175px;
+        }
+
+        label {
+            position: absolute;
+            top: 0;
+            height: 52px;
+            /* background-color: #f2f2f2; */
+            padding: 0 1rem;
+            border-radius: 8px 0 0 8px;
+
+            .background {
+                background-color: #f2f2f2;
+                border-radius: 8px 0 0 8px;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+                top: 0px;
+            }
+
+            span {
+                z-index: 1;
+                color: #6f6f6f;
+            }
+
+            .radiobutton {
+                border: 1px solid #6f6f6f;
+            }
+
+            /* On mouse-over, add a grey background color */
+            &:hover input ~ .radiobutton {
+                background-color: #00b2ee;
+                border-color: #f2f2f2;
+                outline: 1px solid #00b2ee;
+            }
+
+            &:hover input {
+                &:checked input ~ .radiobutton {
+                    background-color: #00b2ee;
+                }
+            }
+        }
+
+        .radiobutton-container input {
+            &:checked ~ .background {
+                background-color: rgba(1, 178, 239, .1);
+                border: 1px solid #01b2ef;
+                bottom: -1px;
+                left: -1px;
+                right: -1px;
+                top: -1px;
+            }
+
+            &:checked ~ span {
+                color: black;
+            }
+
+            &:checked ~ .radiobutton {
+                border: 1px solid #ffffff;
+            }
+        }
+
+        .row .radiobutton-container .background {
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+    }
 }

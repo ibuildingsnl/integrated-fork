@@ -23,6 +23,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            flex-wrap: wrap;
         }
     }
 
@@ -41,6 +42,7 @@
             padding-left: 8px;
             text-overflow: ellipsis;
             white-space: nowrap;
+            flex-wrap: wrap;
         }
     }
 

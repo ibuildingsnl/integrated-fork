@@ -41,7 +41,7 @@ div#integrated_content_content_container {
     }
 }
 
-.collection-widget, .sortable-collection-widget {
+.collection-widget, .sortable-collection-widget, .integrated_sortable_collection {
     width: 100%;
 
     .bc-collection {
@@ -74,11 +74,12 @@ div#integrated_content_content_container {
                         span {
                             padding-left: 25px;
                         }
+                        a.remove {
+                            top: 0px;
+                            right: 0px;
+                        }
                     }
-                    a.remove {
-                        top: 6px;
-                        right: 6px;
-                    }
+
                 }
 
                 .panel-collapse {
@@ -103,11 +104,9 @@ div#integrated_content_content_container {
 
                         > div {
                             display: flex;
-                            margin: 0 -0.5rem;
                             flex-wrap: wrap;
 
-                            > div.form-item {
-                                padding: 0.5rem;
+                            > div.form-item, div.form-group {
                                 min-width: 25%;
                             }
                         }

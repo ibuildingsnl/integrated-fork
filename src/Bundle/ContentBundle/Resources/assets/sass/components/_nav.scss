@@ -34,21 +34,21 @@ nav.navbar {
     //    }
     //}
     .new-contenttype {
-        margin-left: 70px;
+        margin-left: 64px;
 
-        > ul {
-            transition: 0.2s 1s;
-        }
-
-        &:not(:hover) > ul {
-            transition: all 0.1s;
-            transition-delay: 1s;
-        }
-
-        &:hover > ul:not(:hover) {
-            transition: all 0s !important;
-            transition-delay: 0s !important;
-        }
+        //> ul {
+        //    transition: 0.2s 1s;
+        //}
+        //
+        //&:not(:hover) > ul {
+        //    transition: all 0.1s;
+        //    transition-delay: 1s;
+        //}
+        //
+        //&:hover > ul:not(:hover) {
+        //    transition: all 0s !important;
+        //    transition-delay: 0s !important;
+        //}
     }
 
     ul.header-nav {
@@ -142,13 +142,13 @@ body div#dropdown_overlay {
     }
 }
 
-.hover {
+.dropdown.top-bar {
     padding: 10px 0;
     padding-bottom: 30px;
     display: block;
     position: relative;
 
-    &:hover {
+    &.open {
         ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
             visibility: visible;
             opacity: 1;

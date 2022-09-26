@@ -16,4 +16,7 @@
 }
 .jFiler-input-dragDrop {
     margin:0;
+    background: #e9f7fe;
+    border: 2px dashed #e0e3e9;
+    border-radius: 8px;
 }
