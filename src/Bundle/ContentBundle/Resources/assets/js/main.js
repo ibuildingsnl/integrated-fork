@@ -22,4 +22,6 @@ global.moment = moment;
 
 import 'select2/dist/js/select2.full';
 
+import './colorpicker';
+
 import './scripts'
