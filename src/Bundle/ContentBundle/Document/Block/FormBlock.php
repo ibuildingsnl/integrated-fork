@@ -93,7 +93,9 @@ class FormBlock extends Block
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={
-     *          "required"=false
+     *          "label"="Enable reCaptcha for this form",
+     *          "required"=false,
+     *          "attr"={"align_with_widget"=true}
      *      }
      * )
      */
