@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Extension;
 
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
-//use Integrated\Bundle\ContentBundle\Document\Content\File; not needed,
+use Integrated\Bundle\ContentBundle\Document\Content\File; //not needed,
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Common\Content\Document\Storage\FileInterface;
@@ -27,11 +27,7 @@ class StringClassExtension implements TypeExtensionInterface
      */
     public function build(ContainerInterface $container, $data, array $options = [])
     {
-        //TODO *1
-        //get custom class from data and add this.
-
-        //File of FileInterface?
-        if (!$data instanceof FileInterface) {
+        if (!$data instanceof File) {
             return;
         }
 
@@ -45,15 +41,27 @@ class StringClassExtension implements TypeExtensionInterface
         $container->set('class_string', 'ContentType');
         $container->add('class_string', 'File');
 
+        //We add 1 more, based on the ContentType
+        //Image --> Image
+        //Video --> Video
+        //File --> NonMedia (to be able to distinguish from file)
+        //Other --> [variable: name of Other class]
         if ($data instanceof Image) {
             $container->add('class_string', 'Image');
         } else if ($data instanceof Video) {
             $container->add('class_string', 'Video');
+        } else {
+            //first we check if it isnt one of the regular types
+            //if that is true, we set it to the custom string
+            if ($data->getRelations()->getOwner()->getContentType() !== 'video' &&
+                $data->getRelations()->getOwner()->getContentType() !== 'image' &&
+                $data->getRelations()->getOwner()->getContentType() !== 'file') {
+                $container->add('class_string', $data->getRelations()->getOwner()->getContentType());
+            } else {
+                //if it is, we set the custom class
+                $container->add('class_string', 'NonMedia');
+            }
         }
-
-        //TODO *1
-        //If $data is custom class
-        //$container->add('class_string', $customclass);
     }
 
     /**

@@ -125,6 +125,10 @@ We have an icon now for all files and videos. Later refine this:
  - stills for videos?
  - per filetype a separate icon
 
+We now can search with the input field, i used the field from the index of content
 
+We now have a pulldown, I set the options in MediaController, later move this to the config?
+
+I added a third value for the File class: NonMedia, so we can search for files only.
 
 

@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Common\Content\ParentIDTrait;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
 use Integrated\Common\Form\Mapping\Annotations as Type;
@@ -26,6 +27,7 @@ use Integrated\Common\Form\Mapping\Annotations as Type;
 class Taxonomy extends Content implements RankableInterface
 {
     use RankTrait;
+    use ParentIDTrait;
 
     /**
      * @var string

@@ -8,4 +8,12 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index</default>
     </route>
 
+    <route id="integrated_content_media_edit" path="/edit" methods="GET, PUT">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::edit</default>
+    </route>
+
+    <route id="integrated_content_media_menu" path="/menu" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::menu</default>
+    </route>
+
 </routes>

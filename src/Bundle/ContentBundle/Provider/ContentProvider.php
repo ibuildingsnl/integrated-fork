@@ -56,19 +56,20 @@ class ContentProvider
     /**
      * ContentProvider constructor.
      *
-     * @param Client                $client
-     * @param DocumentManager       $dm
+     * @param Client $client
+     * @param DocumentManager $dm
      * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationChecker  $authorizationChecker
-     * @param bool                  $workflowExtension
+     * @param AuthorizationChecker $authorizationChecker
+     * @param bool $workflowExtension
      */
     public function __construct(
-        Client $client,
-        DocumentManager $dm,
+        Client                $client,
+        DocumentManager       $dm,
         TokenStorageInterface $tokenStorage,
-        AuthorizationChecker $authorizationChecker,
-        $workflowExtension = false
-    ) {
+        AuthorizationChecker  $authorizationChecker,
+                              $workflowExtension = false
+    )
+    {
         $this->client = $client;
         $this->dm = $dm;
         $this->tokenStorage = $tokenStorage;
@@ -88,10 +89,11 @@ class ContentProvider
 
         // Why would I add a Tag?
         if ($class = $request->query->get('class_string')) {
+//            dd("hi");
             $query
                 ->createFilterQuery('class_string')
 //                ->addTag('class_string')
-                ->setQuery('class_string: '.$class);
+                ->setQuery('class_string: ' . $class);
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
@@ -135,7 +137,7 @@ class ContentProvider
                 $query
                     ->createFilterQuery($name)
                     ->addTag($name)
-                    ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
+                    ->setQuery('facet_' . $relation->getId() . ': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
 
@@ -198,8 +200,8 @@ class ContentProvider
         if (\is_array($hasFields)) {
             foreach ($hasFields as $field) {
                 $query
-                    ->createFilterQuery('hasField_'.$field)
-                    ->setQuery($field.':[* TO *]');
+                    ->createFilterQuery('hasField_' . $field)
+                    ->setQuery($field . ':[* TO *]');
             }
         }
 
@@ -211,7 +213,7 @@ class ContentProvider
             'created' => ['name' => 'created', 'field' => 'pub_created', 'label' => 'date created', 'order' => 'desc'],
             'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
-            'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
+            'random' => ['name' => 'random', 'field' => 'random_' . mt_rand(), 'label' => 'random', 'order' => 'desc'],
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
         ];
         $order_options = [
@@ -224,7 +226,7 @@ class ContentProvider
                 return preg_match('/[a-z0-9]{32}/', $value);
             });
             if (\count($ids)) {
-                $query->createFilterQuery('ids')->setQuery('type_id: ("'.implode('" OR "', $ids).'")');
+                $query->createFilterQuery('ids')->setQuery('type_id: ("' . implode('" OR "', $ids) . '")');
             }
         }
 
@@ -292,15 +294,15 @@ class ContentProvider
 
         // allow content with group access
         if ($filterWorkflow) {
-            $fq->setQuery($fq->getQuery().' OR (security_workflow_read: ((%1%)) AND security_workflow_write: ((%1%)))', [implode(') OR (', $filterWorkflow)]);
+            $fq->setQuery($fq->getQuery() . ' OR (security_workflow_read: ((%1%)) AND security_workflow_write: ((%1%)))', [implode(') OR (', $filterWorkflow)]);
         }
 
         // always allow access to assinged content
-        $fq->setQuery($fq->getQuery().' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
+        $fq->setQuery($fq->getQuery() . ' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
 
         /* @var Person $person */
         if ($person = $user->getRelation()) {
-            $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
+            $fq->setQuery($fq->getQuery() . ' OR author: %1%*', [$person->getId()]);
         }
 
         return $fq;

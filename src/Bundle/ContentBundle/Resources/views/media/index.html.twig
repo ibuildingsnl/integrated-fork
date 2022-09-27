@@ -1,127 +1,426 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
 
-<div class="grid-container">
-    <div class="menu">
-        {#        <h3>Linker menu</h3> #}
-        <div class="menu">
-            <div class="menu-item">
-                <a>Alle bestanden</a>
-            </div>
-            <div class="menu-item">
-                <input type="search" placeholder="Voer de naam van de map in">
-            </div>
-            {% for menu_item in menu %}
-                <div class="menu-item">
-                    {{ menu_item }}
-                </div>
-            {% endfor %}
-        </div>
-    </div>
+    <div class="flex flex-wrap media-library">
+        <div class="sm:w-3/12 p-2 pr-4 pl-4">
+            <aside>
+                <h2 class="heading ">{% trans %}Mappen{% endtrans %}</h2>
+                <div class="aside-holder bg-white section-radius">
+                    <div
+                        class="aside-item-wrapper">
+                        <div class="aside-item-header">
+                            <h3 class="aside-item-title">
+                                <i class="fa-regular fa-folder"></i>
+                                <span>Alle bestanden</span>
+                            </h3>
+                        </div>
+                        <div class="aside-item-search">
+                            <i class="fa fa-search"></i>
+                            <input type="text" class="list-search"
+                                   onchange="asideItemsSearch(this)"
+                                   onkeyup="asideItemsSearch(this)"
+                                   placeholder="{% trans %}Search in folders{% endtrans %}">
+                        </div>
+                        <div class="p-2 text-red-600">CHANNELS</div>
+                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
+                            {% for key, menu_item in newMenu %}
+                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
+                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                                id="category_{{ key }}">
+                                <i class="fa-regular fa-folders"></i>
+                                <span>{{ menu_item.title }}</span>
+                                {% if menu_item.children %}
 
-    <div class="header" style="padding-bottom: 20px">
-        <div><a class="menulink">Alle mediabestanden</a>
-            <a class="menulink">Images</a>
-            <a class="menulink">Videos</a>
-            <a class="menulink">Files</a>
-            <input type="search" placeholder="Zoeken"></div>
+                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                    <li class="menu-parent media_category"
+                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
+                                        <i class="fa-regular fa-folders"></i>
+                                        <span>{{ menu_item_1.title }}</span>
+                                        {% if menu_item_1.children %}
 
-    </div>
+                                            {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                <li class="menu-parent media_category"
+                                                    style="margin-bottom: 1px; padding-left: 33px"
+                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
+                                                    <i class="fa-regular fa-folders"></i>
+                                                    <span>{{ menu_item_2.title }}</span>
+                                                </li>
+                                            {% endfor %}
 
-    <div class="main">
-        <div class="flex">
-            {% for media in items %}
+                                        {% endif %}
+                                        </li>
+                                    {% endfor %}
 
-                <div class="flex-item">
-                    <div class="flex-content">
-                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-{#                            <div class="image-title">{{ media.title|default('geen title') }}</div>#}
-                            {% if media.contentType == 'image' %}
-                                <img src="{{ integrated_image(media.file).zoomCrop(150, 100) }}" alt="test"/>
+                                {% endif %}
+                                </li>
+                            {% endfor %}
+                        </lu>
+                        <div class="p-2 text-red-600">CATEGORIES</div>
+                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
+                            {% for key, menu_item in menuResult %}
+                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
+                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                                id="category_{{ key }}">
+                                <i class="fa-regular fa-folders"></i>
+{#                                <span>{{ menu_item.title }}</span>#}
+                                <a href="{{ path(app.request.attributes.get('_route'),
+                                    app.request.query.all|merge({'Media_Taxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })) }}"
+                                   tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
+                                {% if menu_item.children %}
 
-                            {% elseif media.contentType == 'video' %}
-                                {#                TODO add stills for images #}
-                                <img width="150px" height="100"
-                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg=="
-                                     alt="test"/>
+                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                    <li class="menu-parent media_category"
+                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
+                                        <i class="fa-regular fa-folders"></i>
+                                        <span>{{ menu_item_1.title }}</span>
+                                        {% if menu_item_1.children %}
 
-                            {% elseif media.contentType == 'file' %}
-                                {#                TODO add stills for files #}
-                                <img width="150px" height="100"
-                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU"
-                                     alt="test"/>
-                            {% else %}
-{#                                TODO How to handle custom ContentTypes that can be anything?#}
-{#                                We could check pathname / identifier, but that is not so elegant##}
-                                <img width="150px" height="100"
-                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU"
-                                     alt="test"/>
-                            {% endif %}
+                                            {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                <li class="menu-parent media_category"
+                                                    style="margin-bottom: 1px; padding-left: 33px"
+                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
+                                                    <i class="fa-regular fa-folders"></i>
+                                                    <span>{{ menu_item_2.title }}</span>
+                                                </li>
+                                            {% endfor %}
 
-                        </a>
+                                        {% endif %}
+                                        </li>
+                                    {% endfor %}
+
+                                {% endif %}
+                                </li>
+                            {% endfor %}
+                        </lu>
                     </div>
                 </div>
-            {% endfor %}
+            </aside>
         </div>
+        <div class="md:w-9/12 pr-4 pl-4 mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Media Bibliotheek{% endtrans %}</h1>
+                <ul class="options-no-bg">
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                            <span>{% trans %}New{% endtrans %}</span>
+                            <i class="fa-regular fa-plus"></i>
+                        </a>
+                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                            {% for type in params.types %}
+                                {% if type %}
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type.type }}">
+                                            {{ type.label }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <div class="options flex justify-between">
+                    <ul class="">
+                        <li class="dropdown">
+                            <a href data-toggle="dropdown" role="button" id="sorting-list"
+                               class="btn btn-select space-between"><span>{{ params.sort.options[params.sort.current].label|trans }}</span>
+                                <i
+                                    class="fa-regular fa-angle-down"></i></a>
+                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
+                                {% for sort in params.sort.options %}
+
+                                    <li {% if sort.name == params.sort.current %}class="active"
+                                        {% endif %}role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': sort.name == params.sort.default ? null : sort.name })) }}"
+                                           tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+                        </li>
+                    </ul>
+                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">Bulkselectie</button>
+                    <form action="" class="media-search-form" method="get">
+                        <div class="form-group relative" style="width: 250px">
+                            <input type="text" name="q" class="form-control"
+                                   value="{{ app.request.query.get('q')|trim }}"
+                                   placeholder="{% trans %}Zoeken{% endtrans %}...">
+                            <button type="submit"><i class="fa-regular fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <section class="section-white section-radius p-4">
+                {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
+                <div class="media-container">
+                    <div class="media-wrapper">
+                        <ul class="flex flex-wrap gallery gallery ui-helper-reset ui-helper-clearfix" id="gallery">
+                            {% for media in items %}
+                                {% if media.contentType == 'image' %}
+                                    {# TODO add stills for images #}
+                                    {% set thumbnail = integrated_image(media.file).zoomCrop(100, 100) %}
+                                    {#                                    {% set thumbnail = integrated_image(media.file) %} #}
+                                {% elseif media.contentType == 'video' %}
+                                    {% set thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg==' %}
+                                {% elseif media.contentType == 'file' %}
+                                    {# TODO add stills for files #}
+                                    {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
+                                {% else %}
+                                    {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
+                                    {# TODO How to handle custom ContentTypes that can be anything? #}
+                                    {# We could check pathname / identifier, but that is not so elegant# #}
+                                {% endif %}
+                                <!-- simply add selected class to visualy show a selected state -->
+                                <li class="media-item ui-widget-content ui-corner-tr {{ media.contentType }}"
+                                    id="{{ media.id }}" data-id="{{ media.id }}">
+                                    <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                        <div class="media-preview">
+                                            <div class="thumbnail">
+                                                <div class="centered">
+                                                    <img src="{{ thumbnail }}"
+                                                        {# alt="{{ media.title }}"> #}
+                                                         alt="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <button data-media_id="{{ loop.index }}" data-id="{{ media.id }}" id="bulkselection_{{ media.id }}" type="button" class="check bulkselectionbutton" tabindex="-1">
+                                            <span class="media-modal-icwon py-2 px-3">
+                                                <i class="fa-regular fa-check"></i>
+                                            </span>
+                                        <span class="screen-reader-text">Deselecteren</span>
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
 
 
     <style>
-        .flex {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 0 4px;
+        .ui-droppable-hover, .bulkselected {
+            background-color: lightskyblue ;
         }
 
-        .flex-item {
-            flex: 25%;
-            max-width: 25%;
-            padding: 0 4px 20px;
+        .flash {
+            -moz-animation: flash 1s ease-out;
+            -moz-animation-iteration-count: 1;
 
+            -webkit-animation: flash 1s ease-out;
+            -webkit-animation-iteration-count: 1;
+
+            -ms-animation: flash 1s ease-out;
+            -ms-animation-iteration-count: 1;
         }
 
-        .menu {
-            background-color: #cdd;
-            padding: 7px;
+        @keyframes flash {
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
-        .menu-item {
-            padding: 2px;
+        @-webkit-keyframes flash {
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-areas:
-    'menu header header header header header'
-    'menu main main main main main';
-            gap: 10px;
-            background-color: #eee;
-            padding: 10px;
+        @-moz-keyframes flash {
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
-        .menu {
-            grid-area: menu;
+        @-ms-keyframes flash {
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #fbf8b2;
+            }
+            100% {
+                background-color: transparent;
+            }
         }
 
-        .main {
-            grid-area: main;
-            padding-top: 20px;
+        .media-container {
+            padding: 2rem;
         }
 
-        .header {
-            background-color: #cdd;
-            padding: 10px;
-            grid-area: header;
+        .media-wrapper ul {
+            margin: -0.5rem;
         }
 
-        .header a {
-            padding-right: 8px;
+        .media-library .media-preview {
+            position: relative;
+            background: #f2f2f2;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .menu {
-            grid-area: menu;
-            max-width: 230px;
+        .media-library .media-item {
+            position: relative;
+            float: left;
+            padding: 8px;
+            margin: 0;
+            width: 10%;
+            color: #3c434a;
+            cursor: pointer;
+            list-style: none;
+            text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
+            box-sizing: border-box;
         }
+
+        .media-library .media-preview:before {
+            content: "";
+            display: block;
+            padding-top: 100%;
+        }
+
+        .media-library .media-item .thumbnail {
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 1;
+            transition: opacity .1s;
+            background-size: cover;
+        }
+
+        .media-library .media-item .check {
+            display: none;
+            height: 24px;
+            width: 24px;
+            padding: 0;
+            border: 0;
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            right: 0;
+            outline: 0;
+            background-color: #00b2ee;
+            border-color: #00b2ee;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .media-library .media-item.selected .check {
+            display: block;
+        }
+
+        .media-container.mode-select .media-item .thumbnail {
+            opacity: .65;
+        }
+        .media-container.mode-select .media-item.selected .thumbnail {
+            opacity: 1;
+        }
+
+        .screen-reader-text {
+            position: absolute;
+            top: -10000em;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .media-library .media-item .thumbnail img {
+            transform: translate(-50%, -50%);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .media-library .media-item .thumbnail .centered {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translate(50%, 50%);
+        }
+
+        .media-library .media-item .thumbnail:after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
+            overflow: hidden;
+        }
+
+
+        ul.aside-filter-menu {
+            padding: 2rem;
+        }
+
+        ul.aside-filter-menu li {
+            padding: .5rem 0;
+        }
+
+        ul.aside-filter-menu li span {
+            margin-left: 1rem;
+        }
+
+        form.media-search-form input {
+            border: 1px solid #dee3e9;
+            border-radius: 8px;
+            color: #000;
+            font-size: 13px;
+            padding: 0 1rem 0 2rem;
+            width: 100%;
+            height: 34px;
+        }
+
+        form.media-search-form {
+            position: relative;
+        }
+
+        form.media-search-form button {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            color: #beccde;
+        }
+
+
     </style>
-    {% endblock %}
+{% endblock %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+{% endblock %}
