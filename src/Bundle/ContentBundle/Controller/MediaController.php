@@ -57,11 +57,92 @@ class MediaController extends AbstractController
      */
     public function index(Request $request)
     {
-        //Get all the channels
-        /** @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->getDoctrineODM()->getManager();
+        $this->dm = $this->getDoctrineODM()->getManager();
+
+        $channelAuthorisations = $this->getChannels();
+
+        $menuItems = $this->getMenuItems();
+
+        $menuResult = [];
+        $this->makeParentChildRelations($menuItems, $menuResult);
+
+        //Alle content typen ophalen, ook custom
+        $uniqueContentTypes = $this->getContentTypes();
+
+        //Set default if needed
+        $class_string = $request->query->get('class_string');
+        if ($class_string === true || $class_string === null) {
+            $class_string = 'File';
+            $request->query->set('class_string', "File");
+        }
+
+        $media_taxonomy = $request->query->get('media_taxonomy');
+
+        //TODO: vertaling neerzetten in twig template
+        $params = $this->getParams($class_string, $media_taxonomy);
+
+        $this->addContentTypesToUserOptions($uniqueContentTypes, $params);
+
+        $newMenu = $this->mediaGalleryMenu->getSimulation();
+
+        $items = $this->provider->getContentFromSolr($request, 100);
+
+        return $this->render('@IntegratedContent/media/index.html.twig', [
+            'items' => $items,
+            'params' => $params,
+            'newMenu' => $newMenu,
+            'menuResult' => $menuResult
+        ]);
+    }
+
+    public function getContentTypeViaFacets() {
+        if (false) {
+            $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
+            $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
+        }
+    }
+
+    public function addContentTypesToUserOptions($uniqueContentTypes, $params) {
+        foreach ($uniqueContentTypes as $uniqueContentType) {
+            //The following categories are allways there:
+            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
+                continue;
+            }
+
+            //For new items:
+            $params['sort']['options'][$uniqueContentType] = [
+                'name' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+
+            //For filtering:
+            $params['types'][$uniqueContentType] = [
+                'type' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+        }
+    }
+
+    public function getMenuItems() {
+        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
+        $menuItems = [];
+
+        if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
+            foreach ($mediaGalleryMenuResult as $menuItem) {
+                $menuItems[] = [
+                    "ID" => $menuItem->getId(),
+                    "title" => $menuItem->getTitle(),
+                    'parent_id' => $menuItem->getParentId()
+                ];
+            }
+        }
+
+        return $menuItems;
+    }
+
+    public function getChannels() {
         $channels = [];
-        if ($channelResult = $dm->getRepository(Channel::class)->findAll()) {
+        if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
             /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($channelResult as $channel) {
                 $channels[$channel->getId()] = $channel->getName();
@@ -73,6 +154,7 @@ class MediaController extends AbstractController
             $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
             $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
 
+            //TODO Enable this with proper data
 //            if ($read === true || $write === true) {
             $channelAuthorisations[] = $value;
 //                $channelAuthorisations[$value ] = [
@@ -82,45 +164,14 @@ class MediaController extends AbstractController
 //            }
         }
 
-        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
-        $menuItems = [];
-        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
-//        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findAll()) {
+        return $channelAuthorisations;
+    }
 
-//            dd($mediaGalleryMenuResult);
-            /** @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($mediaGalleryMenuResult as $menuItem) {
-              $menuItems[] = [
-                "ID" => $menuItem->getId(),
-                "title" => $menuItem->getTitle(),
-                'parent_id' => $menuItem->getParentId()
-              ];
-            }
-        }
-
-        $menuResult = [];
-        $this->makeParentChildRelations($menuItems, $menuResult);
-
-        //Alle content typen ophalen, ook custom
-        $contentTypes = [];
-        if ($dbContentTypes = $dm->getRepository(File::class)->findAll()) {
-            foreach ($dbContentTypes as $menuItem) {
-                $contentTypes[] = $menuItem->getContentType();
-            }
-        }
-        $uniqueContentTypes = array_unique($contentTypes);
-
-        //Get current selected value
-        $class_string = $request->query->get('class_string');
-        if ($class_string === true || $class_string === null) {
-            $class_string = 'Alle mediabestanden';
-        }
-
-        //TODO: vertaling neerzetten in twig template
-        $params = [
+    public function getParams($class_string, $media_taxonomy) {
+        return [
             'sort' => [
                 'options' => [
-                    "Alle mediabestanden" => [
+                    "File" => [
                         'name' => 'File',
                         'label' => 'Alle mediabestanden',
                     ],
@@ -154,49 +205,22 @@ class MediaController extends AbstractController
                     'type' => 'file',
                     'label' => 'File'
                 ],
+            ],
+            "media_taxonomy" => [
+                "current" => $media_taxonomy,
+                "default" => null
             ]
         ];
+    }
 
-        foreach ($uniqueContentTypes as $uniqueContentType) {
-            //For new items:
-            $params['sort']['options'][$uniqueContentType] = [
-                'name' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
-
-            //For filtering:
-            $params['types'][$uniqueContentType] = [
-                'type' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
+    public function getContentTypes() {
+        $contentTypes = [];
+        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
+            foreach ($dbContentTypes as $menuItem) {
+                $contentTypes[] = $menuItem->getContentType();
+            }
         }
-
-        //I think this is correct Autowiring:
-        //Include the Service in services.xml
-        //Pass the Service as an argument in controller.xml
-        $newMenu = $this->mediaGalleryMenu->getSimulation();
-
-        if (false) {
-            //Get facetlist of class_string:
-            $facetRequest = new Request;
-            $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
-            $facetRequest->query->set('class_string_facets', $q);
-            $facets = $this->provider->getContentFromSolr($facetRequest, 20);
-            $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
-        }
-
-//        $request->query->set('class_string', $params["sort"]["options"][$class_string]["name"];);
-
-//        dd($request);
-
-        $items = $this->provider->getContentFromSolr($request, 20);
-
-        return $this->render('@IntegratedContent/media/index.html.twig', [
-            'items' => $items,
-            'params' => $params,
-            'newMenu' => $newMenu,
-            'menuResult' => $menuResult
-        ]);
+        return array_unique($contentTypes);
     }
 
     public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0) {
@@ -215,6 +239,15 @@ class MediaController extends AbstractController
                 $outArray[] = $tuple;
             }
         }
+    }
+
+    public function edit(Request $request) {
+        echo "Hi Edit";
+
+        $answer = $request->request->get('answer');
+        dd($answer);
+//        $request->request->get('taxonomy_id');
+        dd($request);
     }
 
     public function menu()

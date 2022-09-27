@@ -614,6 +614,19 @@
     -ms-flex-line-pack: $value-2011;
 }
 
+$prefix-for-webkit:    false !global;
+$prefix-for-mozilla:   false !global;
+$prefix-for-microsoft: false !global;
+$prefix-for-opera:     false !global;
+$prefix-for-spec:      false !global;
+
+@mixin disable-prefix-for-all() {
+    $prefix-for-webkit:    false !global;
+    $prefix-for-mozilla:   false !global;
+    $prefix-for-microsoft: false !global;
+    $prefix-for-opera:     false !global;
+    $prefix-for-spec:      false !global;
+}
 
 @mixin prefixer($property, $value, $prefixes) {
     @each $prefix in $prefixes {
@@ -643,10 +656,4 @@
     }
 }
 
-@mixin disable-prefix-for-all() {
-    $prefix-for-webkit:    false !global;
-    $prefix-for-mozilla:   false !global;
-    $prefix-for-microsoft: false !global;
-    $prefix-for-opera:     false !global;
-    $prefix-for-spec:      false !global;
-}
+

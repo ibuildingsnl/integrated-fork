@@ -89,25 +89,11 @@ class ContentProvider
 
         // Why would I add a Tag?
         if ($class = $request->query->get('class_string')) {
+//            dd("hi");
             $query
                 ->createFilterQuery('class_string')
 //                ->addTag('class_string')
                 ->setQuery('class_string: ' . $class);
-        }
-
-        //@TODO This doesnt work, improve this.
-        if ($request->query->get('class_string_facets')) {
-            // get the facetset component
-            $facetSet = $query->getFacetSet();
-
-            // create a facet query instance and set options
-            $facetSet->createFacetQuery('string_class')->setQuery('*'); //->field('class_string'); //* geeft 400 terug
-
-            $resultset = $this->client->select($query);
-
-            $facet = $resultset->getFacetSet()->getFacet('string_class');
-
-//            return $facet;
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order

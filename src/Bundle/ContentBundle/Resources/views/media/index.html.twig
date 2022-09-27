@@ -63,7 +63,10 @@
                             <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                                 id="category_{{ key }}">
                                 <i class="fa-regular fa-folders"></i>
-                                <span>{{ menu_item.title }}</span>
+{#                                <span>{{ menu_item.title }}</span>#}
+                                <a href="{{ path(app.request.attributes.get('_route'),
+                                    app.request.query.all|merge({'Media_Taxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })) }}"
+                                   tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
                                 {% if menu_item.children %}
 
                                     {% for key_1, menu_item_1 in menu_item.children %}
@@ -94,7 +97,7 @@
                 </div>
             </aside>
         </div>
-        <div class="md:w-10/12 pr-4 pl-4 mb-4 md:mb-0">
+        <div class="md:w-9/12 pr-4 pl-4 mb-4 md:mb-0">
             <div class="page-title">
                 <h1 class="heading">{% trans %}Media Bibliotheek{% endtrans %}</h1>
                 <ul class="options-no-bg">
