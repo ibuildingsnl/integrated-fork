@@ -166,7 +166,7 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param string $type
+     * @param string $icon
      *
      * @return $this
      */

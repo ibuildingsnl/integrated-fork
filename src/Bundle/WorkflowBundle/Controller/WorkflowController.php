@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
@@ -128,7 +129,7 @@ class WorkflowController extends AbstractController
 
         /** @var Definition $workflow */
         $workflow = $this->entityManager
-            ->getManager()
+//            ->getManager()
             ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
             ->find($request->get('id'));
 
@@ -330,12 +331,8 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Create']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -356,12 +353,8 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'save' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -382,12 +375,8 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }

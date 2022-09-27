@@ -527,7 +527,7 @@ class ContentController extends AbstractController
                 // Set flash message
                 $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
-                return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
+                return $this->redirectToRoute('integrated_content_content_index', ['id' => $content->getId(), 'remember' => 1]);
             }
         }
 
@@ -634,7 +634,7 @@ class ContentController extends AbstractController
                         $locking['release']();
                     }
 
-                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
+//                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
 
@@ -1126,16 +1126,15 @@ class ContentController extends AbstractController
         // load a different set of buttons based on the permissions and locking state
 
         if (!$this->isGranted(Permissions::EDIT, $content)) {
-            return $form->add('actions', ActionsType::class, ['buttons' => ['back']]);
-            //TODO: Check if we can add update or publish button which is disabled?
+            return $form->add('actions', ActionsType::class, ['buttons' => ['cancel']]);
         }
 
         if ($locking['locked']) {
-            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'back']]);
+            return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
             // Removed cancel button which will be added by default as a back button
         }
 
-        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'back']]);
+        return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
     }
 
     /**

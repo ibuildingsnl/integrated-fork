@@ -12,21 +12,20 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeFormType;
-use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
 use Integrated\Common\ContentType\Events;
 use Integrated\Common\Form\Mapping\MetadataFactory;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -158,15 +157,22 @@ class ContentTypeController extends AbstractController
         $form = $this->createNewForm($contentType, $metadata);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($contentType);
-            $this->documentManager->flush();
 
-            $this->addFlash('success', 'Item created');
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_content_type_index');
+            }
 
-            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_CREATED);
+            if ($form->isValid()) {
+                $this->documentManager->persist($contentType);
+                $this->documentManager->flush();
 
-            return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
+                $this->addFlash('success', 'Item created');
+
+                $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_CREATED);
+
+                return $this->redirectToRoute('integrated_content_content_type_edit', ['id' => $contentType->getId()]);
+            }
         }
 
         return $this->render('@IntegratedContent/content_type/new.html.twig', [
@@ -192,20 +198,26 @@ class ContentTypeController extends AbstractController
         $form = $this->createEditForm($contentType, $metadata);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->documentManager->contains($contentType)) {
-                // Needed for content types from XML files
-                $this->documentManager->persist($contentType);
+        if ($form->isSubmitted()) {
+
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_content_type_index');
             }
 
-            $this->documentManager->flush();
+            if ($form->isValid()) {
+                if (!$this->documentManager->contains($contentType)) {
+                    // Needed for content types from XML files
+                    $this->documentManager->persist($contentType);
+                }
 
-            $this->addFlash('success', 'Item updated');
+                $this->documentManager->flush();
 
-            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
+                $this->addFlash('success', 'Item updated');
 
-            return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
-        }
+                $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
+
+                return $this->redirectToRoute('integrated_content_content_type_edit', ['id' => $contentType->getId()]);
+            }}
 
         return $this->render('@IntegratedContent/content_type/edit.html.twig', [
             'form' => $form->createView(),
@@ -234,27 +246,41 @@ class ContentTypeController extends AbstractController
         $form = $this->createDeleteForm($contentType);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Only delete ContentType when there are no Content items
-            $count = \count($this->documentManager->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()]));
 
-            if ($count > 0) {
-                // Set flash message and redirect to item page
-                $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
+        if ($form->isSubmitted()) {
 
-                return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_content_type_index');
             }
 
-            $this->documentManager->remove($contentType);
-            $this->documentManager->flush();
+            if ($form->isValid()) {
+                // Only delete ContentType when there are no Content items
+                $count = \count(
+                    $this->documentManager->getRepository($contentType->getClass())->findBy(
+                        ['contentType' => $contentType->getId()]
+                    )
+                );
 
-            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_DELETED);
+                if ($count > 0) {
+                    // Set flash message and redirect to item page
+                    $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
 
-            // Set flash message
-            $this->addFlash('success', 'Item deleted');
+                    return $this->redirectToRoute(
+                        'integrated_content_content_type_edit',
+                        ['id' => $contentType->getId()]
+                    );
+                }
 
-            return $this->redirectToRoute('integrated_content_content_type_index');
-        }
+                $this->documentManager->remove($contentType);
+                $this->documentManager->flush();
+
+                $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_DELETED);
+
+                // Set flash message
+                $this->addFlash('success', 'Item deleted');
+
+                return $this->redirectToRoute('integrated_content_content_type_index');
+            }}
 
         return $this->render('@IntegratedContent/content_type/delete.html.twig', [
             'contentType' => $contentType,
@@ -298,11 +324,7 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'submit' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class,  ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -327,11 +349,7 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'submit' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class,  ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -354,11 +372,8 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]],
-            ],
-        ]);
+
+        $form->add('actions', ActionsType::class,  ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }

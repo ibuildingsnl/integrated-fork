@@ -78,15 +78,12 @@
     }
 
     i {
-        font-size: 0.625rem;
         position: relative;
-        top: -2px;
         @include media(md) {
-            font-size: 0.75rem;
         }
     }
 
-    svg {
+    i, svg {
         display: inline-block;
     }
 
@@ -225,7 +222,7 @@
     &.btn-select {
         background: #fff;
         font-size: 13px;
-        border-color: #DDE2E8;
+        border-color: $border-color;
         color: #515865;
         height: 34px;
         line-height: 34px;
@@ -244,7 +241,7 @@
         height: 30px;
         line-height: 29px;
         background-color: white;
-        border-color: #dde2e8;
+        border-color: $border-color;
         color: #515865;
     }
     &.btn-danger {
@@ -283,6 +280,15 @@
         &:hover, &:focus {
             color: #637281;
             background-color: $border-color;
+        }
+    }
+    &.btn-dark-green {
+        background-color: $navbar-green;
+        border-color: $navbar-green;
+        color: white;
+        &:hover, &:focus {
+            color: white;
+            background-color: darken($navbar-green, 20%);
         }
     }
 }

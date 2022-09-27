@@ -24,15 +24,57 @@ class ActionsType extends BaseActionsType
      */
     public function __construct()
     {
-        parent::__construct([
-            'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Create', 'button_class' => 'orange no-icon']],
-            'save' => ['type' => SubmitType::class, 'options' => ['label' => 'Update', 'button_class' => 'green no-icon']],
-            'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete', 'button_class' => 'orange']],
-            'back' => ['type' => SubmitType::class, 'options' => ['label' => 'Back', 'button_class' => 'white icon-left', 'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'arrow-left']]],
-            'reload' => ['type' => SubmitType::class, 'options' => ['label' => 'Reload', 'button_class' => 'orange icon-left', 'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate']]],
-            'reload_changed' => ['type' => SubmitType::class, 'options' => ['label' => 'Reload (keep changes)', 'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate']]],
-            'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Back', 'button_class' => 'white icon-left', 'attr' => ['formnovalidate' => 'formnovalidate', 'data-dismiss' => 'modal', 'icon' => 'arrow-left']]],
-        ]);
+        parent::__construct(
+            [
+                'create' => [
+                    'type' => SubmitType::class,
+                    'options' => ['label' => 'Create', 'button_class' => 'orange no-icon']
+                ],
+                'save' => [
+                    'type' => SubmitType::class,
+                    'options' => ['label' => 'Update', 'button_class' => 'green no-icon']
+                ],
+                'delete' => [
+                    'type' => SubmitType::class,
+                    'options' => ['label' => 'Delete', 'button_class' => 'orange no-icon']
+                ],
+                'back' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Back',
+                        'button_class' => 'white icon-left',
+                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'arrow-left']
+                    ]
+                ],
+                'reload' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Reload',
+                        'button_class' => 'orange icon-left',
+                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate']
+                    ]
+                ],
+                'reload_changed' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Reload (keep changes)',
+                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate']
+                    ]
+                ],
+                'cancel' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Back',
+                        'button_class' => 'white icon-left',
+                        'attr' => [
+                            'formnovalidate' => 'formnovalidate',
+                            'data-dismiss' => 'modal',
+                            'icon' => 'arrow-left'
+                        ]
+                    ]
+                ],
+            ]
+        );
     }
 
     /**

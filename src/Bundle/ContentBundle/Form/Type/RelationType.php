@@ -14,6 +14,8 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -75,26 +77,39 @@ class RelationType extends AbstractType
                         'Editor' => 'editor',
                     ]
                 ]
-            )->add('icon'
             )->add(
-                'multiple',
-                null,
+                'icon', null,
                 [
-                    'required' => false,
                     'attr' => [
-                        'align_with_widget' => true,
-                    ],
+                        'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',
+                    ]
+                    ,
                 ]
             )
             ->add(
-                'required',
-                null,
-                [
-                    'required' => false,
-                    'attr' => [
-                        'align_with_widget' => true,
-                    ],
-                ]
+                $builder->create('options', FormType::class, ['inherit_data' => true])
+                        ->add(
+                            'multiple',
+                            CheckboxType::class,
+                            [
+                                'label' => 'Allow multiselect',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
+                        ->add(
+                            'required',
+                            CheckboxType::class,
+                            [
+                                'label' => 'This relation is required',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
             );
     }
 

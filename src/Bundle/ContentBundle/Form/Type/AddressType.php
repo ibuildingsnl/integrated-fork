@@ -45,7 +45,7 @@ class AddressType extends AbstractType
                 case 'type':
                     $type = ChoiceType::class;
                     $default = [
-                        'placeholder' => '',
+                        'placeholder' => 'Select address type',
                         'required' => false,
                         'choices' => [
                             'postal' => 'Postal address',

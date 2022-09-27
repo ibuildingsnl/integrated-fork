@@ -24,27 +24,46 @@ class ActionsType extends BaseActionsType
      */
     public function __construct()
     {
-        parent::__construct([
-            'create' => [
-                'type' => SubmitType::class,
-                'options' => ['label' => 'Create configuration', 'translation_domain' => 'IntegratedChannelBundle'],
-            ],
-            'save' => [
-                'type' => SubmitType::class,
-                'options' => ['label' => 'Save', 'translation_domain' => 'IntegratedChannelBundle'],
-            ],
-            'delete' => [
-                'type' => SubmitType::class,
-                'options' => ['label' => 'Delete', 'translation_domain' => 'IntegratedChannelBundle'],
-            ],
-            'cancel' => [
-                'type' => SubmitType::class,
-                'options' => [
-                    'label' => 'Cancel',
-                    'translation_domain' => 'IntegratedChannelBundle',
-                    'button_class' => 'default',
+        parent::__construct(
+            [
+                'create' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Create',
+                        'button_class' => 'orange no-icon',
+                        'translation_domain' => 'IntegratedChannelBundle'
+                    ]
                 ],
-            ],
-        ]);
+                'save' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Update',
+                        'button_class' => 'green no-icon',
+                        'translation_domain' => 'IntegratedChannelBundle'
+                    ]
+                ],
+                'delete' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Delete',
+                        'button_class' => 'orange',
+                        'translation_domain' => 'IntegratedChannelBundle'
+                    ]
+                ],
+                'cancel' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Back',
+                        'button_class' => 'white icon-left',
+                        'translation_domain' => 'IntegratedChannelBundle',
+                        'attr' => [
+                            'formnovalidate' => 'formnovalidate',
+                            'data-dismiss' => 'modal',
+                            'icon' => 'arrow-left'
+                        ]
+                    ]
+                ],
+            ]
+        );
     }
 }

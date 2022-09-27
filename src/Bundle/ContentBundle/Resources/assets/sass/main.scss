@@ -42,8 +42,12 @@ $custom-font-path: '../../';
 @import 'components/comment';
 @import 'components/filters';
 @import 'components/toolbar';
+@import 'components/alert';
 @import 'components/editor';
 @import 'components/login';
+@import 'components/workflow';
+@import 'components/tooltip';
+@import 'components/colorpicker';
 
 @import 'partials/header';
 @import 'partials/footer';

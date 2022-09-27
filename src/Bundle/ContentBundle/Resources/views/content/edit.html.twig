@@ -1,22 +1,24 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
-{% dump(type.class) %}
-
 {% block content %}
     {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
-       {% set title_state = 'title_tinymce' %}
-       {% set tinymce_state = 'fancy_tinymce' %}
+        {% set title_state = 'title_tinymce' %}
+        {% set title_style = '' %}
+        {% set tinymce_state = 'fancy_tinymce' %}
+        {% set form_class = 'content-edit-form' %}
     {% else %}
         {% set title_state = '' %}
-        {% set tinymce_state = '' %}
+        {% set title_style = 'inline' %}
+        {% set tinymce_state = 'show' %}
+        {% set form_class = 'edit-form' %}
     {% endif %}
 
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap {{ form_class }}">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
@@ -35,6 +37,7 @@
                 <div class="convert">
                     {% if content is defined %}
                         {% if content.isPublished and content.getChannels|length > 0 %}
+                            <!-- TODO: Make a function for this -->
                             <a href="#">Naar concept omzetten</a>
                         {% endif %}
                     {% endif %}
@@ -124,7 +127,7 @@
                             </div>
                         </div>
 
-                        <div id="used-by">
+                        <div class="aside-item-wrapper" id="used-by">
 
                         </div>
 
@@ -175,6 +178,10 @@
                                 {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
                             {% endif %}
 
+                            {% if form.logo is defined %}
+                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}
+                            {% endif %}
+
                             {% if form.rank is defined %}
                                 {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
                             {% endif %}
@@ -198,7 +205,7 @@
                                                         class="aside-item-icon"
                                                         for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                                 </h3>
-                                                <i class="fa-regular fa-chevron-down"></i>
+                                                <i class="fa-regular fa-chevron-up"></i>
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
@@ -231,9 +238,9 @@
                 {% block content_form %}
                     <!-- Styling of these elements to make sure they are lined out vertically have been done with css. Making functionality for this specificialy makes it complicated without the need for it because horizontal fields in the sidebar don't have a use. -->
                     {% if form.title is defined %}
-                        {{ form_row(form.title, {'state': title_state}) }}
+                        {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
                     {% elseif form.name is defined %}
-                        {{ form_row(form.name, {'state': title_state}) }}
+                        {{ form_row(form.name, {'state': title_state, 'style': title_style}) }}
                     {% endif %}
 
                     {% if form.content is defined %}
@@ -245,18 +252,18 @@
                     {% endif %}
 
                     {% if form.file is defined %}
-                        {{ form_row(form.file, {'style':'editor'}) }}
+                        {{ form_row(form.file, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
                     {% if form.subtitle is defined %}
-                        {{ form_row(form.subtitle, {'style':'editor'}) }}
+                        {{ form_row(form.subtitle, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
                     {% if form.intro is defined %}
-                        {{ form_row(form.intro, {'style':'editor'}) }}
+                        {{ form_row(form.intro, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
                 {% block content_relations_editor %}
                     {% if form.offsetGet('relations').count() %}
@@ -271,7 +278,7 @@
                                                 class="editor-item-icon"
                                                 for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                         </h3>
-                                        <i class="fa-regular fa-chevron-down"></i>
+                                        <i class="fa-regular fa-chevron-up"></i>
                                     </div>
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
@@ -376,7 +383,7 @@
 {% block javascript %}
 {{ parent() }}
 <script>
-textarea = document.querySelector('.title_tinymce_input');
+        textarea = document.querySelector('.title_tinymce_input');
         textarea.addEventListener('input', autoResize, false);
         textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
@@ -466,7 +473,7 @@ textarea = document.querySelector('.title_tinymce_input');
         var formInvalid = {{ form.vars.valid ? '0' : '1' }};
     </script>
 
-    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>
+{#    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>#}
 {% endif %}
 {% endif %}
 

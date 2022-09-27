@@ -4,7 +4,6 @@
     <title>{% block title %}{% trans %}Integrated{% endtrans %}{% endblock title %} | Integrated</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <script src="https://kit.fontawesome.com/8af8ed7fb4.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
     {% block style %}
         <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
@@ -67,7 +66,7 @@
             <div class="flex wrap w-full">
                 {% block navbar_content_type %}
 
-                    <div class="new-contenttype hover">
+                    <div class="new-contenttype dropdown top-bar">
                         <a href="#" class="btn btn-green"
                            data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
                                 class="fa-regular fa-plus"></i></a>
@@ -81,32 +80,22 @@
     </nav>
 {% endblock %}
 
-{# {% block crumbs %} #}
-{#    <div class="breadcrumb-holder"> #}
-{#        <div class="container mx-auto sm:px-4"> #}
-{#            <ol class="flex flex-wrap list-reset pt-3 pb-3 py-4 px-4 mb-4 bg-gray-200 rounded"> #}
-{#                <li class="active"> #}
-{#                    {% trans %}Home{% endtrans %} #}
-{#                </li> #}
-{#            </ol> #}
-{#        </div> #}
-{#    </div> #}
-{# {% endblock %} #}
-
-<div id="wrapper-holder">
-    {% block body %}
+{% block body %}
+    <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-{#        {% block sidebar %}#}
-            <div class="sidebar">
-                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
-            </div>
-{#        {% endblock sidebar %}#}
+        {#        {% block sidebar %} #}
+        <div class="sidebar">
+            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+        </div>
+        {#        {% endblock sidebar %} #}
         <div class="content-wrapper">
 
-            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
+            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                 {% for message in messages %}
                     {% if label == 'alert' %}
                         {% set label = 'warning' %}
+                    {% elseif label == 'error' %}
+                        {% set label = 'danger' %}
                     {% endif %}
                     <div class="alert alert-{{ label }} alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert"><i class="fa-regular fa-xmark"></i>
@@ -118,8 +107,8 @@
 
             {% block content %}{% endblock content %}
         </div>
-    {% endblock body %}
-</div>
+    </div>
+{% endblock body %}
 
 {% block edit_modal %}{% endblock edit_modal %}
 
@@ -142,16 +131,12 @@
     {% endif %}
 {% endblock locking %}
 {% endblock javascript %}
-<script>
 
+<script>
     //DROPDOWN MENU
     function initMenu() {
 
-        var menus = [
-            document.querySelector('div.new-contenttype'),
-            document.querySelector('li.dropdown-queue'),
-            document.querySelector('li.dropdown-profile'),
-            document.querySelector('li.dropdown-assigned-to-me')];
+        var menus = document.querySelectorAll('.dropdown.top-bar');
         menus.forEach((menu) => {
             if (menu != null) {
                 for (var i = 0; i < menu.children.length; i++) {
@@ -159,45 +144,51 @@
                     var cList = menuClasses.classList;
                     if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
                         cList.contains('dropdown-menu-right')) {
-                        menu.addEventListener('mouseenter', showDropDownBackGround, false);
-                        menu.addEventListener('mouseleave', hideDropDownBackGround, false);
+                        menu.addEventListener('click', showDropDownBackGround, false);
                     }
                 }
             }
         });
     }
 
+    function hideDropDownBackgroud(event) {
+        var searchMenu = document.querySelector('.search-form .form-control');
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        menuItemDropDownUnderlay.classList.remove('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+
+    window.addEventListener('click', function(event) {
+        if (!event.srcElement.classList.contains('tt-input')) {
+            hideDropDownBackgroud();
+        }
+    });
+
+
     jQuery('.search-form .form-control').focus(function() {
         showDropDownBackGround();
     });
 
     jQuery('.search-form .form-control').blur(function() {
-        hideDropDownBackGround();
+        hideDropDownBackgroud();
     });
 
-    function showDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.remove('hide');
-        menuItemZindexFix.classList.add('hide');
-    }
-
-    function hideDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        var menuItemZindexFix = document.querySelector('#wrapper-holder');
-        menuItemDropDownUnderlay.classList.add('hide');
-        menuItemZindexFix.classList.remove('hide');
-    }
-
-    document.addEventListener('DOMContentLoaded', initMenu);
-
-    function asideItemsSearch(el) {
+    function asideItemsSearch(elem) {
         // Declare variables
 
         var input, filter, ul, li, a, i, txtValue;
-        input = el;
+        input = elem;
         filter = input.value.toUpperCase();
-        ul = el.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
+        ul = elem.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
         li = ul.getElementsByTagName('li');
 
         // Loop through all list items, and hide those who don't match the search query
@@ -217,14 +208,16 @@
     var editorsettings = document.getElementsByClassName('editor-item-header');
 
     for (var i = 0; i < sidebarfilter.length; i++) {
-        sidebarfilter[i].addEventListener('click', options, false);
-    };
+        sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
 
     for (var ii = 0; ii < editorsettings.length; ii++) {
-        editorsettings[ii].addEventListener('click', options, false);
-    };
+        editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
 
-    function options(event) {
+    function toggleOptionsElement(event) {
         var options = this.parentNode.querySelector('.aside-item-list');
         if (!options) {
             var options = this.parentNode.querySelector('.editor-item-list');
@@ -235,11 +228,11 @@
         if (!options) return;
 
         // Toggle the content
-        toggle(options);
+        toggleElement(options);
     };
 
     // Show an element
-    var show = function(elem) {
+    var showElement = function(elem) {
 
         // Get the natural height of the element
         var getHeight = function() {
@@ -255,11 +248,13 @@
         elem.style.height = height; // Update the max-height
 
         // Once the transition is complete, remove the inline max-height so the content can scale responsively
-        window.setTimeout(function() {elem.style.height = '';}, 350);
+        window.setTimeout(function() {
+            elem.style.height = '';
+        }, 350);
     };
 
     // Hide an element
-    var hide = function(elem) {
+    var hideElement = function(elem) {
 
         // Give the element a height to change from
         elem.style.height = elem.scrollHeight + 'px';
@@ -278,17 +273,18 @@
     };
 
     // Toggle element visibility
-    var toggle = function(elem, timing) {
+    var toggleElement = function(elem, timing) {
 
         // If the element is visible, hide it
         if (elem.parentNode.classList.contains('show')) {
-            hide(elem);
+            hideElement(elem);
             return;
         }
 
         // Otherwise, show it
-        show(elem);
+        showElement(elem);
 
     };
-</script></body>
+</script>
+</body>
 </html>

@@ -15,6 +15,8 @@ use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
@@ -180,6 +182,11 @@ class PageController extends AbstractController
         $form = $this->createEditForm($page);
         $form->handleRequest($request);
 
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_page_page_index');
+        }
+
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 
@@ -216,6 +223,10 @@ class PageController extends AbstractController
 
         $form = $this->createDeleteForm($page->getId());
         $form->handleRequest($request);
+
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_page_page_index');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->remove($page);
@@ -302,11 +313,8 @@ class PageController extends AbstractController
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, [
-            'cancel_route' => 'integrated_page_page_index',
-            'label' => 'Create',
-            'button_class' => '',
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -330,9 +338,8 @@ class PageController extends AbstractController
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, [
-            'cancel_route' => 'integrated_page_page_index',
-        ]);
+
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -348,7 +355,8 @@ class PageController extends AbstractController
 
         $builder->setAction($this->generateUrl('integrated_page_page_delete', ['id' => $id]));
         $builder->setMethod('DELETE');
-        $builder->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+        $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
+
 
         return $builder->getForm();
     }

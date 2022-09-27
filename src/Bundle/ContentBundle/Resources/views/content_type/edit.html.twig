@@ -12,15 +12,103 @@
         </div>
     </div>
 {% endblock %}
+
 {% block content %}
-    <div class="row">
-        <div class="w-full mb-4 md:mb-0">
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        <div id="toolbar" class="w-full flex justify-between">
+            <div class="back">
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="options">
+                <div class="form-actions">
+                    {% block form_actions %}
+                        {% if form.actions.save is defined %}
+                            {{ form_row(form.actions.save) }}
+                        {% endif %}
+                        {% if form.actions.reload is defined %}
+                            {{ form_row(form.actions.reload) }}
+                        {% endif %}
+                        {% if form.actions.create is defined %}
+                            {{ form_row(form.actions.create) }}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <div class="aside-options">
+            <aside>
+                <div class="aside-holder section-gray section-radius">
+                    {% block sidebar %}
+                        {% block content_meta %}
+                            {% if form.permissions is defined %}
+                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options_publication is defined %}
+                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options_workflow is defined %}
+                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'fa-droplet', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options is defined %}
+                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                            {% endif %}
+                        {% endblock %}
+
+
+                    {% endblock %}
+                    <div class="aside-item-wrapper show">
+                        <div class="aside-item-header">
+                            <h3 class="aside-item-title">
+                                <i class="fa-regular fa-circle-info"></i>
+                                <span class="aside-item-icon">{% trans %}Relations{% endtrans %}</span>
+                            </h3>
+                            <i class="fa-regular fa-chevron-up"></i>
+                        </div>
+                        <div class="aside-item-list">
+                            <div class="aside-item-list-container">
+                                {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        <div class="editor-wrapper">
             <div class="page-title">
                 <h1 class="heading">{% trans %}Edit {% endtrans %} {{ contentType.name }}</h1>
             </div>
-            <section class="section-white section-padding section-radius">
-                {{ form(form, {'style': 'horizontal'}) }}
+            <section class="editor">
+                {% block content_form %}
+                    {% if form.name is defined %}
+                        {{ form_row(form.name, {'style': 'inline'}) }}
+                    {% endif %}
+
+                    {% if form.domains is defined %}
+                        {{ form_row(form.domains, {'style': 'editor','state': 'show'}) }}
+                    {% endif %}
+
+                    {% if form.options is defined %}
+                        {{ form_row(form.options, {'style': 'editor', 'state': 'show'}) }}
+                    {% endif %}
+
+                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                {% endblock %}
             </section>
         </div>
+
+
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
 {% endblock %}

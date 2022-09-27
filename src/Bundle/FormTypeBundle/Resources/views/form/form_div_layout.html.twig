@@ -14,48 +14,46 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="//cdn.jsdelivr.net/ace/1.2.6/min/ace.js"></script>
     <script>
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/twilight");
-        editor.getSession().setMode("ace/mode/html");
+        var editor = ace.edit('editor');
+        editor.setTheme('ace/theme/xcode');
+        editor.getSession().setMode('ace/mode/html');
 
         var content = $("#{{ id }}");
 
         editor.getSession().setValue(content.val());
-        editor.getSession().on('change', function(){
+        editor.getSession().on('change', function() {
             content.val(editor.getSession().getValue());
         });
     </script>
 {% endblock %}
 
-{% block integrated_datetime_widget  %}
+{% block integrated_datetime_widget %}
     {% apply spaceless %}
         <div class="input-group date form_datetime" data-locale="{{ app.request.locale }}" data-date-format="d-m-Y H:i">
-            <input {{ block('widget_attributes') }} class="form-control" size="16" type="text" {% if value is not empty %}value="{{ value }}" {% endif %} autocomplete="off">
+            <input {{ block('widget_attributes') }} class="form-control" size="16"
+                                                    type="text" {% if value is not empty %}value="{{ value }}" {% endif %}
+                                                    autocomplete="off">
             <span class="input-group-append remove"><i class="fa fa-xmark"></i></span>
         </div>
     {% endapply %}
 {% endblock %}
 
 {% block integrated_color_row %}
-{% apply spaceless %}
-    {% integrated_javascripts inline=true %}
-        $('.colorpicker-component').colorpicker();
-    {% endintegrated_javascripts %}
-
-    {{ block("form_row") }}
-{% endapply %}
+    {% apply spaceless %}
+        {{ block("form_row") }}
+    {% endapply %}
 {% endblock %}
 
 {% block integrated_color_widget %}
-{% apply spaceless %}
-    <div class="input-group colorpicker-component">
-        <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}">
-        <span class="input-group-addon"><i></i></span>
-    </div>
-{% endapply %}
+    {% apply spaceless %}
+        <div class="input-group coloris">
+            <input {{ block('widget_attributes') }} class="form-control" type="text" value="{{ value }}" data-coloris>
+            <span class="input-group-addon"><i></i></span>
+        </div>
+    {% endapply %}
 {% endblock %}
 
-{% block integrated_wysihtml5x_widget  %}
+{% block integrated_wysihtml5x_widget %}
     <textarea {{ block('widget_attributes') }} class="form-control integrated_wysihtml5x">{% if value is not empty %}{{ value }}{% endif %}</textarea>
 {% endblock %}
 
@@ -63,26 +61,26 @@
     {{ block("integrated_editor_row") }}
 {% endblock %}
 
-{% block integrated_editor_row  %}
+{% block integrated_editor_row %}
     {% apply spaceless %}
-    {% set state = state|default(tailwind_get_state()) %}
-    <div class="form-group {% if state is not empty %}{{ state }}{% endif %}">
-        <div class="w-full">
-            <div id="{{ id }}_container">
+        {% set state = state|default(tailwind_get_state()) %}
+        <div class="form-group w-full flex flex-wrap {% if state is not empty %}{{ state }}{% endif %} widget">
+            <div class="w-full">
+                <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
-                    data-content_css="{{ content_styles.content_css|merge([asset('/bundles/integratedformtype/css/tinymce.content.css')])|join(',') }}"
-                    data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
-                    data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
-                    data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                    data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
-                    data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
-                    placeholder="{% trans %}You're article starts here{% endtrans %}"
+                          data-content_css="{{ content_styles.content_css|merge([asset('/bundles/integratedformtype/css/tinymce.content.css')])|join(',') }}"
+                          data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
+                          data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
+                          data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                          data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
+                          data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
+                          placeholder="{% trans %}You're article starts here{% endtrans %}"
                 >{% if value is not empty %}{{ value }}{% endif %}</textarea>
-            </div>
+                </div>
 
-            {{ block('form_errors') }}
+                {{ block('form_errors') }}
+            </div>
         </div>
-    </div>
     {% endapply %}
 {% endblock %}
 
@@ -118,7 +116,7 @@
 
             {% set prototype_html = '<a data-toggle="collapse" href="#__id__"><i class="fa-regular fa-grip-dots-vertical"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ form.vars.delete_button_text|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
+                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
             {% endif %}
             {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
             {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
@@ -139,13 +137,16 @@
                                         <i class="fa-regular fa-grip-dots-vertical"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
                                     </a>
                                     {% if form.vars.allow_delete %}
-                                        <a href="javascript:;" class="remove" title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}" data-removefield="collection" data-field="{{ field.vars.id }}">
+                                        <a href="javascript:;" class="remove"
+                                           title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                           data-removefield="collection" data-field="{{ field.vars.id }}">
                                             <i class="fa fa-xmark"></i>
                                         </a>
                                     {% endif %}
                                 </h4>
                             </div>
-                            <div id="{{ field.vars.id }}" class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
+                            <div id="{{ field.vars.id }}"
+                                 class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
                                 <div class="panel-body">
                                     {{ form_widget(field) }}
                                     {{ form_errors(field) }}
@@ -158,7 +159,9 @@
             </ul>
 
             {% if form.vars.allow_add %}
-                <a href="javascript:;" class="btn" title="{{ form.vars.add_button_text|trans({}, translation_domain) }}" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">
+                <a href="javascript:;" class="btn" title="{{ form.vars.add_button_text|trans({}, translation_domain) }}"
+                   data-addfield="collection" data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">
                     <span>{{ form.vars.add_button_text|trans({}, translation_domain) }}</span>
                     <i class="fa fa-plus"></i>
                 </a>
@@ -178,39 +181,39 @@
             {% if style is defined %}
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
-            {% set prototype_html = '<div class="w-full ' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
+            {% set prototype_html = '<div class="w-full ' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="w-full ' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__" title="' ~ form.vars.delete_button_text|trans({}, translation_domain)|raw ~ '"><span class="fa fa-xmark"></span></a></div>' %}
+                {% set prototype_html = prototype_html ~ '<a href="#" class="remove" data-removefield="collection" data-field="__id__" title="Remove"><i class="fa fa-xmark"></i></a>' %}
             {% endif %}
-            {% set prototype_html = '<div class="section-white section-padding section-radius"><div class="row">' ~ prototype_html ~ '</div></div>' %}
+            {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div></div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
         <div {{ block('widget_container_attributes') }} class="collection-widget">
-            <ul class="bc-collection list-unstyled">
+            <ul class="integrated-collection list-unstyled">
                 {% for field in form %}
                     <li>
-                        <div class="section-white section-padding section-radius">
-                            <div class="row">
-                                <div class="col-xs-{{ form.vars.sub_widget_col }}">
-                                    {{ form_widget(field) }}
-                                    {{ form_errors(field) }}
-                                </div>
-                                {% if form.vars.allow_delete %}
-                                    <div class="col-xs-{{ form.vars.button_col }}">
-                                        <a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="{{ field.vars.id }}" title="{{ form.vars.delete_button_text|trans({}, translation_domain)|raw }}">
-                                            <span class="fa fa-xmark"></span>
-                                        </a>
-                                    </div>
-                                {% endif %}
+                        <div class="row">
+                            <div class="{{ form.vars.sub_widget_col }}">
+                                {{ form_widget(field) }}
+                                {{ form_errors(field) }}
                             </div>
+                            {% if form.vars.allow_delete %}
+                                <div class="{{ form.vars.button_col }}">
+                                    <a href="#" class="remove" data-removefield="collection"
+                                       data-field="{{ field.vars.id }}" title="Remove">
+                                        <i class="fa fa-xmark"></i>
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}
             </ul>
             {% if form.vars.allow_add %}
-                <a href="#" class="btn btn-primary btn-sm" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
+                <a href="#" class="btn btn-green" data-addfield="collection" data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
             {% endif %}
         </div>
     {% endapply %}
@@ -218,7 +221,7 @@
 
 {% block integrated_content_choice_widget %}
     {% integrated_javascripts mode='prepend'
-    'bundles/integratedformtype/js/content_choice.js' %}
+        'bundles/integratedformtype/js/content_choice.js' %}
     {% endintegrated_javascripts %}
     {% set attr = attr|merge({
         'data-ajax-url' : path(route, params),
@@ -249,7 +252,7 @@
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% if data %}
-                <option value="{{ data }}" selected="selected">{% trans%}Keep current position{% endtrans %}</option>
+                <option value="{{ data }}" selected="selected">{% trans %}Keep current position{% endtrans %}</option>
             {% endif %}
         </select>
     {% endapply %}
@@ -285,7 +288,8 @@
             <div class="container text-center">
                 {{ form_widget(form) }}
                 &nbsp;
-                <a class="btn btn-gray-thin integrated-cancel-button" href="{{ path(cancel_route, cancel_route_parameters) }}">{% trans %}Cancel{% endtrans %}</a>
+                <a class="btn btn-gray-thin integrated-cancel-button"
+                   href="{{ path(cancel_route, cancel_route_parameters) }}">{% trans %}Cancel{% endtrans %}</a>
             </div><!-- container -->
         </section>
     {% endapply %}
@@ -312,9 +316,12 @@
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set style = attr.state %}
+        {% endif %}
         {% if style == 'horizontal' %}
             <div
-                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}
@@ -324,18 +331,6 @@
                     {{ form_errors(form) }}
                 </div>
             </div>
-            {#        {% elseif style == 'vertical' %}#}
-            {#            <div#}
-            {#                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
-            {#                {% if show_label != false %}#}
-            {#                    {{ form_label(form) }}#}
-            {#                {% endif %}#}
-            {#                <div class="w-full">#}
-            {#                    {{ block('form_input_group') }}#}
-            {#                    {{ block('form_help') }}#}
-            {#                    {{ form_errors(form) }}#}
-            {#                </div>#}
-            {#            </div>#}
         {% elseif style == 'sidebar' %}
             <div
                 class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
@@ -346,7 +341,7 @@
                             {{ form_label(form) }}
                         </span>
                     </h3>
-                    <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                    <i class="fa-regular fa-chevron-up"></i>
                 </div>
                 <div class="aside-item-list">
                     <div class="aside-item-list-container">
@@ -365,7 +360,7 @@
                             {{ form_label(form) }}
                         </span>
                     </h3>
-                    <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>
+                    <i class="fa-regular fa-chevron-up"></i>
                 </div>
                 <div class="editor-item-list">
                     <div class="editor-item-list-container">
@@ -390,96 +385,96 @@
     {% endapply %}
 {% endblock form_row %}
 
-{#{% block integrated_sidebar_row %}#}
-{#    {% apply spaceless %}#}
-{#        {% set style = style|default(tailwind_get_style()) %}#}
-{#        {{ style }}#}
-{#        {% if attr.label_col is defined and attr.label_col is not empty %}#}
-{#            {% set label_col = attr.label_col %}#}
-{#        {% endif %}#}
-{#        {% if attr.widget_col is defined and attr.widget_col is not empty %}#}
-{#            {% set widget_col = attr.widget_col %}#}
-{#            {% if label is same as (false) and label_col is defined %}#}
-{#                {% set widget_col = widget_col + label_col %}#}
-{#            {% endif %}#}
-{#        {% endif %}#}
-{#        {% if attr.style is defined and attr.style is not empty %}#}
-{#            {% set style = attr.style %}#}
-{#        {% endif %}#}
+{# {% block integrated_sidebar_row %} #}
+{#    {% apply spaceless %} #}
+{#        {% set style = style|default(tailwind_get_style()) %} #}
+{#        {{ style }} #}
+{#        {% if attr.label_col is defined and attr.label_col is not empty %} #}
+{#            {% set label_col = attr.label_col %} #}
+{#        {% endif %} #}
+{#        {% if attr.widget_col is defined and attr.widget_col is not empty %} #}
+{#            {% set widget_col = attr.widget_col %} #}
+{#            {% if label is same as (false) and label_col is defined %} #}
+{#                {% set widget_col = widget_col + label_col %} #}
+{#            {% endif %} #}
+{#        {% endif %} #}
+{#        {% if attr.style is defined and attr.style is not empty %} #}
+{#            {% set style = attr.style %} #}
+{#        {% endif %} #}
 
-{#        {% set label_col = label_col|default(tailwind_get_label_col()) %}#}
-{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}#}
-{#        {% set show_label = show_label|default(tailwind_get_show_label()) %}#}
-{#        {% set icon = icon|default(tailwind_get_icon()) %}#}
-{#        {% set state = state|default(tailwind_get_icon()) %}#}
-{#        <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
-{#            <div class="aside-item-header">#}
-{#                <h3 class="aside-item-title">#}
-{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>#}
-{#                    <span class="aside-item-icon">#}
-{#                            {{ form_label(form) }}#}
-{#                        </span>#}
-{#                </h3>#}
-{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>#}
-{#            </div>#}
-{#            <div class="aside-item-list">#}
-{#                <div class="aside-item-list-container">#}
-{#                    <div class="input-group relative flex items-stretch w-full">#}
-{#                        {{ block('form_input_group') }}#}
-{#                        {{ block('form_help') }}#}
-{#                        {{ form_errors(form) }}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+{#        {% set label_col = label_col|default(tailwind_get_label_col()) %} #}
+{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %} #}
+{#        {% set show_label = show_label|default(tailwind_get_show_label()) %} #}
+{#        {% set icon = icon|default(tailwind_get_icon()) %} #}
+{#        {% set state = state|default(tailwind_get_icon()) %} #}
+{#        <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"> #}
+{#            <div class="aside-item-header"> #}
+{#                <h3 class="aside-item-title"> #}
+{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i> #}
+{#                    <span class="aside-item-icon"> #}
+{#                            {{ form_label(form) }} #}
+{#                        </span> #}
+{#                </h3> #}
+{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i> #}
+{#            </div> #}
+{#            <div class="aside-item-list"> #}
+{#                <div class="aside-item-list-container"> #}
+{#                    <div class="input-group relative flex items-stretch w-full"> #}
+{#                        {{ block('form_input_group') }} #}
+{#                        {{ block('form_help') }} #}
+{#                        {{ form_errors(form) }} #}
+{#                    </div> #}
+{#                </div> #}
+{#            </div> #}
+{#        </div> #}
 
-{#                {% if style == 'inline' %}&nbsp;{% endif %}#}
-{#    {% endapply %}#}
-{#{% endblock integrated_sidebar_row %}#}
+{#                {% if style == 'inline' %}&nbsp;{% endif %} #}
+{#    {% endapply %} #}
+{# {% endblock integrated_sidebar_row %} #}
 
-{#{% block editor_row %}#}
-{#    {% apply spaceless %}#}
-{#        {% set style = style|default(tailwind_get_style()) %}#}
+{# {% block editor_row %} #}
+{#    {% apply spaceless %} #}
+{#        {% set style = style|default(tailwind_get_style()) %} #}
 
-{#        {% if attr.label_col is defined and attr.label_col is not empty %}#}
-{#            {% set label_col = attr.label_col %}#}
-{#        {% endif %}#}
-{#        {% if attr.widget_col is defined and attr.widget_col is not empty %}#}
-{#            {% set widget_col = attr.widget_col %}#}
-{#            {% if label is same as (false) and label_col is defined %}#}
-{#                {% set widget_col = widget_col + label_col %}#}
-{#            {% endif %}#}
-{#        {% endif %}#}
-{#        {% if attr.style is defined and attr.style is not empty %}#}
-{#            {% set style = attr.style %}#}
-{#        {% endif %}#}
+{#        {% if attr.label_col is defined and attr.label_col is not empty %} #}
+{#            {% set label_col = attr.label_col %} #}
+{#        {% endif %} #}
+{#        {% if attr.widget_col is defined and attr.widget_col is not empty %} #}
+{#            {% set widget_col = attr.widget_col %} #}
+{#            {% if label is same as (false) and label_col is defined %} #}
+{#                {% set widget_col = widget_col + label_col %} #}
+{#            {% endif %} #}
+{#        {% endif %} #}
+{#        {% if attr.style is defined and attr.style is not empty %} #}
+{#            {% set style = attr.style %} #}
+{#        {% endif %} #}
 
-{#        {% set label_col = label_col|default(tailwind_get_label_col()) %}#}
-{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}#}
-{#        {% set show_label = show_label|default(tailwind_get_show_label()) %}#}
-{#        {% set icon = icon|default(tailwind_get_icon()) %}#}
-{#        {% set state = state|default(tailwind_get_icon()) %}#}
-{#        <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">#}
-{#            <div class="editor-item-header">#}
-{#                <h3 class="editor-item-title">#}
-{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>#}
-{#                    <span class="editor-item-icon">#}
-{#                            {{ form_label(form) }}#}
-{#                        </span>#}
-{#                </h3>#}
-{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i>#}
-{#            </div>#}
-{#            <div class="editor-item-list">#}
-{#                <div class="editor-item-list-container">#}
-{#                    <div class="input-group relative flex items-stretch w-full">#}
-{#                        {{ block('form_input_group') }}#}
-{#                        {{ block('form_help') }}#}
-{#                        {{ form_errors(form) }}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+{#        {% set label_col = label_col|default(tailwind_get_label_col()) %} #}
+{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %} #}
+{#        {% set show_label = show_label|default(tailwind_get_show_label()) %} #}
+{#        {% set icon = icon|default(tailwind_get_icon()) %} #}
+{#        {% set state = state|default(tailwind_get_icon()) %} #}
+{#        <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"> #}
+{#            <div class="editor-item-header"> #}
+{#                <h3 class="editor-item-title"> #}
+{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i> #}
+{#                    <span class="editor-item-icon"> #}
+{#                            {{ form_label(form) }} #}
+{#                        </span> #}
+{#                </h3> #}
+{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i> #}
+{#            </div> #}
+{#            <div class="editor-item-list"> #}
+{#                <div class="editor-item-list-container"> #}
+{#                    <div class="input-group relative flex items-stretch w-full"> #}
+{#                        {{ block('form_input_group') }} #}
+{#                        {{ block('form_help') }} #}
+{#                        {{ form_errors(form) }} #}
+{#                    </div> #}
+{#                </div> #}
+{#            </div> #}
+{#        </div> #}
 
-{#                {% if style == 'inline' %}&nbsp;{% endif %}#}
-{#    {% endapply %}#}
-{#{% endblock editor_row %}#}
+{#                {% if style == 'inline' %}&nbsp;{% endif %} #}
+{#    {% endapply %} #}
+{# {% endblock editor_row %} #}

@@ -29,14 +29,12 @@
                     <colgroup>
                         <col style="width: 3em"/>
                         <col/>
-                        <col style="width: 5em"/>
                     </colgroup>
 
                     <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Actions</th>
                     </tr>
                     </thead>
 
@@ -44,17 +42,20 @@
 
                     {% for scope in scopes %}
 
-                        <tr>
+                        <tr class="has-options">
                             <td>{{ scope.id }}</td>
-                            <td>{{ scope.name }}</td>
                             <td>
-                                <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}"
-                                   title="{% trans %}Edit{% endtrans %}"><span class="fa fa-edit"></span></a>
-                                {% if not scope.admin %}
+                                <strong>
+                                    <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}">
+                                        {{ scope.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
                                     <a href="{{ path('integrated_user_scope_delete', {'id': scope.id}) }}"
-                                       title="{% trans %}Delete{% endtrans %}"><span
-                                            class="fa fa-circle-xmark"></span></a>
-                                {% endif %}
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
                             </td>
                         </tr>
 

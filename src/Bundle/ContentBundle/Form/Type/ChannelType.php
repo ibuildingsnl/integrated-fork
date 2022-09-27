@@ -18,6 +18,7 @@ use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -56,21 +57,31 @@ class ChannelType extends AbstractType
 
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
 
-        $builder->add('primaryDomainRedirect', CheckboxType::class, [
-            'label' => 'Redirect to primary domain',
-            'required' => false,
-            'attr' => [
-                'align_with_widget' => true,
-            ],
-        ]);
+        $builder->add(
+            $builder->create('options', FormType::class, ['inherit_data' => true])
+                    ->add(
+                        'primaryDomainRedirect',
+                        CheckboxType::class,
+                        [
+                            'label' => 'Redirect to primary domain',
+                            'required' => false,
+                            'attr' => [
+                                'align_with_widget' => true,
+                            ],
+                        ]
+                    )
+                    ->add(
+                        'ipProtected', CheckboxType::class,
+                        [
+                            'label' => 'Protect by IP address or logged in user',
+                            'required' => false,
+                            'attr' => [
+                                'align_with_widget' => true,
+                            ],
+                        ]
+                    )
+        );
 
-        $builder->add('ipProtected', CheckboxType::class, [
-            'label' => 'Protect by IP address or logged in user',
-            'required' => false,
-            'attr' => [
-                'align_with_widget' => true,
-            ],
-        ]);
 
         // validate domain names
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
@@ -115,8 +126,15 @@ class ChannelType extends AbstractType
             ]
         );
 
-        $builder->add('permissions', PermissionsType::class, [
-            'required' => false,
-        ]);
+        $builder->add(
+            $builder->create('permissions', FormType::class, ['inherit_data' => true])
+                    ->add(
+                        'permissions',
+                        PermissionsType::class,
+                        [
+                            'required' => false,
+                        ]
+                    )
+        );
     }
 }

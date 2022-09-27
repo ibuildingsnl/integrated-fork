@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block title %}{% trans %}Edit scraper{% endtrans %} {% endblock title %}
+{% block title %}{% trans %}Delete search selection{% endtrans %}{% endblock title %}
 {% block content %}
     <div class="flex flex-wrap edit-form">
         {% block form_start %}
@@ -19,14 +19,11 @@
             <div class="options">
                 <div class="form-actions">
                     {% block form_actions %}
-                        {% if form.actions.save is defined %}
-                            {{ form_row(form.actions.save) }}
-                        {% endif %}
                         {% if form.actions.reload is defined %}
                             {{ form_row(form.actions.reload) }}
                         {% endif %}
-                        {% if form.actions.create is defined %}
-                            {{ form_row(form.actions.create) }}
+                        {% if form.actions.delete is defined %}
+                            {{ form_row(form.actions.delete) }}
                         {% endif %}
                     {% endblock %}
                 </div>
@@ -35,10 +32,12 @@
         <div class="aside-options"></div>
         <div class="editor-wrapper">
             <div class="page-title">
-                <h1 class="heading">{% trans %}Edit Scraper{% endtrans %}</h1>
+                <h1 class="heading">{% trans %}Delete{% endtrans %} {% trans %}search selection{% endtrans %}</h1>
             </div>
             <section class="editor editor-wrapped">
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+                <p>
+                    {% trans with {'%name%':  relation.name} %}You are about to delete "%name%", click the delete button to confirm the action.{% endtrans %}
+                </p>
             </section>
         </div>
         {% block form_end %}

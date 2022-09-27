@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -210,12 +211,7 @@ class UserController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Create']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -240,12 +236,7 @@ class UserController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'save' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -270,12 +261,7 @@ class UserController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }

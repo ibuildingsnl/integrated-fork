@@ -175,3 +175,11 @@ $(document).ready(function () {
         return '';
     }
 });
+
+Coloris({
+    themeMode: 'light',
+    clearButton: true,
+    clearLabel: 'Clear',
+    format: 'mixed',
+});
+

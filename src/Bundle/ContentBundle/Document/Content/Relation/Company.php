@@ -40,7 +40,7 @@ class Company extends Relation
 
     /**
      * @var StorageInterface
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $logo;
 
