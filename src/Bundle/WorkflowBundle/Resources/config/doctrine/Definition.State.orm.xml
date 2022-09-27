@@ -28,7 +28,7 @@
 		<field name="assignee" column="assignee" type="integer" />
 
 		<field name="deadline" column="deadline" type="integer" />
-        
+
 		<field name="color" type="string" />
 
 		<field name="icon" type="string" />

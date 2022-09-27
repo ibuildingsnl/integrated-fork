@@ -21,7 +21,6 @@ label.is-primary-channel {
 }
 
 .select2-selected {
-  display: inline-block;
   max-width: 95%;
   overflow: hidden;
 
@@ -73,8 +72,11 @@ label.is-primary-channel {
     float: left;
     height: 100%;
     position: absolute;
-    width: 11%;
+    width: 25px;
     text-align: inherit;
+      right: 0;
+      background-color: #dfe3e7;
+      border-radius: 8px;
 
     .add-relation {
       height: 100%;
@@ -83,11 +85,11 @@ label.is-primary-channel {
     button {
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      -moz-transform: translate(-50%, -50%);
-      -webkit-transform: translate(-50%, -50%);
+      transform: translate(0%, -50%);
+      -ms-transform: translate(0%, -50%);
+      -moz-transform: translate(0%, -50%);
+        -webkit-transform: translate(0%,-50%);
+        width: 25px;
     }
   }
 

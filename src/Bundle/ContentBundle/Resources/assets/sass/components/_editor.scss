@@ -127,3 +127,23 @@ div#integrated_content_content_container {
 .colorpicker {
     position: absolute;
 }
+
+pre#editor {
+    border: 1px solid #dee3e7;
+    border-radius: 8px;
+}
+
+.texturl {
+    .input-group-addon {
+        position: absolute;
+        top: 1.1rem;
+        left: 1rem;
+    }
+    input {
+        padding-left: 1.3rem;
+    }
+}
+
+.input-group {
+    position: relative;
+}

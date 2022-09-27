@@ -337,7 +337,21 @@ li.dropdown {
         li:last-child {
             margin: 0;
             padding: 0;
+            border-bottom: 0;
         }
+    }
+}
+
+.dropdown-queue {
+    li.header {
+        color: #283c53;
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 0;
+        padding: 0;
+        text-transform: uppercase;
+        white-space: nowrap;
     }
 }
 

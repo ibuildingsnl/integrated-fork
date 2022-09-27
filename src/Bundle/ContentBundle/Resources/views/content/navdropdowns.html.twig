@@ -100,7 +100,7 @@
                 <ul class="dropdown-menu-right">
                     <li>
                         <div class="megamenu-content">
-                            <ul class="list list-large list-user">
+                            <ul class="user-menu w-full">
                                 <li class="user-info">
                                     <p>
                                         {% if app.user.getRelation.getEmail is defined %}
@@ -111,13 +111,13 @@
                                 </li>
                                 <li>
                                     <a href="{{ path('integrated_user_profile_index') }}">
-                                        <i class="integrate-icon-edit"></i>{% trans %}Edit profile{% endtrans %}
+                                        {% trans %}Edit profile{% endtrans %}
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a href="{{ path('integrated_user_logout') }}">
-                                        <i class="integrate-icon-lock"></i>{% trans %}Log out{% endtrans %}
+                                    <a href="{{ path('integrated_user_logout') }}" class="btn btn-dark-green w-full justify-between mt-2">
+                                        <span>{% trans %}Log out{% endtrans %}</span><i class="fa-regular fa-arrow-right-from-bracket rotate-180"></i>
                                     </a>
                                 </li>
                             </ul>

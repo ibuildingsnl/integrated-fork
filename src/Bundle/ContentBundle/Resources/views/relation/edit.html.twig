@@ -69,20 +69,13 @@
                     </div>
                 </div>
                 {% if form.location is defined %}
-                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'fa-location-crosshairs', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.icon is defined %}
-                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
-                {% endif %}
-                <!-- TODO: group Multiple & Required together in "Options" -->
-                {% if form.multiple is defined %}
-                    {{ form_row(form.multiple, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.required is defined %}
-                    {{ form_row(form.required, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'fa-icons', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.options is defined %}
-                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
                 {% endif %}
             </aside>
         </div>

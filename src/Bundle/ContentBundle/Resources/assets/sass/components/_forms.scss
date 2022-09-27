@@ -25,7 +25,7 @@
     }
 }
 
-.form-group {
+.form-group, .form-item {
     position: relative;
 
     &:last-child {
@@ -325,7 +325,7 @@ label {
     }
 }
 
-.form-group {
+.form-group, .form-item {
     .checkbox-container {
         input:checked ~ .background {
             background-color: rgb(1 178 239 / 10%);

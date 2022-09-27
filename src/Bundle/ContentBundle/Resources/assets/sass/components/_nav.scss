@@ -61,7 +61,7 @@ nav.navbar {
                 width: 40px;
             }
 
-            a {
+            > a {
                 color: white;
                 display: flex;
                 align-items: center;
@@ -78,8 +78,13 @@ nav.navbar {
             }
 
             .megamenu-content {
-                a {
-                    color: black;
+                a:not(.btn) {
+                    border-bottom: 1px solid $border-color;
+                    color: #000;
+                    font-size: 1.1rem;
+                    width: 100%;
+                    display: block;
+                    padding: 0.5rem;
                 }
             }
         }
@@ -144,7 +149,6 @@ body div#dropdown_overlay {
 
 .dropdown.top-bar {
     padding: 10px 0;
-    padding-bottom: 30px;
     display: block;
     position: relative;
 

@@ -15,7 +15,7 @@
     <script src="//cdn.jsdelivr.net/ace/1.2.6/min/ace.js"></script>
     <script>
         var editor = ace.edit('editor');
-        editor.setTheme('ace/theme/twilight');
+        editor.setTheme('ace/theme/xcode');
         editor.getSession().setMode('ace/mode/html');
 
         var content = $("#{{ id }}");
@@ -319,11 +319,9 @@
         {% if attr.state is defined and attr.state is not empty %}
             {% set style = attr.state %}
         {% endif %}
-
-
         {% if style == 'horizontal' %}
             <div
-                class="form-item w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label != false %}
                     {{ form_label(form) }}
                 {% endif %}

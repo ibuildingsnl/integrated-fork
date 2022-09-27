@@ -178,6 +178,10 @@
                                 {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
                             {% endif %}
 
+                            {% if form.logo is defined %}
+                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}
+                            {% endif %}
+
                             {% if form.rank is defined %}
                                 {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
                             {% endif %}

@@ -282,4 +282,13 @@
             background-color: $border-color;
         }
     }
+    &.btn-dark-green {
+        background-color: $navbar-green;
+        border-color: $navbar-green;
+        color: white;
+        &:hover, &:focus {
+            color: white;
+            background-color: darken($navbar-green, 20%);
+        }
+    }
 }
