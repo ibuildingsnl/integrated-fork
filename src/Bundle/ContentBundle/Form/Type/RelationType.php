@@ -78,7 +78,8 @@ class RelationType extends AbstractType
                     ]
                 ]
             )->add(
-                'icon', null,
+                'icon',
+                null,
                 [
                     'attr' => [
                         'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',

@@ -71,7 +71,8 @@ class ChannelType extends AbstractType
                         ]
                     )
                     ->add(
-                        'ipProtected', CheckboxType::class,
+                        'ipProtected',
+                        CheckboxType::class,
                         [
                             'label' => 'Protect by IP address or logged in user',
                             'required' => false,
