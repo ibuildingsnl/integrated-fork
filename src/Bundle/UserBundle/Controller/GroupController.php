@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
@@ -20,7 +19,6 @@ use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -190,7 +188,6 @@ class GroupController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
@@ -212,7 +209,6 @@ class GroupController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
@@ -233,7 +229,6 @@ class GroupController extends AbstractController
                 'method' => 'DELETE',
             ]
         );
-
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

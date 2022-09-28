@@ -165,7 +165,6 @@ class State
         return $this->name;
     }
 
-
     /**
      * @return string
      */

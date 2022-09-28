@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * Annotation for defining field options for properties of a document.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
  * @Annotation
  */
 class Field

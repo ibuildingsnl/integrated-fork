@@ -16,9 +16,7 @@ use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -28,7 +26,6 @@ use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use MongoDB\BSON\Regex;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -186,7 +183,6 @@ class PageController extends AbstractController
             return $this->redirectToRoute('integrated_page_page_index');
         }
 
-
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 
@@ -313,7 +309,6 @@ class PageController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
@@ -338,7 +333,6 @@ class PageController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
@@ -356,7 +350,6 @@ class PageController extends AbstractController
         $builder->setAction($this->generateUrl('integrated_page_page_delete', ['id' => $id]));
         $builder->setMethod('DELETE');
         $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
-
 
         return $builder->getForm();
     }

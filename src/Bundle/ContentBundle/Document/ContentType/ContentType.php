@@ -31,18 +31,21 @@ class ContentType implements ContentTypeInterface
 
     /**
      * @var string
+     *
      * @Slug(fields={"name"}, separator="_")
      */
     protected $id;
 
     /**
      * @var string The class of the content type
+     *
      * @Assert\NotBlank()
      */
     protected $class;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank()
      */
     protected $name;

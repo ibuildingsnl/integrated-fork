@@ -83,7 +83,6 @@ class ChannelType extends AbstractType
                     )
         );
 
-
         // validate domain names
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();

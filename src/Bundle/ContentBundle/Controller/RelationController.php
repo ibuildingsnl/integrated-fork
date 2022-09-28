@@ -12,12 +12,10 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -212,7 +210,7 @@ class RelationController extends AbstractController
 
         return $this->render('@IntegratedContent/relation/delete.html.twig', [
             'relation' => $relation,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -276,7 +274,6 @@ class RelationController extends AbstractController
                      ->setMethod('DELETE');
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
-
 
         return $form->getForm();
     }

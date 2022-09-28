@@ -15,7 +15,6 @@ use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\DataTransformer\GroupTransformer;
 use Integrated\Bundle\BlockBundle\Locator\LayoutLocator;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupType;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Integrated\Common\Form\Type\MetadataType;

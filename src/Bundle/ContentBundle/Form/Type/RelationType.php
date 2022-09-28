@@ -48,7 +48,7 @@ class RelationType extends AbstractType
                         'Author' => 'author',
                         'File' => 'file',
                         'Slider' => 'slider',
-                    ]
+                    ],
                 ]
             )->add(
                 'sources',
@@ -75,7 +75,7 @@ class RelationType extends AbstractType
                     'choices' => [
                         'Sidebar' => 'sidebar',
                         'Editor' => 'editor',
-                    ]
+                    ],
                 ]
             )->add(
                 'icon',
@@ -83,8 +83,7 @@ class RelationType extends AbstractType
                 [
                     'attr' => [
                         'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',
-                    ]
-                    ,
+                    ],
                 ]
             )
             ->add(

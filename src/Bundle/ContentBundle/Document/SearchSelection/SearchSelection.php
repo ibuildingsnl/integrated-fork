@@ -23,12 +23,14 @@ class SearchSelection
 {
     /**
      * @var string
+     *
      * @Slug(fields={"title"})
      */
     protected $id;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      */
     protected $title;

@@ -31,6 +31,7 @@ class FormBlock extends Block
 
     /**
      * @var ContentType
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
@@ -44,12 +45,14 @@ class FormBlock extends Block
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
      */
     protected $content;
 
     /**
      * @var string
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\TextType",
      *     options={
@@ -61,6 +64,7 @@ class FormBlock extends Block
 
     /**
      * @var string
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\TextareaType",
      *     options={
@@ -72,6 +76,7 @@ class FormBlock extends Block
 
     /**
      * @var array
+     *
      * @Assert\All({
      *     @Assert\Email
      * })
@@ -90,6 +95,7 @@ class FormBlock extends Block
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={
@@ -103,6 +109,7 @@ class FormBlock extends Block
 
     /**
      * @var Relation
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={

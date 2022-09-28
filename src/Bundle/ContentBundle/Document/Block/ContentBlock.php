@@ -30,6 +30,7 @@ class ContentBlock extends Block
 
     /**
      * @var SearchSelection
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionChoiceType"
      * )
@@ -38,6 +39,7 @@ class ContentBlock extends Block
 
     /**
      * @var int
+     *
      * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
@@ -52,6 +54,7 @@ class ContentBlock extends Block
 
     /**
      * @var int
+     *
      * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
@@ -67,6 +70,7 @@ class ContentBlock extends Block
 
     /**
      * @var string
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\TextType",
      *      options={
@@ -78,6 +82,7 @@ class ContentBlock extends Block
 
     /**
      * @var array
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType",
      *      options={
@@ -91,6 +96,7 @@ class ContentBlock extends Block
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Type\Field(
      *       options={

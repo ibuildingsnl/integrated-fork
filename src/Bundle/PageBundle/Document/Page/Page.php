@@ -24,6 +24,7 @@ class Page extends AbstractPage
 {
     /**
      * @var string
+     *
      * @Assert\NotBlank
      */
     protected $title;

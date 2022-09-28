@@ -27,12 +27,14 @@ class Company extends Relation
 {
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $name;
 
     /**
      * @var string
+     *
      * @Slug(fields={"name"})
      * @Type\Field
      */
@@ -40,12 +42,14 @@ class Company extends Relation
 
     /**
      * @var StorageInterface
+     *
      * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $logo;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $website;

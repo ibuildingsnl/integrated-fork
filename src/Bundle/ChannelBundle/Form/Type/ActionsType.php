@@ -31,24 +31,24 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Create',
                         'button_class' => 'orange no-icon',
-                        'translation_domain' => 'IntegratedChannelBundle'
-                    ]
+                        'translation_domain' => 'IntegratedChannelBundle',
+                    ],
                 ],
                 'save' => [
                     'type' => SubmitType::class,
                     'options' => [
                         'label' => 'Update',
                         'button_class' => 'green no-icon',
-                        'translation_domain' => 'IntegratedChannelBundle'
-                    ]
+                        'translation_domain' => 'IntegratedChannelBundle',
+                    ],
                 ],
                 'delete' => [
                     'type' => SubmitType::class,
                     'options' => [
                         'label' => 'Delete',
                         'button_class' => 'orange',
-                        'translation_domain' => 'IntegratedChannelBundle'
-                    ]
+                        'translation_domain' => 'IntegratedChannelBundle',
+                    ],
                 ],
                 'cancel' => [
                     'type' => SubmitType::class,
@@ -59,9 +59,9 @@ class ActionsType extends BaseActionsType
                         'attr' => [
                             'formnovalidate' => 'formnovalidate',
                             'data-dismiss' => 'modal',
-                            'icon' => 'arrow-left'
-                        ]
-                    ]
+                            'icon' => 'arrow-left',
+                        ],
+                    ],
                 ],
             ]
         );

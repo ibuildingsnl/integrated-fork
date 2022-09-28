@@ -29,12 +29,14 @@ class Taxonomy extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $title;
 
     /**
      * @var string
+     *
      * @Slug(fields={"title"})
      * @Type\Field
      */
@@ -42,6 +44,7 @@ class Taxonomy extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $description;

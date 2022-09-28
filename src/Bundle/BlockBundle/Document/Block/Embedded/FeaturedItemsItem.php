@@ -23,24 +23,28 @@ class FeaturedItemsItem
 {
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $title;
 
     /**
      * @var StorageInterface
+     *
      * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
      */
     protected $image;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $link;
 
     /**
      * @var string
+     *
      * @Type\Field(
      *     options={
      *         "required"=false
@@ -51,6 +55,7 @@ class FeaturedItemsItem
 
     /**
      * @var string
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
      *      options={
@@ -67,6 +72,7 @@ class FeaturedItemsItem
 
     /**
      * @var string
+     *
      * @Type\Field(
      *     type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",
      *     options={
@@ -80,6 +86,7 @@ class FeaturedItemsItem
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={
@@ -92,6 +99,7 @@ class FeaturedItemsItem
 
     /**
      * @var int
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\HiddenType",
      *     options={"attr"={"data-itemorder"="collection"}}

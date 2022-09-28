@@ -38,9 +38,9 @@ interface ManagerInterface
      *
      * @param StorageInterface $storage
      *
-     * @throws \LogicException
-     *
      * @return string
+     *
+     * @throws \LogicException
      */
     public function read(StorageInterface $storage);
 
@@ -50,9 +50,9 @@ interface ManagerInterface
      * @param ReaderInterface $reader
      * @param ArrayCollection $filesystems
      *
-     * @throws \Exception
-     *
      * @return StorageInterface
+     *
+     * @throws \Exception
      */
     public function write(ReaderInterface $reader, ArrayCollection $filesystems = null);
 

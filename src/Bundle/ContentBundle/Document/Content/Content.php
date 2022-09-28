@@ -48,6 +48,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
+     *
      * @Slug(fields={"id"})
      * @Type\Field
      */
@@ -75,6 +76,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var PublishTime
+     *
      * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType")
      */
     protected $publishTime;
@@ -86,6 +88,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *     options={"attr"={"align_with_widget"=true}}
@@ -115,6 +118,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
+     *
      * @Type\Field(options={"label" = "Copyright restrictions"})
      */
     protected $copyrightRestrictions;

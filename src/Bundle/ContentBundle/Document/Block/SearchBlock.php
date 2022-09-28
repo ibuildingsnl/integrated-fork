@@ -25,6 +25,7 @@ class SearchBlock extends Block
 {
     /**
      * @var ContentBlock
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
@@ -38,6 +39,7 @@ class SearchBlock extends Block
 
     /**
      * @var string
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\TextType",
      *      options={

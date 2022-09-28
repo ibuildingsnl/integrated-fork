@@ -19,9 +19,6 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -217,7 +214,6 @@ class SearchSelectionController extends AbstractController
                 'method' => 'POST',
             ]
         );
-
 
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 

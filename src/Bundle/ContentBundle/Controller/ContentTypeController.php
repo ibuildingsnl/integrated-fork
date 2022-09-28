@@ -157,7 +157,6 @@ class ContentTypeController extends AbstractController
         $form = $this->createNewForm($contentType, $metadata);
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_content_content_type_index');
@@ -199,7 +198,6 @@ class ContentTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_content_content_type_index');
             }
@@ -217,7 +215,8 @@ class ContentTypeController extends AbstractController
                 $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
 
                 return $this->redirectToRoute('integrated_content_content_type_edit', ['id' => $contentType->getId()]);
-            }}
+            }
+        }
 
         return $this->render('@IntegratedContent/content_type/edit.html.twig', [
             'form' => $form->createView(),
@@ -246,9 +245,7 @@ class ContentTypeController extends AbstractController
         $form = $this->createDeleteForm($contentType);
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted()) {
-
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_content_content_type_index');
             }
@@ -280,7 +277,8 @@ class ContentTypeController extends AbstractController
                 $this->addFlash('success', 'Item deleted');
 
                 return $this->redirectToRoute('integrated_content_content_type_index');
-            }}
+            }
+        }
 
         return $this->render('@IntegratedContent/content_type/delete.html.twig', [
             'contentType' => $contentType,
@@ -324,7 +322,7 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-        $form->add('actions', ActionsType::class,  ['buttons' => ['create', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -349,7 +347,7 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-        $form->add('actions', ActionsType::class,  ['buttons' => ['save', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -372,8 +370,7 @@ class ContentTypeController extends AbstractController
             ]
         );
 
-
-        $form->add('actions', ActionsType::class,  ['buttons' => ['delete', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }

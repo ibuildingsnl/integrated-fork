@@ -22,6 +22,7 @@ class ContentTypePage extends AbstractPage
 {
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Assert\Regex(
      *     pattern="/{slug}/",
@@ -32,12 +33,14 @@ class ContentTypePage extends AbstractPage
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      */
     protected $controllerService;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      */
     protected $controllerAction;

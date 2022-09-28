@@ -25,12 +25,14 @@ class Product extends Content
 {
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $title;
 
     /**
      * @var string
+     *
      * @Slug(fields={"title"})
      * @Type\Field
      */
@@ -38,12 +40,14 @@ class Product extends Content
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $reference;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $variant;
@@ -55,12 +59,14 @@ class Product extends Content
 
     /**
      * @var float
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\MoneyType")
      */
     protected $price;
 
     /**
      * @var int
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *     options={
@@ -72,6 +78,7 @@ class Product extends Content
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *     options={
@@ -83,12 +90,14 @@ class Product extends Content
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
     protected $description;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
     protected $content;

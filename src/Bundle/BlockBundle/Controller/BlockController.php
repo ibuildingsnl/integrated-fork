@@ -25,7 +25,6 @@ use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -15,6 +15,7 @@ trait PublishTitleTrait
 {
     /**
      * @var string
+     *
      * @Type\Field(
      *       options={
      *          "required"=false,

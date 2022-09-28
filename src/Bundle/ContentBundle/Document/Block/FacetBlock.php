@@ -26,6 +26,7 @@ class FacetBlock extends Block
 {
     /**
      * @var ContentBlock
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
@@ -39,6 +40,7 @@ class FacetBlock extends Block
 
     /**
      * @var ArrayCollection
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType",
      *      options={

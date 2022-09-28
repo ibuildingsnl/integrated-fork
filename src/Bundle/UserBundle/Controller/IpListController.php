@@ -12,14 +12,12 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\IpListFormType;
 use Integrated\Bundle\UserBundle\Model\IpList;
 use Integrated\Bundle\UserBundle\Model\IpListManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -185,7 +183,6 @@ class IpListController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
@@ -207,7 +204,6 @@ class IpListController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
@@ -228,7 +224,6 @@ class IpListController extends AbstractController
                 'method' => 'DELETE',
             ]
         );
-
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

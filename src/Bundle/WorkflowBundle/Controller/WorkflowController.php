@@ -16,7 +16,6 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -30,7 +29,6 @@ use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionFormType;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Integrated\Common\Security\PermissionInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -331,7 +329,6 @@ class WorkflowController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
@@ -353,7 +350,6 @@ class WorkflowController extends AbstractController
             ]
         );
 
-
         $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
@@ -374,7 +370,6 @@ class WorkflowController extends AbstractController
                 'method' => 'DELETE',
             ]
         );
-
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

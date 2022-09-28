@@ -12,14 +12,12 @@
 namespace Integrated\Bundle\ThemeBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper;
 use Integrated\Bundle\ThemeBundle\Form\Type\ScraperType;
 use Integrated\Bundle\ThemeBundle\Scraper\Scraper as ScraperService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -140,7 +138,6 @@ class ScraperController extends AbstractController
         $form = $this->createDeleteForm($scraper);
         $form->handleRequest($request);
 
-
         if ($form->get('actions')->getData() == 'cancel') {
             return $this->redirectToRoute('integrated_theme_scraper_index');
         }
@@ -160,6 +157,7 @@ class ScraperController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * Creates a form to edit a Scraper.
      *
@@ -205,6 +203,7 @@ class ScraperController extends AbstractController
 
         return $form;
     }
+
     /**
      * Creates a form to delete a Scraper.
      *
@@ -222,7 +221,6 @@ class ScraperController extends AbstractController
                 'method' => 'DELETE',
             ]
         );
-
 
         $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 

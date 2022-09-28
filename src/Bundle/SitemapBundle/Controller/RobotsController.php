@@ -20,6 +20,7 @@ class RobotsController
 {
     /**
      * @return array
+     *
      * @Template
      */
     public function index()
