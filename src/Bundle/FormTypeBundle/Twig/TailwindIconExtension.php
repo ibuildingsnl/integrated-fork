@@ -33,9 +33,9 @@ class TailwindIconExtension extends AbstractExtension
 
     /**
      * @param string $iconPrefix
-     * @param string $iconTag
+//     * @param string $iconTag
      */
-    public function __construct($iconPrefix, $iconTag = 'i')
+    public function __construct(string $iconPrefix)
     {
         $this->iconPrefix = $iconPrefix;
         // TODO: figure out where 'span' comes from as iconTag.

@@ -93,30 +93,6 @@ abstract class Relation extends Content implements RankableInterface
     }
 
     /**
-     * Get the content of the document.
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Set the content of the document.
-     *
-     * @param string $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
      * Get the accountnumber of the document.
      *
      * @return string
