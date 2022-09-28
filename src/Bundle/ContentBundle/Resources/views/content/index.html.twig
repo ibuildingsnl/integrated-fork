@@ -312,8 +312,8 @@
             function openSelectedOptions(elem) {
                 var textinputs = elem.querySelectorAll('input[type=checkbox]');
                 console.log(elem);
-                var chevUp = this.querySelector('.fa-chevron-down');
-                var chevDown = this.querySelector('.fa-chevron-up');
+                var chevUp = document.querySelector('.fa-chevron-down');
+                var chevDown = document.querySelector('.fa-chevron-up');
                 var empty = [].filter.call(textinputs, function(elem) {
                     return !elem.checked;
                 });

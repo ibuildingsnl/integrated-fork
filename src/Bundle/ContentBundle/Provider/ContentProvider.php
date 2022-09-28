@@ -89,7 +89,6 @@ class ContentProvider
 
         // Why would I add a Tag?
         if ($class = $request->query->get('class_string')) {
-//            dd("hi");
             $query
                 ->createFilterQuery('class_string')
 //                ->addTag('class_string')

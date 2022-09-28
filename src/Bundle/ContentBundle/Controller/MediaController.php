@@ -244,6 +244,8 @@ class MediaController extends AbstractController
     public function edit(Request $request) {
         echo "Hi Edit";
 
+        dd($request);
+
         $answer = $request->request->get('answer');
         dd($answer);
 //        $request->request->get('taxonomy_id');

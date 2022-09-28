@@ -487,6 +487,8 @@ class ContentController extends AbstractController
         $form = $this->createNewForm($contentType, $content, $request);
         $form->handleRequest($request);
 
+//        dd($form);
+
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);

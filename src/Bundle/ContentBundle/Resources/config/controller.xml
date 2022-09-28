@@ -81,6 +81,19 @@
             </call>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Controller\ParentIDController">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
+            <argument type="service" id="translator" />
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Controller\RelationController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
 

@@ -14,9 +14,16 @@ namespace Integrated\Common\Content;
 trait ParentIDTrait
 {
     /**
-     * @var string
-     * @Type\Field
+     * @var string|null
+     * @Type\Field(
+     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentParentIDType",
+     *     options={
+     *         "label" = "Parent",
+     *         "route" = "integrated_content_parent_id_lookup"
+     *     }
+     * )
      */
+
     protected $parent_id;
 
     /**
