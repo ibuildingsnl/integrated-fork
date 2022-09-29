@@ -16,6 +16,7 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListener;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -30,6 +31,8 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\MenuItem as KnpMenuItem;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class MediaController extends AbstractController
 {
@@ -83,30 +86,42 @@ class MediaController extends AbstractController
         //TODO: vertaling neerzetten in twig template
         $params = $this->getParams($class_string, $media_taxonomy);
 
-        $this->addContentTypesToUserOptions($uniqueContentTypes, $params);
+        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params);
 
         $newMenu = $this->mediaGalleryMenu->getSimulation();
 
         $items = $this->provider->getContentFromSolr($request, 100);
 
         $request->query->remove('MediaTaxonomy');
-//        dd($menuResult);
 
-//        $form = $form = $this->createForm(
-//            MediaConnectType::class,
-//            null,
+        $test = new ContentType;
+
+
+//        $form = $this->createForm(
+//            ContentType::class,
+//            ['categoryID' => "1"],
 //            [
 //                'action' => $this->generateUrl('integrated_user_iplist_new'),
 //                'method' => 'POST',
 //            ]
 //        );
+//
+//        $task = new MediaConnectType;
+//        $task->categoryID = 5;
+//        $form = $this->createForm(MediaConnectType::class, (new Taxonomy()));
+//        $task = new \stdClass();
+//        $task->task = '';
 
+//        $form = $this->createForm( MediaConnectType::class, $task);
 
+//            ->add('task', TextType::class)
+//            ->add('save', SubmitType::class, ['label' => 'Create Task'])
+//            ->getForm();
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
 //            'form' => $form,
             'items' => $items,
-            'params' => $params,
+            'params' => $paramsExtended,
             'newMenu' => $newMenu,
             'menuResult' => $menuResult
         ]);
@@ -138,6 +153,8 @@ class MediaController extends AbstractController
                 'label' => ucfirst($uniqueContentType)
             ];
         }
+
+        return $params;
     }
 
     public function getMenuItems() {
@@ -270,16 +287,9 @@ class MediaController extends AbstractController
     }
 
     public function edit(Request $request) {
-        echo "Hi Edit";
+        $params = $request->query->all();
 
-
-
-        dd($request);
-
-        $answer = $request->request->get('answer');
-        dd($answer);
-//        $request->request->get('taxonomy_id');
-        dd($request);
+        dd($params);
     }
 
     public function menu()

@@ -10,12 +10,12 @@
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
                         <div class="">
-                            <h3 class="p-2">
+                            <p class="p-2 ">
 {#                                <i class="fa-regular fa-folder"></i>#}
                                 <a href="{{ path(app.request.attributes.get('_route') ) }}">
                                     Alle bestanden
                                 </a>
-                            </h3>
+                            </p>
                         </div>
                         <div class="aside-item-search">
                             <i class="fa fa-search"></i>
@@ -24,42 +24,54 @@
                                    onkeyup="asideItemsSearch(this)"
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
-                        <div class="p-2 text-red-600">CHANNELS</div>
-                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
-                            {% for key, menu_item in newMenu %}
-                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
-                            <li class="menu-parent media_category"
-                                style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
-                                id="category_{{ key }}">
-                                <i class="fa-regular fa-folders"></i>
-                                <span>{{ menu_item.title }}</span>
-                                {% if menu_item.children %}
+{#                        <div class="p-2 text-red-600">CHANNELS</div>#}
+{#                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">#}
+{#                            {% for key, menu_item in newMenu %}#}
+{#                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->#}
+{#                            <li class="menu-parent media_category"#}
+{#                                style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"#}
+{#                                id="category_{{ key }}">#}
+{#                                <i class="fa-regular fa-folders"></i>#}
+{#                                <span>{{ menu_item.title }}</span>#}
+{#                                {% if menu_item.children %}#}
 
-                                    {% for key_1, menu_item_1 in menu_item.children %}
-                                    <li class="menu-parent media_category"
-                                        style="margin-bottom: 1px; padding-left: 22px"
-                                        id="category_{{ key }}-{{ key_1 }}">
-                                        <i class="fa-regular fa-folders"></i>
-                                        <span>{{ menu_item_1.title }}</span>
-                                        {% if menu_item_1.children %}
+{#                                    {% for key_1, menu_item_1 in menu_item.children %}#}
+{#                                    <li class="menu-parent media_category"#}
+{#                                        style="margin-bottom: 1px; padding-left: 22px"#}
+{#                                        id="category_{{ key }}-{{ key_1 }}">#}
+{#                                        <i class="fa-regular fa-folders"></i>#}
+{#                                        <span>{{ menu_item_1.title }}</span>#}
+{#                                        {% if menu_item_1.children %}#}
 
-                                            {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                <li class="menu-parent media_category"
-                                                    style="margin-bottom: 1px; padding-left: 33px"
-                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">
-                                                    <i class="fa-regular fa-folders"></i>
-                                                    <span>{{ menu_item_2.title }}</span>
-                                                </li>
-                                            {% endfor %}
+{#                                            {% for key_2, menu_item_2 in menu_item_1.children %}#}
+{#                                                <li class="menu-parent media_category"#}
+{#                                                    style="margin-bottom: 1px; padding-left: 33px"#}
+{#                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">#}
+{#                                                    <i class="fa-regular fa-folders"></i>#}
+{#                                                    <span>{{ menu_item_2.title }}</span>#}
+{#                                                </li>#}
+{#                                            {% endfor %}#}
 
-                                        {% endif %}
-                                        </li>
-                                    {% endfor %}
+{#                                        {% endif %}#}
+{#                                        </li>#}
+{#                                    {% endfor %}#}
 
-                                {% endif %}
-                                </li>
-                            {% endfor %}
-                        </lu>
+{#                                {% endif %}#}
+{#                                </li>#}
+{#                            {% endfor %}#}
+{#                        </lu>#}
+
+                        <form id="media_form"  action="{{ path('integrated_content_media_edit') }}" method="PUT">
+{#                            onsubmit="event.preventDefault();"#}
+                            {# the argument of csrf_token() is an arbitrary string used to generate the token #}
+                            <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
+                            <input type="hidden" id="test" name="test" value="wouter"/>
+                            <input type="hidden" id="media_id" name="media_id" value="1123456"/>
+                            <input type="hidden" id="category_id" name="category_id" value="3324234324;234324324;24242;424224"/>
+                            <input type="hidden" id="channel_id" name="channel_id" value="3324234"/>
+
+                            <button id="media_category_submit" type="submit">Post</button>
+                        </form>
                         <div class="p-2 text-red-600">CATEGORIES</div>
                         {% for key, menu_item in menuResult %}
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
@@ -449,6 +461,25 @@
             crossorigin="anonymous"></script>
 
     <script>
+
+        $("#media_category_submit").on("click", function (event) {
+            console.log("SEND")
+            event.preventDefault()
+            handleFormSubmit(event);
+        });
+
+        function handleFormSubmit(e) {
+
+            let formData = new FormData(document.querySelector('form'))
+
+            let csrf = document.querySelector('#media_category_csrf').value
+            let csrf_val = csrf.value
+            console.log(csrf)
+            console.log(csrf_val)
+            console.log(e)
+            console.log(formData)
+        }
+
         //BULKSELECTION FUNCTIONALITY
         let bulkSelectionEnabled = false //this controls if we show an icon with each image
         let bulkSelection = [] //this keeps track which items are selected
@@ -559,7 +590,7 @@
                         console.log(duplicatesRemoved)
                     } else {
                         console.log("We`re single moving:")
-                        sendAjaxRequest()
+                        sendAjaxRequest(category_id, media_id)
                         console.log(media_id)
                     }
                     console.log("To: " + category_id)
@@ -567,7 +598,13 @@
                     $('#' + category_id).addClass("flash");
                 }
 
-                function sendAjaxRequest() {
+                function sendAjaxRequest(category_id, media_id) {
+                    $('#media_id').val(media_id)
+                    $('#category_id').val(category_id)
+                    $('form#media_form').submit();
+
+                    return
+
                     // var url = 'https://localhost.integratedfordevelopers.com/admin/content';
                     // var data = {username: 'courseya'};fetch(url, {
                     //     method: 'POST', // or 'PUT'
@@ -604,7 +641,11 @@
                         return response; // parses JSON response into native JavaScript objects
                     }
 
+
+
                     //'https://localhost.integratedfordevelopers.com/admin/content/37e42e2d1b8132b69b1cbb2e206e93e6'
+
+
                     postData('https://localhost.integratedfordevelopers.com/admin/media/edit', {
                         answer: 42,
                         test: "rawr"

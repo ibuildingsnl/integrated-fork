@@ -23,16 +23,17 @@ class MediaConnectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('categoryID', TextType::class, [
-            'label' => 'Category ID',
-        ]);
-        $builder->add('channelID', TextType::class, [
-            'label' => 'Channel ID',
-        ]);
-        $builder->add('mediaIDs', TextType::class, [
-            'label' => 'Media ID`s (one or multiple)',
-            'required' => true,
-        ]);
+        $builder->add('title', TextType::class);
+//        $builder->add('categoryID', TextType::class, [
+//            'label' => 'Category ID',
+//        ]);
+//        $builder->add('channelID', TextType::class, [
+//            'label' => 'Channel ID',
+//        ]);
+//        $builder->add('mediaIDs', TextType::class, [
+//            'label' => 'Media ID`s (one or multiple)',
+//            'required' => true,
+//        ]);
     }
 
     /**
