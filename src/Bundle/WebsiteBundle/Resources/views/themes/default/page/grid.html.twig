@@ -27,7 +27,7 @@
         {% endif %}
 
         {% if item.row %}
-            <div class="row{% if edit|default %} integrated-website-sortable" data-block-type="row{% endif %}"
+            <div class="{% if edit|default %} integrated-website-sortable" data-block-type="row{% endif %}"
                 {%- for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
                 {% for column in item.row.columns %}
                     <div class="col-sm-{{ column.size }}{% if edit|default %} integrated-website-col integrated-website-droppable"

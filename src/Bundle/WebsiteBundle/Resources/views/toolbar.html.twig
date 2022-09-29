@@ -6,57 +6,132 @@
 {% include integrated_active_theme('objects/toolbar-page-js.html.twig') %}
 
 <div class="integrated-website-toolbar">
-    <div class="container">
+    <div class="toolbar-wrapper" style="">
+        <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}">
+            <img src="{{ asset('bundles/integratedintegrated/images/logo_white.svg') }}" alt="">
+        </a>
 
-        <div class="integrated-website-toolbar-logo">
-            <a href="{{ path('integrated_content_content_index') }}">Integrated</a>
-        </div>
-
-        {% if (message != '') %}
-        <div class="integrated-website-toolbar-message">
-            {{ message|trans }}
-        </div>
-        {% endif %}
-
-        <div class="integrated-website-toolbar-right">
-            {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
-
-            {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
-                <a href="javascript:;" class="integrated-website-toolbar-button" data-action="integrated-website-page-save"
-                   {% if app.request.attributes.get('page').id|default %}data-id="{{ app.request.attributes.get('page').id }}" {% endif %}
-                   data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
-                    {% trans %}Save page{% endtrans %}
-                </a>
-
-                <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}" class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary">
-                    {% trans %}Cancel{% endtrans %}
-                </a>
-            {% else %}
-                {% if content is defined and content is not null %}
-                <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}" class="integrated-website-toolbar-button">
-                    {% trans %}Edit{% endtrans %}
-                </a> &nbsp;
-                {% endif %}
-
-                {% if layoutEditable %}
-                <div class="integrated-website-toolbar-button-group">
-                    <a href="{{  path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 1})) }}" class="integrated-website-toolbar-button">
-                        {% trans %}Edit page{% endtrans %}
-                    </a>
-                    <div data-integrated-dropdown="integrated-page-button-dropdown" class="integrated-website-toolbar-button integrated-website-toolbar-button-dropdown"></div>
-                    <ul id="integrated-page-button-dropdown" class="integrated-website-toolbar-dropdown">
-                        {% if app.request.attributes.get('page').type == 'content_type_page' %}
-                            <li><a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
-                        {% else %}
-                            <li><a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('integrated_page_page_index') }}">{% trans %}Go to page overview{% endtrans %}</a></li>
-                    </ul>
+        <div class="integrated-website-toolbar-tools">
+            <div class="new-contenttype dropdown top-bar">
+                <a href="#" class="btn btn-green"
+                   data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
+                        class="fa-regular fa-plus"></i></a>
+                {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+            </div>
+            {% if (message != '') %}
+                <div class="integrated-website-toolbar-message">
+                    {{ message|trans }}
                 </div>
-                {% endif %}
             {% endif %}
+            <div class="integrated-website-toolbar-right">
+                {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
+
+                {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
+                    <a href="javascript:;" class="integrated-website-toolbar-button btn btn-green"
+                       data-action="integrated-website-page-save"
+                       {% if app.request.attributes.get('page').id|default %}data-id="{{ app.request.attributes.get('page').id }}" {% endif %}
+                       data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
+                        {% trans %}Save page{% endtrans %}
+                    </a>
+
+                    <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}"
+                       class="integrated-website-toolbar-button integrated-website-toolbar-button-secondary btn btn-white">
+                        {% trans %}Cancel{% endtrans %}
+                    </a>
+                {% else %}
+                    {% if content is defined and content is not null %}
+                        <a href="{{ path('integrated_content_content_edit', {'id': content.id}) }}"
+                           class="integrated-website-toolbar-button btn btn-green">
+                            {% trans %}Edit{% endtrans %}
+                        </a> &nbsp;
+                    {% endif %}
+
+                    {% if layoutEditable %}
+                        <div class="integrated-website-toolbar-button-group">
+                            <a href="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 1})) }}"
+                               class="integrated-website-toolbar-button btn btn-green">
+                                {% trans %}Edit page{% endtrans %}
+                            </a>
+                            {% if app.request.attributes.get('page').type == 'content_type_page' %}
+                                <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"
+                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                            {% else %}
+                                <a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}"
+                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                            {% endif %}
+                            <a href="{{ path('integrated_page_page_index') }}"
+                               class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
+
+{#                            <div data-integrated-dropdown="integrated-page-button-dropdown"#}
+{#                                 class="integrated-website-toolbar-button integrated-website-toolbar-button-dropdown btn btn-white"></div>#}
+{#                            <ul id="integrated-page-button-dropdown" class="integrated-website-toolbar-dropdown">#}
+{#                                {% if app.request.attributes.get('page').type == 'content_type_page' %}#}
+{#                                    <li>#}
+{#                                        <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"#}
+{#                                           class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>#}
+{#                                    </li>#}
+{#                                {% else %}#}
+{#                                    <li>#}
+{#                                        <a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}"#}
+{#                                           class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>#}
+{#                                    </li>#}
+{#                                {% endif %}#}
+{#                                <li>#}
+{#                                    <a href="{{ path('integrated_page_page_index') }}"#}
+{#                                       class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>#}
+{#                                </li>#}
+{#                            </ul>#}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    //DROPDOWN MENU
+    function initMenu() {
+
+        var menus = document.querySelectorAll('.dropdown.top-bar');
+        menus.forEach((menu) => {
+            if (menu != null) {
+                for (var i = 0; i < menu.children.length; i++) {
+                    var menuClasses = menu.children[i];
+                    var cList = menuClasses.classList;
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
+                        cList.contains('dropdown-menu-right')) {
+                        menu.addEventListener('click', toggleDropDownBackGround, false);
+                    }
+                }
+            }
+        });
+    }
+
+    function hideDropDownBackgroud(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function toggleDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        } else {
+            menuItemDropDownUnderlay.classList.remove('hide');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+
+    window.addEventListener('click', function(event) {
+        hideDropDownBackgroud();
+    });
+</script>
+
+<div id="dropdown_overlay" class="hide"></div>
 
 <div class="integrated-website-body-margin-top"></div>
