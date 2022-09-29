@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\EventListener\ContentChannelIntegrationListe
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\PageBundle\Form\Type\MediaConnectType;
 use Integrated\Bundle\UserBundle\Controller\SecurityController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Security\PermissionInterface;
@@ -76,7 +77,8 @@ class MediaController extends AbstractController
             $request->query->set('class_string', "File");
         }
 
-        $media_taxonomy = $request->query->get('media_taxonomy');
+        $media_taxonomy = $request->query->get('MediaTaxonomy');
+        $request->query->set('MediaTaxonomy[]', $media_taxonomy);
 
         //TODO: vertaling neerzetten in twig template
         $params = $this->getParams($class_string, $media_taxonomy);
@@ -87,7 +89,22 @@ class MediaController extends AbstractController
 
         $items = $this->provider->getContentFromSolr($request, 100);
 
+        $request->query->remove('MediaTaxonomy');
+//        dd($menuResult);
+
+//        $form = $form = $this->createForm(
+//            MediaConnectType::class,
+//            null,
+//            [
+//                'action' => $this->generateUrl('integrated_user_iplist_new'),
+//                'method' => 'POST',
+//            ]
+//        );
+
+
+
         return $this->render('@IntegratedContent/media/index.html.twig', [
+//            'form' => $form,
             'items' => $items,
             'params' => $params,
             'newMenu' => $newMenu,
@@ -241,8 +258,21 @@ class MediaController extends AbstractController
         }
     }
 
+    public function addChannel(Request $request) {
+        echo "AddChannel";
+
+        dd($request);
+    }
+    public function addCategpry(Request $request) {
+        echo "addCategpry";
+
+        dd($request);
+    }
+
     public function edit(Request $request) {
         echo "Hi Edit";
+
+
 
         dd($request);
 

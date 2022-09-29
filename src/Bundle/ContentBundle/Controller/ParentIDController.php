@@ -68,9 +68,7 @@ class ParentIDController extends AbstractController
     {
         $limit = 1000;
 
-//        $request->query->set('sort', 'rank');
-        $request->query->set('hasFields', ['rank']);
-        $request->query->set('contenttypes', 'Media_Taxonomy');
+        $request->query->set('contenttypes', ['media_taxonomy']);
         $content = $this->contentProvider->getContentFromSolr($request, $limit);
 
         $result = [];

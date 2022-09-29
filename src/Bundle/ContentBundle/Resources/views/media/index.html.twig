@@ -3,16 +3,18 @@
 {% block content %}
 
     <div class="flex flex-wrap media-library">
+
         <div class="sm:w-3/12 p-2 pr-4 pl-4">
             <aside>
                 <h2 class="heading ">{% trans %}Mappen{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
-                    <div
-                        class="aside-item-wrapper">
-                        <div class="aside-item-header">
-                            <h3 class="aside-item-title">
-                                <i class="fa-regular fa-folder"></i>
-                                <span>Alle bestanden</span>
+                    <div class="aside-item-wrapper">
+                        <div class="">
+                            <h3 class="p-2">
+{#                                <i class="fa-regular fa-folder"></i>#}
+                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                    Alle bestanden
+                                </a>
                             </h3>
                         </div>
                         <div class="aside-item-search">
@@ -26,7 +28,8 @@
                         <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
                             {% for key, menu_item in newMenu %}
                                 <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
-                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                            <li class="menu-parent media_category"
+                                style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                                 id="category_{{ key }}">
                                 <i class="fa-regular fa-folders"></i>
                                 <span>{{ menu_item.title }}</span>
@@ -34,7 +37,8 @@
 
                                     {% for key_1, menu_item_1 in menu_item.children %}
                                     <li class="menu-parent media_category"
-                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
+                                        style="margin-bottom: 1px; padding-left: 22px"
+                                        id="category_{{ key }}-{{ key_1 }}">
                                         <i class="fa-regular fa-folders"></i>
                                         <span>{{ menu_item_1.title }}</span>
                                         {% if menu_item_1.children %}
@@ -42,7 +46,7 @@
                                             {% for key_2, menu_item_2 in menu_item_1.children %}
                                                 <li class="menu-parent media_category"
                                                     style="margin-bottom: 1px; padding-left: 33px"
-                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
+                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">
                                                     <i class="fa-regular fa-folders"></i>
                                                     <span>{{ menu_item_2.title }}</span>
                                                 </li>
@@ -57,41 +61,47 @@
                             {% endfor %}
                         </lu>
                         <div class="p-2 text-red-600">CATEGORIES</div>
-                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">
-                            {% for key, menu_item in menuResult %}
-                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
-                            <li class="menu-parent media_category" style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
-                                id="category_{{ key }}">
-                                <i class="fa-regular fa-folders"></i>
-{#                                <span>{{ menu_item.title }}</span>#}
-                                <a href="{{ path(app.request.attributes.get('_route'),
-                                    app.request.query.all|merge({'Media_Taxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })) }}"
-                                   tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
-                                {% if menu_item.children %}
+                        {% for key, menu_item in menuResult %}
+                            <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
+                        <li class="menu-parent media_category"
+                            style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                            id="category_{{ key }}">
+                            <i class="fa-regular fa-folders"></i>
+                            {#                                <span>{{ menu_item.title }}</span> #}
+                            <a href="{{ path(app.request.attributes.get('_route'),
+                                app.request.query.all|merge({'MediaTaxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title }) ) }}"
+                               tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
+                            {% if menu_item.children %}
 
-                                    {% for key_1, menu_item_1 in menu_item.children %}
-                                    <li class="menu-parent media_category"
-                                        style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{  key_1 }}">
-                                        <i class="fa-regular fa-folders"></i>
-                                        <span>{{ menu_item_1.title }}</span>
-                                        {% if menu_item_1.children %}
+                                {% for key_1, menu_item_1 in menu_item.children %}
+                                <li class="menu-parent media_category"
+                                    style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{ key_1 }}">
+                                    <i class="fa-regular fa-folders"></i>
+{#                                    <span>{{ menu_item_1.title }}</span>#}
+                                    <a href="{{ path(app.request.attributes.get('_route'),
+                                        app.request.query.all|merge({'MediaTaxonomy[]': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title }) ) }}"
+                                       tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
+                                    {% if menu_item_1.children %}
 
-                                            {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                <li class="menu-parent media_category"
-                                                    style="margin-bottom: 1px; padding-left: 33px"
-                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2}}">
-                                                    <i class="fa-regular fa-folders"></i>
-                                                    <span>{{ menu_item_2.title }}</span>
-                                                </li>
-                                            {% endfor %}
+                                        {% for key_2, menu_item_2 in menu_item_1.children %}
+                                            <li class="menu-parent media_category"
+                                                style="margin-bottom: 1px; padding-left: 33px"
+                                                id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">
+                                                <i class="fa-regular fa-folders"></i>
+{#                                                <span>{{ menu_item_2.title }}</span>#}
+                                                <a href="{{ path(app.request.attributes.get('_route'),
+                                                    app.request.query.all|merge({'MediaTaxonomy[]': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) ) }}"
+                                                   tabindex="-1" role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
+                                            </li>
+                                        {% endfor %}
 
-                                        {% endif %}
-                                        </li>
-                                    {% endfor %}
+                                    {% endif %}
+                                    </li>
+                                {% endfor %}
 
-                                {% endif %}
-                                </li>
-                            {% endfor %}
+                            {% endif %}
+                            </li>
+                        {% endfor %}
                         </lu>
                     </div>
                 </div>
@@ -125,7 +135,7 @@
                             <a href data-toggle="dropdown" role="button" id="sorting-list"
                                class="btn btn-select space-between"><span>{{ params.sort.options[params.sort.current].label|trans }}</span>
                                 <i
-                                    class="fa-regular fa-angle-down"></i></a>
+                                        class="fa-regular fa-angle-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                 {% for sort in params.sort.options %}
@@ -141,7 +151,8 @@
                             </ul>
                         </li>
                     </ul>
-                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">Bulkselectie</button>
+                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">Bulkselectie
+                    </button>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
                             <input type="text" name="q" class="form-control"
@@ -180,13 +191,14 @@
                                             <div class="thumbnail">
                                                 <div class="centered">
                                                     <img src="{{ thumbnail }}"
-                                                        {# alt="{{ media.title }}"> #}
+                                                            {# alt="{{ media.title }}"> #}
                                                          alt="">
                                                 </div>
                                             </div>
                                         </div>
                                     </a>
-                                    <button id="bulkselection_{{ media.id }}" type="button" class="bulkselectionbutton check" tabindex="-1">
+                                    <button id="bulkselection_{{ media.id }}" type="button"
+                                            class="bulkselectionbutton check" tabindex="-1">
                                             <span class="media-modal-icon">
                                                 <i class="fa-regular fa-check"></i>
                                             </span>
@@ -204,7 +216,7 @@
 
     <style>
         .ui-droppable-hover, .bulkselected {
-            background-color: lightskyblue ;
+            background-color: lightskyblue;
         }
 
         .flash {
@@ -333,6 +345,7 @@
             cursor: pointer;
             border-radius: 4px;
         }
+
         .media-library .media-item.selected .check {
             display: block;
         }
@@ -340,6 +353,7 @@
         .media-container.mode-select .media-item .thumbnail {
             opacity: .65;
         }
+
         .media-container.mode-select .media-item.selected .thumbnail {
             opacity: 1;
         }
@@ -366,6 +380,7 @@
             top: 0;
             left: 0;
         }
+
         .media-library .media-item .thumbnail .centered {
             position: absolute;
             top: 0;
@@ -426,7 +441,8 @@
 {% endblock %}
 
 {% block webpack_js %}
-<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script
             src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
             integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0="
@@ -438,20 +454,20 @@
         let bulkSelection = [] //this keeps track which items are selected
         let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 
-        $( "#bulkselection" ).on( "click", function() {
+        $("#bulkselection").on("click", function () {
             if (bulkSelectionEnabled) {
                 disableBulkSelection()
             } else {
                 enableBulkSelection()
             }
-            bulkSelectionEnabled =! bulkSelectionEnabled
+            bulkSelectionEnabled = !bulkSelectionEnabled
         });
 
         function enableBulkSelection() {
             $('.bulkselectionbutton').removeClass('bulkselected')
             $('.media-container').addClass('mode-select')
 
-            $( ".media-item" ).on( "click", function(event) {
+            $(".media-item").on("click", function (event) {
                 handleBulkItemClick(event);
             });
         }
@@ -468,14 +484,14 @@
                 step_to = event.currentTarget.getAttribute('data-media_id') * 1
 
                 for (let step = step_from; step <= step_to; step++) {
-                    let element = document.querySelector('.media-item[data-media_id="'+step+'"]')
+                    let element = document.querySelector('.media-item[data-media_id="' + step + '"]')
 
                     //element.preventDefault();
 
                     media_id = element.getAttribute('data-id')
 
                     bulkSelection.push(media_id)
-                    $('#'+element.id).addClass('selected')
+                    $('#' + element.id).addClass('selected')
                 }
             } else {
                 //SINGLE CLICK
@@ -501,7 +517,7 @@
         }
 
         //DRAG AND DROP FUNCTIONALITY
-        (function($){
+        (function ($) {
             $(function () {
 
                 let $gallery = $("#gallery")
@@ -524,7 +540,7 @@
                         current_id = this.id
                         moveImage(ui.draggable, event, current_id);
                     },
-                    over: function(event, ui) {
+                    over: function (event, ui) {
                         // $('.display').html( this.id );
                     }
                 });
@@ -548,7 +564,7 @@
                     }
                     console.log("To: " + category_id)
                     $('.media_category').removeClass('flash')
-                    $('#'+category_id).addClass("flash");
+                    $('#' + category_id).addClass("flash");
                 }
 
                 function sendAjaxRequest() {
@@ -589,7 +605,10 @@
                     }
 
                     //'https://localhost.integratedfordevelopers.com/admin/content/37e42e2d1b8132b69b1cbb2e206e93e6'
-                    postData('https://localhost.integratedfordevelopers.com/admin/media/edit', { answer: 42, test: "rawr" })
+                    postData('https://localhost.integratedfordevelopers.com/admin/media/edit', {
+                        answer: 42,
+                        test: "rawr"
+                    })
                         .then((data) => {
                             console.log(data); // JSON data parsed by `data.json()` call
                         });
