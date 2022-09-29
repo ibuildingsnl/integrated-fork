@@ -8,7 +8,7 @@
 
     &.iframe {
         width: 100vw;
-
+        max-height: calc(100vh - 50px);
         .aside-options {
             height: 100vh
         }
@@ -87,6 +87,12 @@
 body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
     .content-wrapper {
         padding: 50px 0 0;
+    }
+}
+
+body[class*="_index"] {
+    .content-wrapper {
+        overflow-y:scroll;
     }
 }
 
