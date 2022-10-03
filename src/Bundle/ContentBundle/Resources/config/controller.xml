@@ -59,6 +59,8 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
             <argument type="service" id="integrated_content.form.channel.repository" />
             <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
+            <argument type="service" id="integrated_solr.indexer" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

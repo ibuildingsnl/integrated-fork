@@ -77,7 +77,7 @@
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
-                            id="category_{{ key }}">
+                            id="{{ menu_item.ID }}">
                             <i class="fa-regular fa-folders"></i>
                             {#                                <span>{{ menu_item.title }}</span> #}
                             <a href="{{ path(app.request.attributes.get('_route'),

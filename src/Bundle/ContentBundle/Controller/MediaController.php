@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
@@ -25,6 +26,8 @@ use Integrated\Bundle\PageBundle\Form\Type\MediaConnectType;
 use Integrated\Bundle\UserBundle\Controller\SecurityController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Security\PermissionInterface;
+use Integrated\Common\Solr\Indexer\IndexerInterface;
+use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Menu\FactoryInterface;
@@ -42,16 +45,19 @@ class MediaController extends AbstractController
     private $provider;
     private $repository;
     private $authorizationChecker;
+    private $queueSubscriber;
+    private $indexer;
 
-    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
     {
         $this->provider = $provider;
         $this->userManager = $userManager;
         $this->mediaGalleryMenu = $mediaGalleryMenu;
         $this->repository = $repository;
         $this->authorizationChecker = $authorizationChecker;
+        $this->queueSubscriber = $queueSubscriber;
+        $this->indexer = $indexer;
     }
-
 
 
     /**
@@ -127,54 +133,8 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function getContentTypeViaFacets() {
-        if (false) {
-            $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
-            $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
-        }
-    }
-
-    public function addContentTypesToUserOptions($uniqueContentTypes, $params) {
-        foreach ($uniqueContentTypes as $uniqueContentType) {
-            //The following categories are allways there:
-            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
-                continue;
-            }
-
-            //For new items:
-            $params['sort']['options'][$uniqueContentType] = [
-                'name' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
-
-            //For filtering:
-            $params['types'][$uniqueContentType] = [
-                'type' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
-        }
-
-        return $params;
-    }
-
-    public function getMenuItems() {
-        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
-        $menuItems = [];
-
-        if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
-            foreach ($mediaGalleryMenuResult as $menuItem) {
-                $menuItems[] = [
-                    "ID" => $menuItem->getId(),
-                    "title" => $menuItem->getTitle(),
-                    'parent_id' => $menuItem->getParentId()
-                ];
-            }
-        }
-
-        return $menuItems;
-    }
-
-    public function getChannels() {
+    public function getChannels()
+    {
         $channels = [];
         if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
             /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
@@ -201,7 +161,56 @@ class MediaController extends AbstractController
         return $channelAuthorisations;
     }
 
-    public function getParams($class_string, $media_taxonomy) {
+    public function getMenuItems()
+    {
+        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
+        $menuItems = [];
+
+        if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
+            foreach ($mediaGalleryMenuResult as $menuItem) {
+                $menuItems[] = [
+                    "ID" => $menuItem->getId(),
+                    "title" => $menuItem->getTitle(),
+                    'parent_id' => $menuItem->getParentId()
+                ];
+            }
+        }
+
+        return $menuItems;
+    }
+
+    public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0)
+    {
+        if (!is_array($inArray)) {
+            return;
+        }
+
+        if (!is_array($outArray)) {
+            return;
+        }
+
+        foreach ($inArray as $key => $tuple) {
+            if ($tuple['parent_id'] == $currentParentId) {
+                $tuple['children'] = array();
+                $this->makeParentChildRelations($inArray, $tuple['children'], $tuple['ID']);
+                $outArray[] = $tuple;
+            }
+        }
+    }
+
+    public function getContentTypes()
+    {
+        $contentTypes = [];
+        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
+            foreach ($dbContentTypes as $menuItem) {
+                $contentTypes[] = $menuItem->getContentType();
+            }
+        }
+        return array_unique($contentTypes);
+    }
+
+    public function getParams($class_string, $media_taxonomy)
+    {
         return [
             'sort' => [
                 'options' => [
@@ -247,49 +256,109 @@ class MediaController extends AbstractController
         ];
     }
 
-    public function getContentTypes() {
-        $contentTypes = [];
-        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
-            foreach ($dbContentTypes as $menuItem) {
-                $contentTypes[] = $menuItem->getContentType();
+    public function addContentTypesToUserOptions($uniqueContentTypes, $params)
+    {
+        foreach ($uniqueContentTypes as $uniqueContentType) {
+            //The following categories are allways there:
+            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
+                continue;
             }
+
+            //For new items:
+            $params['sort']['options'][$uniqueContentType] = [
+                'name' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+
+            //For filtering:
+            $params['types'][$uniqueContentType] = [
+                'type' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
         }
-        return array_unique($contentTypes);
+
+        return $params;
     }
 
-    public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0) {
-        if(!is_array($inArray)) {
-            return;
-        }
-
-        if(!is_array($outArray)) {
-            return;
-        }
-
-        foreach($inArray as $key => $tuple) {
-            if($tuple['parent_id'] == $currentParentId) {
-                $tuple['children'] = array();
-                $this->makeParentChildRelations($inArray, $tuple['children'], $tuple['ID']);
-                $outArray[] = $tuple;
-            }
+    public function getContentTypeViaFacets()
+    {
+        if (false) {
+            $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
+            $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
         }
     }
 
-    public function addChannel(Request $request) {
+    public function addChannel(Request $request)
+    {
         echo "AddChannel";
 
         dd($request);
     }
-    public function addCategpry(Request $request) {
+
+    public function addCategpry(Request $request)
+    {
         echo "addCategpry";
 
         dd($request);
     }
 
-    public function edit(Request $request) {
-        $params = $request->query->all();
+    //Update relation of mediaItems
+    public function edit(Request $request)
+    {
+        $this->dm = $this->getDoctrineODM()->getManager();
 
-        dd($params);
+        $params = $request->query->all();
+//      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
+//      "category_id" => "category_2-1"                                OPTIONAL, one
+//      "channel_id" => "3324234"                                      OPTIONAL, one
+
+        //get the Taxonomy (Category) with $params["category_id"]
+        $taxonomy = null;
+        if ($params["category_id"]) {
+            $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params["category_id"]);
+        }
+
+        //get one or more media items with:
+        $mediaItems = $this->dm->getRepository(File::class)->findBy(array('id' => $params["media_id"]));
+
+        foreach ($mediaItems as $mediaItem) {
+            if ($relation = $mediaItem->getRelation('mediaitem_channelcategory')) {
+                dump('there is a relation');
+            } else {
+                dump('new relation');
+                $relation = (new Relation())
+                    ->setRelationId('mediaitem_channelcategory')
+                    ->setRelationType('taxonomy');
+            }
+
+            //Check if references already contain this id:
+            $relationIDs = $relation->getReferences()->map(function ($item) {
+                return $item->getID();
+            })->toArray();
+            if (in_array($taxonomy->getID(), $relationIDs)) {
+                dump('relation already exists');
+            } else {
+                dump('setting the new relation');
+                // Add the new taxonomy item
+                $relation->addReference($taxonomy);
+                $mediaItem->addRelation($relation);
+                $this->dm->persist($mediaItem);
+                $this->dm->flush();
+                $this->updateQueueToSolr($mediaItem);
+            }
+        }
+
+        dd('done');
+    }
+
+    public function updateQueueToSolr($content) {
+        dump("running solr update q");
+        $queue = $this->queueSubscriber->getQueue();
+        $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
+        $this->dm->persist($content);
+        $this->dm->flush();
+        $this->indexer->setOption('queue.size', 2);
+        $this->indexer->execute();
     }
 
     public function menu()
