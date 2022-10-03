@@ -599,26 +599,29 @@
                 }
 
                 function sendAjaxRequest(category_id, media_id) {
+
+                    let csrf = document.querySelector('#media_category_csrf').value
+                    let csrf_val = csrf.value
+
+                    let jsonContent = JSON.stringify({
+                        csrf: csrf,
+                        category_id: category_id,
+                        media_id: media_id
+                    })
+
+                    postData('https://localhost.integratedfordevelopers.com/admin/media/edit', jsonContent
+
+                    ).then((data) => {
+                        console.log(data); // JSON data parsed by `data.json()` call
+                    });
+
+                    return;
+
                     $('#media_id').val(media_id)
                     $('#category_id').val(category_id)
                     $('form#media_form').submit();
 
                     return
-
-                    // var url = 'https://localhost.integratedfordevelopers.com/admin/content';
-                    // var data = {username: 'courseya'};fetch(url, {
-                    //     method: 'POST', // or 'PUT'
-                    //     body: JSON.stringify(data), // data can be `string` or {object}!
-                    //     headers:{
-                    //         'Content-Type': 'application/json'
-                    //     }
-                    // }).then(res => res.json())
-                    //     .then(response => console.log('Success:', JSON.stringify(response)))
-                    //     .catch(error => console.error('Error:', error));
-                    //
-                    // return
-
-                    // console.log(path('integrated_content_content_edit_rest'))
 
                     // Example POST method implementation:
                     async function postData(url = '', data = {}) {
@@ -646,13 +649,7 @@
                     //'https://localhost.integratedfordevelopers.com/admin/content/37e42e2d1b8132b69b1cbb2e206e93e6'
 
 
-                    postData('https://localhost.integratedfordevelopers.com/admin/media/edit', {
-                        answer: 42,
-                        test: "rawr"
-                    })
-                        .then((data) => {
-                            console.log(data); // JSON data parsed by `data.json()` call
-                        });
+
 
                 }
             });

@@ -36,6 +36,7 @@ use Knp\Menu\MenuItem as KnpMenuItem;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MediaController extends AbstractController
 {
@@ -305,9 +306,11 @@ class MediaController extends AbstractController
     //Update relation of mediaItems
     public function edit(Request $request)
     {
+        $messages = [];
+
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        $params = $request->query->all();
+        $params = json_decode($request->getContent(), true);
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
 //      "category_id" => "category_2-1"                                OPTIONAL, one
 //      "channel_id" => "3324234"                                      OPTIONAL, one
@@ -323,9 +326,9 @@ class MediaController extends AbstractController
 
         foreach ($mediaItems as $mediaItem) {
             if ($relation = $mediaItem->getRelation('mediaitem_channelcategory')) {
-                dump('there is a relation');
+                $messages[] = 'there is a relation';
             } else {
-                dump('new relation');
+                $messages[] = 'new relation';
                 $relation = (new Relation())
                     ->setRelationId('mediaitem_channelcategory')
                     ->setRelationType('taxonomy');
@@ -336,9 +339,9 @@ class MediaController extends AbstractController
                 return $item->getID();
             })->toArray();
             if (in_array($taxonomy->getID(), $relationIDs)) {
-                dump('relation already exists');
+                $messages[] = 'relation already exists';
             } else {
-                dump('setting the new relation');
+                $messages[] = 'setting the new relation';
                 // Add the new taxonomy item
                 $relation->addReference($taxonomy);
                 $mediaItem->addRelation($relation);
@@ -348,7 +351,7 @@ class MediaController extends AbstractController
             }
         }
 
-        dd('done');
+        return new JsonResponse(['$messages' => $messages]);
     }
 
     public function updateQueueToSolr($content) {
