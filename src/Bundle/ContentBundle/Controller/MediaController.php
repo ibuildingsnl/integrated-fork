@@ -200,8 +200,24 @@ class MediaController extends AbstractController
         }
     }
 
+    public function getContentTypeName($item) {
+        $className = $item->getClass();
+        if (str_contains($className, '\Content\File' ) ||
+            str_contains($className, '\Content\Video' ) ||
+            str_contains($className, '\Content\Image' )
+        ) {
+            return $item->getName();
+        }
+    }
+
     public function getContentTypes()
     {
+        //TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
+        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
+
+        return array_filter( $contentTypeNames);
+
+        //old
         $contentTypes = [];
         if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
             foreach ($dbContentTypes as $menuItem) {
@@ -310,6 +326,10 @@ class MediaController extends AbstractController
         $this->dm = $this->getDoctrineODM()->getManager();
 
         $params = json_decode($request->getContent(), true);
+
+
+        return new JsonResponse(['test' => $rerfg]);
+
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
 //      "category_id" => "category_2-1"                                OPTIONAL, one
 //      "channel_id" => "3324234"                                      OPTIONAL, one
