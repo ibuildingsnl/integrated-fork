@@ -61,17 +61,13 @@
 {#                            {% endfor %}#}
 {#                        </lu>#}
 
-                        <form id="media_form"  action="{{ path('integrated_content_media_edit') }}" method="PUT">
-{#                            onsubmit="event.preventDefault();"#}
-                            {# the argument of csrf_token() is an arbitrary string used to generate the token #}
+                        <form id="media_form"  action="{{ path('integrated_content_media_edit') }}">
                             <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
-                            <input type="hidden" id="test" name="test" value="wouter"/>
                             <input type="hidden" id="media_id" name="media_id" value="1123456"/>
                             <input type="hidden" id="category_id" name="category_id" value="3324234324;234324324;24242;424224"/>
                             <input type="hidden" id="channel_id" name="channel_id" value="3324234"/>
-
-                            <button id="media_category_submit" type="submit">Post</button>
                         </form>
+
                         <div class="p-2 text-red-600">CATEGORIES</div>
                         {% for key, menu_item in menuResult %}
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
@@ -87,7 +83,7 @@
 
                                 {% for key_1, menu_item_1 in menu_item.children %}
                                 <li class="menu-parent media_category"
-                                    style="margin-bottom: 1px; padding-left: 22px" id="category_{{ key }}-{{ key_1 }}">
+                                    style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
                                     <i class="fa-regular fa-folders"></i>
 {#                                    <span>{{ menu_item_1.title }}</span>#}
                                     <a href="{{ path(app.request.attributes.get('_route'),
@@ -98,7 +94,7 @@
                                         {% for key_2, menu_item_2 in menu_item_1.children %}
                                             <li class="menu-parent media_category"
                                                 style="margin-bottom: 1px; padding-left: 33px"
-                                                id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">
+                                                id="{{ menu_item_2.ID }}">
                                                 <i class="fa-regular fa-folders"></i>
 {#                                                <span>{{ menu_item_2.title }}</span>#}
                                                 <a href="{{ path(app.request.attributes.get('_route'),
@@ -588,6 +584,7 @@
                         console.log("Were bulk moving!")
                         let duplicatesRemoved = bulkSelection.filter(onlyUnique);
                         console.log(duplicatesRemoved)
+                        sendAjaxRequest(category_id, duplicatesRemoved)
                     } else {
                         console.log("We`re single moving:")
                         sendAjaxRequest(category_id, media_id)
@@ -599,12 +596,8 @@
                 }
 
                 function sendAjaxRequest(category_id, media_id) {
-
-                    let csrf = document.querySelector('#media_category_csrf').value
-                    let csrf_val = csrf.value
-
                     let jsonContent = JSON.stringify({
-                        csrf: csrf,
+                        csrf: document.querySelector('#media_category_csrf').value,
                         category_id: category_id,
                         media_id: media_id
                     })
@@ -615,17 +608,8 @@
                         console.log(data); // JSON data parsed by `data.json()` call
                     });
 
-                    return;
-
-                    $('#media_id').val(media_id)
-                    $('#category_id').val(category_id)
-                    $('form#media_form').submit();
-
-                    return
-
                     // Example POST method implementation:
                     async function postData(url = '', data = {}) {
-                        console.log("posting")
                         // Default options are marked with *
                         const response = await fetch(url, {
                             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -643,14 +627,6 @@
 
                         return response; // parses JSON response into native JavaScript objects
                     }
-
-
-
-                    //'https://localhost.integratedfordevelopers.com/admin/content/37e42e2d1b8132b69b1cbb2e206e93e6'
-
-
-
-
                 }
             });
         })(jQuery);

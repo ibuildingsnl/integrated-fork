@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -306,8 +307,6 @@ class MediaController extends AbstractController
     //Update relation of mediaItems
     public function edit(Request $request)
     {
-        $messages = [];
-
         $this->dm = $this->getDoctrineODM()->getManager();
 
         $params = json_decode($request->getContent(), true);
@@ -321,14 +320,15 @@ class MediaController extends AbstractController
             $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params["category_id"]);
         }
 
-        //get one or more media items with:
-        $mediaItems = $this->dm->getRepository(File::class)->findBy(array('id' => $params["media_id"]));
+        $mediaItems = $this->dm->createQueryBuilder(File::class)
+            ->field('id')->in($params["media_id"])
+            ->getQuery()
+            ->execute();
 
         foreach ($mediaItems as $mediaItem) {
             if ($relation = $mediaItem->getRelation('mediaitem_channelcategory')) {
-                $messages[] = 'there is a relation';
+
             } else {
-                $messages[] = 'new relation';
                 $relation = (new Relation())
                     ->setRelationId('mediaitem_channelcategory')
                     ->setRelationType('taxonomy');
@@ -339,9 +339,8 @@ class MediaController extends AbstractController
                 return $item->getID();
             })->toArray();
             if (in_array($taxonomy->getID(), $relationIDs)) {
-                $messages[] = 'relation already exists';
+                //relation exists
             } else {
-                $messages[] = 'setting the new relation';
                 // Add the new taxonomy item
                 $relation->addReference($taxonomy);
                 $mediaItem->addRelation($relation);
@@ -351,11 +350,10 @@ class MediaController extends AbstractController
             }
         }
 
-        return new JsonResponse(['$messages' => $messages]);
+        return new JsonResponse(['message' => 'Media Items were successfully added.']);
     }
 
     public function updateQueueToSolr($content) {
-        dump("running solr update q");
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
         $this->dm->persist($content);
