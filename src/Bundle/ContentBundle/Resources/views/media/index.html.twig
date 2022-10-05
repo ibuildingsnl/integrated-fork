@@ -6,7 +6,7 @@
 
         <div class="sm:w-3/12 p-2 pr-4 pl-4">
             <aside>
-                <h2 class="heading ">{% trans %}Mappen{% endtrans %}</h2>
+                <h2 class="heading ">{% trans %}Overzicht{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
                         <div class="">
@@ -17,6 +17,7 @@
                                 </a>
                             </p>
                         </div>
+
                         <div class="aside-item-search">
                             <i class="fa fa-search"></i>
                             <input type="text" class="list-search"
@@ -69,13 +70,12 @@
                         </form>
 
                         <div class="p-2 text-red-600">CATEGORIES</div>
-                        {% for key, menu_item in menuResult %}
+                        {% for key, menu_item in menu %}
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                             id="{{ menu_item.ID }}">
                             <i class="fa-regular fa-folders"></i>
-                            {#                                <span>{{ menu_item.title }}</span> #}
                             <a href="{{ path(app.request.attributes.get('_route'),
                                 app.request.query.all|merge({'MediaTaxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title }) ) }}"
                                tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
@@ -85,7 +85,6 @@
                                 <li class="menu-parent media_category"
                                     style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
                                     <i class="fa-regular fa-folders"></i>
-{#                                    <span>{{ menu_item_1.title }}</span>#}
                                     <a href="{{ path(app.request.attributes.get('_route'),
                                         app.request.query.all|merge({'MediaTaxonomy[]': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title }) ) }}"
                                        tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
@@ -96,7 +95,6 @@
                                                 style="margin-bottom: 1px; padding-left: 33px"
                                                 id="{{ menu_item_2.ID }}">
                                                 <i class="fa-regular fa-folders"></i>
-{#                                                <span>{{ menu_item_2.title }}</span>#}
                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                     app.request.query.all|merge({'MediaTaxonomy[]': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) ) }}"
                                                    tabindex="-1" role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
@@ -141,19 +139,38 @@
                     <ul class="">
                         <li class="dropdown">
                             <a href data-toggle="dropdown" role="button" id="sorting-list"
-                               class="btn btn-select space-between"><span>{{ params.sort.options[params.sort.current].label|trans }}</span>
-                                <i
-                                        class="fa-regular fa-angle-down"></i></a>
+                               class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label|trans }}</span>
+                                <i class="fa-regular fa-angle-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                {% for sort in params.sort.options %}
+                                {% for content_type in params.content_types.options %}
+                                    {% if content_type.label != 'File' %}
+                                        <li {% if content_type.name == params.content_types.current %}class="active"
+                                            {% endif %}role="presentation">
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type.name == params.content_types.default ? null : content_type.name })) }}"
+                                               tabindex="-1" role="menuitem">{{ content_type.label|trans|capitalize }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
 
-                                    <li {% if sort.name == params.sort.current %}class="active"
-                                        {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': sort.name == params.sort.default ? null : sort.name })) }}"
-                                           tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
-                                    </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="">
+                        <li class="dropdown">
+                            <a href data-toggle="dropdown" role="button" id="sorting-list"
+                               class="btn btn-select space-between"><span>{{ params.date_filter.options[params.date_filter.current].label|trans }}</span>
+                                <i class="fa-regular fa-angle-down"></i></a>
+                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
+                                {% for year_month in params.date_filter.options %}
+                                    {% if year_month.label != 'File' %}
+                                        <li {% if year_month.name == params.date_filter.current %}class="active"
+                                            {% endif %}role="presentation">
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'year_month': year_month.type == params.date_filter.default ? null : year_month.type })) }}"
+                                               tabindex="-1" role="menuitem">{{ year_month.label|trans|capitalize }}</a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
 
                             </ul>
@@ -602,7 +619,10 @@
                         media_id: media_id
                     })
 
-                    postData('https://localhost.integratedfordevelopers.com/admin/media/edit', jsonContent
+                    let path =  'https://localhost.integratedfordevelopers.com/admin/media/edit'
+                    //{{ path('integrated_content_media_edit') }} ||
+
+                    postData(path, jsonContent
 
                     ).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call
@@ -612,20 +632,16 @@
                     async function postData(url = '', data = {}) {
                         // Default options are marked with *
                         const response = await fetch(url, {
-                            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-                            mode: 'cors', // no-cors, *cors, same-origin
-                            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                            credentials: 'same-origin', // include, *same-origin, omit
-                            // headers: {
-                            //     'Content-Type': 'application/json'
-                            //     // 'Content-Type': 'application/x-www-form-urlencoded',
-                            // },
-                            redirect: 'follow', // manual, *follow, error
-                            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                            body: data // body data type must match "Content-Type" header
+                            method: 'PUT',
+                            mode: 'cors',
+                            cache: 'no-cache',
+                            credentials: 'same-origin',
+                            redirect: 'follow',
+                            referrerPolicy: 'no-referrer',
+                            body: data
                         });
 
-                        return response; // parses JSON response into native JavaScript objects
+                        return response;
                     }
                 }
             });

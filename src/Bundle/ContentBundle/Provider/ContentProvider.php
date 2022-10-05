@@ -87,12 +87,16 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
-        // Why would I add a Tag?
-        if ($class = $request->query->get('class_string')) {
+        if ($class = $request->query->get('solr_class_string')) {
             $query
                 ->createFilterQuery('class_string')
-//                ->addTag('class_string')
                 ->setQuery('class_string: ' . $class);
+        }
+
+        if ($timePeriod = $request->query->get('year_month_day_filter')) {
+            $query
+                ->createFilterQuery('pub_created')
+                ->setQuery('pub_created: ' . '['.$timePeriod.']');
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order

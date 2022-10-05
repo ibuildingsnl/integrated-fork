@@ -39,6 +39,21 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/*
+ * Goal for the user:
+ *  - show files in a coherent manner
+ *  - let the user filter / search for specific content
+ *  - let the user be able to organise with categories and channels
+ *
+ * Codewise:
+ *  - Media items are ContentType of the sort: File.
+ *  - A Media item can be a Video, Image, File(NonMedia), or a custom type. But they are all extended from file.
+ *  - To work with database, you are working with the classnames, so: Image, Video, CustomContentType
+ *  - To work with url, you work with camelcase, so: image, custom_content_type
+ *
+ *
+ */
+
 class MediaController extends AbstractController
 {
 
@@ -71,96 +86,229 @@ class MediaController extends AbstractController
     {
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        $channelAuthorisations = $this->getChannels();
-
-        $menuItems = $this->getMenuItems();
-
-        $menuResult = [];
-        $this->makeParentChildRelations($menuItems, $menuResult);
+        //not needed anymore
+        //$channelAuthorisations = $this->getChannels();
 
         //Alle content typen ophalen, ook custom
         $uniqueContentTypes = $this->getContentTypes();
 
-        //Set default if needed
-        $class_string = $request->query->get('class_string');
-        if ($class_string === true || $class_string === null) {
-            $class_string = 'File';
-            $request->query->set('class_string', "File");
-        }
+        $this->set_and_get_class_string($request);
+
+        $yearMonthFilter = $this->setYearMonthFilter($request);
 
         $media_taxonomy = $request->query->get('MediaTaxonomy');
         $request->query->set('MediaTaxonomy[]', $media_taxonomy);
 
         //TODO: vertaling neerzetten in twig template
-        $params = $this->getParams($class_string, $media_taxonomy);
-
-        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params);
-
-        $newMenu = $this->mediaGalleryMenu->getSimulation();
+        $params = $this->getParams($request);
 
         $items = $this->provider->getContentFromSolr($request, 100);
 
+        $dateFilter = $this->getDateFilter($items);
+
+        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
+
+        $newMenu = $this->mediaGalleryMenu->getSimulation();
+
         $request->query->remove('MediaTaxonomy');
 
-        $test = new ContentType;
-
-
-//        $form = $this->createForm(
-//            ContentType::class,
-//            ['categoryID' => "1"],
-//            [
-//                'action' => $this->generateUrl('integrated_user_iplist_new'),
-//                'method' => 'POST',
-//            ]
-//        );
-//
-//        $task = new MediaConnectType;
-//        $task->categoryID = 5;
-//        $form = $this->createForm(MediaConnectType::class, (new Taxonomy()));
-//        $task = new \stdClass();
-//        $task->task = '';
-
-//        $form = $this->createForm( MediaConnectType::class, $task);
-
-//            ->add('task', TextType::class)
-//            ->add('save', SubmitType::class, ['label' => 'Create Task'])
-//            ->getForm();
-
         return $this->render('@IntegratedContent/media/index.html.twig', [
-//            'form' => $form,
             'items' => $items,
             'params' => $paramsExtended,
-            'newMenu' => $newMenu,
-            'menuResult' => $menuResult
+            'menu' => $this->createMenu(),
         ]);
     }
 
-    public function getChannels()
+    public function getContentTypes()
     {
-        $channels = [];
-        if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
+        //TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
+        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
+
+        return array_filter($contentTypeNames);
+
+        //old
+        $contentTypes = [];
+        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
+            foreach ($dbContentTypes as $menuItem) {
+                $contentTypes[] = $menuItem->getContentType();
+            }
+        }
+        return array_unique($contentTypes);
+    }
+
+    public function set_and_get_class_string($request)
+    {
+        //we want to keep two things separate:
+        // - what the user asks for
+        // - what we query
+        // because with the user selection 'Alle Mediabestanden' we want to query for the class: File.
+        // but when the user clicks on 'Files' we want to query on 'NonMedia'
+
+        $class_string = $request->query->get('class_string');
+        if ($class_string === null || $class_string === "" || $class_string === 'Alle mediabestanden') {
+            $request->query->set('class_string', "Alle mediabestanden");
+            $request->query->set('solr_class_string', "File");
+        } else {
+            $request->query->set('solr_class_string', $class_string);
+        }
+
+        return $class_string;
+    }
+
+    public function setYearMonthFilter($request)
+    {
+        $yearMonthFilter = $request->query->get('year_month');
+        if ($yearMonthFilter == '') {
+            $request->query->set('year_month', 'Alles');
+            $yearMonthFilter = $request->query->get('year_month');
+        }
+
+        if (isset($yearMonthFilter) && $yearMonthFilter != null && $yearMonthFilter !== 'Alles') {
+            list($year, $month, $day) = explode('-', $yearMonthFilter);
+            $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
+            $endDate = "{$year}-{$month}-{$day}T23:59:59Z";
+            $fullDateFilter = $startDate . ' TO ' . $endDate;
+            $request->query->set('year_month_day_filter', $fullDateFilter);
+
+            //specific day:
+//                    xx                      xx
+//            2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
+            //specific month:
+//                 xx                      xx
+//            2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
+
+//            pub_created: [2022-09-17T00:00:00Z TO 2022-09-27T00:00:00Z]
+        } else if ($yearMonthFilter === 'Alles') {
+            $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
+        }
+
+        return $yearMonthFilter;
+    }
+
+    public function getParams($request)
+    {
+        return [
+            'date_filter' => [
+                'options' => [
+                    "Alles" => [
+                        'type' => 'Alles',
+                        'name' => 'Alles',
+                        'label' => 'Alles',
+                    ],
+                ],
+                'current' => $request->query->get('year_month'),
+                'default' => "Alles"
+            ],
+            'content_types' => [
+                'options' => [
+                    "Alle mediabestanden" => [
+                        'name' => 'Alle mediabestanden',
+                        'label' => 'Alle mediabestanden',
+                    ],
+                    "Image" => [
+                        'name' => 'Image',
+                        'label' => 'Images'
+                    ],
+                    "Video" => [
+                        'name' => 'Video',
+                        'label' => 'Videos'
+                    ],
+                    "NonMedia" => [
+                        'name' => 'NonMedia',
+                        'label' => 'Files'
+                    ],
+                ],
+                'current' => $request->query->get('class_string'),
+                'default' => "Alle mediabestanden"
+            ],
+            //NEW ITEMS
+            'types' => [
+                "Image" => [
+                    'type' => 'image',
+                    'label' => 'Image'
+                ],
+                "Video" => [
+                    'type' => 'video',
+                    'label' => 'Video'
+                ],
+                "File" => [
+                    'type' => 'file',
+                    'label' => 'File'
+                ],
+            ],
+            "media_taxonomy" => [
+                "current" => $request->query->get('MediaTaxonomy'),
+                "default" => null
+            ]
+        ];
+    }
+
+    public function getDateFilter($items)
+    {
+        $dates = [];
+        foreach ($items as $item) {
+            $yearMonth = $item->getCreatedAt()->format('Y-m-d');
+            if (array_key_exists($yearMonth, $dates)) {
+                $dates[$yearMonth]++;
+            } else {
+                $dates[$yearMonth] = 1;
             }
         }
 
-        $channelAuthorisations = [];
-        foreach ($channels as $index => $value) {
-            $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
-            $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
-
-            //TODO Enable this with proper data
-//            if ($read === true || $write === true) {
-            $channelAuthorisations[] = $value;
-//                $channelAuthorisations[$value ] = [
-//                    "read" => $read,
-//                    "write" => $write
-//                ];
-//            }
+        $result = [];
+        foreach ($dates as $yearMonth => $amount) {
+            $result[$yearMonth] = [
+                'label' => $yearMonth . " (" . $amount . ")",
+                'yearMonth' => $yearMonth,
+                'amount' => $amount
+            ];
         }
 
-        return $channelAuthorisations;
+        return $result;
+    }
+
+    public function addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter)
+    {
+        foreach ($uniqueContentTypes as $uniqueContentType) {
+            //The following categories are allways there, and dont need to be added again.
+            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
+                continue;
+            }
+
+            //For new items:
+            $params['content_types']['options'][$uniqueContentType] = [
+                'name' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+
+            //For filtering:
+            $params['types'][$uniqueContentType] = [
+                'type' => $uniqueContentType,
+                'label' => ucfirst($uniqueContentType)
+            ];
+        }
+
+        foreach ($dateFilter as $yearMonth) {
+            $params['date_filter']["options"][$yearMonth["yearMonth"]] = [
+                'type' => $yearMonth["yearMonth"],
+                'label' => $yearMonth["label"],
+                'name' => $yearMonth["label"]
+            ];
+        }
+
+//        dd($params);
+
+        return $params;
+    }
+
+    public function createMenu()
+    {
+        $menuItems = $this->getMenuItems();
+
+        $menuResult = [];
+        $this->makeParentChildRelations($menuItems, $menuResult);
+
+        return $menuResult;
     }
 
     public function getMenuItems()
@@ -200,102 +348,43 @@ class MediaController extends AbstractController
         }
     }
 
-    public function getContentTypeName($item) {
+    public function getChannels()
+    {
+        $channels = [];
+        if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
+            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
+            foreach ($channelResult as $channel) {
+                $channels[$channel->getId()] = $channel->getName();
+            }
+        }
+
+        $channelAuthorisations = [];
+        foreach ($channels as $index => $value) {
+            $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
+            $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
+
+            //TODO Enable this with proper data
+//            if ($read === true || $write === true) {
+            $channelAuthorisations[] = $value;
+//                $channelAuthorisations[$value ] = [
+//                    "read" => $read,
+//                    "write" => $write
+//                ];
+//            }
+        }
+
+        return $channelAuthorisations;
+    }
+
+    public function getContentTypeName($item)
+    {
         $className = $item->getClass();
-        if (str_contains($className, '\Content\File' ) ||
-            str_contains($className, '\Content\Video' ) ||
-            str_contains($className, '\Content\Image' )
+        if (str_contains($className, '\Content\File') ||
+            str_contains($className, '\Content\Video') ||
+            str_contains($className, '\Content\Image')
         ) {
             return $item->getName();
         }
-    }
-
-    public function getContentTypes()
-    {
-        //TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
-        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
-
-        return array_filter( $contentTypeNames);
-
-        //old
-        $contentTypes = [];
-        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
-            foreach ($dbContentTypes as $menuItem) {
-                $contentTypes[] = $menuItem->getContentType();
-            }
-        }
-        return array_unique($contentTypes);
-    }
-
-    public function getParams($class_string, $media_taxonomy)
-    {
-        return [
-            'sort' => [
-                'options' => [
-                    "File" => [
-                        'name' => 'File',
-                        'label' => 'Alle mediabestanden',
-                    ],
-                    "Image" => [
-                        'name' => 'Image',
-                        'label' => 'Images'
-                    ],
-                    "Video" => [
-                        'name' => 'Video',
-                        'label' => 'Videos'
-                    ],
-                    "NonMedia" => [
-                        'name' => 'NonMedia',
-                        'label' => 'Files'
-                    ],
-                ],
-                'current' => $class_string,
-                'default' => 'File'
-            ],
-            //NEW ITEMS
-            'types' => [
-                "Image" => [
-                    'type' => 'image',
-                    'label' => 'Image'
-                ],
-                "Video" => [
-                    'type' => 'video',
-                    'label' => 'Video'
-                ],
-                "File" => [
-                    'type' => 'file',
-                    'label' => 'File'
-                ],
-            ],
-            "media_taxonomy" => [
-                "current" => $media_taxonomy,
-                "default" => null
-            ]
-        ];
-    }
-
-    public function addContentTypesToUserOptions($uniqueContentTypes, $params)
-    {
-        foreach ($uniqueContentTypes as $uniqueContentType) {
-            //The following categories are allways there:
-            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
-                continue;
-            }
-
-            //For new items:
-            $params['sort']['options'][$uniqueContentType] = [
-                'name' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
-
-            //For filtering:
-            $params['types'][$uniqueContentType] = [
-                'type' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType)
-            ];
-        }
-
-        return $params;
     }
 
     public function getContentTypeViaFacets()
@@ -327,9 +416,6 @@ class MediaController extends AbstractController
 
         $params = json_decode($request->getContent(), true);
 
-
-        return new JsonResponse(['test' => $rerfg]);
-
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
 //      "category_id" => "category_2-1"                                OPTIONAL, one
 //      "channel_id" => "3324234"                                      OPTIONAL, one
@@ -340,6 +426,13 @@ class MediaController extends AbstractController
             $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params["category_id"]);
         }
 
+        //if media id is a string, convert it to an array
+        //(is_array($params["media_id"]) === false) ? $params["media_id"] = [$params["media_id"]] : '';
+        //more readable
+        if (is_array($params["media_id"]) === false) {
+            $params["media_id"] = [$params["media_id"]];
+        }
+
         $mediaItems = $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($params["media_id"])
             ->getQuery()
@@ -347,6 +440,7 @@ class MediaController extends AbstractController
 
         foreach ($mediaItems as $mediaItem) {
             if ($relation = $mediaItem->getRelation('mediaitem_channelcategory')) {
+                $message = json_encode($relation);
 
             } else {
                 $relation = (new Relation())
@@ -358,8 +452,10 @@ class MediaController extends AbstractController
             $relationIDs = $relation->getReferences()->map(function ($item) {
                 return $item->getID();
             })->toArray();
+            return new JsonResponse($relationIDs);
             if (in_array($taxonomy->getID(), $relationIDs)) {
-                //relation exists
+                //unset?
+
             } else {
                 // Add the new taxonomy item
                 $relation->addReference($taxonomy);
@@ -373,12 +469,13 @@ class MediaController extends AbstractController
         return new JsonResponse(['message' => 'Media Items were successfully added.']);
     }
 
-    public function updateQueueToSolr($content) {
+    public function updateQueueToSolr($content)
+    {
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
         $this->dm->persist($content);
         $this->dm->flush();
-        $this->indexer->setOption('queue.size', 2);
+        $this->indexer->setOption('queue.size', 2); //1 voor het item, 1 voor de commit message
         $this->indexer->execute();
     }
 
@@ -407,8 +504,5 @@ class MediaController extends AbstractController
 //            'params' => $params,
 //            'newMenu' => $newMenu
         ]);
-
-//        return $this->redirectToRoute();
-//        return $this->redirect(''));
     }
 }
