@@ -402,7 +402,6 @@
             overflow: hidden;
         }
 
-
         ul.aside-filter-menu {
             padding: 2rem;
         }
@@ -466,6 +465,7 @@
         let bulkSelectionEnabled = false //this controls if we show an icon with each image
         let bulkSelection = [] //this keeps track which items are selected
         let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
+        let draggingAmountOfItems = 1
 
         $("#bulkselection").on("click", function () {
             if (bulkSelectionEnabled) {
@@ -520,31 +520,46 @@
             }
 
             latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
+
+            draggingAmountOfItems = bulkSelection.length
         }
 
         function disableBulkSelection() {
             bulkSelection = []
             $('.media-container').removeClass('mode-select')
             $('.media-item').removeClass('selected')
+            draggingAmountOfItems = 1
             // $('.check .fa-folders').removeClass('fa-folders')
         }
 
         //DRAG AND DROP FUNCTIONALITY
         (function ($) {
             $(function () {
-
                 let $gallery = $("#gallery")
                 let $trash = $(".media_category");
 
+                //GOED VOORBEELD: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
                 $("li", $gallery).draggable({
                     // cancel: "a.ui-icon", // clicking an icon won't initiate dragging
-                    containment: "document",
+                    // containment: '#parent',
                     helper: "clone",
-                    cursor: "move",
+                    // cursor: "move",
+                    start: function(ev, ui) {
+                        // offset = $(this).offset();
+                        helper =
+                        offset = {
+                            top: 50,
+                            left: 50
+                        }
+                    }
                 });
 
                 // Let the trash be droppable, accepting the gallery items
                 $trash.droppable({
+                    activate: function( event, ui ) {
+                        let bulkSelectionLength = draggingAmountOfItems
+                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">'+bulkSelectionLength + ' item(s)</div>')
+                    },
                     accept: "#gallery > li",
                     classes: {
                         "ui-droppable-active": "ui-state-highlight"
@@ -554,6 +569,7 @@
                         moveImage(ui.draggable, event, current_id);
                     },
                     over: function (event, ui) {
+                        console.log("over")
                         // $('.display').html( this.id );
                     }
                 });
