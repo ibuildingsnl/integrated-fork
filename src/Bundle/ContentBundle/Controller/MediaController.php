@@ -76,6 +76,16 @@ class MediaController extends AbstractController
         $this->indexer = $indexer;
     }
 
+    public function test(Request $request)
+    {
+        $result = $this->provider->test($request, 100);
+
+        dd($result);
+
+        return $this->render('@IntegratedContent/media/show.html.twig', [
+            'id' => 5
+        ]);
+    }
 
     /**
      * @param Request $request
@@ -96,8 +106,8 @@ class MediaController extends AbstractController
 
         $yearMonthFilter = $this->setYearMonthFilter($request);
 
-        $media_taxonomy = $request->query->get('MediaTaxonomy');
-        $request->query->set('MediaTaxonomy[]', $media_taxonomy);
+        $mediaTaxonomy = $request->query->get('MediaTaxonomy');
+        $request->query->set('MediaTaxonomy[]', $mediaTaxonomy);
 
         //TODO: vertaling neerzetten in twig template
         $params = $this->getParams($request);
@@ -313,7 +323,7 @@ class MediaController extends AbstractController
 
     public function getMenuItems()
     {
-        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
+        //Alle MediaGalleryMenuTree items ophalen om de cacontegorieen te tonen aan de linkerkant
         $menuItems = [];
 
         if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
@@ -413,12 +423,12 @@ class MediaController extends AbstractController
     public function edit(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
-
+        $messages = [];
         $params = json_decode($request->getContent(), true);
-
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
 //      "category_id" => "category_2-1"                                OPTIONAL, one
 //      "channel_id" => "3324234"                                      OPTIONAL, one
+//      "category_id_origin" => "3324234"                              OPTIONAL, one
 
         //get the Taxonomy (Category) with $params["category_id"]
         $taxonomy = null;
@@ -439,34 +449,44 @@ class MediaController extends AbstractController
             ->execute();
 
         foreach ($mediaItems as $mediaItem) {
-            if ($relation = $mediaItem->getRelation('mediaitem_channelcategory')) {
-                $message = json_encode($relation);
-
+            if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
+                $messages[] = "relation exists?";
             } else {
-                $relation = (new Relation())
+                $messages[] = "new relation?";
+                $relations = (new Relation())
                     ->setRelationId('mediaitem_channelcategory')
                     ->setRelationType('taxonomy');
             }
 
             //Check if references already contain this id:
-            $relationIDs = $relation->getReferences()->map(function ($item) {
+            $relationIDs = $relations->getReferences()->map(function ($item) {
                 return $item->getID();
             })->toArray();
-            return new JsonResponse($relationIDs);
-            if (in_array($taxonomy->getID(), $relationIDs)) {
-                //unset?
 
+            //Remove relation when needed:
+            $category_id_origin = $params["category_id_origin"];
+            if ($category_id_origin !== "") {
+                if (in_array($category_id_origin, $relationIDs)) {
+                    $remove_this_taxonomy = $this->dm->getRepository(Taxonomy::class)->find($category_id_origin);
+                    $relations->removeReference($remove_this_taxonomy);
+                    $messages[] = 'Removed';
+                }
+            }
+
+            if (in_array($taxonomy->getID(), $relationIDs)) {
+                $messages[] = 'in array';
             } else {
+                $messages[] = 'not in array';
                 // Add the new taxonomy item
-                $relation->addReference($taxonomy);
-                $mediaItem->addRelation($relation);
+                $relations->addReference($taxonomy);
+                $mediaItem->addRelation($relations);
                 $this->dm->persist($mediaItem);
                 $this->dm->flush();
                 $this->updateQueueToSolr($mediaItem);
             }
         }
 
-        return new JsonResponse(['message' => 'Media Items were successfully added.']);
+        return new JsonResponse($messages);
     }
 
     public function updateQueueToSolr($content)

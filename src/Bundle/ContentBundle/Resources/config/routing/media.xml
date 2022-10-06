@@ -16,4 +16,8 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::menu</default>
     </route>
 
+    <route id="integrated_content_media_test" path="/test" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::test</default>
+    </route>
+
 </routes>

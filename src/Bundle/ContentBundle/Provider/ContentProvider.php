@@ -77,6 +77,87 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    public function test(Request $request, $limit)
+    {
+        $query = $this->client->createSelect();
+
+        $query->createFilterQuery('class_string')
+            ->setQuery('class_string: ' . 'File'); //TODO Dit wordt een variabele.
+
+        $facetSet = $query->getFacetSet();
+        $facet = $facetSet->createFacetRange('pub_created');
+        $facet->setField('pub_created');
+        $facet->setStart('2022-01-01T00:00:00Z');
+        $facet->setGap('+1DAY');
+        $facet->setEnd('2023-01-01T00:00:00Z');
+
+        $resultset = $this->client->select($query);
+
+        $facet = $resultset->getFacetSet()->getFacet('pub_created');
+
+        $facetValues = $facet->getValues();
+
+        $result = [];
+        foreach ($facetValues as $key => $val) {
+            if ($val !== 0) {
+                $result[$key] = $val;
+            }
+        }
+
+        dd($result);
+
+        echo 'NumFound: '.$resultset->getNumFound();
+
+        echo '<hr/>Facet ranges:<br/>';
+
+        dd($facet);
+        foreach ($facet as $range => $count) {
+
+            echo $range . ' to ' . ($range + 100) . ' [' . $count . ']<br/>';
+        }
+        dd($facet);
+
+
+//        $facetSet->createFacetField('rawr')
+//            ->setField('pub_created');
+
+        // this executes the query and returns the result
+        $resultset = $this->client->select($query);
+
+        // display the total number of documents found by Solr
+        echo 'NumFound: ' . $resultset->getNumFound();
+//        dd($resultset->getFacetSet()->getFacet('type_name'));
+        // display facet query count
+        $count = $resultset->getFacetSet()->getFacet('rawr')->getValues();
+
+        dd($count);
+        echo '<hr/>Facet query count : ' . $count;
+
+        // show documents using the resultset iterator
+        foreach ($resultset as $document) {
+
+            echo '<hr/><table>';
+            echo '<tr><th>id</th><td>' . $document->id . '</td></tr>';
+            echo '<tr><th>name</th><td>' . $document->title . '</td></tr>';
+            echo '<tr><th>class_string</th><td>';
+            foreach($document->class_string as $class_string) {
+                echo $class_string . " - ";
+            }
+            echo '</td></tr>';
+//            echo '<tr><th>price</th><td>' . $document->class_string . '</td></tr>';
+            echo '<tr><th>type_name</th><td>' . $document->type_name . '</td></tr>';
+            echo '</table>';
+        }
+
+        //        $query->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
+//        $query->setQuery('type_name: ((%1%))', ['']);
+        //        $query facet on type_name
+
+//        $result = $this->client->execute($query);
+
+        return $resultset;
+    }
+
     /**
      * @param Request $request
      * @param $limit
@@ -96,7 +177,7 @@ class ContentProvider
         if ($timePeriod = $request->query->get('year_month_day_filter')) {
             $query
                 ->createFilterQuery('pub_created')
-                ->setQuery('pub_created: ' . '['.$timePeriod.']');
+                ->setQuery('pub_created: ' . '[' . $timePeriod . ']');
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order

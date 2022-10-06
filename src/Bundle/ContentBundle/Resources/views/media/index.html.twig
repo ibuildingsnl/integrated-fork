@@ -25,59 +25,27 @@
                                    onkeyup="asideItemsSearch(this)"
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
-{#                        <div class="p-2 text-red-600">CHANNELS</div>#}
-{#                        <lu class="aside-filter-menu trash ui-widget-content ui-state-default bg-red-200 " id="trash">#}
-{#                            {% for key, menu_item in newMenu %}#}
-{#                                <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->#}
-{#                            <li class="menu-parent media_category"#}
-{#                                style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"#}
-{#                                id="category_{{ key }}">#}
-{#                                <i class="fa-regular fa-folders"></i>#}
-{#                                <span>{{ menu_item.title }}</span>#}
-{#                                {% if menu_item.children %}#}
-
-{#                                    {% for key_1, menu_item_1 in menu_item.children %}#}
-{#                                    <li class="menu-parent media_category"#}
-{#                                        style="margin-bottom: 1px; padding-left: 22px"#}
-{#                                        id="category_{{ key }}-{{ key_1 }}">#}
-{#                                        <i class="fa-regular fa-folders"></i>#}
-{#                                        <span>{{ menu_item_1.title }}</span>#}
-{#                                        {% if menu_item_1.children %}#}
-
-{#                                            {% for key_2, menu_item_2 in menu_item_1.children %}#}
-{#                                                <li class="menu-parent media_category"#}
-{#                                                    style="margin-bottom: 1px; padding-left: 33px"#}
-{#                                                    id="category_{{ key }}-{{ key_1 }}-{{ key_2 }}">#}
-{#                                                    <i class="fa-regular fa-folders"></i>#}
-{#                                                    <span>{{ menu_item_2.title }}</span>#}
-{#                                                </li>#}
-{#                                            {% endfor %}#}
-
-{#                                        {% endif %}#}
-{#                                        </li>#}
-{#                                    {% endfor %}#}
-
-{#                                {% endif %}#}
-{#                                </li>#}
-{#                            {% endfor %}#}
-{#                        </lu>#}
 
                         <form id="media_form"  action="{{ path('integrated_content_media_edit') }}">
                             <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
-                            <input type="hidden" id="media_id" name="media_id" value="1123456"/>
-                            <input type="hidden" id="category_id" name="category_id" value="3324234324;234324324;24242;424224"/>
-                            <input type="hidden" id="channel_id" name="channel_id" value="3324234"/>
+                            <input type="hidden" id="media_id" name="media_id" value=""/>
+                            <input type="hidden" id="category_id" name="category_id" value=""/>
+                            <input type="hidden" id="channel_id" name="channel_id" value=""/>
                         </form>
 
                         <div class="p-2 text-red-600">CATEGORIES</div>
                         {% for key, menu_item in menu %}
+                            {{ dump(menu_item) }}
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                             id="{{ menu_item.ID }}">
                             <i class="fa-regular fa-folders"></i>
                             <a href="{{ path(app.request.attributes.get('_route'),
-                                app.request.query.all|merge({'MediaTaxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title }) ) }}"
+                                app.request.query.all|
+                                merge({'MediaTaxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
+                                merge({'media_taxonomy_id':menu_item.ID})
+                            ) }}"
                                tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
                             {% if menu_item.children %}
 
@@ -86,7 +54,10 @@
                                     style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
                                     <i class="fa-regular fa-folders"></i>
                                     <a href="{{ path(app.request.attributes.get('_route'),
-                                        app.request.query.all|merge({'MediaTaxonomy[]': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title }) ) }}"
+                                        app.request.query.all|
+                                        merge({'MediaTaxonomy[]': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                        merge({'media_taxonomy_id':menu_item_1.ID})
+                                    ) }}"
                                        tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
                                     {% if menu_item_1.children %}
 
@@ -96,7 +67,11 @@
                                                 id="{{ menu_item_2.ID }}">
                                                 <i class="fa-regular fa-folders"></i>
                                                 <a href="{{ path(app.request.attributes.get('_route'),
-                                                    app.request.query.all|merge({'MediaTaxonomy[]': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) ) }}"
+                                                    app.request.query.all|
+                                                    merge({'MediaTaxonomy[]': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                    merge({'media_taxonomy_id':menu_item_2.ID})
+
+                                                ) }}"
                                                    tabindex="-1" role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
                                             </li>
                                         {% endfor %}
@@ -475,23 +450,17 @@
 
     <script>
 
-        $("#media_category_submit").on("click", function (event) {
-            console.log("SEND")
-            event.preventDefault()
-            handleFormSubmit(event);
-        });
-
-        function handleFormSubmit(e) {
-
-            let formData = new FormData(document.querySelector('form'))
-
-            let csrf = document.querySelector('#media_category_csrf').value
-            let csrf_val = csrf.value
-            console.log(csrf)
-            console.log(csrf_val)
-            console.log(e)
-            console.log(formData)
-        }
+        // $("#media_category_submit").on("click", function (event) {
+        //     console.log("SEND")
+        //     event.preventDefault()
+        //     handleFormSubmit(event);
+        // });
+        //
+        // function handleFormSubmit(e) {
+        //     let formData = new FormData(document.querySelector('form'))
+        //     let csrf = document.querySelector('#media_category_csrf').value
+        //     let csrf_val = csrf.value
+        // }
 
         //BULKSELECTION FUNCTIONALITY
         let bulkSelectionEnabled = false //this controls if we show an icon with each image
@@ -612,25 +581,26 @@
                     $('#' + category_id).addClass("flash");
                 }
 
+                function get_current_category_id() {
+                    return new URL(location.href).searchParams.get("media_taxonomy_id") || "";
+                }
+
                 function sendAjaxRequest(category_id, media_id) {
                     let jsonContent = JSON.stringify({
                         csrf: document.querySelector('#media_category_csrf').value,
                         category_id: category_id,
-                        media_id: media_id
+                        media_id: media_id,
+                        category_id_origin: get_current_category_id(),
                     })
 
                     let path =  'https://localhost.integratedfordevelopers.com/admin/media/edit'
                     //{{ path('integrated_content_media_edit') }} ||
 
-                    postData(path, jsonContent
-
-                    ).then((data) => {
+                    postData(path, jsonContent).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call
                     });
 
-                    // Example POST method implementation:
                     async function postData(url = '', data = {}) {
-                        // Default options are marked with *
                         const response = await fetch(url, {
                             method: 'PUT',
                             mode: 'cors',
