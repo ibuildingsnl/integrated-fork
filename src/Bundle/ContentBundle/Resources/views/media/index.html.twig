@@ -26,7 +26,7 @@
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
 
-                        <form id="media_form"  action="{{ path('integrated_content_media_edit') }}">
+                        <form id="media_form"  action="{{ path('integrated_content_media_manage_relations') }}">
                             <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
                             <input type="hidden" id="media_id" name="media_id" value=""/>
                             <input type="hidden" id="category_id" name="category_id" value=""/>
@@ -593,8 +593,8 @@
                         category_id_origin: get_current_category_id(),
                     })
 
-                    let path =  'https://localhost.integratedfordevelopers.com/admin/media/edit'
-                    //{{ path('integrated_content_media_edit') }} ||
+                    let path =  'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
+                    // ||
 
                     postData(path, jsonContent).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call

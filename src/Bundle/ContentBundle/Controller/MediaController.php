@@ -420,7 +420,7 @@ class MediaController extends AbstractController
     }
 
     //Update relation of mediaItems
-    public function edit(Request $request)
+    public function manageRelations(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
         $messages = [];
@@ -429,6 +429,12 @@ class MediaController extends AbstractController
 //      "category_id" => "category_2-1"                                OPTIONAL, one
 //      "channel_id" => "3324234"                                      OPTIONAL, one
 //      "category_id_origin" => "3324234"                              OPTIONAL, one
+
+        //Is the user dragging from and to the same folder
+        //TODO disable this at client side
+        if ($params["category_id"] === $params["category_id_origin"]) {
+            return new JsonResponse('Origin is same as target');
+        }
 
         //get the Taxonomy (Category) with $params["category_id"]
         $taxonomy = null;
