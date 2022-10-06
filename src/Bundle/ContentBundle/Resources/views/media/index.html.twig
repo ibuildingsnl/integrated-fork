@@ -101,8 +101,8 @@
                             {% for type in params.types %}
                                 {% if type %}
                                     <li role="presentation">
-                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type.type }}">
-                                            {{ type.label }}
+                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type.type | title | lower | replace({' ': '_'}) }}">
+                                            {{ type.label | title }}
                                         </a>
                                     </li>
                                 {% endif %}
