@@ -76,15 +76,11 @@ class MediaController extends AbstractController
         $this->indexer = $indexer;
     }
 
-    public function test(Request $request)
+    public function getYearMonthDates(Request $request, $limit): array
     {
-        $result = $this->provider->test($request, 100);
+        $date_amount =  $this->provider->getFilterOptionsFromSolr($request, 100);
 
-        dd($result);
-
-        return $this->render('@IntegratedContent/media/show.html.twig', [
-            'id' => 5
-        ]);
+        return $this->transformDateYearToFrontendArray($date_amount);
     }
 
     /**
@@ -104,7 +100,7 @@ class MediaController extends AbstractController
 
         $this->set_and_get_class_string($request);
 
-        $yearMonthFilter = $this->setYearMonthFilter($request);
+        $this->setYearMonthFilter($request);
 
         $mediaTaxonomy = $request->query->get('MediaTaxonomy');
         $request->query->set('MediaTaxonomy[]', $mediaTaxonomy);
@@ -112,21 +108,40 @@ class MediaController extends AbstractController
         //TODO: vertaling neerzetten in twig template
         $params = $this->getParams($request);
 
-        $items = $this->provider->getContentFromSolr($request, 100);
+        $items = $this->provider->getContentFromSolr($request, 2000);
 
-        $dateFilter = $this->getDateFilter($items);
+        //we dont want a date filter based on the current files.
+        //we want a date filter, based on the solr_class_string.
+        $dateFilter = $this->getYearMonthDates($request, 1000);
 
         $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
 
-        $newMenu = $this->mediaGalleryMenu->getSimulation();
+        $paramsChecked = $this->checkIfCurrentExistsAsKey($paramsExtended);
+
+//        $newMenu = $this->mediaGalleryMenu->getSimulation();
 
         $request->query->remove('MediaTaxonomy');
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
-            'params' => $paramsExtended,
+            'params' => $paramsChecked,
             'menu' => $this->createMenu(),
         ]);
+    }
+
+    public function checkIfCurrentExistsAsKey($paramsExtended) {
+        $current_date = $paramsExtended["date_filter"]["current"];
+
+        if (key_exists($current_date, $paramsExtended["date_filter"]["options"]) === false) {
+           $paramsExtended["date_filter"]["current"] = 'Alles';
+        }
+
+        $current_content_type = $paramsExtended["content_types"]["current"];
+        if (key_exists($current_content_type, $paramsExtended["content_types"]["options"]) === false) {
+            $paramsExtended["content_types"]["current"] = null;
+        }
+
+        return $paramsExtended;
     }
 
     public function getContentTypes()
@@ -146,6 +161,11 @@ class MediaController extends AbstractController
         return array_unique($contentTypes);
     }
 
+    public function snakeToCamel($input)
+    {
+        return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
+    }
+
     public function set_and_get_class_string($request)
     {
         //we want to keep two things separate:
@@ -158,8 +178,11 @@ class MediaController extends AbstractController
         if ($class_string === null || $class_string === "" || $class_string === 'Alle mediabestanden') {
             $request->query->set('class_string', "Alle mediabestanden");
             $request->query->set('solr_class_string', "File");
-        } else {
+        } else if ($class_string === 'NonMedia' || $class_string === 'Image' || $class_string === 'Video') {
             $request->query->set('solr_class_string', $class_string);
+        } else  {
+            $camelCase = $this->snakeToCamel($class_string);
+            $request->query->set('solr_class_string', $camelCase);
         }
 
         return $class_string;
@@ -253,7 +276,13 @@ class MediaController extends AbstractController
         ];
     }
 
-    public function getDateFilter($items)
+//    public function getNewDateFilter($request, $limit) {
+//        $date_amount = $this->getYearMonthDates($request, $limit);
+//
+//
+//    }
+
+    public function getDatesOfItems($items)
     {
         $dates = [];
         foreach ($items as $item) {
@@ -265,6 +294,10 @@ class MediaController extends AbstractController
             }
         }
 
+        return $this->transformDateYearToFrontendArray($dates);
+    }
+
+    public function transformDateYearToFrontendArray($dates) {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
             $result[$yearMonth] = [
