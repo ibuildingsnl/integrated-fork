@@ -11,7 +11,6 @@
                     <div class="aside-item-wrapper">
                         <div class="">
                             <p class="p-2 ">
-{#                                <i class="fa-regular fa-folder"></i>#}
                                 <a href="{{ path(app.request.attributes.get('_route') ) }}">
                                     Alle bestanden
                                 </a>
@@ -35,7 +34,7 @@
 
                         <div class="p-2 text-red-600">CATEGORIES</div>
                         {% for key, menu_item in menu %}
-                            {{ dump(menu_item) }}
+                            {{ dump(menu_item.ID) }}
                             <!-- Hier moet nog aangegeven worden of het een parent of een child is; ContentBundle/Resources/views/menu/menu.html.twig -->
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
@@ -50,6 +49,7 @@
                             {% if menu_item.children %}
 
                                 {% for key_1, menu_item_1 in menu_item.children %}
+                                    {{ dump(menu_item_1.ID) }}
                                 <li class="menu-parent media_category"
                                     style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
                                     <i class="fa-regular fa-folders"></i>
@@ -62,6 +62,7 @@
                                     {% if menu_item_1.children %}
 
                                         {% for key_2, menu_item_2 in menu_item_1.children %}
+                                            {{ dump(menu_item_2.ID) }}
                                             <li class="menu-parent media_category"
                                                 style="margin-bottom: 1px; padding-left: 33px"
                                                 id="{{ menu_item_2.ID }}">
@@ -170,13 +171,11 @@
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                             {% for media in items %}
                                 {% if media.contentType == 'image' %}
-                                    {# TODO add stills for images #}
                                     {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
                                     {#                                    {% set thumbnail = integrated_image(media.file) %} #}
                                 {% elseif media.contentType == 'video' %}
                                     {% set thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg==' %}
                                 {% elseif media.contentType == 'file' %}
-                                    {# TODO add stills for files #}
                                     {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
                                 {% else %}
                                     {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
@@ -448,35 +447,22 @@
             crossorigin="anonymous"></script>
 
     <script>
-
-        // $("#media_category_submit").on("click", function (event) {
-        //     console.log("SEND")
-        //     event.preventDefault()
-        //     handleFormSubmit(event);
-        // });
-        //
-        // function handleFormSubmit(e) {
-        //     let formData = new FormData(document.querySelector('form'))
-        //     let csrf = document.querySelector('#media_category_csrf').value
-        //     let csrf_val = csrf.value
-        // }
-
         //BULKSELECTION FUNCTIONALITY
         let bulkSelectionEnabled = false //this controls if we show an icon with each image
         let bulkSelection = [] //this keeps track which items are selected
         let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
         let draggingAmountOfItems = 1
 
-        $("#bulkselection").on("click", function () {
+        $("#bulkselection").on("click", async function () {
             if (bulkSelectionEnabled) {
-                disableBulkSelection()
+                await disableBulkSelection()
             } else {
-                enableBulkSelection()
+                await enableBulkSelection()
             }
             bulkSelectionEnabled = !bulkSelectionEnabled
         });
 
-        function enableBulkSelection() {
+        async function enableBulkSelection() {
             $('.bulkselectionbutton').removeClass('bulkselected')
             $('.media-container').addClass('mode-select')
 
@@ -498,8 +484,6 @@
 
                 for (let step = step_from; step <= step_to; step++) {
                     let element = document.querySelector('.media-item[data-media_id="' + step + '"]')
-
-                    //element.preventDefault();
 
                     media_id = element.getAttribute('data-id')
 
@@ -524,19 +508,18 @@
             draggingAmountOfItems = bulkSelection.length
         }
 
-        function disableBulkSelection() {
+        async function disableBulkSelection() {
             bulkSelection = []
             $('.media-container').removeClass('mode-select')
             $('.media-item').removeClass('selected')
             draggingAmountOfItems = 1
-            // $('.check .fa-folders').removeClass('fa-folders')
         }
 
         //DRAG AND DROP FUNCTIONALITY
         (function ($) {
             $(function () {
                 let $gallery = $("#gallery")
-                let $trash = $(".media_category");
+                let $media_items = $(".media_category");
 
                 //GOED VOORBEELD: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
                 $("li", $gallery).draggable({
@@ -546,7 +529,6 @@
                     // cursor: "move",
                     start: function(ev, ui) {
                         // offset = $(this).offset();
-                        helper =
                         offset = {
                             top: 50,
                             left: 50
@@ -554,23 +536,20 @@
                     }
                 });
 
-                // Let the trash be droppable, accepting the gallery items
-                $trash.droppable({
+                // Let the media items be droppable, accepting the gallery items
+                $media_items.droppable({
                     activate: function( event, ui ) {
-                        let bulkSelectionLength = draggingAmountOfItems
-                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">'+bulkSelectionLength + ' item(s)</div>')
+                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">'+draggingAmountOfItems + ' item(s)</div>')
                     },
                     accept: "#gallery > li",
                     classes: {
                         "ui-droppable-active": "ui-state-highlight"
                     },
                     drop: function (event, ui) {
-                        current_id = this.id
-                        moveImage(ui.draggable, event, current_id);
+                        moveImage(ui.draggable, event, this.id);
                     },
                     over: function (event, ui) {
-                        console.log("over")
-                        // $('.display').html( this.id );
+
                     }
                 });
 
@@ -609,8 +588,8 @@
                         category_id_origin: get_current_category_id(),
                     })
 
+                    //TODO how to get the proper path?
                     let path =  'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
-                    // ||
 
                     postData(path, jsonContent).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call

@@ -56,7 +56,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MediaController extends AbstractController
 {
-
     private $mediaGalleryMenu;
     private $userManager;
     private $provider;
@@ -76,57 +75,46 @@ class MediaController extends AbstractController
         $this->indexer = $indexer;
     }
 
-    public function getYearMonthDates(Request $request, $limit): array
-    {
-        $date_amount =  $this->provider->getFilterOptionsFromSolr($request, 100);
-
-        return $this->transformDateYearToFrontendArray($date_amount);
-    }
-
     /**
      * @param Request $request
      *
      * @return Response
      */
+    //TODO: vertaling neerzetten in twig template
     public function index(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        //not needed anymore
-        //$channelAuthorisations = $this->getChannels();
-
-        //Alle content typen ophalen, ook custom
         $uniqueContentTypes = $this->getContentTypes();
 
-        $this->set_and_get_class_string($request);
+        $this->setAndGetClassString($request);
 
         $this->setYearMonthFilter($request);
 
+        //This piece of code, how can we improve it?
         $mediaTaxonomy = $request->query->get('MediaTaxonomy');
         $request->query->set('MediaTaxonomy[]', $mediaTaxonomy);
-
-        //TODO: vertaling neerzetten in twig template
-        $params = $this->getParams($request);
 
         $items = $this->provider->getContentFromSolr($request, 2000);
 
         //we dont want a date filter based on the current files.
         //we want a date filter, based on the solr_class_string.
-        $dateFilter = $this->getYearMonthDates($request, 1000);
-
-        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
-
-        $paramsChecked = $this->checkIfCurrentExistsAsKey($paramsExtended);
-
-//        $newMenu = $this->mediaGalleryMenu->getSimulation();
+        $dateFilter = $this->getYearMonthDates($request);
 
         $request->query->remove('MediaTaxonomy');
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'items' => $items,
-            'params' => $paramsChecked,
+            'params' => $this->getParams($request, $uniqueContentTypes, $dateFilter),
             'menu' => $this->createMenu(),
         ]);
+    }
+
+    public function getYearMonthDates(Request $request): array
+    {
+        $date_amount =  $this->provider->getFilterOptionsFromSolr($request);
+
+        return $this->transformDateYearToFrontendArray($date_amount);
     }
 
     public function checkIfCurrentExistsAsKey($paramsExtended) {
@@ -161,12 +149,12 @@ class MediaController extends AbstractController
         return array_unique($contentTypes);
     }
 
-    public function snakeToCamel($input)
+    public function KebabToCamel($input)
     {
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
-    public function set_and_get_class_string($request)
+    public function setAndGetClassString($request)
     {
         //we want to keep two things separate:
         // - what the user asks for
@@ -181,13 +169,19 @@ class MediaController extends AbstractController
         } else if ($class_string === 'NonMedia' || $class_string === 'Image' || $class_string === 'Video') {
             $request->query->set('solr_class_string', $class_string);
         } else  {
-            $camelCase = $this->snakeToCamel($class_string);
+            $camelCase = $this->KebabToCamel($class_string);
             $request->query->set('solr_class_string', $camelCase);
         }
 
         return $class_string;
     }
 
+    //specific day:
+    //                    xx                      xx
+    //            2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
+    //specific month:
+    //                 xx                      xx
+    //            2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
     public function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
@@ -203,14 +197,6 @@ class MediaController extends AbstractController
             $fullDateFilter = $startDate . ' TO ' . $endDate;
             $request->query->set('year_month_day_filter', $fullDateFilter);
 
-            //specific day:
-//                    xx                      xx
-//            2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
-            //specific month:
-//                 xx                      xx
-//            2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
-
-//            pub_created: [2022-09-17T00:00:00Z TO 2022-09-27T00:00:00Z]
         } else if ($yearMonthFilter === 'Alles') {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         }
@@ -218,9 +204,9 @@ class MediaController extends AbstractController
         return $yearMonthFilter;
     }
 
-    public function getParams($request)
+    public function getParams($request, $uniqueContentTypes, $dateFilter)
     {
-        return [
+        $params = [
             'date_filter' => [
                 'options' => [
                     "Alles" => [
@@ -274,13 +260,11 @@ class MediaController extends AbstractController
                 "default" => null
             ]
         ];
-    }
 
-//    public function getNewDateFilter($request, $limit) {
-//        $date_amount = $this->getYearMonthDates($request, $limit);
-//
-//
-//    }
+        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
+
+        return $this->checkIfCurrentExistsAsKey($paramsExtended);
+    }
 
     public function getDatesOfItems($items)
     {
@@ -338,8 +322,6 @@ class MediaController extends AbstractController
                 'name' => $yearMonth["label"]
             ];
         }
-
-//        dd($params);
 
         return $params;
     }
@@ -406,7 +388,7 @@ class MediaController extends AbstractController
             $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
             $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
 
-            //TODO Enable this with proper data
+            //TODO Enable this when we have proper data
 //            if ($read === true || $write === true) {
             $channelAuthorisations[] = $value;
 //                $channelAuthorisations[$value ] = [
@@ -430,29 +412,8 @@ class MediaController extends AbstractController
         }
     }
 
-    public function getContentTypeViaFacets()
-    {
-        if (false) {
-            $q = 'select/?q=*:*&rows=0&facet=on&facet.field=class_string';
-            $url = 'https://solr.localhost.e-active.nl/solr/integrated/'; //select/?q=*%3A*&rows=0&facet=on&facet.field=class_string
-        }
-    }
-
-    public function addChannel(Request $request)
-    {
-        echo "AddChannel";
-
-        dd($request);
-    }
-
-    public function addCategpry(Request $request)
-    {
-        echo "addCategpry";
-
-        dd($request);
-    }
-
     //Update relation of mediaItems
+    //I want to keep the messages for debugging
     public function manageRelations(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
@@ -460,7 +421,6 @@ class MediaController extends AbstractController
         $params = json_decode($request->getContent(), true);
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
 //      "category_id" => "category_2-1"                                OPTIONAL, one
-//      "channel_id" => "3324234"                                      OPTIONAL, one
 //      "category_id_origin" => "3324234"                              OPTIONAL, one
 
         //Is the user dragging from and to the same folder
@@ -505,6 +465,9 @@ class MediaController extends AbstractController
             //Remove relation when needed:
             $category_id_origin = $params["category_id_origin"];
             if ($category_id_origin !== "") {
+                $messages[] = 'origin: ' . $category_id_origin;
+                $messages[] = 'relationIDs: ' . implode( "-", $relationIDs);
+
                 if (in_array($category_id_origin, $relationIDs)) {
                     $remove_this_taxonomy = $this->dm->getRepository(Taxonomy::class)->find($category_id_origin);
                     $relations->removeReference($remove_this_taxonomy);
@@ -538,6 +501,7 @@ class MediaController extends AbstractController
         $this->indexer->execute();
     }
 
+    //TODO later make this
     public function menu()
     {
         $dm = $this->getDoctrineODM()->getManager();
@@ -560,8 +524,6 @@ class MediaController extends AbstractController
 
         return $this->render('@IntegratedContent/media/menu.html.twig', [
             'channels' => $channels,
-//            'params' => $params,
-//            'newMenu' => $newMenu
         ]);
     }
 }

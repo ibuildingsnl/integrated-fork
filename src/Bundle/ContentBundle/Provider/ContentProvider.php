@@ -77,13 +77,26 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function test(Request $request, $limit)
+    public function getFilterOptionsFromSolr(Request $request): array
     {
         $query = $this->client->createSelect();
 
+        //Filter on contentType
         $query->createFilterQuery('class_string')
-            ->setQuery('class_string: ' . 'File'); //TODO Dit wordt een variabele.
+            ->setQuery('class_string: ' . $request->query->get('solr_class_string'));
 
+        //Filter on Category /
+        if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
+            $relation = $this->dm->getRepository(Relation::class)->find('mediaitem_channelcategory');
+            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
+
+            $query
+                ->createFilterQuery($name)
+                ->addTag($name)
+                ->setQuery('facet_' . $relation->getId() . ': ((%1%))', $selectedCategory);
+        }
+
+        //TODO with some more data, update this to MONTH
         $facetSet = $query->getFacetSet();
         $facet = $facetSet->createFacetRange('pub_created');
         $facet->setField('pub_created');
@@ -91,71 +104,22 @@ class ContentProvider
         $facet->setGap('+1DAY');
         $facet->setEnd('2023-01-01T00:00:00Z');
 
-        $resultset = $this->client->select($query);
+        $resultSet = $this->client->select($query);
 
-        $facet = $resultset->getFacetSet()->getFacet('pub_created');
+        $facet = $resultSet->getFacetSet()->getFacet('pub_created');
 
         $facetValues = $facet->getValues();
 
         $result = [];
         foreach ($facetValues as $key => $val) {
+            $yyyy_mm_dd = substr($key, 0, 10);
+
             if ($val !== 0) {
-                $result[$key] = $val;
+                $result[$yyyy_mm_dd] = $val;
             }
         }
 
-        dd($result);
-
-        echo 'NumFound: '.$resultset->getNumFound();
-
-        echo '<hr/>Facet ranges:<br/>';
-
-        dd($facet);
-        foreach ($facet as $range => $count) {
-
-            echo $range . ' to ' . ($range + 100) . ' [' . $count . ']<br/>';
-        }
-        dd($facet);
-
-
-//        $facetSet->createFacetField('rawr')
-//            ->setField('pub_created');
-
-        // this executes the query and returns the result
-        $resultset = $this->client->select($query);
-
-        // display the total number of documents found by Solr
-        echo 'NumFound: ' . $resultset->getNumFound();
-//        dd($resultset->getFacetSet()->getFacet('type_name'));
-        // display facet query count
-        $count = $resultset->getFacetSet()->getFacet('rawr')->getValues();
-
-        dd($count);
-        echo '<hr/>Facet query count : ' . $count;
-
-        // show documents using the resultset iterator
-        foreach ($resultset as $document) {
-
-            echo '<hr/><table>';
-            echo '<tr><th>id</th><td>' . $document->id . '</td></tr>';
-            echo '<tr><th>name</th><td>' . $document->title . '</td></tr>';
-            echo '<tr><th>class_string</th><td>';
-            foreach($document->class_string as $class_string) {
-                echo $class_string . " - ";
-            }
-            echo '</td></tr>';
-//            echo '<tr><th>price</th><td>' . $document->class_string . '</td></tr>';
-            echo '<tr><th>type_name</th><td>' . $document->type_name . '</td></tr>';
-            echo '</table>';
-        }
-
-        //        $query->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
-//        $query->setQuery('type_name: ((%1%))', ['']);
-        //        $query facet on type_name
-
-//        $result = $this->client->execute($query);
-
-        return $resultset;
+        return $result;
     }
 
     /**
