@@ -93,7 +93,7 @@ class ContentProvider
             $query
                 ->createFilterQuery($name)
                 ->addTag($name)
-                ->setQuery('facet_' . $relation->getId() . ': ((%1%))', $selectedCategory);
+                ->setQuery('facet_' . $relation->getId() . ': ((%1%))', [implode(') OR (', $selectedCategory)]);
         }
 
         //TODO with some more data, update this to MONTH

@@ -87,6 +87,14 @@ class MediaController extends AbstractController
     //TODO: vertaling neerzetten in twig template
     public function index(Request $request)
     {
+        $allSelectedCategoryTitles = null;
+
+        $params["selected_taxonomy"] = NULL;
+        $selectedMediaTaxonomy = $request->query->get('MediaTaxonomy');
+        if ($selectedMediaTaxonomy !== NULL) {
+            $params["selected_taxonomy"] = $selectedMediaTaxonomy[0];
+        }
+
         $this->dm = $this->getDoctrineODM()->getManager();
 
         $only_allowed_taxonomy_id = $request->query->get('media_taxonomy_id');
@@ -98,9 +106,6 @@ class MediaController extends AbstractController
             $request->query->set('MediaTaxonomy', $allSelectedCategoryTitles);
         }
 
-        //Is this needed? not sure anymore
-        $request->query->set('MediaTaxonomy[]', $request->query->get('MediaTaxonomy'));
-
         $uniqueContentTypes = $this->getContentTypes();
 
         $this->setAndGetClassString($request);
@@ -109,57 +114,19 @@ class MediaController extends AbstractController
 
         $items = $this->provider->getContentFromSolr($request, 2000);
 
-        if ($only_allowed_taxonomy_id !== NULL) {
-            $items2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
-                return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
-                    if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                        return $relation->getReferences()->filter(function ($reference) use ($only_allowed_taxonomy_id) {
-                                return $reference->getID() === $only_allowed_taxonomy_id;
-                            })->count() > 0;
-                    }
-                });
-            });
-        }
-
-        $filtered_items_2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
-            return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
-                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                    return array_filter($relation->getReferences()->toArray(), function ($reference) use ($only_allowed_taxonomy_id) {
-                        return $reference->getID() === $only_allowed_taxonomy_id;
-                    });
-                }
-            });
-        });
-
-        $filtered_items = [];
-        foreach ($items as $item) {
-            $addToResult = false;
-//            dd($item->getFile()->getMetadata()->getExtension());
-            foreach ($item->getRelations() as $relation) {
-                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                    foreach ($relation->getReferences() as $reference) {
-                        if ($reference->getID() === $only_allowed_taxonomy_id) {
-                            $addToResult = true;
-                        }
-                    }
-                }
-            }
-            if ($addToResult === true) {
-                $filtered_items[] = $item;
-            }
-        }
-
         $dateFilter = $this->getYearMonthDates($request);
 
-        $request->query->remove('MediaTaxonomy[]');
         $request->query->remove('MediaTaxonomy');
+        $request->query->remove('MediaTaxonomy[]');
+
+        $params = array_merge($params, $this->getParams($request, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'not_shown_filetypes' => array_map(fn($item) => strtolower($item),
                 $this->notShownFileTypes
              ),
             'items' => $items,
-            'params' => $this->getParams($request, $uniqueContentTypes, $dateFilter),
+            'params' => $params,
             'menu' => $menu,
         ]);
     }
@@ -190,6 +157,47 @@ class MediaController extends AbstractController
         }
 
         return $menuItems;
+    }
+
+    public function filterInThreeDifferentWays() {
+        if ($only_allowed_taxonomy_id !== NULL) {
+            $items2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
+                return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
+                    if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                        return $relation->getReferences()->filter(function ($reference) use ($only_allowed_taxonomy_id) {
+                                return $reference->getID() === $only_allowed_taxonomy_id;
+                            })->count() > 0;
+                    }
+                });
+            });
+        }
+
+        $filtered_items_2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
+            return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
+                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                    return array_filter($relation->getReferences()->toArray(), function ($reference) use ($only_allowed_taxonomy_id) {
+                        return $reference->getID() === $only_allowed_taxonomy_id;
+                    });
+                }
+            });
+        });
+
+        $filtered_items = [];
+        foreach ($items as $item) {
+            $addToResult = false;
+            foreach ($item->getRelations() as $relation) {
+                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                    foreach ($relation->getReferences() as $reference) {
+                        if ($reference->getID() === $only_allowed_taxonomy_id) {
+                            $addToResult = true;
+                        }
+                    }
+                }
+            }
+            if ($addToResult === true) {
+                $filtered_items[] = $item;
+            }
+        }
     }
 
     public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0)
@@ -378,6 +386,8 @@ class MediaController extends AbstractController
                 "default" => null
             ]
         ];
+
+//        dd($params);
 
         $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
 
