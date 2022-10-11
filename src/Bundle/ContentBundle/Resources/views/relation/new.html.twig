@@ -6,16 +6,6 @@
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
             <div class="options">
                 <div class="form-actions">
                     {% block form_actions %}
@@ -31,6 +21,16 @@
                     {% endblock %}
                 </div>
             </div>
+            <div class="back">
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
+            </div>
         </div>
         <div class="aside-options">
             <aside>
@@ -45,20 +45,9 @@
                     <div class="aside-item-list">
                         <div class="aside-item-list-container">
                             <div class="status-options">
-                                {% if relation is defined and relation.createdAt is defined %}
-                                    <div class="status published">
-                                        <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
-                                    </div>
-                                    <!-- TODO: Delete button not working -->
-                                    <a class="delete"
-                                       href="{{ path('integrated_content_relation_delete', {'id': relation.id}) }}">
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </a>
-                                {% else %}
-                                    <div class="status draft">
-                                        <i class="fa-regular fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                {% endif %}
+                                <div class="status draft">
+                                    <i class="fa-regular fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -80,7 +69,7 @@
             </div>
             <section class="editor">
                 <section class="section-white section-padding section-radius">
-                    {{ form_rest(form, {'style':'horizontal'})}}
+                    {{ form_rest(form, {'style':'horizontal'}) }}
                 </section>
             </section>
         </div>
@@ -90,12 +79,12 @@
     </div>
 {% endblock %}
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-    $(document).ready(function() {
-        $('#integrated_relation_sources').select2();
-        $('#integrated_relation_targets').select2();
-    });
-    </script>
+<script>
+$(document).ready(function() {
+    $('#integrated_relation_sources').select2();
+    $('#integrated_relation_targets').select2();
+});
+</script>
 {% endblock javascript %}

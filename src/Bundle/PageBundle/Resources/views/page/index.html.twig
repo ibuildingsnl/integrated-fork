@@ -76,17 +76,17 @@
                             <td>
                                 <strong>
                                     {% if page.type == 'page' and page.domain != "" %}
-                                    {% if (page.domain == app.request.httphost) %}
-                                    <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
+                                        {% if (page.domain == app.request.httphost) %}
+                                            <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
                                         {% else %}
-                                        <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                            <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
                                            title="{% trans %}Open page{% endtrans %}">
-                                            {% endif %}
-                                            {% endif %}
-                                            {{ page.path }}
-                                            {% if page.type == 'page' and page.domain != "" %}
-                                        </a>
                                         {% endif %}
+                                    {% endif %}
+                                    {{ page.path }}
+                                    {% if page.type == 'page' and page.domain != "" %}
+                                        </a>
+                                    {% endif %}
                                     </a>
                                 </strong>
                                 <div class="row-options">

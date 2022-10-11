@@ -7,16 +7,6 @@
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
             <div class="options">
                 <div class="form-actions">
                     {% block form_actions %}
@@ -31,6 +21,16 @@
                         {% endif %}
                     {% endblock %}
                 </div>
+            </div>
+            <div class="back">
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
             </div>
         </div>
         <div class="aside-options">
@@ -64,7 +64,6 @@
                                     <div class="status published">
                                         <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
                                     </div>
-                                    <!-- TODO: Delete button not working -->
                                     <a class="delete"
                                        href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
                                         <i class="fa-regular fa-trash-can"></i>
@@ -101,24 +100,6 @@
                         {{ form_row(form.title, {'style': 'horizontal'}) }}
                     {% endif %}
 
-{#                    {% dump(field) %}#}
-{#                    {% for field in form %}#}
-{#                        {% if field.vars.name == 'useTitle' %}#}
-{#                            <div class="form-group ">#}
-{#                                <label class="control-label col-sm-4 required" for="block_edit_searchSelection">#}
-{#                                    {{ 'Published title'|trans }}#}
-{#                                </label>#}
-{#                                <div class="w-full sm:w-2/3">#}
-{#                                    <div>#}
-{#                                        <label style="font-weight: unset;" for="{{ field.vars.id }}">{{ form_widget(field) }} {{ field.vars.name|humanize }}</label>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        {% else %}#}
-{#                            {{ form_row(field) }}#}
-{#                        {% endif %}#}
-
-{#                    {% endfor %}#}
                     {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
                 </div>
             </section>
