@@ -49,7 +49,7 @@ $('.integrated_tinymce').each(function(key, elem){
              "table directionality template wordcount autoresize code"
         ,
         external_plugins: {
-            // TODO: update plugin
+            // TODO: update plugin INTEGRATED-1779
             //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
         },
         add_unload_trigger: false,
