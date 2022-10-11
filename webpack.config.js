@@ -43,6 +43,10 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         from: './node_modules/tinymce/skins',
         to: 'skins/[path][name].[ext]'
     })
+    .copyFiles({
+        from: './node_modules/tinymce/icons',
+        to: 'icons/[path][name].[ext]'
+    })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
     .enableSassLoader()
