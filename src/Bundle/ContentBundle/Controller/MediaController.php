@@ -85,25 +85,68 @@ class MediaController extends AbstractController
     {
         $this->dm = $this->getDoctrineODM()->getManager();
 
+        //This piece of code, how can we improve it?
+        $mediaTaxonomy = $request->query->get('MediaTaxonomy');
+        $request->query->set('MediaTaxonomy[]', $mediaTaxonomy);
+
         $uniqueContentTypes = $this->getContentTypes();
 
         $this->setAndGetClassString($request);
 
         $this->setYearMonthFilter($request);
 
-        //This piece of code, how can we improve it?
-        $mediaTaxonomy = $request->query->get('MediaTaxonomy');
-        $request->query->set('MediaTaxonomy[]', $mediaTaxonomy);
-
         $items = $this->provider->getContentFromSolr($request, 2000);
 
-        //we dont want a date filter based on the current files.
-        //we want a date filter, based on the solr_class_string.
+        $only_allowed_taxonomy_id = $request->query->get('media_taxonomy_id');
+
+        if ($only_allowed_taxonomy_id !== NULL) {
+            $items2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
+                return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
+                    if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                        return $relation->getReferences()->filter(function ($reference) use ($only_allowed_taxonomy_id) {
+                            return $reference->getID() === $only_allowed_taxonomy_id;
+                        })->count() > 0;
+                    }
+                });
+            });
+        }
+
+        $filtered_items_2 = array_filter($items, function($item) use ($only_allowed_taxonomy_id) {
+            return array_filter($item->getRelations()->toArray(), function($relation) use ($only_allowed_taxonomy_id) {
+                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                    return array_filter($relation->getReferences()->toArray(), function($reference) use ($only_allowed_taxonomy_id) {
+                        return $reference->getID() === $only_allowed_taxonomy_id;
+                    });
+                }
+            });
+        });
+
+        $filtered_items = [];
+        foreach ($items as $item) {
+            $addToResult = false;
+//            dd($item->getFile()->getMetadata()->getExtension());
+            foreach ($item->getRelations() as $relation) {
+                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
+                    foreach ($relation->getReferences() as $reference) {
+                        if ($reference->getID() === $only_allowed_taxonomy_id) {
+                            $addToResult = true;
+                        }
+                    }
+                }
+            }
+            if ($addToResult === true) {
+                $filtered_items[] = $item;
+            }
+        }
+
         $dateFilter = $this->getYearMonthDates($request);
 
+        $request->query->remove('MediaTaxonomy[]');
         $request->query->remove('MediaTaxonomy');
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
+            'not_shown_filetypes' => array_map(fn($item) => strtolower($item),
+                ['jpg', 'jpeg', 'png', 'tif', 'webp', 'MP4',  'MOV',  'AVI',  'FLV',  'MKV',  'WMV']),
             'items' => $items,
             'params' => $this->getParams($request, $uniqueContentTypes, $dateFilter),
             'menu' => $this->createMenu(),
@@ -281,6 +324,9 @@ class MediaController extends AbstractController
         return $this->transformDateYearToFrontendArray($dates);
     }
 
+    public function resetAllItems() {
+
+    }
     public function transformDateYearToFrontendArray($dates) {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {

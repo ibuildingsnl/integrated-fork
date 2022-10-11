@@ -196,6 +196,13 @@
                                             </div>
                                         </div>
                                     </a>
+
+                                    <div>
+                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                            {{ media.file|split('.')|last | lower }}
+                                        {% endif %}
+                                    </div>
+
                                     <button id="bulkselection_{{ media.id }}" type="button"
                                             class="bulkselectionbutton check" tabindex="-1">
                                             <span class="media-modal-icon">
