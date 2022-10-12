@@ -65,8 +65,35 @@ class MediaController extends AbstractController
     private $indexer;
 
     //settings:
-    private $showFilesOfSubcategories = true;
-    private $notShownFileTypes = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'MP4', 'MOV', 'AVI', 'FLV', 'MKV', 'WMV'];
+    const SHOW_FILES_OF_SUBCATEGORY = FALSE;
+    const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'MP4', 'MOV', 'AVI', 'FLV', 'MKV', 'WMV'];
+    const HARD_CODED_CATEGORY = 'MediaTaxonomy';
+    const DEFAULT_FILE_TYPES = [
+        'image' => [
+            "label_singular" => 'Image',
+            "label_plural" => 'Images',
+            "solr_name" => 'Image',
+            "new_type_location" => 'image',
+            'class_name' => 'Image',
+            "class_path" => 'Integrated\Bundle\ContentBundle\Document\Content\Image',
+        ],
+        'video' => [
+            "label_singular" => 'Video',
+            "label_plural" => 'Video',
+            "solr_name" => 'Video',
+            "new_type_location" => 'video',
+            'class_name' => 'Video',
+            "class_path" => 'Integrated\Bundle\ContentBundle\Document\Content\Video',
+        ],
+        'file' => [
+            "label_singular" => 'File',
+            "label_plural" => 'Files',
+            "solr_name" => 'NonMedia',
+            "new_type_location" => 'file',
+            'class_name' => 'File',
+            "class_path" => 'Integrated\Bundle\ContentBundle\Document\Content\File',
+        ]
+    ];
 
     public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
     {
@@ -90,7 +117,7 @@ class MediaController extends AbstractController
         $allSelectedCategoryTitles = null;
 
         $params["selected_taxonomy"] = NULL;
-        $selectedMediaTaxonomy = $request->query->get('MediaTaxonomy');
+        $selectedMediaTaxonomy = $request->query->get($this::HARD_CODED_CATEGORY);
         if ($selectedMediaTaxonomy !== NULL) {
             $params["selected_taxonomy"] = $selectedMediaTaxonomy[0];
         }
@@ -101,9 +128,9 @@ class MediaController extends AbstractController
 
         $menu = $this->createMenu();
 
-        if ($only_allowed_taxonomy_id !== NULL && $this->showFilesOfSubcategories === true) {
+        if ($only_allowed_taxonomy_id !== NULL && $this::SHOW_FILES_OF_SUBCATEGORY === true) {
             $allSelectedCategoryTitles = $this->findSelectedMenuTitles($menu, $only_allowed_taxonomy_id);
-            $request->query->set('MediaTaxonomy', $allSelectedCategoryTitles);
+            $request->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
         }
 
         $uniqueContentTypes = $this->getContentTypes();
@@ -116,14 +143,14 @@ class MediaController extends AbstractController
 
         $dateFilter = $this->getYearMonthDates($request);
 
-        $request->query->remove('MediaTaxonomy');
-        $request->query->remove('MediaTaxonomy[]');
+        $request->query->remove($this::HARD_CODED_CATEGORY);
+        $request->query->remove($this::HARD_CODED_CATEGORY.'[]');
 
         $params = array_merge($params, $this->getParams($request, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'not_shown_filetypes' => array_map(fn($item) => strtolower($item),
-                $this->notShownFileTypes
+                $this::NOT_SHOWN_FILETYPES
              ),
             'items' => $items,
             'params' => $params,
@@ -275,14 +302,14 @@ class MediaController extends AbstractController
         } else if ($class_string === 'NonMedia' || $class_string === 'Image' || $class_string === 'Video') {
             $request->query->set('solr_class_string', $class_string);
         } else {
-            $camelCase = $this->KebabToCamel($class_string);
+            $camelCase = $this->kebabToCamel($class_string);
             $request->query->set('solr_class_string', $camelCase);
         }
 
         return $class_string;
     }
 
-    public function KebabToCamel($input)
+    public function kebabToCamel($input)
     {
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
@@ -387,8 +414,6 @@ class MediaController extends AbstractController
             ]
         ];
 
-//        dd($params);
-
         $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
 
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
@@ -397,8 +422,8 @@ class MediaController extends AbstractController
     public function addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter)
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
-            //The following categories are allways there, and dont need to be added again.
-            if ($uniqueContentType === 'file' || $uniqueContentType === 'video' || $uniqueContentType === 'image') {
+            //The default categories are always there, and dont need to be added again.
+            if (in_array($uniqueContentType, array_column($this::DEFAULT_FILE_TYPES, "class_name"))) {
                 continue;
             }
 
@@ -414,6 +439,7 @@ class MediaController extends AbstractController
                 'label' => ucfirst($uniqueContentType)
             ];
         }
+//        dd("fone");
 
         foreach ($dateFilter as $yearMonth) {
             $params['date_filter']["options"][$yearMonth["yearMonth"]] = [
@@ -505,11 +531,10 @@ class MediaController extends AbstractController
 
     public function getContentTypeName($item)
     {
+        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $className = $item->getClass();
-        if (str_contains($className, '\Content\File') ||
-            str_contains($className, '\Content\Video') ||
-            str_contains($className, '\Content\Image')
-        ) {
+
+        if (in_array($className, $contentTypes)) {
             return $item->getName();
         }
     }
@@ -619,7 +644,6 @@ class MediaController extends AbstractController
         if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
             /** @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($mediaGalleryMenuResult as $menuItem) {
-//                dd($menuItem);
                 $menuItems[menuItem->getId()] = $channel->getName();
             }
         }
