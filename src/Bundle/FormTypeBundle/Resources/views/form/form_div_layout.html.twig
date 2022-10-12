@@ -74,8 +74,13 @@
                           data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
                           data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
                           data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
-                          placeholder="{% trans %}You're article starts here{% endtrans %}"
-                >{% if value is not empty %}{{ value }}{% endif %}</textarea>
+                          placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
+                          data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
+                    {% if value is not empty %}
+                        {{ value }}
+                    {% endif %}
+                </textarea>
+                    <!-- TODO: After TINYMCE6 implementation, make use of the dynamic placeholder -->
                 </div>
 
                 {{ block('form_errors') }}
@@ -380,101 +385,5 @@
                 {{ form_errors(form) }}
             </div>
         {% endif %}
-
-        {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
     {% endapply %}
 {% endblock form_row %}
-
-{# {% block integrated_sidebar_row %} #}
-{#    {% apply spaceless %} #}
-{#        {% set style = style|default(tailwind_get_style()) %} #}
-{#        {{ style }} #}
-{#        {% if attr.label_col is defined and attr.label_col is not empty %} #}
-{#            {% set label_col = attr.label_col %} #}
-{#        {% endif %} #}
-{#        {% if attr.widget_col is defined and attr.widget_col is not empty %} #}
-{#            {% set widget_col = attr.widget_col %} #}
-{#            {% if label is same as (false) and label_col is defined %} #}
-{#                {% set widget_col = widget_col + label_col %} #}
-{#            {% endif %} #}
-{#        {% endif %} #}
-{#        {% if attr.style is defined and attr.style is not empty %} #}
-{#            {% set style = attr.style %} #}
-{#        {% endif %} #}
-
-{#        {% set label_col = label_col|default(tailwind_get_label_col()) %} #}
-{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %} #}
-{#        {% set show_label = show_label|default(tailwind_get_show_label()) %} #}
-{#        {% set icon = icon|default(tailwind_get_icon()) %} #}
-{#        {% set state = state|default(tailwind_get_icon()) %} #}
-{#        <div class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"> #}
-{#            <div class="aside-item-header"> #}
-{#                <h3 class="aside-item-title"> #}
-{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i> #}
-{#                    <span class="aside-item-icon"> #}
-{#                            {{ form_label(form) }} #}
-{#                        </span> #}
-{#                </h3> #}
-{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i> #}
-{#            </div> #}
-{#            <div class="aside-item-list"> #}
-{#                <div class="aside-item-list-container"> #}
-{#                    <div class="input-group relative flex items-stretch w-full"> #}
-{#                        {{ block('form_input_group') }} #}
-{#                        {{ block('form_help') }} #}
-{#                        {{ form_errors(form) }} #}
-{#                    </div> #}
-{#                </div> #}
-{#            </div> #}
-{#        </div> #}
-
-{#                {% if style == 'inline' %}&nbsp;{% endif %} #}
-{#    {% endapply %} #}
-{# {% endblock integrated_sidebar_row %} #}
-
-{# {% block editor_row %} #}
-{#    {% apply spaceless %} #}
-{#        {% set style = style|default(tailwind_get_style()) %} #}
-
-{#        {% if attr.label_col is defined and attr.label_col is not empty %} #}
-{#            {% set label_col = attr.label_col %} #}
-{#        {% endif %} #}
-{#        {% if attr.widget_col is defined and attr.widget_col is not empty %} #}
-{#            {% set widget_col = attr.widget_col %} #}
-{#            {% if label is same as (false) and label_col is defined %} #}
-{#                {% set widget_col = widget_col + label_col %} #}
-{#            {% endif %} #}
-{#        {% endif %} #}
-{#        {% if attr.style is defined and attr.style is not empty %} #}
-{#            {% set style = attr.style %} #}
-{#        {% endif %} #}
-
-{#        {% set label_col = label_col|default(tailwind_get_label_col()) %} #}
-{#        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %} #}
-{#        {% set show_label = show_label|default(tailwind_get_show_label()) %} #}
-{#        {% set icon = icon|default(tailwind_get_icon()) %} #}
-{#        {% set state = state|default(tailwind_get_icon()) %} #}
-{#        <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"> #}
-{#            <div class="editor-item-header"> #}
-{#                <h3 class="editor-item-title"> #}
-{#                    <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i> #}
-{#                    <span class="editor-item-icon"> #}
-{#                            {{ form_label(form) }} #}
-{#                        </span> #}
-{#                </h3> #}
-{#                <i class="fa-regular {% if state is not empty %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></i> #}
-{#            </div> #}
-{#            <div class="editor-item-list"> #}
-{#                <div class="editor-item-list-container"> #}
-{#                    <div class="input-group relative flex items-stretch w-full"> #}
-{#                        {{ block('form_input_group') }} #}
-{#                        {{ block('form_help') }} #}
-{#                        {{ form_errors(form) }} #}
-{#                    </div> #}
-{#                </div> #}
-{#            </div> #}
-{#        </div> #}
-
-{#                {% if style == 'inline' %}&nbsp;{% endif %} #}
-{#    {% endapply %} #}
-{# {% endblock editor_row %} #}
