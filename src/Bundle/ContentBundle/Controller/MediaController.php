@@ -65,7 +65,7 @@ class MediaController extends AbstractController
     private $indexer;
 
     //settings:
-    const SHOW_FILES_OF_SUBCATEGORY = FALSE;
+    const SHOW_FILES_OF_SUBCATEGORY = FALSE; //true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'MP4', 'MOV', 'AVI', 'FLV', 'MKV', 'WMV'];
     const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     const DEFAULT_FILE_TYPES = [
@@ -112,41 +112,42 @@ class MediaController extends AbstractController
      * @return Response
      */
     //TODO: vertaling neerzetten in twig template
-    public function index(Request $request)
+    public function index(Request $request_source)
     {
         $allSelectedCategoryTitles = null;
 
+        $request_copy = clone $request_source;
+
         $params["selected_taxonomy"] = NULL;
-        $selectedMediaTaxonomy = $request->query->get($this::HARD_CODED_CATEGORY);
+        $selectedMediaTaxonomy = $request_copy->query->get($this::HARD_CODED_CATEGORY);
         if ($selectedMediaTaxonomy !== NULL) {
             $params["selected_taxonomy"] = $selectedMediaTaxonomy[0];
         }
 
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        $only_allowed_taxonomy_id = $request->query->get('media_taxonomy_id');
+        $only_allowed_taxonomy_id = $request_copy->query->get('media_taxonomy_id');
 
-        $menu = $this->createMenu();
+        $menu = $this->mediaGalleryMenu->createMenu();
 
         if ($only_allowed_taxonomy_id !== NULL && $this::SHOW_FILES_OF_SUBCATEGORY === true) {
-            $allSelectedCategoryTitles = $this->findSelectedMenuTitles($menu, $only_allowed_taxonomy_id);
-            $request->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
+            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $only_allowed_taxonomy_id);
+            $request_copy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
         }
 
         $uniqueContentTypes = $this->getContentTypes();
 
-        $this->setAndGetClassString($request);
+        $request_copy = $this->setAndGetClassString($request_copy);
 
-        $this->setYearMonthFilter($request);
+        $this->setYearMonthFilter($request_copy);
 
-        $items = $this->provider->getContentFromSolr($request, 2000);
+        $items = $this->provider->getContentFromSolr($request_copy, 2000);
 
-        $dateFilter = $this->getYearMonthDates($request);
+        $dateFilter = $this->getYearMonthDates($request_copy);
 
-        $request->query->remove($this::HARD_CODED_CATEGORY);
-        $request->query->remove($this::HARD_CODED_CATEGORY.'[]');
+        $request_source->query->remove($this::HARD_CODED_CATEGORY);
 
-        $params = array_merge($params, $this->getParams($request, $uniqueContentTypes, $dateFilter));
+        $params = array_merge($params, $this->getParams($request_copy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'not_shown_filetypes' => array_map(fn($item) => strtolower($item),
@@ -156,111 +157,6 @@ class MediaController extends AbstractController
             'params' => $params,
             'menu' => $menu,
         ]);
-    }
-
-    public function createMenu()
-    {
-        $menuItems = $this->getMenuItems();
-
-        $menuResult = [];
-        $this->makeParentChildRelations($menuItems, $menuResult);
-
-        return $menuResult;
-    }
-
-    public function getMenuItems()
-    {
-        //Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
-        $menuItems = [];
-
-        if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
-            foreach ($mediaGalleryMenuResult as $menuItem) {
-                $menuItems[] = [
-                    "ID" => $menuItem->getId(),
-                    "title" => $menuItem->getTitle(),
-                    'parent_id' => $menuItem->getParentId()
-                ];
-            }
-        }
-
-        return $menuItems;
-    }
-
-    public function filterInThreeDifferentWays() {
-        if ($only_allowed_taxonomy_id !== NULL) {
-            $items2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
-                return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
-                    if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                        return $relation->getReferences()->filter(function ($reference) use ($only_allowed_taxonomy_id) {
-                                return $reference->getID() === $only_allowed_taxonomy_id;
-                            })->count() > 0;
-                    }
-                });
-            });
-        }
-
-        $filtered_items_2 = array_filter($items, function ($item) use ($only_allowed_taxonomy_id) {
-            return array_filter($item->getRelations()->toArray(), function ($relation) use ($only_allowed_taxonomy_id) {
-                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                    return array_filter($relation->getReferences()->toArray(), function ($reference) use ($only_allowed_taxonomy_id) {
-                        return $reference->getID() === $only_allowed_taxonomy_id;
-                    });
-                }
-            });
-        });
-
-        $filtered_items = [];
-        foreach ($items as $item) {
-            $addToResult = false;
-            foreach ($item->getRelations() as $relation) {
-                if ($relation->getRelationId() === 'mediaitem_channelcategory') {
-                    foreach ($relation->getReferences() as $reference) {
-                        if ($reference->getID() === $only_allowed_taxonomy_id) {
-                            $addToResult = true;
-                        }
-                    }
-                }
-            }
-            if ($addToResult === true) {
-                $filtered_items[] = $item;
-            }
-        }
-    }
-
-    public function makeParentChildRelations(&$inArray, &$outArray, $currentParentId = 0)
-    {
-        if (!is_array($inArray)) {
-            return;
-        }
-
-        if (!is_array($outArray)) {
-            return;
-        }
-
-        foreach ($inArray as $key => $tuple) {
-            if ($tuple['parent_id'] == $currentParentId) {
-                $tuple['children'] = array();
-                $this->makeParentChildRelations($inArray, $tuple['children'], $tuple['ID']);
-                $outArray[] = $tuple;
-            }
-        }
-    }
-
-    public function findCurrentlySelectedMenu($inArray, $target)
-    {
-        foreach ($inArray as $key => $tuple) {
-            if ($tuple["ID"] === $target) {
-                return $tuple;
-            }
-
-            if (count($tuple['children']) > 0) {
-                $found = $this->findCurrentlySelectedMenu($tuple["children"], $target);
-
-                if ($found !== NULL) {
-                    return $found;
-                }
-            }
-        }
     }
 
     public function getContentTypes()
@@ -273,8 +169,8 @@ class MediaController extends AbstractController
         //old
         $contentTypes = [];
         if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
-            foreach ($dbContentTypes as $menuItem) {
-                $contentTypes[] = $menuItem->getContentType();
+            foreach ($dbContentTypes as $dbContentType) {
+                $contentTypes[] = $dbContentType->getContentType();
             }
         }
         return array_unique($contentTypes);
@@ -306,7 +202,7 @@ class MediaController extends AbstractController
             $request->query->set('solr_class_string', $camelCase);
         }
 
-        return $class_string;
+        return $request;
     }
 
     public function kebabToCamel($input)
@@ -481,24 +377,6 @@ class MediaController extends AbstractController
         }
 
         return $this->transformDateYearToFrontendArray($dates);
-    }
-
-    public function array_column_recursive(array $haystack, $needle)
-    {
-        $found = [];
-        array_walk_recursive($haystack, function ($value, $key) use (&$found, $needle) {
-            if ($key == $needle)
-                $found[] = $value;
-        });
-        return $found;
-    }
-
-    public function findSelectedMenuTitles(array $menu, string $only_allowed_taxonomy_id): array
-    {
-        $allSelectedTaxonomys = $this->findCurrentlySelectedMenu($menu, $only_allowed_taxonomy_id);
-
-        //TODO change this to ID!
-        return $this->array_column_recursive($allSelectedTaxonomys, 'title');
     }
 
     public function getChannels()
