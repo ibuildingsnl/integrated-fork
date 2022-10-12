@@ -251,7 +251,6 @@ class ContentTypeController extends AbstractController
             }
 
             if ($form->isValid()) {
-                // Only delete ContentType when there are no Content items
                 $count = \count(
                     $this->documentManager->getRepository($contentType->getClass())->findBy(
                         ['contentType' => $contentType->getId()]
@@ -259,7 +258,6 @@ class ContentTypeController extends AbstractController
                 );
 
                 if ($count > 0) {
-                    // Set flash message and redirect to item page
                     $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
 
                     return $this->redirectToRoute(

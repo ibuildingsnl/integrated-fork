@@ -37,7 +37,7 @@ class ScraperController extends AbstractController
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param ScraperService         $scraper
+     * @param ScraperService $scraper
      */
     public function __construct(EntityManagerInterface $entityManager, ScraperService $scraper)
     {
@@ -77,15 +77,20 @@ class ScraperController extends AbstractController
         $form = $this->createNewForm($scraper);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($scraper);
-            $this->entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_theme_scraper_index');
+            }
+            if ($form->isValid()) {
+                $this->entityManager->persist($scraper);
+                $this->entityManager->flush();
 
-            $this->scraper->prepare($scraper);
+                $this->scraper->prepare($scraper);
 
-            $this->addFlash('success', 'Item created');
+                $this->addFlash('success', 'Item created');
 
-            return $this->redirectToRoute('integrated_theme_scraper_edit', ['id' => $scraper->getId()]);
+                return $this->redirectToRoute('integrated_theme_scraper_edit', ['id' => $scraper->getId()]);
+            }
         }
 
         return $this->render('@IntegratedTheme/scraper/new.html.twig', [
@@ -108,14 +113,17 @@ class ScraperController extends AbstractController
         $form = $this->createEditForm($scraper);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_theme_scraper_index');
+            }
+            if ($form->isValid()) {
+                $this->entityManager->flush();
 
-            $this->scraper->prepare($scraper);
+                $this->scraper->prepare($scraper);
 
-            $this->addFlash('success', 'Item updated');
-
-//            return $this->redirectToRoute('integrated_theme_scraper_index');
+                $this->addFlash('success', 'Item updated');
+            }
         }
 
         return $this->render('@IntegratedTheme/scraper/edit.html.twig', [
@@ -138,18 +146,19 @@ class ScraperController extends AbstractController
         $form = $this->createDeleteForm($scraper);
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_theme_scraper_index');
-        }
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_theme_scraper_index');
+            }
+            if ($form->isValid()) {
+                $this->entityManager->remove($scraper);
+                $this->entityManager->flush();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($scraper);
-            $this->entityManager->flush();
+                // Set flash message
+                $this->addFlash('success', 'Item updated');
 
-            // Set flash message
-            $this->addFlash('success', 'Item updated');
-
-            return $this->redirectToRoute('integrated_theme_scraper_index');
+                return $this->redirectToRoute('integrated_theme_scraper_index');
+            }
         }
 
         return $this->render('@IntegratedTheme/scraper/delete.html.twig', [
@@ -182,8 +191,6 @@ class ScraperController extends AbstractController
     }
 
     /**
-     * Creates a form to create a Scraper.
-     *
      * @param Scraper $scraper
      *
      * @return FormInterface
@@ -205,8 +212,6 @@ class ScraperController extends AbstractController
     }
 
     /**
-     * Creates a form to delete a Scraper.
-     *
      * @param Scraper $scraper
      *
      * @return Form

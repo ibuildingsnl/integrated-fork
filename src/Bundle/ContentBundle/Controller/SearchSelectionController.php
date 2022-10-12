@@ -46,8 +46,11 @@ class SearchSelectionController extends AbstractController
      */
     private $searchContentReferenced;
 
-    public function __construct(RequestStack $requestStack, DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        DocumentManager $documentManager,
+        SearchContentReferenced $searchContentReferenced
+    ) {
         $this->requestStack = $requestStack;
         $this->documentManager = $documentManager;
         $this->searchContentReferenced = $searchContentReferenced;
@@ -86,17 +89,19 @@ class SearchSelectionController extends AbstractController
         $form = $this->createCreateForm($searchSelection);
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_content_search_selection_index');
-        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($searchSelection);
-            $this->documentManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_search_selection_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->persist($searchSelection);
+                $this->documentManager->flush();
 
-            $this->addFlash('success', 'Item created');
+                $this->addFlash('success', 'Item created');
 
-            return $this->redirectToRoute('integrated_content_search_selection_index');
+                return $this->redirectToRoute('integrated_content_search_selection_index');
+            }
         }
 
         return $this->render('@IntegratedContent/search_selection/new.html.twig', [
@@ -107,7 +112,7 @@ class SearchSelectionController extends AbstractController
     /**
      * Edits an existing SearchSelection document.
      *
-     * @param Request         $request
+     * @param Request $request
      * @param SearchSelection $searchSelection
      *
      * @return Response|RedirectResponse
@@ -139,7 +144,7 @@ class SearchSelectionController extends AbstractController
     /**
      * Deletes a SearchSelection document.
      *
-     * @param Request         $request
+     * @param Request $request
      * @param SearchSelection $searchSelection
      *
      * @return Response|RedirectResponse
@@ -210,7 +215,10 @@ class SearchSelectionController extends AbstractController
             SearchSelectionType::class,
             $searchSelection,
             [
-                'action' => $this->generateUrl('integrated_content_search_selection_new', $request ? $request->query->all() : []),
+                'action' => $this->generateUrl(
+                    'integrated_content_search_selection_new',
+                    $request ? $request->query->all() : []
+                ),
                 'method' => 'POST',
             ]
         );
@@ -233,7 +241,10 @@ class SearchSelectionController extends AbstractController
             SearchSelectionType::class,
             $searchSelection,
             [
-                'action' => $this->generateUrl('integrated_content_search_selection_edit', ['id' => $searchSelection->getId()]),
+                'action' => $this->generateUrl(
+                    'integrated_content_search_selection_edit',
+                    ['id' => $searchSelection->getId()]
+                ),
                 'method' => 'PUT',
             ]
         );
@@ -254,8 +265,8 @@ class SearchSelectionController extends AbstractController
     protected function createDeleteForm($id, bool $notDelete = false)
     {
         $form = $this->createFormBuilder()
-            ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
-            ->setMethod('DELETE');
+                     ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
+                     ->setMethod('DELETE');
 
         if ($notDelete) {
             $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);

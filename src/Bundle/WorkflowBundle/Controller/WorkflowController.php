@@ -127,8 +127,7 @@ class WorkflowController extends AbstractController
 
         /** @var Definition $workflow */
         $workflow = $this->entityManager
-//            ->getManager()
-            ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
+            ->getRepository(Definition::class)
             ->find($request->get('id'));
 
         if (!$workflow) {
@@ -139,7 +138,7 @@ class WorkflowController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -147,8 +146,6 @@ class WorkflowController extends AbstractController
                 $this->entityManager->flush();
 
                 $this->addFlash('success', sprintf('The changes to the workflow %s are saved', $workflow->getName()));
-
-                return $this->redirectToRoute('integrated_workflow_index');
             }
         }
 
@@ -180,7 +177,7 @@ class WorkflowController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 

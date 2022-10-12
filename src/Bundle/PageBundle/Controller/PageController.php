@@ -179,20 +179,23 @@ class PageController extends AbstractController
         $form = $this->createEditForm($page);
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_page_page_index');
-        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->flush();
 
-            $this->routeCache->clear();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->flush();
 
-            $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
+                $this->routeCache->clear();
 
-            $this->setLastEditPage($request->getSession(), $page);
+                $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
-            return $this->redirectToRoute('integrated_page_page_index');
+                $this->setLastEditPage($request->getSession(), $page);
+
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
         }
 
         return $this->render('@IntegratedPage/page/edit.html.twig', [

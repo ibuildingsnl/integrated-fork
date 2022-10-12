@@ -633,11 +633,8 @@ class ContentController extends AbstractController
                     if (!$locking['locked']) {
                         $locking['release']();
                     }
-
-//                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
-
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.
         }
@@ -1131,7 +1128,6 @@ class ContentController extends AbstractController
 
         if ($locking['locked']) {
             return $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
-            // Removed cancel button which will be added by default as a back button
         }
 
         return $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);

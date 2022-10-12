@@ -55,9 +55,9 @@ class BlockController extends AbstractController
 
     /**
      * @param MetadataFactoryInterface $metadataFactory
-     * @param DocumentManager          $documentManager
-     * @param PaginatorInterface       $paginator
-     * @param FilterQueryProvider      $provider
+     * @param DocumentManager $documentManager
+     * @param PaginatorInterface $paginator
+     * @param FilterQueryProvider $provider
      */
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
@@ -106,7 +106,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block   $block
+     * @param Block $block
      *
      * @return Response
      */
@@ -153,21 +153,22 @@ class BlockController extends AbstractController
         );
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_block_block_index');
-        }
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($block);
-            $this->documentManager->flush();
-
-            if ('iframe.html' === $request->getRequestFormat()) {
-                return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_block_block_index');
             }
+            if ($form->isValid()) {
+                $this->documentManager->persist($block);
+                $this->documentManager->flush();
 
-            $this->addFlash('success', 'Block created');
+                if ('iframe.html' === $request->getRequestFormat()) {
+                    return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
+                }
 
-            return $this->redirectToRoute('integrated_block_block_edit', ['id' => $block->getId()]);
+                $this->addFlash('success', 'Block created');
+
+                return $this->redirectToRoute('integrated_block_block_edit', ['id' => $block->getId()]);
+            }
         }
 
         return $this->render(sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
@@ -211,7 +212,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block   $block
+     * @param Block $block
      *
      * @return array|RedirectResponse|Response
      */
@@ -235,22 +236,22 @@ class BlockController extends AbstractController
         );
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_block_block_index');
-        }
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->flush();
-
-            if ('iframe.html' === $request->getRequestFormat()) {
-                return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', [
-                    'id' => $block->getId(),
-                ]);
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_block_block_index');
             }
 
-            $this->addFlash('success', 'Block updated');
+            if ($form->isValid()) {
+                $this->documentManager->flush();
 
-//            return $this->redirectToRoute('integrated_block_block_index');
+                if ('iframe.html' === $request->getRequestFormat()) {
+                    return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', [
+                        'id' => $block->getId(),
+                    ]);
+                }
+
+                $this->addFlash('success', 'Block updated');
+            }
         }
 
         $metadata = $this->metadataFactory->getMetadata(\get_class($block));
@@ -264,7 +265,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block   $block
+     * @param Block $block
      *
      * @return RedirectResponse|Response
      */
@@ -288,17 +289,18 @@ class BlockController extends AbstractController
         $form = $this->createDeleteForm($block->getId());
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_block_block_index');
-        }
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_block_block_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->remove($block);
+                $this->documentManager->flush();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->remove($block);
-            $this->documentManager->flush();
+                $this->addFlash('success', 'Block deleted');
 
-            $this->addFlash('success', 'Block deleted');
-
-            return $this->redirectToRoute('integrated_block_block_index');
+                return $this->redirectToRoute('integrated_block_block_index');
+            }
         }
 
         return $this->render('@IntegratedBlock/block/delete.html.twig', [

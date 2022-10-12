@@ -112,40 +112,22 @@ class RelationController extends AbstractController
         $form = $this->createNewForm($relation);
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_content_relation_index');
-        }
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->persist($relation);
+                $this->documentManager->flush();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($relation);
-            $this->documentManager->flush();
+                $this->addFlash('success', 'Item created');
 
-            $this->addFlash('success', 'Item created');
-
-            return $this->redirectToRoute('integrated_content_relation_index');
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
         }
 
         return $this->render('@IntegratedContent/relation/new.html.twig', [
             'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Display a form to edit an existing Relation document.
-     *
-     * @param Relation $relation
-     *
-     * @return Response
-     */
-    public function edit(Relation $relation)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createEditForm($relation);
-
-        return $this->render('@IntegratedContent/relation/edit.html.twig', [
-            'form' => $form->createView(),
-            'relation' => $relation,
         ]);
     }
 
@@ -164,12 +146,17 @@ class RelationController extends AbstractController
         $form = $this->createEditForm($relation);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->flush();
 
-            $this->addFlash('success', 'Item updated');
+                $this->addFlash('success', 'Item updated');
 
-            return $this->redirectToRoute('integrated_content_relation_index');
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
         }
 
         return $this->render('@IntegratedContent/relation/edit.html.twig', [
@@ -195,17 +182,18 @@ class RelationController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->get('actions')->getData() == 'cancel') {
-            return $this->redirectToRoute('integrated_content_relation_index');
-        }
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->remove($relation);
+                $this->documentManager->flush();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->remove($relation);
-            $this->documentManager->flush();
+                $this->addFlash('success', 'Relation deleted');
 
-            $this->addFlash('success', 'Relation deleted');
-
-            return $this->redirectToRoute('integrated_content_relation_index');
+                return $this->redirectToRoute('integrated_content_relation_index');
+            }
         }
 
         return $this->render('@IntegratedContent/relation/delete.html.twig', [
