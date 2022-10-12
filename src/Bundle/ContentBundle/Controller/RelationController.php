@@ -132,6 +132,25 @@ class RelationController extends AbstractController
     }
 
     /**
+     * Display a form to edit an existing Relation document.
+     *
+     * @param Relation $relation
+     *
+     * @return Response
+     */
+    public function edit(Relation $relation)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $form = $this->createEditForm($relation);
+
+        return $this->render('@IntegratedContent/relation/edit.html.twig', [
+            'form' => $form->createView(),
+            'relation' => $relation,
+        ]);
+    }
+
+    /**
      * Edits an existing Relation document.
      *
      * @param Request  $request
