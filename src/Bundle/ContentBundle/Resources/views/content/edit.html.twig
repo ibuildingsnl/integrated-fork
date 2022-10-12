@@ -21,74 +21,11 @@
     <div class="flex flex-wrap {{ form_class }}">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
+            {% dump(form) %}
         {% endblock %}
-        <div id="toolbar" class="w-full flex justify-between">
-            <div class="options">
-                <div class="convert">
-                    {% if content is defined %}
-                        {% if content.isPublished and content.getChannels|length > 0 %}
-                            <!-- TODO: Make a function for this -->
-                            <a href="#">{% trans %}Convert to draft{% endtrans %}</a>
-                        {% endif %}
-                    {% endif %}
-                </div>
-                <div class="preview">
-                    {% block content_website_links %}
-                        {% if content is defined %}
-                            {% if content.getChannels|length > 0 %}
-                                <ul class="options-no-bg">
-                                    <li class="dropdown">
-                                        <a href="#" data-toggle="dropdown" role="button" id="drop_1"
-                                           class="btn btn-dropdown">
-                                            <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
-                                            <i class="fa-regular fa-chevron-down"></i>
-                                        </a>
-                                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt" id="menu_1">
-                                            {% for channel in content.getChannels %}
-                                                {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
-                                                {% set url = integrated_url(content, channel.id, false) %}
-                                                {% if (domain != "" and url) %}
-                                                    {% if (domain != app.request.httphost) %}
-                                                        {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
-                                                    {% endif %}
-                                                    <li>
-                                                        <a target="_blank"
-                                                           href="{{ url }}">{% trans %}View on{% endtrans %} {{ channel.name }}</a>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                </ul>
-                            {% endif %}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-                <div class="form-actions">
-                    {% block form_actions %}
-                        {% if form.actions.save is defined %}
-                            {{ form_row(form.actions.save) }}
-                        {% endif %}
-                        {% if form.actions.reload is defined %}
-                            {{ form_row(form.actions.reload) }}
-                        {% endif %}
-                        {% if form.actions.create is defined %}
-                            {{ form_row(form.actions.create) }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-            </div>
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
-        </div>
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
         <div class="aside-options">
             <aside>
                 <div class="aside-holder section-gray section-radius">
