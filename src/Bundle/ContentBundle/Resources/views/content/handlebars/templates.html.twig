@@ -1,5 +1,5 @@
 {% autoescape 'js' %}
-{% verbatim %}
+    {% verbatim %}
 <script id="options-template" type="text/x-handlebars-template">
 
     <div class="options-cnt">
@@ -45,10 +45,10 @@
         {{#each items}}
             <p class="alert-dismissable closable" data-remove="{{ this.id }}">
                 {% endverbatim %}
-                    {% if editable is not defined or editable %}
-                        <button aria-hidden="true" data-dismiss="alert" class="close fa fa-xmark" type="button"></button>
-                    {% endif %}
-                {% verbatim %}
+    {% if editable is not defined or editable %}
+        <button aria-hidden="true" data-dismiss="alert" class="close fa fa-xmark" type="button"></button>
+    {% endif %}
+    {% verbatim %}
                 {{this.title}}
             </p>
         {{else}}
@@ -83,25 +83,6 @@
     </div>
     {{/hasItems}}
 </script>
-
-<!--<script id="used-by-template" type="text/x-handlebars-template">-->
-<!--    {{#hasItems pagination.numFound}}-->
-<!--    <div class="item_row">-->
-<!--        <h3 class="title">{{this.title}} <small>({{pagination.numFound}})</small></h3>-->
-<!--        <div class="content_column_inner">-->
-<!--            <ul class="custom_list li_with_margin">-->
-<!--                {{#each items}}-->
-<!--                <li>-->
-<!--                    <a href="{{this.href}}" target="_blank">-->
-<!--                        {{this.title}}-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                {{/each}}-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    {{/hasItems}}-->
-<!--</script>-->
 <script id="pagination-template" type="text/xhandlebars-template">
     {{#hasPages pagination.pageCount}}
     <div class="pagination">

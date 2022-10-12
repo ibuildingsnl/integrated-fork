@@ -1,11 +1,21 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Delete{% endtrans %} {{ contentType.name }}{% endblock title %}
+
 {% block content %}
     <div class="flex flex-wrap edit-form">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
+            <div class="options">
+                <div class="form-actions">
+                    {% block form_actions %}
+                        {% if form.actions.delete is defined %}
+                            {{ form_row(form.actions.delete) }}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
             <div class="back">
                 {% block form_return %}
                     {% if form.actions.back is defined %}
@@ -15,15 +25,6 @@
                         {{ form_row(form.actions.cancel) }}
                     {% endif %}
                 {% endblock %}
-            </div>
-            <div class="options">
-                <div class="form-actions">
-                    {% block form_actions %}
-                        {% if form.actions.delete is defined %}
-                            {{ form_row(form.actions.delete) }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
             </div>
         </div>
         <div class="aside-options"></div>
@@ -37,6 +38,7 @@
                         You are about to delete "%name%", click the delete button below to confirm the action.
                     {% endtrans %}
                 </p>
+                {{ form_rest(form, {'style':'horizontal'})}}
             </section>
         </div>
         {% block form_end %}

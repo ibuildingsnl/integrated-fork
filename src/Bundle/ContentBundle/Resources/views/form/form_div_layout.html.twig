@@ -68,6 +68,7 @@
                 <label class="checkbox-container" for="{{ element.vars.id }}">
                     <input id="{{ element.vars.id }}" name="{{ element.vars.full_name  }}" type="checkbox" {% if element.vars.value is defined %} value="{{ element.vars.value }}"{% endif %}{% if element.vars.checked %} checked="checked"{% endif %}/>
                     <span class="checkmark"></span>
+                    <div class="background"></div>
                     {{ element.vars.label|trans({}, translation_domain) }}
                 </label>
             {% else %}

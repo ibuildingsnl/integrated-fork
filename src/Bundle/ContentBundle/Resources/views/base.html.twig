@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="no-js">
 <head>
-    <title>{% block title %}{% trans %}Integrated{% endtrans %}{% endblock title %} | Integrated</title>
+    <title>{% block title %}{% trans %}Index{% endtrans %}{% endblock title %} | Integrated</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <script src="https://kit.fontawesome.com/8af8ed7fb4.js" crossorigin="anonymous"></script>
+    <!-- TODO: provide via yarn/webpack -->
     {% block style %}
         <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
@@ -49,18 +50,17 @@
     {% endblock style %}
 
 </head>
-{# {% dump(app.request.attributes.get('_route')) %} #}
 <body style="overflow: hidden;"
       class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
 {% block form_theme %}
     {% if form is defined %}
-        {% form_theme form with ['@IntegratedContent/form/form_div_layout.html.twig'] %}
+        {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
     {% endif %}
 {% endblock %}
 
 {% block header %}
     <nav class="navbar">
-        <div class="flex justify-between sm:px-4 w-full" style="">
+        <div class="flex justify-between sm:px-4 w-full">
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
             <div class="flex wrap w-full">
@@ -83,11 +83,11 @@
 {% block body %}
     <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-        {#        {% block sidebar %} #}
-        <div class="sidebar">
-            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
-        </div>
-        {#        {% endblock sidebar %} #}
+        {% block sidebar_menu %}
+            <div class="sidebar">
+                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+            </div>
+        {% endblock sidebar_menu %}
         <div class="content-wrapper">
 
             {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
@@ -172,7 +172,6 @@
             hideDropDownBackgroud();
         }
     });
-
 
     jQuery('.search-form .form-control').focus(function() {
         showDropDownBackGround();

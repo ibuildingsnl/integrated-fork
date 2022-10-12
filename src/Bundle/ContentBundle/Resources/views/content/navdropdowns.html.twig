@@ -19,7 +19,6 @@
                                     {% trans %}Assigned to me{% endtrans %}:
                                 </li>
                                 {% for doc in assignedContent %}
-                                    {% dump(doc) %}
                                     <li class="assigned-item">
                                         <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
                                             {% if doc.workflow_color_string is defined %}
@@ -85,7 +84,7 @@
                     <img src="{{ avatarurl }}" class="profile-image"/>
 
                     <span class="welcome-msg">
-                        Hallo,&nbsp;
+                        {% trans %}Hello{% endtrans %},&nbsp;
                     </span>
                     <span class="user-name">
                         {% if app.user.getRelation.getLastname is defined %}

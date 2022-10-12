@@ -1,15 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
-{# {% block crumbs %} #}
-{#    <div class="breadcrumb-holder"> #}
-{#        <div class="container mx-auto sm:px-4"> #}
-{#            <ol class="flex flex-wrap list-reset pt-3 pb-3 py-4 px-4 mb-4 bg-gray-200 rounded"> #}
-{#                <li class="active">{% trans %}Content navigator{% endtrans %}</li> #}
-{#            </ol> #}
-{#        </div> #}
-{#    </div> #}
-{# {% endblock %} #}
-
 {% block content %}
     <div class="flex flex-wrap ">
 
@@ -21,8 +11,8 @@
                         <li class="dropdown">
                             <a href data-toggle="dropdown" role="button" id="sorting-list"
                                class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
-                                : {{ params.sort.options[params.sort.current].label|trans }}</span> <i
-                                    class="fa-regular fa-angle-down"></i></a>
+                                : {{ params.sort.options[params.sort.current].label|trans }}</span>
+                                <i class="fa-regular fa-angle-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
                                 {% for sort in params.sort.options %}
                                     <li {% if sort.name == params.sort.current %}class="active"
@@ -36,8 +26,8 @@
                         {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
                         <li class="dropdown">
                             <a href data-toggle="dropdown" role="button"
-                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span> <i
-                                    class="fa-regular fa-angle-down"></i></a>
+                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
+                                <i class="fa-regular fa-angle-down"></i></a>
 
                             <ul role="menu" class=" dropdown-menu">
                                 <li role="presentation">
@@ -143,26 +133,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                {#                <ul class="list-unstyled list-content"> #}
-                {#                    {% for content in pager %} #}
-                {#                        <li> #}
-                {#                            <ul class="list-inline"> #}
-                {#                                <li> #}
-                {#                                    {% if content.workflow_state is defined %} #}
-                {#                                        {{ content.workflow_state|default }} | #}
-                {#                                    {% endif %} #}
-                {#                                                    {% if content.workflow_assigned is defined %} #}
-                {#                                                        {{ content.workflow_assigned|first|default }} | #}
-                {#                                                    {% endif %} #}
-                {#                                    {% if contentTypes[content.type_name] is defined %} #}
-                {#                                        {{ contentTypes[content.type_name] }} #}
-                {#                                    {% else %} #}
-                {#                                        {{ content.type_name }} #}
-                {#                                    {% endif %} #}
-                {#                                    {% if content.pub_time is defined %} #}
-                {#                                        | #}
-                {#                                        {{ content.pub_time|format_date('medium') }} #}
-                {#                                    {% endif %} #}
+
                 {#                                    {% if content.pub_edited is defined %} #}
                 {#                                        {% if content.pub_time is not defined or content.pub_edited != content.pub_time %} #}
                 {#                                            | #}
@@ -172,25 +143,6 @@
                 {#                                            {{ content.pub_edited|format_date('medium') }} #}
                 {#                                        {% endif %} #}
                 {#                                    {% endif %} #}
-                {#                                </li> #}
-
-                {#                                <li class="dropdown"> #}
-                {#                                    <a href="#" data-toggle="dropdown" role="button"><b class="caret"></b></a> #}
-                {#                                    <ul role="menu" class=" dropdown-menu"> #}
-                {#                                        <li role="presentation"><a #}
-                {#                                                href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}" #}
-                {#                                                tabindex="-1" role="menuitem">{% trans %}Delete item{% endtrans %}</a> #}
-                {#                                        </li> #}
-                {#                                    </ul> #}
-                {#                                </li> #}
-                {#                            </ul> #}
-                {#                        </li> #}
-                {#                    {% else %} #}
-                {#                        <li class="text-red-600"> #}
-                {#                            {% trans %}No items found{% endtrans %} #}
-                {#                        </li> #}
-                {#                    {% endfor %} #}
-                {#                </ul> #}
 
                 <div class="flex flex-wrap ">
                     {{ knp_pagination_render(pager) }}
@@ -284,7 +236,7 @@
 {{ parent() }}
 
 <script>
-           //TODO: Stopped working after moving global js out of edit.html.twig
+        //TODO: Stopped working after moving global js out of edit.html.twig
         document.addEventListener('DOMContentLoaded', function() {
             var filterElements = document.getElementsByClassName('aside-item-list');
 

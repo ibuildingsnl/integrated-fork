@@ -23,22 +23,12 @@
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         <div id="toolbar" class="w-full flex justify-between">
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
             <div class="options">
                 <div class="convert">
                     {% if content is defined %}
                         {% if content.isPublished and content.getChannels|length > 0 %}
                             <!-- TODO: Make a function for this -->
-                            <a href="#">Naar concept omzetten</a>
+                            <a href="#">{% trans %}Convert to draft{% endtrans %}</a>
                         {% endif %}
                     {% endif %}
                 </div>
@@ -88,6 +78,16 @@
                     {% endblock %}
                 </div>
             </div>
+            <div class="back">
+                {% block form_return %}
+                    {% if form.actions.back is defined %}
+                        {{ form_row(form.actions.back) }}
+                    {% endif %}
+                    {% if form.actions.cancel is defined %}
+                        {{ form_row(form.actions.cancel) }}
+                    {% endif %}
+                {% endblock %}
+            </div>
         </div>
         <div class="aside-options">
             <aside>
@@ -109,7 +109,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="status-options">
-                                        {% if content is defined and (content.isPublished and content.getChannels|length > 0) %}
+                                        {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
                                             <div class="status published">
                                                 <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
                                             </div>
@@ -117,6 +117,10 @@
                                                href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
                                                 <i class="fa-regular fa-trash-can"></i>
                                             </a>
+                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                            <div class="status planned">
+                                                <i class="fa-regular fa-calendar-days"></i> {% trans %}Planned{% endtrans %}
+                                            </div>
                                         {% else %}
                                             <div class="status draft">
                                                 <i class="fa-regular fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
@@ -190,7 +194,6 @@
                                 {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'fa-do-not-enter'}) }}
                             {% endif %}
                         {% endblock %}
-
 
                         {% block content_relations %}
                             {% if form.offsetGet('relations').count() %}
@@ -316,8 +319,8 @@
             <script id="add-template" type="text/xhandlebars-template">
                 {{#if relations}}
                 {{#equals relations.length 1}}
-                    <button data-title="Add {{relations.0.name}}" class="add-relation font-size-13" data-href="{{relations.0.href}}" data-modal="add-modal">
-                        <i class="fa-regular fa-plus"></i>
+                    <button data-title="Add {{relations.0.name}}" class="add-relation" data-href="{{relations.0.href}}" data-modal="add-modal">
+                        Add {{relations.0.name}}
                         <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
                     </button>
                 {{else}}
@@ -355,27 +358,27 @@
 
 {% endblock %}
 
-    {% block edit_modal %}
-        <div class="modal fade" id="content-edit-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">{% trans %}Unsaved changes{% endtrans %}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>{% trans %}You have unsaved changes. When you leave this page your changes will be lost.{% endtrans %}</p>
-                        <p>{% trans %}Are you sure you want to leave this page?{% endtrans %}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
-                        <button type="button" class="btn btn-gray-thin"
-                                data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
-                    </div>
+{% block edit_modal %}
+    <div class="modal fade" id="content-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{% trans %}Unsaved changes{% endtrans %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans %}You have unsaved changes. When you leave this page your changes will be lost.{% endtrans %}</p>
+                    <p>{% trans %}Are you sure you want to leave this page?{% endtrans %}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
+                    <button type="button" class="btn btn-gray-thin"
+                            data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
                 </div>
             </div>
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
 {% endblock %}
@@ -383,101 +386,100 @@
 {% block javascript %}
 {{ parent() }}
 <script>
-        textarea = document.querySelector('.title_tinymce_input');
-        textarea.addEventListener('input', autoResize, false);
-        textarea.addEventListener('DOMContentLoaded', autoResize, false);
+    textarea = document.querySelector('.title_tinymce_input');
+    textarea.addEventListener('input', autoResize, false);
+    textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
-        textarea.addEventListener('keypress', function(event) {
-          if (event.key === 'Enter') {
+    textarea.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
             event.preventDefault();
-          }
-        });
-
-        function autoResize() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
         }
+    });
 
-        setTimeout(function(){
-           const resize_ob = new ResizeObserver(function(entries) {
-                // since we are observing only a single element, so we access the first element in entries array
-                let rect = entries[0].contentRect;
+    function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    }
 
-                // current width & height
-                let width = rect.width;
-                let height = rect.height;
+    setTimeout(function() {
+        const resize_ob = new ResizeObserver(function(entries) {
+            // since we are observing only a single element, so we access the first element in entries array
+            let rect = entries[0].contentRect;
 
-                editor = document.querySelector('div.mce-edit-area');
-                editor.style.padding = (62 + height) + 'px 0 0 0';
-            });
-            // start observing for resize
-            resize_ob.observe(document.querySelector('.title_tinymce_input'));
-        }, 1000);
+            // current width & height
+            let width = rect.width;
+            let height = rect.height;
+
+            editor = document.querySelector('div.mce-edit-area');
+            editor.style.padding = (62 + height) + 'px 0 0 0';
+        });
+        // start observing for resize
+        resize_ob.observe(document.querySelector('.title_tinymce_input'));
+    }, 1000);
 </script>
 
 {% if content is defined %}
-<script>
-    $(function() {
-        var cnt = $('#used-by');
+    <script>
+        $(function() {
+            var cnt = $('#used-by');
 
-        var handleUsedBy = function(data) {
-            var optionsTemplateSource = $('#used-by-template').html(), optionsTemplate = Handlebars.compile(optionsTemplateSource);
-            var paginationTemplateSource = $('#pagination-template').html(), paginationTemplate = Handlebars.compile(paginationTemplateSource);
+            var handleUsedBy = function(data) {
+                var optionsTemplateSource = $('#used-by-template').html(),
+                    optionsTemplate = Handlebars.compile(optionsTemplateSource);
+                var paginationTemplateSource = $('#pagination-template').html(),
+                    paginationTemplate = Handlebars.compile(paginationTemplateSource);
 
-            data.title = "{% trans %}Used by{% endtrans %}";
+                data.title = "{% trans %}Used by{% endtrans %}";
 
-            if (data.pagination.numFound == 0) {
-                cnt.hide();
-            }
-            cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
-            cnt.find('.pagination a').click(function(ev){
-                ev.preventDefault();
-                loadUsedBy($(this).attr('href'));
-            });
-        };
+                if (data.pagination.numFound == 0) {
+                    cnt.hide();
+                }
+                cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
+                cnt.find('.pagination a').click(function(ev) {
+                    ev.preventDefault();
+                    loadUsedBy($(this).attr('href'));
+                });
+            };
 
-        var loadUsedBy = function(url) {
-            cnt.find('.pagination a').unbind('click').click(function(ev){
-                ev.preventDefault();
-            });
+            var loadUsedBy = function(url) {
+                cnt.find('.pagination a').unbind('click').click(function(ev) {
+                    ev.preventDefault();
+                });
 
-            $.ajax({
-                url: url,
-                data: {
-                    'limit': 5,
-                },
-                success: handleUsedBy,
-            });
-        };
+                $.ajax({
+                    url: url,
+                    data: {
+                        'limit': 5,
+                    },
+                    success: handleUsedBy,
+                });
+            };
 
-        loadUsedBy('{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}');
+            loadUsedBy('{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}');
 
-        window.addEventListener('message', function(event) {
-            // also resize modal if relations are changed
-            var iframe = $('[data-id="' + event.data.resizeModal + '"]');
-            var height = iframe.contents().height();
-            var margin = 120;
+            window.addEventListener('message', function(event) {
+                // also resize modal if relations are changed
+                var iframe = $('[data-id="' + event.data.resizeModal + '"]');
+                var height = iframe.contents().height();
+                var margin = 120;
 
-            if (height > ($(window).height() - margin)) {
-                height = $(window).height() - margin;
-            }
+                if (height > ($(window).height() - margin)) {
+                    height = $(window).height() - margin;
+                }
 
-            iframe.attr('height', height);
-        }, false);
+                iframe.attr('height', height);
+            }, false);
 
- });
-</script>
-
+        });
+    </script>
+{% endif %}
 {% if editable %}
     <script>
         var formInvalid = {{ form.vars.valid ? '0' : '1' }};
     </script>
-
-{#    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>#}
-{% endif %}
 {% endif %}
 
-{{ include('@IntegratedContent/content/handlebars/templates.html.twig')}}
+{{ include('@IntegratedContent/content/handlebars/templates.html.twig') }}
 {% endblock javascript %}
 
 {% block style %}
