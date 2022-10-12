@@ -1,18 +1,11 @@
 /* Set some custom paths */
-//$icon-font-path: '/node_modules/bootstrap-sass/assets/fonts/bootstrap/';
 $custom-font-path: '../../';
-
-//@import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-//@import "./node_modules/bourbon/app/assets/stylesheets/bourbon";
-
-// we want the mixin from bootstrap so load them again to override the changes made by bourbon
-//@import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins';
+@import url('//fonts.googleapis.com/css?family=Poppins:400,500,600');
 
 @import 'components/fonts';
 @import 'components/variables';
