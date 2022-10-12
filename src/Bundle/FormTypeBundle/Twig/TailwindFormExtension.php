@@ -16,7 +16,6 @@ use Twig\TwigFunction;
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
  *
- * @see       http://tailwind.braincrafted.com tailwind for Symfony2
  */
 class TailwindFormExtension extends AbstractExtension
 {
@@ -61,7 +60,6 @@ class TailwindFormExtension extends AbstractExtension
             new TwigFunction('tailwind_get_label_col', [$this, 'getLabelCol']),
             new TwigFunction('tailwind_set_simple_col', [$this, 'setSimpleCol']),
             new TwigFunction('tailwind_get_simple_col', [$this, 'getSimpleCol']),
-            // NEW FUNCTIONS
             new TwigFunction('tailwind_set_show_label', [$this, 'setShowLabel']),
             new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
             new TwigFunction('tailwind_set_icon', [$this, 'setIcon']),
