@@ -61,7 +61,7 @@ class TailwindFormExtension extends AbstractExtension
             new TwigFunction('tailwind_get_label_col', [$this, 'getLabelCol']),
             new TwigFunction('tailwind_set_simple_col', [$this, 'setSimpleCol']),
             new TwigFunction('tailwind_get_simple_col', [$this, 'getSimpleCol']),
-            //NEW FUNCTIONS
+            // NEW FUNCTIONS
             new TwigFunction('tailwind_set_show_label', [$this, 'setShowLabel']),
             new TwigFunction('tailwind_get_show_label', [$this, 'getShowLabel']),
             new TwigFunction('tailwind_set_icon', [$this, 'setIcon']),
@@ -184,7 +184,7 @@ class TailwindFormExtension extends AbstractExtension
     }
 
     /**
-     * Sets the value of Icon
+     * Sets the value of Icon.
      *
      * @param string $icon
      */
@@ -204,7 +204,7 @@ class TailwindFormExtension extends AbstractExtension
     }
 
     /**
-     * Sets the value of State to open or close settings by default
+     * Sets the value of State to open or close settings by default.
      *
      * @param string $state
      */
@@ -222,7 +222,6 @@ class TailwindFormExtension extends AbstractExtension
     {
         return $this->state;
     }
-
 
     /**
      * Sets the value of Placeholders to true or false.
@@ -263,7 +262,6 @@ class TailwindFormExtension extends AbstractExtension
     {
         return $this->simpleCol;
     }
-
 
     /**
      * Backup the form settings to the stack.

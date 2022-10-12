@@ -27,6 +27,7 @@ class File extends Content implements FileInterface
 {
     /**
      * @var string
+     *
      * @Slug(fields={"title"})
      * @Type\Field
      */
@@ -34,24 +35,28 @@ class File extends Content implements FileInterface
 
     /**
      * @var StorageInterface
+     *
      * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
      */
     protected $file;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $title;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $description;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $credits;

@@ -19,6 +19,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  *
  * @Annotation
+ *
  * @Target({"PROPERTY"})
  */
 final class Slug extends Annotation

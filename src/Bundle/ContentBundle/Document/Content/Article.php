@@ -34,12 +34,14 @@ class Article extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $title;
 
     /**
      * @var string
+     *
      * @Slug(fields={"title"})
      * @Type\Field
      */
@@ -47,24 +49,28 @@ class Article extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $subtitle;
 
     /**
      * @var ArrayCollection Embedded\Author[]
+     *
      * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AuthorType", options={"label" = "Authors"})
      */
     protected $authors;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $source;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\UrlType", options={"label" = "Source URL"})
      */
     protected $sourceUrl;
@@ -76,24 +82,28 @@ class Article extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
     protected $intro;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
     protected $description;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
     protected $content;
 
     /**
      * @var Embedded\Address
+     *
      * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AddressType")
      */
     protected $address;

@@ -52,6 +52,7 @@ class NewsController extends AbstractController
 
     /**
      * @return array
+     *
      * @Template
      *
      * @throws \Exception

@@ -15,6 +15,7 @@ trait ParentIDTrait
 {
     /**
      * @var string|null
+     *
      * @Type\Field(
      *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentParentIDType",
      *     options={
@@ -23,7 +24,6 @@ trait ParentIDTrait
      *     }
      * )
      */
-
     protected $parent_id;
 
     /**

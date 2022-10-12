@@ -30,42 +30,49 @@ class Relation implements RelationInterface
 {
     /**
      * @var string
+     *
      * @Slug(fields={"name"}, separator="_")
      */
     protected $id;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank()
      */
     protected $name;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank()
      */
     protected $type;
 
     /**
      * @var ContentTypeInterface[]
+     *
      * @Assert\NotBlank()
      */
     protected $sources;
 
     /**
      * @var ContentTypeInterface[]
+     *
      * @Assert\NotBlank()
      */
     protected $targets;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank()
      */
     protected $location;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank()
      */
     protected $icon;

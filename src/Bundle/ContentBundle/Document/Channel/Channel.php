@@ -32,12 +32,14 @@ class Channel implements ChannelInterface
 
     /**
      * @var string
+     *
      * @Slug(fields={"name"}, separator="_")
      */
     protected $id;
 
     /**
      * @var string the name of the channel
+     *
      * @Assert\NotBlank()
      */
     protected $name;

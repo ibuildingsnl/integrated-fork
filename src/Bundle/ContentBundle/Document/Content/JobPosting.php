@@ -22,18 +22,21 @@ class JobPosting extends Article
 {
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $jobTitle;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $salary;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $applyUrl;

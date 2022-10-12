@@ -31,18 +31,21 @@ abstract class Relation extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $accountnumber;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
     protected $description;
 
     /**
      * @var Phonenumber[]|Collection
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
      *      options={
@@ -57,12 +60,14 @@ abstract class Relation extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\EmailType")
      */
     protected $email;
 
     /**
      * @var Address[]
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
      *      options={

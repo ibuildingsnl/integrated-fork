@@ -27,6 +27,7 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Type\Field(
      *       options={
@@ -38,12 +39,14 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\AceType")
      */
     protected $content;
 
     /**
      * @var Relation
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
@@ -59,6 +62,7 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
 
     /**
      * @var ArrayCollection
+     *
      * @Type\Field(
      *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType",
      *     options={

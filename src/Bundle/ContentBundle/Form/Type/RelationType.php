@@ -46,7 +46,7 @@ class RelationType extends AbstractType
                         'Author' => 'author',
                         'File' => 'file',
                         'Slider' => 'slider',
-                    ]
+                    ],
                 ]
             )->add(
                 'sources',
@@ -73,7 +73,7 @@ class RelationType extends AbstractType
                     'choices' => [
                         'Sidebar' => 'sidebar',
                         'Editor' => 'editor',
-                    ]
+                    ],
                 ]
             )->add('icon'
             )->add(

@@ -37,9 +37,9 @@ class WriteFilesystem
      * @param string          $identifier
      * @param ReaderInterface $reader
      *
-     * @throws \LogicException
-     *
      * @return mixed
+     *
+     * @throws \LogicException
      */
     public function write($identifier, ReaderInterface $reader)
     {

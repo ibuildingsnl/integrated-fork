@@ -22,12 +22,14 @@ class FacetField
 {
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $name;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $field;

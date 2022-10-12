@@ -21,7 +21,6 @@ class ContentParentIDType extends AbstractType
 {
     /**
      * @var DocumentManager
-     *
      */
     protected $dm;
 

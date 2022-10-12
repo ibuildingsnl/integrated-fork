@@ -1129,7 +1129,7 @@ class ContentController extends AbstractController
 
         if (!$this->isGranted(Permissions::EDIT, $content)) {
             return $form->add('actions', ActionsType::class, ['buttons' => ['back']]);
-            //TODO: Check if we can add update or publish button which is disabled?
+            // TODO: Check if we can add update or publish button which is disabled?
         }
 
         if ($locking['locked']) {

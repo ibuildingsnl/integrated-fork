@@ -26,6 +26,7 @@ class FeaturedItemsBlock extends Block
 
     /**
      * @var ArrayCollection
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
      *      options={
