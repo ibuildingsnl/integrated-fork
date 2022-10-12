@@ -345,8 +345,13 @@
                 }
 
                 &.draft {
-                    background-color: #f6f0e5;
-                    color: #946a00;
+                    background-color: #e9edf1;
+                    color: #8DA3BC;
+                }
+
+                &.planned {
+                    background-color: #dfe7f8;
+                    color: #5F84DB;
                 }
 
                 i, svg {

@@ -53,7 +53,7 @@ $('.integrated_tinymce').each(function(key, elem){
             "integratedColumn": "/bundles/integratedformtype/js/tinymce-plugins/integrated-column/plugin.js"
         },
         add_unload_trigger: false,
-        placeholder: "You're article starts here",
+        placeholder: "Your article starts here",
         schema: "html5",
         menubar: true,
         toolbar: "styleselect | bold italic underline | bullist numlist | link integratedImage integratedVideo integratedColumn image media print preview fullpage table | charmap pagebreak | pastetext searchreplace | code fullscreen",
@@ -63,7 +63,6 @@ $('.integrated_tinymce').each(function(key, elem){
         width: "100%",
         height: "100%",
         autoresize_min_height: 300,
-        // autoresize_max_height: (window.innerHeight-64),
         browser_spellcheck : true,
         autoresize_bottom_margin: "0px",
         convert_urls: false,

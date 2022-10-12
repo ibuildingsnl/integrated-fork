@@ -548,8 +548,6 @@ label {
 
 
 .definition-state-collection-widget .widget {
-    //display: flex;
-    //margin: -.5rem;
     ul[id^='integrated_workflow_definition_states'] {
         display: flex;
         margin: -.5rem;
@@ -607,7 +605,6 @@ label {
             position: absolute;
             top: 0;
             height: 52px;
-            /* background-color: #f2f2f2; */
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 

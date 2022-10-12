@@ -1,105 +1,110 @@
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
 
 /* STYLES */
-//#wrapper-holder {
-//  padding-bottom: 120px;
-//}
-
 label.is-primary-channel {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .select2-dropdown-image {
-  max-height: 40px;
-  margin-right: 5px;
+    max-height: 40px;
+    margin-right: 5px;
 }
 
 .select2-selection__choice {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 .select2-selected {
-  max-width: 95%;
-  overflow: hidden;
+    max-width: 95%;
+    overflow: hidden;
 
-  img {
-    margin: 0 5px 0 -5px;
-    max-height: 40px;
-  }
+    img {
+        margin: 0 5px 0 -5px;
+        max-height: 40px;
+    }
 }
 
 .button-submitted {
-  cursor: not-allowed;
-  opacity: 0.65;
+    cursor: not-allowed;
+    opacity: 0.65;
 }
 
 .button-submitted .fa-refresh {
-  margin-right: 10px;
-  -webkit-animation: spin 3s linear infinite;
-  -moz-animation: spin 3s linear infinite;
-  animation: spin 3s linear infinite;
+    margin-right: 10px;
+    -webkit-animation: spin 3s linear infinite;
+    -moz-animation: spin 3s linear infinite;
+    animation: spin 3s linear infinite;
 }
 
 .add-relation {
-  position: relative;
+    position: relative;
 }
 
 .section-margin {
-  margin-bottom: 20px !important;
+    margin-bottom: 20px !important;
 }
 
 .bulk-readonly {
-  position: relative;
+    position: relative;
 }
 
 .bulk-readonly-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 .relation .input-group {
-  display: inline-block;
-  position: relative;
-  width: 100%;
-
-  .input-group-addon {
     display: inline-block;
-    float: left;
-    height: 100%;
-    position: absolute;
-    width: 25px;
-    text-align: inherit;
-      right: 0;
-      background-color: #dfe3e7;
-      border-radius: 8px;
+    position: relative;
+    width: 100%;
 
-    .add-relation {
-      height: 100%;
+    .input-group-addon {
+        display: block;
+        float: none;
+        text-align: inherit;
+        width: 100%;
+
+        .add-relation {
+            height: 100%;
+        }
+
+        button {
+            text-decoration: underline;
+            color: #1b3149;
+            font-weight: 500;
+            font-size: 12px;
+            margin-top: 10px;
+        }
     }
 
-    button {
-      position: absolute;
-      top: 50%;
-      transform: translate(0%, -50%);
-      -ms-transform: translate(0%, -50%);
-      -moz-transform: translate(0%, -50%);
-        -webkit-transform: translate(0%,-50%);
-        width: 25px;
+    .select2-container {
+        float: left;
+        width: 100% !important;
     }
-  }
-
-  .select2-container {
-    float: left;
-  }
 }
 
 @media only screen and (max-width: 767px) {
-  .relation .input-group .select2 .select2-selection {
-    height: auto;
-  }
+    .relation .input-group .select2 .select2-selection {
+        height: auto;
+    }
 }

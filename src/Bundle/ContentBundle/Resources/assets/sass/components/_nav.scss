@@ -18,37 +18,8 @@ nav.navbar {
         }
     }
 
-    //ul.dropdown-menu {
-    //    visibility: hidden;
-    //    opacity: 0;
-    //    position: absolute;
-    //    background-color: white;
-    //    z-index: 9;
-    //    padding: 1rem;
-    //    border-radius: 8px;
-    //    margin-top:0px;
-    //    top: 50px;
-    //    transition: top .15s linear, visibility .15s, opacity .15s linear;
-    //    .megamenu-content {
-    //        display: flex;
-    //    }
-    //}
     .new-contenttype {
         margin-left: 64px;
-
-        //> ul {
-        //    transition: 0.2s 1s;
-        //}
-        //
-        //&:not(:hover) > ul {
-        //    transition: all 0.1s;
-        //    transition-delay: 1s;
-        //}
-        //
-        //&:hover > ul:not(:hover) {
-        //    transition: all 0s !important;
-        //    transition-delay: 0s !important;
-        //}
     }
 
     ul.header-nav {
