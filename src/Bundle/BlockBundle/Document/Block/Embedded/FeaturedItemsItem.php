@@ -31,7 +31,7 @@ class FeaturedItemsItem
     /**
      * @var StorageInterface
      *
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $image;
 
