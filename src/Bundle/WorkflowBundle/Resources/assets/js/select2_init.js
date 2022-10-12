@@ -10,14 +10,18 @@
 require('select2');
 
 $(document).ready(function() {
-    triggerSelect2();
-
-    $('.state_add_button').click(function () {
+    $('.state_add_button').click(function() {
         // use timeout to trigger select2 init after the new state and select2 fields are loaded
         setTimeout(triggerSelect2, 100);
     });
 
     function triggerSelect2() {
-        $('select.select2').select2();
+        $('select.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                // Select2 has been initialized
+            } else {
+                $(this).select2();
+            }
+        });
     }
 });
