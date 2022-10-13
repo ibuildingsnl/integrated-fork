@@ -25,54 +25,64 @@
                                    placeholder="{% trans %}Search in folders{% endtrans %}">
                         </div>
 
-                        <form id="media_form"  action="{{ path('integrated_content_media_manage_relations') }}">
-                            <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
+                        <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
+                            <input type="hidden" id="media_category_csrf" name="token"
+                                   value="{{ csrf_token('delete-item') }}"/>
                             <input type="hidden" id="media_id" name="media_id" value=""/>
                             <input type="hidden" id="category_id" name="category_id" value=""/>
                             <input type="hidden" id="channel_id" name="channel_id" value=""/>
                         </form>
 
-                        <div class="p-2 text-red-600">CATEGORIES</div>
-                        <div>selected: {{ params.media_taxonomy.current }}</div>
+                        <div class="p-2 text-red-600">{% trans %}Categories{% endtrans %}</div>
                         {% for key, menu_item in menu %}
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
                             id="{{ menu_item.ID }}">
                             <i class="fa-regular fa-folders"></i>
-                            <a href="{{ path(app.request.attributes.get('_route'),
-                                app.request.query.all|
-                                merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
-                                merge({'media_taxonomy_id':menu_item.ID})
-                            ) }}"
-                               tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
+                            {% if params.media_taxonomy.current == menu_item.title %}
+                                <span>{{ menu_item.title|trans|capitalize }}</span>
+                            {% else %}
+                                <a href="{{ path(app.request.attributes.get('_route'),
+                                    app.request.query.all|
+                                    merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
+                                    merge({'media_taxonomy_id':menu_item.ID})
+                                ) }}"
+                                   tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
+                            {% endif %}
                             {% if menu_item.children %}
-
                                 {% for key_1, menu_item_1 in menu_item.children %}
-{#                                    {{ dump(menu_item_1.ID) }}#}
                                 <li class="menu-parent media_category"
                                     style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
                                     <i class="fa-regular fa-folders"></i>
-                                    <a href="{{ path(app.request.attributes.get('_route'),
-                                        app.request.query.all|
-                                        merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
-                                        merge({'media_taxonomy_id':menu_item_1.ID})
-                                    ) }}"
-                                       tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
+                                    {% if params.media_taxonomy.current == menu_item_1.title %}
+                                        <span>{{ menu_item_1.title|trans|capitalize }}</span>
+                                    {% else %}
+                                        <a href="{{ path(app.request.attributes.get('_route'),
+                                            app.request.query.all|
+                                            merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                            merge({'media_taxonomy_id':menu_item_1.ID})
+                                        ) }}"
+                                           tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
+                                    {% endif %}
                                     {% if menu_item_1.children %}
 
                                         {% for key_2, menu_item_2 in menu_item_1.children %}
-{#                                            {{ dump(menu_item_2.ID) }}#}
                                             <li class="menu-parent media_category"
                                                 style="margin-bottom: 1px; padding-left: 33px"
                                                 id="{{ menu_item_2.ID }}">
                                                 <i class="fa-regular fa-folders"></i>
-                                                <a href="{{ path(app.request.attributes.get('_route'),
-                                                    app.request.query.all|
-                                                    merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
-                                                    merge({'media_taxonomy_id':menu_item_2.ID})
+                                                {% if params.media_taxonomy.current == menu_item_2.title %}
+                                                    <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                {% else %}
+                                                    <a href="{{ path(app.request.attributes.get('_route'),
+                                                        app.request.query.all|
+                                                        merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                        merge({'media_taxonomy_id':menu_item_2.ID})
 
-                                                ) }}"
-                                                   tabindex="-1" role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
+                                                    ) }}"
+                                                       tabindex="-1"
+                                                       role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
+                                                {% endif %}
                                             </li>
                                         {% endfor %}
 
@@ -120,11 +130,12 @@
 
                                 {% for content_type_key, content_type in params.content_types.options %}
 
-                                        <li {% if content_type_key == params.content_types.current %}class="active"
-                                            {% endif %}role="presentation">
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })) }}"
-                                               tabindex="-1" role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
-                                        </li>
+                                    <li {% if content_type_key == params.content_types.current %}class="active"
+                                        {% endif %}role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })) }}"
+                                           tabindex="-1"
+                                           role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
+                                    </li>
 
                                 {% endfor %}
 
@@ -168,7 +179,7 @@
                 <div class="media-container">
                     <div class="media-wrapper">
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
-                            {% for media in items %}
+                            {% for media in paginator.items %}
                                 {% if media.contentType == 'image' %}
                                     {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
                                     {#                                    {% set thumbnail = integrated_image(media.file) %} #}
@@ -214,6 +225,24 @@
                         </ul>
                     </div>
                 </div>
+
+                <!-- PAGINATOR CONTROLS -->
+                <div>
+                    {% for i in range(1, paginator.amountOfPages) %}
+                        {% if i == paginator.currentPageNumber %}
+                            <a class="text-red-500 bg-red-200 p-2"
+                               href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                               tabindex="-1" role="menuitem">{{ i }}</a>
+                        {% else %}
+                            <a class="p-2"
+                               href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                               tabindex="-1" role="menuitem">{{ i }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    <span>Totaal {{ paginator.getTotalItemCount() }} items.</span>
+                    <span>Showing {{ paginator.showingStart }} till {{ paginator.showingEnd }}.</span>
+                </div>
+
             </section>
         </div>
     </div>
@@ -533,7 +562,7 @@
                     // containment: '#parent',
                     helper: "clone",
                     // cursor: "move",
-                    start: function(ev, ui) {
+                    start: function (ev, ui) {
                         // offset = $(this).offset();
                         offset = {
                             top: 50,
@@ -544,8 +573,8 @@
 
                 // Let the media items be droppable, accepting the gallery items
                 $media_items.droppable({
-                    activate: function( event, ui ) {
-                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">'+draggingAmountOfItems + ' item(s)</div>')
+                    activate: function (event, ui) {
+                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">' + draggingAmountOfItems + ' item(s)</div>')
                     },
                     accept: "#gallery > li",
                     classes: {
@@ -595,7 +624,7 @@
                     })
 
                     //TODO how to get the proper path?
-                    let path =  'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
+                    let path = 'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
 
                     postData(path, jsonContent).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call

@@ -25,10 +25,12 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 /*
  * Goal for the user:
@@ -54,6 +56,7 @@ class MediaController extends AbstractController
     private $indexer;
 
     // settings:
+    public const PAGINATOR_LIMIT = 50;
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
@@ -68,7 +71,7 @@ class MediaController extends AbstractController
         ],
         'video' => [
             'label_singular' => 'Video',
-            'label_plural' => 'Video',
+            'label_plural' => 'Videos',
             'solr_name' => 'Video',
             'new_type_location' => 'video',
             'class_name' => 'Video',
@@ -104,7 +107,6 @@ class MediaController extends AbstractController
     // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource)
     {
-        $allSelectedCategoryTitles = null;
         $requestCopy = $this->setAndGetClassString($requestSource);
         $params = [];
         $this->dm = $this->getDoctrineODM()->getManager();
@@ -127,6 +129,7 @@ class MediaController extends AbstractController
         $params = array_merge($params, $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
+            'paginator' => $this->createPaginator($items, $requestSource),
             'items' => $items,
             'params' => $params,
             'menu' => $menu,
@@ -135,6 +138,23 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ]);
+    }
+
+    public function createPaginator($items, $requestSource): SlidingPagination {
+        $paginator = $this->getPaginator()->paginate(
+            $items,
+            $requestSource->query->get('page', 1),
+            $this::PAGINATOR_LIMIT
+        );
+
+        $paginator->amountOfPages = ceil(  $paginator->getTotalItemCount() / $paginator->getItemNumberPerPage() );
+        $paginator->showingStart = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1;
+        $paginator->showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
+        if ($paginator->showingEnd > $paginator->getTotalItemCount()) {
+            $paginator->showingEnd = $paginator->getTotalItemCount();
+        }
+
+        return $paginator;
     }
 
     public function getContentTypes()
