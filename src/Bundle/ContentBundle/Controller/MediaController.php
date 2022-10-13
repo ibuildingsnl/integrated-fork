@@ -101,32 +101,22 @@ class MediaController extends AbstractController
      * @return Response
      */
     // TODO: Use translations in Twig
+    // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource)
     {
         $allSelectedCategoryTitles = null;
-
-        $requestCopy = clone $requestSource;
-
-        $params['selected_taxonomy'] = null;
-        $selectedMediaTaxonomy = $requestCopy->query->get($this::HARD_CODED_CATEGORY);
-        if ($selectedMediaTaxonomy !== null) {
-            $params['selected_taxonomy'] = $selectedMediaTaxonomy[0];
-        }
-
+        $requestCopy = $this->setAndGetClassString($requestSource);
+        $params = [];
         $this->dm = $this->getDoctrineODM()->getManager();
-
-        $onlyAllowedTaxonomyID = $requestCopy->query->get('media_taxonomy_id');
 
         $menu = $this->mediaGalleryMenu->createMenu();
 
-        if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $onlyAllowedTaxonomyID) {
-            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $onlyAllowedTaxonomyID);
+        if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
+            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
             $requestCopy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
         }
 
         $uniqueContentTypes = $this->getContentTypes();
-
-        $requestCopy = $this->setAndGetClassString($requestCopy);
 
         $this->setYearMonthFilter($requestCopy);
 
@@ -134,17 +124,16 @@ class MediaController extends AbstractController
 
         $dateFilter = $this->getYearMonthDates($requestCopy);
 
-        $requestSource->query->remove($this::HARD_CODED_CATEGORY);
-
         $params = array_merge($params, $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
-            'not_shown_filetypes' => array_map(fn ($item) => strtolower($item),
-                $this::NOT_SHOWN_FILETYPES
-            ),
             'items' => $items,
             'params' => $params,
             'menu' => $menu,
+            'not_shown_filetypes' => array_map(
+                fn ($item) => strtolower($item),
+                $this::NOT_SHOWN_FILETYPES
+            ),
         ]);
     }
 
@@ -156,22 +145,34 @@ class MediaController extends AbstractController
         return array_filter($contentTypeNames);
     }
 
-    // specific day:
-    //                    xx                      xx
-    //            2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
-    // specific month:
-    //                 xx                      xx
-    //            2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
-    public function setAndGetClassString($request)
+    /**
+     * @param $request
+     *
+     * @return mixed
+     *               specific day:
+     *               --------xx                      xx
+     *               2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
+     *               specific month:
+     *               -----xx                      xx
+     *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
+     */
+    public function setAndGetClassString($requestSource)
     {
-        // we want to keep two things separate:
-        // - what the user asks for
-        // - what we query
-        // because with the user selection 'Alle Mediabestanden' we want to query for the class: File.
-        // but when the user clicks on 'Files' we want to query on 'NonMedia'
+        /** we want to keep two things separate:
+         * - what the user asks for
+         * - what we query
+         * because with the user selection 'Alle Mediabestanden' we want to query for the class: File.
+         * but when the user clicks on 'Files' we want to query on 'NonMedia'.
+         */
+        $request = clone $requestSource;
+
+        if (null !== $requestSource->query->get('MediaTaxonomy')) {
+            $request->query->set('MediaTaxonomy', [$requestSource->query->get('MediaTaxonomy')]);
+            $request->query->set('MediaTaxonomy[]', [$request->query->get('MediaTaxonomy')]);
+        }
 
         $classString = $request->query->get('class_string');
-        if (null === $classString || '' === $classString || 'Alle mediabestanden' === $classString ) {
+        if (null === $classString || '' === $classString || 'Alle mediabestanden' === $classString) {
             $request->query->set('class_string', 'Alle mediabestanden');
             $request->query->set('solr_class_string', 'File');
         } elseif ('NonMedia' === $classString || 'Image' === $classString || 'Video' === $classString) {
@@ -200,7 +201,7 @@ class MediaController extends AbstractController
         if (isset($yearMonthFilter) && null != $yearMonthFilter && 'Alles' !== $yearMonthFilter) {
             list($year, $month, $day) = explode('-', $yearMonthFilter);
             $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
-            $endDate = "{$year}-{$month}-{$day}T23:59:59Z";
+            $endDate = "$year-{$month}-{$day}T23:59:59Z";
             $fullDateFilter = $startDate.' TO '.$endDate;
             $request->query->set('year_month_day_filter', $fullDateFilter);
         } elseif ('Alles' === $yearMonthFilter) {
@@ -233,6 +234,14 @@ class MediaController extends AbstractController
 
     public function getParams($request, $uniqueContentTypes, $dateFilter)
     {
+        // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
+        $mediaTaxonomy = 'null';
+        if (\is_array($request->query->get('MediaTaxonomy'))) {
+            $mediaTaxonomy = $request->query->get('MediaTaxonomy')[0];
+        } elseif (\is_string($request->query->get('MediaTaxonomy'))) {
+            $mediaTaxonomy = $request->query->get('MediaTaxonomy');
+        }
+
         $params = [
             'date_filter' => [
                 'options' => [
@@ -283,7 +292,7 @@ class MediaController extends AbstractController
                 ],
             ],
             'media_taxonomy' => [
-                'current' => $request->query->get('MediaTaxonomy'),
+                'current' => $mediaTaxonomy,
                 'default' => null,
             ],
         ];
@@ -293,7 +302,7 @@ class MediaController extends AbstractController
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
     }
 
-    public function addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter)
+    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
             // The default categories are always there, and dont need to be added again.
@@ -325,7 +334,7 @@ class MediaController extends AbstractController
         return $params;
     }
 
-    public function checkIfCurrentExistsAsKey($paramsExtended)
+    public function checkIfCurrentExistsAsKey(array $paramsExtended): array
     {
         $currentDate = $paramsExtended['date_filter']['current'];
 

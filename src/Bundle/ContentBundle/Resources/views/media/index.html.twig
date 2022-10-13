@@ -33,7 +33,7 @@
                         </form>
 
                         <div class="p-2 text-red-600">CATEGORIES</div>
-                        <div>selected: {{ params.selected_taxonomy }}</div>
+                        <div>selected: {{ params.media_taxonomy.current }}</div>
                         {% for key, menu_item in menu %}
                         <li class="menu-parent media_category"
                             style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
@@ -41,7 +41,7 @@
                             <i class="fa-regular fa-folders"></i>
                             <a href="{{ path(app.request.attributes.get('_route'),
                                 app.request.query.all|
-                                merge({'MediaTaxonomy[]': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
+                                merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
                                 merge({'media_taxonomy_id':menu_item.ID})
                             ) }}"
                                tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
@@ -54,7 +54,7 @@
                                     <i class="fa-regular fa-folders"></i>
                                     <a href="{{ path(app.request.attributes.get('_route'),
                                         app.request.query.all|
-                                        merge({'MediaTaxonomy[]': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                        merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
                                         merge({'media_taxonomy_id':menu_item_1.ID})
                                     ) }}"
                                        tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
@@ -68,7 +68,7 @@
                                                 <i class="fa-regular fa-folders"></i>
                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                     app.request.query.all|
-                                                    merge({'MediaTaxonomy[]': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                    merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
                                                     merge({'media_taxonomy_id':menu_item_2.ID})
 
                                                 ) }}"
