@@ -47,17 +47,9 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class MediaController extends AbstractController
 {
-    private $mediaGalleryMenu;
-    private $userManager;
-    private $provider;
-    private $repository;
-    private $authorizationChecker;
-    private $queueSubscriber;
-    private $indexer;
-
-    // settings:
     public const PAGINATOR_LIMIT = 50;
-    public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
+    public const DATE_FILTER_ON = '+1MONTH'; //1DAY or 1MONTH
+    public const SHOW_FILES_OF_SUBCATEGORY = false;
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
@@ -86,6 +78,14 @@ class MediaController extends AbstractController
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\File',
         ],
     ];
+    public const SOLR_ALL_MEDIA_CLASS_STRING = "File";
+    private $mediaGalleryMenu;
+    private $userManager;
+    private $provider;
+    private $repository; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
+    private $authorizationChecker;
+    private $queueSubscriber;
+    private $indexer;
 
     public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
     {
@@ -134,35 +134,10 @@ class MediaController extends AbstractController
             'params' => $params,
             'menu' => $menu,
             'not_shown_filetypes' => array_map(
-                fn ($item) => strtolower($item),
+                fn($item) => strtolower($item),
                 $this::NOT_SHOWN_FILETYPES
             ),
         ]);
-    }
-
-    public function createPaginator($items, $requestSource): SlidingPagination {
-        $paginator = $this->getPaginator()->paginate(
-            $items,
-            $requestSource->query->get('page', 1),
-            $this::PAGINATOR_LIMIT
-        );
-
-        $paginator->amountOfPages = ceil(  $paginator->getTotalItemCount() / $paginator->getItemNumberPerPage() );
-        $paginator->showingStart = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1;
-        $paginator->showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($paginator->showingEnd > $paginator->getTotalItemCount()) {
-            $paginator->showingEnd = $paginator->getTotalItemCount();
-        }
-
-        return $paginator;
-    }
-
-    public function getContentTypes()
-    {
-        // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
-        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
-
-        return array_filter($contentTypeNames);
     }
 
     /**
@@ -194,12 +169,10 @@ class MediaController extends AbstractController
         $classString = $request->query->get('class_string');
         if (null === $classString || '' === $classString || 'all_files' === $classString) {
             $request->query->set('class_string', 'all_files');
-            $request->query->set('solr_class_string', 'File');
+            $request->query->set('solr_class_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
 
         } elseif (\in_array($classString, array_keys($this::DEFAULT_FILE_TYPES))) {
-//        } elseif ('NonMedia' === $classString || 'Image' === $classString || 'Video' === $classString) {
             $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]["solr_name"]);
-//            $request->query->set('solr_class_string', $classString);
         } else {
             $camelCase = $this->kebabToCamel($classString);
             $request->query->set('solr_class_string', $camelCase);
@@ -213,40 +186,73 @@ class MediaController extends AbstractController
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
+    public function getContentTypes()
+    {
+        // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
+        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
+
+        return array_filter($contentTypeNames);
+    }
+
     public function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
-        if ('' === $yearMonthFilter) {
-            $request->query->set('year_month', 'all_dates');
-            $yearMonthFilter = $request->query->get('year_month');
-        }
 
-        if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
-            list($year, $month, $day) = explode('-', $yearMonthFilter);
-            $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
-            $endDate = "$year-{$month}-{$day}T23:59:59Z";
-            $fullDateFilter = $startDate.' TO '.$endDate;
-            $request->query->set('year_month_day_filter', $fullDateFilter);
-        } elseif ('all_dates' === $yearMonthFilter) {
+        if (null === $yearMonthFilter) {
+            return;
+        } else if ('all_dates' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
-        }
+        } else {
+            if ($this::DATE_FILTER_ON == '+1DAY') {
+                if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
+                    list($year, $month, $day) = explode('-', $yearMonthFilter);
+                    $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
+                    $endDate = "$year-{$month}-{$day}T23:59:59Z";
+                    $fullDateFilter = $startDate . ' TO ' . $endDate;
+                    $request->query->set('year_month_day_filter', $fullDateFilter);
+                }
 
-        return $yearMonthFilter;
+                return $yearMonthFilter;
+            } else if ($this::DATE_FILTER_ON == '+1MONTH') {
+                if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
+                    list($year, $month, $day) = explode('-', $yearMonthFilter);
+                    $nextMonth = (int)$month + 1;
+                    if ($nextMonth === 13) {
+                        $nextMonth = 1;
+                    }
+                    $startDate = "{$year}-{$month}-01T00:00:00Z";
+                    $endDate = "$year-{$nextMonth}-01T00:00:00Z";
+                    $fullDateFilter = $startDate . ' TO ' . $endDate;
+
+                    $request->query->set('year_month_day_filter', $fullDateFilter);
+                } elseif ('all_dates' === $yearMonthFilter) {
+                    $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
+                }
+            }
+        }
     }
 
-    public function getYearMonthDates(Request $request): array
+    public
+    function getYearMonthDates(Request $request): array
     {
-        $dateAmount = $this->provider->getFilterOptionsFromSolr($request);
+        $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON);
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }
 
-    public function transformDateYearToFrontendArray($dates): array
+    public
+    function transformDateYearToFrontendArray($dates): array
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
+            if ($this::DATE_FILTER_ON == '+1DAY') {
+                $label = substr($yearMonth, 0, 10);
+            } else if ($this::DATE_FILTER_ON == '+1MONTH') {
+                $label = substr($yearMonth, 0, 7);
+            }
+
             $result[$yearMonth] = [
-                'label' => $yearMonth.' ('.$amount.')',
+                'label' => $label . ' (' . $amount . ')',
                 'yearMonth' => $yearMonth,
                 'amount' => $amount,
             ];
@@ -255,7 +261,8 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getParams($request, $uniqueContentTypes, $dateFilter)
+    public
+    function getParams($request, $uniqueContentTypes, $dateFilter)
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -304,7 +311,8 @@ class MediaController extends AbstractController
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
     }
 
-    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
+    public
+    function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
             // The default categories are always there, and dont need to be added again.
@@ -336,7 +344,8 @@ class MediaController extends AbstractController
         return $params;
     }
 
-    public function checkIfCurrentExistsAsKey(array $paramsExtended): array
+    public
+    function checkIfCurrentExistsAsKey(array $paramsExtended): array
     {
         $currentDate = $paramsExtended['date_filter']['current'];
 
@@ -352,10 +361,30 @@ class MediaController extends AbstractController
         return $paramsExtended;
     }
 
+    public
+    function createPaginator($items, $requestSource): SlidingPagination
+    {
+        $paginator = $this->getPaginator()->paginate(
+            $items,
+            $requestSource->query->get('page', 1),
+            $this::PAGINATOR_LIMIT
+        );
+
+        $paginator->amountOfPages = ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage());
+        $paginator->showingStart = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1;
+        $paginator->showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
+        if ($paginator->showingEnd > $paginator->getTotalItemCount()) {
+            $paginator->showingEnd = $paginator->getTotalItemCount();
+        }
+
+        return $paginator;
+    }
+
     /**
      * @deprecated
      */
-    public function getDatesOfItems($items)
+    public
+    function getDatesOfItems($items)
     {
         $dates = [];
         foreach ($items as $item) {
@@ -370,7 +399,8 @@ class MediaController extends AbstractController
         return $this->transformDateYearToFrontendArray($dates);
     }
 
-    public function getChannels()
+    public
+    function getChannels()
     {
         $channels = [];
         if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
@@ -398,7 +428,8 @@ class MediaController extends AbstractController
         return $channelAuthorisations;
     }
 
-    public function getContentTypeName($item)
+    public
+    function getContentTypeName($item)
     {
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $className = $item->getClass();
@@ -408,9 +439,10 @@ class MediaController extends AbstractController
         }
     }
 
-    // Update relation of mediaItems
-    // I want to keep the messages for debugging
-    public function manageRelations(Request $request)
+// Update relation of mediaItems
+// I want to keep the messages for debugging
+    public
+    function manageRelations(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
         $messages = [];
@@ -461,8 +493,8 @@ class MediaController extends AbstractController
             // Remove relation when needed:
             $categoryIdOrigin = $params['category_id_origin'];
             if ('' !== $categoryIdOrigin) {
-                $messages[] = 'origin: '.$categoryIdOrigin;
-                $messages[] = 'relationIDs: '.implode('-', $relationIDs);
+                $messages[] = 'origin: ' . $categoryIdOrigin;
+                $messages[] = 'relationIDs: ' . implode('-', $relationIDs);
 
                 if (\in_array($categoryIdOrigin, $relationIDs)) {
                     $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($categoryIdOrigin);
@@ -487,7 +519,8 @@ class MediaController extends AbstractController
         return new JsonResponse($messages);
     }
 
-    public function updateQueueToSolr($content)
+    public
+    function updateQueueToSolr($content)
     {
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
@@ -497,8 +530,9 @@ class MediaController extends AbstractController
         $this->indexer->execute();
     }
 
-    // TODO later make this
-    public function menu()
+// TODO later make this
+    public
+    function menu()
     {
         $dm = $this->getDoctrineODM()->getManager();
         $channels = [];

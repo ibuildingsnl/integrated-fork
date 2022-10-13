@@ -45,7 +45,8 @@
                                 <a href="{{ path(app.request.attributes.get('_route'),
                                     app.request.query.all|
                                     merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
-                                    merge({'media_taxonomy_id':menu_item.ID})
+                                    merge({'media_taxonomy_id':menu_item.ID})|
+                                    merge({'page':1})
                                 ) }}"
                                    tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
                             {% endif %}
@@ -60,7 +61,8 @@
                                         <a href="{{ path(app.request.attributes.get('_route'),
                                             app.request.query.all|
                                             merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
-                                            merge({'media_taxonomy_id':menu_item_1.ID})
+                                            merge({'media_taxonomy_id':menu_item_1.ID})|
+                                            merge({'page':1})
                                         ) }}"
                                            tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
                                     {% endif %}
@@ -77,7 +79,8 @@
                                                     <a href="{{ path(app.request.attributes.get('_route'),
                                                         app.request.query.all|
                                                         merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
-                                                        merge({'media_taxonomy_id':menu_item_2.ID})
+                                                        merge({'media_taxonomy_id':menu_item_2.ID})|
+                                                        merge({'page':1})
 
                                                     ) }}"
                                                        tabindex="-1"
@@ -132,7 +135,10 @@
 
                                     <li {% if content_type_key == params.content_types.current %}class="active"
                                         {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })) }}"
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
+                                            merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })|
+                                            merge({'page':1})
+                                        ) }}"
                                            tabindex="-1"
                                            role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
                                     </li>
@@ -153,7 +159,10 @@
                                     {% if year_month.label != 'File' %}
                                         <li {% if year_month.name == params.date_filter.current %}class="active"
                                             {% endif %}role="presentation">
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })) }}"
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
+                                                merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })|
+                                                merge({'page':1})
+                                            ) }}"
                                                tabindex="-1" role="menuitem">{{ year_month.label|trans|capitalize }}</a>
                                         </li>
                                     {% endif %}
@@ -228,6 +237,7 @@
 
                 <!-- PAGINATOR CONTROLS -->
                 <div>
+                    {% if paginator.amountOfPages > 1 %}
                     {% for i in range(1, paginator.amountOfPages) %}
                         {% if i == paginator.currentPageNumber %}
                             <a class="text-red-500 bg-red-200 p-2"
@@ -239,8 +249,10 @@
                                tabindex="-1" role="menuitem">{{ i }}</a>
                         {% endif %}
                     {% endfor %}
+
                     <span>Totaal {{ paginator.getTotalItemCount() }} items.</span>
                     <span>Showing {{ paginator.showingStart }} till {{ paginator.showingEnd }}.</span>
+                    {% endif %}
                 </div>
 
             </section>

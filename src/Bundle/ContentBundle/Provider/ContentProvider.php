@@ -76,15 +76,15 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getFilterOptionsFromSolr(Request $request): array
+    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear): array
     {
         $query = $this->client->createSelect();
 
-        // Filter on contentType
+        // Filter on ContentType
         $query->createFilterQuery('class_string')
             ->setQuery('class_string: '.$request->query->get('solr_class_string'));
 
-        // Filter on Category /
+        // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
             $relation = $this->dm->getRepository(Relation::class)->find('mediaitem_channelcategory');
             $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
@@ -95,13 +95,14 @@ class ContentProvider
                 ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', $selectedCategory)]);
         }
 
+        // Filter on dates
         // TODO with some more data, update this to MONTH
         $facetSet = $query->getFacetSet();
         $facet = $facetSet->createFacetRange('pub_created');
         $facet->setField('pub_created');
-        $facet->setStart('2022-01-01T00:00:00Z');
-        $facet->setGap('+1DAY');
-        $facet->setEnd('2023-01-01T00:00:00Z');
+        $facet->setStart('2022-01-01T00:00:00Z'); // TODO Can we fill this dynamically with Lowest?
+        $facet->setGap($filterOnDayOrYear);
+        $facet->setEnd(date("Y-m-d")."T".date('H:i:s') ."Z"); // Is there a prettier way?
 
         $resultSet = $this->client->select($query);
 
