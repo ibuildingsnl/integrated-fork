@@ -172,11 +172,14 @@ class MediaController extends AbstractController
         }
 
         $classString = $request->query->get('class_string');
-        if (null === $classString || '' === $classString || 'Alle mediabestanden' === $classString) {
-            $request->query->set('class_string', 'Alle mediabestanden');
+        if (null === $classString || '' === $classString || 'all_files' === $classString) {
+            $request->query->set('class_string', 'all_files');
             $request->query->set('solr_class_string', 'File');
-        } elseif ('NonMedia' === $classString || 'Image' === $classString || 'Video' === $classString) {
-            $request->query->set('solr_class_string', $classString);
+
+        } elseif (\in_array($classString, array_keys($this::DEFAULT_FILE_TYPES))) {
+//        } elseif ('NonMedia' === $classString || 'Image' === $classString || 'Video' === $classString) {
+            $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]["solr_name"]);
+//            $request->query->set('solr_class_string', $classString);
         } else {
             $camelCase = $this->kebabToCamel($classString);
             $request->query->set('solr_class_string', $camelCase);
@@ -194,17 +197,17 @@ class MediaController extends AbstractController
     {
         $yearMonthFilter = $request->query->get('year_month');
         if ('' === $yearMonthFilter) {
-            $request->query->set('year_month', 'Alles');
+            $request->query->set('year_month', 'all_dates');
             $yearMonthFilter = $request->query->get('year_month');
         }
 
-        if (isset($yearMonthFilter) && null != $yearMonthFilter && 'Alles' !== $yearMonthFilter) {
+        if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
             list($year, $month, $day) = explode('-', $yearMonthFilter);
             $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
             $endDate = "$year-{$month}-{$day}T23:59:59Z";
             $fullDateFilter = $startDate.' TO '.$endDate;
             $request->query->set('year_month_day_filter', $fullDateFilter);
-        } elseif ('Alles' === $yearMonthFilter) {
+        } elseif ('all_dates' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         }
 
@@ -245,57 +248,36 @@ class MediaController extends AbstractController
         $params = [
             'date_filter' => [
                 'options' => [
-                    'Alles' => [
-                        'type' => 'Alles',
+                    'all_dates' => [
                         'name' => 'Alles',
-                        'label' => 'Alles',
+                        'label' => 'Alle datums',
                     ],
                 ],
                 'current' => $request->query->get('year_month'),
-                'default' => 'Alles',
+                'default' => 'all_dates',
             ],
             'content_types' => [
                 'options' => [
-                    'Alle mediabestanden' => [
-                        'name' => 'Alle mediabestanden',
-                        'label' => 'Alle mediabestanden',
-                    ],
-                    'Image' => [
-                        'name' => 'Image',
-                        'label' => 'Images',
-                    ],
-                    'Video' => [
-                        'name' => 'Video',
-                        'label' => 'Videos',
-                    ],
-                    'NonMedia' => [
-                        'name' => 'NonMedia',
-                        'label' => 'Files',
+                    'all_files' => [
+                        'label_plural' => 'Alle mediabestanden',
                     ],
                 ],
                 'current' => $request->query->get('class_string'),
-                'default' => 'Alle mediabestanden',
+                'default' => 'all_files',
             ],
             // NEW ITEMS
             'types' => [
-                'Image' => [
-                    'type' => 'image',
-                    'label' => 'Image',
-                ],
-                'Video' => [
-                    'type' => 'video',
-                    'label' => 'Video',
-                ],
-                'File' => [
-                    'type' => 'file',
-                    'label' => 'File',
-                ],
             ],
             'media_taxonomy' => [
                 'current' => $mediaTaxonomy,
                 'default' => null,
             ],
         ];
+
+        foreach ($this::DEFAULT_FILE_TYPES as $file_type_key => $file_type) {
+            $params['content_types']['options'][$file_type_key] = $file_type;
+            $params['types'][$file_type_key] = $file_type;
+        }
 
         $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
 
@@ -310,16 +292,16 @@ class MediaController extends AbstractController
                 continue;
             }
 
-            // For new items:
+            // For filtering of content_types
             $params['content_types']['options'][$uniqueContentType] = [
                 'name' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType),
+                'label_plural' => ucfirst($uniqueContentType),
             ];
 
-            // For filtering:
+            // For new items of content_type:
             $params['types'][$uniqueContentType] = [
                 'type' => $uniqueContentType,
-                'label' => ucfirst($uniqueContentType),
+                'label_singular' => ucfirst($uniqueContentType),
             ];
         }
 
@@ -339,7 +321,7 @@ class MediaController extends AbstractController
         $currentDate = $paramsExtended['date_filter']['current'];
 
         if (false === \array_key_exists($currentDate, $paramsExtended['date_filter']['options'])) {
-            $paramsExtended['date_filter']['current'] = 'Alles';
+            $paramsExtended['date_filter']['current'] = 'all_dates';
         }
 
         $currentContentType = $paramsExtended['content_types']['current'];

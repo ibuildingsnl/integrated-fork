@@ -98,11 +98,11 @@
                             <i class="fa-regular fa-plus"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                            {% for type in params.types %}
+                            {% for type_key, type in params.types %}
                                 {% if type %}
                                     <li role="presentation">
-                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type.type | title | lower | replace({' ': '_'}) }}">
-                                            {{ type.label | title }}
+                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type_key | title | lower | replace({' ': '_'}) }}">
+                                            {{ type.label_singular | title }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -114,18 +114,18 @@
                     <ul class="">
                         <li class="dropdown">
                             <a href data-toggle="dropdown" role="button" id="sorting-list"
-                               class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label|trans }}</span>
+                               class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label_plural|trans }}</span>
                                 <i class="fa-regular fa-angle-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                {% for content_type in params.content_types.options %}
-                                    {% if content_type.label != 'File' %}
-                                        <li {% if content_type.name == params.content_types.current %}class="active"
+                                {% for content_type_key, content_type in params.content_types.options %}
+
+                                        <li {% if content_type_key == params.content_types.current %}class="active"
                                             {% endif %}role="presentation">
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type.name == params.content_types.default ? null : content_type.name })) }}"
-                                               tabindex="-1" role="menuitem">{{ content_type.label|trans|capitalize }}</a>
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })) }}"
+                                               tabindex="-1" role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
                                         </li>
-                                    {% endif %}
+
                                 {% endfor %}
 
                             </ul>
@@ -138,11 +138,11 @@
                                 <i class="fa-regular fa-angle-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                {% for year_month in params.date_filter.options %}
+                                {% for year_month_key, year_month in params.date_filter.options %}
                                     {% if year_month.label != 'File' %}
                                         <li {% if year_month.name == params.date_filter.current %}class="active"
                                             {% endif %}role="presentation">
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'year_month': year_month.type == params.date_filter.default ? null : year_month.type })) }}"
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })) }}"
                                                tabindex="-1" role="menuitem">{{ year_month.label|trans|capitalize }}</a>
                                         </li>
                                     {% endif %}
