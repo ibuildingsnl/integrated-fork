@@ -87,7 +87,7 @@ class MediaGalleryMenu
         $allSelectedTaxonomys = $this->findCurrentlySelectedMenu($menu, $only_allowed_taxonomy_id);
 
         // TODO change this to ID!
-        return $this->array_column_recursive($allSelectedTaxonomys, 'title');
+        return $this->arrayColumnRecursive($allSelectedTaxonomys, 'title');
     }
 
     public function findCurrentlySelectedMenu($inArray, $target)
@@ -107,7 +107,7 @@ class MediaGalleryMenu
         }
     }
 
-    public function array_column_recursive(array $haystack, $needle)
+    public function arrayColumnRecursive(array $haystack, $needle)
     {
         $found = [];
         array_walk_recursive($haystack, function ($value, $key) use (&$found, $needle) {

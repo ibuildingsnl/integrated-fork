@@ -41,8 +41,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *  - A Media item can be a Video, Image, File(NonMedia), or a custom type. But they are all extended from file.
  *  - To work with database, you are working with the classnames, so: Image, Video, CustomContentType
  *  - To work with url, you work with camelcase, so: image, custom_content_type
- *
- *
  */
 
 class MediaController extends AbstractController
@@ -57,7 +55,7 @@ class MediaController extends AbstractController
 
     // settings:
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
-    public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'MP4', 'MOV', 'AVI', 'FLV', 'MKV', 'WMV'];
+    public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
         'image' => [
@@ -102,43 +100,43 @@ class MediaController extends AbstractController
      *
      * @return Response
      */
-    // TODO: vertaling neerzetten in twig template
-    public function index(Request $request_source)
+    // TODO: Use translations in Twig
+    public function index(Request $requestSource)
     {
         $allSelectedCategoryTitles = null;
 
-        $request_copy = clone $request_source;
+        $requestCopy = clone $requestSource;
 
         $params['selected_taxonomy'] = null;
-        $selectedMediaTaxonomy = $request_copy->query->get($this::HARD_CODED_CATEGORY);
+        $selectedMediaTaxonomy = $requestCopy->query->get($this::HARD_CODED_CATEGORY);
         if ($selectedMediaTaxonomy !== null) {
             $params['selected_taxonomy'] = $selectedMediaTaxonomy[0];
         }
 
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        $only_allowed_taxonomy_id = $request_copy->query->get('media_taxonomy_id');
+        $onlyAllowedTaxonomyID = $requestCopy->query->get('media_taxonomy_id');
 
         $menu = $this->mediaGalleryMenu->createMenu();
 
-        if ($only_allowed_taxonomy_id !== null && $this::SHOW_FILES_OF_SUBCATEGORY === true) {
-            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $only_allowed_taxonomy_id);
-            $request_copy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
+        if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $onlyAllowedTaxonomyID) {
+            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $onlyAllowedTaxonomyID);
+            $requestCopy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
         }
 
         $uniqueContentTypes = $this->getContentTypes();
 
-        $request_copy = $this->setAndGetClassString($request_copy);
+        $requestCopy = $this->setAndGetClassString($requestCopy);
 
-        $this->setYearMonthFilter($request_copy);
+        $this->setYearMonthFilter($requestCopy);
 
-        $items = $this->provider->getContentFromSolr($request_copy, 2000);
+        $items = $this->provider->getContentFromSolr($requestCopy, 2000);
 
-        $dateFilter = $this->getYearMonthDates($request_copy);
+        $dateFilter = $this->getYearMonthDates($requestCopy);
 
-        $request_source->query->remove($this::HARD_CODED_CATEGORY);
+        $requestSource->query->remove($this::HARD_CODED_CATEGORY);
 
-        $params = array_merge($params, $this->getParams($request_copy, $uniqueContentTypes, $dateFilter));
+        $params = array_merge($params, $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'not_shown_filetypes' => array_map(fn ($item) => strtolower($item),
@@ -156,16 +154,6 @@ class MediaController extends AbstractController
         $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
 
         return array_filter($contentTypeNames);
-
-        // old
-        $contentTypes = [];
-        if ($dbContentTypes = $this->dm->getRepository(File::class)->findAll()) {
-            foreach ($dbContentTypes as $dbContentType) {
-                $contentTypes[] = $dbContentType->getContentType();
-            }
-        }
-
-        return array_unique($contentTypes);
     }
 
     // specific day:
@@ -174,7 +162,6 @@ class MediaController extends AbstractController
     // specific month:
     //                 xx                      xx
     //            2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
-
     public function setAndGetClassString($request)
     {
         // we want to keep two things separate:
@@ -183,21 +170,21 @@ class MediaController extends AbstractController
         // because with the user selection 'Alle Mediabestanden' we want to query for the class: File.
         // but when the user clicks on 'Files' we want to query on 'NonMedia'
 
-        $class_string = $request->query->get('class_string');
-        if ($class_string === null || $class_string === '' || $class_string === 'Alle mediabestanden') {
+        $classString = $request->query->get('class_string');
+        if (null === $classString || '' === $classString || 'Alle mediabestanden' === $classString ) {
             $request->query->set('class_string', 'Alle mediabestanden');
             $request->query->set('solr_class_string', 'File');
-        } elseif ($class_string === 'NonMedia' || $class_string === 'Image' || $class_string === 'Video') {
-            $request->query->set('solr_class_string', $class_string);
+        } elseif ('NonMedia' === $classString || 'Image' === $classString || 'Video' === $classString) {
+            $request->query->set('solr_class_string', $classString);
         } else {
-            $camelCase = $this->kebabToCamel($class_string);
+            $camelCase = $this->kebabToCamel($classString);
             $request->query->set('solr_class_string', $camelCase);
         }
 
         return $request;
     }
 
-    public function kebabToCamel($input)
+    public function kebabToCamel($input): string
     {
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
@@ -205,18 +192,18 @@ class MediaController extends AbstractController
     public function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
-        if ($yearMonthFilter == '') {
+        if ('' === $yearMonthFilter) {
             $request->query->set('year_month', 'Alles');
             $yearMonthFilter = $request->query->get('year_month');
         }
 
-        if (isset($yearMonthFilter) && $yearMonthFilter != null && $yearMonthFilter !== 'Alles') {
+        if (isset($yearMonthFilter) && null != $yearMonthFilter && 'Alles' !== $yearMonthFilter) {
             list($year, $month, $day) = explode('-', $yearMonthFilter);
             $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
             $endDate = "{$year}-{$month}-{$day}T23:59:59Z";
             $fullDateFilter = $startDate.' TO '.$endDate;
             $request->query->set('year_month_day_filter', $fullDateFilter);
-        } elseif ($yearMonthFilter === 'Alles') {
+        } elseif ('Alles' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         }
 
@@ -225,12 +212,12 @@ class MediaController extends AbstractController
 
     public function getYearMonthDates(Request $request): array
     {
-        $date_amount = $this->provider->getFilterOptionsFromSolr($request);
+        $dateAmount = $this->provider->getFilterOptionsFromSolr($request);
 
-        return $this->transformDateYearToFrontendArray($date_amount);
+        return $this->transformDateYearToFrontendArray($dateAmount);
     }
 
-    public function transformDateYearToFrontendArray($dates)
+    public function transformDateYearToFrontendArray($dates): array
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
@@ -326,7 +313,6 @@ class MediaController extends AbstractController
                 'label' => ucfirst($uniqueContentType),
             ];
         }
-//        dd("fone");
 
         foreach ($dateFilter as $yearMonth) {
             $params['date_filter']['options'][$yearMonth['yearMonth']] = [
@@ -341,20 +327,23 @@ class MediaController extends AbstractController
 
     public function checkIfCurrentExistsAsKey($paramsExtended)
     {
-        $current_date = $paramsExtended['date_filter']['current'];
+        $currentDate = $paramsExtended['date_filter']['current'];
 
-        if (\array_key_exists($current_date, $paramsExtended['date_filter']['options']) === false) {
+        if (false === \array_key_exists($currentDate, $paramsExtended['date_filter']['options'])) {
             $paramsExtended['date_filter']['current'] = 'Alles';
         }
 
-        $current_content_type = $paramsExtended['content_types']['current'];
-        if (\array_key_exists($current_content_type, $paramsExtended['content_types']['options']) === false) {
+        $currentContentType = $paramsExtended['content_types']['current'];
+        if (false === \array_key_exists($currentContentType, $paramsExtended['content_types']['options'])) {
             $paramsExtended['content_types']['current'] = null;
         }
 
         return $paramsExtended;
     }
 
+    /**
+     * @deprecated
+     */
     public function getDatesOfItems($items)
     {
         $dates = [];
@@ -386,7 +375,7 @@ class MediaController extends AbstractController
             $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
 
             // TODO Enable this when we have proper data
-//            if ($read === true || $write === true) {
+//          if ($read === true || $write === true) {
             $channelAuthorisations[] = $value;
 //                $channelAuthorisations[$value ] = [
 //                    "read" => $read,
@@ -434,7 +423,7 @@ class MediaController extends AbstractController
         // if media id is a string, convert it to an array
         // (is_array($params["media_id"]) === false) ? $params["media_id"] = [$params["media_id"]] : '';
         // more readable
-        if (\is_array($params['media_id']) === false) {
+        if (false === \is_array($params['media_id'])) {
             $params['media_id'] = [$params['media_id']];
         }
 
@@ -459,14 +448,14 @@ class MediaController extends AbstractController
             })->toArray();
 
             // Remove relation when needed:
-            $category_id_origin = $params['category_id_origin'];
-            if ($category_id_origin !== '') {
-                $messages[] = 'origin: '.$category_id_origin;
+            $categoryIdOrigin = $params['category_id_origin'];
+            if ('' !== $categoryIdOrigin) {
+                $messages[] = 'origin: '.$categoryIdOrigin;
                 $messages[] = 'relationIDs: '.implode('-', $relationIDs);
 
-                if (\in_array($category_id_origin, $relationIDs)) {
-                    $remove_this_taxonomy = $this->dm->getRepository(Taxonomy::class)->find($category_id_origin);
-                    $relations->removeReference($remove_this_taxonomy);
+                if (\in_array($categoryIdOrigin, $relationIDs)) {
+                    $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($categoryIdOrigin);
+                    $relations->removeReference($removeThisTaxonomy);
                     $messages[] = 'Removed';
                 }
             }
@@ -513,7 +502,7 @@ class MediaController extends AbstractController
         if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
             /* @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($mediaGalleryMenuResult as $menuItem) {
-                $menuItems[menuItem->getId()] = $channel->getName();
+                $menuItems[$menuItem->getId()] = $channel->getName();
             }
         }
 
