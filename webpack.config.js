@@ -20,10 +20,15 @@ webpackConfig = Encore.setOutputPath(
         './src/Bundle/FormTypeBundle/Resources/assets/css/tinymce.editor.css',
         './src/Bundle/FormTypeBundle/Resources/assets/js/editor.js',
         './node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css',
-        './node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js']).
-    addEntry('iframe', [
-        './src/Bundle/BlockBundle/Resources/assets/css/iframe.css']).
-    addEntry('content_sortable', [
+        './node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js',
+    ])
+    .addEntry('collection', [
+        './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
+    ])
+    .addEntry('iframe', [
+        './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
+    ])
+    .addEntry('content_sortable', [
         './node_modules/components-jqueryui/jquery-ui.min.js',
         './src/Bundle/FormTypeBundle/Resources/assets/js/content_sortable_collection.js']).
     addEntry('drag-drop', [
