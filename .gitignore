@@ -3,8 +3,10 @@
 .php-cs-fixer.cache
 .php_cs.cache
 vendor/
+node_modules/
 composer.lock
 composer.phar
 phpunit.xml
+.phpunit.result.cache
 phpcs.xml
-node_modules/
+yarn-error.log

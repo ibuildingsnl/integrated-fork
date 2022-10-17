@@ -40,26 +40,33 @@ webpackConfig = Encore.setOutputPath(
     addEntry('workflow', [
         './src/Bundle/WorkflowBundle/Resources/assets/js/updateTransitions.js',
         './src/Bundle/WorkflowBundle/Resources/assets/js/defaultSelection.js',
-        './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js']).
-    copyFiles({
-        from: './node_modules/tinymce/skins', to: 'skins/[path][name].[ext]',
-    }).
-    copyFiles({
+        './src/Bundle/WorkflowBundle/Resources/assets/js/select2_init.js',
+    ])
+    .copyFiles({
+        from: './node_modules/tinymce/skins',
+        to: 'skins/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/tinymce/icons',
+        to: 'icons/[path][name].[ext]'
+    })
+    .copyFiles({
         from: './src/Bundle/ContentBundle/Resources/assets/images',
         to: 'images/[path][name].[ext]',
-    }).
-    cleanupOutputBeforeBuild().
-    autoProvidejQuery().
-    enableSassLoader().
-    enableSourceMaps(false).
-    enableVersioning(false).
-    disableSingleRuntimeChunk().
-    enablePostCssLoader((options) => {
+    })
+    .cleanupOutputBeforeBuild()
+    .autoProvidejQuery()
+    .enableSassLoader()
+    .enableSourceMaps(false)
+    .enableVersioning(false)
+    .disableSingleRuntimeChunk()
+    .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
         };
-    }).
-    getWebpackConfig();
+    })
+    .getWebpackConfig();
+
 
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname,

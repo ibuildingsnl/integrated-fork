@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
@@ -22,13 +21,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class IntegratedContentExtension extends Extension implements PrependExtensionInterface
+class IntegratedContentExtension extends Extension
 {
-    /**
-     * @var string
-     */
-    protected $formTemplate = '@IntegratedContent/form/form_div_layout.html.twig';
-
     /**
      * Load the configuration.
      *
@@ -76,30 +70,5 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
         $loader->load('mailer.xml');
 
         $loader->load('data_fixtures.xml');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepend(ContainerBuilder $container)
-    {
-        $this->configureTwigBundle($container);
-    }
-
-    /**
-     * @param ContainerBuilder $container The service container
-     */
-    protected function configureTwigBundle(ContainerBuilder $container)
-    {
-        foreach ($container->getExtensions() as $name => $extension) {
-            switch ($name) {
-                case 'twig':
-                    $container->prependExtensionConfig(
-                        $name,
-                        ['form_themes' => [$this->formTemplate]]
-                    );
-                    break;
-            }
-        }
     }
 }
