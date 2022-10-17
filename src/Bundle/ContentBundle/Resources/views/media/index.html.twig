@@ -630,7 +630,7 @@
                 function sendAjaxRequest(category_id, media_id) {
                     let jsonContent = JSON.stringify({
                         csrf: document.querySelector('#media_category_csrf').value,
-                        category_id: category_id,
+                        category_id_target: category_id,
                         media_id: media_id,
                         category_id_origin: get_current_category_id(),
                     })

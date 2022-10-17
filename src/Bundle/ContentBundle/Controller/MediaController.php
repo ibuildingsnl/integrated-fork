@@ -49,7 +49,7 @@ class MediaController extends AbstractController
 {
     public const PAGINATOR_LIMIT = 50;
     public const DATE_FILTER_ON = '+1MONTH'; //1DAY or 1MONTH
-    public const SHOW_FILES_OF_SUBCATEGORY = false;
+    public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
@@ -82,7 +82,7 @@ class MediaController extends AbstractController
     private $mediaGalleryMenu;
     private $userManager;
     private $provider;
-    private $repository; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
+    private $repository;
     private $authorizationChecker;
     private $queueSubscriber;
     private $indexer;
@@ -111,7 +111,19 @@ class MediaController extends AbstractController
         $params = [];
         $this->dm = $this->getDoctrineODM()->getManager();
 
-        $menu = $this->mediaGalleryMenu->createMenu();
+        $menu = $this->mediaGalleryMenu->createMenu($this);
+
+        $otherMenu = $this->mediaGalleryMenu->getMenuItemsFromDB();
+
+        // TODO: With my installation, I cant add groups, work this out later
+        foreach ($otherMenu as $menuItem) {
+            if (false === $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem)) {
+//                dump("false");
+                continue;
+            } else {
+//                dump("true");
+            }
+        }
 
         if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
             $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
@@ -399,8 +411,7 @@ class MediaController extends AbstractController
         return $this->transformDateYearToFrontendArray($dates);
     }
 
-    public
-    function getChannels()
+    public function getChannels()
     {
         $channels = [];
         if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
@@ -441,41 +452,42 @@ class MediaController extends AbstractController
 
 // Update relation of mediaItems
 // I want to keep the messages for debugging
-    public
-    function manageRelations(Request $request)
+    public function manageRelations(Request $request)
     {
         $this->dm = $this->getDoctrineODM()->getManager();
         $messages = [];
         $params = json_decode($request->getContent(), true);
-//      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"               REQUIRED, one or many
-//      "category_id" => "category_2-1"                                OPTIONAL, one
-//      "category_id_origin" => "3324234"                              OPTIONAL, one
+//      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, one or many
+//      "category_id_target" => "category_2-1"                               REQUIRED, one
+//      "category_id_origin" => "3324234"                                    REQUIRED, one
 
         // Is the user dragging from and to the same folder
         // TODO disable this at client side
-        if ($params['category_id'] === $params['category_id_origin']) {
+        if ($params['category_id_target'] === $params['category_id_origin']) {
             return new JsonResponse('Origin is same as target');
         }
 
         // get the Taxonomy (Category) with $params["category_id"]
         $taxonomy = null;
-        if ($params['category_id']) {
-            $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id']);
+        if ($params['category_id_target']) {
+            $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id_target']);
         }
 
         // if media id is a string, convert it to an array
-        // (is_array($params["media_id"]) === false) ? $params["media_id"] = [$params["media_id"]] : '';
-        // more readable
-        if (false === \is_array($params['media_id'])) {
+        if (true === \is_string($params['media_id'])) {
             $params['media_id'] = [$params['media_id']];
         }
 
         $mediaItems = $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($params['media_id'])
             ->getQuery()
-            ->execute();
+            ->execute()->toArray();
 
+        $counter = 1;
         foreach ($mediaItems as $mediaItem) {
+            $messages[] = '';
+            $messages[] = $counter++;
+
             if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
                 $messages[] = 'relation exists?';
             } else {
@@ -491,13 +503,13 @@ class MediaController extends AbstractController
             })->toArray();
 
             // Remove relation when needed:
-            $categoryIdOrigin = $params['category_id_origin'];
-            if ('' !== $categoryIdOrigin) {
-                $messages[] = 'origin: ' . $categoryIdOrigin;
+            if ('' !== $params['category_id_origin']) {
+                $messages[] = 'origin: ' . $params['category_id_origin'];
                 $messages[] = 'relationIDs: ' . implode('-', $relationIDs);
 
-                if (\in_array($categoryIdOrigin, $relationIDs)) {
-                    $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($categoryIdOrigin);
+                if (\in_array($params['category_id_origin'], $relationIDs)) {
+                    $messages[] = 'The origin link will be removed.';
+                    $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id_origin']);
                     $relations->removeReference($removeThisTaxonomy);
                     $messages[] = 'Removed';
                 }
@@ -510,17 +522,15 @@ class MediaController extends AbstractController
                 // Add the new taxonomy item
                 $relations->addReference($taxonomy);
                 $mediaItem->addRelation($relations);
-                $this->dm->persist($mediaItem);
-                $this->dm->flush();
-                $this->updateQueueToSolr($mediaItem);
             }
+
+            $this->updateQueueToSolr($mediaItem);
         }
 
         return new JsonResponse($messages);
     }
 
-    public
-    function updateQueueToSolr($content)
+    public function updateQueueToSolr($content)
     {
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
@@ -531,8 +541,7 @@ class MediaController extends AbstractController
     }
 
 // TODO later make this
-    public
-    function menu()
+    public function menu()
     {
         $dm = $this->getDoctrineODM()->getManager();
         $channels = [];
