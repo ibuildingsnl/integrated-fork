@@ -23,6 +23,9 @@ use Integrated\Common\Content\Embedded\RelationInterface;
  */
 class Relation implements RelationInterface
 {
+    public const LOCATION_SIDEBAR = 'sidebar';
+    public const LOCATION_EDITOR = 'editor';
+
     /**
      * @var string id of the Relation document
      */

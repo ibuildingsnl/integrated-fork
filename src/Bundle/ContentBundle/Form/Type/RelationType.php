@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -73,8 +74,8 @@ class RelationType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => [
-                        'Sidebar' => 'sidebar',
-                        'Editor' => 'editor',
+                        'Sidebar' => Embedded\Relation::LOCATION_SIDEBAR,
+                        'Editor' => Embedded\Relation::LOCATION_EDITOR,
                     ],
                 ]
             )->add(
@@ -87,7 +88,7 @@ class RelationType extends AbstractType
                 ]
             )
             ->add(
-                $builder->create('options', FormType::class, ['inherit_data' => true])
+                $builder->create('options', FormType::class, [§])
                         ->add(
                             'multiple',
                             CheckboxType::class,
