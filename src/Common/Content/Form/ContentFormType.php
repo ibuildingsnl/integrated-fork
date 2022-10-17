@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Form;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Form;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Event\FieldEvent;
 use Integrated\Common\Content\Form\Event\ViewEvent;
@@ -21,6 +22,8 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -66,12 +69,13 @@ class ContentFormType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $dispatcher = $this->getEventDispatcher();
 
         /** @var ContentTypeInterface $type */
         $type = $options['content_type'];
+
         unset($options['content_type']);
 
         $metadata = $this->metadataFactory->getMetadata($type->getClass());
@@ -82,11 +86,12 @@ class ContentFormType extends AbstractType
                 $type,
                 $metadata,
                 $builder,
-                $options
+                $options,
             ), Events::PRE_BUILD)->getOptions();
         }
 
         foreach ($metadata->getFields() as $field) {
+
             // Allow events to add fields before the supplied field
             if ($dispatcher->hasListeners(Events::PRE_BUILD_FIELD)) {
                 $dispatcher->dispatch(new BuilderEvent(
@@ -98,11 +103,15 @@ class ContentFormType extends AbstractType
                 ), Events::PRE_BUILD_FIELD);
             }
 
+//            $builder->create('sidebar', FormType::class, ['inherit_data' => true]);
+//            $builder->create('editor', FormType::class, ['inherit_data' => true]);
+
             if ($type->hasField($field->getName())) {
                 $config = new Field($field->getName());
 
                 $config->setType($field->getType());
                 $config->setOptions($type->getField($field->getName())->getOptions() + $field->getOptions());
+                $config->setLocation($field->getLocation())->setIcon($field->getIcon())->setState($field->getState());
 
                 // Allow events to change the supplied field options or even remove it from the form
                 if ($dispatcher->hasListeners(Events::BUILD_FIELD)) {
@@ -113,11 +122,11 @@ class ContentFormType extends AbstractType
                         $config = null;
                     }
                 }
-
                 if ($config) {
                     $builder->add($config->getName(), $config->getType(), $config->getOptions());
                 }
             }
+
 
             // Allow events to add fields after the supplied field
             if ($dispatcher->hasListeners(Events::POST_BUILD_FIELD)) {

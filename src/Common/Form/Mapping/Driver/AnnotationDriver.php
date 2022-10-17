@@ -75,7 +75,10 @@ class AnnotationDriver implements DriverInterface
 
             $metadataField = $metadata->newField($prop->getName())
                 ->setType($field->getType())
-                ->setOptions($field->getOptions());
+                ->setOptions($field->getOptions())
+                ->setLocation($field->getLocation())
+                ->setIcon($field->getIcon())
+                ->setState($field->getState());
 
             $metadata->addField($metadataField);
         }

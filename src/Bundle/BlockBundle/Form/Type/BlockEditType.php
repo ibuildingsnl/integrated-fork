@@ -85,6 +85,9 @@ class BlockEditType extends AbstractType
                     'class' => 'select2',
                     'data-placeholder' => 'Block managers only',
                 ],
+                'location' => 'sidebar',
+                'icon' => 'fa-key',
+                'state' => 'show'
             ]);
 
             $builder->get('groups')->addModelTransformer(new GroupTransformer($this->groupManager));
