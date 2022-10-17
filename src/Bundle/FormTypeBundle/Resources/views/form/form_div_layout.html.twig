@@ -322,7 +322,7 @@
             {% set style = attr.style %}
         {% endif %}
         {% if attr.state is defined and attr.state is not empty %}
-            {% set style = attr.state %}
+            {% set state = attr.state %}
         {% endif %}
         {% if style == 'horizontal' %}
             <div

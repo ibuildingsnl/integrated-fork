@@ -21,7 +21,6 @@
     <div class="flex flex-wrap {{ form_class }}">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
-            {% dump(form) %}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -79,57 +78,64 @@
                         {% endblock %}
 
                         {% block content_meta %}
-
-                            {% if form.channels is defined %}
-                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}
-                            {% endif %}
-
-                            {% if form.slug is defined %}
-                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'fa-link'}) }}
-                            {% endif %}
-
-                            <!-- If description is available and Content is also, show it in the sidebar -->
-                            {% if form.content is defined %}
-                                {% if form.description is defined %}
-                                    {{ form_row(form.description, {'style': 'sidebar', 'icon':'fa-input-text'}) }}
+                            {% dump(form) %}
+                            {% for key in form.children %}
+                                {% if key.vars.attr.location is defined and key.vars.attr.location == 'sidebar' %}
+                                    {% set location, icon, state = key.vars.attr.location|default, key.vars.attr.icon|default, key.vars.attr.state|default %}
+                                    {{ form_row(key, {'style': location, 'icon': icon, 'state': state}) }}
                                 {% endif %}
-                            {% endif %}
+                            {% endfor %}
+{#                            #}
+{#                            {% if form.channels is defined %}#}
+{#                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.address is defined %}
-                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'fa-map-location-dot'}) }}
-                            {% endif %}
+{#                            {% if form.slug is defined %}#}
+{#                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'fa-link'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.copyrightRestrictions is defined %}
-                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'fa-copyright'}) }}
-                            {% endif %}
+{#                            <!-- If description is available and Content is also, show it in the sidebar -->#}
+{#                            {% if form.content is defined %}#}
+{#                                {% if form.description is defined %}#}
+{#                                    {{ form_row(form.description, {'style': 'sidebar', 'icon':'fa-input-text'}) }}#}
+{#                                {% endif %}#}
+{#                            {% endif %}#}
 
-                            {% if form.authors is defined %}
-                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather', 'widget_col': '', 'label_col':''}) }}
-                            {% endif %}
+{#                            {% if form.address is defined %}#}
+{#                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'fa-map-location-dot'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.source is defined %}
-                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'fa-megaphone'}) }}
-                            {% endif %}
+{#                            {% if form.copyrightRestrictions is defined %}#}
+{#                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'fa-copyright'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.sourceUrl is defined %}
-                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'fa-arrow-up-right-from-square'}) }}
-                            {% endif %}
+{#                            {% if form.authors is defined %}#}
+{#                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather', 'widget_col': '', 'label_col':''}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.relations is defined %}
-                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
-                            {% endif %}
+{#                            {% if form.source is defined %}#}
+{#                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'fa-megaphone'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.logo is defined %}
-                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}
-                            {% endif %}
+{#                            {% if form.sourceUrl is defined %}#}
+{#                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'fa-arrow-up-right-from-square'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.rank is defined %}
-                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
-                            {% endif %}
+{#                            {% if form.relations is defined %}#}
+{#                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}#}
+{#                            {% endif %}#}
 
-                            {% if form.disabled is defined %}
-                                {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'fa-do-not-enter'}) }}
-                            {% endif %}
+{#                            {% if form.logo is defined %}#}
+{#                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}#}
+{#                            {% endif %}#}
+
+{#                            {% if form.rank is defined %}#}
+{#                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}#}
+{#                            {% endif %}#}
+
+{#                            {% if form.disabled is defined %}#}
+{#                                {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'fa-do-not-enter'}) }}#}
+{#                            {% endif %}#}
                         {% endblock %}
 
                         {% block content_relations %}
