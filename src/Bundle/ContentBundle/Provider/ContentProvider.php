@@ -102,7 +102,7 @@ class ContentProvider
         $facet->setField('pub_created');
         $facet->setStart('2022-01-01T00:00:00Z'); // TODO Can we fill this dynamically with Lowest?
         $facet->setGap($filterOnDayOrYear);
-        $facet->setEnd(date("Y-m-d")."T".date('H:i:s') ."Z"); // Is there a prettier way?
+        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z'); // Is there a prettier way?
 
         $resultSet = $this->client->select($query);
 

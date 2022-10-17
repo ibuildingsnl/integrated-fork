@@ -62,7 +62,8 @@ class MediaGalleryMenu
         }
     }
 
-    public function getMenuItemsFromDB() {
+    public function getMenuItemsFromDB()
+    {
         return $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy']);
     }
 

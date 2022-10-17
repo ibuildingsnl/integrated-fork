@@ -61,7 +61,6 @@ class TaxonomyRelationManager
         }
 
         return new JsonResponse('Ok');
-
     }
 
     public function getTaxonomy($params)
@@ -93,11 +92,10 @@ class TaxonomyRelationManager
     {
         if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
             return $relations;
-        } else {
-            $relations = (new Relation())
-                ->setRelationId('mediaitem_channelcategory')
-                ->setRelationType('taxonomy');
         }
+        $relations = (new Relation())
+            ->setRelationId('mediaitem_channelcategory')
+            ->setRelationType('taxonomy');
 
         return $relations;
     }
@@ -121,7 +119,7 @@ class TaxonomyRelationManager
 
     public function addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs)
     {
-        if ( false === \in_array($taxonomy->getID(), $relationIDs)) {
+        if (false === \in_array($taxonomy->getID(), $relationIDs)) {
             $messages[] = 'not in array';
             // Add the new taxonomy item
             $relations->addReference($taxonomy);

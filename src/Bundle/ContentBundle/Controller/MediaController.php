@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -26,11 +25,9 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 /*
@@ -49,7 +46,7 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 class MediaController extends AbstractController
 {
     public const PAGINATOR_LIMIT = 50;
-    public const DATE_FILTER_ON = '+1MONTH'; //1DAY or 1MONTH
+    public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
@@ -79,7 +76,7 @@ class MediaController extends AbstractController
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\File',
         ],
     ];
-    public const SOLR_ALL_MEDIA_CLASS_STRING = "File";
+    public const SOLR_ALL_MEDIA_CLASS_STRING = 'File';
     private $mediaGalleryMenu;
     private $userManager;
     private $provider;
@@ -122,11 +119,10 @@ class MediaController extends AbstractController
         // TODO: With my installation, I cant add groups, work this out later
         foreach ($otherMenu as $menuItem) {
             if (false === $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem)) {
-                dump("false");
+                dump('false');
                 continue;
-            } else {
-                dump("true");
             }
+            dump('true');
         }
 
         if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
@@ -140,8 +136,8 @@ class MediaController extends AbstractController
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
 
-        if (count($items) === 0) {
-            $message = "No results with this selection.";
+        if (\count($items) === 0) {
+            $message = 'No results with this selection.';
         }
 
         $dateFilter = $this->getYearMonthDates($requestCopy);
@@ -154,7 +150,7 @@ class MediaController extends AbstractController
             'params' => $params,
             'menu' => $menu,
             'not_shown_filetypes' => array_map(
-                fn($item) => strtolower($item),
+                fn ($item) => strtolower($item),
                 $this::NOT_SHOWN_FILETYPES
             ),
         ]);
@@ -190,9 +186,8 @@ class MediaController extends AbstractController
         if (null === $classString || '' === $classString || 'all_files' === $classString) {
             $request->query->set('class_string', 'all_files');
             $request->query->set('solr_class_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
-
         } elseif (\in_array($classString, array_keys($this::DEFAULT_FILE_TYPES))) {
-            $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]["solr_name"]);
+            $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]['solr_name']);
         } else {
             $camelCase = $this->kebabToCamel($classString);
             $request->query->set('solr_class_string', $camelCase);
@@ -220,7 +215,7 @@ class MediaController extends AbstractController
 
         if (null === $yearMonthFilter) {
             return;
-        } else if ('all_dates' === $yearMonthFilter) {
+        } elseif ('all_dates' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         } else {
             if ($this::DATE_FILTER_ON == '+1DAY') {
@@ -228,21 +223,21 @@ class MediaController extends AbstractController
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
                     $endDate = "$year-{$month}-{$day}T23:59:59Z";
-                    $fullDateFilter = $startDate . ' TO ' . $endDate;
+                    $fullDateFilter = $startDate.' TO '.$endDate;
                     $request->query->set('year_month_day_filter', $fullDateFilter);
                 }
 
                 return $yearMonthFilter;
-            } else if ($this::DATE_FILTER_ON == '+1MONTH') {
+            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
                 if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
-                    $nextMonth = (int)$month + 1;
+                    $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
                     }
                     $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
-                    $fullDateFilter = $startDate . ' TO ' . $endDate;
+                    $fullDateFilter = $startDate.' TO '.$endDate;
 
                     $request->query->set('year_month_day_filter', $fullDateFilter);
                 } elseif ('all_dates' === $yearMonthFilter) {
@@ -252,27 +247,25 @@ class MediaController extends AbstractController
         }
     }
 
-    public
-    function getYearMonthDates(Request $request): array
+    public function getYearMonthDates(Request $request): array
     {
         $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON);
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }
 
-    public
-    function transformDateYearToFrontendArray($dates): array
+    public function transformDateYearToFrontendArray($dates): array
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
             if ($this::DATE_FILTER_ON == '+1DAY') {
                 $label = substr($yearMonth, 0, 10);
-            } else if ($this::DATE_FILTER_ON == '+1MONTH') {
+            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
                 $label = substr($yearMonth, 0, 7);
             }
 
             $result[$yearMonth] = [
-                'label' => $label . ' (' . $amount . ')',
+                'label' => $label.' ('.$amount.')',
                 'yearMonth' => $yearMonth,
                 'amount' => $amount,
             ];
@@ -281,8 +274,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public
-    function getParams($request, $uniqueContentTypes, $dateFilter)
+    public function getParams($request, $uniqueContentTypes, $dateFilter)
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -331,8 +323,7 @@ class MediaController extends AbstractController
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
     }
 
-    public
-    function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
+    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
             // The default categories are always there, and dont need to be added again.
@@ -364,8 +355,7 @@ class MediaController extends AbstractController
         return $params;
     }
 
-    public
-    function checkIfCurrentExistsAsKey(array $paramsExtended): array
+    public function checkIfCurrentExistsAsKey(array $paramsExtended): array
     {
         $currentDate = $paramsExtended['date_filter']['current'];
 
@@ -381,8 +371,7 @@ class MediaController extends AbstractController
         return $paramsExtended;
     }
 
-    public
-    function createPaginator($items, $requestSource): SlidingPagination
+    public function createPaginator($items, $requestSource): SlidingPagination
     {
         $paginator = $this->getPaginator()->paginate(
             $items,
@@ -403,8 +392,7 @@ class MediaController extends AbstractController
     /**
      * @deprecated
      */
-    public
-    function getDatesOfItems($items)
+    public function getDatesOfItems($items)
     {
         $dates = [];
         foreach ($items as $item) {
