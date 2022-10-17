@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
+use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Security\PermissionInterface;
@@ -86,8 +87,9 @@ class MediaController extends AbstractController
     private $authorizationChecker;
     private $queueSubscriber;
     private $indexer;
+    private TaxonomyRelationManager $taxonomyRelationManager;
 
-    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
+    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, TaxonomyRelationManager $taxonomyRelationManager)
     {
         $this->provider = $provider;
         $this->userManager = $userManager;
@@ -96,6 +98,7 @@ class MediaController extends AbstractController
         $this->authorizationChecker = $authorizationChecker;
         $this->queueSubscriber = $queueSubscriber;
         $this->indexer = $indexer;
+        $this->taxonomyRelationManager = $taxonomyRelationManager;
     }
 
     /**
@@ -109,6 +112,7 @@ class MediaController extends AbstractController
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
         $params = [];
+
         $this->dm = $this->getDoctrineODM()->getManager();
 
         $menu = $this->mediaGalleryMenu->createMenu($this);
@@ -118,10 +122,10 @@ class MediaController extends AbstractController
         // TODO: With my installation, I cant add groups, work this out later
         foreach ($otherMenu as $menuItem) {
             if (false === $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem)) {
-//                dump("false");
+                dump("false");
                 continue;
             } else {
-//                dump("true");
+                dump("true");
             }
         }
 
@@ -135,6 +139,10 @@ class MediaController extends AbstractController
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
+
+        if (count($items) === 0) {
+            $message = "No results with this selection.";
+        }
 
         $dateFilter = $this->getYearMonthDates($requestCopy);
 
@@ -168,7 +176,7 @@ class MediaController extends AbstractController
         /** we want to keep two things separate:
          * - what the user asks for
          * - what we query
-         * because with the user selection 'Alle Mediabestanden' we want to query for the class: File.
+         * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
          * but when the user clicks on 'Files' we want to query on 'NonMedia'.
          */
         $request = clone $requestSource;
@@ -289,7 +297,7 @@ class MediaController extends AbstractController
                 'options' => [
                     'all_dates' => [
                         'name' => 'Alles',
-                        'label' => 'Alle datums',
+                        'label' => 'All dates',
                     ],
                 ],
                 'current' => $request->query->get('year_month'),
@@ -298,11 +306,11 @@ class MediaController extends AbstractController
             'content_types' => [
                 'options' => [
                     'all_files' => [
-                        'label_plural' => 'Alle mediabestanden',
+                        'label_plural' => 'All mediafiles',
                     ],
                 ],
                 'current' => $request->query->get('class_string'),
-                'default' => 'all_files',
+                'default' => 'All mediafiles',
             ],
             // NEW ITEMS
             'types' => [
@@ -439,8 +447,7 @@ class MediaController extends AbstractController
         return $channelAuthorisations;
     }
 
-    public
-    function getContentTypeName($item)
+    public function getContentTypeName($item)
     {
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $className = $item->getClass();
@@ -450,94 +457,9 @@ class MediaController extends AbstractController
         }
     }
 
-// Update relation of mediaItems
-// I want to keep the messages for debugging
     public function manageRelations(Request $request)
     {
-        $this->dm = $this->getDoctrineODM()->getManager();
-        $messages = [];
-        $params = json_decode($request->getContent(), true);
-//      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, one or many
-//      "category_id_target" => "category_2-1"                               REQUIRED, one
-//      "category_id_origin" => "3324234"                                    REQUIRED, one
-
-        // Is the user dragging from and to the same folder
-        // TODO disable this at client side
-        if ($params['category_id_target'] === $params['category_id_origin']) {
-            return new JsonResponse('Origin is same as target');
-        }
-
-        // get the Taxonomy (Category) with $params["category_id"]
-        $taxonomy = null;
-        if ($params['category_id_target']) {
-            $taxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id_target']);
-        }
-
-        // if media id is a string, convert it to an array
-        if (true === \is_string($params['media_id'])) {
-            $params['media_id'] = [$params['media_id']];
-        }
-
-        $mediaItems = $this->dm->createQueryBuilder(File::class)
-            ->field('id')->in($params['media_id'])
-            ->getQuery()
-            ->execute()->toArray();
-
-        $counter = 1;
-        foreach ($mediaItems as $mediaItem) {
-            $messages[] = '';
-            $messages[] = $counter++;
-
-            if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
-                $messages[] = 'relation exists?';
-            } else {
-                $messages[] = 'new relation?';
-                $relations = (new Relation())
-                    ->setRelationId('mediaitem_channelcategory')
-                    ->setRelationType('taxonomy');
-            }
-
-            // Check if references already contain this id:
-            $relationIDs = $relations->getReferences()->map(function ($item) {
-                return $item->getID();
-            })->toArray();
-
-            // Remove relation when needed:
-            if ('' !== $params['category_id_origin']) {
-                $messages[] = 'origin: ' . $params['category_id_origin'];
-                $messages[] = 'relationIDs: ' . implode('-', $relationIDs);
-
-                if (\in_array($params['category_id_origin'], $relationIDs)) {
-                    $messages[] = 'The origin link will be removed.';
-                    $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id_origin']);
-                    $relations->removeReference($removeThisTaxonomy);
-                    $messages[] = 'Removed';
-                }
-            }
-
-            if (\in_array($taxonomy->getID(), $relationIDs)) {
-                $messages[] = 'in array';
-            } else {
-                $messages[] = 'not in array';
-                // Add the new taxonomy item
-                $relations->addReference($taxonomy);
-                $mediaItem->addRelation($relations);
-            }
-
-            $this->updateQueueToSolr($mediaItem);
-        }
-
-        return new JsonResponse($messages);
-    }
-
-    public function updateQueueToSolr($content)
-    {
-        $queue = $this->queueSubscriber->getQueue();
-        $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
-        $this->dm->persist($content);
-        $this->dm->flush();
-        $this->indexer->setOption('queue.size', 2); // 1 voor het item, 1 voor de commit message
-        $this->indexer->execute();
+        return $this->taxonomyRelationManager->manageRelations($request);
     }
 
 // TODO later make this

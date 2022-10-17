@@ -1,18 +1,18 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block title %}{% trans %}Media Library{% endtrans %}{% endblock title %}
+{% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
 
     <div class="flex flex-wrap media-library">
 
         <div class="sm:w-3/12 p-2 pr-4 pl-4">
             <aside>
-                <h2 class="heading ">{% trans %}Overzicht{% endtrans %}</h2>
+                <h2 class="heading ">{% trans %}Overview{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
                         <div class="">
                             <p class="p-2 ">
                                 <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                    Alle bestanden
+                                    {% trans %} Files {% endtrans %}
                                 </a>
                             </p>
                         </div>
@@ -103,7 +103,7 @@
         </div>
         <div class="md:w-9/12 pr-4 pl-4 mb-4 md:mb-0">
             <div class="page-title">
-                <h1 class="heading">{% trans %}Media Bibliotheek{% endtrans %}</h1>
+                <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
                 <ul class="options-no-bg">
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
@@ -171,7 +171,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">Bulkselectie
+                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                     </button>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
@@ -187,6 +187,11 @@
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
                     <div class="media-wrapper">
+                        <div>
+                            {% if paginator.items|length == 0 %}
+                                {% trans %} No results with this selection. {% endtrans %}
+                            {% endif %}
+                        </div>
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                             {% for media in paginator.items %}
                                 {% if media.contentType == 'image' %}
@@ -227,7 +232,7 @@
                                             <span class="media-modal-icon">
                                                 <i class="fa-regular fa-check"></i>
                                             </span>
-                                        <span class="screen-reader-text">Deselecteren</span>
+                                        <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
                                     </button>
                                 </li>
                             {% endfor %}
@@ -238,20 +243,20 @@
                 <!-- PAGINATOR CONTROLS -->
                 <div>
                     {% if paginator.amountOfPages > 1 %}
-                    {% for i in range(1, paginator.amountOfPages) %}
-                        {% if i == paginator.currentPageNumber %}
-                            <a class="text-red-500 bg-red-200 p-2"
-                               href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                               tabindex="-1" role="menuitem">{{ i }}</a>
-                        {% else %}
-                            <a class="p-2"
-                               href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                               tabindex="-1" role="menuitem">{{ i }}</a>
-                        {% endif %}
-                    {% endfor %}
+                        {% for i in range(1, paginator.amountOfPages) %}
+                            {% if i == paginator.currentPageNumber %}
+                                <a class="text-red-500 bg-red-200 p-2"
+                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                   tabindex="-1" role="menuitem">{{ i }}</a>
+                            {% else %}
+                                <a class="p-2"
+                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                   tabindex="-1" role="menuitem">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
 
-                    <span>Totaal {{ paginator.getTotalItemCount() }} items.</span>
-                    <span>Showing {{ paginator.showingStart }} till {{ paginator.showingEnd }}.</span>
+                        <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
+                        <span>{% trans %} Showing {% endtrans %} {{ paginator.showingStart }} {% trans %} till {% endtrans %} {{ paginator.showingEnd }}.</span>
                     {% endif %}
                 </div>
 
@@ -628,6 +633,10 @@
                 }
 
                 function sendAjaxRequest(category_id, media_id) {
+                    if (get_current_category_id() === category_id) {
+                        return
+                    }
+
                     let jsonContent = JSON.stringify({
                         csrf: document.querySelector('#media_category_csrf').value,
                         category_id_target: category_id,

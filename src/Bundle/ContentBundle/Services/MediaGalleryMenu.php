@@ -33,7 +33,6 @@ class MediaGalleryMenu
         $this->dm = $dm;
     }
 
-    // CREATING THE MENU
     public function createMenu()
     {
         $menuItems = $this->getMenuItems();
@@ -63,12 +62,16 @@ class MediaGalleryMenu
         }
     }
 
+    public function getMenuItemsFromDB() {
+        return $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy']);
+    }
+
     public function getMenuItems()
     {
         // Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
         $menuItems = [];
 
-        if ($mediaGalleryMenuResult = $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy'])) {
+        if ($mediaGalleryMenuResult = $this->getMenuItemsFromDB()) {
             foreach ($mediaGalleryMenuResult as $menuItem) {
                 $menuItems[] = [
                     'ID' => $menuItem->getId(),
