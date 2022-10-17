@@ -37,7 +37,7 @@
             <tag name="integrated_solr.type_extension" />
         </service>
 
-        <service id="integrated_content.solr.string_class.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\StringClassExtension" public="false">
+        <service id="integrated_content.solr.string_class.extension" class="Integrated\Bundle\ContentBundle\Solr\Extension\MultivaluedFieldExtension" public="false">
             <argument type="service" id="integrated_content.resolver" />
             <tag name="integrated_solr.type_extension" />
         </service>
