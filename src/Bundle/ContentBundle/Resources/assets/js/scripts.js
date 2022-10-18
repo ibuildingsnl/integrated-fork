@@ -176,10 +176,5 @@ $(document).ready(function () {
     }
 });
 
-Coloris({
-    themeMode: 'light',
-    clearButton: true,
-    clearLabel: 'Clear',
-    format: 'mixed',
-});
+
 
