@@ -3,6 +3,7 @@
 
 {% block content %}
     {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
+        {# https://eactive.atlassian.net/browse/INTEGRATED-1783 #}
         {% set title_state = 'title_tinymce' %}
         {% set title_style = '' %}
         {% set tinymce_state = 'fancy_tinymce' %}
@@ -78,7 +79,7 @@
                         {% endblock %}
 
                         {% block content_meta %}
-
+                            {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
                             {% if form.channels is defined %}
                                 {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}
                             {% endif %}
@@ -175,7 +176,7 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
-                    <!-- Styling of these elements to make sure they are lined out vertically have been done with css. Making functionality for this specificialy makes it complicated without the need for it because horizontal fields in the sidebar don't have a use. -->
+                    {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
                     {% if form.title is defined %}
                         {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
                     {% elseif form.name is defined %}
