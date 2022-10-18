@@ -88,7 +88,7 @@ class RelationType extends AbstractType
                 ]
             )
             ->add(
-                $builder->create('options', FormType::class, [§])
+                $builder->create('options', FormType::class, ['inherit_data' => true])
                         ->add(
                             'multiple',
                             CheckboxType::class,
