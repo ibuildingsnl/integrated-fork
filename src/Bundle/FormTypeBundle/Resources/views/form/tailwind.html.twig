@@ -722,7 +722,7 @@
         {% set help_text = help_text|default('') %}
         {% if help_text is not empty %}
             <span class="help-block"><i
-                    class="fa-regular fa-circle-info"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
+                    class="fa-solid fa-circle-info"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
         {% endif %}
     {% endapply %}
 {% endblock form_help %}

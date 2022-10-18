@@ -119,7 +119,7 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<a data-toggle="collapse" href="#__id__"><i class="fa-regular fa-grip-dots-vertical"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+            {% set prototype_html = '<a data-toggle="collapse" href="#__id__"><i class="fa-solid fa-grip-dots-vertical"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
                 {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
             {% endif %}
@@ -139,7 +139,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" href="#{{ field.vars.id }}">
-                                        <i class="fa-regular fa-grip-dots-vertical"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
+                                        <i class="fa-solid fa-grip-dots-vertical"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
                                     </a>
                                     {% if form.vars.allow_delete %}
                                         <a href="javascript:;" class="remove"
@@ -341,12 +341,12 @@
                 class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
-                        <i class="fa-regular {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
+                        <i class="fa-solid {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
                         <span class="aside-item-icon">
                             {{ form_label(form) }}
                         </span>
                     </h3>
-                    <i class="fa-regular fa-chevron-up"></i>
+                    <i class="fa-solid fa-chevron-up"></i>
                 </div>
                 <div class="aside-item-list">
                     <div class="aside-item-list-container">
@@ -365,7 +365,7 @@
                             {{ form_label(form) }}
                         </span>
                     </h3>
-                    <i class="fa-regular fa-chevron-up"></i>
+                    <i class="fa-solid fa-chevron-up"></i>
                 </div>
                 <div class="editor-item-list">
                     <div class="editor-item-list-container">

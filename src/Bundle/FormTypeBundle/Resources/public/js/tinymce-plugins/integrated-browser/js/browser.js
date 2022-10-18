@@ -274,7 +274,7 @@ $(document).ready(function() {
         } else if (contentTypes.length > 1) {
             buttonHtml =
                 '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                'Upload new ' + options['mode'] + '<i class="fa-regular fa-chevron-down"></i></button>' +
+                'Upload new ' + options['mode'] + '<i class="fa-solid fa-chevron-down"></i></button>' +
                 '<ul class="dropdown-menu">';
 
             for (var i in contentTypes) {
