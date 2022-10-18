@@ -89,7 +89,6 @@ class SearchSelectionController extends AbstractController
         $form = $this->createCreateForm($searchSelection);
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_content_search_selection_index');
@@ -112,7 +111,7 @@ class SearchSelectionController extends AbstractController
     /**
      * Edits an existing SearchSelection document.
      *
-     * @param Request $request
+     * @param Request         $request
      * @param SearchSelection $searchSelection
      *
      * @return Response|RedirectResponse
@@ -144,7 +143,7 @@ class SearchSelectionController extends AbstractController
     /**
      * Deletes a SearchSelection document.
      *
-     * @param Request $request
+     * @param Request         $request
      * @param SearchSelection $searchSelection
      *
      * @return Response|RedirectResponse

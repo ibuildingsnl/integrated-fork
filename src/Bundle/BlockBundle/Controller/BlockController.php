@@ -55,9 +55,9 @@ class BlockController extends AbstractController
 
     /**
      * @param MetadataFactoryInterface $metadataFactory
-     * @param DocumentManager $documentManager
-     * @param PaginatorInterface $paginator
-     * @param FilterQueryProvider $provider
+     * @param DocumentManager          $documentManager
+     * @param PaginatorInterface       $paginator
+     * @param FilterQueryProvider      $provider
      */
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
@@ -106,7 +106,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block $block
+     * @param Block   $block
      *
      * @return Response
      */
@@ -212,7 +212,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block $block
+     * @param Block   $block
      *
      * @return array|RedirectResponse|Response
      */
@@ -265,7 +265,7 @@ class BlockController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Block $block
+     * @param Block   $block
      *
      * @return RedirectResponse|Response
      */

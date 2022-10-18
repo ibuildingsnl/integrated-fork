@@ -37,7 +37,7 @@ class ScraperController extends AbstractController
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param ScraperService $scraper
+     * @param ScraperService         $scraper
      */
     public function __construct(EntityManagerInterface $entityManager, ScraperService $scraper)
     {

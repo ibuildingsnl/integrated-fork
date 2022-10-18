@@ -87,7 +87,7 @@ class BlockEditType extends AbstractType
                 ],
                 'location' => 'sidebar',
                 'icon' => 'fa-key',
-                'state' => 'show'
+                'state' => 'show',
             ]);
 
             $builder->get('groups')->addModelTransformer(new GroupTransformer($this->groupManager));

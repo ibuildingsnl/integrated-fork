@@ -23,7 +23,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -91,7 +90,6 @@ class ContentFormType extends AbstractType
         }
 
         foreach ($metadata->getFields() as $field) {
-
             // Allow events to add fields before the supplied field
             if ($dispatcher->hasListeners(Events::PRE_BUILD_FIELD)) {
                 $dispatcher->dispatch(new BuilderEvent(
@@ -126,7 +124,6 @@ class ContentFormType extends AbstractType
                     $builder->add($config->getName(), $config->getType(), $config->getOptions());
                 }
             }
-
 
             // Allow events to add fields after the supplied field
             if ($dispatcher->hasListeners(Events::POST_BUILD_FIELD)) {

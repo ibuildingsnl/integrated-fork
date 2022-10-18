@@ -179,8 +179,6 @@ class PageController extends AbstractController
         $form = $this->createEditForm($page);
         $form->handleRequest($request);
 
-
-
         if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_page_page_index');
