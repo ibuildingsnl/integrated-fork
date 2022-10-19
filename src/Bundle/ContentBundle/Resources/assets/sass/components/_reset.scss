@@ -92,8 +92,8 @@ ul {
 }
 
 .same-height {
-	@include display(flex);
-	@include align-items(center);
+    display:flex;
+    align-items: center;
 	@include media(max-md) {
 		display: block;
 	}

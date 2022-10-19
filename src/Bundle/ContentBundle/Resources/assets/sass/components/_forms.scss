@@ -328,7 +328,7 @@ label {
 .form-group, .form-item {
     .checkbox-container {
         input:checked ~ .background {
-            background-color: rgb(1 178 239 / 10%);
+            background-color: rgba(1, 178, 239, 0.1);
         }
 
         .background {
@@ -480,7 +480,7 @@ label {
     }
 
     input:checked ~ .background {
-        background-color: rgb(1 178 239 / 10%);
+        background-color: rgba(1, 178, 239, 1);
     }
 
     .background {
@@ -592,7 +592,7 @@ label {
     border: 1px solid #9d0000;
     padding: 1rem;
     border-radius: 8px;
-    background-color: rgb(255 0 0 / 10%);
+    background-color: rgba(255, 0, 0, 0.1);
 }
 
 .channel-domains {
