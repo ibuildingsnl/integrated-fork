@@ -55,7 +55,11 @@ $('.integrated_tinymce').each(function(key, elem){
         placeholder: "Your article starts here",
         schema: "html5",
         menubar: true,
-        toolbar: "styleselect | bold italic underline | bullist numlist | link integratedImage integratedVideo integratedColumn image media print preview fullpage table | charmap pagebreak | pastetext searchreplace | code fullscreen",
+        branding: false,
+        toolbar:
+            "styles | bold italic underline | bullist numlist | " +
+            "link integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
+            "charmap pagebreak | pastetext searchreplace | code fullscreen",
         statusbar: true,
         statusbar_size: "small",
         fixed_toolbar_container: '#mytoolbar',
