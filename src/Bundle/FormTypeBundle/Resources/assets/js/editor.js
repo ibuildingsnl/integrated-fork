@@ -60,12 +60,14 @@ $('.integrated_tinymce').each(function(key, elem){
             "styles | bold italic underline | bullist numlist | " +
             "link integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
             "charmap pagebreak | pastetext searchreplace | code fullscreen",
+        toolbar_sticky: true,
+        toolbar_sticky_offset: 110,
         statusbar: true,
         statusbar_size: "small",
         fixed_toolbar_container: '#mytoolbar',
         width: "100%",
         height: "100%",
-        autoresize_min_height: 300,
+        autoresize_min_height: 500,
         browser_spellcheck : true,
         autoresize_bottom_margin: "0px",
         convert_urls: false,

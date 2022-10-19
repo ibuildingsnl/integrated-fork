@@ -347,12 +347,16 @@
             let width = rect.width;
             let height = rect.height;
 
-            editor = document.querySelector('div.mce-edit-area');
-            editor.style.padding = (62 + height) + 'px 0 0 0';
+            editor = document.querySelector('div.tox-edit-area');
+            wrapper = document.querySelector('div.tox-sidebar-wrap');
+            editor.style.top = (46 + height) + 'px';
+            wrapper.style.paddingBottom = (46 + height) + 'px';
         });
         // start observing for resize
         resize_ob.observe(document.querySelector('.title_tinymce_input'));
     }, 1000);
+
+
 </script>
 
 {% if content is defined %}

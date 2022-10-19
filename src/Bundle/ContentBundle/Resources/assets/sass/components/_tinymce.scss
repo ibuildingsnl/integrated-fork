@@ -1,37 +1,49 @@
 /*TINEMCE*/
-.mce-tinymce {
+.tox-tinymce {
     border-radius: 0 !important;
 }
 
-.mce-tinymce.mce-container.mce-panel {
+.tox-tinymce.tox-container.tox-panel {
     border-color: $border-color;
 }
 
+.tox-fullscreen nav.navbar {
+    z-index: 0;
+}
+
 .fancy_tinymce {
-    .mce-container-body {
+    .tox-container-body {
         //overflow: hidden;
     }
-
-    .mce-tinymce {
+    .tox:not(.tox-tinymce-inline) .tox-editor-header {
+        padding: 0;
+    }
+    .tox-tinymce {
         border: 0 !important;
+        min-height: 500px;
 
-        .mce-menubar {
-            border: 1px solid $border-color;
+        .tox-menubar {
+            border-bottom: 1px solid $border-color;
         }
-        &.mce-container {
-            &.mce-panel {
+
+        &.tox-container {
+            &.tox-panel {
                 border-color: $border-color;
             }
         }
-        .mce-edit-area {
-             background: #fff;
-             filter: none;
-             padding-top: 110px;
-             iframe {
-                 position: relative;
-             }
-         }
-        .mce-menubar {
+
+        .tox-edit-area {
+            background: #fff;
+            filter: none;
+            top: 140px;
+            position: relative;
+
+            iframe {
+                position: relative;
+            }
+        }
+
+        .tox-menubar {
             position: sticky;
             width: 100%;
             background-color: white;
@@ -40,7 +52,7 @@
             padding-left: 23px;
         }
 
-        .mce-toolbar-grp {
+        .tox-toolbar-grp {
             position: sticky;
             width: 100%;
             top: 35px;
@@ -50,21 +62,24 @@
             border-radius: 0;
         }
 
-        .mce-panel {
+        .tox-panel {
             background-color: #ffffff;
             border: 0;
         }
 
 
-        .mce-btn {
+        .tox-btn {
             background-color: #fff;
+        }
+        .tox .tox-menubar+.tox-toolbar, .tox .tox-menubar+.tox-toolbar-overlord {
+            padding-left: 12px;
         }
     }
 }
 
-.mce-fullscreen {
+.tox-fullscreen {
     .fancy_tinymce {
-        div.mce-edit-area {
+        div.tox-edit-area {
             padding-top: 50px !important;
         }
     }
