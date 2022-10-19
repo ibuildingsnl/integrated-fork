@@ -1,0 +1,51 @@
+{
+  "entrypoints": {
+    "app": {
+      "css": [
+        "/bundles/integratedintegrated/app.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/app.js"
+      ]
+    },
+    "edit": {
+      "css": [
+        "/bundles/integratedintegrated/edit.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/edit.js"
+      ]
+    },
+    "collection": {
+      "js": [
+        "/bundles/integratedintegrated/collection.js"
+      ]
+    },
+    "iframe": {
+      "css": [
+        "/bundles/integratedintegrated/iframe.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/iframe.js"
+      ]
+    },
+    "content_sortable": {
+      "js": [
+        "/bundles/integratedintegrated/content_sortable.js"
+      ]
+    },
+    "drag-drop": {
+      "css": [
+        "/bundles/integratedintegrated/drag-drop.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/drag-drop.js"
+      ]
+    },
+    "workflow": {
+      "js": [
+        "/bundles/integratedintegrated/workflow.js"
+      ]
+    }
+  }
+}
