@@ -1,17 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Show {% endtrans %} {{ contentType.name }}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_type_index') }}">{% trans %}Content types{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}Show{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
     <div class="row">
         <div class="w-full mb-4 md:mb-0">
@@ -76,7 +64,7 @@
                     </dd>
                 </dl>
 
-                <a class="pull-left btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_content_type_edit', {'id': contentType.id}) }}">
+                <a class="btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_content_type_edit', {'id': contentType.id}) }}">
                     {% trans %}Edit{% endtrans %}
                 </a>
 

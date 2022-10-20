@@ -12,7 +12,7 @@
     z-index: 1070;
 
     &.auth {
-        background-image: url("https://integrated.twindigital.nl/bundles/integratedintegrated/images/integrated-login-background.jpeg");
+        background-image: url("../../images/integrated-login-background.jpeg");
         background-size: cover;
         .logo img {
             width: 273px;
@@ -162,7 +162,6 @@
     }
 
     .modal-content {
-        //position: relative;
         background-color: #fff;
         border-radius: 1rem;
         background-clip: padding-box;
@@ -240,11 +239,6 @@
     .modal-dialog {
         width: 600px;
         margin: 30px auto
-    }
-
-    .modal-content {
-        //-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        //box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5)
     }
 
     .modal-sm {

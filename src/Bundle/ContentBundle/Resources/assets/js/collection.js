@@ -1,3 +1,7 @@
+import $ from 'jquery';
+jQuery = $;
+global.$ = global.jQuery = $;
+window.$ = window.jQuery = $;
 
 $('[data-prototype]').each(function(index, elm) {
     init($(this));
@@ -24,7 +28,7 @@ $('[data-prototype]').each(function(index, elm) {
             let item = $('<li></li>').append(prototype);
 
             $collection.data('index', index + 1);
-            $collection.find('ul').append(item);
+            $collection.find('> ul').append(item);
 
             register($collection.find('ul li:last-child'));
         }

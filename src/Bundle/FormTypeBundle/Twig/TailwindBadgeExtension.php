@@ -18,8 +18,6 @@ use Twig\TwigFunction;
  * @author     Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
- *
- * @see       http://tailwind.braincrafted.com Tailwind for Symfony2
  */
 class TailwindBadgeExtension extends AbstractExtension
 {

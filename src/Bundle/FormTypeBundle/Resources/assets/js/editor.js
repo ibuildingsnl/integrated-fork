@@ -1,6 +1,8 @@
 import tinymce from 'tinymce';
 
-import 'tinymce/themes/modern';
+import 'tinymce/themes/silver';
+
+import 'tinymce/models/dom';
 
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autolink';
@@ -8,7 +10,6 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/pagebreak';
 import 'tinymce/plugins/searchreplace';
@@ -17,15 +18,13 @@ import 'tinymce/plugins/visualchars';
 import 'tinymce/plugins/fullscreen';
 import 'tinymce/plugins/nonbreaking';
 import 'tinymce/plugins/table';
-import 'tinymce/plugins/contextmenu';
 import 'tinymce/plugins/directionality';
 import 'tinymce/plugins/template';
-import 'tinymce/plugins/paste';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/code';
 $('.integrated_tinymce').each(function(key, elem){
-    let element = $(elem);
+    const element = $(elem);
 
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
@@ -42,28 +41,33 @@ $('.integrated_tinymce').each(function(key, elem){
 
     tinymce.init({
         target: elem,
-        theme: "modern",
-        plugins: [
-            ["advlist autolink link lists charmap hr anchor pagebreak"],
-            ["searchreplace wordcount visualchars fullscreen nonbreaking"],
-            ["table contextmenu directionality template paste wordcount autoresize code"]
-        ],
+        theme: "silver",
+        plugins:
+             "advlist autolink link lists charmap anchor pagebreak " +
+             "searchreplace wordcount visualchars fullscreen nonbreaking " +
+             "table directionality template wordcount autoresize code"
+        ,
         external_plugins: {
-            "integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
-            "integratedColumn": "/bundles/integratedformtype/js/tinymce-plugins/integrated-column/plugin.js"
+            // TODO: update plugin INTEGRATED-1779
+            //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
         },
         add_unload_trigger: false,
-        placeholder: "You're article starts here",
+        placeholder: "Your article starts here",
         schema: "html5",
         menubar: true,
-        toolbar: "styleselect | bold italic underline | bullist numlist | link integratedImage integratedVideo integratedColumn image media print preview fullpage table | charmap pagebreak | pastetext searchreplace | code fullscreen",
+        branding: false,
+        toolbar:
+            "styles | bold italic underline | bullist numlist | " +
+            "link integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
+            "charmap pagebreak | pastetext searchreplace | code fullscreen",
+        toolbar_sticky: true,
+        toolbar_sticky_offset: 110,
         statusbar: true,
         statusbar_size: "small",
         fixed_toolbar_container: '#mytoolbar',
         width: "100%",
         height: "100%",
-        autoresize_min_height: 300,
-        // autoresize_max_height: (window.innerHeight-64),
+        autoresize_min_height: 500,
         browser_spellcheck : true,
         autoresize_bottom_margin: "0px",
         convert_urls: false,

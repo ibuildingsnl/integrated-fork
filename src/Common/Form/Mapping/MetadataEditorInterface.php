@@ -24,6 +24,27 @@ interface MetadataEditorInterface extends MetadataInterface
     public function setType($type);
 
     /**
+     * @param string $location
+     *
+     * @return self
+     */
+    public function setLocation($location);
+
+    /**
+     * @param string $icon
+     *
+     * @return self
+     */
+    public function setIcon($icon);
+
+    /**
+     * @param string $state
+     *
+     * @return self
+     */
+    public function setState($state);
+
+    /**
      * @param string $name
      *
      * @return AttributeEditorInterface

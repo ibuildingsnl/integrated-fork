@@ -5,7 +5,7 @@
 }
 .comment-inner {
 	border-radius: 4px;
-	border: 1px solid $color-silver;
+	border: 1px solid $border-color;
 	position: relative;
 	background: $color-white;
 	&:before, &:after {
@@ -28,7 +28,7 @@
 		height: 0;
 		border-style: solid;
 		border-width: 27px 26px 0 26px;
-		border-color: $color-silver transparent transparent transparent;
+		border-color: $border-color transparent transparent transparent;
 		bottom: -27px;
 		left: 50%;
 		margin-left: -26px;
@@ -54,7 +54,7 @@
 			height: 0;
 			border-style: solid;
 			border-width: 0 26px 27px 26px;
-			border-color: transparent transparent $color-silver transparent;
+			border-color: transparent transparent $border-color transparent;
 			top: -27px;
 			left: 50%;
 			margin-left: -26px;
@@ -66,12 +66,12 @@
 			left: 27px;
 		}
 	}
-}	
+}
 .comment-body {
 	padding: 30px;
 }
 .comment-footer {
-	border-top: 1px solid $color-silver;
+	border-top: 1px solid $border-color;
 	padding: 10px 30px;
 }
 .cancel-comment {

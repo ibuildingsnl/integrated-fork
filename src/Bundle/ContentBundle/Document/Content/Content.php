@@ -44,13 +44,16 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @var string
      *
      * @Slug(fields={"id"})
-     * @Type\Field
+     * @Type\Field(
+     *     location = "sidebar",
+     *     icon = "fa-link"
+     * )
      */
     protected $slug;
 
@@ -91,7 +94,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *     options={"attr"={"align_with_widget"=true}}
+     *     options={
+     *          "attr"={
+     *              "align_with_widget"=true,
+     *          }
+     *     },
+     *     location = "sidebar",
+     *     icon = "fa-copyright"
      * )
      */
     protected $disabled = false;
@@ -119,7 +128,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      *
-     * @Type\Field(options={"label" = "Copyright restrictions"})
+     * @Type\Field(
+     *     options={
+     *          "label" = "Copyright restrictions",
+     *          },
+     *     location = "sidebar",
+     *     icon = "fa-copyright"
+     *     )
      */
     protected $copyrightRestrictions;
 

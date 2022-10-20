@@ -40,6 +40,21 @@ interface MetadataInterface
     /**
      * @return string
      */
+    public function getLocation();
+
+    /**
+     * @return string
+     */
+    public function getIcon();
+
+    /**
+     * @return string
+     */
+    public function getState();
+
+    /**
+     * @return string
+     */
     public function getType();
 
     /**

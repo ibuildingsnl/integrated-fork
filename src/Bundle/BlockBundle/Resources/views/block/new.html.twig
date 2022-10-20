@@ -1,52 +1,97 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}New block{% endtrans %}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_block_block_index') }}">{% trans %}Blocks{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}New{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="w-full mb-4 md:mb-0">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}block{% endtrans %}</h1>
+    {% block form_section %}
+        <div class="flex flex-wrap edit-form">
+            {% block form_start %}
+                {{ form_start(form, { 'style': 'horizontal' }) }}
+            {% endblock %}
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="options">
+                    <div class="form-actions">
+                        {% block form_actions %}
+                            {% if form.actions.save is defined %}
+                                {{ form_row(form.actions.save) }}
+                            {% endif %}
+                            {% if form.actions.reload is defined %}
+                                {{ form_row(form.actions.reload) }}
+                            {% endif %}
+                            {% if form.actions.create is defined %}
+                                {{ form_row(form.actions.create) }}
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+                </div>
+                <div class="back">
+                    {% block form_return %}
+                        {% if form.actions.back is defined %}
+                            {{ form_row(form.actions.back) }}
+                        {% endif %}
+                        {% if form.actions.cancel is defined %}
+                            {{ form_row(form.actions.cancel) }}
+                        {% endif %}
+                    {% endblock %}
+                </div>
             </div>
-            {% block form_section %}
-                <section class="section-white section-padding section-radius">
-                {{ form_start(form, {'style': 'horizontal', 'label_col': 4, 'widget_col': 8, 'col_size': 'sm'}) }}
-                <div id="integrated_block_block">
-                    {{ form_errors(form) }}
-
-                    {% for field in form %}
-                        {% if field.vars.name == 'useTitle' %}
-                            <div class="form-group ">
-                                <label class="control-label col-sm-4 required" for="block_edit_searchSelection">
-                                    {{ 'Published title'|trans }}
-                                </label>
-                                <div class="w-full sm:w-2/3">
-                                    <div>
-                                        <label style="font-weight: unset;" for="{{ field.vars.id }}">{{ form_widget(field) }} {{ field.vars.name|humanize }}</label>
+            <div class="aside-options">
+                <aside>
+                    <div class="aside-item-wrapper show">
+                        <div class="aside-item-header">
+                            <h3 class="aside-item-title">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                            </h3>
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </div>
+                        <div class="aside-item-list">
+                            <div class="aside-item-list-container">
+                                <div class="status-info">
+                                    {% if form.publishedAt is defined %}
+                                        {{ form_row(form.publishedAt) }}
+                                    {% endif %}
+                                    {% if form.publishedUntil is defined %}
+                                        {{ form_row(form.publishedUntil) }}
+                                    {% endif %}
+                                </div>
+                                <div class="status-options">
+                                    <div class="status draft">
+                                        <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
                                     </div>
                                 </div>
                             </div>
-                        {% else %}
-                            {{ form_row(field) }}
+                        </div>
+                    </div>
+                    {% if form.itemsPerPage is defined %}
+                        {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {% endif %}
+                    {% if form.maxItems is defined %}
+                        {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {% endif %}
+                    {% if form.groups is defined %}
+                        {{ form_row(form.groups, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {% endif %}
+                </aside>
+            </div>
+            <div class="editor-wrapper">
+                <div class="page-title">
+                    <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}block{% endtrans %}</h1>
+                </div>
+                <section class="editor editor-wrapped">
+                    <div id="integrated_block_block">
+                        {{ form_errors(form) }}
+                        {% if form.title is defined %}
+                            {{ form_row(form.title) }}
                         {% endif %}
 
-                    {% endfor %}
-                </div>
+                        {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+                    </div>
+                </section>
+            </div>
+            {% block form_end %}
                 {{ form_end(form) }}
-            </section>
             {% endblock %}
         </div>
-    </div>
+    {% endblock form_section %}
 {% endblock %}
 
 {% block webpack_js %}
@@ -54,8 +99,8 @@
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/integratedblock/js/published_title.js') }}"></script>
+{{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/integratedblock/js/published_title.js') }}"></script>
 {% endblock %}
 
 {% block style %}

@@ -1,91 +1,31 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
-{% dump(type.class) %}
-
 {% block content %}
     {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
-       {% set title_state = 'title_tinymce' %}
-       {% set tinymce_state = 'fancy_tinymce' %}
+        {# https://eactive.atlassian.net/browse/INTEGRATED-1783 #}
+        {% set title_state = 'title_tinymce' %}
+        {% set title_style = '' %}
+        {% set tinymce_state = 'fancy_tinymce' %}
+        {% set form_class = 'content-edit-form' %}
     {% else %}
         {% set title_state = '' %}
-        {% set tinymce_state = '' %}
+        {% set title_style = 'inline' %}
+        {% set tinymce_state = 'show' %}
+        {% set form_class = 'edit-form' %}
     {% endif %}
 
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap {{ form_class }}">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
-        <div id="toolbar" class="w-full flex justify-between">
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
-            <div class="options">
-                <div class="convert">
-                    {% if content is defined %}
-                        {% if content.isPublished and content.getChannels|length > 0 %}
-                            <a href="#">Naar concept omzetten</a>
-                        {% endif %}
-                    {% endif %}
-                </div>
-                <div class="preview">
-                    {% block content_website_links %}
-                        {% if content is defined %}
-                            {% if content.getChannels|length > 0 %}
-                                <ul class="options-no-bg">
-                                    <li class="dropdown">
-                                        <a href="#" data-toggle="dropdown" role="button" id="drop_1"
-                                           class="btn btn-dropdown">
-                                            <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
-                                            <i class="fa-regular fa-chevron-down"></i>
-                                        </a>
-                                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt" id="menu_1">
-                                            {% for channel in content.getChannels %}
-                                                {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
-                                                {% set url = integrated_url(content, channel.id, false) %}
-                                                {% if (domain != "" and url) %}
-                                                    {% if (domain != app.request.httphost) %}
-                                                        {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
-                                                    {% endif %}
-                                                    <li>
-                                                        <a target="_blank"
-                                                           href="{{ url }}">{% trans %}View on{% endtrans %} {{ channel.name }}</a>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                </ul>
-                            {% endif %}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-                <div class="form-actions">
-                    {% block form_actions %}
-                        {% if form.actions.save is defined %}
-                            {{ form_row(form.actions.save) }}
-                        {% endif %}
-                        {% if form.actions.reload is defined %}
-                            {{ form_row(form.actions.reload) }}
-                        {% endif %}
-                        {% if form.actions.create is defined %}
-                            {{ form_row(form.actions.create) }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-            </div>
-        </div>
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
         <div class="aside-options">
             <aside>
                 <div class="aside-holder section-gray section-radius">
@@ -93,30 +33,34 @@
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
-                                    <i class="fa-regular fa-circle-info"></i>
+                                    <i class="fa-solid fa-circle-info"></i>
                                     <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                                 </h3>
-                                <i class="fa-regular fa-chevron-up"></i>
+                                <i class="fa-solid fa-chevron-up"></i>
                             </div>
                             <div class="aside-item-list">
                                 <div class="aside-item-list-container">
                                     <div class="status-info">
                                         {% if form.publishTime is defined %}
-                                            {{ form_row(form.publishTime, {show_placeholder: true}) }}
+                                            {{ form_row(form.publishTime, {style: 'inline'}) }}
                                         {% endif %}
                                     </div>
                                     <div class="status-options">
-                                        {% if content is defined and (content.isPublished and content.getChannels|length > 0) %}
+                                        {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
                                             <div class="status published">
-                                                <i class="fa-regular fa-circle-check"></i> {% trans %}Published{% endtrans %}
+                                                <i class="fa-solid fa-circle-check"></i> {% trans %}Published{% endtrans %}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                <i class="fa-regular fa-trash-can"></i>
+                                                <i class="fa-solid fa-trash-can"></i>
                                             </a>
+                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                            <div class="status planned">
+                                                <i class="fa-solid fa-calendar-days"></i> {% trans %}Planned{% endtrans %}
+                                            </div>
                                         {% else %}
                                             <div class="status draft">
-                                                <i class="fa-regular fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                                <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
                                             </div>
                                         {% endif %}
                                     </div>
@@ -124,7 +68,7 @@
                             </div>
                         </div>
 
-                        <div id="used-by">
+                        <div class="aside-item-wrapper" id="used-by">
 
                         </div>
 
@@ -135,7 +79,7 @@
                         {% endblock %}
 
                         {% block content_meta %}
-
+                            {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
                             {% if form.channels is defined %}
                                 {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}
                             {% endif %}
@@ -175,6 +119,10 @@
                                 {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
                             {% endif %}
 
+                            {% if form.logo is defined %}
+                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}
+                            {% endif %}
+
                             {% if form.rank is defined %}
                                 {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
                             {% endif %}
@@ -184,7 +132,6 @@
                             {% endif %}
                         {% endblock %}
 
-
                         {% block content_relations %}
                             {% if form.offsetGet('relations').count() %}
                                 <input type="hidden" id="default_references" value="{{ references }}">
@@ -193,12 +140,12 @@
                                         <div class="aside-item-wrapper relations">
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
-                                                    <i class="fa-regular {{ relation.vars.attr['data-icon'] }}"></i>
+                                                    <i class="fa-solid {{ relation.vars.attr['data-icon'] }}"></i>
                                                     <label
                                                         class="aside-item-icon"
                                                         for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                                 </h3>
-                                                <i class="fa-regular fa-chevron-down"></i>
+                                                <i class="fa-solid fa-chevron-up"></i>
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
@@ -229,11 +176,11 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
-                    <!-- Styling of these elements to make sure they are lined out vertically have been done with css. Making functionality for this specificialy makes it complicated without the need for it because horizontal fields in the sidebar don't have a use. -->
+                    {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
                     {% if form.title is defined %}
-                        {{ form_row(form.title, {'state': title_state}) }}
+                        {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
                     {% elseif form.name is defined %}
-                        {{ form_row(form.name, {'state': title_state}) }}
+                        {{ form_row(form.name, {'state': title_state, 'style': title_style}) }}
                     {% endif %}
 
                     {% if form.content is defined %}
@@ -245,18 +192,18 @@
                     {% endif %}
 
                     {% if form.file is defined %}
-                        {{ form_row(form.file, {'style':'editor'}) }}
+                        {{ form_row(form.file, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
                     {% if form.subtitle is defined %}
-                        {{ form_row(form.subtitle, {'style':'editor'}) }}
+                        {{ form_row(form.subtitle, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
                     {% if form.intro is defined %}
-                        {{ form_row(form.intro, {'style':'editor'}) }}
+                        {{ form_row(form.intro, {'style':'editor', 'state': 'show'}) }}
                     {% endif %}
 
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
                 {% block content_relations_editor %}
                     {% if form.offsetGet('relations').count() %}
@@ -266,12 +213,12 @@
                                 <div class="editor-item-wrapper relations">
                                     <div class="editor-item-header">
                                         <h3 class="editor-item-title">
-                                            <i class="fa-regular {{ relation.vars.attr['data-icon'] }}"></i>
+                                            <i class="fa-solid {{ relation.vars.attr['data-icon'] }}"></i>
                                             <label
                                                 class="editor-item-icon"
                                                 for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                         </h3>
-                                        <i class="fa-regular fa-chevron-down"></i>
+                                        <i class="fa-solid fa-chevron-up"></i>
                                     </div>
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
@@ -309,14 +256,14 @@
             <script id="add-template" type="text/xhandlebars-template">
                 {{#if relations}}
                 {{#equals relations.length 1}}
-                    <button data-title="Add {{relations.0.name}}" class="add-relation font-size-13" data-href="{{relations.0.href}}" data-modal="add-modal">
-                        <i class="fa-regular fa-plus"></i>
+                    <button data-title="Add {{relations.0.name}}" class="add-relation" data-href="{{relations.0.href}}" data-modal="add-modal">
+                        Add {{relations.0.name}}
                         <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
                     </button>
                 {{else}}
                 <div class="add-relation">
                     <button type="button" class=" inline-block w-0 h-0 ml-1 align border-b-0 border-t-1 border-r-1 border-l-1 font-size-13" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-regular fa-plus"></i>
+                        <i class="fa-solid fa-plus"></i>
                         <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
                     </button>
                     <ul class=" dropdown-menu" role="menu">
@@ -348,27 +295,27 @@
 
 {% endblock %}
 
-    {% block edit_modal %}
-        <div class="modal fade" id="content-edit-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">{% trans %}Unsaved changes{% endtrans %}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>{% trans %}You have unsaved changes. When you leave this page your changes will be lost.{% endtrans %}</p>
-                        <p>{% trans %}Are you sure you want to leave this page?{% endtrans %}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
-                        <button type="button" class="btn btn-gray-thin"
-                                data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
-                    </div>
+{% block edit_modal %}
+    <div class="modal fade" id="content-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{% trans %}Unsaved changes{% endtrans %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans %}You have unsaved changes. When you leave this page your changes will be lost.{% endtrans %}</p>
+                    <p>{% trans %}Are you sure you want to leave this page?{% endtrans %}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
+                    <button type="button" class="btn btn-gray-thin"
+                            data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
                 </div>
             </div>
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
 {% endblock %}
@@ -376,101 +323,105 @@
 {% block javascript %}
 {{ parent() }}
 <script>
-textarea = document.querySelector('.title_tinymce_input');
-        textarea.addEventListener('input', autoResize, false);
-        textarea.addEventListener('DOMContentLoaded', autoResize, false);
+    textarea = document.querySelector('.title_tinymce_input');
+    textarea.addEventListener('input', autoResize, false);
+    textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
-        textarea.addEventListener('keypress', function(event) {
-          if (event.key === 'Enter') {
+    textarea.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
             event.preventDefault();
-          }
-        });
-
-        function autoResize() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
         }
+    });
 
-        setTimeout(function(){
-           const resize_ob = new ResizeObserver(function(entries) {
-                // since we are observing only a single element, so we access the first element in entries array
-                let rect = entries[0].contentRect;
+    function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    }
 
-                // current width & height
-                let width = rect.width;
-                let height = rect.height;
+    setTimeout(function() {
+        const resize_ob = new ResizeObserver(function(entries) {
+            // since we are observing only a single element, so we access the first element in entries array
+            let rect = entries[0].contentRect;
 
-                editor = document.querySelector('div.mce-edit-area');
-                editor.style.padding = (62 + height) + 'px 0 0 0';
-            });
-            // start observing for resize
-            resize_ob.observe(document.querySelector('.title_tinymce_input'));
-        }, 1000);
+            // current width & height
+            let width = rect.width;
+            let height = rect.height;
+
+            editor = document.querySelector('div.tox-edit-area');
+            wrapper = document.querySelector('div.tox-sidebar-wrap');
+            editor.style.top = (46 + height) + 'px';
+            wrapper.style.paddingBottom = (46 + height) + 'px';
+        });
+        //TODO: Need to fix comments alignment.
+        // start observing for resize
+        resize_ob.observe(document.querySelector('.title_tinymce_input'));
+    }, 1000);
+
+
 </script>
 
 {% if content is defined %}
-<script>
-    $(function() {
-        var cnt = $('#used-by');
+    <script>
+        $(function() {
+            var cnt = $('#used-by');
 
-        var handleUsedBy = function(data) {
-            var optionsTemplateSource = $('#used-by-template').html(), optionsTemplate = Handlebars.compile(optionsTemplateSource);
-            var paginationTemplateSource = $('#pagination-template').html(), paginationTemplate = Handlebars.compile(paginationTemplateSource);
+            var handleUsedBy = function(data) {
+                var optionsTemplateSource = $('#used-by-template').html(),
+                    optionsTemplate = Handlebars.compile(optionsTemplateSource);
+                var paginationTemplateSource = $('#pagination-template').html(),
+                    paginationTemplate = Handlebars.compile(paginationTemplateSource);
 
-            data.title = "{% trans %}Used by{% endtrans %}";
+                data.title = "{% trans %}Used by{% endtrans %}";
 
-            if (data.pagination.numFound == 0) {
-                cnt.hide();
-            }
-            cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
-            cnt.find('.pagination a').click(function(ev){
-                ev.preventDefault();
-                loadUsedBy($(this).attr('href'));
-            });
-        };
+                if (data.pagination.numFound == 0) {
+                    cnt.hide();
+                }
+                cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
+                cnt.find('.pagination a').click(function(ev) {
+                    ev.preventDefault();
+                    loadUsedBy($(this).attr('href'));
+                });
+            };
 
-        var loadUsedBy = function(url) {
-            cnt.find('.pagination a').unbind('click').click(function(ev){
-                ev.preventDefault();
-            });
+            var loadUsedBy = function(url) {
+                cnt.find('.pagination a').unbind('click').click(function(ev) {
+                    ev.preventDefault();
+                });
 
-            $.ajax({
-                url: url,
-                data: {
-                    'limit': 5,
-                },
-                success: handleUsedBy,
-            });
-        };
+                $.ajax({
+                    url: url,
+                    data: {
+                        'limit': 5,
+                    },
+                    success: handleUsedBy,
+                });
+            };
 
-        loadUsedBy('{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}');
+            loadUsedBy('{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}');
 
-        window.addEventListener('message', function(event) {
-            // also resize modal if relations are changed
-            var iframe = $('[data-id="' + event.data.resizeModal + '"]');
-            var height = iframe.contents().height();
-            var margin = 120;
+            window.addEventListener('message', function(event) {
+                // also resize modal if relations are changed
+                var iframe = $('[data-id="' + event.data.resizeModal + '"]');
+                var height = iframe.contents().height();
+                var margin = 120;
 
-            if (height > ($(window).height() - margin)) {
-                height = $(window).height() - margin;
-            }
+                if (height > ($(window).height() - margin)) {
+                    height = $(window).height() - margin;
+                }
 
-            iframe.attr('height', height);
-        }, false);
+                iframe.attr('height', height);
+            }, false);
 
- });
-</script>
-
+        });
+    </script>
+{% endif %}
 {% if editable %}
     <script>
         var formInvalid = {{ form.vars.valid ? '0' : '1' }};
     </script>
-
-    <script src="{{ asset('bundles/integratedcontent/js/unlock_article.js') }}"></script>
-{% endif %}
 {% endif %}
 
-{{ include('@IntegratedContent/content/handlebars/templates.html.twig')}}
+{{ include('@IntegratedContent/content/handlebars/templates.html.twig') }}
 {% endblock javascript %}
 
 {% block style %}

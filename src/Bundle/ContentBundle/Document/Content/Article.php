@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Content\RankableInterface;
@@ -42,14 +41,6 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      *
-     * @Slug(fields={"title"})
-     * @Type\Field
-     */
-    protected $slug;
-
-    /**
-     * @var string
-     *
      * @Type\Field
      */
     protected $subtitle;
@@ -57,21 +48,40 @@ class Article extends Content implements RankableInterface
     /**
      * @var ArrayCollection Embedded\Author[]
      *
-     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AuthorType", options={"label" = "Authors"})
+     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AuthorType",
+     *     options={
+     *          "attr"={
+     *              "label"= "Authors",
+     *          }
+     *     },
+     *     location= "sidebar",
+     *     icon= "fa-feather",
+     * )
      */
     protected $authors;
 
     /**
      * @var string
      *
-     * @Type\Field
+     * @Type\Field(
+     *      location= "sidebar",
+     *      icon= "fa-megaphone",
+     * )
      */
     protected $source;
 
     /**
      * @var string
      *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\UrlType", options={"label" = "Source URL"})
+     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\UrlType",
+     *      options={
+     *          "attr"={
+     *              "label"= "Source URL",
+     *          }
+     *     },
+     *     location = "sidebar",
+     *     icon = "fa-arrow-up-right-from-square",
+     * )
      */
     protected $sourceUrl;
 
@@ -97,7 +107,10 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
+     * @Type\Field(
+     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",
+     *     options={"attr"={"placeholder"="Your article starts here"}}
+     * )
      */
     protected $content;
 

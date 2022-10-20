@@ -64,7 +64,7 @@ h6, .h6 {
 }
 
 .bordered-title {
-	border: 1px solid $color-silver;
+	border: 1px solid $border-color;
 	padding: 10px 15px;
 	margin-bottom: 0;
 	&:first-child:not(last-child) {

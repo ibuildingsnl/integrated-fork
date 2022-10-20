@@ -20,7 +20,7 @@
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_theme_scraper_new') }}">
                             <span>{% trans %}New{% endtrans %} {% trans %}scraper{% endtrans %}</span>
-                            <i class="fa-regular fa-plus"></i>
+                            <i class="fa-solid fa-plus"></i>
                         </a>
                     </li>
                 </ul>
@@ -54,7 +54,6 @@
                                     <a class="color-red"
                                        href="{{ path('integrated_theme_scraper_delete', {'id': scraper.id}) }}"
                                        title="{% trans %}Delete{% endtrans %}">
-                                        {#                                    {{ icon('trash') }} #}
                                         {% trans %}Delete{% endtrans %}
                                     </a>
                                 </div>

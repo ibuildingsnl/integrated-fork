@@ -1,11 +1,3 @@
-.editor-wrapper {
-    width: calc(100% - 350px);
-    max-height: calc(100vh - 110px);
-    overflow: auto;
-    position: relative;
-    background-color: white;
-}
-
 textarea#integrated_content_content {
     display: none;
 }
@@ -49,7 +41,7 @@ div#integrated_content_content_container {
     }
 }
 
-.collection-widget, .sortable-collection-widget {
+.collection-widget, .sortable-collection-widget, .integrated_sortable_collection {
     width: 100%;
 
     .bc-collection {
@@ -77,22 +69,17 @@ div#integrated_content_content_container {
                             width: 20px;
                             height: 20px;
                             position: absolute;
+                            font-size: 20px;
                         }
                         span {
                             padding-left: 25px;
                         }
+                        a.remove {
+                            top: 0px;
+                            right: 0px;
+                        }
                     }
-                    a.remove {
-                        background-color: #c6422f;
-                        width: 20px;
-                        height: 20px;
-                        border: 2px solid #c6422f;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        border-radius: 4px;
-                        color: white;
-                    }
+
                 }
 
                 .panel-collapse {
@@ -117,11 +104,9 @@ div#integrated_content_content_container {
 
                         > div {
                             display: flex;
-                            margin: 0 -0.5rem;
                             flex-wrap: wrap;
 
-                            > div.form-item {
-                                padding: 0.5rem;
+                            > div.form-item, div.form-group {
                                 min-width: 25%;
                             }
                         }
@@ -137,4 +122,28 @@ div#integrated_content_content_container {
             }
         }
     }
+}
+
+.colorpicker {
+    position: absolute;
+}
+
+pre#editor {
+    border: 1px solid #dee3e7;
+    border-radius: 8px;
+}
+
+.texturl {
+    .input-group-addon {
+        position: absolute;
+        top: 1.1rem;
+        left: 1rem;
+    }
+    input {
+        padding-left: 1.3rem;
+    }
+}
+
+.input-group {
+    position: relative;
 }

@@ -4,10 +4,7 @@
     overflow: hidden;
     padding-bottom: 0px !important;
     position: relative;
-    z-index:1050;
-    &.hide {
-        z-index: 1000;
-    }
+    z-index:1000;
     .sidebar {
         background-color: $sidebar-green;
         width: 250px;

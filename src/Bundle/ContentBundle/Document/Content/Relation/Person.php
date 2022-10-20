@@ -83,7 +83,7 @@ class Person extends Relation
     /**
      * @var StorageInterface|null
      *
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $picture;
 

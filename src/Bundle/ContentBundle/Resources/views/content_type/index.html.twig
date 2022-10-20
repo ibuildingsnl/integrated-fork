@@ -19,7 +19,7 @@
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
                         <span>{% trans %}New{% endtrans %} {% trans %}content type{% endtrans %}</span>
-                        <i class="fa-regular fa-plus"></i>
+                        <i class="fa-solid fa-plus"></i>
                     </a>
                     <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                         {% for type in documentTypes %}
@@ -56,10 +56,6 @@
                                     </a>
                                 </strong>
                                 <div class="row-options">
-                                    <a href="{{ path('integrated_content_content_type_show', {'id': document.id}) }}"
-                                       title="{% trans %}Information{% endtrans %}">
-                                        {% trans %}Information{% endtrans %}
-                                    </a> |
                                     <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
@@ -67,7 +63,6 @@
                                     <a class="color-red"
                                        href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}"
                                        title="{% trans %}Delete{% endtrans %}">
-                                        {#                                    {{ icon('trash') }} #}
                                         {% trans %}Delete{% endtrans %}
                                     </a>
                                 </div>

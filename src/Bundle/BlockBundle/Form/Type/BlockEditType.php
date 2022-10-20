@@ -14,7 +14,7 @@ namespace Integrated\Bundle\BlockBundle\Form\Type;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\DataTransformer\GroupTransformer;
 use Integrated\Bundle\BlockBundle\Locator\LayoutLocator;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupType;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Integrated\Common\Form\Type\MetadataType;
@@ -85,19 +85,18 @@ class BlockEditType extends AbstractType
                     'class' => 'select2',
                     'data-placeholder' => 'Block managers only',
                 ],
+                'location' => 'sidebar',
+                'icon' => 'fa-key',
+                'state' => 'show',
             ]);
 
             $builder->get('groups')->addModelTransformer(new GroupTransformer($this->groupManager));
         }
 
         if ($options['method'] == 'PUT') {
-            $builder->add('actions', SaveCancelType::class, [
-                'cancel_route' => 'integrated_block_block_index',
-                'label' => 'Create',
-                'button_class' => '',
-            ]);
+            $builder->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
         } else {
-            $builder->add('actions', SaveCancelType::class, ['cancel_route' => 'integrated_block_block_index']);
+            $builder->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
         }
     }
 

@@ -30,7 +30,7 @@ trait PublishTitleTrait
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={
      *          "required"=false,
-     *          "attr"={"class"="use-title"}
+     *          "attr"={"class"="use-title", "align_with_widget"=true}
      *      }
      * )
      */

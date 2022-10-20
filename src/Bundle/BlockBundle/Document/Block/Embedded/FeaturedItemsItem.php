@@ -31,7 +31,7 @@ class FeaturedItemsItem
     /**
      * @var StorageInterface
      *
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $image;
 
@@ -73,7 +73,14 @@ class FeaturedItemsItem
     /**
      * @var string
      *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
+     * @Type\Field(
+     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",
+     *     options={
+     *          "label"="Content",
+     *          "mode"="web",
+     *          "attr"={"align_with_widget"=true}
+     *          }
+     *     )
      */
     protected $text;
 

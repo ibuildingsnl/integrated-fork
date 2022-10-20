@@ -18,23 +18,8 @@ nav.navbar {
         }
     }
 
-    //ul.dropdown-menu {
-    //    visibility: hidden;
-    //    opacity: 0;
-    //    position: absolute;
-    //    background-color: white;
-    //    z-index: 9;
-    //    padding: 1rem;
-    //    border-radius: 8px;
-    //    margin-top:0px;
-    //    top: 50px;
-    //    transition: top .15s linear, visibility .15s, opacity .15s linear;
-    //    .megamenu-content {
-    //        display: flex;
-    //    }
-    //}
     .new-contenttype {
-        margin-left: 70px;
+        margin-left: 64px;
     }
 
     ul.header-nav {
@@ -47,7 +32,7 @@ nav.navbar {
                 width: 40px;
             }
 
-            a {
+            > a {
                 color: white;
                 display: flex;
                 align-items: center;
@@ -64,8 +49,13 @@ nav.navbar {
             }
 
             .megamenu-content {
-                a {
-                    color: black;
+                a:not(.btn) {
+                    border-bottom: 1px solid $border-color;
+                    color: #000;
+                    font-size: 1.1rem;
+                    width: 100%;
+                    display: block;
+                    padding: 0.5rem;
                 }
             }
         }
@@ -128,13 +118,12 @@ body div#dropdown_overlay {
     }
 }
 
-.hover {
+.dropdown.top-bar {
     padding: 10px 0;
-    padding-bottom: 30px;
     display: block;
     position: relative;
 
-    &:hover {
+    &.open {
         ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
             visibility: visible;
             opacity: 1;
@@ -157,24 +146,27 @@ body div#dropdown_overlay {
         border-radius: 8px;
         margin-top: 0px;
         top: 50px;
-        border:none;
+        border: none;
         transition: top .15s linear, visibility .15s, opacity .15s linear;
 
         .megamenu-content {
             display: flex;
         }
     }
+
     ul.dropdown-menu-left {
         left: 0;
+
         li {
-            width:100%;
+            width: 100%;
         }
     }
 
     ul.dropdown-menu-right {
         right: 0;
+
         li {
-            width:100%;
+            width: 100%;
         }
     }
 }

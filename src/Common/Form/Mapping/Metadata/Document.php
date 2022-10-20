@@ -38,6 +38,21 @@ class Document implements MetadataEditorInterface
     protected $type;
 
     /**
+     * @var string
+     */
+    protected $location;
+
+    /**
+     * @var string
+     */
+    protected $icon;
+
+    /**
+     * @var string
+     */
+    protected $state;
+
+    /**
      * @var AttributeInterface[]
      */
     protected $fields = [];
@@ -111,6 +126,60 @@ class Document implements MetadataEditorInterface
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
 
         return $this;
     }

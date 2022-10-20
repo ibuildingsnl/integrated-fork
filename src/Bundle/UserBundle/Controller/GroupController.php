@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
@@ -19,7 +19,6 @@ use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +27,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class GroupController extends AbstractController
 {
+    /**
+     * @var GroupManagerInterface
+     */
+    private $manager;
+
+    public function __construct(GroupManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
     /**
      * @param Request $request
      *
@@ -40,7 +49,7 @@ class GroupController extends AbstractController
         }
 
         $paginator = $this->getPaginator()->paginate(
-            $this->getManager()->findAll(),
+            $this->manager->findAll(),
             $request->query->get('page', 1),
             15
         );
@@ -72,7 +81,7 @@ class GroupController extends AbstractController
             if ($form->isValid()) {
                 $user = $form->getData();
 
-                $this->getManager()->persist($user);
+                $this->manager->persist($user);
                 $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
@@ -97,7 +106,7 @@ class GroupController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $group = $this->getManager()->find($request->get('id'));
+        $group = $this->manager->find($request->get('id'));
 
         if (!$group) {
             throw $this->createNotFoundException();
@@ -112,7 +121,7 @@ class GroupController extends AbstractController
             }
 
             if ($form->isValid()) {
-                $this->getManager()->persist($group);
+                $this->manager->persist($group);
                 $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
@@ -136,7 +145,7 @@ class GroupController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $group = $this->getManager()->find($request->get('id'));
+        $group = $this->manager->find($request->get('id'));
 
         if (!$group) {
             return $this->redirectToRoute('integrated_user_group_index'); // group is already gone
@@ -152,7 +161,7 @@ class GroupController extends AbstractController
             }
 
             if ($form->isValid()) {
-                $this->getManager()->remove($group);
+                $this->manager->remove($group);
                 $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
 
                 return $this->redirectToRoute('integrated_user_group_index');
@@ -179,12 +188,7 @@ class GroupController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Create']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -205,12 +209,7 @@ class GroupController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -231,27 +230,8 @@ class GroupController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
-    }
-
-    /**
-     * @return GroupManagerInterface
-     *
-     * @throws \LogicException
-     */
-    protected function getManager()
-    {
-        if (!$this->container->has('integrated_user.group.manager')) {
-            throw new \LogicException('The UserBundle is not registered in your application.');
-        }
-
-        return $this->container->get('integrated_user.group.manager');
     }
 }

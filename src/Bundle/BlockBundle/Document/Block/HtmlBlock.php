@@ -50,9 +50,9 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
-     *          "class"="IntegratedContentBundle:Relation\Relation",
+     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
      *          "choice_label"="name",
-     *          "placeholder"="",
+     *          "placeholder"="Select a relation",
      *          "label"="Require relation",
      *          "required"=false
      *      }

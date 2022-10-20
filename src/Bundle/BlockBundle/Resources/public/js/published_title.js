@@ -3,8 +3,8 @@ $(function () {
     var use_title = $('.use-title', block);
     var title = $(".main-title", block);
     var published_title = $('.published-title', block);
-    var published_form_row = published_title.closest(".form-group");
-    var use_title_form_row = use_title.closest('.form-group');
+    var published_form_row = published_title.closest(".form-item");
+    var use_title_form_row = use_title.closest('.form-item');
 
     var compare_titles = function (at_start) {
         if (title.val() === published_title.val()) {
@@ -16,7 +16,7 @@ $(function () {
             use_title_form_row.hide();
         }
     };
-
+    /* TODO: Check if this is still working like it should */
     compare_titles(true);
 
     use_title.on('change', function () {

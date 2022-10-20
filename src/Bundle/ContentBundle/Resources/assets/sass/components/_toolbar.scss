@@ -1,12 +1,13 @@
 #toolbar {
     display: flex;
+    flex-direction: row-reverse;
     justify-content: space-between;
     width: 100%;
     background-color: white;
     height: 50px;
     position: absolute;
     top: 0;
-    border-bottom: 1px solid #dee2e8;
+    border-bottom: 1px solid $border-color;
 
     .options {
         display: flex;
@@ -26,7 +27,7 @@
     .back {
         align-items: center;
         display: flex;
-        margin-left: 33px;
+        margin-left: 27px;
     }
 
     a {

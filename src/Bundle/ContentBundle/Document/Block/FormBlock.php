@@ -35,7 +35,7 @@ class FormBlock extends Block
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
-     *          "class"="IntegratedContentBundle:ContentType\ContentType",
+     *          "class"="Integrated\Bundle\ContentBundle\Document\ContentType\ContentType",
      *          "choice_label"="name",
      *          "placeholder"=""
      *      }
@@ -84,7 +84,7 @@ class FormBlock extends Block
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType",
      *      options={
      *          "label"="Sent form to e-mail address(es)",
-     *          "type"="email",
+     *          "entry_type"="Symfony\Component\Form\Extension\Core\Type\EmailType",
      *          "allow_add"=true,
      *          "allow_delete"=true,
      *          "required"=false,
@@ -99,7 +99,9 @@ class FormBlock extends Block
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={
-     *          "required"=false
+     *          "label"="Enable reCaptcha for this form",
+     *          "required"=false,
+     *          "attr"={"align_with_widget"=true}
      *      }
      * )
      */
@@ -112,7 +114,7 @@ class FormBlock extends Block
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
      *          "label"="Link to content item",
-     *          "class"="IntegratedContentBundle:Relation\Relation",
+     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
      *          "choice_label"="name",
      *          "placeholder"="Do not link",
      *          "required"=false,

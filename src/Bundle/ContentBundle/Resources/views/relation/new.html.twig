@@ -1,36 +1,66 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}New relation{% endtrans %}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_relation_index') }}">{% trans %}Relation{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}New{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="w-full mb-4 md:mb-0">
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options">
+            <aside>
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                        </h3>
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </div>
+                    <div class="aside-item-list">
+                        <div class="aside-item-list-container">
+                            <div class="status-options">
+                                <div class="status draft">
+                                    <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if form.location is defined %}
+                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'fa-location-crosshairs', 'state': 'show'}) }}
+                {% endif %}
+                {% if form.icon is defined %}
+                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'fa-icons', 'state': 'show'}) }}
+                {% endif %}
+                {% if form.options is defined %}
+                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                {% endif %}
+            </aside>
+        </div>
+        <div class="editor-wrapper">
             <div class="page-title">
-                <h1 class="heading">{% trans %}New relation{% endtrans %}</h1>
+                <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}relation{% endtrans %}</h1>
             </div>
-            <section class="section-white section-padding section-radius">
-                {{ form(form, {'style': 'horizontal'}) }}
+            <section class="editor">
+                <section class="section-white section-padding section-radius">
+                    {{ form_rest(form, {'style':'horizontal'}) }}
+                </section>
             </section>
         </div>
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
 {% endblock %}
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-    $(document).ready(function() {
-        $('#integrated_relation_sources').select2();
-        $('#integrated_relation_targets').select2();
-    });
-    </script>
+<script>
+$(document).ready(function() {
+    $('#integrated_relation_sources').select2();
+    $('#integrated_relation_targets').select2();
+});
+</script>
 {% endblock javascript %}

@@ -21,7 +21,7 @@
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_user_user_new') }}">
                             <span>{% trans %}New{% endtrans %} {% trans %}User{% endtrans %}</span>
-                            <i class="fa-regular fa-plus"></i>
+                            <i class="fa-solid fa-plus"></i>
                         </a>
                     </li>
                 </ul>
@@ -37,10 +37,10 @@
                     {{ form_start(facetFilter) }}
 
                     <div class="aside-item-holder">
-                        <div class="input-group">
+                        <div class="input-group input-group-search">
                             {{ form_widget(facetFilter.q) }}
                             <span class="input-group-btn">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
                             </span>
@@ -49,13 +49,13 @@
 
                     {% block user_filter_groups %}
                     <div class="aside-item-holder {% if facetFilter.groups|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.groups) }}
+                        {{ form_row(facetFilter.groups, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 
                     {% block user_filter_scope %}
                     <div class="aside-item-holder {% if facetFilter.scope|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.scope) }}
+                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 

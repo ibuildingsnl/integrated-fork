@@ -16,8 +16,6 @@ use Twig\TwigFunction;
  * @author     Florian Eckerstorfer <florian@eckerstorfer.co>
  * @copyright  2012-2013 Florian Eckerstorfer
  * @license    http://opensource.org/licenses/MIT The MIT License
- *
- * @see       http://tailwind.braincrafted.com Tailwind for Symfony2
  */
 class TailwindIconExtension extends AbstractExtension
 {
@@ -33,12 +31,13 @@ class TailwindIconExtension extends AbstractExtension
 
     /**
      * @param string $iconPrefix
-     * @param string $iconTag
      */
-    public function __construct($iconPrefix, $iconTag = 'i')
+    public function __construct(string $iconPrefix)
     {
         $this->iconPrefix = $iconPrefix;
-        $this->iconTag = $iconTag;
+        // TODO: figure out where 'span' comes from as iconTag.
+//        $this->iconTag = $iconTag;
+        $this->iconTag = 'i';
     }
 
     /**
