@@ -44,7 +44,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      */
-    protected string $id;
+    protected $id;
 
     /**
      * @var string
