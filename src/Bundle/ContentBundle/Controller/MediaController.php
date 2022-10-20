@@ -85,6 +85,7 @@ class MediaController extends AbstractController
     private $queueSubscriber;
     private $indexer;
     private TaxonomyRelationManager $taxonomyRelationManager;
+    private $dm;
 
     public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, TaxonomyRelationManager $taxonomyRelationManager)
     {
@@ -96,6 +97,7 @@ class MediaController extends AbstractController
         $this->queueSubscriber = $queueSubscriber;
         $this->indexer = $indexer;
         $this->taxonomyRelationManager = $taxonomyRelationManager;
+        $this->dm = null;
     }
 
     /**
@@ -219,7 +221,7 @@ class MediaController extends AbstractController
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         } else {
             if ($this::DATE_FILTER_ON == '+1DAY') {
-                if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
+                if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
                     $endDate = "$year-{$month}-{$day}T23:59:59Z";
@@ -229,7 +231,7 @@ class MediaController extends AbstractController
 
                 return $yearMonthFilter;
             } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
-                if (isset($yearMonthFilter) && null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
+                if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
@@ -258,6 +260,7 @@ class MediaController extends AbstractController
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
+            $label = '';
             if ($this::DATE_FILTER_ON == '+1DAY') {
                 $label = substr($yearMonth, 0, 10);
             } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
@@ -450,7 +453,7 @@ class MediaController extends AbstractController
         return $this->taxonomyRelationManager->manageRelations($request);
     }
 
-// TODO later make this
+    // TODO later make this
     public function menu()
     {
         $dm = $this->getDoctrineODM()->getManager();
@@ -465,9 +468,9 @@ class MediaController extends AbstractController
         $menuItems = [];
         if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
             /* @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($mediaGalleryMenuResult as $menuItem) {
-                $menuItems[$menuItem->getId()] = $channel->getName();
-            }
+//            foreach ($mediaGalleryMenuResult as $menuItem) {
+//                $menuItems[$menuItem->getId()] = $channel->getName();
+//            }
         }
 
         return $this->render('@IntegratedContent/media/menu.html.twig', [

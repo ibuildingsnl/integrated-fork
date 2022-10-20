@@ -67,7 +67,7 @@ class ContentProvider
         DocumentManager $dm,
         TokenStorageInterface $tokenStorage,
         AuthorizationChecker $authorizationChecker,
-                              $workflowExtension = false
+        $workflowExtension = false
     ) {
         $this->client = $client;
         $this->dm = $dm;
