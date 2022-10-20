@@ -24,13 +24,13 @@ webpackConfig = Encore.setOutputPath(
     .addEntry('collection', [
         './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
     ])
-    addEntry('mediagallery', [
+    .addEntry('mediagallery', [
         './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
         './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/main.js',
-    ]).
-    addEntry('iframe', [
+    ])
+    .addEntry('iframe', [
         './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
     ])
     .addEntry('content_sortable', [
