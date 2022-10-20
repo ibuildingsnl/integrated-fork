@@ -1,30 +1,115 @@
 {% block integrated_file_dropzone_row %}
     {% apply spaceless %}
-        <div class="form-group{% if not form.vars.valid %} has-error{% endif %}">
-            {{ form_label(form) }}
-            <div class="col-sm-8">
-                {% set changeInput %}
-                    <div class="jFiler-input-inner dropzone-empty">
-                        <div class="jFiler-input-icon">
-                            <i class="icon-jfi-cloud-up-o"></i>
-                        </div>
-                        <div class="jFiler-input-text">
-                            <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
-                            <span>{% trans %}or click to browse{% endtrans %}</span>
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% set state = state|default(tailwind_get_state()) %}
+        {% if style == 'sidebar' %}
+            <div
+                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        <i class="fa-solid {% if icon is not empty %}{{ icon }}{% else %}fa-folder-closed{% endif %}"></i>
+                        <span class="aside-item-icon">
+                            {{ form_label(form) }}
+                        </span>
+                    </h3>
+                    <i class="fa-solid fa-chevron-up"></i>
+                </div>
+                <div class="aside-item-list">
+                    <div class="aside-item-list-container">
+                        <div class="w-full">
+                            {% set changeInput %}
+                                <div class="jFiler-input-inner dropzone-empty">
+                                    <div class="jFiler-input-icon">
+                                        <i class="icon-jfi-cloud-up-o"></i>
+                                    </div>
+                                    <div class="jFiler-input-text">
+                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
+                                        <span>{% trans %}or click to browse{% endtrans %}</span>
+                                    </div>
+                                </div>
+                            {% endset %}
+
+                            {% set options = options|merge({'changeInput': changeInput}) %}
+
+                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
+                                 data-options="{{ options|json_encode }}">
+                                {{ form_widget(form.file) }}
+                                {{ form_widget(form.remove) }}
+                            </div>
+
+                            {{ form_errors(form.file) }}
                         </div>
                     </div>
-                {% endset %}
-
-                {% set options = options|merge({'changeInput': changeInput}) %}
-
-                <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}" data-options="{{ options|json_encode }}">
-                    {{ form_widget(form.file) }}
-                    {{ form_widget(form.remove) }}
                 </div>
-
-                {{ form_errors(form.file) }}
             </div>
-        </div>
+        {% elseif style == 'editor' %}
+            <div
+                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="editor-item-header">
+                    <h3 class="editor-item-title">
+                        <span class="editor-item-icon">
+                            {{ form_label(form) }}
+                        </span>
+                    </h3>
+                    <i class="fa-solid fa-chevron-up"></i>
+                </div>
+                <div class="editor-item-list">
+                    <div class="editor-item-list-container">
+                        <div class="w-full">
+                            {% set changeInput %}
+                                <div class="jFiler-input-inner dropzone-empty">
+                                    <div class="jFiler-input-icon">
+                                        <i class="icon-jfi-cloud-up-o"></i>
+                                    </div>
+                                    <div class="jFiler-input-text">
+                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
+                                        <span>{% trans %}or click to browse{% endtrans %}</span>
+                                    </div>
+                                </div>
+                            {% endset %}
+
+                            {% set options = options|merge({'changeInput': changeInput}) %}
+
+                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
+                                 data-options="{{ options|json_encode }}">
+                                {{ form_widget(form.file) }}
+                                {{ form_widget(form.remove) }}
+                            </div>
+
+                            {{ form_errors(form.file) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
+                {{ form_label(form) }}
+                <div class="w-full {{ widget_col }}">
+                    {% set changeInput %}
+                        <div class="jFiler-input-inner dropzone-empty">
+                            <div class="jFiler-input-icon">
+                                <i class="icon-jfi-cloud-up-o"></i>
+                            </div>
+                            <div class="jFiler-input-text">
+                                <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
+                                <span>{% trans %}or click to browse{% endtrans %}</span>
+                            </div>
+                        </div>
+                    {% endset %}
+
+                    {% set options = options|merge({'changeInput': changeInput}) %}
+
+                    <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
+                         data-options="{{ options|json_encode }}">
+                        {{ form_widget(form.file) }}
+                        {{ form_widget(form.remove) }}
+                    </div>
+
+                    {{ form_errors(form.file) }}
+                </div>
+            </div>
+        {% endif %}
     {% endapply %}
 {% endblock %}
 

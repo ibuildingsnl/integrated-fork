@@ -15,11 +15,10 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepo
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,8 +46,11 @@ class SearchSelectionController extends AbstractController
      */
     private $searchContentReferenced;
 
-    public function __construct(RequestStack $requestStack, DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        DocumentManager $documentManager,
+        SearchContentReferenced $searchContentReferenced
+    ) {
         $this->requestStack = $requestStack;
         $this->documentManager = $documentManager;
         $this->searchContentReferenced = $searchContentReferenced;
@@ -87,13 +89,18 @@ class SearchSelectionController extends AbstractController
         $form = $this->createCreateForm($searchSelection);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($searchSelection);
-            $this->documentManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_content_search_selection_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->persist($searchSelection);
+                $this->documentManager->flush();
 
-            $this->addFlash('success', 'Item created');
+                $this->addFlash('success', 'Item created');
 
-            return $this->redirectToRoute('integrated_content_search_selection_index');
+                return $this->redirectToRoute('integrated_content_search_selection_index');
+            }
         }
 
         return $this->render('@IntegratedContent/search_selection/new.html.twig', [
@@ -207,16 +214,15 @@ class SearchSelectionController extends AbstractController
             SearchSelectionType::class,
             $searchSelection,
             [
-                'action' => $this->generateUrl('integrated_content_search_selection_new', $request ? $request->query->all() : []),
+                'action' => $this->generateUrl(
+                    'integrated_content_search_selection_new',
+                    $request ? $request->query->all() : []
+                ),
                 'method' => 'POST',
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, [
-            'cancel_route' => 'integrated_content_search_selection_index',
-            'label' => 'Create',
-            'button_class' => '',
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -234,12 +240,15 @@ class SearchSelectionController extends AbstractController
             SearchSelectionType::class,
             $searchSelection,
             [
-                'action' => $this->generateUrl('integrated_content_search_selection_edit', ['id' => $searchSelection->getId()]),
+                'action' => $this->generateUrl(
+                    'integrated_content_search_selection_edit',
+                    ['id' => $searchSelection->getId()]
+                ),
                 'method' => 'PUT',
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, ['cancel_route' => 'integrated_content_search_selection_index']);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -252,17 +261,16 @@ class SearchSelectionController extends AbstractController
      *
      * @return FormInterface
      */
-    protected function createDeleteForm($id, $notDelete = false)
+    protected function createDeleteForm($id, bool $notDelete = false)
     {
-        $form = $this
-            ->createFormBuilder()
-            ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
-            ->setMethod('DELETE');
+        $form = $this->createFormBuilder()
+                     ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
+                     ->setMethod('DELETE');
 
         if ($notDelete) {
-            $form->add('reload', SubmitType::class, ['label' => 'Reload', 'attr' => ['class' => 'btn-default']]);
+            $form->add('actions', ActionsType::class, ['buttons' => ['reload', 'cancel']]);
         } else {
-            $form->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+            $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
         }
 
         return $form->getForm();

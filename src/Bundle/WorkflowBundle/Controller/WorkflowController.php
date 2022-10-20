@@ -12,10 +12,10 @@
 namespace Integrated\Bundle\WorkflowBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -29,7 +29,6 @@ use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionFormType;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Integrated\Common\Security\PermissionInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -128,8 +127,7 @@ class WorkflowController extends AbstractController
 
         /** @var Definition $workflow */
         $workflow = $this->entityManager
-            ->getManager()
-            ->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')
+            ->getRepository(Definition::class)
             ->find($request->get('id'));
 
         if (!$workflow) {
@@ -140,7 +138,7 @@ class WorkflowController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -148,8 +146,6 @@ class WorkflowController extends AbstractController
                 $this->entityManager->flush();
 
                 $this->addFlash('success', sprintf('The changes to the workflow %s are saved', $workflow->getName()));
-
-                return $this->redirectToRoute('integrated_workflow_index');
             }
         }
 
@@ -181,7 +177,7 @@ class WorkflowController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->get('actions')->getData() == 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -330,12 +326,7 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'create' => ['type' => SubmitType::class, 'options' => ['label' => 'Create']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -356,12 +347,7 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'save' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -382,12 +368,7 @@ class WorkflowController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'delete' => ['type' => SubmitType::class, 'options' => ['label' => 'Delete']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default']]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $form;
     }

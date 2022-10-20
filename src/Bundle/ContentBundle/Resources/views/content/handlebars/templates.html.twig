@@ -1,5 +1,5 @@
 {% autoescape 'js' %}
-{% verbatim %}
+    {% verbatim %}
 <script id="options-template" type="text/x-handlebars-template">
 
     <div class="options-cnt">
@@ -45,10 +45,10 @@
         {{#each items}}
             <p class="alert-dismissable closable" data-remove="{{ this.id }}">
                 {% endverbatim %}
-                    {% if editable is not defined or editable %}
-                        <button aria-hidden="true" data-dismiss="alert" class="close glyphicon glyphicon-remove" type="button"></button>
-                    {% endif %}
-                {% verbatim %}
+    {% if editable is not defined or editable %}
+        <button aria-hidden="true" data-dismiss="alert" class="close fa fa-xmark" type="button"></button>
+    {% endif %}
+    {% verbatim %}
                 {{this.title}}
             </p>
         {{else}}
@@ -58,18 +58,25 @@
         {{/each}}
     {{/hasItems}}
 </script>
+
 <script id="used-by-template" type="text/x-handlebars-template">
     {{#hasItems pagination.numFound}}
-    <div class="item_row">
-        <h3 class="title">{{this.title}} <small>({{pagination.numFound}})</small></h3>
-        <div class="content_column_inner">
-            <ul class="custom_list li_with_margin">
+    <div class="aside-item-header">
+        <h3 class="aside-item-title">
+            <i class="fa-solid fa-circle-info"></i>
+            <span class="aside-item-icon">{{this.title}} ({{pagination.numFound}})</span>
+        </h3>
+        <i class="fa-solid fa-chevron-up"></i>
+    </div>
+    <div class="aside-item-list content_column_inner">
+        <div class="aside-item-list-container">
+            <ul class="used-by">
                 {{#each items}}
-                <li>
-                    <a href="{{this.href}}" target="_blank">
-                        {{this.title}}
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{this.href}}" target="_blank">
+                            {{this.title}}
+                        </a>
+                    </li>
                 {{/each}}
             </ul>
         </div>
@@ -78,27 +85,27 @@
 </script>
 <script id="pagination-template" type="text/xhandlebars-template">
     {{#hasPages pagination.pageCount}}
-    <ul class="pagination">
+    <div class="pagination">
         {{#if pagination.previous}}
-        <li>
+        <span>
             <a href="{{pagination.previous.href}}">&laquo;</a>
-        </li>
+        </span>
         {{else}}
-            <li class="disabled">
-            <span>&laquo;</span>
-        </li>
+        <span class="disabled">
+            <div>&laquo;</div>
+        </span>
         {{/if}}
 
         {{#if pagination.next}}
-        <li>
+        <span>
             <a href="{{pagination.next.href}}">&raquo;</a>
-        </li>
+        </span>
             {{else}}
-            <li class="disabled">
-            <span>&raquo;</span>
-        </li>
+            <span class="disabled">
+            <div>&raquo;</div>
+        </span>
             {{/if}}
-    </ul>
+    </div>
     {{/hasPages}}
 </script>
 <script id="add-template" type="text/xhandlebars-template">
@@ -110,7 +117,7 @@
         {{else}}
         <div class="btn-group add-relation">
             <button type="button" class="btn btn-default dropdown-toggle" style="font-size: 13px;" data-toggle="dropdown" aria-expanded="false">
-                Add <span class="caret"></span>
+                Add <i class="fa-solid fa-chevron-down"></i>
             </button>
             <ul class="dropdown-menu" role="menu">
                 {{#each relations}}

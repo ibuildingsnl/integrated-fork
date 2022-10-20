@@ -5,13 +5,13 @@
             {% set style = attr.style %}
         {% endif %}
 
-        {% set style = style|default(bootstrap_get_style()) %}
+        {% set style = style|default(tailwind_get_style()) %}
 
         {% if label is empty %}
             {% set label = name|humanize %}
         {% endif %}
 
-        <div class="form-group">
+        <div class="form-group w-full flex flex-wrap">
             {% if style == 'horizontal' %}
 
                 {% if attr.label_col is defined and attr.label_col is not empty %}
@@ -20,15 +20,11 @@
                 {% if attr.widget_col is defined and attr.widget_col is not empty %}
                     {% set widget_col = attr.widget_col %}
                 {% endif %}
-                {% if attr.col_size is defined and attr.col_size is not empty %}
-                    {% set col_size = attr.col_size %}
-                {% endif %}
 
-                {% set label_col = label_col|default(bootstrap_get_label_col()) %}
-                {% set widget_col = widget_col|default(bootstrap_get_widget_col()) %}
-                {% set col_size = col_size|default(bootstrap_get_col_size()) %}
+                {% set label_col = label_col|default(tailwind_get_label_col()) %}
+                {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
 
-                <div class="col-{{ col_size }}-{{ widget_col }} col-{{ col_size }}-offset-{{ label_col }}">
+                <div class="w-full {{ widget_col }}">
                     <strong>{{ label|trans({}, translation_domain)|raw }}</strong>
                 </div>
             {% else %}

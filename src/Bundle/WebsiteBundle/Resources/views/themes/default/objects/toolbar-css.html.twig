@@ -337,14 +337,14 @@
     }
     .integrated-modal-dialog {
         position: relative;
-        width: 800px;
+        width: calc(100vw - 100px);
         margin: 30px auto;
 
     }
     .integrated-modal-content {
         position: relative;
         background-color: #000000;
-        box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(0,0,0,0.2);
         border-radius: 6px;
         border-bottom-left-radius: 0px;
@@ -376,11 +376,12 @@
     .integrated-modal-body {
         background: #ffffff;
         position: relative;
-        padding: 15px;
         max-height: calc(100vh - 150px);
         overflow: auto;
     }
-
+    .integrated-modal-body iframe {
+        border: none;
+    }
     .integrated-control-row {
         display: flex;
         flex-direction: row;

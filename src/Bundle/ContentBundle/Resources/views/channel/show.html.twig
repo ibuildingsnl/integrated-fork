@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Show Channel{% endtrans %}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -13,9 +14,11 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular">{% trans %}Show{% endtrans %}</h1>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Channel{% endtrans %} {{ channel.name }}</h1>
+            </div>
+            <section class="section-white overflow section-radius">
                 <dl class="dl-horizontal">
                     <dt>
                         {% trans %}Id{% endtrans %}
@@ -42,7 +45,7 @@
                         {{ channel.primaryDomain }}
                     </dd>
                 </dl>
-                <a class="pull-left btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_channel_edit', {'id': channel.id}) }}">
+                <a class="btn btn-primary" style="margin-right:10px;" href="{{ path('integrated_content_channel_edit', {'id': channel.id}) }}">
                     {% trans %}Edit{% endtrans %}
                 </a>
                 <a class="btn-danger btn btn-primary" href="{{ path('integrated_content_channel_delete', {'id': channel.id}) }}">

@@ -1,42 +1,33 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_index') }}">{% trans %}Home{% endtrans %}</a>
-                </li>
-                <li>
-                    <a href="{{ path('integrated_content_content_index', { 'contenttypes': [ type.id ] }) }}">{{ type.name|trans }}</a>
-                </li>
-                <li class="active">{% trans %}Delete{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% block title %}{% trans %}Delete{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-    <h1 class="main-title font-regular">
-        {% trans %}Delete{% endtrans %} {{ type.name }}
-        <i class="integrate-icon-edit"></i>
-    </h1>
-
-    <div class="row">
-        <div class="col-md-12">
-            <section class="section-white section-padding section-shadow section-radius">
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options"></div>
+        <div class="editor-wrapper">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Delete{% endtrans %} {{ type.name }}</h1>
+            </div>
+            <section class="editor editor-wrapped">
                 <p>
                     {% trans with {'%name%': content.title|default(content.name|default(content.id)) } %}
-                        You are about to delete "%name%", click the delete button below to confirm the action.
+                        You are about to delete "%name%", click the delete button to confirm the action.
                     {% endtrans %}
                 </p>
-
+                {{ form_rest(form, {'style':'horizontal'})}}
                 {% if referenced %}
                     {% include '@IntegratedContent/referencedAlert.html.twig' with { 'referenced': referenced } only %}
                 {% endif %}
-
-                {{ form(form) }}
             </section>
         </div>
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
 {% endblock %}

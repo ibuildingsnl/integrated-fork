@@ -74,7 +74,7 @@ $(document).ready(function () {
                 e.preventDefault();
                 e.stopImmediatePropagation();
             });
-            $(this).prepend('<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>');
+            $(this).prepend('<span class="fa fa-refresh" aria-hidden="true"></span>');
         }
     });
 });
@@ -175,3 +175,6 @@ $(document).ready(function () {
         return '';
     }
 });
+
+
+

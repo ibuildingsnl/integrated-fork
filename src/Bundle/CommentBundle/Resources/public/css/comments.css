@@ -27,7 +27,8 @@
     border-radius:5px;
     cursor:pointer;
     margin:0 auto;
-    white-space:nowrap
+    white-space:nowrap;
+    padding-top:110px;
 }
 
 .comment-reply {

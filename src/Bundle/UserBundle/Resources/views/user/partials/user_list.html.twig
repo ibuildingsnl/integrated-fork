@@ -1,47 +1,60 @@
-<section class="section-white section-padding section-shadow section-radius">
+<section class="section-white section-radius">
     <table class="table table-hover">
 
         <colgroup>
-            <col style="width: 3em" />
-            <col />
-            <col />
-            <col style="width: 5em" />
+            <col style="width: 3em"/>
+            <col/>
+            <col/>
+            <col style="width: 5em"/>
         </colgroup>
 
         <thead>
         <tr>
             <th>{{ knp_pagination_sortable(users, '#', 'id') }}</th>
-            <th>{{ knp_pagination_sortable(users, 'Username'|trans, 'username')}}</th>
-            <th>{{ knp_pagination_sortable(users, 'Scope'|trans, 'scope.name')}}</th>
-            <th>{{ knp_pagination_sortable(users, 'Date created'|trans, 'createdAt')}}</th>
+            <th>{{ knp_pagination_sortable(users, 'Username'|trans, 'username') }}</th>
+            <th>{{ knp_pagination_sortable(users, 'Scope'|trans, 'scope.name') }}</th>
+            <th>{{ knp_pagination_sortable(users, 'Date created'|trans, 'createdAt') }}</th>
             <th>{% trans %}Relation{% endtrans %}</th>
-            <th>{% trans %}Actions{% endtrans %}</th>
         </tr>
         </thead>
 
         <tbody>
 
         {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
+            <tr class="has-options">
+                <td>
+                    {{ user.id }}
+                </td>
 
                 {% if user.enabled == false %}
-                    <td style="color: lightgrey">{{ user.username }}</td>
+                    <td style="color: lightgrey">
+                        <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
+                           title="{% trans %}Edit{% endtrans %}">
+                            <strong>{{ user.username }}</strong>
+                        </a>
                 {% else %}
-                    <td>{{ user.username }}</td>
+                    <td>
+                    <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
+                       title="{% trans %}Edit{% endtrans %}">
+                        <strong>{{ user.username }}</strong>
+                    </a>
                 {% endif %}
+                <div class="row-options">
+                    <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}"
+                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                    <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}"
+                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                    {% if user.googleAuthenticatorEnabled %}
+                         | <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}"
+                           class="color-red" title="{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}">{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}</a>
+                    {% endif %}
+                </div>
+                    </td>
 
                 <td>{{ user.scope.name|default('') }}</td>
                 <td>{% if user.createdAt|date('Y') > 0 %}{{ user.createdAt|format_date("medium", "none") }}{% endif %}</td>
                 <td>{% if user.relation.id|default %}
                         <a href="{{ path('integrated_content_content_edit', {id: user.relation.id}) }}">{{ user.relation.name|default }} {{ user.relation.firstname|default }} {{ user.relation.lastname|default }}</a>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ path('integrated_user_user_edit', {'id': user.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                    <a href="{{ path('integrated_user_user_delete', {'id': user.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
-                    {% if user.googleAuthenticatorEnabled %}
-                        <a href="{{ path('integrated_user_user_delete_authenticator', {'id': user.id}) }}" title="{% trans %}Delete{% endtrans %} {% trans %}two factor authenticator{% endtrans %}"><span class="glyphicon glyphicon-phone"></span></a>
                     {% endif %}
                 </td>
             </tr>

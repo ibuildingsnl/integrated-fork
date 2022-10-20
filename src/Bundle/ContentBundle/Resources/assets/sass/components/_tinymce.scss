@@ -1,7 +1,87 @@
 /*TINEMCE*/
-.mce-tinymce {
-	border-radius: 0 !important;
+.tox-tinymce {
+    border-radius: 0 !important;
 }
-.mce-tinymce.mce-container.mce-panel {
-	border-color: $color-silver;
+
+.tox-tinymce.tox-container.tox-panel {
+    border-color: $border-color;
 }
+
+.tox-fullscreen nav.navbar {
+    z-index: 0;
+}
+
+.fancy_tinymce {
+    .tox-container-body {
+        //overflow: hidden;
+    }
+    .tox:not(.tox-tinymce-inline) .tox-editor-header {
+        padding: 0;
+    }
+    .tox-tinymce {
+        border: 0 !important;
+        min-height: 500px;
+
+        .tox-menubar {
+            border-bottom: 1px solid $border-color;
+        }
+
+        &.tox-container {
+            &.tox-panel {
+                border-color: $border-color;
+            }
+        }
+
+        .tox-edit-area {
+            background: #fff;
+            filter: none;
+            top: 140px;
+            position: relative;
+
+            iframe {
+                position: relative;
+            }
+        }
+
+        .tox-menubar {
+            position: sticky;
+            width: 100%;
+            background-color: white;
+            top: 0;
+            z-index: 9;
+            padding-left: 23px;
+        }
+
+        .tox-toolbar-grp {
+            position: sticky;
+            width: 100%;
+            top: 35px;
+            z-index: 9;
+            padding-left: 23px;
+            border-bottom: 1px solid $border-color !important;
+            border-radius: 0;
+        }
+
+        .tox-panel {
+            background-color: #ffffff;
+            border: 0;
+        }
+
+
+        .tox-btn {
+            background-color: #fff;
+        }
+        .tox .tox-menubar+.tox-toolbar, .tox .tox-menubar+.tox-toolbar-overlord {
+            padding-left: 12px;
+        }
+    }
+}
+
+.tox-fullscreen {
+    .fancy_tinymce {
+        div.tox-edit-area {
+            padding-top: 50px !important;
+        }
+    }
+}
+

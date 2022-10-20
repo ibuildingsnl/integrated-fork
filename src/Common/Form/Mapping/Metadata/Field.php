@@ -31,6 +31,21 @@ class Field implements AttributeEditorInterface
     protected $type;
 
     /**
+     * @var string
+     */
+    protected $location = 'editor';
+
+    /**
+     * @var string
+     */
+    protected $icon = '';
+
+    /**
+     * @var string
+     */
+    protected $state = '';
+
+    /**
      * @var array
      */
     protected $options = [];
@@ -65,6 +80,60 @@ class Field implements AttributeEditorInterface
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
 
         return $this;
     }

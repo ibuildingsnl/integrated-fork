@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * Annotation for defining field options for properties of a document.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
  * @Annotation
  */
 class Field
@@ -25,6 +26,21 @@ class Field
      * @var string
      */
     protected $type = TextType::class;
+
+    /**
+     * @var string
+     */
+    protected $location = 'editor';
+
+    /**
+     * @var string
+     */
+    protected $icon;
+
+    /**
+     * @var string
+     */
+    protected $state;
 
     /**
      * @var array
@@ -69,6 +85,78 @@ class Field
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get the location of the field.
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * Set the location of the field.
+     *
+     * @param string $location
+     *
+     * @return $this
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get the icon of the field.
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * Set the icon of the field.
+     *
+     * @param string $icon
+     *
+     * @return $this
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Get the state of the field.
+     *
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Set the state of the field.
+     *
+     * @param string $state
+     *
+     * @return $this
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
 
         return $this;
     }

@@ -1,53 +1,64 @@
 {% extends '@IntegratedChannel/base.html.twig' %}
+{% block title %}{% trans %}Connectors{% endtrans %}{% endblock title %}
 
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li class="dropdown">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Connectors{% endtrans %}</h1>
+                <ul class="options-no-bg">
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                            <span>{% trans %}New{% endtrans %} {% trans %}connector{% endtrans %}</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                            {% for adapter in adapters %}
+                                <li role="presentation"><a
+                                        href="{{ path('integrated_channel_config_new', {'adapter': adapter.manifest.name}) }}"
+                                        tabindex="-1" role="menuitem">New {{ adapter.manifest.label }} configuration</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-                {% if adapters %}
-                    <a href="#" data-toggle="dropdown" role="button" id="drop_1">Options <b class="caret"></b></a>
-                    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-
-                    {% for adapter in adapters %}
-                        <li role="presentation"><a href="{{ path('integrated_channel_config_new', {'adapter': adapter.manifest.name}) }}" tabindex="-1" role="menuitem">New {{ adapter.manifest.label }} configuration</a></li>
-                    {% endfor %}
-
-                    </ul>
-                {% endif %}
-
-                </li>
-            </ul>
-            <section class="section-white section-padding section-shadow section-radius">
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
 
                     <colgroup>
                         <col style="width: 20%"/>
-                        <col />
-                        <col style="width: 5em" />
+                        <col/>
                     </colgroup>
 
                     <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Connector</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>{% trans %}Connector{% endtrans %}</th>
+                    </tr>
                     </thead>
 
                     <tbody>
 
                     {% for data in pager %}
 
-                        <tr>
-                            <td>{{ data.name }}</td>
-                            <td>{{ data.adapter }}</td>
+                        <tr class="has-options">
                             <td>
-                                <a href="{{ path('integrated_channel_config_edit', {'id': data.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                <a href="{{ path('integrated_channel_config_delete', {'id': data.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                            <strong>
+                                <a href="{{ path('integrated_channel_config_edit', {'id': data.id}) }}">
+                                    {{ data.name }}
+                                </a>
+                            </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_channel_config_edit', {'id': data.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                                    <a href="{{ path('integrated_channel_config_delete', {'id': data.id}) }}"
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
                             </td>
+                            <td>{{ data.adapter }}</td>
                         </tr>
 
                     {% endfor %}

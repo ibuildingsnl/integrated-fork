@@ -1,49 +1,57 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}User scopes{% endtrans %} {% endblock title %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li class="dropdown">
-                    <a href="#" data-toggle="dropdown" role="button" id="drop_1">Options <b class="caret"></b></a>
-                    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                        <li role="presentation"><a href="{{ path('integrated_user_scope_new') }}" tabindex="-1" role="menuitem">New</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}User scopes{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_user_scope_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}user scope{% endtrans %}</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
 
                     <colgroup>
-                        <col style="width: 3em" />
-                        <col />
-                        <col style="width: 5em" />
+                        <col style="width: 3em"/>
+                        <col/>
                     </colgroup>
 
                     <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                    </tr>
                     </thead>
 
                     <tbody>
 
                     {% for scope in scopes %}
 
-                        <tr>
+                        <tr class="has-options">
                             <td>{{ scope.id }}</td>
-                            <td>{{ scope.name }}</td>
                             <td>
-                                <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                {% if not scope.admin %}
-                                    <a href="{{ path('integrated_user_scope_delete', {'id': scope.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
-                                {% endif %}
+                                <strong>
+                                    <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}">
+                                        {{ scope.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_user_scope_edit', {'id': scope.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                                    <a href="{{ path('integrated_user_scope_delete', {'id': scope.id}) }}"
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
                             </td>
                         </tr>
 
-                   {% endfor %}
+                    {% endfor %}
 
                     </tbody>
 

@@ -1,40 +1,75 @@
 {% extends '@IntegratedWorkflow/layout.html.twig' %}
-
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_index') }}">{% trans %}Home{% endtrans %}</a>
-                </li>
-                {% block crumbsActive %}
-                    <li class="active">{% trans %}Edit{% endtrans %}</li>
-                {% endblock %}
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% block title %}{% trans %}Edit workflow{% endtrans %}{% endblock title %}
 
 {% block content %}
-
-    <h1 class="main-title font-regular">
-        {% block contentTitle %}
-            {% trans %}Edit{% endtrans %} Workflow
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
-        <i class="integrate-icon-edit"></i>
-    </h1>
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options">
+            <aside>
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                        </h3>
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </div>
+                    <div class="aside-item-list">
+                        <div class="aside-item-list-container">
+                            <div class="status-info">
+                                {% if form.publicationStartDate is defined %}
+                                    {{ form_row(form.publicationStartDate) }}
+                                {% endif %}
+                            </div>
+                            <div class="status-options">
+                                {% if workflow is defined %}
+                                    <div class="status published">
+                                        <i class="fa-solid fa-circle-check"></i> {% trans %}Published{% endtrans %}
+                                    </div>
+                                    <a class="delete"
+                                       href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                {% else %}
+                                    <div class="status draft">
+                                        <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if form.channels is defined %}
+                    {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                {% endif %}
+            </aside>
+        </div>
+        <div class="editor-wrapper">
+            <div class="page-title">
+                <h1 class="heading">
+                    {% block contentTitle %}
+                        {% trans %}Edit{% endtrans %} {% trans %}workflow{% endtrans %}
+                    {% endblock %}
+                </h1>
+            </div>
+            <section class="editor editor-wrapped">
+                {{ form_errors(form) }}
 
-    <div class="row">
-
-        <div class="col-md-12">
-            <section class="section-white section-padding section-shadow section-radius">
-                {{ form(form, { 'style': 'horizontal' }) }}
+                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
             </section>
         </div>
-
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
-
 {% endblock %}
+{#{% block webpack_js %}#}
+{#{% endblock %}#}
 
 {% block javascript %}
     {{ parent() }}

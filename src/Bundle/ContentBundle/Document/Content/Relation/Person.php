@@ -29,6 +29,7 @@ class Person extends Relation
 {
     /**
      * @var string
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
      *     options={"choices"={"Male"="Male", "Female"="Female"}}
@@ -38,30 +39,35 @@ class Person extends Relation
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $prefix;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $nickname;
 
     /**
      * @var string
+     *
      * @Type\Field(options={"label"="First name"})
      */
     protected $firstName;
 
     /**
      * @var string
+     *
      * @Type\Field(options={"label"="Last name"})
      */
     protected $lastName;
 
     /**
      * @var string
+     *
      * @Slug(fields={"firstName", "lastName"})
      * @Type\Field
      */
@@ -69,13 +75,15 @@ class Person extends Relation
 
     /**
      * @var Collection Job[]
+     *
      * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType")
      */
     protected $jobs;
 
     /**
      * @var StorageInterface|null
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
+     *
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType")
      */
     protected $picture;
 

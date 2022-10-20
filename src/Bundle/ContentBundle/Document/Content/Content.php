@@ -48,8 +48,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
+     *
      * @Slug(fields={"id"})
-     * @Type\Field
+     * @Type\Field(
+     *     location = "sidebar",
+     *     icon = "fa-link"
+     * )
      */
     protected $slug;
 
@@ -75,6 +79,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var PublishTime
+     *
      * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType")
      */
     protected $publishTime;
@@ -86,9 +91,16 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *     options={"attr"={"align_with_widget"=true}}
+     *     options={
+     *          "attr"={
+     *              "align_with_widget"=true,
+     *          }
+     *     },
+     *     location = "sidebar",
+     *     icon = "fa-copyright"
      * )
      */
     protected $disabled = false;
@@ -115,7 +127,14 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
-     * @Type\Field(options={"label" = "Copyright restrictions"})
+     *
+     * @Type\Field(
+     *     options={
+     *          "label" = "Copyright restrictions",
+     *          },
+     *     location = "sidebar",
+     *     icon = "fa-copyright"
+     *     )
      */
     protected $copyrightRestrictions;
 

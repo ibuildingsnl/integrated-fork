@@ -1,33 +1,36 @@
-<ul class="nav navbar-nav navbar-right header-nav">
-    {% block navbar_content_type %}
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle btn btn-blue" data-toggle="dropdown">{% trans %}Create new{% endtrans %}</a>
-            {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
-        </li>
-    {% endblock navbar_content_type %}
-
+<ul class="header-nav">
     {% set divided = false %}
 
     {% block navbar_assignee %}
         {% if assignedContent|length > 0 %}
             <li class="divider-nav hidden-xs"></li>
-            {%  set divided = true %}
+            {% set divided = true %}
 
-            <li class="dropdown hidden-xs">
-                <a href="#" class="dropdown-toggle btn btn-blue-thin" data-toggle="dropdown">
-                    <i class="integrate-icon-doc"></i>
-                    <span class="badge badge-right">{{ assignedContent|length }}</span>
+            <li class="dropdown-assigned-to-me dropdown top-bar hidden-xs">
+                <a href="#" class="btn btn-orange icon-left" data-toggle="dropdown">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>{{ assignedContent|length }}</span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-left dropdown-icons">
+                <ul class="dropdown-menu-left dropdown-icons">
                     <li>
                         <div class="megamenu-content">
                             <ul class="list list-large list-border">
-                                <li class="dropdown-header">{% trans %}Assigned to me{% endtrans %}:</li>
+                                <li class="header">
+                                    {% trans %}Assigned to me{% endtrans %}:
+                                </li>
                                 {% for doc in assignedContent %}
-                                    <li>
+                                    <li class="assigned-item">
                                         <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
-                                            <i class="integrate-icon-plus-circled"></i>
-                                            {{ doc.title|default }}
+                                            {% if doc.workflow_color_string is defined %}
+                                                {% set status_color = doc.workflow_color_string|first %}
+                                            {% endif %}
+                                            {% if doc.workflow_icon_string is defined %}
+                                                {% set status_icon = doc.workflow_icon_string|first %}
+                                            {% endif %}
+                                            <div class="workflow-status" style="background-color:{{ status_color }};">
+                                                <i class="fa-solid {{ status_icon }}"></i>
+                                            </div>
+                                            <span class="item-title">{{ doc.title|default }}</span>
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -45,19 +48,22 @@
                 <li class="divider-nav hidden-xs"></li>
             {% endif %}
 
-            <li class="dropdown hidden-xs">
-                <a href="#" class="dropdown-toggle btn btn-blue-thin" data-toggle="dropdown">
-                    <i class="integrate-icon-database"></i><span class="badge badge-right">{{ queuecount }}</span>
+            <li class="dropdown-queue dropdown top-bar hidden-xs">
+                <a href="#" class="btn btn-green icon-left" data-toggle="dropdown">
+                    <i class="fa-solid fa-database"></i>
+                    <span class="">{{ queuecount }}</span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-left dropdown-icons">
+                <ul class="dropdown-menu-left dropdown-icons">
                     <li>
                         <div class="megamenu-content">
-                            <ul class="list list-large list-border">
-                                <li class="dropdown-header">{% trans %}Background indexing{% endtrans %}... <span class="pull-right"></span></li>
+                            <ul class="w-full">
+                                <li class="text-sm text-black">{% trans %}Background indexing{% endtrans %}...
                                 <li>
                                     <div class="progress progress-striped">
-                                        <div style="min-width: 2em; width: {{ queuepercentage }}%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ queuepercentage }}" role="progressbar" class="progress-bar progress-bar-success">
-                                           {{ queuepercentage }}%
+                                        <div style="width: {{ queuepercentage }}%" aria-valuemax="100"
+                                             aria-valuemin="0" aria-valuenow="{{ queuepercentage }}" role="progressbar"
+                                             class="progress-bar progress-bar-success">
+                                            <span class="font-bold">{{ queuepercentage }}%</span>
                                         </div>
                                     </div>
                                 </li>
@@ -73,40 +79,44 @@
         <li class="divider-nav hidden-xs"></li>
 
         {% if app.user %}
-            <li class="dropdown dropdown-profile hidden-xs">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="{{ avatarurl }}" class="profile-image" />
+            <li class="dropdown-profile dropdown top-bar hidden-xs">
+                <a href="#" class="flex" data-toggle="dropdown">
+                    <img src="{{ avatarurl }}" class="profile-image"/>
+
+                    <span class="welcome-msg">
+                        {% trans %}Hello{% endtrans %},&nbsp;
+                    </span>
+                    <span class="user-name">
+                        {% if app.user.getRelation.getLastname is defined %}
+                            {{ app.user.getRelation.getFirstname|default('') }} {{ app.user.getRelation.getLastname|default('') }}
+                        {% else %}
+                            {{ app.user.username|default('') }}
+                        {% endif %}
+                    </span>
                     <i class="integrate-icon-down-open"></i>
                 </a>
 
-                <ul class="dropdown-menu dropdown-menu-right">
+                <ul class="dropdown-menu-right">
                     <li>
                         <div class="megamenu-content">
-                            <ul class="list list-large list-user">
+                            <ul class="user-menu w-full">
                                 <li class="user-info">
                                     <p>
-                                        <b>
-                                            {% if app.user.getRelation.getLastname is defined %}
-                                                {{ app.user.getRelation.getFirstname|default('') }} {{ app.user.getRelation.getLastname|default('') }}
-                                            {% else %}
-                                               {{ app.user.username|default('') }}
-                                            {% endif %}
-                                        </b>
                                         {% if app.user.getRelation.getEmail is defined %}
                                             <br>
                                             <small>{{ app.user.getRelation.getEmail|default('') }}</small>
-                                    {% endif %}
+                                        {% endif %}
                                     </p>
                                 </li>
                                 <li>
                                     <a href="{{ path('integrated_user_profile_index') }}">
-                                        <i class="integrate-icon-edit"></i>{% trans %}Edit profile{% endtrans %}
+                                        {% trans %}Edit profile{% endtrans %}
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a href="{{ path('integrated_user_logout') }}">
-                                        <i class="integrate-icon-lock"></i>{% trans %}Log out{% endtrans %}
+                                    <a href="{{ path('integrated_user_logout') }}" class="btn btn-dark-green w-full justify-between mt-2">
+                                        <span>{% trans %}Log out{% endtrans %}</span><i class="fa-solid fa-arrow-right-from-bracket rotate-180"></i>
                                     </a>
                                 </li>
                             </ul>

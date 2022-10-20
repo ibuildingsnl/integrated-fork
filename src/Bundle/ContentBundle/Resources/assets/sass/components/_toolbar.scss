@@ -1,0 +1,36 @@
+#toolbar {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 100%;
+    background-color: white;
+    height: 50px;
+    position: absolute;
+    top: 0;
+    border-bottom: 1px solid $border-color;
+
+    .options {
+        display: flex;
+
+        .convert, .preview, .form-actions {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .preview {
+            padding: 9px;
+            align-items: unset;
+        }
+    }
+
+    .back {
+        align-items: center;
+        display: flex;
+        margin-left: 27px;
+    }
+
+    a {
+        color: $green;
+    }
+}

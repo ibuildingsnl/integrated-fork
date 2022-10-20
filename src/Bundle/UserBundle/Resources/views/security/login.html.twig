@@ -10,37 +10,42 @@
 {% endblock flash %}
 
 {% block body %}
-<div class="modal auth">
-    <div class="modal-dialog">
-        <div class="modal-content ">
+    <div class="modal-wrapper auth">
+        <div class="logo"><img src="{{ asset('bundles/integratedintegrated/images/logo_white.svg') }}" alt=""></div>
+        <div class="auth modal">
+            <div class="modal-dialog">
+                <div class="modal-content ">
 
-            {{ form_start(form, {'attr': {'id': 'login_form'}, 'style': 'horizontal', 'label_col': 3, 'widget_col': 9, 'col_size': 'sm'}) }}
+                    {{ form_start(form, {'attr': {'id': 'login_form'}, 'label_col': 'w-full', 'style': 'inline', 'show_placeholder': false}) }}
+                    <div class="modal-header">
+                        <h2 class="modal-title">{% trans %}Login{% endtrans %}</h2>
+                        <p>{% trans %} Fill in your data to log into your account {% endtrans %}</p>
+                    </div>
 
-                <div class="modal-header">
-                    <h4 class="modal-title">{% trans %}Login{% endtrans %}</h4>
-                </div>
-
-                <div class="modal-body">
-                    {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
-                        {% for message in messages %}
-                            {% if label == 'alert' %}
-                                {% set label = 'warning' %}
-                            {% endif %}
-                            <div class="alert alert-{{ label }} alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                {{ message|trans }}
-                            </div>
+                    <div class="modal-body">
+                        {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
+                            {% for message in messages %}
+                                {% if label == 'alert' %}
+                                    {% set label = 'warning' %}
+                                {% endif %}
+                                <div class="alert alert-{{ label }} alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    {{ message|trans }}
+                                </div>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
 
-                    {{ form_widget(form) }}
-                    <p><a href="{{ path('integrated_user_password_reset') }}">{% trans %}Password reset{% endtrans %}</a></p>
+                        {{ form_widget(form) }}
+                    </div>
+
+                    {{ form_end(form) }}
                 </div>
-
-            {{ form_end(form) }}
+            </div>
         </div>
+        <span class="password-reset">
+            <a href="{{ path('integrated_user_password_reset') }}">{% trans %}Password reset{% endtrans %}</a>
+        </span>
     </div>
-</div>
 
-<div class="modal-backdrop"></div>
+    <div class="modal-backdrop"></div>
 {% endblock body %}

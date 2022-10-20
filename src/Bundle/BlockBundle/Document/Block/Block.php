@@ -26,12 +26,14 @@ abstract class Block implements BlockInterface
 {
     /**
      * @var string
+     *
      * @Slug(fields={"title"}, separator="_")
      */
     protected $id;
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Type\Field
      */
@@ -54,12 +56,14 @@ abstract class Block implements BlockInterface
 
     /**
      * @var \DateTime
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $publishedAt;
 
     /**
      * @var \DateTime
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType",
      *      options={
@@ -71,6 +75,7 @@ abstract class Block implements BlockInterface
 
     /**
      * @var bool
+     *
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
      *      options={

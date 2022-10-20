@@ -1,88 +1,94 @@
 <!DOCTYPE html>
 <html class="no-js">
 <head>
-    <title>{% block title %}{% trans %}Integrated{% endtrans %}{% endblock title %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>{% block title %}{% trans %}Index{% endtrans %}{% endblock title %} | Integrated</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
-{% block style %}
-    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
+    {% block style %}
+        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
-    {{ integrated_stylesheets() }}
+        {{ integrated_stylesheets() }}
 
-    <script>
-        var loadedScripts = [],
-            callbacks = [];
-        function require(url, callback){
+        <script>
+            var loadedScripts = [],
+                callbacks = [];
 
-            callbacks.push(callback);
+            function require(url, callback) {
 
-            if (loadedScripts[url]) {
-                script = loadedScripts[url];
-            } else {
-                var script = document.createElement("script")
-                script.type = "text/javascript";
+                callbacks.push(callback);
 
-                script.src = url;
-                document.getElementsByTagName("head")[0].appendChild(script);
+                if (loadedScripts[url]) {
+                    script = loadedScripts[url];
+                } else {
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
 
-                loadedScripts[url] = script;
+                    script.src = url;
+                    document.getElementsByTagName('head')[0].appendChild(script);
+
+                    loadedScripts[url] = script;
+                }
+
+                if (script.readyState) {  //IE
+                    script.onreadystatechange = function() {
+                        if (script.readyState == 'loaded' ||
+                            script.readyState == 'complete') {
+                            script.onreadystatechange = null;
+                            callback();
+                        }
+                    };
+                } else {  //Others
+                    script.onload = function() {
+                        for (var key in callbacks) {
+                            callbacks[key]();
+                        }
+                    };
+                }
             }
-
-            if (script.readyState){  //IE
-                script.onreadystatechange = function(){
-                    if (script.readyState == "loaded" ||
-                            script.readyState == "complete"){
-                        script.onreadystatechange = null;
-                        callback();
-                    }
-                };
-            } else {  //Others
-                script.onload = function(){
-                    for (var key in callbacks) {
-                        callbacks[key]();
-                    }
-                };
-            }
-        }
-    </script>
-{% endblock style %}
+        </script>
+    {% endblock style %}
 
 </head>
-<body>
+<body style="overflow: hidden;"
+      class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
 {% block form_theme %}
     {% if form is defined %}
-        {% form_theme form with ['@IntegratedContent/form/form_div_layout.html.twig'] %}
+        {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
     {% endif %}
 {% endblock %}
 
 {% block header %}
-    <nav class="navbar megamenu">
-        <div class="container">
-            {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+    <nav class="navbar">
+        <div class="flex justify-between sm:px-4 w-full">
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
-            {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+            <div class="flex wrap w-full">
+                {% block navbar_content_type %}
 
-            {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                    <div class="new-contenttype dropdown top-bar">
+                        <a href="#" class="btn btn-green"
+                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
+                                class="fa-solid fa-plus"></i></a>
+                        {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+                    </div>
+                {% endblock navbar_content_type %}
+                {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+            </div>
         </div>
     </nav>
 {% endblock %}
 
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="active">
-                    {% trans %}Home{% endtrans %}
-                </li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% block body %}
+    <div id="wrapper-holder">
+        <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
+        {% block sidebar_menu %}
+            <div class="sidebar">
+                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+            </div>
+        {% endblock sidebar_menu %}
+        <div class="content-wrapper">
 
-<div id="wrapper-holder">
-    {% block body %}
-        <div class="container">
             {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                 {% for message in messages %}
                     {% if label == 'alert' %}
@@ -91,7 +97,8 @@
                         {% set label = 'danger' %}
                     {% endif %}
                     <div class="alert alert-{{ label }} alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <button type="button" class="close" data-dismiss="alert"><i class="fa-solid fa-xmark"></i>
+                        </button>
                         {{ message|trans }}
                     </div>
                 {% endfor %}
@@ -99,28 +106,183 @@
 
             {% block content %}{% endblock content %}
         </div>
-    {% endblock body %}
-</div>
+    </div>
+{% endblock body %}
+
+{% block edit_modal %}{% endblock edit_modal %}
 
 {% block javascript %}
-    {% block webpack_js %}
-        <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-    {% endblock %}
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}
 
-    {% if app.request.locale %}
-    <script>
-        moment.locale('{{ app.request.locale }}');
-    </script>
+{% if app.request.locale %}
+<script>
+    moment.locale('{{ app.request.locale }}');
+</script>
+{% endif %}
+
+{{ integrated_javascripts() }}
+
+{% block locking %}
+    {% if locking is defined and locking.lock is defined and locking.locked == false %}
+        {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
     {% endif %}
-
-    {{ integrated_javascripts() }}
-
-    {% block locking %}
-        {% if locking is defined and locking.lock is defined and locking.locked == false %}
-            {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
-        {% endif %}
-    {% endblock locking %}
+{% endblock locking %}
 {% endblock javascript %}
 
+<script>
+    //DROPDOWN MENU
+    function initMenu() {
+
+        var menus = document.querySelectorAll('.dropdown.top-bar');
+        menus.forEach((menu) => {
+            if (menu != null) {
+                for (var i = 0; i < menu.children.length; i++) {
+                    var menuClasses = menu.children[i];
+                    var cList = menuClasses.classList;
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
+                        cList.contains('dropdown-menu-right')) {
+                        menu.addEventListener('click', showDropDownBackGround, false);
+                    }
+                }
+            }
+        });
+    }
+
+    function hideDropDownBackgroud(event) {
+        var searchMenu = document.querySelector('.search-form .form-control');
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        menuItemDropDownUnderlay.classList.remove('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+
+    window.addEventListener('click', function(event) {
+        if (!event.srcElement.classList.contains('tt-input')) {
+            hideDropDownBackgroud();
+        }
+    });
+
+    jQuery('.search-form .form-control').focus(function() {
+        showDropDownBackGround();
+    });
+
+    jQuery('.search-form .form-control').blur(function() {
+        hideDropDownBackgroud();
+    });
+
+    function asideItemsSearch(elem) {
+        // Declare variables
+
+        var input, filter, ul, li, a, i, txtValue;
+        input = elem;
+        filter = input.value.toUpperCase();
+        ul = elem.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName('label')[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
+    };
+
+    // JS
+    var sidebarfilter = document.getElementsByClassName('aside-item-header');
+    var editorsettings = document.getElementsByClassName('editor-item-header');
+
+    for (var i = 0; i < sidebarfilter.length; i++) {
+        sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
+
+    for (var ii = 0; ii < editorsettings.length; ii++) {
+        editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
+
+    function toggleOptionsElement(event) {
+        var options = this.parentNode.querySelector('.aside-item-list');
+        if (!options) {
+            var options = this.parentNode.querySelector('.editor-item-list');
+        }
+        // Prevent default link behavior
+        event.preventDefault();
+
+        if (!options) return;
+
+        // Toggle the content
+        toggleElement(options);
+    };
+
+    // Show an element
+    var showElement = function(elem) {
+
+        // Get the natural height of the element
+        var getHeight = function() {
+            elem.style.display = 'block'; // Make it visible
+            var height = elem.scrollHeight + 'px'; // Get it's height
+            elem.style.display = ''; //  Hide it again
+            return height;
+        };
+
+        var height = getHeight(); // Get the natural height
+        // elem.classList.add('show'); // Make the element visible
+        elem.parentNode.classList.add('show'); // Make the element visible
+        elem.style.height = height; // Update the max-height
+
+        // Once the transition is complete, remove the inline max-height so the content can scale responsively
+        window.setTimeout(function() {
+            elem.style.height = '';
+        }, 350);
+    };
+
+    // Hide an element
+    var hideElement = function(elem) {
+
+        // Give the element a height to change from
+        elem.style.height = elem.scrollHeight + 'px';
+
+        // Set the height back to 0
+        window.setTimeout(function() {
+            elem.style.height = '0';
+        }, 1);
+
+        // When the transition is complete, hide it
+        window.setTimeout(function() {
+            elem.classList.remove('show');
+            elem.parentNode.classList.remove('show');
+        }, 350);
+
+    };
+
+    // Toggle element visibility
+    var toggleElement = function(elem, timing) {
+
+        // If the element is visible, hide it
+        if (elem.parentNode.classList.contains('show')) {
+            hideElement(elem);
+            return;
+        }
+
+        // Otherwise, show it
+        showElement(elem);
+
+    };
+</script>
 </body>
 </html>

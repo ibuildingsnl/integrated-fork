@@ -1,65 +1,269 @@
 /* BUTTONS */
 .btn {
-	box-shadow: none;
-	display: inline-block;
-	padding: 6px 22px;
-	text-align: center;
-	vertical-align: middle;
-	line-height: 22px;
-	border-radius: 3px;
-	&:hover, &:focus {
-		text-decoration: none;
-	}
-	@include respond-to(phones) {
-		padding: 7px 10px;
-	}
-	&.btn-uppercase {
-		text-transform: uppercase;
-	}
-	&.btn-block {
-		display: block;
-	}
-	&.btn-bold {
-		font-weight: $font-bold;
-	}
-	&.btn-blue {
+    padding: 0 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    height: 40px;
+    line-height: 40px;
+    border: 1px solid;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:visited {
+        color: inherit;
+    }
+
+    &.space-between {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &:hover, &:focus {
+        text-decoration: none;
+        outline: none;
+    }
+
+    &.svg {
+        padding-left: 0.5rem;
+    }
+
+    span {
+        line-height: 1.5;
+        margin-right: 1rem;
+    }
+
+    &.icon-left {
+        span {
+            margin-left: 1rem;
+            margin-right: 0;
+        }
+    }
+
+    &.no-icon {
+        span {
+            margin-right: 0;
+        }
+    }
+
+    i {
+        position: relative;
+        @include media(md) {
+        }
+    }
+
+    i, svg {
+        display: inline-block;
+    }
+
+    @include media(md) {
+        padding: 0 .5rem;
+    }
+    @include media(lg) {
+        padding: 0 1rem;
+    }
+
+    &.gray-hover-black {
+        color: #fff;
+        background-color: $gray;
+        border-color: $gray;
+
+        svg {
+            display: inline-block;
+            fill: #fff;
+        }
+
+        i {
+            color: #fff;
+        }
+
+        &:visited {
+            color: #fff;
+        }
+
+        &:hover {
+            color: #fff;
+            background-color: #000;
+            border-color: #000;
+
+            &:visited {
+                color: #fff;
+            }
+
+            i {
+                color: #fff;
+            }
+
+            svg {
+                fill: #fff;
+            }
+        }
+    }
+
+    &.dark-gray-hover-black {
+        color: #fff;
+        background-color: $dark-gray;
+        border-color: $dark-gray;
+
+        svg {
+            display: inline-block;
+            fill: #fff;
+        }
+
+        i {
+            color: #fff;
+        }
+
+        &:hover {
+            color: #fff;
+            background-color: #000;
+            border-color: #000;
+
+            &:visited {
+                color: #fff;
+            }
+
+            i {
+                color: #fff;
+            }
+
+            svg {
+                fill: #fff;
+            }
+        }
+    }
+
+    &.btn-bold {
+        font-weight: $font-bold;
+    }
+
+    &.btn-blue {
         color: $color-white;
-		background: $color-azure-radiance;
-		&:hover, &:focus {
+        background: $color-azure-radiance;
+
+        &:hover, &:focus {
             color: $color-white;
-			background: $color-dodger-blue;
-		}
-	}
-	&.btn-blue-thin {
+            background: $color-dodger-blue;
+        }
+    }
+
+    &.btn-blue-thin {
         color: $color-white;
-		background: $color-danube;
-		&:hover, &:focus {
+        background: $color-danube;
+
+        &:hover, &:focus {
             color: $color-white;
-			background: $color-boston-blue;
-		}
-	}
-	&.btn-gray {
+            background: $color-boston-blue;
+        }
+    }
+
+    &.btn-gray {
         color: $color-white;
-		background: $color-silver-chalive;
-		&:hover, &:focus {
+        background: $color-silver-chalive;
+
+        &:hover, &:focus {
             color: $color-white;
-			background: darken($color-silver-chalive, 10%);
-		}
-	}
-	&.btn-gray-thin {
-		color: $color-silver-chalive;
-		background: $color-gallery;
-		&:hover, &:focus {
-			color: $color-silver-chalive;
-			background: darken($color-gallery, 10%);
-		}
-	}
-	&.btn-orange {
-		color: $color-white;
-		background: $color-ecstasy;
-		&:hover, &:focus {
+            background: darken($color-silver-chalive, 10%);
+        }
+    }
+
+    &.btn-gray-thin {
+        color: $color-silver-chalive;
+        background: $color-gallery;
+
+        &:hover, &:focus {
+            color: $color-silver-chalive;
+            background: darken($color-gallery, 10%);
+        }
+    }
+
+    &.btn-primary {
+        background: #005d93;
+        color: $color-white;
+        border-color: #005d93;
+
+        &:hover, &:focus {
             color: $color-white;
-			background: darken($color-ecstasy, 10%);
-		}
-	}
+            background: darken(#005d93, 10%);
+        }
+    }
+
+    &.btn-select {
+        background: #fff;
+        font-size: 13px;
+        border-color: $border-color;
+        color: #515865;
+        height: 34px;
+        line-height: 34px;
+    }
+    &.btn-dropdown {
+        background: #fff;
+        font-size: 13px;
+        border:none;
+        color: #01ae93;
+        height: 34px;
+        line-height: 34px;
+    }
+    &.btn-create-new {
+        font-size: 13px;
+        padding: 0 1rem;
+        height: 30px;
+        line-height: 29px;
+        background-color: white;
+        border-color: $border-color;
+        color: #515865;
+    }
+    &.btn-danger {
+        background: white;
+        border-color: #b31818;
+        color: #b31818;
+        &:hover, &:focus {
+            color: #b31818;
+            background: darken(#FFFFFF, 20%);
+        }
+    }
+    &.btn-orange {
+        background-color: $orange;
+        border-color: $orange;
+        color:white;
+        &:hover, &:focus {
+            color: white;
+            background-color: darken($orange, 20%);
+            border-color: darken($orange, 20%);
+        }
+    }
+    &.btn-green {
+        background-color: $green;
+        border-color: $green;
+        color:white;
+        &:hover, &:focus {
+            color: white;
+            background-color: darken($green, 20%);
+            border-color: darken($green, 20%);
+        }
+    }
+    &.btn-white {
+        background-color: white;
+        border-color: $border-color;
+        color: #637281;
+        &:hover, &:focus {
+            color: #637281;
+            background-color: $border-color;
+        }
+    }
+    &.btn-dark-green {
+        background-color: $navbar-green;
+        border-color: $navbar-green;
+        color: white;
+        &:hover, &:focus {
+            color: white;
+            background-color: darken($navbar-green, 20%);
+        }
+    }
 }

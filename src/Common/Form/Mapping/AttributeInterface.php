@@ -27,6 +27,21 @@ interface AttributeInterface
     public function getType();
 
     /**
+     * @return string
+     */
+    public function getLocation();
+
+    /**
+     * @return string
+     */
+    public function getIcon();
+
+    /**
+     * @return string
+     */
+    public function getState();
+
+    /**
      * @return array
      */
     public function getOptions();

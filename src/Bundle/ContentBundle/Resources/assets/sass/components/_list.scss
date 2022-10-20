@@ -107,7 +107,7 @@
 					@include rotate(90deg);
 				}
 			}
-			@include respond-to(phones) {
+			@include media(max-md) {
 				padding: 12.5px 15px;
 			}
 		}
@@ -132,7 +132,7 @@
 			&:hover {
 				color: $color-dove-gray;
 			}
-			@include respond-to(phones) {
+			@include media(max-md) {
 				padding: 5px 15px;
 			}
 		}
@@ -167,4 +167,33 @@
 	}
   }
 }
+
+.list-inline {
+    list-style:none;
+    display: inline-block;
+    > li {
+        display: inline-block;
+    }
+}
+
+dl {
+    display: flex;
+    flex-flow: column wrap;
+}
+dt {
+    padding: .8rem 2rem;
+    background: #fff;
+    color: rgba(0,0,0,.5);
+    font-size: .8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-bottom: 1px solid $border-color;
+}
+
+dd {
+    margin: 0;
+    padding: .8rem 2rem;
+    min-height: 3em;
+}
+
 

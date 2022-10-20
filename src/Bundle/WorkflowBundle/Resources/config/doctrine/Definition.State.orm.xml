@@ -29,6 +29,10 @@
 
 		<field name="deadline" column="deadline" type="integer" />
 
+		<field name="color" type="string" />
+
+		<field name="icon" type="string" />
+
 		<one-to-many field="permissions" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission" mapped-by="state">
 			<cascade>
 				<cascade-persist />

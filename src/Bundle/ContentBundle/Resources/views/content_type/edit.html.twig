@@ -1,4 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Edit{% endtrans %} {{ contentType.name }}{% endblock title %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -11,14 +12,80 @@
         </div>
     </div>
 {% endblock %}
+
 {% block content %}
-    <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <h1 class="main-title font-regular">{% trans %}Edit{% endtrans %}</h1>
-            <section class="section-white section-padding section-shadow section-radius">
-                {{ form(form, {'style': 'horizontal'}) }}
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options">
+            <aside>
+                <div class="aside-holder section-gray section-radius">
+                    {% block sidebar %}
+                        {% block content_meta %}
+                            {% if form.permissions is defined %}
+                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options_publication is defined %}
+                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options_workflow is defined %}
+                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'fa-droplet', 'state': 'show'}) }}
+                            {% endif %}
+                            {% if form.options is defined %}
+                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                            {% endif %}
+                        {% endblock %}
+
+
+                    {% endblock %}
+                    <div class="aside-item-wrapper show">
+                        <div class="aside-item-header">
+                            <h3 class="aside-item-title">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span class="aside-item-icon">{% trans %}Relations{% endtrans %}</span>
+                            </h3>
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </div>
+                        <div class="aside-item-list">
+                            <div class="aside-item-list-container">
+                                {{ render(controller("Integrated\\Bundle\\ContentBundle\\Controller\\RelationController::index", {'contentType': contentType.id, '_format': 'inline.html'})) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        <div class="editor-wrapper">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Edit {% endtrans %} {{ contentType.name }}</h1>
+            </div>
+            <section class="editor">
+                {% block content_form %}
+                    {% if form.name is defined %}
+                        {{ form_row(form.name, {'style': 'inline'}) }}
+                    {% endif %}
+
+                    {% if form.domains is defined %}
+                        {{ form_row(form.domains, {'style': 'editor','state': 'show'}) }}
+                    {% endif %}
+
+                    {% if form.options is defined %}
+                        {{ form_row(form.options, {'style': 'editor', 'state': 'show'}) }}
+                    {% endif %}
+
+                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                {% endblock %}
             </section>
         </div>
+
+
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
 {% endblock %}
 

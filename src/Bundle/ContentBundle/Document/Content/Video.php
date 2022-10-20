@@ -26,6 +26,7 @@ class Video extends File
 {
     /**
      * @var StorageInterface
+     *
      * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
      * @Assert\File(mimeTypes="video/*")
      */

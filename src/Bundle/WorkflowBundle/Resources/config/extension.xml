@@ -6,7 +6,7 @@
 
 	<services>
 
-		<service id="integrated_workflow.extension.doctrine.object_manager" alias="doctrine.orm.entity_manager" /> <!-- config option -->
+		<service id="integrated_workflow.extension.doctrine.object_manager" alias="doctrine.orm.entity_manager" public="true"/> <!-- config option -->
 
         <service id="Integrated\Bundle\WorkflowBundle\Extension\EventListener\ContentSubscriber">
             <argument type="service" id="integrated_user.user.manager" />

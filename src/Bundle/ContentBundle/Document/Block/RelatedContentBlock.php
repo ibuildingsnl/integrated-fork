@@ -42,6 +42,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Type\Field
      */
@@ -49,6 +50,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var int
+     *
      * @Assert\NotBlank
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
@@ -65,6 +67,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var Relation
+     *
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
@@ -78,6 +81,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
+     *
      * @Assert\NotBlank
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
@@ -94,6 +98,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
+     *
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
      *     options={
@@ -108,6 +113,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var int
+     *
      * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
@@ -122,6 +128,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var int
+     *
      * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
@@ -137,6 +144,7 @@ class RelatedContentBlock extends Block
 
     /**
      * @var array
+     *
      * @Type\Field(
      *     type="Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice",
      *     options={

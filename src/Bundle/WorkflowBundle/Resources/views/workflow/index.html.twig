@@ -1,41 +1,50 @@
 {% extends '@IntegratedWorkflow/layout.html.twig' %}
 
 {% block content %}
-
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-
-            <ul class="list-inline">
-                <li>
-                    <a href="{{ path('integrated_workflow_new') }}" role="button" id="drop_1">{% trans %}Create new{% endtrans %}</a>
-                </li>
-            </ul>
-
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Workflows{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_workflow_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}workflow{% endtrans %}</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
 
                     <colgroup>
-                        <col />
-                        <col style="width: 5em" />
+                        <col/>
                     </colgroup>
 
                     <thead>
-                        <tr>
-                            <th>Workflow</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>Workflow</th>
+                    </tr>
                     </thead>
 
                     <tbody>
 
                     {% for workflow in pager %}
 
-                        <tr>
-                            <td>{{ workflow.name }} <small>({{ workflow.id }})</small></td>
+                        <tr class="has-options">
                             <td>
-                                <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                <a href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                                <strong>
+                                    <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}">
+                                        {{ workflow.name }} ({{ workflow.id }})
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_workflow_edit', {'id': workflow.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">{% trans %}Edit{% endtrans %}</a> |
+                                    <a href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}"
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
                             </td>
                         </tr>
 

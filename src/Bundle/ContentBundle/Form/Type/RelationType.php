@@ -14,8 +14,12 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -29,8 +33,25 @@ class RelationType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('type')
             ->add(
+                'type',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'Embedded' => 'embedded',
+                        'Cover' => 'cover',
+                        'Taxonomy' => 'taxonomy',
+                        'Category' => 'category',
+                        'Edition' => 'edition',
+                        'Commercial' => 'commercial',
+                        'Parent' => 'parent',
+                        'Subscriptiontypes' => 'subscriptiontypes',
+                        'Author' => 'author',
+                        'File' => 'file',
+                        'Slider' => 'slider',
+                    ],
+                ]
+            )->add(
                 'sources',
                 DocumentType::class,
                 [
@@ -49,24 +70,47 @@ class RelationType extends AbstractType
                     'required' => false,
                 ]
             )->add(
-                'multiple',
+                'location',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'Sidebar' => Embedded\Relation::LOCATION_SIDEBAR,
+                        'Editor' => Embedded\Relation::LOCATION_EDITOR,
+                    ],
+                ]
+            )->add(
+                'icon',
                 null,
                 [
-                    'required' => false,
                     'attr' => [
-                        'align_with_widget' => true,
+                        'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',
                     ],
                 ]
             )
             ->add(
-                'required',
-                null,
-                [
-                    'required' => false,
-                    'attr' => [
-                        'align_with_widget' => true,
-                    ],
-                ]
+                $builder->create('options', FormType::class, ['inherit_data' => true])
+                        ->add(
+                            'multiple',
+                            CheckboxType::class,
+                            [
+                                'label' => 'Allow multiselect',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
+                        ->add(
+                            'required',
+                            CheckboxType::class,
+                            [
+                                'label' => 'This relation is required',
+                                'required' => false,
+                                'attr' => [
+                                    'align_with_widget' => true,
+                                ],
+                            ]
+                        )
             );
     }
 
@@ -76,8 +120,8 @@ class RelationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
-        ]);
+                                   'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation',
+                               ]);
     }
 
     /**

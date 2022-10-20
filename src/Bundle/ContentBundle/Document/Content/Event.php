@@ -22,18 +22,21 @@ class Event extends Article
 {
     /**
      * @var \DateTime
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $startDate;
 
     /**
      * @var \DateTime
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
     protected $endDate;
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $website;

@@ -1,10 +1,10 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}Show history{% endtrans %}{% endblock title %}
 {% block header %}{% endblock %}
 {% block crumbs %}{% endblock %}
 
 {% block content %}
-<section class="section-white section-padding section-shadow section-radius">
+<section class="section-white section-padding section-radius">
     <p>
         <b>{% trans %}Date{% endtrans %}:</b> {{ contentHistory.date|format_date }}<br />
         <b>{% trans %}Action{% endtrans %}:</b> {{ contentHistory.action|trans }}<br />

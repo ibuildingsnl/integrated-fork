@@ -1,17 +1,20 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{% block title %}{% trans %}IP list{% endtrans %} {% endblock title %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li class="dropdown">
-                    <a href="#" data-toggle="dropdown" role="button" id="drop_1">Options <b class="caret"></b></a>
-                    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                        <li role="presentation"><a href="{{ path('integrated_user_iplist_new') }}" tabindex="-1" role="menuitem">{% trans %}New{% endtrans %}</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <section class="section-white section-padding section-shadow section-radius">
+        <div class="w-full mb-4 md:mb-0">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}IP list{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_user_iplist_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}IP list{% endtrans %}</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <section class="section-white section-radius">
 
                 <table class="table table-hover">
 
@@ -27,7 +30,6 @@
                             <th>#</th>
                             <th>{% trans %}Ip{% endtrans %}</th>
                             <th>{% trans %}Description{% endtrans %}</th>
-                            <th>{% trans %}Actions{% endtrans %}</th>
                         </tr>
                     </thead>
 
@@ -35,14 +37,27 @@
 
                     {% for list in lists %}
 
-                        <tr>
+                        <tr class="has-options">
                             <td>{{ list.id }}</td>
-                            <td>{{ list.ip.protocolAppropriateAddress }}</td>
-                            <td>{{ list.description }}</td>
                             <td>
-                                <a href="{{ path('integrated_user_iplist_edit', {'id': list.id}) }}" title="{% trans %}Edit{% endtrans %}"><span class="glyphicon glyphicon-edit"></span></a>
-                                <a href="{{ path('integrated_user_iplist_delete', {'id': list.id}) }}" title="{% trans %}Delete{% endtrans %}"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                                <strong>
+                                    <a href="{{ path('integrated_user_iplist_edit', {'id': list.id}) }}">
+                                        {{ list.ip.protocolAppropriateAddress }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_user_iplist_edit', {'id': list.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a class="color-red"
+                                       href="{{ path('integrated_user_iplist_delete', {'id': list.id}) }}"
+                                       title="{% trans %}Remove{% endtrans %}">
+                                        {% trans %}Remove{% endtrans %}
+                                    </a>
+                                </div>
                             </td>
+                            <td>{{ list.description }}</td>
                         </tr>
 
                    {% endfor %}

@@ -31,24 +31,28 @@ abstract class Relation extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field
      */
     protected $accountnumber;
 
     /**
      * @var string
+     *
      * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
     protected $description;
 
     /**
      * @var Phonenumber[]|Collection
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
      *      options={
      *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType",
      *          "allow_add"=true,
-     *          "allow_delete"=true
+     *          "allow_delete"=true,
+     *          "add_button_text"="Add Phonenumber"
      *      }
      * )
      */
@@ -56,19 +60,22 @@ abstract class Relation extends Content implements RankableInterface
 
     /**
      * @var string
+     *
      * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\EmailType")
      */
     protected $email;
 
     /**
      * @var Address[]
+     *
      * @Type\Field(
      *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
      *      options={
      *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\AddressType",
      *          "default_title"="New address",
      *          "allow_add"=true,
-     *          "allow_delete"=true
+     *          "allow_delete"=true,
+     *          "add_button_text"="Add Address"
      *      }
      * )
      */

@@ -15,8 +15,8 @@ use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -26,7 +26,6 @@ use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use MongoDB\BSON\Regex;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -180,16 +179,21 @@ class PageController extends AbstractController
         $form = $this->createEditForm($page);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->get('actions')->getData() == 'cancel') {
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
+            if ($form->isValid()) {
+                $this->documentManager->flush();
 
-            $this->routeCache->clear();
+                $this->routeCache->clear();
 
-            $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
+                $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
-            $this->setLastEditPage($request->getSession(), $page);
+                $this->setLastEditPage($request->getSession(), $page);
 
-            return $this->redirectToRoute('integrated_page_page_index');
+                return $this->redirectToRoute('integrated_page_page_index');
+            }
         }
 
         return $this->render('@IntegratedPage/page/edit.html.twig', [
@@ -216,6 +220,10 @@ class PageController extends AbstractController
 
         $form = $this->createDeleteForm($page->getId());
         $form->handleRequest($request);
+
+        if ($form->get('actions')->getData() == 'cancel') {
+            return $this->redirectToRoute('integrated_page_page_index');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->remove($page);
@@ -302,11 +310,7 @@ class PageController extends AbstractController
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, [
-            'cancel_route' => 'integrated_page_page_index',
-            'label' => 'Create',
-            'button_class' => '',
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }
@@ -330,9 +334,7 @@ class PageController extends AbstractController
             ]
         );
 
-        $form->add('actions', SaveCancelType::class, [
-            'cancel_route' => 'integrated_page_page_index',
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }
@@ -348,7 +350,7 @@ class PageController extends AbstractController
 
         $builder->setAction($this->generateUrl('integrated_page_page_delete', ['id' => $id]));
         $builder->setMethod('DELETE');
-        $builder->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+        $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $builder->getForm();
     }

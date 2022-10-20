@@ -23,7 +23,6 @@ import 'tinymce/plugins/template';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/code';
-
 $('.integrated_tinymce').each(function(key, elem){
     const element = $(elem);
 
@@ -53,19 +52,22 @@ $('.integrated_tinymce').each(function(key, elem){
             //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
         },
         add_unload_trigger: false,
+        placeholder: "Your article starts here",
         schema: "html5",
-        menubar: false,
+        menubar: true,
         branding: false,
         toolbar:
             "styles | bold italic underline | bullist numlist | " +
             "link integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
             "charmap pagebreak | pastetext searchreplace | code fullscreen",
+        toolbar_sticky: true,
+        toolbar_sticky_offset: 110,
         statusbar: true,
         statusbar_size: "small",
+        fixed_toolbar_container: '#mytoolbar',
         width: "100%",
-        height: "0",
-        autoresize_min_height: 300,
-        autoresize_max_height: (window.innerHeight-64),
+        height: "100%",
+        autoresize_min_height: 500,
         browser_spellcheck : true,
         autoresize_bottom_margin: "0px",
         convert_urls: false,
@@ -78,3 +80,4 @@ $('.integrated_tinymce').each(function(key, elem){
         style_formats: style_formats
     });
 });
+

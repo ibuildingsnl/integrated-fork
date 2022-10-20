@@ -8,7 +8,7 @@ import 'jquery-datetimepicker';
 
 $(function() {
     $('.form_datetime').each(function(index, elm) {
-        let $input = $(elm).children('input').eq(0), $clearButton = $(elm).find('.glyphicon-remove');
+        const $input = $(elm).children('input').eq(0), $clearButton = $(elm).find('.remove');
 
         $input.datetimepicker({
             format: $(elm).data('dateFormat'),
