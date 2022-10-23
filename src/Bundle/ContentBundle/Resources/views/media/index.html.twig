@@ -4,111 +4,114 @@
 
     <div class="flex flex-wrap media-library">
 
-        <div class="sm:w-3/12 p-2 pr-4 pl-4">
+        <div class="w-full sm:w-1/5 p-2 pr-4 pl-4">
             <aside>
-                <h2 class="heading ">{% trans %}Overview{% endtrans %}</h2>
+                <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
-                        <div class="">
-                            <p class="p-2 ">
-                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                    {% trans %} Files {% endtrans %}
-                                </a>
-                            </p>
+                        <div class="aside-item-header">
+                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                <i class="fa-regular fa-folder"></i><span>{% trans %}All files{% endtrans %}</span>
+                            </a>
                         </div>
+                        <div class="aside-item-list-container">
+                            <div class="aside-item-search">
+                                <i class="fa fa-search"></i>
+                                <input type="text" class="list-search"
+                                       onchange="asideFolderSearch(this)"
+                                       onkeyup="asideFolderSearch(this)"
+                                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
+                            </div>
 
-                        <div class="aside-item-search">
-                            <i class="fa fa-search"></i>
-                            <input type="text" class="list-search"
-                                   onchange="asideItemsSearch(this)"
-                                   onkeyup="asideItemsSearch(this)"
-                                   placeholder="{% trans %}Search in folders{% endtrans %}">
-                        </div>
-
-                        <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
-                            <input type="hidden" id="media_category_csrf" name="token"
-                                   value="{{ csrf_token('delete-item') }}"/>
-                            <input type="hidden" id="media_id" name="media_id" value=""/>
-                            <input type="hidden" id="category_id" name="category_id" value=""/>
-                            <input type="hidden" id="channel_id" name="channel_id" value=""/>
-                        </form>
-
-                        <div class="p-2 text-red-600">{% trans %}Categories{% endtrans %}</div>
-                        {% for key, menu_item in menu %}
-                        <li class="menu-parent media_category"
-                            style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
-                            id="{{ menu_item.ID }}">
-                            <i class="fa-regular fa-folders"></i>
-                            {% if params.media_taxonomy.current == menu_item.title %}
-                                <span>{{ menu_item.title|trans|capitalize }}</span>
-                            {% else %}
-                                <a href="{{ path(app.request.attributes.get('_route'),
-                                    app.request.query.all|
-                                    merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
-                                    merge({'media_taxonomy_id':menu_item.ID})|
-                                    merge({'page':1})
-                                ) }}"
-                                   tabindex="-1" role="menuitem">{{ menu_item.title|trans|capitalize }}</a>
-                            {% endif %}
-                            {% if menu_item.children %}
-                                {% for key_1, menu_item_1 in menu_item.children %}
-                                <li class="menu-parent media_category"
-                                    style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
-                                    <i class="fa-regular fa-folders"></i>
-                                    {% if params.media_taxonomy.current == menu_item_1.title %}
-                                        <span>{{ menu_item_1.title|trans|capitalize }}</span>
-                                    {% else %}
-                                        <a href="{{ path(app.request.attributes.get('_route'),
-                                            app.request.query.all|
-                                            merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
-                                            merge({'media_taxonomy_id':menu_item_1.ID})|
-                                            merge({'page':1})
-                                        ) }}"
-                                           tabindex="-1" role="menuitem">{{ menu_item_1.title|trans|capitalize }}</a>
-                                    {% endif %}
-                                    {% if menu_item_1.children %}
-
-                                        {% for key_2, menu_item_2 in menu_item_1.children %}
-                                            <li class="menu-parent media_category"
-                                                style="margin-bottom: 1px; padding-left: 33px"
-                                                id="{{ menu_item_2.ID }}">
-                                                <i class="fa-regular fa-folders"></i>
-                                                {% if params.media_taxonomy.current == menu_item_2.title %}
-                                                    <span>{{ menu_item_2.title|trans|capitalize }}</span>
-                                                {% else %}
-                                                    <a href="{{ path(app.request.attributes.get('_route'),
-                                                        app.request.query.all|
-                                                        merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
-                                                        merge({'media_taxonomy_id':menu_item_2.ID})|
-                                                        merge({'page':1})
-
-                                                    ) }}"
-                                                       tabindex="-1"
-                                                       role="menuitem">{{ menu_item_2.title|trans|capitalize }}</a>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-
-                                    {% endif %}
+                            <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
+                                <input type="hidden" id="media_category_csrf" name="token"
+                                       value="{{ csrf_token('delete-item') }}"/>
+                                <input type="hidden" id="media_id" name="media_id" value=""/>
+                                <input type="hidden" id="category_id" name="category_id" value=""/>
+                                <input type="hidden" id="channel_id" name="channel_id" value=""/>
+                            </form>
+                            <ul class="aside-filter-menu">
+                                {% for key, menu_item in menu %}
+                                    <li class="menu-parent media_category {% if params.media_taxonomy.current == menu_item.title %}current-menu-item{% endif %}"
+                                        id="{{ menu_item.ID }}">
+                                        {% if params.media_taxonomy.current == menu_item.title %}
+                                            <i class="fa fa-folder"></i>
+                                            <span>{{ menu_item.title|trans|capitalize }}</span>
+                                        {% else %}
+                                            <a href="{{ path(app.request.attributes.get('_route'),
+                                                app.request.query.all|
+                                                merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
+                                                merge({'media_taxonomy_id':menu_item.ID})|
+                                                merge({'page':1})
+                                            ) }}"
+                                               tabindex="-1"
+                                               role="menuitem">
+                                                <i class="fa fa-folder"></i><span>{{ menu_item.title|trans|capitalize }}</span></a>
+                                        {% endif %}
+                                        {% if menu_item.children %}
+                                            <ul class="child-menu">
+                                                {% for key_1, menu_item_1 in menu_item.children %}
+                                                    <li class="menu-child media_category {% if params.media_taxonomy.current == menu_item_1.title %}current-menu-item{% endif %}"
+                                                        id="{{ menu_item_1.ID }}">
+                                                        {% if params.media_taxonomy.current == menu_item_1.title %}
+                                                            <i class="fa fa-folder"></i>
+                                                            <span>{{ menu_item_1.title|trans|capitalize }}</span>
+                                                        {% else %}
+                                                            <a href="{{ path(app.request.attributes.get('_route'),
+                                                                app.request.query.all|
+                                                                merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                                                merge({'media_taxonomy_id':menu_item_1.ID})|
+                                                                merge({'page':1})
+                                                            ) }}"
+                                                               tabindex="-1"
+                                                               role="menuitem">
+                                                                <i class="fa fa-folder"></i>
+                                                                <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
+                                                        {% endif %}
+                                                        {% if menu_item_1.children %}
+                                                            <ul class="child-menu">
+                                                                {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                                    <li class="menu-child media_category {% if params.media_taxonomy.current == menu_item_2.title %}current-menu-item{% endif %}"
+                                                                        id="{{ menu_item_2.ID }}">
+                                                                        {% if params.media_taxonomy.current == menu_item_2.title %}
+                                                                            <i class="fa fa-folder"></i>
+                                                                            <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                        {% else %}
+                                                                            <a href="{{ path(app.request.attributes.get('_route'),
+                                                                                app.request.query.all|
+                                                                                merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                                                merge({'media_taxonomy_id':menu_item_2.ID})|
+                                                                                merge({'page':1})
+                                                                            ) }}"
+                                                                               tabindex="-1"
+                                                                               role="menuitem">
+                                                                                <i class="fa fa-folder"></i>
+                                                                                <span>{{ menu_item_2.title|trans|capitalize }}</span></a>
+                                                                        {% endif %}
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
-
-                            {% endif %}
-                            </li>
-                        {% endfor %}
-                        </lu>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </aside>
         </div>
-        <div class="md:w-9/12 pr-4 pl-4 mb-4 md:mb-0">
+        <div class="w-full sm:w-4/5 md:w-4/5 pr-4 pl-4 mb-4 md:mb-0">
             <div class="page-title">
                 <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
                 <ul class="options-no-bg">
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
                             <span>{% trans %}New{% endtrans %}</span>
-                            <i class="fa-regular fa-plus"></i>
+                            <i class="fa fa-plus"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                             {% for type_key, type in params.types %}
@@ -124,61 +127,67 @@
                     </li>
                 </ul>
                 <div class="options flex justify-between">
-                    <ul class="">
-                        <li class="dropdown">
-                            <a href data-toggle="dropdown" role="button" id="sorting-list"
-                               class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label_plural|trans }}</span>
-                                <i class="fa-regular fa-angle-down"></i></a>
-                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                    <div class="left flex">
+                        <button class="switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
+                        <button class="switcher mr-2"><i class="fa-solid fa-table-cells-large"></i></button>
+                        <ul class="mr-2">
+                            <li class="dropdown">
+                                <a href data-toggle="dropdown" role="button" id="sorting-list"
+                                   class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label_plural|trans }}</span>
+                                    <i class="fa fa-angle-down"></i></a>
+                                <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                {% for content_type_key, content_type in params.content_types.options %}
+                                    {% for content_type_key, content_type in params.content_types.options %}
 
-                                    <li {% if content_type_key == params.content_types.current %}class="active"
-                                        {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                            merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })|
-                                            merge({'page':1})
-                                        ) }}"
-                                           tabindex="-1"
-                                           role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
-                                    </li>
-
-                                {% endfor %}
-
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="">
-                        <li class="dropdown">
-                            <a href data-toggle="dropdown" role="button" id="sorting-list"
-                               class="btn btn-select space-between"><span>{{ params.date_filter.options[params.date_filter.current].label|trans }}</span>
-                                <i class="fa-regular fa-angle-down"></i></a>
-                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-
-                                {% for year_month_key, year_month in params.date_filter.options %}
-                                    {% if year_month.label != 'File' %}
-                                        <li {% if year_month.name == params.date_filter.current %}class="active"
+                                        <li {% if content_type_key == params.content_types.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })|
+                                                merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
-                                               tabindex="-1" role="menuitem">{{ year_month.label|trans|capitalize }}</a>
+                                               tabindex="-1"
+                                               role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
                                         </li>
-                                    {% endif %}
-                                {% endfor %}
 
-                            </ul>
-                        </li>
-                    </ul>
-                    <button class="border border-gray-300 bg-gray-200 py-2 px-3" id="bulkselection">{% trans %} Bulkselection {% endtrans %}
-                    </button>
+                                    {% endfor %}
+
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="mr-2">
+                            <li class="dropdown">
+                                <a href data-toggle="dropdown" role="button" id="sorting-list"
+                                   class="btn btn-select space-between"><span>{{ params.date_filter.options[params.date_filter.current].label|trans }}</span>
+                                    <i class="fa fa-angle-down"></i></a>
+                                <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+
+                                    {% for year_month_key, year_month in params.date_filter.options %}
+                                        {% if year_month.label != 'File' %}
+                                            <li {% if year_month.name == params.date_filter.current %}class="active"
+                                                {% endif %}role="presentation">
+                                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
+                                                    merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })|
+                                                    merge({'page':1})
+                                                ) }}"
+                                                   tabindex="-1"
+                                                   role="menuitem">{{ year_month.label|trans|capitalize }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </ul>
+                            </li>
+                        </ul>
+                        <button class="btn btn-action"
+                                id="bulkselection">{% trans %} Bulkselection {% endtrans %}
+                        </button>
+                    </div>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
                             <input type="text" name="q" class="form-control"
                                    value="{{ app.request.query.get('q')|trim }}"
                                    placeholder="{% trans %}Zoeken{% endtrans %}...">
-                            <button type="submit"><i class="fa-regular fa-search"></i></button>
+                            <button type="submit"><i class="fa fa-search"></i></button>
                         </div>
                     </form>
                 </div>
@@ -187,11 +196,11 @@
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
                     <div class="media-wrapper">
-                        <div>
-                            {% if paginator.items|length == 0 %}
+                        {% if paginator.items|length == 0 %}
+                            <div>
                                 {% trans %} No results with this selection. {% endtrans %}
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% endif %}
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                             {% for media in paginator.items %}
                                 {% if media.contentType == 'image' %}
@@ -206,35 +215,100 @@
                                     {# TODO How to handle custom ContentTypes that can be anything? #}
                                     {# We could check pathname / identifier, but that is not so elegant# #}
                                 {% endif %}
-                                <!-- simply add selected class to visualy show a selected state -->
-                                <li class="media-item ui-widget-content ui-corner-tr {{ media.contentType }}"
-                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                    <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                        <div class="media-preview">
-                                            <div class="thumbnail">
-                                                <div class="centered">
-                                                    <img src="{{ thumbnail }}"
-                                                            {# alt="{{ media.title }}"> #}
-                                                         alt="">
+                                {% set gallery = 'grid' %}
+                                {% if gallery is same as('grid') %}
+                                    <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
+                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                            <div class="media-preview">
+                                                <div class="thumbnail">
+                                                    <div class="centered">
+                                                        <img src="{{ thumbnail }}"
+                                                             alt="{{ media.title }}">
+                                                    </div>
                                                 </div>
+                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                                    <div class="filetype">
+                                                        {{ media.file|split('.')|last | lower }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </a>
+
+                                        <button id="bulkselection_{{ media.id }}" type="button"
+                                                class="bulkselectionbutton check" tabindex="-1">
+                                            <span class="media-modal-icon">
+                                                <i class="fa fa-check"></i>
+                                            </span>
+                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                        </button>
+                                    </li>
+                                {% else %}
+                                    <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
+                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                            <div class="media-preview">
+                                                <div class="thumbnail">
+                                                    <div class="centered">
+                                                        <img src="{{ thumbnail }}"
+                                                             alt="{{ media.title }}">
+                                                    </div>
+                                                </div>
+                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                                    <div class="filetype">
+                                                        {{ media.file|split('.')|last | lower }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                        <div class="details flex">
+                                            <div class="w-full md:w-1/2">
+                                                <div class="detail-wrap title">
+                                                    <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
+                                                    <h3>{{ media.title }}</h3>
+                                                </div>
+                                                {% if media.description %}
+                                                    <div class="detail-wrap description">
+                                                        <span
+                                                            class="detail-label">{% trans %}Description{% endtrans %}:</span>
+                                                        <p>{{ media.description }}</p>
+                                                    </div>
+                                                {% endif %}
+                                                {% if media.credits %}
+                                                    <div class="detail-wrap credits">
+                                                        <span
+                                                            class="detail-label">{% trans %}Credits{% endtrans %}:</span>
+                                                        <p>{{ media.credits }}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="w-full md:w-1/2">
+                                                {% if media.createdAt is defined %}
+                                                    <div class="detail-wrap created-at flex justify-end">
+                                                        <span
+                                                            class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
+                                                        <p>{{ media.createdAt|format_date('long') }}</p>
+                                                    </div>
+                                                {% endif %}
+{#                                                {% if media.file.metadata.extension is defined %}#}
+{#                                                    <div class="detail-wrap extension">#}
+{#                                                        <span#}
+{#                                                            class="detail-label">{% trans %}Filetype:{% endtrans %}:</span>#}
+{#                                                        <p>{{ media.file.metadata.extension }}</p>#}
+{#                                                    </div>#}
+{#                                                {% endif %}#}
                                             </div>
                                         </div>
-                                    </a>
 
-                                    <div>
-                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                            {{ media.file|split('.')|last | lower }}
-                                        {% endif %}
-                                    </div>
-
-                                    <button id="bulkselection_{{ media.id }}" type="button"
-                                            class="bulkselectionbutton check" tabindex="-1">
+                                        <button id="bulkselection_{{ media.id }}" type="button"
+                                                class="bulkselectionbutton check" tabindex="-1">
                                             <span class="media-modal-icon">
-                                                <i class="fa-regular fa-check"></i>
+                                                <i class="fa fa-check"></i>
                                             </span>
-                                        <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                    </button>
-                                </li>
+                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                        </button>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     </div>
@@ -263,346 +337,125 @@
             </section>
         </div>
     </div>
-
-
-    <style>
-        .ui-droppable-hover, .bulkselected {
-            background-color: lightskyblue;
-        }
-
-        .flash {
-            -moz-animation: flash 1s ease-out;
-            -moz-animation-iteration-count: 1;
-
-            -webkit-animation: flash 1s ease-out;
-            -webkit-animation-iteration-count: 1;
-
-            -ms-animation: flash 1s ease-out;
-            -ms-animation-iteration-count: 1;
-        }
-
-        @keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-webkit-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-moz-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-ms-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        .media-container {
-            padding: 2rem;
-        }
-
-        .media-wrapper ul {
-            margin: -0.5rem;
-        }
-
-        .media-library .media-preview {
-            position: relative;
-            background: #f2f2f2;
-            cursor: pointer;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .media-library .media-item {
-            position: relative;
-            float: left;
-            padding: 8px;
-            margin: 0;
-            width: 10%;
-            color: #3c434a;
-            cursor: pointer;
-            list-style: none;
-            text-align: center;
-            -webkit-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-        }
-
-        .media-library .media-preview:before {
-            content: "";
-            display: block;
-            padding-top: 100%;
-        }
-
-        .media-library .media-item .thumbnail {
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            opacity: 1;
-            transition: opacity .1s;
-            background-size: cover;
-        }
-
-        .media-library .media-item .check {
-            display: none;
-            height: 24px;
-            width: 24px;
-            padding: 0;
-            border: 0;
-            position: absolute;
-            z-index: 10;
-            top: 0;
-            right: 0;
-            outline: 0;
-            background-color: #00b2ee;
-            border-color: #00b2ee;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .media-library .media-item.selected .check {
-            display: block;
-        }
-
-        .media-container.mode-select .media-item .thumbnail {
-            opacity: .65;
-        }
-
-        .media-container.mode-select .media-item.selected .thumbnail {
-            opacity: 1;
-        }
-
-        .media-container.mode-select a {
-            pointer-events: none;
-        }
-
-        .screen-reader-text {
-            position: absolute;
-            top: -10000em;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-
-        .media-library .media-item .thumbnail img {
-            transform: translate(-50%, -50%);
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .media-library .media-item .thumbnail .centered {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: translate(50%, 50%);
-        }
-
-        .media-library .media-item .thumbnail:after {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
-            overflow: hidden;
-        }
-
-        ul.aside-filter-menu {
-            padding: 2rem;
-        }
-
-        ul.aside-filter-menu li {
-            padding: .5rem 0;
-        }
-
-        ul.aside-filter-menu li span {
-            margin-left: 1rem;
-        }
-
-        form.media-search-form input {
-            border: 1px solid #dee3e9;
-            border-radius: 8px;
-            color: #000;
-            font-size: 13px;
-            padding: 0 1rem 0 2rem;
-            width: 100%;
-            height: 34px;
-        }
-
-        form.media-search-form {
-            position: relative;
-        }
-
-        form.media-search-form button {
-            position: absolute;
-            top: 6px;
-            left: 8px;
-            color: #beccde;
-        }
-
-
-    </style>
 {% endblock %}
 
 {% block webpack_js %}
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
             integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script
-            src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
-            integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0="
-            crossorigin="anonymous"></script>
+        src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+        integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0="
+        crossorigin="anonymous"></script>
 
     <script>
         //BULKSELECTION FUNCTIONALITY
-        let bulkSelectionEnabled = false //this controls if we show an icon with each image
-        let bulkSelection = [] //this keeps track which items are selected
-        let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
-        let draggingAmountOfItems = 1
+        let bulkSelectionEnabled = false; //this controls if we show an icon with each image
+        let bulkSelection = []; //this keeps track which items are selected
+        let latestBulkSelectionItemClicked = null; //so we can handle a shift click with a from - to
+        let draggingAmountOfItems = 1;
 
-        $("#bulkselection").on("click", async function () {
+        $('#bulkselection').on('click', async function() {
             if (bulkSelectionEnabled) {
-                await disableBulkSelection()
+                await disableBulkSelection();
             } else {
-                await enableBulkSelection()
+                await enableBulkSelection();
             }
-            bulkSelectionEnabled = !bulkSelectionEnabled
+            bulkSelectionEnabled = !bulkSelectionEnabled;
         });
 
         async function enableBulkSelection() {
-            $('.bulkselectionbutton').removeClass('bulkselected')
-            $('.media-container').addClass('mode-select')
+            $('.bulkselectionbutton').removeClass('bulkselected');
+            $('.media-container').addClass('mode-select');
 
-            $(".media-item").on("click", function (event) {
+            $('.media-item').on('click', function(event) {
                 handleBulkItemClick(event);
             });
         }
 
         function handleBulkItemClick(event) {
-            let media_id = null
+            let media_id = null;
             if (event.shiftKey === true) {
                 //SHIFT CLICK
                 if (latestBulkSelectionItemClicked === null) {
-                    latestBulkSelectionItemClicked = 1
+                    latestBulkSelectionItemClicked = 1;
                 }
 
-                let step_from = latestBulkSelectionItemClicked * 1
-                step_to = event.currentTarget.getAttribute('data-media_id') * 1
+                let step_from = latestBulkSelectionItemClicked * 1;
+                step_to = event.currentTarget.getAttribute('data-media_id') * 1;
 
                 for (let step = step_from; step <= step_to; step++) {
-                    let element = document.querySelector('.media-item[data-media_id="' + step + '"]')
+                    let element = document.querySelector('.media-item[data-media_id="' + step + '"]');
 
-                    media_id = element.getAttribute('data-id')
+                    media_id = element.getAttribute('data-id');
 
-                    bulkSelection.push(media_id)
-                    $('#' + element.id).addClass('selected')
+                    bulkSelection.push(media_id);
+                    $('#' + element.id).addClass('selected');
                 }
             } else {
                 //SINGLE CLICK
-                media_id = event.currentTarget.getAttribute('data-id')
+                media_id = event.currentTarget.getAttribute('data-id');
 
                 if (bulkSelection.includes(media_id)) {
-                    bulkSelection = bulkSelection.filter(item => item !== media_id)
-                    $('#' + event.currentTarget.id).removeClass('selected')
+                    bulkSelection = bulkSelection.filter(item => item !== media_id);
+                    $('#' + event.currentTarget.id).removeClass('selected');
                 } else {
-                    bulkSelection.push(media_id)
-                    $('#' + event.currentTarget.id).addClass('selected')
+                    bulkSelection.push(media_id);
+                    $('#' + event.currentTarget.id).addClass('selected');
                 }
             }
 
-            latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
+            latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id');
 
-            draggingAmountOfItems = bulkSelection.length
+            draggingAmountOfItems = bulkSelection.length;
         }
 
         async function disableBulkSelection() {
-            bulkSelection = []
-            $('.media-container').removeClass('mode-select')
-            $('.media-item').removeClass('selected')
-            draggingAmountOfItems = 1
+            bulkSelection = [];
+            $('.media-container').removeClass('mode-select');
+            $('.media-item').removeClass('selected');
+            draggingAmountOfItems = 1;
         }
 
         //DRAG AND DROP FUNCTIONALITY
-        (function ($) {
-            $(function () {
-                let $gallery = $("#gallery")
-                let $media_items = $(".media_category");
+        (function($) {
+            $(function() {
+                let $gallery = $('#gallery');
+                let $media_items = $('.media_category');
 
                 //GOED VOORBEELD: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
-                $("li", $gallery).draggable({
+                $('li.media-item', $gallery).draggable({
                     // cancel: "a.ui-icon", // clicking an icon won't initiate dragging
                     // containment: '#parent',
-                    helper: "clone",
+                    helper: 'clone',
                     // cursor: "move",
-                    start: function (ev, ui) {
-                        // offset = $(this).offset();
-                        offset = {
-                            top: 50,
-                            left: 50
-                        }
-                    }
+                    cursorAt: { left: 10, top: 10 },
+                    start: function(ev, ui) {
+                        offset = $(this).offset();
+                        // offset = {
+                        //     top: 50,
+                        //     left: 50,
+                        // };
+                    },
                 });
 
                 // Let the media items be droppable, accepting the gallery items
                 $media_items.droppable({
-                    activate: function (event, ui) {
-                        $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">' + draggingAmountOfItems + ' item(s)</div>')
+                    activate: function(event, ui) {
+                        $('.ui-draggable-dragging').
+                            html('<div class="drag-media">' + draggingAmountOfItems +
+                                ' item(s)</div>');
                     },
-                    accept: "#gallery > li",
+                    accept: '#gallery > li.media-item',
+                    cursorAt: { left: 5, top: 5 },
                     classes: {
-                        "ui-droppable-active": "ui-state-highlight"
+                        'ui-droppable-active': 'ui-state-highlight',
                     },
-                    drop: function (event, ui) {
+                    drop: function(event, ui) {
                         moveImage(ui.draggable, event, this.id);
                     },
-                    over: function (event, ui) {
+                    over: function(event, ui) {
 
-                    }
+                    },
                 });
 
                 function onlyUnique(value, index, self) {
@@ -610,31 +463,31 @@
                 }
 
                 function moveImage($item, event, category_id = null) {
-                    let media_id = $item[0].id || null
+                    let media_id = $item[0].id || null;
 
                     //So here we want to send something to the server
                     if (bulkSelection.length > 0) {
-                        console.log("Were bulk moving!")
+                        console.log('Were bulk moving!');
                         let duplicatesRemoved = bulkSelection.filter(onlyUnique);
-                        console.log(duplicatesRemoved)
-                        sendAjaxRequest(category_id, duplicatesRemoved)
+                        console.log(duplicatesRemoved);
+                        sendAjaxRequest(category_id, duplicatesRemoved);
                     } else {
-                        console.log("We`re single moving:")
-                        sendAjaxRequest(category_id, media_id)
-                        console.log(media_id)
+                        console.log('We`re single moving:');
+                        sendAjaxRequest(category_id, media_id);
+                        console.log(media_id);
                     }
-                    console.log("To: " + category_id)
-                    $('.media_category').removeClass('flash')
-                    $('#' + category_id).addClass("flash");
+                    console.log('To: ' + category_id);
+                    $('.media_category').removeClass('flash');
+                    $('#' + category_id).addClass('flash');
                 }
 
                 function get_current_category_id() {
-                    return new URL(location.href).searchParams.get("media_taxonomy_id") || "";
+                    return new URL(location.href).searchParams.get('media_taxonomy_id') || '';
                 }
 
                 function sendAjaxRequest(category_id, media_id) {
                     if (get_current_category_id() === category_id) {
-                        return
+                        return;
                     }
 
                     let jsonContent = JSON.stringify({
@@ -642,10 +495,10 @@
                         category_id_target: category_id,
                         media_id: media_id,
                         category_id_origin: get_current_category_id(),
-                    })
+                    });
 
                     //TODO how to get the proper path?
-                    let path = 'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
+                    let path = 'https://localhost.integratedfordevelopers.com/admin/media/manage_relations';
 
                     postData(path, jsonContent).then((data) => {
                         console.log(data); // JSON data parsed by `data.json()` call
@@ -659,7 +512,7 @@
                             credentials: 'same-origin',
                             redirect: 'follow',
                             referrerPolicy: 'no-referrer',
-                            body: data
+                            body: data,
                         });
 
                         return response;
@@ -667,6 +520,27 @@
                 }
             });
         })(jQuery);
+
+        function asideFolderSearch(elem) {
+            // Declare variables
+
+            var input, filter, ul, li, a, i, txtValue;
+            input = elem;
+            filter = input.value.toUpperCase();
+            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName('a')[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].classList.remove('menu-item-hidden');
+                } else {
+                    li[i].classList.add('menu-item-hidden');
+                }
+            }
+        };
     </script>
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
 {% endblock %}
