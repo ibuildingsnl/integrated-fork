@@ -32,11 +32,9 @@
                             </form>
                             <ul class="aside-filter-menu">
                                 {% for key, menu_item in menu %}
-                                    <li class="menu-parent media_category {% if params.media_taxonomy.current == menu_item.title %}current-menu-item{% endif %}"
-                                        id="{{ menu_item.ID }}">
+                                    <li class="menu-parent {% if params.media_taxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if params.media_taxonomy.current == menu_item.title %}
-                                            <i class="fa fa-folder"></i>
-                                            <span>{{ menu_item.title|trans|capitalize }}</span>
+                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                                         {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
@@ -45,17 +43,19 @@
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
-                                               role="menuitem">
-                                                <i class="fa fa-folder"></i><span>{{ menu_item.title|trans|capitalize }}</span></a>
+                                               role="menuitem"
+                                               class="media_category"
+                                               id="{{ menu_item.ID }}">
                                         {% endif %}
+                                                <i class="fa fa-folder"></i>
+                                                <span>{{ menu_item.title|trans|capitalize }}</span>
+                                            </a>
                                         {% if menu_item.children %}
                                             <ul class="child-menu">
                                                 {% for key_1, menu_item_1 in menu_item.children %}
-                                                    <li class="menu-child media_category {% if params.media_taxonomy.current == menu_item_1.title %}current-menu-item{% endif %}"
-                                                        id="{{ menu_item_1.ID }}">
+                                                    <li class="menu-child {% if params.media_taxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
                                                         {% if params.media_taxonomy.current == menu_item_1.title %}
-                                                            <i class="fa fa-folder"></i>
-                                                            <span>{{ menu_item_1.title|trans|capitalize }}</span>
+                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
                                                         {% else %}
                                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                                 app.request.query.all|
@@ -64,18 +64,18 @@
                                                                 merge({'page':1})
                                                             ) }}"
                                                                tabindex="-1"
-                                                               role="menuitem">
+                                                               role="menuitem"
+                                                               class="media_category"
+                                                               id="{{ menu_item_1.ID }}">
+                                                        {% endif %}
                                                                 <i class="fa fa-folder"></i>
                                                                 <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
-                                                        {% endif %}
                                                         {% if menu_item_1.children %}
                                                             <ul class="child-menu">
                                                                 {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                                    <li class="menu-child media_category {% if params.media_taxonomy.current == menu_item_2.title %}current-menu-item{% endif %}"
-                                                                        id="{{ menu_item_2.ID }}">
+                                                                    <li class="menu-child {% if params.media_taxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
                                                                         {% if params.media_taxonomy.current == menu_item_2.title %}
-                                                                            <i class="fa fa-folder"></i>
-                                                                            <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_2.ID }}">
                                                                         {% else %}
                                                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                                                 app.request.query.all|
@@ -84,10 +84,13 @@
                                                                                 merge({'page':1})
                                                                             ) }}"
                                                                                tabindex="-1"
-                                                                               role="menuitem">
-                                                                                <i class="fa fa-folder"></i>
-                                                                                <span>{{ menu_item_2.title|trans|capitalize }}</span></a>
+                                                                               role="menuitem"
+                                                                               class="media_category"
+                                                                               id="{{ menu_item_2.ID }}">
                                                                         {% endif %}
+                                                                                <i class="fa fa-folder"></i>
+                                                                                <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                            </a>
                                                                     </li>
                                                                 {% endfor %}
                                                             </ul>
