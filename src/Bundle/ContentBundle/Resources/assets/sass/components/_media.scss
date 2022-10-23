@@ -62,6 +62,15 @@
 }
 
 .media-library {
+    .media-sidebar {
+        width: 280px;
+        margin-right: 1rem;
+        border-right: 1px solid #dfe3e9;
+        padding-right: 1rem;
+    }
+    .media-gallery {
+        width: calc(100% - (280px + 2rem));
+    }
     .media-preview {
         position: relative;
         background: #f2f2f2;
@@ -99,7 +108,18 @@
         -webkit-user-select: none;
         user-select: none;
         box-sizing: border-box;
-
+        @include media('xl') {
+            width: 20%;
+        }
+        @include media('2xl') {
+            width: 14.28571429%;
+        }
+        @include media('3xl') {
+            width: 11.11111%;
+        }
+        @include media('4xl') {
+            width:10%;
+        }
         &.list {
             width: 100%;
             display: flex;
@@ -137,9 +157,9 @@
         }
 
         .drag-media {
-            background-color: #e5f6f4;
-            color: #125251;
-            border: 1px solid #0d4f4e;
+            background-color: #e0e3e9;
+            border: 1px solid #e0e3e9;
+            color: #283c53;
             padding: 0.35rem;
             border-radius: 8px;
         }
@@ -414,11 +434,9 @@
     }
 
     .ui-droppable-hover, .bulkselected {
-        background-color: #00b2ee;
+        background-color: #00b2ee !important;
         border-radius: 8px;
-        > a, .bulkselected {
-            color: white !important;
-        }
+        color: white !important;
     }
 
     .flash {
@@ -441,7 +459,7 @@
         background-color: transparent;
     }
     50% {
-        background-color: #fbf8b2;
+        background-color: #E5F6F4;
     }
     100% {
         background-color: transparent;
@@ -453,7 +471,7 @@
         background-color: transparent;
     }
     50% {
-        background-color: #fbf8b2;
+        background-color: #E5F6F4;
     }
     100% {
         background-color: transparent;
@@ -465,7 +483,7 @@
         background-color: transparent;
     }
     50% {
-        background-color: #fbf8b2;
+        background-color: #E5F6F4;
     }
     100% {
         background-color: transparent;
@@ -477,7 +495,7 @@
         background-color: transparent;
     }
     50% {
-        background-color: #fbf8b2;
+        background-color: #E5F6F4;
     }
     100% {
         background-color: transparent;
