@@ -90,11 +90,11 @@ class TaxonomyRelationManager
 
     public function getOrCreateRelation($mediaItem)
     {
-        if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
+        if ($relations = $mediaItem->getRelation('mediataxonomy')) {
             return $relations;
         }
         $relations = (new Relation())
-            ->setRelationId('mediaitem_channelcategory')
+            ->setRelationId('mediataxonomy') //mediaitem_channelcategory
             ->setRelationType('taxonomy');
 
         return $relations;
