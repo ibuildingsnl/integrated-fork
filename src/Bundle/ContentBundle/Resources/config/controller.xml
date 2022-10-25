@@ -54,6 +54,7 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\MediaController" public="true">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu" />
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />

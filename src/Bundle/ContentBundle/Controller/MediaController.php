@@ -11,10 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
@@ -77,28 +76,18 @@ class MediaController extends AbstractController
         ],
     ];
     public const SOLR_ALL_MEDIA_CLASS_STRING = 'File';
-    private $mediaGalleryMenu;
-    private $userManager;
-    private $provider;
-    private $repository;
-    private $authorizationChecker;
-    private $queueSubscriber;
-    private $indexer;
-    private TaxonomyRelationManager $taxonomyRelationManager;
-    private $dm;
 
-    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, TaxonomyRelationManager $taxonomyRelationManager)
-    {
-        $this->provider = $provider;
-        $this->userManager = $userManager;
-        $this->mediaGalleryMenu = $mediaGalleryMenu;
-        $this->repository = $repository;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->indexer = $indexer;
-        $this->taxonomyRelationManager = $taxonomyRelationManager;
-        $this->dm = null;
-    }
+    public function __construct(
+        private DocumentManager $documentManager,
+        private MediaGalleryMenu $mediaGalleryMenu,
+        private UserManagerInterface $userManager,
+        private ContentProvider $provider,
+        private ObjectRepository $repository,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private QueueSubscriber $queueSubscriber,
+        private IndexerInterface $indexer,
+        private TaxonomyRelationManager $taxonomyRelationManager)
+    {}
 
     /**
      * @param Request $request
@@ -111,8 +100,6 @@ class MediaController extends AbstractController
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
         $params = [];
-
-        $this->dm = $this->getDoctrineODM()->getManager();
 
         $menu = $this->mediaGalleryMenu->createMenu($this);
 
@@ -206,7 +193,7 @@ class MediaController extends AbstractController
     public function getContentTypes()
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
-        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
+        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->documentManager->getRepository(ContentType::class)->findAll());
 
         return array_filter($contentTypeNames);
     }
@@ -392,28 +379,10 @@ class MediaController extends AbstractController
         return $paginator;
     }
 
-    /**
-     * @deprecated
-     */
-    public function getDatesOfItems($items)
-    {
-        $dates = [];
-        foreach ($items as $item) {
-            $yearMonth = $item->getCreatedAt()->format('Y-m-d');
-            if (\array_key_exists($yearMonth, $dates)) {
-                ++$dates[$yearMonth];
-            } else {
-                $dates[$yearMonth] = 1;
-            }
-        }
-
-        return $this->transformDateYearToFrontendArray($dates);
-    }
-
     public function getChannels()
     {
         $channels = [];
-        if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
+        if ($channelResult = $this->documentManager->getRepository(Channel::class)->findAll()) {
             /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
             foreach ($channelResult as $channel) {
                 $channels[$channel->getId()] = $channel->getName();
