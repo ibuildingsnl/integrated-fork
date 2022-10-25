@@ -1,5 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Pages{% endtrans %}{% endblock title %}
+{% form_theme filterForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
     {% if lastPage %}
         {% if (lastPage.domain == app.request.httphost) %}
@@ -21,7 +22,7 @@
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
                             <span>{% trans %}Options{% endtrans %}</span>
-                            <i class="fa-solid fa-chevron-down"></i>
+                            <i class="iconoir-nav-arrow-down"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                             <li><a href="{{ editUrl }}">{% trans %}Edit page{% endtrans %}</a></li>
@@ -39,11 +40,11 @@
             <li>
                 <a class="btn btn-create-new" href="{{ path('integrated_page_page_new') }}">
                     <span>{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}</span>
-                    <i class="fa-solid fa-plus"></i>
+                    <i class="iconoir-plus"></i>
                 </a>
                 <a class="btn btn-create-new" href="{{ path('integrated_page_page_copy') }}">
                     <span>{% trans %}Copy{% endtrans %} {% trans %}page{% endtrans %}</span>
-                    <i class="fa-solid fa-copy"></i>
+                    <i class="iconoir-copy"></i>
                 </a>
             </li>
         </ul>
@@ -133,7 +134,18 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-item-holder">
-                        {{ form(filterForm) }}
+                        {{ form_start(filterForm, { 'style': 'sidebar' }) }}
+                        {% if form.q is defined %}
+                            {{ form_widget(filterForm.q, {'style':'inline'}) }}
+                        {% endif %}
+
+                        {% if form.pagetype is defined %}
+                            {{ form_row(filterForm.pagetype, {'style':'sidebar','state':'show'}) }}
+                        {% endif %}
+                        {% if form.channel is defined %}
+                            {{ form_row(filterForm.channel, {'style':'sidebar','state':'show'}) }}
+                        {% endif %}
+                        {{ form_end(filterForm) }}
                     </div>
                 </div>
             </aside>

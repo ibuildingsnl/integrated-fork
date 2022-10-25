@@ -20,27 +20,25 @@
                     {% block sidebar %}
                         {% block content_meta %}
                             {% if form.scope is defined %}
-                                {{ form_row(form.scope, {'style': 'sidebar', 'icon':'fa-crosshairs', 'state': 'show'}) }}
+                                {{ form_row(form.scope, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
                             {% endif %}
 
                             {% if form.permissions is defined %}
-                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.ipProtected is defined %}
-                                {{ form_row(form.ipProtected, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                                {{ form_row(form.ipProtected, {'style': 'sidebar', 'icon':'antenna-off', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.color is defined %}
-                                {{ form_row(form.color, {'style': 'sidebar', 'icon':'fa-droplet', 'state': 'show'}) }}
+                                {{ form_row(form.color, {'style': 'sidebar', 'icon':'droplet', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.logo is defined %}
-                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image', 'state': 'show'}) }}
+                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'media-image', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options is defined %}
-                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                             {% endif %}
                         {% endblock %}
-
-
                     {% endblock %}
                 </div>
             </aside>
