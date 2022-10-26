@@ -77,7 +77,7 @@
                         {{ form_row(form.options, {'style': 'editor', 'state': 'show'}) }}
                     {% endif %}
 
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
             </section>
         </div>
@@ -91,6 +91,7 @@
 
 {% block webpack_js %}
     {{ parent() }}
+
     <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
 {% endblock %}
 
