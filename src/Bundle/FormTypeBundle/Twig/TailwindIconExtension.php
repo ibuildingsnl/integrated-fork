@@ -101,6 +101,7 @@ class TailwindIconExtension extends AbstractExtension
         if ($iconSet == 'icon') {
             $iconSet = $this->iconPrefix;
         }
+
         $icon = str_replace('+', ' '.$iconSet.'-', $icon);
 
         return sprintf('<%1$s class="%2$s %2$s-%3$s"></%1$s>', $this->iconTag, $iconSet, $icon);

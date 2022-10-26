@@ -174,7 +174,7 @@ body[class*="_index"] {
         cursor: pointer;
 
         > i {
-            width: 13px;
+            width: 20px;
         }
 
         h3.editor-item-title {
@@ -256,4 +256,13 @@ span.help-block {
     margin-top: -11px;
     border-radius: 0 0 8px 8px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    i {
+        margin-right:5px;
+        &:before {
+            width: 14px;
+            height: 14px;
+        }
+    }
 }

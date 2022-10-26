@@ -36,7 +36,7 @@
 
             {% set prototype_html = '<div class="lg:w-11/12">' ~ form_widget(prototype, prototype_vars) %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href class="remove" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
+                {% set prototype_html = prototype_html ~ '<a href class="remove" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
             {% endif %}
             {% set prototype_html = prototype_html ~ '</div>' %}
 
@@ -53,7 +53,7 @@
                         </div>
                         {% if form.vars.allow_delete %}
                             <a href class="remove" data-removefield="collection" data-field="{{ field.vars.id }}">
-                                <i class="fa fa-xmark"></i>
+                                <i class="iconoir-cancel"></i>
                             </a>
                         {% endif %}
                     </li>
@@ -64,7 +64,7 @@
                 <div class="integrated-collection-button">
                     <a href class="btn btn-green icon-left state_add_button" data-addfield="collection"
                        data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">
-                        <i class="fa fa-plus"></i><span>Add Status</span></a>
+                        <i class="iconoir-plus"></i><span>Add Status</span></a>
                 </div>
             {% endif %}
 

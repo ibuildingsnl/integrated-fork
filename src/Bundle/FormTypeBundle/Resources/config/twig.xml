@@ -6,8 +6,8 @@
     <services>
 
         <service id="Integrated\Bundle\FormTypeBundle\Twig\TailwindIconExtension">
-            <argument>fa</argument>
-            <argument>span</argument>
+            <argument>iconoir</argument>
+            <argument>i</argument>
 
             <tag name="twig.extension" />
         </service>
