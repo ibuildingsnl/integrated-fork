@@ -26,7 +26,9 @@
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                             <li><a href="{{ editUrl }}">{% trans %}Edit page{% endtrans %}</a></li>
-                            <li><a href="{{ path('integrated_page_page_copy') }}">{% trans %}Edit page properties{% endtrans %}</a></li>
+                            <li>
+                                <a href="{{ path('integrated_page_page_copy') }}">{% trans %}Edit page properties{% endtrans %}</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
@@ -77,17 +79,17 @@
                             <td>
                                 <strong>
                                     {% if page.type == 'page' and page.domain != "" %}
-                                        {% if (page.domain == app.request.httphost) %}
-                                            <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
+                                    {% if (page.domain == app.request.httphost) %}
+                                    <a href="{{ page.path }}" title="{% trans %}Open page{% endtrans %}">
                                         {% else %}
-                                            <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
+                                        <a href="//{{ page.domain }}{{ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': page.path}) }}"
                                            title="{% trans %}Open page{% endtrans %}">
-                                        {% endif %}
-                                    {% endif %}
-                                    {{ page.path }}
-                                    {% if page.type == 'page' and page.domain != "" %}
+                                            {% endif %}
+                                            {% endif %}
+                                            {{ page.path }}
+                                            {% if page.type == 'page' and page.domain != "" %}
                                         </a>
-                                    {% endif %}
+                                        {% endif %}
                                     </a>
                                 </strong>
                                 <div class="row-options">
@@ -130,23 +132,40 @@
                 {{ knp_pagination_render(pages) }}
             </section>
         </div>
-        <div class="pl-4 w-1/5">
+        <div class="w-full md:w-1/5 pl-4">
             <aside>
                 <div class="aside-holder section-gray section-radius">
-                    <div class="aside-item-holder">
-                        {{ form_start(filterForm, { 'style': 'sidebar' }) }}
-                        {% if form.q is defined %}
-                            {{ form_widget(filterForm.q, {'style':'inline'}) }}
-                        {% endif %}
+                    {{ form_start(filterForm) }}
 
-                        {% if form.pagetype is defined %}
+                    {% if filterForm.q is defined %}
+                        <div class="aside-item-holder">
+                            <div class="input-group input-group-search">
+                                {{ form_widget(filterForm.q) }}
+                                <span class="input-group-btn">
+                                <button type="submit" class="">
+                                    <i class="iconoir-search"></i>
+                                </button>
+                            </span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% dump(filterForm) %}
+                    {% if filterForm.pagetype is defined %}
+                        <div
+                            class="aside-item-holder{% if filterForm.pagetype.vars.choices|length == 0 %} hidden{% endif %}">
                             {{ form_row(filterForm.pagetype, {'style':'sidebar','state':'show'}) }}
-                        {% endif %}
-                        {% if form.channel is defined %}
+                        </div>
+                    {% endif %}
+                    {% if filterForm.channel is defined %}
+                        <div
+                            class="aside-item-holder{% if filterForm.channel.vars.choices|length == 0 %} hidden{% endif %}">
                             {{ form_row(filterForm.channel, {'style':'sidebar','state':'show'}) }}
-                        {% endif %}
-                        {{ form_end(filterForm) }}
+                        </div>
+                    {% endif %}
+                    <div class="aside-item-holder">
+                        {{ form_rest(filterForm, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
+                    {{ form_end(filterForm) }}
                 </div>
             </aside>
         </div>
