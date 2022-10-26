@@ -56,6 +56,7 @@ class ChannelChoiceType extends AbstractType
     {
         $resolver->setDefault('class', Channel::class);
         $resolver->setDefault('choice_label', 'name');
+        $resolver->setDefault('placeholder', 'Select a channel');
         $resolver->setDefault('return_object', false);
     }
 

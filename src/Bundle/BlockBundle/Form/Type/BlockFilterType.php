@@ -68,7 +68,7 @@ class BlockFilterType extends AbstractType
             TextType::class,
             [
                 'required' => false,
-                'attr' => ['placeholder' => 'Filter block name'],
+                'label' => 'Filter by block name'
             ]
         );
 
