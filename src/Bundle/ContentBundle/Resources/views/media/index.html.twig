@@ -9,10 +9,12 @@
                 <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
-                        <div class="aside-item-header">
-                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                <i class="fa-regular fa-folder"></i><span>{% trans %}All files{% endtrans %}</span>
-                            </a>
+                        <div class="p-4">
+                            <div class="text-black p-4">
+                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                    <i class="fa-regular fa-folder"></i><span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                                </a>
+                            </div>
                         </div>
                         <div class="aside-item-list-container">
                             <div class="aside-item-search">
