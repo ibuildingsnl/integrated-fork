@@ -98,7 +98,6 @@ class MediaController extends AbstractController
     public function index(Request $requestSource)
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
-        $params = [];
 
         $menu = $this->mediaGalleryMenu->createMenu();
 
@@ -115,7 +114,7 @@ class MediaController extends AbstractController
 
         $dateFilter = $this->getYearMonthDates($requestCopy);
 
-        $params = array_merge($params, $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
+        $params = array_merge([], $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
@@ -363,34 +362,6 @@ class MediaController extends AbstractController
         return $paginator;
     }
 
-    public function getChannels()
-    {
-        $channels = [];
-        if ($channelResult = $this->documentManager->getRepository(Channel::class)->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
-            }
-        }
-
-        $channelAuthorisations = [];
-        foreach ($channels as $index => $value) {
-            $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
-            $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
-
-            // TODO Enable this when we have proper data
-//          if ($read === true || $write === true) {
-            $channelAuthorisations[] = $value;
-//                $channelAuthorisations[$value ] = [
-//                    "read" => $read,
-//                    "write" => $write
-//                ];
-//            }
-        }
-
-        return $channelAuthorisations;
-    }
-
     public function getContentTypeName($item)
     {
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
@@ -406,28 +377,12 @@ class MediaController extends AbstractController
         return $this->taxonomyRelationManager->manageRelations($request);
     }
 
-    // TODO later make this
     public function menu()
     {
-        $dm = $this->getDoctrineODM()->getManager();
-        $channels = [];
-        if ($channelResult = $dm->getRepository(Channel::class)->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
-            }
-        }
-
-        $menuItems = [];
-        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
-            /* @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-//            foreach ($mediaGalleryMenuResult as $menuItem) {
-//                $menuItems[$menuItem->getId()] = $channel->getName();
-//            }
-        }
+        $menu = $this->mediaGalleryMenu->createMenu();
 
         return $this->render('@IntegratedContent/media/menu.html.twig', [
-            'channels' => $channels,
+            'menu' => $menu,
         ]);
     }
 }

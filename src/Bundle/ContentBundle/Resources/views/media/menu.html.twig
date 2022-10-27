@@ -5,246 +5,45 @@
     <div class="flex flex-wrap media-library">
         <div class="sm:w-3/12 p-2 pr-4 pl-4">
             <aside>
-                <div>
+                <div class="text-xl">
                     {% trans %}Folders{% endtrans %}
                 </div>
-            </aside>
-        </div>
-        <div class="md:w-10/12 pr-4 pl-4 mb-4 md:mb-0">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
 
-                <div class="options flex justify-between">
-                    {% trans %} Content {% endtrans %}
-                </div>
-            </div>
-            <section class="section-white section-radius p-4">
-                {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
-                <div class="media-container">
-                   {% trans %}  More content {% endtrans %}
-                </div>
-            </section>
+                {% for key, menu_item in menu %}
+                <li class="menu-parent media_category"
+                    style="margin-bottom: 1px; padding: 5px; padding-left: 5px;"
+                    id="{{ menu_item.ID }}">
+                    <i class="fa-regular fa-folders"></i>
+                       {{ menu_item.title|trans|capitalize }}
+                    {% if menu_item.children %}
+                        {% for key_1, menu_item_1 in menu_item.children %}
+                        <li class="menu-parent media_category"
+                            style="margin-bottom: 1px; padding-left: 22px" id="{{ menu_item_1.ID }}">
+                            <i class="fa-regular fa-folders"></i>
+                               {{ menu_item_1.title|trans|capitalize }}
+                            {% if menu_item_1.children %}
+
+                                {% for key_2, menu_item_2 in menu_item_1.children %}
+                                    <li class="menu-parent media_category"
+                                        style="margin-bottom: 1px; padding-left: 33px"
+                                        id="{{ menu_item_2.ID }}">
+                                        <i class="fa-regular fa-folders"></i>
+                                            {{ menu_item_2.title|trans|capitalize }}
+                                    </li>
+                                {% endfor %}
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </aside>
         </div>
     </div>
 
-
-    <style>
-        .ui-droppable-hover, .bulkselected {
-            background-color: lightskyblue ;
-        }
-
-        .flash {
-            -moz-animation: flash 1s ease-out;
-            -moz-animation-iteration-count: 1;
-
-            -webkit-animation: flash 1s ease-out;
-            -webkit-animation-iteration-count: 1;
-
-            -ms-animation: flash 1s ease-out;
-            -ms-animation-iteration-count: 1;
-        }
-
-        @keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-webkit-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-moz-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        @-ms-keyframes flash {
-            0% {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #fbf8b2;
-            }
-            100% {
-                background-color: transparent;
-            }
-        }
-
-        .media-container {
-            padding: 2rem;
-        }
-
-        .media-wrapper ul {
-            margin: -0.5rem;
-        }
-
-        .media-library .media-preview {
-            position: relative;
-            background: #f2f2f2;
-            cursor: pointer;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .media-library .media-item {
-            position: relative;
-            float: left;
-            padding: 8px;
-            margin: 0;
-            width: 10%;
-            color: #3c434a;
-            cursor: pointer;
-            list-style: none;
-            text-align: center;
-            -webkit-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-        }
-
-        .media-library .media-preview:before {
-            content: "";
-            display: block;
-            padding-top: 100%;
-        }
-
-        .media-library .media-item .thumbnail {
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            opacity: 1;
-            transition: opacity .1s;
-            background-size: cover;
-        }
-
-        .media-library .media-item .check {
-            display: none;
-            height: 24px;
-            width: 24px;
-            padding: 0;
-            border: 0;
-            position: absolute;
-            z-index: 10;
-            top: 0;
-            right: 0;
-            outline: 0;
-            background-color: #00b2ee;
-            border-color: #00b2ee;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .media-library .media-item.selected .check {
-            display: block;
-        }
-
-        .media-container.mode-select .media-item .thumbnail {
-            opacity: .65;
-        }
-        .media-container.mode-select .media-item.selected .thumbnail {
-            opacity: 1;
-        }
-
-        .screen-reader-text {
-            position: absolute;
-            top: -10000em;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-
-        .media-library .media-item .thumbnail img {
-            transform: translate(-50%, -50%);
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .media-library .media-item .thumbnail .centered {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: translate(50%, 50%);
-        }
-
-        .media-library .media-item .thumbnail:after {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
-            overflow: hidden;
-        }
-
-
-        ul.aside-filter-menu {
-            padding: 2rem;
-        }
-
-        ul.aside-filter-menu li {
-            padding: .5rem 0;
-        }
-
-        ul.aside-filter-menu li span {
-            margin-left: 1rem;
-        }
-
-        form.media-search-form input {
-            border: 1px solid #dee3e9;
-            border-radius: 8px;
-            color: #000;
-            font-size: 13px;
-            padding: 0 1rem 0 2rem;
-            width: 100%;
-            height: 34px;
-        }
-
-        form.media-search-form {
-            position: relative;
-        }
-
-        form.media-search-form button {
-            position: absolute;
-            top: 6px;
-            left: 8px;
-            color: #beccde;
-        }
-
-
-    </style>
 {% endblock %}
 
 {% block webpack_js %}
