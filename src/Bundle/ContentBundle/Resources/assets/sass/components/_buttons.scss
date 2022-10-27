@@ -266,4 +266,14 @@
             background-color: darken($navbar-green, 20%);
         }
     }
+    &.btn-action {
+        background-color: #E5F6F4;
+        border-color: #E5F6F4;
+        color: #0D4E4D;
+        height: 34px;
+        &:hover, &:focus {
+            color: #0D4E4D;
+            background-color: darken(#E5F6F4, 20%);
+        }
+    }
 }
