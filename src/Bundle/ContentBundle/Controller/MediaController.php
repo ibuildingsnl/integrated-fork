@@ -94,25 +94,13 @@ class MediaController extends AbstractController
      *
      * @return Response
      */
-    // TODO: Use translations in Twig
     // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource)
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
         $params = [];
 
-        $menu = $this->mediaGalleryMenu->createMenu($this);
-
-        $otherMenu = $this->mediaGalleryMenu->getMenuItemsFromDB();
-
-        // TODO: With my installation, I cant add groups, work this out later
-        foreach ($otherMenu as $menuItem) {
-            if (false === $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem)) {
-                dump('false');
-                continue;
-            }
-            dump('true');
-        }
+        $menu = $this->mediaGalleryMenu->createMenu();
 
         if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
             $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
@@ -124,10 +112,6 @@ class MediaController extends AbstractController
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
-
-        if (\count($items) === 0) {
-            $message = 'No results with this selection.';
-        }
 
         $dateFilter = $this->getYearMonthDates($requestCopy);
 
