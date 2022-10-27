@@ -69,7 +69,8 @@ class MediaGalleryMenu
         return $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy']);
     }
 
-    public function isGranted($menuItem) {
+    public function isGranted($menuItem)
+    {
         return $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem);
     }
 

@@ -94,7 +94,7 @@ class TaxonomyRelationManager
             return $relations;
         }
         $relations = (new Relation())
-            ->setRelationId('mediataxonomy') //mediaitem_channelcategory
+            ->setRelationId('mediataxonomy')
             ->setRelationType('taxonomy');
 
         return $relations;

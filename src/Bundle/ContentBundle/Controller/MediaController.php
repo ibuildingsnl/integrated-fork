@@ -13,15 +13,12 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +84,8 @@ class MediaController extends AbstractController
         private QueueSubscriber $queueSubscriber,
         private IndexerInterface $indexer,
         private TaxonomyRelationManager $taxonomyRelationManager)
-    {}
+    {
+    }
 
     /**
      * @param Request $request

@@ -88,7 +88,7 @@ class ContentProvider
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
             $relation = $this->dm->getRepository(Relation::class)->find('mediataxonomy');
 
-            //No Results;
+            // No Results;
             if (null === $relation) {
                 return [];
             }
