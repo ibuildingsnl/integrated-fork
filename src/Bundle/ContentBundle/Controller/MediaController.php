@@ -83,8 +83,8 @@ class MediaController extends AbstractController
         private AuthorizationCheckerInterface $authorizationChecker,
         private QueueSubscriber $queueSubscriber,
         private IndexerInterface $indexer,
-        private TaxonomyRelationManager $taxonomyRelationManager)
-    {
+        private TaxonomyRelationManager $taxonomyRelationManager
+    ) {
     }
 
     /**
