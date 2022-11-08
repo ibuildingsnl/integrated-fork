@@ -295,13 +295,6 @@
                                                         <p>{{ media.createdAt|format_date('long') }}</p>
                                                     </div>
                                                 {% endif %}
-{#                                                {% if media.file.metadata.extension is defined %}#}
-{#                                                    <div class="detail-wrap extension">#}
-{#                                                        <span#}
-{#                                                            class="detail-label">{% trans %}Filetype:{% endtrans %}:</span>#}
-{#                                                        <p>{{ media.file.metadata.extension }}</p>#}
-{#                                                    </div>#}
-{#                                                {% endif %}#}
                                             </div>
                                         </div>
 
@@ -319,7 +312,6 @@
                     </div>
                 </div>
 
-                <!-- PAGINATOR CONTROLS -->
                 <div>
                     {% if paginator.amountOfPages > 1 %}
                         {% for i in range(1, paginator.amountOfPages) %}

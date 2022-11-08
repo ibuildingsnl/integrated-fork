@@ -93,7 +93,7 @@ class MediaController extends AbstractController
      * @return Response
      */
     // TODO: Either work with ID`s or do some checks that a category has a unique name
-    public function index(Request $requestSource)
+    public function index(Request $requestSource): Response
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
 
@@ -137,7 +137,7 @@ class MediaController extends AbstractController
      *               -----xx                      xx
      *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
      */
-    public function setAndGetClassString($requestSource)
+    public function setAndGetClassString($requestSource): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
@@ -171,7 +171,7 @@ class MediaController extends AbstractController
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
-    public function getContentTypes()
+    public function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
         $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->documentManager->getRepository(ContentType::class)->findAll());
@@ -245,7 +245,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getParams($request, $uniqueContentTypes, $dateFilter)
+    public function getParams($request, $uniqueContentTypes, $dateFilter): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -294,7 +294,7 @@ class MediaController extends AbstractController
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
     }
 
-    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
+    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter): array
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
             // The default categories are always there, and dont need to be added again.
@@ -370,12 +370,12 @@ class MediaController extends AbstractController
         }
     }
 
-    public function manageRelations(Request $request)
+    public function manageRelations(Request $request): Response
     {
         return $this->taxonomyRelationManager->manageRelations($request);
     }
 
-    public function menu()
+    public function menu(): Response
     {
         $menu = $this->mediaGalleryMenu->createMenu();
 

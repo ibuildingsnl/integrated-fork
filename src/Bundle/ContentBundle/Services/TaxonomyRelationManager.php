@@ -32,6 +32,8 @@ class TaxonomyRelationManager
     public function manageRelations(Request $request)
     {
         $params = json_decode($request->getContent(), true);
+
+//      Explanation of fields that can be send:
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, one or many
 //      "category_id_target" => "category_2-1"                               REQUIRED, one
 //      "category_id_origin" => "3324234"                                    REQUIRED, one

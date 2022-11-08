@@ -35,7 +35,7 @@ class MediaGalleryMenu
         $this->dm = $dm;
     }
 
-    public function createMenu()
+    public function createMenu(): array
     {
         $menuItems = $this->getMenuItems();
 
@@ -64,17 +64,17 @@ class MediaGalleryMenu
         }
     }
 
-    public function getMenuItemsFromDB()
+    public function getMenuItemsFromDB(): array
     {
         return $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy']);
     }
 
-    public function isGranted($menuItem)
+    public function isGranted(Taxonomy $menuItem): bool
     {
         return $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem);
     }
 
-    public function getMenuItems()
+    public function getMenuItems(): array
     {
         // Get MediaGalleryMenuItems to show in the menu on the left side.
         $menuItems = [];
