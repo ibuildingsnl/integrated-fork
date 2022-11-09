@@ -324,21 +324,18 @@
 {{ parent() }}
 <script>
     textarea = document.querySelector('.title_tinymce_input');
-    textarea.addEventListener('input', autoResize, false);
-    textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
-    textarea.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-        }
-    });
+    if (doesElementExist(textarea)) {
+        textarea.addEventListener('input', autoResize, false);
+        textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
-    function autoResize() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    }
+        textarea.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
 
-    setTimeout(function() {
+        setTimeout(function() {
         const resize_ob = new ResizeObserver(function(entries) {
             // since we are observing only a single element, so we access the first element in entries array
             let rect = entries[0].contentRect;
@@ -352,12 +349,25 @@
             editor.style.top = (46 + height) + 'px';
             wrapper.style.paddingBottom = (46 + height) + 'px';
         });
+
         //TODO: Need to fix comments alignment.
         // start observing for resize
         resize_ob.observe(document.querySelector('.title_tinymce_input'));
     }, 1000);
+    }
 
+    function doesElementExist(selector) {
+        if (document.querySelector(selector) !== null) {
+            return true
+        }
 
+        return false
+    }
+
+    function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    }
 </script>
 
 {% if content is defined %}
