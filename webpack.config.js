@@ -8,9 +8,6 @@ webpackConfig = Encore.setOutputPath(
     .addEntry('app', [
             './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
             './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
-            './node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css',
-            './node_modules/@fortawesome/fontawesome-free/css/solid.min.css',
-            './node_modules/@fortawesome/fontawesome-free/css/regular.min.css',
             './src/Bundle/ContentBundle/Resources/assets/js/main.js'])
     .addEntry('edit', [
             './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',

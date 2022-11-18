@@ -33,7 +33,7 @@ class UserFilterType extends AbstractType
 
         $builder
             ->add('q', TextType::class, [
-                'attr' => ['placeholder' => 'Find by username'],
+                'label' => 'Find by username',
                 'required' => false,
             ])
             ->add('groups', ChoiceType::class, [

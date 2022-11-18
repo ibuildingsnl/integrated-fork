@@ -33,7 +33,7 @@ class PageFilterType extends AbstractType
         $builder->add('pagetype', ChoiceType::class, [
             'label' => 'Page type',
             'choices' => [
-                '' => '',
+                'Select a page type' => '',
                 'Static pages' => 'page',
                 'Content type pages' => 'contenttype',
             ],

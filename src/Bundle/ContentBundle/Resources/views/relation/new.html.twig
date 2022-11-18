@@ -13,29 +13,29 @@
                 <div class="aside-item-wrapper show">
                     <div class="aside-item-header">
                         <h3 class="aside-item-title">
-                            <i class="fa-solid fa-circle-info"></i>
+                            <i class="iconoir-info-empty"></i>
                             <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                         </h3>
-                        <i class="fa-solid fa-chevron-up"></i>
+                        <i class="iconoir-nav-arrow-up"></i>
                     </div>
                     <div class="aside-item-list">
                         <div class="aside-item-list-container">
                             <div class="status-options">
                                 <div class="status draft">
-                                    <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% if form.location is defined %}
-                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'fa-location-crosshairs', 'state': 'show'}) }}
+                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.icon is defined %}
-                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'fa-icons', 'state': 'show'}) }}
+                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'iconoir', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.options is defined %}
-                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                 {% endif %}
             </aside>
         </div>

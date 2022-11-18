@@ -1,7 +1,7 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Blocks{% endtrans %}{% endblock title %}
 
-{% form_theme facetFilter '@IntegratedBlock/form/form_div_filter.html.twig' %}
+{% form_theme facetFilter with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 
 {% block crumbs %}
     <div class="breadcrumb-holder">
@@ -25,7 +25,7 @@
                         <li class="dropdown">
                             <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
                                 <span>{% trans %}New{% endtrans %} {% trans %}Block{% endtrans %}</span>
-                                <i class="fa-solid fa-plus"></i>
+                                <i class="iconoir-plus"></i>
                             </a>
                             <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                                 {% for metadata in factory.allMetadata %}
@@ -55,7 +55,7 @@
                             {{ form_widget(facetFilter.q) }}
                             <span class="input-group-btn">
                                 <button type="submit" class="">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i class="iconoir-search"></i>
                                 </button>
                             </span>
                         </div>
@@ -70,6 +70,10 @@
                         {{ form_row(facetFilter.channels, {'style':'sidebar', 'state': 'show'}) }}
                     </div>
 
+                    <div class="aside-item-holder">
+                        {{ form_rest(facetFilter, {'style':'sidebar', 'state': 'show'}) }}
+                    </div>
+
                     {{ form_end(facetFilter) }}
                 </div>
             </aside>
@@ -81,6 +85,7 @@
 
 {% block javascript %}
 {{ parent() }}
+
 <script type="text/javascript">
     $(function () {
         $('[data-toggle="popover"]').popover();
