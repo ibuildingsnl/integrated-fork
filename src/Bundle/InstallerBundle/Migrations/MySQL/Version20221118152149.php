@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Application\Migrations\Doctrine;
+namespace Integrated\Bundle\InstallerBundle\Migrations\MySQL;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20221118152149 extends AbstractMigration
 {
     public function getDescription() : string
