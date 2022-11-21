@@ -12,18 +12,13 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
-use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use Integrated\Common\Solr\Indexer\IndexerInterface;
-use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 /*
@@ -41,7 +36,7 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class MediaController extends AbstractController
 {
-    public const PAGINATOR_LIMIT = 50;
+    public const PAGINATOR_LIMIT = 10;
     public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
@@ -77,13 +72,8 @@ class MediaController extends AbstractController
     public function __construct(
         private DocumentManager $documentManager,
         private MediaGalleryMenu $mediaGalleryMenu,
-        private UserManagerInterface $userManager,
         private ContentProvider $provider,
-        private ObjectRepository $repository,
-        private AuthorizationCheckerInterface $authorizationChecker,
-        private QueueSubscriber $queueSubscriber,
-        private IndexerInterface $indexer,
-        private TaxonomyRelationManager $taxonomyRelationManager
+        private TaxonomyRelationManager $taxonomyRelationManager,
     ) {
     }
 
@@ -245,7 +235,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getParams($request, $uniqueContentTypes, $dateFilter): array
+    public function getParams(Request $request, array $uniqueContentTypes, array $dateFilter): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -342,7 +332,7 @@ class MediaController extends AbstractController
         return $paramsExtended;
     }
 
-    public function createPaginator($items, $requestSource): SlidingPagination
+    private function createPaginator(array $items, Request $requestSource): SlidingPagination
     {
         $paginator = $this->getPaginator()->paginate(
             $items,
@@ -350,17 +340,20 @@ class MediaController extends AbstractController
             $this::PAGINATOR_LIMIT
         );
 
-        $paginator->amountOfPages = ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage());
-        $paginator->showingStart = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1;
-        $paginator->showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($paginator->showingEnd > $paginator->getTotalItemCount()) {
-            $paginator->showingEnd = $paginator->getTotalItemCount();
+        $showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
+        if ($showingEnd > $paginator->getTotalItemCount()) {
+            $showingEnd = $paginator->getTotalItemCount();
         }
+        $paginator->setCustomParameters([
+            'amountOfPages' => ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage()),
+            'showingStart' => $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1,
+            'showingEnd' => $showingEnd,
+        ]);
 
         return $paginator;
     }
 
-    public function getContentTypeName($item)
+    public function getContentTypeName(ContentType $item): string
     {
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $className = $item->getClass();
@@ -368,6 +361,8 @@ class MediaController extends AbstractController
         if (\in_array($className, $contentTypes)) {
             return $item->getName();
         }
+
+        return '';
     }
 
     public function manageRelations(Request $request): Response

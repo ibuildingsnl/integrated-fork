@@ -313,8 +313,8 @@
                 </div>
 
                 <div>
-                    {% if paginator.amountOfPages > 1 %}
-                        {% for i in range(1, paginator.amountOfPages) %}
+                    {% if paginator.getCustomParameter('amountOfPages') > 1 %}
+                        {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
                             {% if i == paginator.currentPageNumber %}
                                 <a class="text-red-500 bg-red-200 p-2"
                                    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
@@ -327,7 +327,7 @@
                         {% endfor %}
 
                         <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
-                        <span>{% trans %} Showing {% endtrans %} {{ paginator.showingStart }} {% trans %} till {% endtrans %} {{ paginator.showingEnd }}.</span>
+                        <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
                     {% endif %}
                 </div>
 
