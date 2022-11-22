@@ -186,6 +186,18 @@
                         <button class="btn btn-action"
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
+
+                        <span class="hover:text-yellow-500 hover:font-bold">
+                            <button onclick="fetch_component_upload_images(event)">
+                            <span class="w-10 h-10 inline-block hover:text-yellow-500 hover:fill-green-500">
+                            <svg class="inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="0" fill="none"
+                                                                                                             width="24"
+                                                                                                             height="24"/><g><path
+                                            d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3h3zm-8.5 7c.828 0 1.5-.672 1.5-1.5S15.328 8 14.5 8 13 8.672 13 9.5s.672 1.5 1.5 1.5zm3.5 3.234l-.513-.57c-.794-.885-2.18-.885-2.976 0l-.655.73L9 9l-3 3.333V6h7V4H6c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-7h-2v3.234z"/></g></svg>
+                            </span>
+                            </button>
+                        </span>
+
                     </div>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
@@ -200,9 +212,29 @@
             <section class="section-white section-radius p-4">
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
-                    <div class="media-wrapper" style="display: none;" id="table_view">
+                    <div class="media-wrapper"  id="table_view">
+{#                        style="display: none;"#}
 
+                        <div id="photo_upload_area">
+                        </div>
 
+                        <button id="modal_button" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-modal-toggle="popup-modal">
+                            Toggle modal
+                        </button>
+
+                        <div id="popup-modal" tabindex="-1" class="hidden bg-red-200 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-24 md:inset-0 h-modal md:h-full">
+                            <div class="relative w-full max-w-md h-full md:h-auto">
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="popup-modal">
+                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                        <span class="sr-only">Close modal</span>
+                                    </button>
+                                    <div id="popup-modal-content"  class="p-6 text-center">
+                                       <div>THIS CONTENT WILL BE REPLACED WITH FETCH RESULT</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
                         {% for media in paginator.items %}
@@ -305,7 +337,7 @@
                         {% endfor %}
                     </div>
 
-                    <div class="media-wrapper" id="grid_view">
+                    <div class="media-wrapper" id="grid_view" style="display: none;">
                         {% if paginator.items|length == 0 %}
                             <div>
                                 {% trans %} No results with this selection. {% endtrans %}
@@ -441,7 +473,8 @@
     </div>
 
 <script>
-    let toggle_view = 'GRID_VIEW'
+    let toggle_view = 'TABLE_VIEW'
+    let show_modal = false
 
     window.onload = function() {
         $(".toggle_view").on("click", function () {
@@ -457,6 +490,97 @@
             }
         });
 
+        $('#modal_button').on("click", async function() {
+            if (show_modal === false) {
+                $('#popup-modal').removeClass('hidden')
+                show_modal = true
+
+                options = []
+                const response = await fetch('/admin/content/e8e681dd4c693d5c8ba99ef5fc37c46a?lock=7f64bbff-7a90-4e2a-b7cc-21ad63794cec', options);
+
+                const whereToAdd = '#popup-modal-content'
+                document.querySelector(whereToAdd).innerHTML = await response.text()
+            } else {
+                $('#popup-modal').addClass('hidden')
+                show_modal = false
+            }
+        })
+    }
+
+    let current_drop_target = ''
+
+    async function fetch_component_upload_images(event) {
+        const whereToAdd = '#photo_upload_area'
+        const url = '/admin/media/upload'
+        const options = []
+
+        //toggle if needed
+        if (current_drop_target === whereToAdd) {
+            $(`#photo_upload_area`).hide()
+            current_drop_target = ''
+            return
+        } else {
+            $(`#photo_upload_area`).show()
+            current_drop_target = whereToAdd
+        }
+
+        const response = await fetch(url, options);
+
+        document.querySelector(whereToAdd).innerHTML = await response.text()
+
+        let uppy = inititalizeUppy('/admin/media/upload_file', 5)
+    }
+
+    function inititalizeUppy(endpoint_url, post_id) {
+        let uppy = new Uppy({
+            meta: {
+                userTitle: '',
+                userCaption: '',
+            },
+            onBeforeFileAdded: (currentFile, files) => currentFile,
+            onBeforeUpload(files) {
+                for (const [key, file] of Object.entries(files)) {
+                    if (!file.meta.userCaption) {
+                        file.meta.userTitle = "Dit is mijn titel"
+                        file.meta.postId = post_id
+                    }
+                }
+            },
+            // onBeforeUpload: (files) => {},
+        }).use(Dashboard, {
+            inline: true,
+            target: '#photo_upload_area',
+            height: 600,
+            showProgressDetails: true,
+            metaFields: [
+                { id: 'userTitle', name: 'Title', placeholder: 'file name' },
+                { id: 'userCaption', name: 'Description', placeholder: 'specify Description' },
+                { id: 'userCategory', name: 'Category', placeholder: 'specify Category' },
+            ],
+        })
+
+        uppy.use(XHRUpload, {
+            endpoint: endpoint_url
+        })
+
+        uppy.use(ImageEditor, {
+            target: Dashboard,
+            quality: 0.8,
+        })
+
+        uppy.on('file-added', (file) => {
+            uppy.setFileMeta(file.id, {
+                test: 'hello'
+            });
+
+            console.log(file);
+        });
+
+        uppy.on('complete', (result) => {
+            console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        })
+
+        return uppy
     }
 
     let path = '{{ path('integrated_content_media_manage_relations') }}'

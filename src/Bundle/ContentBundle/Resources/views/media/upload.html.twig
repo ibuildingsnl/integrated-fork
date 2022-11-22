@@ -1,0 +1,64 @@
+<div id="drag-drop-area" class="w-full">
+</div>
+
+<script type="module">
+
+    let current_target = 1
+
+    function inititalizeUppy(endpoint_url) {
+        let uppy = new Uppy({
+            meta: {
+                userTitle: '',
+                userCaption: '',
+                userCategory: null
+            },
+            onBeforeFileAdded: (currentFile, files) => currentFile,
+            onBeforeUpload(files) {
+                for (const [key, file] of Object.entries(files)) {
+                    if (!file.meta.userCaption) {
+                        file.meta.userTitle = "Dit is mijn titel"
+                        file.meta.userCategory = current_target
+
+                        console.log(file)
+                    }
+                }
+            },
+            // onBeforeUpload: (files) => {},
+        }).use(Dashboard, {
+            inline: true,
+            target: '#drag-drop-area',
+            metaFields: [
+                { id: 'userTitle', name: 'Title', placeholder: 'file name' },
+                { id: 'userCaption', name: 'Description', placeholder: 'specify Description' },
+                { id: 'userCategory', name: 'Category', placeholder: 'specify Category' },
+            ],
+        })
+
+        uppy.use(XHRUpload, {
+            endpoint: endpoint_url
+        })
+
+        uppy.use(ImageEditor, {
+            target: Dashboard,
+            quality: 0.8,
+        })
+
+        uppy.on('file-added', (file) => {
+            console.log("file added")
+            uppy.setFileMeta(file.id, {
+                test: 'hello'
+            });
+            console.log(file);
+        });
+
+        uppy.on('complete', (result) => {
+            console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        })
+
+        return uppy
+    }
+
+    let uppy = inititalizeUppy('https://127.0.0.1:8000/uploadme')
+
+    console.log("ready for upload")
+</script>

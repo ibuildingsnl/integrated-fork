@@ -12,14 +12,17 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\Routing\Annotation\Route;
 
 /*
  * Goal for the user:
@@ -114,6 +117,65 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ]);
+    }
+
+    #[Route('/api/components/upload_images', name: 'getUploadComponent', methods: ['GET'])]
+    public function getUploadComponent() {
+        return $this->render('@IntegratedContent/media/upload.html.twig', [
+        ]);
+    }
+
+    public function upload_file(Request $request) {
+        $entityManager = $this->getDoctrineODM()->getManager();
+
+        // I take it that I dont have to build a new function that does File / Video / Image?
+        $file = new Image();
+
+        // Which fields are required / advised? What is the proper way to set categories?
+        //get some form data
+        $uploadedFile = $request->files->get('file');
+        $userChosenCategory = $request->get('userCategory');
+        $userChosenTitle = $request->get('userTitle');
+        $userChosenCaption = $request->get('userCaption');
+
+        // I think you already have a slug function?
+        //Get the filename
+        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+//      $safeFilename = $slugger->slug($originalFilename);
+        $safeFilename = $originalFilename;
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
+
+        // Save to where?
+        // Move the file to public/files are stored, where to get this as variable?
+        try {
+            $uploadedFile->move(
+
+//                $this->getParameter($WHERE),
+                'public/files', $newFilename
+            );
+        } catch (FileException $e) {
+            // ... handle exception if something happens during file upload
+        }
+
+        // Set path of the file
+//        $urlPath = $this->getParameter('files_url_path');
+
+        // How do I set this correctly?
+        $urlPath = 'public/files';
+//        $file->setFile($urlPath . "/" . $newFilename);
+
+        // Set either a user title or the filename
+        if (null !== $userChosenTitle && '' !== $userChosenTitle ) {
+            $file->setTitle($userChosenTitle);
+        } else {
+            $file->setTitle($originalFilename);
+        }
+
+        $entityManager->persist($file);
+        $entityManager->flush();
+
+        return new JsonResponse(array('message' => 'file is uploaded.'));
     }
 
     /**
