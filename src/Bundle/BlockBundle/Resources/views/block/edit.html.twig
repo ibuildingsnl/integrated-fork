@@ -14,10 +14,10 @@
                 <div class="aside-item-wrapper show">
                     <div class="aside-item-header">
                         <h3 class="aside-item-title">
-                            <i class="fa-solid fa-circle-info"></i>
+                            <i class="iconoir-info-empty"></i>
                             <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                         </h3>
-                        <i class="fa-solid fa-chevron-up"></i>
+                        <i class="iconoir-nav-arrow-up"></i>
                     </div>
                     <div class="aside-item-list">
                         <div class="aside-item-list-container">
@@ -38,15 +38,15 @@
                             <div class="status-options">
                                 {% if form.publishedAt is defined %}
                                     <div class="status published">
-                                        <i class="fa-solid fa-circle-check"></i> {% trans %}Published{% endtrans %}
+                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
                                     </div>
                                     <a class="delete"
                                        href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                        <i class="iconoir-trash"></i>
                                     </a>
                                 {% else %}
                                     <div class="status draft">
-                                        <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                     </div>
                                 {% endif %}
                             </div>
@@ -54,13 +54,13 @@
                     </div>
                 </div>
                 {% if form.itemsPerPage is defined %}
-                    {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'grid-add', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.maxItems is defined %}
-                    {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                 {% endif %}
                 {% if form.groups is defined %}
-                    {{ form_row(form.groups, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show'}) }}
+                    {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
                 {% endif %}
             </aside>
         </div>

@@ -52,7 +52,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @Slug(fields={"id"})
      * @Type\Field(
      *     location = "sidebar",
-     *     icon = "fa-link"
+     *     icon = "link"
      * )
      */
     protected $slug;
@@ -100,7 +100,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      *          }
      *     },
      *     location = "sidebar",
-     *     icon = "fa-copyright"
+     *     icon = "copyright"
      * )
      */
     protected $disabled = false;
@@ -133,7 +133,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      *          "label" = "Copyright restrictions",
      *          },
      *     location = "sidebar",
-     *     icon = "fa-copyright"
+     *     icon = "copyright"
      *     )
      */
     protected $copyrightRestrictions;

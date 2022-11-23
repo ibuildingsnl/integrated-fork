@@ -94,7 +94,7 @@
             {% endif %}
             {% set prototype_html = '<div class="w-full relative">' ~ form_widget(prototype, prototype_vars) %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="#" class="' ~ form.vars.delete_button_class ~ '" data-removefield="collection" data-field="__id__"><i class="fa fa-xmark"></i></a>' %}
+                {% set prototype_html = prototype_html ~ '<a href="#" class="' ~ form.vars.delete_button_class ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
             {% endif %}
             {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div></div>' %}
 
@@ -113,7 +113,7 @@
                                     <a href="#" class="{{ form.vars.delete_button_class }}"
                                        data-removefield="collection"
                                        data-field="{{ field.vars.id }}">
-                                        <i class="fa fa-xmark"></i>
+                                        <i class="iconoir-cancel"></i>
                                     </a>
                                 {% endif %}
                             </div>
@@ -187,7 +187,7 @@
         {% set state = state|default(tailwind_get_state()) %}
         {% if 'search' in state %}
             <div class="aside-item-search">
-                <i class="fa fa-search"></i>
+                <i class="iconoir-search"></i>
                 <input type="text" class="list-search"
                        onchange="asideItemsSearch(this)"
                        onkeyup="asideItemsSearch(this)"
@@ -722,7 +722,7 @@
         {% set help_text = help_text|default('') %}
         {% if help_text is not empty %}
             <span class="help-block"><i
-                    class="fa-solid fa-circle-info"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
+                    class="iconoir-info-empty"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
         {% endif %}
     {% endapply %}
 {% endblock form_help %}

@@ -119,18 +119,9 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-release/0.17": "0.17.x-dev",
-            "dev-release/0.20": "0.20.x-dev",
-            "dev-release/0.21": "0.21.x-dev",
-            "dev-release/0.22": "0.22.x-dev",
-            "dev-release/0.23": "0.23.x-dev",
-            "dev-release/0.24": "0.24.x-dev",
-            "dev-release/0.25": "0.25.x-dev",
-            "dev-release/0.26": "0.26.x-dev",
-            "dev-release/0.27": "0.27.x-dev",
-            "dev-release/0.28": "0.28.x-dev",
             "dev-release/0.29": "0.29.x-dev",
-            "dev-release/0.30": "0.30.x-dev"
+            "dev-release/0.30": "0.30.x-dev",
+            "dev-release/0.80": "0.80.x-dev"
         }
     },
     "config": {

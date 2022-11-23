@@ -27,16 +27,16 @@
                     {% block sidebar %}
                         {% block content_meta %}
                             {% if form.permissions is defined %}
-                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options_publication is defined %}
-                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'link', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options_workflow is defined %}
-                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'fa-droplet', 'state': 'show'}) }}
+                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'stackoverflow', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options is defined %}
-                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                             {% endif %}
                         {% endblock %}
 
@@ -45,10 +45,10 @@
                     <div class="aside-item-wrapper show">
                         <div class="aside-item-header">
                             <h3 class="aside-item-title">
-                                <i class="fa-solid fa-circle-info"></i>
+                                <i class="iconoir-info-empty"></i>
                                 <span class="aside-item-icon">{% trans %}Relations{% endtrans %}</span>
                             </h3>
-                            <i class="fa-solid fa-chevron-up"></i>
+                            <i class="iconoir-nav-arrow-up"></i>
                         </div>
                         <div class="aside-item-list">
                             <div class="aside-item-list-container">
@@ -77,7 +77,7 @@
                         {{ form_row(form.options, {'style': 'editor', 'state': 'show'}) }}
                     {% endif %}
 
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
             </section>
         </div>
@@ -90,6 +90,8 @@
 {% endblock %}
 
 {% block webpack_js %}
+    {{ parent() }}
+
     <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
 {% endblock %}
 

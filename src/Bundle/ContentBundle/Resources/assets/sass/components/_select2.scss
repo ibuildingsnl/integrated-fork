@@ -5,7 +5,7 @@
     margin: 0;
     position: relative;
     vertical-align: middle;
-    width: 100%;
+    width: 100% !important;
 
     .select2-selection--single {
         box-sizing: border-box;
@@ -771,18 +771,18 @@
 span.select2 .select2-selection ul {
     &::before {
         color: #bfccde;
-        content: "\f002";
-        font-family: "Font Awesome 6 Free";
-        font-weight: 600;
+        content: "";
+        height: 25px;
         left: 8px;
         position: absolute;
-        top: calc(50% - 15px);
-        width: 30px;
-        height: 30px;
-        font-size: 17px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        top: calc(50% - 12.5px);
+        width: 25px;
+        -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg width="24" height="24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 15.5 19 19M5 11a6 6 0 1 0 12 0 6 6 0 0 0-12 0Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        mask-image: url('data:image/svg+xml;charset=utf-8,<svg width="24" height="24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 15.5 19 19M5 11a6 6 0 1 0 12 0 6 6 0 0 0-12 0Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        background: currentColor;
+        content: " ";
+        mask-size: cover;
+        -webkit-mask-size: cover;
     }
      padding: 0 !important;
      //overflow: auto !important;
