@@ -71,6 +71,12 @@
             <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\StaticContentListener">
+            <argument type="service" id="Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository" />
+
+            <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Doctrine\EventListener\UpdateAuthorRelationListener">
             <tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
         </service>

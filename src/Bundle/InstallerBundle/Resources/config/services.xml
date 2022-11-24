@@ -12,6 +12,7 @@
             <argument id="solarium.client" type="service"/>
             <argument id="Integrated\Bundle\InstallerBundle\Install\MySQLMigrations" type="service"/>
             <argument id="Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations" type="service"/>
+            <argument id="Integrated\Bundle\InstallerBundle\Install\StaticContent" type="service"/>
             <argument id="Integrated\Bundle\InstallerBundle\Test\BundleTest" type="service"/>
             <tag name="console.command"/>
         </service>
@@ -26,8 +27,27 @@
             <argument id="service_container" type="service"/>
         </service>
 
+        <service id="Integrated\Bundle\InstallerBundle\Install\StaticContent">
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+            <argument id="Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository" type="service"/>
+            <argument id="integrated_installer.serializer" type="service"/>
+        </service>
+
         <service id="Integrated\Bundle\InstallerBundle\Test\BundleTest">
             <argument>%kernel.bundles%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\InstallerBundle\Serializer\Normalizer\DocumentNormalizer">
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+        </service>
+
+        <service id="integrated_installer.serializer" class="Symfony\Component\Serializer\Serializer">
+            <argument type="collection">
+                <argument type="service" id="Integrated\Bundle\InstallerBundle\Serializer\Normalizer\DocumentNormalizer" />
+            </argument>
+            <argument type="collection">
+                <argument type="service" id="serializer.encoder.xml" />
+            </argument>
         </service>
 
     </services>

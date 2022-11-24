@@ -13,6 +13,7 @@ namespace Integrated\Bundle\SlugBundle\Mapping\Driver;
 
 use Doctrine\Common\Annotations\Reader;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
+use Metadata\ClassMetadata;
 use Metadata\Driver\DriverInterface;
 use Metadata\MergeableClassMetadata;
 
@@ -39,7 +40,7 @@ class AnnotationDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass(\ReflectionClass $class)
+    public function loadMetadataForClass(\ReflectionClass $class): ?ClassMetadata
     {
         $classMetadata = new MergeableClassMetadata($class->getName());
 

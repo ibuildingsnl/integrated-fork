@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping\Driver;
 
+use Metadata\ClassMetadata;
 use Metadata\Driver\DriverInterface;
 
 /**
@@ -23,7 +24,7 @@ class XmlDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass(\ReflectionClass $class)
+    public function loadMetadataForClass(\ReflectionClass $class): ?ClassMetadata
     {
         throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
     }

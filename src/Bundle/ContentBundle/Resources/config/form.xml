@@ -199,6 +199,12 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Form\Extension\AbstractTypeExtension">
+            <argument type="service" id="Integrated\Bundle\ContentBundle\StaticContent\StaticContentRepository" />
+
+            <tag name="form.type_extension" extended-type="Symfony\Component\Form\Extension\Core\Type\FormType"/>
+        </service>
+
     </services>
 
 </container>

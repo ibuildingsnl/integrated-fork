@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use Integrated\Bundle\InstallerBundle\Install\MongoDBMigrations;
 use Integrated\Bundle\InstallerBundle\Install\MySQLMigrations;
+use Integrated\Bundle\InstallerBundle\Install\StaticContent;
 use Integrated\Bundle\InstallerBundle\Test\BundleTest;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
@@ -23,6 +24,16 @@ use Symfony\Component\Process\Process;
 class IntegratedInstallCommand extends Command
 {
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
      * @var MySQLMigrations
      */
     private $migrations;
@@ -33,14 +44,9 @@ class IntegratedInstallCommand extends Command
     private $mongoDBMigrations;
 
     /**
-     * @var EntityManager
+     * @var StaticContent
      */
-    private $entityManager;
-
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
+    private $staticContent;
 
     /**
      * @var Client
@@ -53,18 +59,28 @@ class IntegratedInstallCommand extends Command
     private $bundleTest;
 
     /**
-     * @param EntityManager   $entityManager
-     * @param DocumentManager $documentManager
-     * @param Client          $solrClient
-     * @param MySQLMigrations $migrations
-     * @param BundleTest      $bundleTest
+     * @param EntityManager     $entityManager
+     * @param DocumentManager   $documentManager
+     * @param Client            $solrClient
+     * @param MySQLMigrations   $migrations
+     * @param MongoDBMigrations $mongoDBMigrations
+     * @param StaticContent     $staticContent
+     * @param BundleTest        $bundleTest
      */
-    public function __construct(EntityManager $entityManager, DocumentManager $documentManager, Client $solrClient, MySQLMigrations $migrations, MongoDBMigrations $mongoDBMigrations, BundleTest $bundleTest)
-    {
-        $this->migrations = $migrations;
-        $this->mongoDBMigrations = $mongoDBMigrations;
+    public function __construct(
+        EntityManager $entityManager,
+        DocumentManager $documentManager,
+        Client $solrClient,
+        MySQLMigrations $migrations,
+        MongoDBMigrations $mongoDBMigrations,
+        StaticContent $staticContent,
+        BundleTest $bundleTest
+    ) {
         $this->entityManager = $entityManager;
         $this->documentManager = $documentManager;
+        $this->migrations = $migrations;
+        $this->mongoDBMigrations = $mongoDBMigrations;
+        $this->staticContent = $staticContent;
         $this->solrClient = $solrClient;
         $this->bundleTest = $bundleTest;
 
@@ -128,6 +144,7 @@ class IntegratedInstallCommand extends Command
 
             $this->migrations->execute();
             $this->mongoDBMigrations->execute();
+            $this->staticContent->execute();
         }
 
         return 0;

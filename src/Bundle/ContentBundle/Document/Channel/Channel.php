@@ -100,6 +100,7 @@ class Channel implements ChannelInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->domains = [];
     }
 
     /**
