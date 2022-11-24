@@ -18,7 +18,7 @@ use ReflectionClass;
 
 class StaticContentPass implements CompilerPassInterface
 {
-    const SERVICE_ID = StaticContentRepository::class;
+    public const SERVICE_ID = StaticContentRepository::class;
 
     /**
      * {@inheritdoc}

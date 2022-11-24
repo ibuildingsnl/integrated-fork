@@ -25,6 +25,7 @@ use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**

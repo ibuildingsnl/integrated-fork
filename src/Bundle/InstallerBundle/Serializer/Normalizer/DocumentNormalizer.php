@@ -31,7 +31,7 @@ class DocumentNormalizer implements DenormalizerInterface
      */
     private $objectNormalizer;
 
-    const SUPPORTED_DOCUMENTS = [
+    public const SUPPORTED_DOCUMENTS = [
         Channel::class,
         ContentType::class,
     ];
