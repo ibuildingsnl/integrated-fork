@@ -1,3 +1,15 @@
+import Uppy from '@uppy/core'
+global.Uppy = Uppy
+
+import Dashboard from '@uppy/dashboard'
+global.Dashboard = Dashboard
+
+import XHRUpload from '@uppy/xhr-upload'
+global.XHRUpload = XHRUpload
+
+import ImageEditor from '@uppy/image-editor'
+global.ImageEditor = ImageEditor
+
 //BULKSELECTION FUNCTIONALITY
 let bulkSelectionEnabled = false //this controls if we show an icon with each image
 let bulkSelection = [] //this keeps track which items are selected
@@ -76,10 +88,10 @@ async function disableBulkSelection() {
         $("li", $gallery).draggable({
             helper: "clone",
             start: function (ev, ui) {
-                offset = {
-                    top: 50,
-                    left: 50
-                }
+                // offset = {
+                //     top: 50,
+                //     left: 50
+                // }
             }
         });
 

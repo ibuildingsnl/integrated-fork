@@ -11,12 +11,19 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
+use Integrated\Bundle\StorageBundle\Storage\Reader\UploadedFileReader;
+use Integrated\Common\Storage\ManagerInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +46,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MediaController extends AbstractController
 {
-    public const PAGINATOR_LIMIT = 10;
+    public const PAGINATOR_LIMIT = 40;
     public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
@@ -77,6 +84,7 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
+        private ManagerInterface $manager,
     ) {
     }
 
@@ -128,54 +136,72 @@ class MediaController extends AbstractController
     public function upload_file(Request $request) {
         $entityManager = $this->getDoctrineODM()->getManager();
 
-        // I take it that I dont have to build a new function that does File / Video / Image?
-        $file = new Image();
+        //check filetype
+        $uploadedFileExtension = $request->files->get('file')->getClientOriginalExtension();
+        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
+        $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
+        $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
+        $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
 
-        // Which fields are required / advised? What is the proper way to set categories?
-        //get some form data
+        // is this file allowed?
+        $isAllowed = in_array($uploadedFileExtension, [...$image_filetypes, ...$video_filetypes, ...$file_filetypes]);
+        if ($isAllowed !== true) {
+            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
+        }
+
+        // Find a matching class with the extension
+        if (in_array($uploadedFileExtension, $image_filetypes)) {
+            $file = new Image;
+            $file->setContentType('image');
+        } else if (in_array($uploadedFileExtension, $video_filetypes)) {
+            $file = new Video;
+            $file->setContentType('video');
+        } else if (in_array($uploadedFileExtension, $file_filetypes)) {
+            $file = new File;
+            $file->setContentType('file');
+        } else {
+            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
+        }
+
+        // Get user / system data:
         $uploadedFile = $request->files->get('file');
+        $urlCategoryId = $request->get('categoryId');
         $userChosenCategory = $request->get('userCategory');
         $userChosenTitle = $request->get('userTitle');
         $userChosenCaption = $request->get('userCaption');
-
-        // I think you already have a slug function?
-        //Get the filename
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-        // this is needed to safely include the file name as part of the URL
-//      $safeFilename = $slugger->slug($originalFilename);
-        $safeFilename = $originalFilename;
-        $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
 
-        // Save to where?
-        // Move the file to public/files are stored, where to get this as variable?
-        try {
-            $uploadedFile->move(
 
-//                $this->getParameter($WHERE),
-                'public/files', $newFilename
-            );
-        } catch (FileException $e) {
-            // ... handle exception if something happens during file upload
-        }
 
-        // Set path of the file
-//        $urlPath = $this->getParameter('files_url_path');
+//        if (null !== $userChosenTitle && '' !== $userChosenTitle ) {
+//            $file->setTitle($userChosenTitle);
+//        } else {
+//            $file->setTitle($originalFilename);
+//        }
+        $file->setTitle("UPPY UPLOAD");
 
-        // How do I set this correctly?
-        $urlPath = 'public/files';
-//        $file->setFile($urlPath . "/" . $newFilename);
+        $storage = $this->manager->write(
+            new MemoryReader(
+                file_get_contents($request->files->get('file')),
+                new Metadata(
+                    $uploadedFileExtension,
+                    $uploadedFileMimetype,
+                    new ArrayCollection(),
+                    new ArrayCollection()
+                )
+            )
+        );
 
-        // Set either a user title or the filename
-        if (null !== $userChosenTitle && '' !== $userChosenTitle ) {
-            $file->setTitle($userChosenTitle);
-        } else {
-            $file->setTitle($originalFilename);
-        }
+        $file->setFile($storage);
 
         $entityManager->persist($file);
         $entityManager->flush();
 
-        return new JsonResponse(array('message' => 'file is uploaded.'));
+        $request->attributes->set('media_id', $file->getId());
+
+        $this->taxonomyRelationManager->manageRelations($request);
+
+        return new JsonResponse(array('message' => 'file is uploaded.', 'content' => json_encode($file)));
     }
 
     /**
