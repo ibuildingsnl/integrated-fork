@@ -13,12 +13,14 @@ namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
 use Integrated\Bundle\ContentBundle\Event\ContentEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
  * @author Patrick Mestebeld <patrick@e-active.nl>
  */
-class IntegratedContentExtension extends \Twig_Extension
+class IntegratedContentExtension extends AbstractExtension
 {
     /**
      * @var EventDispatcherInterface
@@ -39,7 +41,7 @@ class IntegratedContentExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('integrated_content', [$this, 'integratedContent'], ['is_safe' => ['html']]),
+            new TwigFilter('integrated_content', [$this, 'integratedContent'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -51,7 +53,7 @@ class IntegratedContentExtension extends \Twig_Extension
     public function integratedContent($content)
     {
         $contentEvent = new ContentEvent($content);
-        $this->eventDispatcher->dispatch(ContentEvent::NAME, $contentEvent);
+        $this->eventDispatcher->dispatch($contentEvent, ContentEvent::NAME);
 
         return $contentEvent->getContent();
     }

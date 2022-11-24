@@ -69,7 +69,27 @@ class IntegratedMenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, array $options = [])
+    public function get(string $name, array $options = []): ItemInterface
+    {
+        if ($menu = $this->find($name, $options)) {
+            return $menu;
+        }
+
+        throw new \Exception(sprintf('Menu %s not found on channel', $name));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has(string $name, array $options = []): bool
+    {
+        return null !== $this->find($name, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function find($name, array $options = []): ?ItemInterface
     {
         $channel = $this->channelContext->getChannel();
 
@@ -95,14 +115,8 @@ class IntegratedMenuProvider implements MenuProviderInterface
         if (isset($this->menus[$name][$channel])) {
             return $this->menus[$name][$channel];
         }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($name, array $options = [])
-    {
-        return null !== $this->get($name, $options);
+        return null;
     }
 
     /**

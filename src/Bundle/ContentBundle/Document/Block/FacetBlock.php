@@ -29,7 +29,7 @@ class FacetBlock extends Block
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
-     *          "class"="IntegratedContentBundle:Block\ContentBlock",
+     *          "class"="Integrated\Bundle\ContentBundle\Document\Block\ContentBlock",
      *          "choice_label"="title",
      *          "placeholder"=""
      *      }
@@ -53,9 +53,10 @@ class FacetBlock extends Block
      */
     protected $fields;
 
-    public function __construct()
+    public function __construct($id = null)
     {
-        parent::__construct();
+        parent::__construct($id);
+
         $this->fields = new ArrayCollection();
     }
 

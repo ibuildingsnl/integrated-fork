@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\SolrBundle\DependencyInjection;
 
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
 use Solarium\Core\Client\Endpoint;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -38,7 +39,6 @@ class IntegratedSolrExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('converter.xml');
-        $loader->load('event.xml');
         $loader->load('event_listeners.xml');
         $loader->load('command.xml');
         $loader->load('indexer.xml');
@@ -67,13 +67,19 @@ class IntegratedSolrExtension extends Extension
             $endpoints[] = new Reference('solarium.client.endpoint.'.$name);
         }
 
+        $container->register('solarium.adapter.curl', Curl::class)->addMethodCall(
+            'setTimeout',
+            [$config['timeout'] ?? 200]
+        );
+
         $container->setDefinition(
             'solarium.client',
             (new Definition(
                 Client::class,
                 [
+                    new Reference('solarium.adapter.curl'),
+                    new Reference('event_dispatcher'),
                     ['endpoint' => $endpoints],
-                    new Reference('integrated_solr.event.dispatcher'),
                 ]
             ))->setPublic(true)
         );

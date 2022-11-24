@@ -13,21 +13,18 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
 use Doctrine\ODM\MongoDB\Types\Type as MongoType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 
 /**
  * Class SearchContentReferenced.
- *
- * @author Vasil Pascal <developer.optimum@gmail.com>
  */
 class SearchContentReferenced
 {
     /**
      * @const IGNORE_CLASSES
      */
-    const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
+    public const IGNORE_CLASSES = ['Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction'];
 
     /**
      * @var DocumentManager
@@ -36,8 +33,6 @@ class SearchContentReferenced
 
     /**
      * SearchContentReferenced constructor.
-     *
-     * @param DocumentManager $dm
      */
     public function __construct(DocumentManager $dm)
     {
@@ -54,7 +49,7 @@ class SearchContentReferenced
     public function getReferenced($document)
     {
         $metadataFactory = $this->dm->getMetadataFactory();
-        $deleted = $this->getDeletedInfo($document, $metadataFactory);
+        $deleted = $this->getDeletedInfo($document, $this->dm);
         $allMetadata = $metadataFactory->getAllMetadata();
 
         $referenced = [];
@@ -92,10 +87,15 @@ class SearchContentReferenced
                 } elseif ($fieldMetaData = $metadataFactory->getMetadataFor($assocClassName)) {
                     $fieldAssociations = $fieldMetaData->getAssociationNames();
 
+                    if (!$fieldMetaData->isEmbeddedDocument) {
+                        continue;
+                    }
+
                     foreach ($fieldAssociations as $fieldAssociation) {
                         $fieldAssocClassName = $fieldMetaData->getAssociationTargetClass($fieldAssociation);
+                        $allow = $deleted['className'] == $fieldAssocClassName || is_subclass_of($deleted['className'], $fieldAssocClassName);
 
-                        if ($deleted['className'] == $fieldAssocClassName || is_subclass_of($deleted['className'], $fieldAssocClassName)) {
+                        if ($allow) {
                             $items = $this->dm->createQueryBuilder($classMetadata->getName())
                                 ->field($assocFieldName.'.'.$fieldAssociation.'.$id')
                                 ->equals($deleted['idValue'])
@@ -113,23 +113,22 @@ class SearchContentReferenced
             }
         }
 
-        return $this->prepareReferenced(array_unique($referenced));
+        return $this->prepareReferenced($referenced);
     }
 
     /**
-     * @param mixed                $document
-     * @param ClassMetadataFactory $metadataFactory
+     * @param mixed $document
      *
      * @return array
      *
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Exception
      */
-    public function getDeletedInfo($document, ClassMetadataFactory $metadataFactory)
+    public function getDeletedInfo($document, DocumentManager $documentManager)
     {
         $deleted = [
             'className' => \get_class($document),
-            'metadata' => $metadataFactory->getMetadataFor(\get_class($document)),
+            'metadata' => $documentManager->getClassMetadata(\get_class($document)),
         ];
 
         $deleted['idField'] = current($deleted['metadata']->getIdentifier());
@@ -154,14 +153,15 @@ class SearchContentReferenced
     {
         $output = [];
         foreach ($referenced as $item) {
+            $key = \get_class($item).'-'.$item->getId();
             if ($item instanceof Content) {
-                $output[] = [
+                $output[$key] = [
                     'action' => 'integrated_content_content_edit',
                     'id' => $item->getId(),
                     'name' => method_exists($item, 'getTitle') ? $item->getTitle() : \get_class($item),
                 ];
             } else {
-                $output[] = [
+                $output[$key] = [
                     'id' => $item->getId(),
                     'name' => \get_class($item),
                 ];

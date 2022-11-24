@@ -20,7 +20,7 @@ use Integrated\Common\Content\Extension\Event\Subscriber\ContentTypeSubscriberIn
 use Integrated\Common\Content\Extension\Event\Subscriber\MetadataSubscriberInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 
@@ -109,15 +109,15 @@ class Dispatcher implements DispatcherInterface, RegistryInterface
     public function dispatch($eventName, $object)
     {
         if ($object instanceof ContentInterface) {
-            return $this->dispatcher['content']->dispatch($eventName, new ContentEvent($object));
+            return $this->dispatcher['content']->dispatch(new ContentEvent($object), $eventName);
         }
 
         if ($object instanceof ContentTypeInterface) {
-            return $this->dispatcher['type']->dispatch($eventName, new ContentTypeEvent($object));
+            return $this->dispatcher['type']->dispatch(new ContentTypeEvent($object), $eventName);
         }
 
         if ($object instanceof MetadataEditorInterface) {
-            return $this->dispatcher['metadata']->dispatch($eventName, new MetadataEvent($object));
+            return $this->dispatcher['metadata']->dispatch(new MetadataEvent($object), $eventName);
         }
 
         return new Event();

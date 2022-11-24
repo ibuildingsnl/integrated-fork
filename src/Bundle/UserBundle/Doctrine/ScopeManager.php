@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use InvalidArgumentException;
@@ -80,7 +80,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->om->persist($scope);
 
         if ($flush) {
-            $this->om->flush($scope);
+            $this->om->flush();
         }
     }
 
@@ -92,7 +92,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->om->remove($scope);
 
         if ($flush) {
-            $this->om->flush($scope);
+            $this->om->flush();
         }
     }
 

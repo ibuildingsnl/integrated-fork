@@ -19,7 +19,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\BulkConfigureType;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
  */
-class BulkController extends Controller
+class BulkController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -69,7 +69,7 @@ class BulkController extends Controller
      *
      * @return RedirectResponse|Response
      */
-    public function selectAction(Request $request, BulkAction $bulk = null)
+    public function select(Request $request, BulkAction $bulk = null)
     {
         // Fetch Content selection.
         $limit = 1000;
@@ -99,7 +99,7 @@ class BulkController extends Controller
             return $this->redirectToRoute('integrated_content_bulk_configure', ['id' => $bulk->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:bulk:select.html.twig', [
+        return $this->render('@IntegratedContent/bulk/select.html.twig', [
             'content' => $content,
             'limit' => $limit,
             'form' => $form->createView(),
@@ -112,7 +112,7 @@ class BulkController extends Controller
      *
      * @return RedirectResponse|Response
      */
-    public function configureAction(Request $request, BulkAction $bulk)
+    public function configure(Request $request, BulkAction $bulk)
     {
         if ($bulk->getExecutedAt()) {
             return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
@@ -127,7 +127,7 @@ class BulkController extends Controller
             return $this->redirectToRoute('integrated_content_bulk_confirm', ['id' => $bulk->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:bulk:configure.html.twig', [
+        return $this->render('@IntegratedContent/bulk/configure.html.twig', [
             'id' => $bulk->getId(),
             'selection' => \count($bulk->getSelection()),
             'form' => $form->createView(),
@@ -140,8 +140,10 @@ class BulkController extends Controller
      *
      * @return RedirectResponse|Response
      */
-    public function confirmAction(Request $request, BulkAction $bulk)
+    public function confirm(Request $request, BulkAction $bulk)
     {
+        $this->preventTimeout();
+
         if ($bulk->getExecutedAt()) {
             return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
         }
@@ -167,10 +169,18 @@ class BulkController extends Controller
             }
         }
 
-        return $this->render('IntegratedContentBundle:bulk:confirm.html.twig', [
+        return $this->render('@IntegratedContent/bulk/confirm.html.twig', [
             'id' => $bulk->getId(),
             'selection' => \count($bulk->getSelection()),
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * Try to prevent reaching the timeout on large bulk actions.
+     */
+    private function preventTimeout()
+    {
+        ini_set('max_execution_time', '600');
     }
 }

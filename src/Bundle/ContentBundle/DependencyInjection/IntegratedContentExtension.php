@@ -27,7 +27,7 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
     /**
      * @var string
      */
-    protected $formTemplate = 'IntegratedContentBundle:form:form_div_layout.html.twig';
+    protected $formTemplate = '@IntegratedContent/form/form_div_layout.html.twig';
 
     /**
      * Load the configuration.
@@ -59,7 +59,6 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
         $loader->load('solr.xml');
         $loader->load('twig.xml');
         $loader->load('event_listeners.xml');
-        $loader->load('event_dispatchers.xml');
         $loader->load('repositories.xml');
         $loader->load('menu.xml');
         $loader->load('routing.services.xml');

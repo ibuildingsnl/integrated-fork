@@ -60,7 +60,7 @@ class ListCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->registry->getIterator() as $key => $filesystem) {
             $output->writeln(
@@ -86,5 +86,7 @@ class ListCommand extends Command
                 );
             }
         }
+
+        return 0;
     }
 }

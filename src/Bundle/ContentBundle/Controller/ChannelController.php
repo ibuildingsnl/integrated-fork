@@ -11,12 +11,16 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type as Form;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,32 +30,52 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ChannelController extends Controller
+class ChannelController extends AbstractController
 {
     /**
-     * @var string
+     * @var DocumentManager
      */
-    protected $channelClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Channel\\Channel';
+    protected $documentManager;
 
     /**
-     * @var \Doctrine\ODM\MongoDB\DocumentManager
+     * @var SearchContentReferenced
      */
-    protected $dm;
+    protected $searchContentReferenced;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @param DocumentManager          $documentManager
+     * @param SearchContentReferenced  $searchContentReferenced
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(
+        DocumentManager $documentManager,
+        SearchContentReferenced $searchContentReferenced,
+        EventDispatcherInterface $dispatcher
+    ) {
+        $this->searchContentReferenced = $searchContentReferenced;
+        $this->documentManager = $documentManager;
+        $this->dispatcher = $dispatcher;
+    }
 
     /**
      * Lists all the Channel documents.
      *
      * @return Response
      */
-    public function indexAction()
+    public function index()
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $documents = $this->getDocumentManager()->getRepository($this->channelClass)->findAll();
+        $documents = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
 
-        return $this->render('IntegratedContentBundle:channel:index.html.twig', [
+        return $this->render('@IntegratedContent/channel/index.html.twig', [
             'documents' => $documents,
         ]);
     }
@@ -63,16 +87,13 @@ class ChannelController extends Controller
      *
      * @return Response
      */
-    public function showAction(Channel $channel)
+    public function show(Channel $channel)
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createDeleteForm($channel->getId());
-
-        return $this->render('IntegratedContentBundle:channel:show.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('@IntegratedContent/channel/show.html.twig', [
             'channel' => $channel,
         ]);
     }
@@ -82,7 +103,7 @@ class ChannelController extends Controller
      *
      * @return Response
      */
-    public function newAction()
+    public function new()
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -92,7 +113,7 @@ class ChannelController extends Controller
 
         $form = $this->createCreateForm($channel);
 
-        return $this->render('IntegratedContentBundle:channel:new.html.twig', [
+        return $this->render('@IntegratedContent/channel/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -104,7 +125,7 @@ class ChannelController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -115,19 +136,18 @@ class ChannelController extends Controller
         $form = $this->createCreateForm($channel);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $this->getDocumentManager()->persist($channel);
-            $this->getDocumentManager()->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->documentManager->persist($channel);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
-            $dispatcher = $this->get('integrated_content.event_dispatcher');
-            $dispatcher->dispatch(Events::CHANNEL_CREATED, new ChannelEvent($channel));
+            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_CREATED);
 
-            return $this->redirect($this->generateUrl('integrated_content_channel_show', ['id' => $channel->getId()]));
+            return $this->redirectToRoute('integrated_content_channel_show', ['id' => $channel->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:channel:new.html.twig', [
+        return $this->render('@IntegratedContent/channel/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -139,7 +159,7 @@ class ChannelController extends Controller
      *
      * @return Response
      */
-    public function editAction(Channel $channel)
+    public function edit(Channel $channel)
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -147,7 +167,7 @@ class ChannelController extends Controller
 
         $form = $this->createEditForm($channel);
 
-        return $this->render('IntegratedContentBundle:channel:edit.html.twig', [
+        return $this->render('@IntegratedContent/channel/edit.html.twig', [
             'form' => $form->createView(),
             'channel' => $channel,
         ]);
@@ -161,7 +181,7 @@ class ChannelController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function updateAction(Request $request, Channel $channel)
+    public function update(Request $request, Channel $channel)
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -170,18 +190,17 @@ class ChannelController extends Controller
         $form = $this->createEditForm($channel);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $this->getDocumentManager()->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
-            $dispatcher = $this->get('integrated_content.event_dispatcher');
-            $dispatcher->dispatch(Events::CHANNEL_UPDATED, new ChannelEvent($channel));
+            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
 
-            return $this->redirect($this->generateUrl('integrated_content_channel_show', ['id' => $channel->getId()]));
+            return $this->redirectToRoute('integrated_content_channel_show', ['id' => $channel->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:channel:edit.html.twig', [
+        return $this->render('@IntegratedContent/channel/edit.html.twig', [
             'form' => $form->createView(),
             'channel' => $channel,
         ]);
@@ -195,26 +214,33 @@ class ChannelController extends Controller
      *
      * @return RedirectResponse
      */
-    public function deleteAction(Request $request, Channel $channel)
+    public function delete(Request $request, Channel $channel)
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createDeleteForm($channel->getId());
+        $referenced = $this->searchContentReferenced->getReferenced($channel);
+
+        $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $this->getDocumentManager()->remove($channel);
-            $this->getDocumentManager()->flush();
+        if ($form->isSubmitted() && $form->isValid() && $form->has('submit') && $form->get('submit')->isClicked()) {
+            $this->documentManager->remove($channel);
+            $this->documentManager->flush();
 
-            $dispatcher = $this->get('integrated_content.event_dispatcher');
-            $dispatcher->dispatch(Events::CHANNEL_DELETED, new ChannelEvent($channel));
+            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_DELETED);
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Channel deleted');
+
+            return $this->redirectToRoute('integrated_content_channel_index');
         }
 
-        return $this->redirect($this->generateUrl('integrated_content_channel_index'));
+        return $this->render('@IntegratedContent/channel/delete.html.twig', [
+            'channel' => $channel,
+            'form' => $form->createView(),
+            'referenced' => $referenced,
+        ]);
     }
 
     /**
@@ -222,7 +248,7 @@ class ChannelController extends Controller
      *
      * @param Channel $channel
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createCreateForm(Channel $channel)
     {
@@ -245,7 +271,7 @@ class ChannelController extends Controller
      *
      * @param Channel $channel
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(Channel $channel)
     {
@@ -262,29 +288,23 @@ class ChannelController extends Controller
     /**
      * Creates a form to delete a Channel document by id.
      *
-     * @param mixed $id The document id
+     * @param mixed $id            The document id
+     * @param bool  $deleteAllowed
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
-    protected function createDeleteForm($id)
+    protected function createDeleteForm($id, bool $deleteAllowed)
     {
-        return $this->createFormBuilder()
+        $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))
-            ->setMethod('DELETE')
-            ->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['onclick' => 'return confirm(\'Are you sure you want to delete this channel?\')', 'class' => 'btn-danger']])
+            ->setMethod('DELETE');
 
-            ->getForm();
-    }
-
-    /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    protected function getDocumentManager()
-    {
-        if (null === $this->dm) {
-            $this->dm = $this->get('doctrine_mongodb')->getManager();
+        if ($deleteAllowed) {
+            $form->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
+        } else {
+            $form->add('reload', SubmitType::class, ['label' => 'Reload', 'attr' => ['class' => 'btn-default']]);
         }
 
-        return $this->dm;
+        return $form->getForm();
     }
 }

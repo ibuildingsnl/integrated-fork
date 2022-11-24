@@ -22,9 +22,9 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
  */
 class RegisterContentStyleParametersPass implements CompilerPassInterface
 {
-    const STYLE_FORMAT = 'style_formats';
-    const CONTENT_CSS = 'content_css';
-    const PARAMETER_NAME = 'integrated_content_styles';
+    public const STYLE_FORMAT = 'style_formats';
+    public const CONTENT_CSS = 'content_css';
+    public const PARAMETER_NAME = 'integrated_content_styles';
 
     /** @var array */
     private $parameters;
@@ -37,20 +37,22 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
         $this->parameters = [self::CONTENT_CSS => [], self::STYLE_FORMAT => []];
 
         foreach ($container->getParameter('kernel.bundles') as $name => $class) {
-            $this->addParameters(\dirname((new ReflectionClass($class))->getFileName()));
+            $this->addParameters(\dirname((new ReflectionClass($class))->getFileName()).'/Resources/config');
+        }
+
+        if ($container->hasParameter('kernel.project_dir')) {
+            $this->addParameters($container->getParameter('kernel.project_dir').'/config');
         }
 
         $container->getParameterBag()->add([self::PARAMETER_NAME => $this->parameters]);
     }
 
     /**
-     * @param $dir
-     *
      * @throws FileException
      */
-    private function addParameters($dir)
+    private function addParameters(string $dir)
     {
-        $filePath = $dir.'/Resources/config/contentstyle/contentstyle.xml';
+        $filePath = $dir.'/contentstyle/contentstyle.xml';
         if (!is_file($filePath)) {
             return null;
         }

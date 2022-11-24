@@ -20,11 +20,11 @@ use Integrated\Common\Solr\Indexer\Event\BatchEvent;
 class BatchEventTest extends AbstractEventTest
 {
     /**
-     * @var BatchOperation | \PHPUnit_Framework_MockObject_MockObject
+     * @var BatchOperation|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $operation;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

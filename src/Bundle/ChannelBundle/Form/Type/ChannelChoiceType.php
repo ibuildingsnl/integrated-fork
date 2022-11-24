@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\ChannelTransformer;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Symfony\Component\Form\AbstractType;
@@ -44,7 +44,9 @@ class ChannelChoiceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ChannelTransformer($this->repository, $options['multiple']));
+        if (!$options['return_object']) {
+            $builder->addModelTransformer(new ChannelTransformer($this->repository, $options['multiple']));
+        }
     }
 
     /**
@@ -54,6 +56,7 @@ class ChannelChoiceType extends AbstractType
     {
         $resolver->setDefault('class', Channel::class);
         $resolver->setDefault('choice_label', 'name');
+        $resolver->setDefault('return_object', false);
     }
 
     /**

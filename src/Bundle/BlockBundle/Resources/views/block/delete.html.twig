@@ -1,10 +1,10 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
+{% extends '@IntegratedContent/base.html.twig' %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
             <ol class="breadcrumb">
                 <li>
-                    <a href="{{ path('integrated_block_block_index') }}">{% trans %}Home{% endtrans %}</a>
+                    <a href="{{ path('integrated_block_block_index') }}">{% trans %}Blocks{% endtrans %}</a>
                 </li>
                 <li class="active">{% trans %}Delete{% endtrans %}</li>
             </ol>

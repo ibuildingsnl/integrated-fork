@@ -11,22 +11,49 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SearchSelectionController extends Controller
+class SearchSelectionController extends AbstractController
 {
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
+     * @var SearchContentReferenced
+     */
+    private $searchContentReferenced;
+
+    public function __construct(RequestStack $requestStack, DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced)
+    {
+        $this->requestStack = $requestStack;
+        $this->documentManager = $documentManager;
+        $this->searchContentReferenced = $searchContentReferenced;
+    }
+
     /**
      * Lists all the SearchSelection documents.
      *
@@ -34,13 +61,11 @@ class SearchSelectionController extends Controller
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
-        /** @var $paginator \Knp\Component\Pager\Paginator */
-        $paginator = $this->get('knp_paginator');
-        $paginator = $paginator->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 15);
+        $paginator = $this->getPaginator()->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 15);
 
-        return $this->render('IntegratedContentBundle:search_selection:index.html.twig', [
+        return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,
         ]);
     }
@@ -52,7 +77,7 @@ class SearchSelectionController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         $searchSelection = new SearchSelection();
 
@@ -63,15 +88,15 @@ class SearchSelectionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDocumentManager()->persist($searchSelection);
-            $this->getDocumentManager()->flush();
+            $this->documentManager->persist($searchSelection);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
-            return $this->redirect($this->generateUrl('integrated_content_search_selection_index'));
+            return $this->redirectToRoute('integrated_content_search_selection_index');
         }
 
-        return $this->render('IntegratedContentBundle:search_selection:new.html.twig', [
+        return $this->render('@IntegratedContent/search_selection/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -84,7 +109,7 @@ class SearchSelectionController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function editAction(Request $request, SearchSelection $searchSelection)
+    public function edit(Request $request, SearchSelection $searchSelection)
     {
         // TODO: security check
 
@@ -96,14 +121,14 @@ class SearchSelectionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDocumentManager()->flush();
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
-            return $this->redirect($this->generateUrl('integrated_content_search_selection_index'));
+            return $this->redirectToRoute('integrated_content_search_selection_index');
         }
 
-        return $this->render('IntegratedContentBundle:search_selection:edit.html.twig', [
+        return $this->render('@IntegratedContent/search_selection/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -116,7 +141,7 @@ class SearchSelectionController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function deleteAction(Request $request, SearchSelection $searchSelection)
+    public function delete(Request $request, SearchSelection $searchSelection)
     {
         // TODO: security check
 
@@ -124,22 +149,21 @@ class SearchSelectionController extends Controller
             throw new AccessDeniedException();
         }
 
-        $contentReferenced = $this->get('integrated_content.services.search.content.referenced');
-        $referenced = $contentReferenced->getReferenced($searchSelection);
+        $referenced = $this->searchContentReferenced->getReferenced($searchSelection);
 
         $form = $this->createDeleteForm($searchSelection->getId(), \count($referenced) > 0);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDocumentManager()->remove($searchSelection);
-            $this->getDocumentManager()->flush();
+            $this->documentManager->remove($searchSelection);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Item deleted');
 
-            return $this->redirect($this->generateUrl('integrated_content_search_selection_index'));
+            return $this->redirectToRoute('integrated_content_search_selection_index');
         }
 
-        return $this->render('IntegratedContentBundle:search_selection:delete.html.twig', [
+        return $this->render('@IntegratedContent/search_selection/delete.html.twig', [
             'searchSelection' => $searchSelection,
             'form' => $form->createView(),
             'referenced' => $referenced,
@@ -151,17 +175,17 @@ class SearchSelectionController extends Controller
      *
      * @return Response
      */
-    public function menuAction()
+    public function menu()
     {
         /** @var Request $request */
-        $request = $this->get('request_stack')->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository $repo */
-        $repo = $this->getDocumentManager()->getRepository(SearchSelection::class);
+        /** @var SearchSelectionRepository $repo */
+        $repo = $this->documentManager->getRepository(SearchSelection::class);
 
         $user = $this->getUser();
 
-        return $this->render('IntegratedContentBundle:search_selection:menu.html.twig', [
+        return $this->render('@IntegratedContent/search_selection/menu.html.twig', [
             'filters' => $request ? $request->query->all() : [],
             'searchSelections' => $user ? $repo->findPublicByUserId($user->getId()) : [],
         ]);
@@ -177,7 +201,7 @@ class SearchSelectionController extends Controller
     protected function createCreateForm(SearchSelection $searchSelection)
     {
         /** @var Request $request */
-        $request = $this->get('request_stack')->getCurrentRequest();
+        $request = $this->requestStack->getCurrentRequest();
 
         $form = $this->createForm(
             SearchSelectionType::class,
@@ -245,24 +269,16 @@ class SearchSelectionController extends Controller
     }
 
     /**
-     * @return \Doctrine\ODM\MongoDB\Query\Builder
+     * @return Builder
      */
     protected function getQueryBuilder()
     {
-        $builder = $this->getDocumentManager()->createQueryBuilder(SearchSelection::class);
+        $builder = $this->documentManager->createQueryBuilder(SearchSelection::class);
 
-        if (false === $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if (false === $this->isGranted('ROLE_ADMIN')) {
             $builder->field('userId')->equals($this->getUser()->getId());
         }
 
         return $builder;
-    }
-
-    /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    protected function getDocumentManager()
-    {
-        return $this->get('doctrine_mongodb')->getManager();
     }
 }

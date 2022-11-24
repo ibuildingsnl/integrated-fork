@@ -31,7 +31,7 @@ class MongoDBIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): mixed
     {
         return current($this->types) ?: null;
     }
@@ -39,7 +39,7 @@ class MongoDBIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         next($this->types);
     }
@@ -47,7 +47,7 @@ class MongoDBIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->valid() ? $this->current()->getId() : null;
     }
@@ -55,7 +55,7 @@ class MongoDBIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->types) !== null;
     }
@@ -63,7 +63,7 @@ class MongoDBIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->types);
     }

@@ -12,7 +12,9 @@
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -22,7 +24,7 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class PageLoader implements LoaderInterface
 {
-    const ROUTE_PREFIX = 'integrated_website_page_';
+    public const ROUTE_PREFIX = 'integrated_website_page_';
 
     /**
      * @var bool
@@ -53,7 +55,7 @@ class PageLoader implements LoaderInterface
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository('IntegratedPageBundle:Page\Page')->findBy(['disabled' => false]);
+        $pages = $this->dm->getRepository(Page::class)->findBy(['disabled' => false]);
 
         /** @var \Integrated\Bundle\PageBundle\Document\Page\Page $page */
         foreach ($pages as $page) {
@@ -96,6 +98,7 @@ class PageLoader implements LoaderInterface
      */
     public function getResolver()
     {
+        return new LoaderResolver();
     }
 
     /**

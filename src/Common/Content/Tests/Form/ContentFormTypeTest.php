@@ -39,27 +39,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $type;
 
     /**
-     * @var MetadataFactoryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var MetadataFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $metadataFactory;
 
     /**
-     * @var MetadataInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var MetadataInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $metadata;
 
     /**
-     * @var ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $resolver;
 
     /**
-     * @var EventDispatcherInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $dispatcher;
 
@@ -191,15 +191,15 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher->expects($this->exactly(7))
             ->method('dispatch')
             ->withConsecutive(
-                [$this->equalTo(Events::PRE_BUILD), $this->callback($callback[0])],
-                [$this->equalTo(Events::PRE_BUILD_FIELD), $this->callback($callback[1])],
-                [$this->equalTo(Events::BUILD_FIELD), $this->callback($callback[2])],
-                [$this->equalTo(Events::POST_BUILD_FIELD), $this->callback($callback[1])],
-                [$this->equalTo(Events::PRE_BUILD_FIELD), $this->callback($callback[1])],
-                [$this->equalTo(Events::POST_BUILD_FIELD), $this->callback($callback[1])],
-                [$this->equalTo(Events::POST_BUILD), $this->callback($callback[0])]
+                [$this->callback($callback[0])],
+                [$this->callback($callback[1])],
+                [$this->callback($callback[2])],
+                [$this->callback($callback[1])],
+                [$this->callback($callback[1])],
+                [$this->callback($callback[1])],
+                [$this->callback($callback[0])]
             )
-            ->willReturnArgument(1);
+            ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())
             ->method('getFields')
@@ -267,10 +267,10 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
             ->withConsecutive(
-                [$this->equalTo(Events::PRE_BUILD), $this->callback($callback)],
-                [$this->equalTo(Events::POST_BUILD), $this->callback($callback)]
+                [$this->callback($callback)],
+                [$this->callback($callback)]
             )
-            ->willReturnArgument(1);
+            ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())
             ->method('getFields')
@@ -293,8 +293,8 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(Events::BUILD_FIELD), $this->callback($callback))
-            ->willReturnArgument(1);
+            ->with($this->callback($callback))
+            ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())
             ->method('getFields')
@@ -329,8 +329,8 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(Events::BUILD_FIELD), $this->callback($callback))
-            ->willReturnArgument(1);
+            ->with($this->callback($callback))
+            ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())
             ->method('getFields')
@@ -393,7 +393,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(Events::PRE_VIEW), $this->callback($callback));
+            ->with($this->callback($callback));
 
         $this->getInstance()->buildView($view, $form, ['content_type' => $this->type]);
     }
@@ -439,7 +439,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with($this->equalTo(Events::POST_VIEW), $this->callback($callback));
+            ->with($this->callback($callback));
 
         $this->getInstance()->finishView($view, $form, ['content_type' => $this->type]);
     }
@@ -452,7 +452,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('setRequired')
             ->with('content_type')
-            ->willReturn($resolver)
+            ->will($this->returnValue($resolver))
         ;
 
         $resolver
@@ -497,7 +497,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormBuilderInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilder()
     {
@@ -505,7 +505,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormView | \PHPUnit_Framework_MockObject_MockObject
+     * @return FormView|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getView()
     {
@@ -513,7 +513,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormInterface |  \PHPUnit_Framework_MockObject_MockObject
+     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getForm()
     {
@@ -521,7 +521,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return OptionsResolver | \PHPUnit_Framework_MockObject_MockObject
+     * @return OptionsResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getResolver()
     {
@@ -533,7 +533,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      * @param string $type
      * @param array  $options
      *
-     * @return AttributeInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return AttributeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getAttribute($name, $type, array $options = [])
     {
@@ -557,7 +557,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
      * @param string $name
      * @param array  $options
      *
-     * @return ContentTypeFieldInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeFieldInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getField($name, array $options = [])
     {

@@ -14,39 +14,40 @@ namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
-use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Integrated\Bundle\ContentHistoryBundle\History\Parser;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ContentHistoryController
+class ContentHistoryController extends AbstractController
 {
-    /**
-     * @var TwigEngine
-     */
-    protected $templating;
-
     /**
      * @var DocumentRepository
      */
     protected $repository;
 
     /**
-     * @var Paginator
+     * @var Parser
+     */
+    protected $parser;
+
+    /**
+     * @var PaginatorInterface
      */
     protected $paginator;
 
     /**
-     * @param TwigEngine         $templating
      * @param DocumentRepository $repository
-     * @param Paginator          $paginator
+     * @param Parser             $parser
+     * @param PaginatorInterface $paginator
      */
-    public function __construct(TwigEngine $templating, DocumentRepository $repository, Paginator $paginator)
+    public function __construct(DocumentRepository $repository, Parser $parser, PaginatorInterface $paginator)
     {
-        $this->templating = $templating;
         $this->repository = $repository;
+        $this->parser = $parser;
         $this->paginator = $paginator;
     }
 
@@ -56,7 +57,7 @@ class ContentHistoryController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Content $content, Request $request)
+    public function index(Content $content, Request $request)
     {
         $builder = $this->repository->createQueryBuilder();
 
@@ -69,7 +70,7 @@ class ContentHistoryController
             $request->query->get('limit', 20)
         );
 
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:index.html.twig', [
+        return $this->render('@IntegratedContentHistory/content_history/index.html.twig', [
             'paginator' => $paginator,
         ]);
     }
@@ -79,10 +80,11 @@ class ContentHistoryController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAction(ContentHistory $contentHistory)
+    public function show(ContentHistory $contentHistory)
     {
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:show.html.twig', [
+        return $this->render('@IntegratedContentHistory/content_history/show.html.twig', [
             'contentHistory' => $contentHistory,
+            'changeSet' => $this->parser->getReadableChangeset($contentHistory),
         ]);
     }
 
@@ -92,9 +94,9 @@ class ContentHistoryController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function historyAction(Content $content, $limit = 3)
+    public function history(Content $content, $limit = 3)
     {
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:history.html.twig', [
+        return $this->render('@IntegratedContentHistory/content_history/history.html.twig', [
             'content' => $content,
             'documents' => $this->repository->findBy(
                 ['contentId' => $content->getId()],

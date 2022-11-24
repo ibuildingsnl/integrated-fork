@@ -20,11 +20,11 @@ use Solarium\QueryType\Update\Query\Query;
 class SendEventTest extends AbstractEventTest
 {
     /**
-     * @var Query | \PHPUnit_Framework_MockObject_MockObject
+     * @var Query|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

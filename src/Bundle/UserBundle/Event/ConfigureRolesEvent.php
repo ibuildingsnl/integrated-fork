@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Vasil Pascal <developer.optimum@gmail.com>
@@ -21,7 +21,7 @@ class ConfigureRolesEvent extends Event
     /**
      * @var string
      */
-    const CONFIGURE = 'integrated_roles.configure';
+    public const CONFIGURE = 'integrated_roles.configure';
 
     /**
      * @var array

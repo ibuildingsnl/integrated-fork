@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -64,7 +64,15 @@ class ChannelType extends AbstractType
             ],
         ]);
 
-        //validate domain names
+        $builder->add('ipProtected', CheckboxType::class, [
+            'label' => 'Protect by IP address or logged in user',
+            'required' => false,
+            'attr' => [
+                'align_with_widget' => true,
+            ],
+        ]);
+
+        // validate domain names
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $data = $event->getData();
@@ -110,13 +118,5 @@ class ChannelType extends AbstractType
         $builder->add('permissions', PermissionsType::class, [
             'required' => false,
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return 'channel';
     }
 }

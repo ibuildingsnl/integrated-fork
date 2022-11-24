@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
@@ -25,7 +25,7 @@ use stdClass;
 class QueueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $queue;
 
@@ -160,11 +160,11 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $object
      *
-     * @return LifecycleEventArgs | \PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEvent($object)
     {
-        $instance = $this->getMockBuilder('Doctrine\\ORM\\Event\\LifecycleEventArgs')->disableOriginalConstructor()->getMock();
+        $instance = $this->getMockBuilder('Doctrine\\Persistence\\Event\\LifecycleEventArgs')->disableOriginalConstructor()->getMock();
         $instance->expects($this->any())
             ->method('getObject')
             ->willReturn($object);
@@ -175,7 +175,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $id
      *
-     * @return State | \PHPUnit_Framework_MockObject_MockObject
+     * @return State|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getState($id)
     {
@@ -190,7 +190,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $id
      *
-     * @return Definition | \PHPUnit_Framework_MockObject_MockObject
+     * @return Definition|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getDefinition($id)
     {

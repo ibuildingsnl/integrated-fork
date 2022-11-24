@@ -20,7 +20,7 @@ use stdClass;
  */
 class QueueProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const PAYLOAD = 'O:8:"stdClass":0:{}'; // serialized stdClass;
+    public const PAYLOAD = 'O:8:"stdClass":0:{}'; // serialized stdClass;
 
     /**
      * @var QueueProvider
@@ -28,7 +28,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var Connection | \PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $connection;
 

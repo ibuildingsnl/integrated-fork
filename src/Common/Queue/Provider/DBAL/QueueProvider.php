@@ -97,7 +97,7 @@ class QueueProvider implements QueueProviderInterface
 
         $results = [];
 
-        foreach ($this->connection->fetchAll($query, [$channel, time()]) as $row) {
+        foreach ($this->connection->fetchAllAssociative($query, [$channel, time()]) as $row) {
             $delete = function () use ($row) {
                 $this->delete($row['id']);
             };
@@ -134,12 +134,14 @@ class QueueProvider implements QueueProviderInterface
         );
 
         $where = [];
+        $params = [];
         if (isset($this->options['where'])) {
             $where[] = $this->options['where'];
         }
 
         if ($channel) {
             $where[] = 'channel = ?';
+            $params[] = $channel;
         }
 
         $where[] = 'time_execute <= '.time();
@@ -148,7 +150,7 @@ class QueueProvider implements QueueProviderInterface
             $query = sprintf('%s WHERE %s', $query, implode(' AND ', $where));
         }
 
-        return $this->connection->fetchColumn($query, [$channel]);
+        return $this->connection->fetchOne($query, $params);
     }
 
     /**

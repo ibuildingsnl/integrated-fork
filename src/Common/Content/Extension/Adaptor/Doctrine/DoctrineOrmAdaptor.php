@@ -12,9 +12,8 @@
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Proxy;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\Persistence\Proxy;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Common\Content\Extension\Adaptor\AbstractAdaptor;
 use Integrated\Common\Content\Extension\Events;
 
@@ -41,27 +40,27 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
 
     public function preRemove(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::PRE_DELETE, $args->getEntity());
+        $this->dispatch(Events::PRE_DELETE, $args->getObject());
     }
 
     public function postRemove(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::POST_DELETE, $args->getEntity());
+        $this->dispatch(Events::POST_DELETE, $args->getObject());
     }
 
     public function prePersist(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::PRE_CREATE, $args->getEntity());
+        $this->dispatch(Events::PRE_CREATE, $args->getObject());
     }
 
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::POST_CREATE, $args->getEntity());
+        $this->dispatch(Events::POST_CREATE, $args->getObject());
     }
 
-    public function preFlush(PreFlushEventArgs $event)
+    public function preFlush(LifecycleEventArgs $event)
     {
-        $manager = $event->getEntityManager();
+        $manager = $event->getObjectManager();
         $uow = $manager->getUnitOfWork();
 
         foreach ($uow->getIdentityMap() as $class => $objects) {
@@ -72,7 +71,7 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
             }
 
             foreach ($objects as $object) {
-                if ($object instanceof Proxy && !$object->__isInitialized__) {
+                if ($object instanceof Proxy && !$object->__isInitialized()) {
                     continue;
                 }
 
@@ -87,12 +86,12 @@ class DoctrineOrmAdaptor extends AbstractAdaptor implements EventSubscriber
 
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::POST_UPDATE, $args->getEntity());
+        $this->dispatch(Events::POST_UPDATE, $args->getObject());
     }
 
     public function postLoad(LifecycleEventArgs $args)
     {
-        $this->dispatch(Events::POST_READ, $args->getEntity());
+        $this->dispatch(Events::POST_READ, $args->getObject());
     }
 
     protected function dispatch($event, $object)

@@ -17,14 +17,14 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
     /**
      * @var ManagerRegistry
@@ -66,7 +66,7 @@ class DefaultController extends Controller
      *
      * @throws \Exception
      */
-    public function indexAction()
+    public function index()
     {
         $channel = $this->context->getChannel();
 
@@ -78,6 +78,7 @@ class DefaultController extends Controller
 
         $queryBuilder = $this->registry->getManagerForClass(Content::class)->createQueryBuilder(Content::class);
         $count = $queryBuilder
+            ->count()
             ->field('channels.$id')->equals($channel->getId())
             ->field('disabled')->equals(false)
             ->field('publishTime.startDate')->lte($now)
@@ -85,8 +86,7 @@ class DefaultController extends Controller
             ->field('contentType')->in($this->contentTypeInformation->getPublishingAllowedContentTypes($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false))
-            ->getQuery()
-            ->count();
+            ->getQuery();
 
         if (!$count) {
             throw new NotFoundHttpException();
@@ -106,7 +106,7 @@ class DefaultController extends Controller
      *
      * @throws \Exception
      */
-    public function listAction($page)
+    public function list($page)
     {
         $channel = $this->context->getChannel();
 

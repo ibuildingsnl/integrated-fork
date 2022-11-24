@@ -13,7 +13,7 @@ namespace Integrated\Common\Solr\Tests\Task\Event;
 
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
 use Integrated\Common\Solr\Task\Worker;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,11 +21,11 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class AbstractEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Worker | \PHPUnit_Framework_MockObject_MockObject
+     * @var Worker|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $worker;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->worker = $this->getMockBuilder(Worker::class)->disableOriginalConstructor()->getMock();
     }

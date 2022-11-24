@@ -19,10 +19,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContainerAwareQueueListenerTest extends QueueListenerTest
 {
-    const SERVICE_NAME = 'the.queue.service.name';
+    public const SERVICE_NAME = 'the.queue.service.name';
 
     /**
-     * @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $container;
 

@@ -11,17 +11,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Integrated\Common\Content\RankableInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RankController extends Controller
+class RankController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -39,15 +40,22 @@ class RankController extends Controller
     protected $bulkHandler;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * @param DocumentManager $dm
      * @param ContentProvider $contentProvider
      */
     public function __construct(
         DocumentManager $dm,
-        ContentProvider $contentProvider
+        ContentProvider $contentProvider,
+        TranslatorInterface $translator
     ) {
         $this->dm = $dm;
         $this->contentProvider = $contentProvider;
+        $this->translator = $translator;
     }
 
     /**
@@ -70,7 +78,7 @@ class RankController extends Controller
         $skipItem = false;
         $skipItemName = false;
         $previous = '-first-';
-        $previousName = 'First item';
+        $previousName = $this->translator->trans('First item');
         foreach ($content as $item) {
             if ($item instanceof RankableInterface) {
                 if ($item->getRank() == $current) {
@@ -80,23 +88,25 @@ class RankController extends Controller
                 }
             }
             $previous = $item->getRank();
-            $previousName = 'after '.(string) $item;
+            $previousName = $this->translator->trans('After').' '.(string) $item;
         }
 
         $result = [];
         if ($skipItem != '-first-') {
-            $result['-first-'] = 'First item';
+            $result['-first-'] = $this->translator->trans('First item');
         }
         foreach ($content as $item) {
             if ($skipItem != $item->getRank()) {
-                $result[$item->getRank()] = ($current == $item->getRank()) ? 'Current position ('.$skipItemName.')' : 'After '.(string) $item;
+                $result[$item->getRank()] = ($current == $item->getRank())
+                    ? $this->translator->trans('Current position').' ('.$skipItemName.')'
+                    : $this->translator->trans('After').' '.(string) $item;
             }
         }
         if (!$found) {
-            $result[$current] = '...Current position';
+            $result[$current] = '...'.$this->translator->trans('Current position');
         }
 
-        return $this->render('IntegratedContentBundle:rank:lookup.json.twig', [
+        return $this->render('@IntegratedContent/rank/lookup.json.twig', [
             'result' => $result,
             'relations' => [],
         ]);

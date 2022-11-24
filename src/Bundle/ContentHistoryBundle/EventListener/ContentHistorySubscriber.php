@@ -17,7 +17,7 @@ use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Integrated\Bundle\ContentHistoryBundle\Event\ContentHistoryEvent;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class ContentHistorySubscriber implements EventSubscriber
 {
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
@@ -35,10 +35,10 @@ class ContentHistorySubscriber implements EventSubscriber
     protected $className;
 
     /**
-     * @param EventDispatcher $eventDispatcher
-     * @param string          $className
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string                   $className
      */
-    public function __construct(EventDispatcher $eventDispatcher, $className)
+    public function __construct(EventDispatcherInterface $eventDispatcher, $className)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->className = $className;
@@ -84,10 +84,12 @@ class ContentHistorySubscriber implements EventSubscriber
             $history = new $this->className($document, $action);
             $originalData = $this->getOriginalData($dm, $document, $action);
 
-            $this->eventDispatcher->dispatch($action, new ContentHistoryEvent($history, $document, $originalData));
+            $this->eventDispatcher->dispatch(new ContentHistoryEvent($history, $document, $originalData), $action);
 
-            $dm->persist($history);
-            $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $history);
+            if (\count($history->getChangeSet())) {
+                $dm->persist($history);
+                $dm->getUnitOfWork()->recomputeSingleDocumentChangeSet($classMetadata, $history);
+            }
         }
     }
 

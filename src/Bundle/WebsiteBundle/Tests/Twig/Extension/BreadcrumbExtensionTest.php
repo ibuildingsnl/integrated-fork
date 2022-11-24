@@ -21,25 +21,25 @@ use Twig\TwigFunction;
  */
 class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    const TEMPLATE = 'default';
+    public const TEMPLATE = 'default';
 
     /**
-     * @var Helper | \PHPUnit_Framework_MockObject_MockObject
+     * @var Helper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $menuTwigHelper;
 
     /**
-     * @var BreadcrumbMenuProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbMenuProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $breadcrumbMenuProvider;
 
     /**
-     * @var BreadcrumbResolver | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbResolver|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $breadcrumbResolver;
 
     /**
-     * @var BreadcrumbExtension | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbExtension|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $breadcrumbExtension;
 
@@ -66,7 +66,7 @@ class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
         $this->breadcrumbMenuProvider
             ->expects($this->once())
             ->method('get')
-            ->willReturn([$menu]);
+            ->willReturn($menu);
 
         $this->assertEquals('', $this->breadcrumbExtension->renderBreadcrumb());
     }

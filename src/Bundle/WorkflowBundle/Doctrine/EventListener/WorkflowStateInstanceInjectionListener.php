@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 
@@ -62,7 +62,7 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args)
     {
-        $object = $args->getEntity();
+        $object = $args->getObject();
 
         if (!$object instanceof State) {
             return;

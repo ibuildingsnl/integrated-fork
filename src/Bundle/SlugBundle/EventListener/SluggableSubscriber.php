@@ -12,18 +12,20 @@
 namespace Integrated\Bundle\SlugBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use Metadata\MetadataFactoryInterface;
+use MongoDB\BSON\Regex;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -69,7 +71,7 @@ class SluggableSubscriber implements EventSubscriber
             'prePersist',
             'postPersist',
             'preUpdate',
-            //'onFlush', // @todo implement to support update after a persist (INTEGRATED-294)
+            // 'onFlush', // @todo implement to support update after a persist (INTEGRATED-294)
         ];
     }
 
@@ -109,6 +111,10 @@ class SluggableSubscriber implements EventSubscriber
         $om = $args->getObjectManager();
         $class = \get_class($object);
 
+        if (!$om instanceof DocumentManager && !$om instanceof EntityManagerInterface) {
+            return;
+        }
+
         $classMetadata = $this->metadataFactory->getMetadataForClass($class);
         $classMetadataInfo = $om->getClassMetadata($class);
 
@@ -129,10 +135,16 @@ class SluggableSubscriber implements EventSubscriber
                 $slug = null;
 
                 if ($event == 'preUpdate') {
-                    if ($args->hasChangedField($propertyMetadata->name)) {
+                    $uow = $om->getUnitOfWork();
+                    if ($om instanceof DocumentManager) {
+                        $changeset = $uow->getDocumentChangeSet($object);
+                    } else {
+                        $changeset = $uow->getEntityChangeSet($object);
+                    }
+                    if (\array_key_exists($propertyMetadata->name, $changeset)) {
                         // generate custom slug
                         $slug = $this->slugger->slugify(
-                            $args->getNewValue($propertyMetadata->name),
+                            $changeset[$propertyMetadata->name][1],
                             $propertyMetadata->slugSeparator
                         );
                     } elseif (null !== $propertyMetadata->getValue($object)) {
@@ -311,9 +323,9 @@ class SluggableSubscriber implements EventSubscriber
             $query = $builder->count()->getQuery();
 
             return $query->execute() === 0;
-        } elseif ($uow instanceof ORMUnitOfWork) {
-            throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
         }
+
+        throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
     }
 
     /**
@@ -332,17 +344,17 @@ class SluggableSubscriber implements EventSubscriber
 
         if ($uow instanceof ODMUnitOfWork) {
             return array_merge($objects, $this->getRepository($om, $class)->findBy([
-                $field => new \MongoRegex(
-                    '/^'.preg_quote($slug, '/').'('.preg_quote($separator, '/').'\d+)?$/'
+                $field => new Regex(
+                    '^'.preg_quote($slug, '/').'('.preg_quote($separator, '/').'\d+)?$'
                 ), // counter is optional
             ]));
-        } elseif ($uow instanceof ORMUnitOfWork) {
-            throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
         }
+
+        throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
     }
 
     /**
-     * @param ObjectManager $om
+     * @param ObjectManager|EntityManagerInterface|DocumentManager $om
      *
      * @return array
      */
@@ -355,6 +367,8 @@ class SluggableSubscriber implements EventSubscriber
         } elseif ($uow instanceof ORMUnitOfWork) {
             return array_merge($uow->getScheduledEntityInsertions(), $uow->getScheduledEntityUpdates());
         }
+
+        throw new \RuntimeException('Not implemented yet');
     }
 
     /**
@@ -387,6 +401,7 @@ class SluggableSubscriber implements EventSubscriber
         } elseif ($uow instanceof ORMUnitOfWork) {
             throw new \RuntimeException('Not implemented yet'); // @todo (INTEGRATED-294)
         }
+        throw new \RuntimeException('Not supported');
     }
 
     /**

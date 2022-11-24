@@ -1,8 +1,8 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
+{% extends '@IntegratedContent/base.html.twig' %}
 {% form_theme form _self %}
 
 {% block form_errors %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if errors|length > 0 %}
             <ul class="alert alert-danger">
                 {% for error in errors %}
@@ -10,7 +10,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock form_errors %}
 
 {% block content %}
@@ -28,7 +28,7 @@
         <section class="section-white section-padding section-shadow section-radius section-margin">
 
             <div class="container">
-                {% transchoice selection %}{1}Choose the operations you wish to perform on the selected content item|]1,Inf[Choose the operation you wish to perform on the selected %selection% content items{% endtranschoice  %}
+                {% trans %}Choose the operation you wish to perform on the selected content items (%selection%){% endtrans %}
             </div>
 
             <hr/>
@@ -71,7 +71,5 @@
         });
     </script>
 
-    {% javascripts '@IntegratedContentBundle/Resources/public/js/bulk_relation.js' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+    <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
 {% endblock javascript %}

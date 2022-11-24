@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
+use Doctrine\Persistence\ObjectManager;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Indexer\JobFactoryInterface;
@@ -22,9 +23,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 class JobFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SerializerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $serializer;
+
+    /**
+     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $manager;
 
     /**
      * @var string
@@ -34,6 +40,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->manager = $this->createMock(ObjectManager::class);
     }
 
     public function testInterface()
@@ -47,6 +54,8 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateAdd($action, ContentInterface $content, $id, $class, $format)
     {
         $this->format = $format;
+
+        $this->configureManager($class);
 
         $this->serializer->expects($this->once())
             ->method('serialize')
@@ -142,11 +151,23 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function getInstance()
     {
-        return new JobFactory($this->serializer, $this->format);
+        return new JobFactory($this->serializer, $this->manager, $this->format);
+    }
+
+    protected function configureManager($class)
+    {
+        $mockMeta = $this->createMock('Doctrine\\Persistence\\Mapping\\ClassMetadata');
+        $mockMeta->expects($this->once())
+            ->method('getName')
+            ->willReturn($class);
+
+        $this->manager->expects($this->once())
+            ->method('getClassMetadata')
+            ->willReturn($mockMeta);
     }
 
     /**
-     * @return ContentInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContent()
     {

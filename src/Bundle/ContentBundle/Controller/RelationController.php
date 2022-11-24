@@ -11,9 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,12 +24,19 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class RelationController extends Controller
+class RelationController extends AbstractController
 {
     /**
      * @var string
      */
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+
+    private $documentManager;
+
+    public function __construct(DocumentManager $documentManager)
+    {
+        $this->documentManager = $documentManager;
+    }
 
     /**
      * Lists all the Relation documents.
@@ -37,13 +45,11 @@ class RelationController extends Controller
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $qb = $dm->createQueryBuilder($this->relationClass)
+        $qb = $this->documentManager->createQueryBuilder($this->relationClass)
             ->sort('name');
 
         if ($contentType = $request->get('contentType')) {
@@ -52,7 +58,7 @@ class RelationController extends Controller
 
         $documents = $qb->getQuery()->execute();
 
-        return $this->render(sprintf('IntegratedContentBundle:relation:index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
+        return $this->render(sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
     }
 
     /**
@@ -62,13 +68,13 @@ class RelationController extends Controller
      *
      * @return Response
      */
-    public function showAction(Relation $relation)
+    public function show(Relation $relation)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createDeleteForm($relation);
 
-        return $this->render('IntegratedContentBundle:relation:show.html.twig', [
+        return $this->render('@IntegratedContent/relation/show.html.twig', [
             'form' => $form->createView(),
             'relation' => $relation,
         ]);
@@ -79,13 +85,13 @@ class RelationController extends Controller
      *
      * @return Response
      */
-    public function newAction()
+    public function new()
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createNewForm(new Relation());
 
-        return $this->render('IntegratedContentBundle:relation:new.html.twig', [
+        return $this->render('@IntegratedContent/relation/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -97,27 +103,25 @@ class RelationController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $relation = new Relation();
 
         $form = $this->createNewForm($relation);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $dm->persist($relation);
-            $dm->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->documentManager->persist($relation);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
-            return $this->redirect($this->generateUrl('integrated_content_relation_index'));
+            return $this->redirectToRoute('integrated_content_relation_index');
         }
 
-        return $this->render('IntegratedContentBundle:relation:new.html.twig', [
+        return $this->render('@IntegratedContent/relation/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -129,13 +133,13 @@ class RelationController extends Controller
      *
      * @return Response
      */
-    public function editAction(Relation $relation)
+    public function edit(Relation $relation)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createEditForm($relation);
 
-        return $this->render('IntegratedContentBundle:relation:edit.html.twig', [
+        return $this->render('@IntegratedContent/relation/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -148,24 +152,22 @@ class RelationController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function updateAction(Request $request, Relation $relation)
+    public function update(Request $request, Relation $relation)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createEditForm($relation);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $dm->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
-            return $this->redirect($this->generateUrl('integrated_content_relation_index'));
+            return $this->redirectToRoute('integrated_content_relation_index');
         }
 
-        return $this->render('IntegratedContentBundle:relation:edit.html.twig', [
+        return $this->render('@IntegratedContent/relation/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -178,23 +180,21 @@ class RelationController extends Controller
      *
      * @return RedirectResponse
      */
-    public function deleteAction(Request $request, Relation $relation)
+    public function delete(Request $request, Relation $relation)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createDeleteForm($relation);
 
         $form->handleRequest($request);
-        if ($form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $dm->remove($relation);
-            $dm->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->documentManager->remove($relation);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Item deleted');
         }
 
-        return $this->redirect($this->generateUrl('integrated_content_relation_index'));
+        return $this->redirectToRoute('integrated_content_relation_index');
     }
 
     /**

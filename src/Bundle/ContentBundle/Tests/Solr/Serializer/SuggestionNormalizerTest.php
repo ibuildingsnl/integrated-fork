@@ -15,9 +15,11 @@ use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ContentBundle\Solr\Serializer\SuggestionNormalizer;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
-use Solarium\QueryType\Select\Query\Component\FacetSet;
+use Solarium\Component\Result\Facet\Field;
+use Solarium\Component\Result\FacetSet;
 use Solarium\QueryType\Select\Result\Document;
 use Solarium\QueryType\Select\Result\Result;
+use Solarium\QueryType\Suggester\Query;
 use stdClass;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -27,19 +29,19 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    const ROUTE = 'this-is-the-route';
+    public const ROUTE = 'this-is-the-route';
 
     /**
-     * @var UrlGeneratorInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $generator;
 
     /**
-     * @var ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $resolver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->generator = $this->createMock(UrlGeneratorInterface::class);
         $this->resolver = $this->createMock(ResolverInterface::class);
@@ -110,14 +112,14 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->getInstance()->normalize($this->getQueryResult());
+        $this->getInstance()->normalize($this->getQueryResult(new Query()));
     }
 
     public function testNormalizeWithInvalidQuery()
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->getInstance()->normalize($this->getQueryResult(new stdClass()));
+        $this->getInstance()->normalize($this->getQueryResult(new Query()));
     }
 
     public function testNormalize()
@@ -133,7 +135,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         $result
             ->expects($this->once())
             ->method('getFacetSet')
-            ->willReturn($this->getFacetSet($suggestions));
+            ->willReturn($this->getFacetSet(new Field($suggestions)));
 
         $result
             ->expects($this->once())
@@ -158,7 +160,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         $result
             ->expects($this->once())
             ->method('getFacetSet')
-            ->willReturn($this->getFacetSet());
+            ->willReturn($this->getFacetSet(new Field([])));
 
         $result
             ->expects($this->once())
@@ -177,7 +179,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         $result
             ->expects($this->once())
             ->method('getFacetSet')
-            ->willReturn($this->getFacetSet());
+            ->willReturn($this->getFacetSet(new Field([])));
 
         $result
             ->expects($this->once())
@@ -207,7 +209,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         $result
             ->expects($this->once())
             ->method('getFacetSet')
-            ->willReturn($this->getFacetSet($suggestions));
+            ->willReturn($this->getFacetSet(new Field($suggestions)));
 
         $result
             ->expects($this->once())
@@ -231,7 +233,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         $result
             ->expects($this->once())
             ->method('getFacetSet')
-            ->willReturn($this->getFacetSet());
+            ->willReturn($this->getFacetSet(new Field([])));
 
         $result
             ->expects($this->once())
@@ -248,8 +250,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($normalizer->supportsNormalization(null));
         self::assertFalse($normalizer->supportsNormalization('invalid'));
         self::assertFalse($normalizer->supportsNormalization(new stdClass()));
-        self::assertFalse($normalizer->supportsNormalization($this->getQueryResult()));
-        self::assertFalse($normalizer->supportsNormalization($this->getQueryResult(new stdClass())));
+        self::assertFalse($normalizer->supportsNormalization($this->getQueryResult(new Query())));
         self::assertTrue($normalizer->supportsNormalization($this->getQueryResult($this->getQuery())));
     }
 
@@ -262,9 +263,9 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param object | null $query
+     * @param object|null $query
      *
-     * @return Result | \PHPUnit_Framework_MockObject_MockObject
+     * @return Result|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getQueryResult($query = null)
     {
@@ -278,9 +279,9 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string | null $query
+     * @param string|null $query
      *
-     * @return SuggestionQuery | \PHPUnit_Framework_MockObject_MockObject
+     * @return SuggestionQuery|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getQuery($query = null)
     {
@@ -297,9 +298,9 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $facets
      *
-     * @return FacetSet | \PHPUnit_Framework_MockObject_MockObject
+     * @return FacetSet|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getFacetSet($facets = [])
+    protected function getFacetSet($facets = null)
     {
         $mock = $this->getMockBuilder(FacetSet::class)->disableOriginalConstructor()->getMock();
         $mock
@@ -314,7 +315,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ContentTypeInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContentType($name)
     {

@@ -13,6 +13,7 @@ namespace Integrated\Bundle\UserBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -35,12 +36,12 @@ class User implements UserInterface
     protected $password;
 
     /**
-     * @var null | string
+     * @var string|null
      */
     protected $salt = null;
 
     /**
-     * @var null | string
+     * @var string|null
      */
     protected $email = null;
 
@@ -50,19 +51,14 @@ class User implements UserInterface
     protected $createdAt;
 
     /**
-     * @var Collection | GroupInterface[]
+     * @var Collection|GroupInterface[]
      */
     protected $groups;
 
     /**
-     * @var Collection | RoleInterface[]
+     * @var Collection|RoleInterface[]
      */
     protected $roles = [];
-
-    /**
-     * @var bool
-     */
-    protected $locked = false;
 
     /**
      * @var bool
@@ -78,6 +74,16 @@ class User implements UserInterface
      * @var Scope
      */
     protected $scope;
+
+    /**
+     * @var string
+     */
+    protected $googleSecret;
+
+    /**
+     * @var bool
+     */
+    protected $googleEnabled = false;
 
     /**
      * @var \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation
@@ -145,6 +151,14 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
+    public function getUserIdentifier()
+    {
+        return $this->username;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setPassword($password)
     {
         $this->password = (string) $password;
@@ -153,7 +167,7 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -169,7 +183,7 @@ class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return $this->salt;
     }
@@ -297,14 +311,6 @@ class User implements UserInterface
     }
 
     /**
-     * @param bool $locked
-     */
-    public function setLocked($locked = true)
-    {
-        $this->locked = (bool) $locked;
-    }
-
-    /**
      * @param bool $enabled
      */
     public function setEnabled($enabled = true)
@@ -351,34 +357,7 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAccountNonExpired()
-    {
-        return true; // @todo implement
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAccountNonLocked()
-    {
-        return !$this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isCredentialsNonExpired()
-    {
-        return true; // @todo implement
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -391,6 +370,35 @@ class User implements UserInterface
         /* do nothing as there are no unsecured credentials, password should be encrypted */
     }
 
+    public function isGoogleAuthenticatorEnabled(): bool
+    {
+        return $this->googleEnabled && $this->googleSecret;
+    }
+
+    public function setGoogleAuthenticatorEnabled(bool $googleAuthenticatorEnabled): void
+    {
+        $this->googleEnabled = $googleAuthenticatorEnabled ? (bool) $this->googleSecret : false;
+    }
+
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return $this->username;
+    }
+
+    public function getGoogleAuthenticatorSecret(): ?string
+    {
+        return $this->googleSecret;
+    }
+
+    public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void
+    {
+        $this->googleSecret = $googleAuthenticatorSecret ?: null;
+
+        if ($this->googleSecret === null) {
+            $this->googleEnabled = false;
+        }
+    }
+
     /**
      * Get the string representation of the user object.
      *
@@ -401,14 +409,35 @@ class User implements UserInterface
     public function __toString()
     {
         return sprintf(
-            "ID: %s\nUsername: %s\n CreatedAt: %s\nEnabled: %s\nLocked: %s\nExpired (account): %s\nExpired (credentials): %s",
+            "ID: %s\nUsername: %s\n CreatedAt: %s\nEnabled: %s",
             $this->getId(),
-            $this->getUsername(),
-            $this->getCreatedAt(),
-            $this->isEnabled() ? 'TRUE' : 'FALSE',
-            $this->isAccountNonLocked() ? 'FALSE' : 'TRUE',
-            $this->isAccountNonExpired() ? 'FALSE' : 'TRUE',
-            $this->isCredentialsNonExpired() ? 'FALSE' : 'TRUE'
+            $this->getUserIdentifier(),
+            $this->getCreatedAt()->format('r'),
+            $this->isEnabled() ? 'TRUE' : 'FALSE'
         );
+    }
+
+    public function isEqualTo(BaseUserInterface $user)
+    {
+        return $user->getUserIdentifier() === $this->getUserIdentifier();
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->salt,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->salt) = $data;
     }
 }

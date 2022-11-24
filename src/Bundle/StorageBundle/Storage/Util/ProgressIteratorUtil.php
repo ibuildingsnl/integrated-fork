@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Util;
 
-use Doctrine\MongoDB\ArrayIterator;
-use Doctrine\MongoDB\Iterator;
+use ArrayIterator;
+use Iterator;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -26,7 +26,7 @@ class ProgressIteratorUtil
     /**
      * @const string
      */
-    const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
+    public const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
 
     /**
      * @var Iterator
@@ -55,7 +55,7 @@ class ProgressIteratorUtil
      */
     public function map(\Closure $closure)
     {
-        if ($this->iterator->count()) {
+        if (\count($this->iterator->toArray())) {
             $progress = $this->createProgress();
             $iterator = new ArrayIterator();
 
@@ -83,7 +83,7 @@ class ProgressIteratorUtil
      */
     public function walk(\Closure $closure)
     {
-        if ($this->iterator->count()) {
+        if (\count($this->iterator->toArray())) {
             $progress = $this->createProgress();
 
             foreach ($this->iterator as $item) {
@@ -103,10 +103,11 @@ class ProgressIteratorUtil
      */
     protected function createProgress()
     {
-        $progress = new ProgressBar($this->output, $this->iterator->count());
+        $items = $this->iterator->toArray();
+        $progress = new ProgressBar($this->output, \count($items));
         $progress->start();
         $progress->setFormat(self::FORMAT);
-        $progress->setRedrawFrequency(ceil($this->iterator->count() / 50));
+        $progress->setRedrawFrequency(ceil(\count($items) / 50));
 
         return $progress;
     }

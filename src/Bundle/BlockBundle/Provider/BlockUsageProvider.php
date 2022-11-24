@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 
@@ -66,10 +66,10 @@ class BlockUsageProvider
     public function getPagesPerBlock($blockId = null)
     {
         if (null === $this->blockPages) {
-            //loads blockPages
+            // loads blockPages
             $this->convertPages();
 
-            //to prevent doing same logic every time if there are no results
+            // to prevent doing same logic every time if there are no results
             if (null === $this->blockPages) {
                 $this->blockPages = [];
             }
@@ -90,10 +90,10 @@ class BlockUsageProvider
     public function getBlocksPerChannel($channelId = null)
     {
         if (null === $this->channelBlocks) {
-            //loads channelBlocks
+            // loads channelBlocks
             $this->convertPages();
 
-            //to prevent doing same logic every time if there are no results
+            // to prevent doing same logic every time if there are no results
             if (null === $this->channelBlocks) {
                 $this->channelBlocks = [];
             }
@@ -114,7 +114,7 @@ class BlockUsageProvider
     public function getChannel($id)
     {
         if (!\array_key_exists($id, $this->channels)) {
-            $this->channels[$id] = $this->mr->getManager()->getRepository(Channel::class)->find($id);
+            $this->channels[$id] = $this->mr->getRepository(Channel::class)->find($id);
         }
 
         return $this->channels[$id];
@@ -125,9 +125,7 @@ class BlockUsageProvider
      */
     protected function convertPages()
     {
-        $dm = $this->mr->getManager();
-
-        $pages = $dm->createQueryBuilder(Page::class)
+        $pages = $this->mr->getManager()->createQueryBuilder(Page::class)
             ->hydrate(false)
             ->select(['title', 'channel', 'locked', 'grids'])
             ->getQuery()

@@ -11,18 +11,21 @@
 
 namespace Integrated\Bundle\UserBundle\Security\Firewall;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\Security\Http\Firewall\AbstractListener;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\Scope;
+use Symfony\Component\Security\Http\Firewall\FirewallListenerInterface;
 
-class ScopeListener implements ListenerInterface
+class ScopeListener extends AbstractListener implements FirewallListenerInterface
 {
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     private $tokenStorage;
 
@@ -32,32 +35,30 @@ class ScopeListener implements ListenerInterface
     private $providerKey;
 
     /**
-     * @param TokenStorage $tokenStorage
-     * @param string       $providerKey
+     * @param TokenStorageInterface $tokenStorage
+     * @param string                $providerKey
      */
-    public function __construct(TokenStorage $tokenStorage, $providerKey)
+    public function __construct(TokenStorageInterface $tokenStorage, $providerKey)
     {
         $this->tokenStorage = $tokenStorage;
         $this->providerKey = $providerKey;
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function handle(GetResponseEvent $event)
+    public function supports(Request $request): ?bool
     {
-        $token = $this->tokenStorage->getToken();
-
-        if (!$token instanceof TokenInterface) {
-            return;
+        if (!$token = $this->tokenStorage->getToken()) {
+            return false;
         }
 
         $user = $token->getUser();
 
-        if (!$user instanceof UserInterface) {
-            return;
-        }
+        return !(!$token instanceof TokenInterface || $token instanceof TwoFactorTokenInterface) && $user instanceof UserInterface;
+    }
 
+    public function authenticate(RequestEvent $event)
+    {
+        $token = $this->tokenStorage->getToken();
+        $user = $token->getUser();
         $scope = $user->getScope();
 
         if (!$scope instanceof Scope || !$scope->isAdmin()) {
@@ -66,11 +67,10 @@ class ScopeListener implements ListenerInterface
 
         $roles = $user->getRoles();
 
-        array_push($roles, 'ROLE_SCOPE_INTEGRATED');
+        $roles[] = 'ROLE_SCOPE_INTEGRATED';
 
         $newToken = new UsernamePasswordToken(
             $user,
-            $token->getCredentials(),
             $this->providerKey,
             $roles
         );

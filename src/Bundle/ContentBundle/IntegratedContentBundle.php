@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle;
 
-use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\BraincraftedFlashMessagePass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ContentProviderPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ContentTypeManagerPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ExtensionRegistryBuilderPass;
@@ -26,7 +25,6 @@ use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -55,7 +53,6 @@ class IntegratedContentBundle extends Bundle
         $container->addCompilerPass(new FactoryRegistryBuilderPass('integrated_content.bulk.handler_registry_builder', 'integrated_content.bulk.handler'));
         $container->addCompilerPass(new ConfigProviderBuilderPass('integrated_content.bulk.form.chain_provider_builder', 'integrated_content.bulk.form.provider'));
         $container->addCompilerPass(new ContentProviderPass());
-        $container->addCompilerPass(new BraincraftedFlashMessagePass());
         $container->addCompilerPass(new StaticContentPass());
 
         $container->addCompilerPass(new RegisterListenersPass(

@@ -22,11 +22,12 @@ use ReflectionClass;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -42,20 +43,20 @@ class UserFormType extends AbstractType
     private $manager;
 
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
-    private $encoderFactory;
+    private $hasherFactory;
 
     /**
      * Constructor.
      *
-     * @param UserManagerInterface    $manager
-     * @param EncoderFactoryInterface $encoder
+     * @param UserManagerInterface           $manager
+     * @param PasswordHasherFactoryInterface $hasherFactory
      */
-    public function __construct(UserManagerInterface $manager, EncoderFactoryInterface $encoder)
+    public function __construct(UserManagerInterface $manager, PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->manager = $manager;
-        $this->encoderFactory = $encoder;
+        $this->hasherFactory = $hasherFactory;
     }
 
     /**
@@ -131,7 +132,7 @@ class UserFormType extends AbstractType
             },
         ]);
 
-        $builder->addEventSubscriber(new UserProfilePasswordListener($this->encoderFactory));
+        $builder->addEventSubscriber(new UserProfilePasswordListener($this->hasherFactory));
         $builder->addEventSubscriber(new UserProfileExtensionListener('integrated.extension.user'));
 
         if ($options['optional']) {
@@ -186,7 +187,7 @@ class UserFormType extends AbstractType
                 $method = $reflection->getMethod('getValidationGroups');
                 $method->setAccessible(true);
 
-                return $method->invoke(null, $form->getParent());
+                return $method->invoke(new FormValidator(), $form->getParent());
             };
         };
 

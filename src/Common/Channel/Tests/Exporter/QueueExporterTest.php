@@ -29,20 +29,20 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
-     * @var QueueInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $queue;
 
     /**
-     * @var RequestSerializerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestSerializerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $serializer;
 
     /**
-     * @var ExporterInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ExporterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $exporter;
 
@@ -196,18 +196,18 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return QueueExporter | \PHPUnit_Framework_MockObject_MockObject
+     * @return QueueExporter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getInstance($method = null)
     {
         return $this->getMockBuilder('Integrated\\Common\\Channel\\Exporter\\QueueExporter')
             ->setConstructorArgs([$this->queue, $this->serializer, $this->exporter])
-            ->setMethods($method ? [$method] : null)
+            ->onlyMethods($method ? [$method] : [])
             ->getMock();
     }
 
     /**
-     * @return QueueMessageInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return QueueMessageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMessage()
     {
@@ -215,7 +215,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ChannelInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getChannel()
     {

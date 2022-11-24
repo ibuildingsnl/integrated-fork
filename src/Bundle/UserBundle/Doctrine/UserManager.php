@@ -11,12 +11,13 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use InvalidArgumentException;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -34,10 +35,16 @@ class UserManager implements UserManagerInterface
     private $repository;
 
     /**
-     * @param ObjectManager $om
-     * @param $class
+     * @var PasswordHasherFactoryInterface
      */
-    public function __construct(ObjectManager $om, $class)
+    private $hasherFactory;
+
+    /**
+     * @param ObjectManager                  $om
+     * @param                                $class
+     * @param PasswordHasherFactoryInterface $hasherFactory
+     */
+    public function __construct(ObjectManager $om, $class, PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
@@ -45,6 +52,8 @@ class UserManager implements UserManagerInterface
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
             throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
         }
+
+        $this->hasherFactory = $hasherFactory;
     }
 
     /**
@@ -81,7 +90,7 @@ class UserManager implements UserManagerInterface
         $this->om->persist($user);
 
         if ($flush) {
-            $this->om->flush($user);
+            $this->om->flush();
         }
     }
 
@@ -93,7 +102,7 @@ class UserManager implements UserManagerInterface
         $this->om->remove($user);
 
         if ($flush) {
-            $this->om->flush($user);
+            $this->om->flush();
         }
     }
 
@@ -168,19 +177,23 @@ class UserManager implements UserManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function findByUsernameAndScope($username, ScopeInterface $scope)
+    public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null)
     {
-        return $this->createQueryBuilder()
+        $builder = $this->createQueryBuilder()
             ->select('User')
             ->leftJoin('User.scope', 'Scope')
             ->where('User.username = :username')
-            ->andWhere('(Scope.admin = true OR User.scope = :scope)')
-            ->setParameters([
-                'username' => $username,
-                'scope' => (int) $scope->getId(),
-            ])
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->andWhere('User.enabled = true')
+            ->setParameter('username', $username);
+
+        if ($scope) {
+            $builder->andWhere('(User.scope = :scope)');
+            $builder->setParameter('scope', (int) $scope->getId());
+        } else {
+            $builder->andWhere('(Scope.admin = true)');
+        }
+
+        return $builder->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -189,5 +202,27 @@ class UserManager implements UserManagerInterface
     public function createQueryBuilder()
     {
         return $this->repository->createQueryBuilder('User');
+    }
+
+    /**
+     * @param int    $id
+     * @param string $password
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function changePassword(int $id, string $password): bool
+    {
+        if (!$user = $this->find($id)) {
+            return false;
+        }
+
+        $user->setPassword($this->hasherFactory->getPasswordHasher($user)->hash($password));
+        $user->setSalt(null);
+
+        $this->persist($user);
+
+        return true;
     }
 }

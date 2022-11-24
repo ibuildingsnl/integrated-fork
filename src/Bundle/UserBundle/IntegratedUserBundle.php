@@ -14,6 +14,7 @@ namespace Integrated\Bundle\UserBundle;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\Compiler\RegisterRolesParametersPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\IntegratedUserExtension;
+use Integrated\Bundle\UserBundle\DependencyInjection\Security\IpListFactory;
 use Integrated\Bundle\UserBundle\DependencyInjection\Security\ScopeFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -39,7 +40,8 @@ class IntegratedUserBundle extends Bundle
         $security = $container->getExtension('security');
 
         if ($security instanceof SecurityExtension) {
-            $security->addSecurityListenerFactory(new ScopeFactory());
+            $security->addAuthenticatorFactory(new ScopeFactory());
+            $security->addAuthenticatorFactory(new IpListFactory());
         }
     }
 

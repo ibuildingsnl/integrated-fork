@@ -34,7 +34,7 @@ class State
     protected $name;
 
     /**
-     * @var null | Definition
+     * @var Definition|null
      */
     protected $workflow = null;
 
@@ -49,12 +49,12 @@ class State
     protected $publishable = false;
 
     /**
-     * @var Collection | Permission[]
+     * @var Collection|Permission[]
      */
     protected $permissions;
 
     /**
-     * @var Collection | State[]
+     * @var Collection|State[]
      */
     protected $transitions;
 
@@ -348,8 +348,6 @@ class State
     /**
      * Fix issues with primary key constraints errors because deletes are execute
      * after updates and inserts.
-     *
-     * @param PreFlushEventArgs $event
      */
     public function doPermissionFix(PreFlushEventArgs $event)
     {
@@ -360,7 +358,7 @@ class State
             return;
         }
 
-        $em = $event->getEntityManager();
+        $em = $event->getObjectManager();
         $uow = $em->getUnitOfWork();
 
         /** @var Permission $permission */

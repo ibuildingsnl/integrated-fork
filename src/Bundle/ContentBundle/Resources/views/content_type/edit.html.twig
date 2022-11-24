@@ -1,4 +1,4 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
+{% extends '@IntegratedContent/base.html.twig' %}
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -21,3 +21,8 @@
         </div>
     </div>
 {% endblock %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
+{% endblock %}
+

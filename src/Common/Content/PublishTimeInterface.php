@@ -18,12 +18,12 @@ interface PublishTimeInterface
     /**
      * @var string
      */
-    const DATE_MAX = '9999-12-31 00:00:00'; // @todo find a better way (INTEGRATED-429)
+    public const DATE_MAX = '9999-12-31 00:00:00Z'; // @todo find a better way (INTEGRATED-429)
 
     /**
      * @return DateTime|null
      */
-    public function getStartDate(): ? DateTime;
+    public function getStartDate(): ?DateTime;
 
     /**
      * @param DateTime $startDate
@@ -35,7 +35,7 @@ interface PublishTimeInterface
     /**
      * @return DateTime|null
      */
-    public function getEndDate(): ? DateTime;
+    public function getEndDate(): ?DateTime;
 
     /**
      * @param DateTime $endDate

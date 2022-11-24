@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Exception;
 use Integrated\Common\Queue\QueueInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,8 +23,9 @@ use Symfony\Component\Process\Process;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkerCommand extends ContainerAwareCommand
+class WorkerCommand extends Command
 {
+    use LockableTrait;
     /**
      * @var QueueInterface
      */
@@ -34,8 +35,6 @@ class WorkerCommand extends ContainerAwareCommand
      * @var string
      */
     private $workingDirectory;
-
-    use LockableTrait;
 
     /**
      * @param QueueInterface $queue
@@ -72,9 +71,9 @@ The <info>%command.name%</info> .
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$this->lock(self::class.md5(__DIR__))) {
+        if (!$this->lock(self::class.md5(__DIR__.$this->getName()))) {
             $output->writeln('The command is already running in another process.');
 
             return 0;
@@ -133,13 +132,17 @@ The <info>%command.name%</info> .
     {
         // run in a different process for isolation like memory issues.
         $process = new Process(
-            'php bin/console '.$command.' -e '.$input->getOption('env').' '.implode(' ', $arguments),
+            ['php', 'bin/console', $command, '-e', $input->getOption('env'), implode(' ', $arguments)],
             $this->workingDirectory
         );
         $process->run();
 
         $process->run(function ($type, $buffer) use ($output) {
-            $output->write($buffer, false, $type);
+            if (Process::ERR === $type) {
+                $output->write($buffer);
+            } else {
+                $output->write($buffer, false, $output::VERBOSITY_VERBOSE);
+            }
         });
 
         if (!$process->isSuccessful()) {

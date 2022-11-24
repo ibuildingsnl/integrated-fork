@@ -21,7 +21,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -39,23 +40,23 @@ class ChangePasswordCommand extends Command
     private $scopeManager;
 
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
-    private $encoderFactory;
+    private $hasherFactory;
 
     /**
-     * @param ScopeManager            $scopeManager
-     * @param UserManagerInterface    $userManager
-     * @param EncoderFactoryInterface $encoderFactory
+     * @param ScopeManager                   $scopeManager
+     * @param UserManagerInterface           $userManager
+     * @param PasswordHasherFactoryInterface $hasherFactory
      */
     public function __construct(
         ScopeManager $scopeManager,
         UserManagerInterface $userManager,
-        EncoderFactoryInterface $encoderFactory
+        PasswordHasherFactoryInterface $hasherFactory
     ) {
         $this->scopeManager = $scopeManager;
         $this->userManager = $userManager;
-        $this->encoderFactory = $encoderFactory;
+        $this->hasherFactory = $hasherFactory;
 
         parent::__construct();
     }
@@ -83,7 +84,7 @@ The <info>%command.name%</info> command replaces the password of the user
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username'); // @todo validate input
         $password = $input->getArgument('password'); // @todo validate input
@@ -107,10 +108,17 @@ The <info>%command.name%</info> command replaces the password of the user
             return 1;
         }
 
-        $salt = base64_encode(random_bytes(72));
+        $hasher = $this->hasherFactory->getPasswordHasher($user);
 
-        $user->setPassword($this->encoderFactory->getEncoder($user)->encodePassword($password, $salt));
-        $user->setSalt($salt);
+        if (!$hasher instanceof LegacyPasswordHasherInterface) {
+            $user->setPassword($hasher->hash($password, $user->getSalt()));
+            $user->setSalt(null);
+        } else {
+            $salt = base64_encode(random_bytes(72));
+
+            $user->setPassword($hasher->hash($password, $salt));
+            $user->setSalt($salt);
+        }
 
         try {
             $this->userManager->persist($user);

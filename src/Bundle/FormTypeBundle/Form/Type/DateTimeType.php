@@ -47,12 +47,7 @@ class DateTimeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->styleSheetManager->add('bundles/integratedformtype/components/datetimepicker/jquery.datetimepicker.css');
-        $this->javascriptManager->add('bundles/integratedformtype/components/datetimepicker/build/jquery.datetimepicker.full.min.js');
-        $this->javascriptManager->add('bundles/integratedformtype/js/datetimepicker.js');
-
-        $transformer = new DateTime();
-        $builder->addModelTransformer($transformer);
+        $builder->addModelTransformer(new DateTime());
     }
 
     /**

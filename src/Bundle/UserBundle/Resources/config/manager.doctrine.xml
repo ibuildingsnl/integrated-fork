@@ -11,6 +11,10 @@
         <service id="integrated_user.user.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\UserManager">
             <argument type="service" id="integrated_user.doctrine.object_manager"/>
             <argument>%integrated_user.user.class%</argument>
+            <argument type="service" id="security.password_hasher_factory"/>
+        </service>
+
+        <service id="Integrated\Bundle\UserBundle\Doctrine\UserManager" alias="integrated_user.user.manager.doctrine">
         </service>
 
         <service id="integrated_user.group.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\GroupManager">
@@ -28,6 +32,11 @@
         <service id="integrated_user.scope.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\ScopeManager">
             <argument type="service" id="integrated_user.doctrine.object_manager"/>
             <argument>%integrated_user.scope.class%</argument>
+        </service>
+
+        <service id="integrated_user.ip_list.manager.doctrine" class="Integrated\Bundle\UserBundle\Doctrine\IpListManager">
+            <argument type="service" id="integrated_user.doctrine.object_manager"/>
+            <argument>%integrated_user.ip_list.class%</argument>
         </service>
 
     </services>

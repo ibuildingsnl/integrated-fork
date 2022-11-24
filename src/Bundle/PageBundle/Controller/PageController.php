@@ -11,40 +11,60 @@
 
 namespace Integrated\Bundle\PageBundle\Controller;
 
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
+use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Form\Type\PageCopyType;
+use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
-use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Bundle\PageBundle\Services\RouteCache;
+use MongoDB\BSON\Regex;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class PageController extends Controller
+class PageController extends AbstractController
 {
+    /**
+     * @var DocumentManager
+     */
+    private $documentManager;
+
     /**
      * @var PageCopyService
      */
     private $pageCopyService;
 
     /**
+     * @var RouteCache
+     */
+    private $routeCache;
+
+    /**
      * PageController constructor.
      *
-     * @param ChannelContextInterface $channelContext
-     * @param PageCopyService         $pageCopyService
+     * @param DocumentManager $documentManager
+     * @param PageCopyService $pageCopyService
+     * @param RouteCache      $routeCache
      */
-    public function __construct(ChannelContextInterface $channelContext, PageCopyService $pageCopyService)
+    public function __construct(DocumentManager $documentManager, PageCopyService $pageCopyService, RouteCache $routeCache)
     {
-        parent::__construct($channelContext);
-
+        $this->documentManager = $documentManager;
         $this->pageCopyService = $pageCopyService;
+        $this->routeCache = $routeCache;
     }
 
     /**
@@ -52,38 +72,61 @@ class PageController extends Controller
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        try {
-            $channel = $this->getSelectedChannel();
+        $filterForm = $this->createForm(
+            PageFilterType::class,
+            $request->getSession()->get('page_filterform_data', []),
+            ['method' => 'GET']
+        );
+        $filterForm->handleRequest($request);
 
-            $builder = $this->getDocumentManager()->createQueryBuilder(Page::class)
-                ->field('channel.$id')->equals($channel->getId());
-
-            $pagination = $this->getPaginator()->paginate(
-                $builder,
-                $request->query->get('page', 1),
-                25
-            );
-        } catch (\RuntimeException $e) {
-            $this->get('braincrafted_bootstrap.flash')->error('Please add a website connector for at least one channel to manage pages');
-
-            return $this->render('IntegratedPageBundle:page:error.html.twig');
+        switch ($filterForm->get('pagetype')->getData()) {
+            case 'page':
+                $class = Page::class;
+                break;
+            case 'contenttype':
+                $class = ContentTypePage::class;
+                break;
+            default:
+                $class = AbstractPage::class;
         }
 
-        $response = $this->render('IntegratedPageBundle:page:index.html.twig', [
+        $builder = $this->documentManager->createQueryBuilder($class);
+
+        $this->displayPathErrors($builder);
+
+        if ($query = $filterForm->get('q')->getData()) {
+            $builder->addOr($builder->expr()->field('title')->equals(new Regex('/'.$query.'/i')));
+            $builder->addOr($builder->expr()->field('path')->equals(new Regex('/'.$query.'/i')));
+        }
+
+        if ($channel = $filterForm->get('channel')->getData()) {
+            $builder->field('channel.$id')->equals($channel);
+        }
+
+        $builder->sort('path', 1);
+        $builder->sort('channel.$id', 1);
+
+        if ($filterForm->isSubmitted()) {
+            $request->getSession()->set('page_filterform_data', $filterForm->getData());
+        }
+
+        $pagination = $this->getPaginator()->paginate(
+            $builder,
+            $request->query->get('page', 1),
+            25
+        );
+
+        $response = $this->render('@IntegratedPage/page/index.html.twig', [
             'pages' => $pagination,
-            'channels' => $this->getChannels(),
-            'selectedChannel' => $channel,
+            'filterForm' => $filterForm->createView(),
+            'lastPage' => $this->getLastEditPage($request->getSession()),
         ]);
-
-        if ($request->query->has('channel')) {
-            $response->headers->setCookie(new Cookie('channel', $request->query->get('channel')));
-        }
 
         return $response;
     }
@@ -93,7 +136,7 @@ class PageController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -105,23 +148,19 @@ class PageController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channel = $this->getSelectedChannel();
+            $this->documentManager->persist($page);
+            $this->documentManager->flush();
 
-            $page->setChannel($channel);
+            $this->routeCache->clear();
 
-            $dm = $this->getDocumentManager();
+            $this->addFlash('success', sprintf('Page "%s" has been created', $page->getTitle()));
 
-            $dm->persist($page);
-            $dm->flush();
+            $this->setLastEditPage($request->getSession(), $page);
 
-            $this->get('integrated_page.services.route_cache')->clear();
-
-            $this->get('braincrafted_bootstrap.flash')->success('Page created');
-
-            return $this->redirect($this->generateUrl('integrated_page_page_index', ['channel' => $channel->getId()]));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:new.html.twig', [
+        return $this->render('@IntegratedPage/page/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -132,7 +171,7 @@ class PageController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function editAction(Request $request, Page $page)
+    public function edit(Request $request, Page $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -142,18 +181,18 @@ class PageController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channel = $this->getSelectedChannel();
+            $this->documentManager->flush();
 
-            $this->getDocumentManager()->flush();
+            $this->routeCache->clear();
 
-            $this->get('integrated_page.services.route_cache')->clear();
+            $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
-            $this->get('braincrafted_bootstrap.flash')->success('Page updated');
+            $this->setLastEditPage($request->getSession(), $page);
 
-            return $this->redirect($this->generateUrl('integrated_page_page_index', ['channel' => $channel->getId()]));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:edit.html.twig', [
+        return $this->render('@IntegratedPage/page/edit.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
         ]);
@@ -165,7 +204,7 @@ class PageController extends Controller
      *
      * @return Response|RedirectResponse
      */
-    public function deleteAction(Request $request, Page $page)
+    public function delete(Request $request, Page $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -179,21 +218,17 @@ class PageController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channel = $this->getSelectedChannel();
+            $this->documentManager->remove($page);
+            $this->documentManager->flush();
 
-            $dm = $this->getDocumentManager();
+            $this->routeCache->clear();
 
-            $dm->remove($page);
-            $dm->flush();
+            $this->addFlash('success', 'Page deleted');
 
-            $this->get('integrated_page.services.route_cache')->clear();
-
-            $this->get('braincrafted_bootstrap.flash')->success('Page deleted');
-
-            return $this->redirect($this->generateUrl('integrated_page_page_index', ['channel' => $channel->getId()]));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:delete.html.twig', [
+        return $this->render('@IntegratedPage/page/delete.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
         ]);
@@ -204,45 +239,30 @@ class PageController extends Controller
      *
      * @return Response
      *
-     * @throws \Doctrine\ODM\MongoDB\Mapping\MappingException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MappingException
+     * @throws MongoDBException
      */
-    public function copyAction(Request $request)
+    public function copy(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        try {
-            $channel = $this->getSelectedChannel();
-
-            $builder = $this->getDocumentManager()->createQueryBuilder(Page::class)
-                ->field('channel.$id')->equals($channel->getId());
-
-            $pagination = $this->getPaginator()->paginate(
-                $builder,
-                $request->query->get('page', 1),
-                25
-            );
-        } catch (\RuntimeException $e) {
-            $this->get('braincrafted_bootstrap.flash')->error('Please add a website connector for at least one channel to manage pages');
-
-            return $this->render('IntegratedPageBundle:page:error.html.twig');
-        }
-
         if ($formData = $request->request->get('page_copy', null)) {
-            $targetChannel = $formData['targetChannel'];
+            $targetChannel = $formData['targetChannel'] ?? null;
+            $sourceChannel = $formData['sourceChannel'] ?? null;
         } else {
             $targetChannel = null;
+            $sourceChannel = null;
         }
 
         $form = $this->createForm(
             PageCopyType::class,
             null,
             [
-                'channel' => $channel->getId(),
+                'sourceChannel' => $sourceChannel,
                 'targetChannel' => $targetChannel,
-                'action' => $this->generateUrl('integrated_page_page_copy', ['channel' => $channel->getId()]),
+                'action' => $this->generateUrl('integrated_page_page_copy'),
                 'method' => 'POST',
             ]
         );
@@ -253,18 +273,15 @@ class PageController extends Controller
             $data = $form->getData();
 
             if ($data['action'] != 'refresh') {
-                $this->pageCopyService->copyPages($channel->getId(), $form->getData());
+                $this->pageCopyService->copyPages($form->getData());
 
-                $this->get('braincrafted_bootstrap.flash')->success('Pages copied');
+                $this->addFlash('success', 'Pages copied');
 
-                return $this->redirect($this->generateUrl('integrated_page_page_index', ['channel' => $channel->getId()]));
+                return $this->redirectToRoute('integrated_page_page_index');
             }
         }
 
-        return $this->render('IntegratedPageBundle:page:copy.html.twig', [
-            'pages' => $pagination,
-            'channels' => $this->getChannels(),
-            'selectedChannel' => $channel,
+        return $this->render('@IntegratedPage/page/copy.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -276,21 +293,17 @@ class PageController extends Controller
      */
     protected function createCreateForm(Page $page)
     {
-        $channel = $this->getSelectedChannel();
-
         $form = $this->createForm(
             PageType::class,
             $page,
             [
-                'action' => $this->generateUrl('integrated_page_page_new', ['channel' => $channel->getId()]),
+                'action' => $this->generateUrl('integrated_page_page_new'),
                 'method' => 'POST',
-                'theme' => $this->getTheme($channel),
             ]
         );
 
         $form->add('actions', SaveCancelType::class, [
             'cancel_route' => 'integrated_page_page_index',
-            'cancel_route_parameters' => ['channel' => $this->getSelectedChannel()->getId()],
             'label' => 'Create',
             'button_class' => '',
         ]);
@@ -305,24 +318,20 @@ class PageController extends Controller
      */
     protected function createEditForm(Page $page)
     {
-        $channel = $page->getChannel();
-
         $form = $this->createForm(
             PageType::class,
             $page,
             [
                 'action' => $this->generateUrl(
                     'integrated_page_page_edit',
-                    ['id' => $page->getId(), 'channel' => $channel->getId()]
+                    ['id' => $page->getId()]
                 ),
                 'method' => 'PUT',
-                'theme' => $this->getTheme($channel),
             ]
         );
 
         $form->add('actions', SaveCancelType::class, [
             'cancel_route' => 'integrated_page_page_index',
-            'cancel_route_parameters' => ['channel' => $this->getSelectedChannel()->getId()],
         ]);
 
         return $form;
@@ -342,5 +351,50 @@ class PageController extends Controller
         $builder->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
 
         return $builder->getForm();
+    }
+
+    /**
+     * @param Builder $builder
+     *
+     * @throws MongoDBException
+     */
+    protected function displayPathErrors(Builder $builder)
+    {
+        $paths = [];
+        foreach ($builder->getQuery()->execute() as $item) {
+            if (!$item instanceof ContentTypePage) {
+                continue;
+            }
+
+            $settings = $item->getControllerService().$item->getLayout();
+            $key = $item->getChannel()->getId().'-'.$item->getPath();
+            if (isset($paths[$key]) && $paths[$key] != $settings) {
+                $this->addFlash('danger', 'Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
+                continue;
+            }
+
+            $paths[$key] = $settings;
+        }
+    }
+
+    /**
+     * @param SessionInterface $session
+     * @param Page             $page
+     */
+    private function setLastEditPage(SessionInterface $session, Page $page)
+    {
+        $session->set('page_lastedit_id', $page->getId());
+    }
+
+    /**
+     * @param SessionInterface $session
+     *
+     * @return Page|null
+     */
+    private function getLastEditPage(SessionInterface $session)
+    {
+        if ($pageId = $session->get('page_lastedit_id')) {
+            return $this->documentManager->getRepository(Page::class)->find($pageId);
+        }
     }
 }

@@ -11,7 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Symfony\Component\Console\Command\Command;
+use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
@@ -19,18 +20,17 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Lock;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class IndexCommand extends ContainerAwareCommand
+class IndexCommand extends Command
 {
     /**
      * @var StateManager
@@ -38,15 +38,33 @@ class IndexCommand extends ContainerAwareCommand
     private $stateManager;
 
     /**
+     * @var ResolverInterface
+     */
+    private $resolver;
+
+    /**
+     * @var ObjectRepository
+     */
+    private $workflowRepository;
+
+    /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    /**
      * IndexCommand constructor.
      *
      * @param StateManager $stateManager
      */
-    public function __construct(StateManager $stateManager)
+    public function __construct(StateManager $stateManager, ResolverInterface $resolver, ObjectRepository $workflowRepository, LockFactory $lockFactory)
     {
-        parent::__construct();
-
         $this->stateManager = $stateManager;
+        $this->resolver = $resolver;
+        $this->workflowRepository = $workflowRepository;
+        $this->lockFactory = $lockFactory;
+
+        parent::__construct();
     }
 
     /**
@@ -73,7 +91,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$input->getArgument('id') && !$input->getOption('full')) {
             throw new InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
@@ -122,12 +140,12 @@ The <info>%command.name%</info> command starts a index of all the content from t
             $types = [];
 
             foreach ($this->findTypes($workflow) as $row) {
-                $this->stateManager->ensureWorkflowState($row->getType());
-                $types[] = $row->getType();
+                $this->stateManager->ensureWorkflowState($row->getId());
+                $types[] = $row->getId();
             }
 
             if (!$types) {
-                return 0; // no content type connected to the selected workflow ids.
+                return 0;
             }
 
             $command = null;
@@ -149,6 +167,8 @@ The <info>%command.name%</info> command starts a index of all the content from t
         } finally {
             $lock->release();
         }
+
+        return 0;
     }
 
     /**
@@ -159,10 +179,10 @@ The <info>%command.name%</info> command starts a index of all the content from t
     protected function findDefinition(array $ids = null)
     {
         if (null === $ids) {
-            return $this->getRepository()->findAll();
+            return $this->workflowRepository->findAll();
         }
 
-        return $this->getRepository()->findBy(['id' => $ids]);
+        return $this->workflowRepository->findBy(['id' => $ids]);
     }
 
     /**
@@ -174,7 +194,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
     {
         $result = [];
 
-        foreach ($this->getResolver()->getTypes() as $type) {
+        foreach ($this->resolver->getTypes() as $type) {
             if ($type->hasOption('workflow') && isset($ids[$type->getOption('workflow')])) {
                 $result[] = $type;
             }
@@ -184,26 +204,10 @@ The <info>%command.name%</info> command starts a index of all the content from t
     }
 
     /**
-     * @return ResolverInterface
-     */
-    protected function getResolver()
-    {
-        return $this->getContainer()->get('integrated_content.resolver');
-    }
-
-    /**
-     * @return ObjectRepository
-     */
-    protected function getRepository()
-    {
-        return $this->getContainer()->get('integrated_workflow.repository.definition');
-    }
-
-    /**
-     * @return Lock
+     * @return LockFactory
      */
     protected function getLock()
     {
-        return $this->getContainer()->get('integrated_workflow.lock.factory')->createLock(self::class.md5(__DIR__));
+        return $this->lockFactory->createLock(self::class.md5(__DIR__.$this->getName()));
     }
 }

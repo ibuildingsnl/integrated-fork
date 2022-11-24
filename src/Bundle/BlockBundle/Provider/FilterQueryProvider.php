@@ -11,9 +11,11 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
+use MongoDB\BSON\Regex;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -31,28 +33,24 @@ class FilterQueryProvider
     protected $blockUsageProvider;
 
     /**
-     * @var bool
-     */
-    private $pageBundleInstalled;
-
-    /**
      * @param ManagerRegistry    $mr
      * @param BlockUsageProvider $blockUsageProvider
-     * @param array              $bundles
      */
-    public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider, array $bundles)
+    public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider)
     {
         $this->mr = $mr;
         $this->blockUsageProvider = $blockUsageProvider;
-        $this->pageBundleInstalled = isset($bundles['IntegratedPageBundle']);
     }
 
     /**
-     * @param array|null $data
+     * @param array|null  $data
+     * @param object|null $groupUser
      *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return \Doctrine\ODM\MongoDB\Query\Builder
+     *
+     * @throws \MongoException
      */
-    public function getBlocksByChannelQueryBuilder($data)
+    public function getBlocksByChannelQueryBuilder($data, ?object $groupUser)
     {
         $qb = $this->mr->getManager()->createQueryBuilder(Block::class);
 
@@ -64,11 +62,11 @@ class FilterQueryProvider
         }
 
         if (isset($data['q'])) {
-            $qb->field('title')->equals(new \MongoRegex('/'.$data['q'].'/i'));
+            $qb->field('title')->equals(new Regex($data['q'], 'i'));
         }
 
         $channels = isset($data['channels']) ? array_filter($data['channels']) : null;
-        if ($this->pageBundleInstalled && $channels) {
+        if ($channels) {
             $availableBlockIds = [];
 
             foreach ($channels as $channel) {
@@ -78,24 +76,54 @@ class FilterQueryProvider
             $qb->field('id')->in($availableBlockIds);
         }
 
+        if ($groupUser !== null) {
+            $qb->field('groups')->in($this->getUserGroupIds($groupUser));
+        }
+
         return $qb;
     }
 
     /**
-     * @param array|null $data
+     * @param array|null  $data
+     * @param object|null $groupUser
      *
      * @return array
+     *
+     * @throws \MongoException
      */
-    public function getBlockIds($data)
+    public function getBlockIds($data, ?object $groupUser)
     {
-        $queryBuilder = $this->getBlocksByChannelQueryBuilder($data);
+        $queryBuilder = $this->getBlocksByChannelQueryBuilder($data, $groupUser);
 
-        $blocks = $queryBuilder->select('_id')
+        $blockIds = [];
+        $blocks = $queryBuilder
             ->hydrate(false)
+            ->select('_id')
             ->getQuery()
             ->getIterator()
             ->toArray();
 
-        return array_keys($blocks);
+        foreach ($blocks as $block) {
+            $blockIds[] = $block['_id'];
+        }
+
+        return $blockIds;
+    }
+
+    /**
+     * @param object $user
+     *
+     * @return array
+     */
+    private function getUserGroupIds($user)
+    {
+        $groupIds = [];
+        if ($user instanceof UserInterface) {
+            foreach ($user->getGroups() as $group) {
+                $groupIds[] = $group->getId();
+            }
+        }
+
+        return $groupIds;
     }
 }

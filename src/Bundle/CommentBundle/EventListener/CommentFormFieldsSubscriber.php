@@ -23,6 +23,7 @@ use Integrated\Common\Content\Form\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -32,7 +33,12 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
     /**
      * @var DocumentManager
      */
-    protected $documentManager;
+    private $documentManager;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $generator;
 
     /**
      * @var AssetManager
@@ -52,7 +58,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
     /**
      * @var array|null
      */
-    protected $comments = null;
+    private $comments = null;
 
     /**
      * @param DocumentManager $documentManager
@@ -62,11 +68,13 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
      */
     public function __construct(
         DocumentManager $documentManager,
+        UrlGeneratorInterface $generator,
         AssetManager $stylesheets,
         AssetManager $javascripts,
         RequestStack $requestStack
     ) {
         $this->documentManager = $documentManager;
+        $this->generator = $generator;
         $this->stylesheets = $stylesheets;
         $this->javascripts = $javascripts;
         $this->requestStack = $requestStack;
@@ -88,7 +96,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
      */
     public function onBuildField(FieldEvent $event)
     {
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $masterRequest = $this->requestStack->getMainRequest();
         if (!$masterRequest instanceof Request
             || $masterRequest->attributes->get('_route') !== 'integrated_content_content_edit') {
             return;
@@ -104,12 +112,17 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         $options = $field->getOptions();
 
         if ($comment = $this->getComment($content->getId(), $field->getName())) {
-            $comment = $comment[0];
-            $options['attr'] = ['data-comment-id' => $comment->getId()];
+            $options['attr'] = ['data-comment-id' => $comment[0]->getId()];
+
             $field->setOptions($options);
         }
 
-        $this->stylesheets->add('bundles/integratedcomment/css/comments.css');
+        $urls = [
+            'get' => $this->generator->generate('integrated_comment_get', ['comment' => '__comment__']),
+            'new' => $this->generator->generate('integrated_comment_new', ['content' => '__content__', 'field' => '__field__']),
+        ];
+
+        $this->javascripts->add('var integrated_comment_urls = '.json_encode($urls), true);
         $this->javascripts->add('bundles/integratedcomment/js/comments.js');
     }
 
@@ -137,7 +150,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
     protected function getComments($contentId)
     {
         if (null === $this->comments) {
-            $comments = $this->documentManager->getRepository('IntegratedCommentBundle:Comment')
+            $comments = $this->documentManager->getRepository(Comment::class)
                 ->findBy(['content.$id' => $contentId], ['date' => 'asc']);
 
             $this->comments = [];

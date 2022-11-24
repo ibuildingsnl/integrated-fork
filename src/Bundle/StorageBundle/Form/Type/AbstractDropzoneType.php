@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Form\Type;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -19,7 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -77,7 +77,7 @@ abstract class AbstractDropzoneType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //make hidden instead of checkbox
+        // make hidden instead of checkbox
         $builder->add('remove', HiddenType::class, [
             'mapped' => false,
             'required' => false,
@@ -92,11 +92,8 @@ abstract class AbstractDropzoneType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $this->stylesheets->add('bundles/integratedstorage/components/integrated-jquery.filer/css/jquery.filer.css');
-        $this->stylesheets->add('bundles/integratedstorage/components/integrated-jquery.filer/css/themes/jquery.filer-dragdropbox-theme.css');
-        $this->stylesheets->add('bundles/integratedstorage/css/drag-drop.css');
-        $this->javascripts->add('bundles/integratedstorage/components/integrated-jquery.filer/js/jquery.filer.js');
-        $this->javascripts->add('bundles/integratedstorage/js/drag-drop.js');
+        $this->stylesheets->add('bundles/integratedintegrated/drag-drop.css');
+        $this->javascripts->add('bundles/integratedintegrated/drag-drop.js');
 
         $view->vars['type'] = $this->type;
 

@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Event\ConfigureRolesEvent;
 use Integrated\Bundle\UserBundle\Model\RoleInterface;
 use Integrated\Bundle\UserBundle\Model\RoleManagerInterface;
@@ -106,7 +106,7 @@ class RoleManager implements RoleManagerInterface
         $this->om->persist($role);
 
         if ($flush) {
-            $this->om->flush($role);
+            $this->om->flush();
         }
     }
 
@@ -118,7 +118,7 @@ class RoleManager implements RoleManagerInterface
         $this->om->remove($role);
 
         if ($flush) {
-            $this->om->flush($role);
+            $this->om->flush();
         }
     }
 
@@ -195,8 +195,8 @@ class RoleManager implements RoleManagerInterface
     {
         if (!$this->rolesEventFired) {
             $roles = $this->eventDispatcher->dispatch(
-                ConfigureRolesEvent::CONFIGURE,
-                new ConfigureRolesEvent($this->roles)
+                new ConfigureRolesEvent($this->roles),
+                ConfigureRolesEvent::CONFIGURE
             )->getRoles();
 
             $this->roles = [];

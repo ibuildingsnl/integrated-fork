@@ -11,12 +11,14 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Form\FormInterface;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\GroupFormType;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,28 +26,36 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class GroupController extends Controller
+class GroupController extends AbstractController
 {
+    /**
+     * @var GroupManagerInterface
+     */
+    private $manager;
+
+    public function __construct(GroupManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
     /**
      * @param Request $request
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        /** @var $paginator \Knp\Component\Pager\Paginator */
-        $paginator = $this->get('knp_paginator');
-        $paginator = $paginator->paginate(
-            $this->getManager()->findAll(),
+        $paginator = $this->getPaginator()->paginate(
+            $this->manager->findAll(),
             $request->query->get('page', 1),
             15
         );
 
-        return $this->render('IntegratedUserBundle:group:index.html.twig', [
+        return $this->render('@IntegratedUser/group/index.html.twig', [
             'groups' => $paginator,
         ]);
     }
@@ -55,33 +65,31 @@ class GroupController extends Controller
      *
      * @return Response
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
         $form = $this->createNewForm();
+        $form->handleRequest($request);
 
-        if ($request->isMethod('post')) {
-            $form->handleRequest($request);
-
-            // check for cancel click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
 
             if ($form->isValid()) {
                 $user = $form->getData();
 
-                $this->getManager()->persist($user);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The group %s is created', $user->getName()));
+                $this->manager->persist($user);
+                $this->addFlash('success', sprintf('The group %s is created', $user->getName()));
 
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:group:new.html.twig', [
+        return $this->render('@IntegratedUser/group/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -91,39 +99,37 @@ class GroupController extends Controller
      *
      * @return Response
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
-    public function editAction(Request $request)
+    public function edit(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $group = $this->getManager()->find($request->get('id'));
+        $group = $this->manager->find($request->get('id'));
 
         if (!$group) {
             throw $this->createNotFoundException();
         }
 
         $form = $this->createEditForm($group);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('put') || $request->isMethod('post')) {
-            $form->handleRequest($request);
-
-            // check for cancel click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
 
             if ($form->isValid()) {
-                $this->getManager()->persist($group);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The changes to the group %s are saved', $group->getName()));
+                $this->manager->persist($group);
+                $this->addFlash('success', sprintf('The changes to the group %s are saved', $group->getName()));
 
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:group:edit.html.twig', [
+        return $this->render('@IntegratedUser/group/edit.html.twig', [
             'group' => $group,
             'form' => $form->createView(),
         ]);
@@ -134,44 +140,43 @@ class GroupController extends Controller
      *
      * @return Response
      */
-    public function deleteAction(Request $request)
+    public function delete(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $group = $this->getManager()->find($request->get('id'));
+        $group = $this->manager->find($request->get('id'));
 
         if (!$group) {
-            return $this->redirect($this->generateUrl('integrated_user_group_index')); // group is already gone
+            return $this->redirectToRoute('integrated_user_group_index'); // group is already gone
         }
 
         $form = $this->createDeleteForm($group);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('delete')) {
-            $form->handleRequest($request);
-
+        if ($form->isSubmitted()) {
             // check for cancel click else its a submit
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
 
             if ($form->isValid()) {
-                $this->getManager()->remove($group);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The group %s is removed', $group->getName()));
+                $this->manager->remove($group);
+                $this->addFlash('success', sprintf('The group %s is removed', $group->getName()));
 
-                return $this->redirect($this->generateUrl('integrated_user_group_index'));
+                return $this->redirectToRoute('integrated_user_group_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:group:delete.html.twig', [
+        return $this->render('@IntegratedUser/group/delete.html.twig', [
             'group' => $group,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createNewForm()
     {
@@ -197,7 +202,7 @@ class GroupController extends Controller
     /**
      * @param GroupInterface $group
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(GroupInterface $group)
     {
@@ -223,7 +228,7 @@ class GroupController extends Controller
     /**
      * @param GroupInterface $group
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm(GroupInterface $group)
     {
@@ -244,19 +249,5 @@ class GroupController extends Controller
         ]);
 
         return $form;
-    }
-
-    /**
-     * @return GroupManagerInterface
-     *
-     * @throws \LogicException
-     */
-    protected function getManager()
-    {
-        if (!$this->container->has('integrated_user.group.manager')) {
-            throw new \LogicException('The UserBundle is not registered in your application.');
-        }
-
-        return $this->container->get('integrated_user.group.manager');
     }
 }

@@ -11,20 +11,20 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Integrated\Common\Solr\Task\Worker;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class WorkerCommand extends ContainerAwareCommand
+class WorkerCommand extends Command
 {
     /**
-     * @var Factory
+     * @var LockFactory
      */
     private $factory;
 
@@ -34,10 +34,10 @@ class WorkerCommand extends ContainerAwareCommand
     private $worker;
 
     /**
-     * @param Worker  $worker
-     * @param Factory $factory
+     * @param Worker      $worker
+     * @param LockFactory $factory
      */
-    public function __construct(Worker $worker, Factory $factory)
+    public function __construct(Worker $worker, LockFactory $factory)
     {
         parent::__construct();
 
@@ -66,12 +66,12 @@ The <info>%command.name%</info> command starts a solr worker run.
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $lock = $this->factory->createLock(self::class.md5(__DIR__));
+        $lock = $this->factory->createLock(self::class.md5(__DIR__.$this->getName()));
 
         if (!$lock->acquire()) {
-            return;
+            return 0;
         }
 
         try {
@@ -83,5 +83,7 @@ The <info>%command.name%</info> command starts a solr worker run.
         } finally {
             $lock->release();
         }
+
+        return 0;
     }
 }

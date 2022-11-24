@@ -11,18 +11,19 @@
 
 namespace Integrated\Bundle\UserBundle\Security;
 
-use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UserProvider implements UserProviderInterface
+class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     /**
      * @var UserManagerInterface
@@ -60,11 +61,11 @@ class UserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         /** @var User $user */
-        $user = $this->manager->findByUsernameAndScope($username, new Scope());
+        $user = $this->manager->findEnabledByUsernameAndScope($username);
 
         if (!$user) {
-            $exception = new UsernameNotFoundException(sprintf('No user with the username "%s" exists', $username));
-            $exception->setUsername($username);
+            $exception = new UserNotFoundException(sprintf('No user with the username "%s" exists', $username));
+            $exception->setUserIdentifier($username);
 
             throw $exception;
         }
@@ -91,13 +92,13 @@ class UserProvider implements UserProviderInterface
         $loaded = $this->manager->find($user->getId());
 
         if (!$loaded) {
-            $exception = new UsernameNotFoundException(
+            $exception = new UserNotFoundException(
                 sprintf(
                     'The user with id "%s" could not be refreshed',
                     $user->getId()
                 )
             );
-            $exception->setUsername($user->getUsername());
+            $exception->setUserIdentifier($user->getUserIdentifier());
 
             throw $exception;
         }
@@ -115,5 +116,19 @@ class UserProvider implements UserProviderInterface
         }
 
         return $class === $this->manager->getClassName() || is_subclass_of($class, $this->manager->getClassName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function upgradePassword(PasswordAuthenticatedUserInterface|UserInterface $user, string $newHashedPassword)
+    {
+        if (!$this->supportsClass(\get_class($user))) {
+            return;
+        }
+
+        $user->setPassword($newHashedPassword);
+        $user->setSalt(null);
+        $this->manager->persist($user);
     }
 }

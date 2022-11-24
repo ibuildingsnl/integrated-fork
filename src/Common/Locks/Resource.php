@@ -28,13 +28,13 @@ class Resource implements ResourceInterface
     protected $type;
 
     /**
-     * @var string | null
+     * @var string|null
      */
     protected $identifier = null;
 
     /**
-     * @param string        $type
-     * @param string | null $identifier
+     * @param string      $type
+     * @param string|null $identifier
      */
     public function __construct($type, $identifier = null)
     {
@@ -76,7 +76,7 @@ class Resource implements ResourceInterface
 
     public static function fromAccount(UserInterface $user)
     {
-        return new self(ClassUtils::getRealClass($user), $user->getUsername());
+        return new self(ClassUtils::getRealClass($user), $user->getUserIdentifier());
     }
 
     public static function fromToken(TokenInterface $token)

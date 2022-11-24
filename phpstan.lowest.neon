@@ -1,0 +1,10 @@
+includes:
+  - vendor/phpstan/phpstan-doctrine/extension.neon
+  - phpstan-baseline.neon
+parameters:
+  ignoreErrors:
+    - '#Unsafe usage of new static#'
+  reportUnmatchedIgnoredErrors: false
+  level: 1
+  paths:
+    - src/

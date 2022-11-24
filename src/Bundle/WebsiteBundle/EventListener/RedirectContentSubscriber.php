@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
@@ -18,7 +19,6 @@ use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\ContentInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ExceptionInterface;
@@ -75,15 +75,15 @@ class RedirectContentSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
-        if (!$event->getException() instanceof NotFoundHttpException) {
+        if (!$event->getThrowable() instanceof NotFoundHttpException) {
             return;
         }
 
@@ -107,7 +107,10 @@ class RedirectContentSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $url = $this->urlResolver->generateUrl($document);
+        $url = $this->urlResolver->generateUrl($document, null, false);
+        if ($url === null || $url === $request->getRequestUri()) {
+            return;
+        }
 
         try {
             $this->matcher->match($url);

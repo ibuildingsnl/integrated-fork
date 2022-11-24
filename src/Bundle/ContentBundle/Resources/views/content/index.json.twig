@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 {% set items = [] %}
 {% for content in pager %}
     {% set item = {'id': content.type_id, 'type': content.type_name,'title': content.title|default('(no title)'), 'content': null, 'image': null} %}
@@ -22,6 +22,10 @@
     {% if content.alternate_string is defined %}
         {% set item = item|merge({'alternate': content.alternate_string[0]}) %}
     {% endif %}
+    {% if content.parent_id_string is defined %}
+        {% set item = item|merge({'path': integrated_content_path(content)|join(' > ')}) %}
+    {% endif %}
+
     {% set items = items|merge([item]) %}
 {% endfor %}
 {% set paging = [] %}
@@ -29,5 +33,5 @@
     {% set paging = paging|merge([{'prev': true}]) %}
 {% endif %}
 {% set data = {'href': 'resource', 'relations': relations, 'pagination': pager|json_pagination , 'items': items} %}
-{% endspaceless %}
+{% endapply %}
 {{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}

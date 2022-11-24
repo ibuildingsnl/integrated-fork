@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission;
 use Integrated\Bundle\WorkflowBundle\Form\DataTransformer\PermissionTransformer;
@@ -28,7 +28,7 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
      */
     private $repository;
 
-    public function setup(): void
+    protected function setup(): void
     {
         $this->repository = $this->getMockBuilder(ObjectRepository::class)->getMock();
     }

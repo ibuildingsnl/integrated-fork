@@ -23,7 +23,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Lock\Factory;
+use Symfony\Component\Lock\Exception\LockConflictedException;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\Process;
 
 /**
@@ -42,7 +43,7 @@ class IndexerRunCommand extends Command
     protected $queueProvider;
 
     /**
-     * @var Factory
+     * @var LockFactory
      */
     protected $lockFactory;
 
@@ -66,7 +67,7 @@ class IndexerRunCommand extends Command
      *
      * @param Indexer                      $indexer
      * @param QueueProvider                $queueProvider
-     * @param Factory                      $lockFactory
+     * @param LockFactory                  $lockFactory
      * @param DoctrineClearEventSubscriber $clearEventSubscriber
      * @param KernelInterface              $kernel
      * @param string                       $workingDirectory
@@ -74,7 +75,7 @@ class IndexerRunCommand extends Command
     public function __construct(
         Indexer $indexer,
         QueueProvider $queueProvider,
-        Factory $lockFactory,
+        LockFactory $lockFactory,
         DoctrineClearEventSubscriber $clearEventSubscriber,
         KernelInterface $kernel,
         $workingDirectory
@@ -136,7 +137,7 @@ The <info>%command.name%</info> command starts a indexer run.
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($argument = $input->getArgument('processes')) {
             return $this->runProcess(new ArgumentProcess($argument), $input, $output);
@@ -169,7 +170,7 @@ The <info>%command.name%</info> command starts a indexer run.
                 $lock->release();
             }
         } catch (Exception $e) {
-            $output->writeln('Aborting: '.$e->getMessage());
+            $output->writeln('Aborting: '.$e->getMessage(), ($e instanceof LockConflictedException) ? OutputInterface::VERBOSITY_VERBOSE : 0);
 
             return 1;
         }
@@ -191,13 +192,17 @@ The <info>%command.name%</info> command starts a indexer run.
         while (true) {
             // Run a external process
             $process = new Process(
-                sprintf('php bin/console solr:indexer:run -e %s', $this->kernel->getEnvironment()),
+                ['php', 'bin/console', 'solr:indexer:run', '-e', $this->kernel->getEnvironment()],
                 $this->workingDirectory
             );
 
             $process->setTimeout(0);
             $process->run(function ($type, $buffer) use ($output) {
-                $output->write($buffer, false, $type);
+                if (Process::ERR === $type) {
+                    $output->write($buffer);
+                } else {
+                    $output->write($buffer, false, $output::VERBOSITY_VERBOSE);
+                }
             });
 
             if (!$process->isSuccessful()) {
@@ -236,7 +241,7 @@ The <info>%command.name%</info> command starts a indexer run.
                 $process->start();
 
                 // Tell somebody
-                $output->writeln(sprintf('Started process %d with pid %d to run the queue', ($i + 1), $process->getPid()));
+                $output->writeln(sprintf('Started process %d with pid %d to run the queue', $i + 1, $process->getPid()));
             }
 
             if ($input->getOption('blocking')) {
@@ -256,7 +261,7 @@ The <info>%command.name%</info> command starts a indexer run.
 
                         if (!$process->isRunning()) {
                             // Tell the user
-                            $output->writeln(sprintf('Process %d finished', ($i + 1)));
+                            $output->writeln(sprintf('Process %d finished', $i + 1));
 
                             // This one is important
                             $pool->removeElement($process);

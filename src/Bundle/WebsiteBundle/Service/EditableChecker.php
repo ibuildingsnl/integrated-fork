@@ -15,7 +15,7 @@ use Integrated\Bundle\WebsiteBundle\Routing\ContentTypePageLoader;
 use Integrated\Bundle\WebsiteBundle\Routing\PageLoader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 /**
@@ -29,7 +29,7 @@ class EditableChecker
     protected $authorizationChecker;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     protected $tokenStorage;
 
@@ -39,18 +39,18 @@ class EditableChecker
     protected $request;
 
     /**
-     * @param AuthorizationChecker $authorizationChecker
-     * @param TokenStorage         $tokenStorage
-     * @param RequestStack         $requestStack
+     * @param AuthorizationChecker  $authorizationChecker
+     * @param TokenStorageInterface $tokenStorage
+     * @param RequestStack          $requestStack
      */
     public function __construct(
         AuthorizationChecker $authorizationChecker,
-        TokenStorage $tokenStorage,
+        TokenStorageInterface $tokenStorage,
         RequestStack $requestStack
     ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
-        $this->request = $requestStack->getMasterRequest();
+        $this->request = $requestStack->getMainRequest();
     }
 
     /**
@@ -72,7 +72,7 @@ class EditableChecker
 
         $route = $this->request->attributes->get('_route');
 
-        //check if route begins with page or contentTypePage prefix
+        // check if route begins with page or contentTypePage prefix
         if (0 === strpos($route, ContentTypePageLoader::ROUTE_PREFIX) ||
             0 === strpos($route, PageLoader::ROUTE_PREFIX)
         ) {

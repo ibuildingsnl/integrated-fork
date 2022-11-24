@@ -49,7 +49,7 @@ class ContentTypePageService
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        //don't add if no controller service is defined
+        // don't add if no controller service is defined
         if (!\is_array($controller)) {
             return;
         }
@@ -60,6 +60,6 @@ class ContentTypePageService
         $contentTypePage->setControllerAction($controller['controller_actions'][0]);
 
         $this->dm->persist($contentTypePage);
-        $this->dm->flush($contentTypePage);
+        $this->dm->flush();
     }
 }

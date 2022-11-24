@@ -29,7 +29,7 @@ class RelationsType extends AbstractType
     /**
      * @var string
      */
-    const REPOSITORY = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+    public const REPOSITORY = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
     /**
      * @var ManagerRegistry
@@ -60,7 +60,7 @@ class RelationsType extends AbstractType
 
             foreach ($relation->getTargets() as $contentType) {
                 $contentTypes[] = [
-                    'type' => $contentType->getType(),
+                    'type' => $contentType->getId(),
                     'name' => $contentType->getName(),
                 ];
             }
@@ -86,7 +86,7 @@ class RelationsType extends AbstractType
     }
 
     /**
-     * {@inheritdoc.
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {

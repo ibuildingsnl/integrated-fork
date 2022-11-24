@@ -11,10 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Mailer;
 
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
+use Twig\Environment;
+use Twig\Error\Error;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Symfony\Bridge\Twig\TwigEngine;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -24,12 +29,12 @@ class FormMailer
     /**
      * @var string
      */
-    protected $template = 'email/block/form.html.twig';
+    private $template = 'email/block/form.html.twig';
 
     /**
-     * @var \Swift_Mailer
+     * @var MailerInterface
      */
-    protected $mailer;
+    private $mailer;
 
     /**
      * @var ChannelContextInterface
@@ -37,9 +42,9 @@ class FormMailer
     private $channelContext;
 
     /**
-     * @var TwigEngine
+     * @var Environment
      */
-    protected $twigEngine;
+    private $twig;
 
     /**
      * @var ThemeManager
@@ -54,26 +59,26 @@ class FormMailer
     /**
      * @var string
      */
-    protected $from;
+    private $from;
 
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
-     * @param \Swift_Mailer           $mailer
+     * @param MailerInterface         $mailer
      * @param ChannelContextInterface $channelContext
-     * @param TwigEngine              $twigEngine
+     * @param Environment             $twig
      * @param ThemeManager            $themeManager
      * @param TranslatorInterface     $translator
      * @param string                  $from
      * @param string                  $name
      */
-    public function __construct(\Swift_Mailer $mailer, ChannelContextInterface $channelContext, TwigEngine $twigEngine, ThemeManager $themeManager, TranslatorInterface $translator, $from, $name)
+    public function __construct(MailerInterface $mailer, ChannelContextInterface $channelContext, Environment $twig, ThemeManager $themeManager, TranslatorInterface $translator, $from, $name)
     {
         $this->mailer = $mailer;
-        $this->twigEngine = $twigEngine;
+        $this->twig = $twig;
         $this->channelContext = $channelContext;
         $this->themeManager = $themeManager;
         $this->translator = $translator;
@@ -86,8 +91,8 @@ class FormMailer
      * @param array       $emailAddresses
      * @param string|null $title
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
-     * @throws \Twig\Error\Error
+     * @throws CircularFallbackException
+     * @throws Error
      */
     public function send(array $data, array $emailAddresses = [], ?string $title = null)
     {
@@ -96,19 +101,20 @@ class FormMailer
         }
 
         $subject = $this->translator->trans('Form submitted');
+
         if ($channel = $this->channelContext->getChannel()) {
             $subject = '['.$channel->getName().'] '.$subject;
         }
+
         if ($title) {
             $subject .= ' - '.$title;
         }
 
-        $body = $this->twigEngine->render($this->themeManager->locateTemplate($this->template), ['data' => $data]);
-
-        $message = (new \Swift_Message($subject))
-            ->setBcc($emailAddresses)
-            ->setFrom($this->from, $this->name)
-            ->setBody($body, 'text/html');
+        $message = (new Email())
+            ->from(new Address($this->from, $this->name))
+            ->bcc(...$emailAddresses)
+            ->subject($subject)
+            ->html($this->twig->render($this->themeManager->locateTemplate($this->template), ['data' => $data]));
 
         $this->mailer->send($message);
     }

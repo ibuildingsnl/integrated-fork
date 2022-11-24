@@ -28,17 +28,17 @@ class RelatedContentBlock extends Block
     /**
      * Show items which have the current document linked.
      */
-    const SHOW_USED_BY = 1;
+    public const SHOW_USED_BY = 1;
 
     /**
      * Show items which share linked items with the current document.
      */
-    const SHOW_LINKED = 2;
+    public const SHOW_LINKED = 2;
 
     /**
      * Show items linked by the current document.
      */
-    const SHOW_LINKED_BY = 3;
+    public const SHOW_LINKED_BY = 3;
 
     /**
      * @var string
@@ -68,7 +68,7 @@ class RelatedContentBlock extends Block
      * @Type\Field(
      *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
      *      options={
-     *          "class"="IntegratedContentBundle:Relation\Relation",
+     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
      *          "choice_label"="name",
      *          "placeholder"=""
      *      }

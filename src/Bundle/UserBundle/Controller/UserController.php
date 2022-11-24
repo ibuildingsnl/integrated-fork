@@ -11,9 +11,12 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,26 +28,41 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UserController extends Controller
+class UserController extends AbstractController
 {
+    /**
+     * @var UserManagerInterface
+     */
+    private $manager;
+
+    /**
+     * @var FilterQueryProvider
+     */
+    private $provider;
+
+    public function __construct(UserManagerInterface $manager, FilterQueryProvider $provider)
+    {
+        $this->manager = $manager;
+        $this->provider = $provider;
+    }
+
     /**
      * @param Request $request
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
         $data = $request->query->get('integrated_user_filter');
-        $queryProvider = $this->get('integrated_user.provider.filter_query');
 
-        $users = $queryProvider->getUsers($data);
+        $users = $this->provider->getUsers($data);
 
         $facetFilter = $this->createForm(UserFilterType::class, null, [
-            'users' => $users,
+            'data' => $data,
         ]);
         $facetFilter->handleRequest($request);
 
@@ -54,7 +72,7 @@ class UserController extends Controller
             15
         );
 
-        return $this->render('IntegratedUserBundle:user:index.html.twig', [
+        return $this->render('@IntegratedUser/user/index.html.twig', [
             'users' => $pagination,
             'facetFilter' => $facetFilter->createView(),
         ]);
@@ -65,33 +83,31 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
         $form = $this->createNewForm();
+        $form->handleRequest($request);
 
-        if ($request->isMethod('post')) {
-            $form->handleRequest($request);
-
-            // check for back click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
 
             if ($form->isValid()) {
                 $user = $form->getData();
 
-                $this->getManager()->persist($user);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The user %s is created', $user->getUsername()));
+                $this->manager->persist($user);
+                $this->addFlash('success', sprintf('The user %s is created', $user->getUsername()));
 
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:user:new.html.twig', [
+        return $this->render('@IntegratedUser/user/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -101,39 +117,37 @@ class UserController extends Controller
      *
      * @return Response
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
-    public function editAction(Request $request)
+    public function edit(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $user = $this->getManager()->find($request->get('id'));
+        $user = $this->manager->find($request->get('id'));
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
         $form = $this->createEditForm($user);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('put')) {
-            $form->handleRequest($request);
-
-            // check for back click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
 
             if ($form->isValid()) {
-                $this->getManager()->persist($user);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The changes to the user %s are saved', $user->getUsername()));
+                $this->manager->persist($user);
+                $this->addFlash('success', sprintf('The changes to the user %s are saved', $user->getUserIdentifier()));
 
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:user:edit.html.twig', [
+        return $this->render('@IntegratedUser/user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
@@ -144,44 +158,42 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function deleteAction(Request $request)
+    public function delete(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $user = $this->getManager()->find($request->get('id'));
+        $user = $this->manager->find($request->get('id'));
 
         if (!$user) {
-            return $this->redirect($this->generateUrl('integrated_user_user_index')); // user is already gone
+            return $this->redirectToRoute('integrated_user_user_index'); // user is already gone
         }
 
         $form = $this->createDeleteForm($user);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('delete')) {
-            $form->handleRequest($request);
-
-            // check for back click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
 
             if ($form->isValid()) {
-                $this->getManager()->remove($user);
-                $this->get('braincrafted_bootstrap.flash')->success(sprintf('The user %s is removed', $user->getUsername()));
+                $this->manager->remove($user);
+                $this->addFlash('success', sprintf('The user %s is removed', $user->getUserIdentifier()));
 
-                return $this->redirect($this->generateUrl('integrated_user_user_index'));
+                return $this->redirectToRoute('integrated_user_user_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:user:delete.html.twig', [
+        return $this->render('@IntegratedUser/user/delete.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createNewForm()
     {
@@ -211,7 +223,7 @@ class UserController extends Controller
     /**
      * @param UserInterface $user
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createEditForm(UserInterface $user)
     {
@@ -241,7 +253,7 @@ class UserController extends Controller
     /**
      * @param UserInterface $user
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm(UserInterface $user)
     {
@@ -266,27 +278,5 @@ class UserController extends Controller
         ]);
 
         return $form;
-    }
-
-    /**
-     * @return UserManagerInterface
-     *
-     * @throws \LogicException
-     */
-    protected function getManager()
-    {
-        if (!$this->container->has('integrated_user.user.manager')) {
-            throw new \LogicException('The UserBundle is not registered in your application.');
-        }
-
-        return $this->container->get('integrated_user.user.manager');
-    }
-
-    /**
-     * @return \Knp\Component\Pager\Paginator
-     */
-    protected function getPaginator()
-    {
-        return $this->get('knp_paginator');
     }
 }

@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\WebsiteBundle\Routing;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
@@ -22,7 +24,7 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class ContentTypePageLoader extends Loader
 {
-    const ROUTE_PREFIX = 'integrated_website_content_type_page';
+    public const ROUTE_PREFIX = 'integrated_website_content_type_page';
 
     /**
      * @var bool
@@ -60,7 +62,7 @@ class ContentTypePageLoader extends Loader
 
         $routes = new RouteCollection();
 
-        $pages = $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage')->findAll();
+        $pages = $this->dm->getRepository(ContentTypePage::class)->findAll();
 
         /** @var \Integrated\Bundle\PageBundle\Document\Page\ContentTypePage $page */
         foreach ($pages as $page) {
@@ -91,7 +93,7 @@ class ContentTypePageLoader extends Loader
      */
     protected function getContentTypeRepo()
     {
-        return $this->dm->getRepository('IntegratedContentBundle:ContentType\ContentType');
+        return $this->dm->getRepository(ContentType::class);
     }
 
     /**

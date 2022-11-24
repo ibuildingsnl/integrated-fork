@@ -95,7 +95,7 @@ class ContentProvider
             /** @var Relation $relation */
             if ($relation = $this->dm->getRepository(Relation::class)->find($relation)) {
                 foreach ($relation->getTargets() as $target) {
-                    $contentType[] = $target->getType();
+                    $contentType[] = $target->getId();
                 }
             }
         } else {
@@ -211,6 +211,15 @@ class ContentProvider
             'desc' => 'desc',
         ];
 
+        if ($ids = $request->get('ids')) {
+            $ids = array_filter(explode(',', $ids), function ($value) {
+                return preg_match('/[a-z0-9]{32}/', $value);
+            });
+            if (\count($ids)) {
+                $query->createFilterQuery('ids')->setQuery('type_id: ("'.implode('" OR "', $ids).'")');
+            }
+        }
+
         if ($q = $request->get('q')) {
             $edismax = $query->getEDisMax();
             $edismax->setQueryFields('title content');
@@ -220,7 +229,7 @@ class ContentProvider
 
             $sort_default = 'rel';
         } else {
-            //relevance only available when sorting on specific query
+            // relevance only available when sorting on specific query
             unset($sort_options['rel']);
         }
 
@@ -255,7 +264,7 @@ class ContentProvider
         $filterWorkflow = [];
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            //admin is always allowed to do everything
+            // admin is always allowed to do everything
             return;
         }
 
@@ -281,7 +290,7 @@ class ContentProvider
         // always allow access to assinged content
         $fq->setQuery($fq->getQuery().' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
 
-        /* @var Person $person*/
+        /* @var Person $person */
         if ($person = $user->getRelation()) {
             $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
         }
