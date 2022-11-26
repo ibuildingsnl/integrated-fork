@@ -144,6 +144,7 @@
                     if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
                         cList.contains('dropdown-menu-right')) {
                         menu.addEventListener('click', showDropDownBackGround, false);
+                        menu.clickableElement = menu;
                     }
                 }
             }
@@ -161,7 +162,11 @@
 
     function showDropDownBackGround(event) {
         var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        menuItemDropDownUnderlay.classList.remove('hide');
+        if (event.currentTarget.clickableElement.classList.contains('open')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        } else {
+            menuItemDropDownUnderlay.classList.remove('hide');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', initMenu);

@@ -14,8 +14,61 @@
                 </ul>
             </div>
             <section class="section-white section-radius">
-                {{ include('@IntegratedContent/relation/partial/list.html.twig', { 'documents': documents }) }}
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>{% trans %}Name{% endtrans %}</th>
+                        <th>{% trans %}Type{% endtrans %}</th>
+                        <th>{% trans %}Location{% endtrans %}</th>
+                        <th>{% trans %}Created{% endtrans %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for document in documents %}
+                        <tr class="has-options">
+                            <td>
+                                <strong>
+                                    <a href="{{ path('integrated_content_relation_edit', {'id': document.id}) }}">
+                                        {{ document.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_content_relation_edit', {'id': document.id}) }}" title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_content_relation_delete', {'id': document.id}) }}"
+                                       class="color-red" title="{% trans %}Delete{% endtrans %}">{% trans %}Delete{% endtrans %}</a>
+                                </div>
+                            </td>
+                            <td>
+                                {{ document.type }}
+                            </td>
+                            <td>
+                                {{ document.location }}
+                            </td>
+                            <td>
+                                {{ document.createdAt|date }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">
+                                {% trans %}No relations added{% endtrans %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </section>
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
 {% endblock %}

@@ -89,9 +89,13 @@
     </div>
 {% endblock %}
 
-{% block webpack_js %}
-    {{ parent() }}
+{% block javascript %}
+{{ parent() }}
 
-    <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
 {% endblock %}
 

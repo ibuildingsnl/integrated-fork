@@ -118,10 +118,18 @@
                                 {% if content.workflow_state is defined %}
                                     {% if content.workflow_color_string is defined %}
                                         {% set status_color = content.workflow_color_string|first %}
+                                        {% set status_icon = content.workflow_icon_string|first %}
                                     {% endif %}
-                                    <div class="workflow-status" style="background-color:{{ status_color }};">
-                                    {{ content.workflow_state|default }}
-                                    </div>
+                                    {% dump(content) %}
+                                    {% if (content is defined and ('now'|date('U') < content.pub_time |date('U'))) %}
+                                        <div class="workflow-status" style="background-color:#5F84DB;">
+                                            {% trans %}Planned{% endtrans %}
+                                        </div>
+                                    {% else %}
+                                        <div class="workflow-status" style="background-color:{{ status_color }};">
+                                            {{ content.workflow_state|default }}
+                                        </div>
+                                    {% endif %}
                                     {% set status_color = '' %}
                                 {% endif %}
                             </td>
@@ -191,7 +199,7 @@
                                                 {% endif %}
                                                 <ul class="filters_list">
                                                     {% for title, count in facet %}
-                                                        <li class="checkbox{% if (loop.index >= 6) and (not (title in active[key]|default)) %} to_show{% endif %}">
+                                                        <li class="checkbox">
                                                             <label class="checkbox-container">
                                                                 <input
                                                                     {% if title in active[key]|default %}checked="checked"{% endif %}
@@ -214,7 +222,7 @@
                                                                 {% else %}
                                                                     {{ title }}
                                                                 {% endif %}
-                                                                <span class="value">({{ count }})</span>
+                                                                <span class="value"> ({{ count }})</span>
                                                             </label>
                                                         </li>
                                                     {% endfor %}

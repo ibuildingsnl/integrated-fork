@@ -133,6 +133,12 @@ body div#dropdown_overlay {
             z-index: 9;
             display: flex;
         }
+        &.new-contenttype {
+            ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
+                max-height: calc(100vh - 100px);
+                overflow-y: scroll;
+            }
+        }
     }
 
     ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
