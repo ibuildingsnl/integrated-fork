@@ -85,8 +85,9 @@ async function disableBulkSelection() {
         let $media_items = $(".media_category");
 
         //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
-        $("li", $gallery).draggable({
+        $('li.media-item', $gallery).draggable({
             helper: "clone",
+            cursorAt: { left: 10, top: 10 },
             start: function (ev, ui) {
                 // offset = {
                 //     top: 50,
@@ -97,12 +98,15 @@ async function disableBulkSelection() {
 
         // Let the media items be droppable, accepting the gallery items
         $media_items.droppable({
-            activate: function (event, ui) {
-                $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">' + draggingAmountOfItems + ' item(s)</div>')
+            activate: function(event, ui) {
+                $('.ui-draggable-dragging').
+                    html('<div class="drag-media">' + draggingAmountOfItems +
+                        ' item(s)</div>');
             },
-            accept: "#gallery > li",
+            accept: '#gallery > li.media-item',
+            cursorAt: { left: 5, top: 5 },
             classes: {
-                "ui-droppable-active": "ui-state-highlight"
+                'ui-droppable-active': 'ui-state-highlight',
             },
             drop: function (event, ui) {
                 moveImage(ui.draggable, event, this.id);
@@ -173,5 +177,26 @@ async function disableBulkSelection() {
                 return response;
             }
         }
+
+        function asideFolderSearch(elem) {
+            // Declare variables
+
+            var input, filter, ul, li, a, i, txtValue;
+            input = elem;
+            filter = input.value.toUpperCase();
+            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName('a')[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].classList.remove('menu-item-hidden');
+                } else {
+                    li[i].classList.add('menu-item-hidden');
+                }
+            }
+        };
     });
 })(jQuery);

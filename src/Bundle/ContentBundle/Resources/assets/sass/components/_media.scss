@@ -108,6 +108,8 @@
         -webkit-user-select: none;
         user-select: none;
         box-sizing: border-box;
+        border: none;
+        background-color: transparent;
         @include media('xl') {
             width: 20%;
         }
@@ -321,6 +323,9 @@
 
     aside {
         .aside-holder {
+            form {
+                padding:0;
+            }
             .aside-item-wrapper {
                 border: none;
                 border-radius: 1rem;
@@ -340,6 +345,7 @@
                     padding: 0.5rem 2rem;
 
                     li {
+                        padding: 0;
                         &.menu-item-hidden {
                             > a {
                                 display: none;
@@ -365,6 +371,9 @@
                             color: black;
                             display: block;
                             padding: 0.35rem 0.75rem;
+                            display: flex;
+                            align-items: center;
+                            margin: 0.5rem 0;
 
                             i {
                                 font-size: 16px;
@@ -373,6 +382,11 @@
                             span {
                                 margin-left: 1rem;
                                 font-size: 14px;
+                            }
+                            &.ui-state-highlight {
+                                background: #e5f6f4;
+                                border: none;
+                                border-radius: 8px;
                             }
                         }
 

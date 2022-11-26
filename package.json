@@ -28,7 +28,8 @@
         "moment": "~2.17",
         "select2": "4.0.5",
         "tinymce": "~6.0",
-        "typeahead.js": "0.11.1"
+        "typeahead.js": "0.11.1",
+        "uppy": "^3.3.1"
     },
     "private": true
 }
