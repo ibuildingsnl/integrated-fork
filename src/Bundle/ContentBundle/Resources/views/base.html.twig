@@ -68,7 +68,7 @@
                     <div class="new-contenttype dropdown top-bar">
                         <a href="#" class="btn btn-green"
                            data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
-                                class="fa-solid fa-plus"></i></a>
+                                class="iconoir-plus"></i></a>
                         {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
                     </div>
                 {% endblock navbar_content_type %}
@@ -97,7 +97,7 @@
                         {% set label = 'danger' %}
                     {% endif %}
                     <div class="alert alert-{{ label }} alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert"><i class="fa-solid fa-xmark"></i>
+                        <button type="button" class="close" data-dismiss="alert"><i class="iconoir-cancel"></i>
                         </button>
                         {{ message|trans }}
                     </div>

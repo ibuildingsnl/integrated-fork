@@ -79,7 +79,7 @@ class StateType extends AbstractType
                 'label' => 'Status Icon',
                 'required' => false,
                 'attr' => [
-                        'help_text' => 'You can use any regular <a href="https://fontawesome.com/search?o=r&s=regular" target="_blank">FontAwesome</a> icon',
+                        'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
                     ],
             ]
         );

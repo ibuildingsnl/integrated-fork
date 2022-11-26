@@ -74,7 +74,7 @@ $(document).ready(function () {
                 e.preventDefault();
                 e.stopImmediatePropagation();
             });
-            $(this).prepend('<span class="fa fa-refresh" aria-hidden="true"></span>');
+            $(this).prepend('<i class="iconoir-refresh-double" aria-hidden="true"></i>');
         }
     });
 });

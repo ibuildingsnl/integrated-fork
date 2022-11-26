@@ -33,10 +33,10 @@
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
-                                    <i class="fa-solid fa-circle-info"></i>
+                                    <i class="iconoir-info-empty"></i>
                                     <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                                 </h3>
-                                <i class="fa-solid fa-chevron-up"></i>
+                                <i class="iconoir-nav-arrow-up"></i>
                             </div>
                             <div class="aside-item-list">
                                 <div class="aside-item-list-container">
@@ -48,19 +48,19 @@
                                     <div class="status-options">
                                         {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
                                             <div class="status published">
-                                                <i class="fa-solid fa-circle-check"></i> {% trans %}Published{% endtrans %}
+                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                <i class="fa-solid fa-trash-can"></i>
+                                                <i class="iconoir-trash"></i>
                                             </a>
                                         {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                                             <div class="status planned">
-                                                <i class="fa-solid fa-calendar-days"></i> {% trans %}Planned{% endtrans %}
+                                                <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                             </div>
                                         {% else %}
                                             <div class="status draft">
-                                                <i class="fa-solid fa-pen-ruler"></i> {% trans %}Draft{% endtrans %}
+                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                             </div>
                                         {% endif %}
                                     </div>
@@ -81,54 +81,54 @@
                         {% block content_meta %}
                             {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
                             {% if form.channels is defined %}
-                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'fa-share-nodes', 'state': 'show search'}) }}
+                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'network-alt', 'state': 'show search'}) }}
                             {% endif %}
 
                             {% if form.slug is defined %}
-                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'fa-link'}) }}
+                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'link'}) }}
                             {% endif %}
 
                             <!-- If description is available and Content is also, show it in the sidebar -->
                             {% if form.content is defined %}
                                 {% if form.description is defined %}
-                                    {{ form_row(form.description, {'style': 'sidebar', 'icon':'fa-input-text'}) }}
+                                    {{ form_row(form.description, {'style': 'sidebar', 'icon':'message-text'}) }}
                                 {% endif %}
                             {% endif %}
 
                             {% if form.address is defined %}
-                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'fa-map-location-dot'}) }}
+                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'pin-alt'}) }}
                             {% endif %}
 
                             {% if form.copyrightRestrictions is defined %}
-                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'fa-copyright'}) }}
+                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'copyright'}) }}
                             {% endif %}
 
                             {% if form.authors is defined %}
-                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'fa-feather', 'widget_col': '', 'label_col':''}) }}
+                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'user', 'widget_col': '', 'label_col':''}) }}
                             {% endif %}
 
                             {% if form.source is defined %}
-                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'fa-megaphone'}) }}
+                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'megaphone'}) }}
                             {% endif %}
 
                             {% if form.sourceUrl is defined %}
-                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'fa-arrow-up-right-from-square'}) }}
+                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'open-new-window'}) }}
                             {% endif %}
 
                             {% if form.relations is defined %}
-                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'fa-arrows-left-right'}) }}
+                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'network-right'}) }}
                             {% endif %}
 
                             {% if form.logo is defined %}
-                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'fa-image'}) }}
+                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'media-image'}) }}
                             {% endif %}
 
                             {% if form.rank is defined %}
-                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'fa-ranking-star'}) }}
+                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'numbered-list-left'}) }}
                             {% endif %}
 
                             {% if form.disabled is defined %}
-                                {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'fa-do-not-enter'}) }}
+                                {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'do-not-enter'}) }}
                             {% endif %}
                         {% endblock %}
 
@@ -140,12 +140,12 @@
                                         <div class="aside-item-wrapper relations">
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
-                                                    <i class="fa-solid {{ relation.vars.attr['data-icon'] }}"></i>
+                                                    <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                                     <label
                                                         class="aside-item-icon"
                                                         for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                                 </h3>
-                                                <i class="fa-solid fa-chevron-up"></i>
+                                                <i class="iconoir-nav-arrow-up"></i>
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
@@ -213,12 +213,12 @@
                                 <div class="editor-item-wrapper relations">
                                     <div class="editor-item-header">
                                         <h3 class="editor-item-title">
-                                            <i class="fa-solid {{ relation.vars.attr['data-icon'] }}"></i>
+                                            <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                             <label
                                                 class="editor-item-icon"
                                                 for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                         </h3>
-                                        <i class="fa-solid fa-chevron-up"></i>
+                                        <i class="iconoir-nav-arrow-up"></i>
                                     </div>
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
@@ -263,7 +263,7 @@
                 {{else}}
                 <div class="add-relation">
                     <button type="button" class=" inline-block w-0 h-0 ml-1 align border-b-0 border-t-1 border-r-1 border-l-1 font-size-13" data-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-plus"></i>
+                        <i class="iconoir-plus"></i>
                         <span class="sr-only">{% endverbatim %}{% trans %}Add New{% endtrans %}{% verbatim %}:</span>
                     </button>
                     <ul class=" dropdown-menu" role="menu">
@@ -324,8 +324,7 @@
 {{ parent() }}
 <script>
     textarea = document.querySelector('.title_tinymce_input');
-
-    if (doesElementExist(textarea)) {
+    if (textarea !== null) {
         textarea.addEventListener('input', autoResize, false);
         textarea.addEventListener('DOMContentLoaded', autoResize, false);
 
@@ -334,6 +333,10 @@
                 event.preventDefault();
             }
         });
+         function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    }
 
         setTimeout(function() {
         const resize_ob = new ResizeObserver(function(entries) {
@@ -361,13 +364,7 @@
             return true
         }
 
-        return false
-    }
 
-    function autoResize() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    }
 </script>
 
 {% if content is defined %}

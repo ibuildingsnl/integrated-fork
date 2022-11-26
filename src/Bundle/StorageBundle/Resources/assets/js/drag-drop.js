@@ -101,7 +101,7 @@ $(document).ready(function(){
                                         </div>\
                                         <div class="jFiler-item-assets jFiler-row">\
                                             <ul class="list-inline pull-right">\
-                                                <li><a href="{{fi-name}}" title="Download" target="_blank"><span class="fa fa-download-alt"></span></a></li>\
+                                                <li><a href="{{fi-name}}" title="Download" target="_blank"><span class="iconoir-download"></span></a></li>\
                                                 <li><a class="icon-jfi-trash jFiler-item-trash-action" title="Delete"></a></li>\
                                             </ul>\
                                         </div>\

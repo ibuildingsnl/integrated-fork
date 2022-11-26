@@ -64,7 +64,7 @@ div#integrated_content_content_container {
                         display: flex;
                         justify-content: space-between;
                         position: relative;
-                        .fa-grip-dots-vertical {
+                        .iconoir-line-space {
                             margin-right: 10px;
                             width: 20px;
                             height: 20px;
@@ -146,4 +146,8 @@ pre#editor {
 
 .input-group {
     position: relative;
+}
+
+.collapse {
+    visibility: unset;
 }

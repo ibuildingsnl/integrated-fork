@@ -176,6 +176,9 @@ label {
         right: 0;
         height: 100%;
         width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .form-control {

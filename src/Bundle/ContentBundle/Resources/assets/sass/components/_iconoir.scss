@@ -1,0 +1,9 @@
+[class*=" iconoir-"]:before, [class^=iconoir-]:before {
+    display: block;
+    height: 20px;
+    width: 20px;
+}
+
+[class*=" iconoir-"], [class^=iconoir-] {
+    display: inline-block;
+}

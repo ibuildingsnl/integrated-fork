@@ -1,6 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 
-{% form_theme facetFilter '@IntegratedBlock/form/form_div_filter.html.twig' %}
+{% form_theme facetFilter with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 
 {% block crumbs %}
     <div class="breadcrumb-holder">
@@ -21,7 +21,7 @@
                     <li>
                         <a class="btn btn-create-new" href="{{ path('integrated_user_user_new') }}">
                             <span>{% trans %}New{% endtrans %} {% trans %}User{% endtrans %}</span>
-                            <i class="fa-solid fa-plus"></i>
+                            <i class="iconoir-plus"></i>
                         </a>
                     </li>
                 </ul>
@@ -35,13 +35,12 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     {{ form_start(facetFilter) }}
-
                     <div class="aside-item-holder">
                         <div class="input-group input-group-search">
                             {{ form_widget(facetFilter.q) }}
                             <span class="input-group-btn">
                                 <button type="submit" class="">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i class="iconoir-search"></i>
                                 </button>
                             </span>
                         </div>
@@ -49,15 +48,19 @@
 
                     {% block user_filter_groups %}
                     <div class="aside-item-holder {% if facetFilter.groups|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.groups, {'style':'sidebar', 'state': 'show'}) }}
+                        {{ form_row(facetFilter.groups, {'style':'sidebar', 'icon': 'download', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
 
                     {% block user_filter_scope %}
                     <div class="aside-item-holder {% if facetFilter.scope|length == 0 %} hidden{% endif %}">
-                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'state': 'show'}) }}
+                        {{ form_row(facetFilter.scope, {'style':'sidebar', 'icon':'network-alt', 'state': 'show'}) }}
                     </div>
                     {% endblock %}
+
+                    <div class="aside-item-holder">
+                    {{ form_rest(facetFilter, {'style':'sidebar', 'state': 'show'}) }}
+                    </div>
 
                     {{ form_end(facetFilter) }}
                 </div>
