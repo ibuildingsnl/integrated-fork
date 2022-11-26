@@ -29,9 +29,38 @@ class TaxonomyRelationManager
         $this->indexer = $indexer;
     }
 
+    public function manageRelationsWithParams($params) {
+        $request = new Request;
+
+        foreach ($params as $key => $value) {
+            $request->attributes->set($key, $value);
+        }
+
+        $this->manageRelations($request);
+    }
+
+    public function findParams(Request $request): array {
+        if (null !== json_decode($request->getContent(), true)) {
+            return json_decode($request->getContent(), true);
+        }
+        
+        if (null !== $request->get('category_id_target')) {
+            return [
+                'category_id_origin' => '',
+                'category_id_target' => $request->get('category_id_target'),
+                'media_id' => $request->get('media_id'),
+            ];
+        }
+        
+    }
+    
     public function manageRelations(Request $request)
     {
         $params = json_decode($request->getContent(), true);
+
+        $params = $this->findParams($request);
+
+//      Explanation of fields that can be send:
 //      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, one or many
 //      "category_id_target" => "category_2-1"                               REQUIRED, one
 //      "category_id_origin" => "3324234"                                    REQUIRED, one
@@ -90,11 +119,11 @@ class TaxonomyRelationManager
 
     public function getOrCreateRelation($mediaItem)
     {
-        if ($relations = $mediaItem->getRelation('mediaitem_channelcategory')) {
+        if ($relations = $mediaItem->getRelation('mediataxonomy')) {
             return $relations;
         }
         $relations = (new Relation())
-            ->setRelationId('mediaitem_channelcategory')
+            ->setRelationId('mediataxonomy')
             ->setRelationType('taxonomy');
 
         return $relations;

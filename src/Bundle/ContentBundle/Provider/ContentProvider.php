@@ -86,7 +86,13 @@ class ContentProvider
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
-            $relation = $this->dm->getRepository(Relation::class)->find('mediaitem_channelcategory');
+            $relation = $this->dm->getRepository(Relation::class)->find('mediataxonomy');
+
+            // No Results;
+            if (null === $relation) {
+                return [];
+            }
+
             $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
 
             $query

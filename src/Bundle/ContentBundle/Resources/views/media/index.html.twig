@@ -9,10 +9,12 @@
                 <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
-                        <div class="aside-item-header">
-                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                <i class="fa-regular fa-folder"></i><span>{% trans %}All files{% endtrans %}</span>
-                            </a>
+                        <div class="p-4">
+                            <div class="text-black p-4">
+                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                    <i class="fa-regular fa-folder"></i><span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                                </a>
+                            </div>
                         </div>
                         <div class="aside-item-list-container">
                             <div class="aside-item-search">
@@ -131,8 +133,8 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button class="switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
-                        <button class="switcher mr-2"><i class="fa-solid fa-table-cells-large"></i></button>
+                        <button class="toggle_view toggle switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
+                        <button class="toggle_view switcher mr-2"><i class="fa-solid fa-table-cells-large"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
@@ -184,6 +186,18 @@
                         <button class="btn btn-action"
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
+
+                        <span class="hover:text-yellow-500 hover:font-bold">
+                            <button onclick="fetch_component_upload_images(event)">
+                            <span class="w-10 h-10 inline-block hover:text-yellow-500 hover:fill-green-500">
+                            <svg class="inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="0" fill="none"
+                                                                                                             width="24"
+                                                                                                             height="24"/><g><path
+                                            d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3h3zm-8.5 7c.828 0 1.5-.672 1.5-1.5S15.328 8 14.5 8 13 8.672 13 9.5s.672 1.5 1.5 1.5zm3.5 3.234l-.513-.57c-.794-.885-2.18-.885-2.976 0l-.655.73L9 9l-3 3.333V6h7V4H6c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-7h-2v3.234z"/></g></svg>
+                            </span>
+                            </button>
+                        </span>
+
                     </div>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
@@ -198,7 +212,133 @@
             <section class="section-white section-radius p-4">
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
-                    <div class="media-wrapper">
+                    <div id="photo_upload_area">
+                    </div>
+
+                    <button id="modal_button" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-modal-toggle="popup-modal">
+                        Toggle modal
+                    </button>
+
+                    <div id="popup-modal" tabindex="-1" class="hidden bg-red-200 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-24 md:inset-0 h-modal md:h-full">
+                        <div class="relative w-full max-w-md h-full md:h-auto">
+                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="popup-modal">
+                                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                                <div id="popup-modal-content"  class="p-6 text-center">
+                                    <div>THIS CONTENT WILL BE REPLACED WITH FETCH RESULT</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-wrapper" id="table_view" style="display: none;">
+{#                        style="display: none;"#}
+
+
+
+
+                        {% for media in paginator.items %}
+
+                            {% set thumbnail = integrated_image(media.file).zoomCrop(80, 80) %}
+
+                            <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
+                                id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+{#                                    <div class="media-preview">#}
+{#                                        <div class="thumbnail">#}
+{#                                            <div class="centered">#}
+{#                                                <img src="{{ thumbnail }}"#}
+{#                                                     alt="{{ media.title }}">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %}#}
+{#                                            <div class="filetype">#}
+{#                                                {{ media.file|split('.')|last | lower }}#}
+{#                                            </div>#}
+{#                                        {% endif %}#}
+{#                                    </div>#}
+                                </a>
+
+                                <button id="bulkselection_{{ media.id }}" type="button"
+                                        class="bulkselectionbutton check" tabindex="-1">
+                                            <span class="media-modal-icon">
+                                                <i class="fa fa-check"></i>
+                                            </span>
+                                    <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                </button>
+                            </li>
+
+                            <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
+                                id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                    <div class="media-preview">
+                                        <div class="thumbnail">
+                                            <div class="centered">
+                                                <img src="{{ thumbnail }}"
+                                                     alt="{{ media.title }}">
+                                            </div>
+                                        </div>
+                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                            <div class="filetype">
+                                                {{ media.file|split('.')|last | lower }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                                <div class="details flex">
+                                    <div class="w-full md:w-1/2">
+                                        <div class="detail-wrap title">
+                                            <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
+                                            <h3>{{ media.title }}</h3>
+                                        </div>
+                                        {% if media.description %}
+                                            <div class="detail-wrap description">
+                                                        <span
+                                                            class="detail-label">{% trans %}Description{% endtrans %}:</span>
+                                                <p>{{ media.description }}</p>
+                                            </div>
+                                        {% endif %}
+                                        {% if media.credits %}
+                                            <div class="detail-wrap credits">
+                                                        <span
+                                                            class="detail-label">{% trans %}Credits{% endtrans %}:</span>
+                                                <p>{{ media.credits }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="w-full md:w-1/2">
+                                        {% if media.createdAt is defined %}
+                                            <div class="detail-wrap created-at flex justify-end">
+                                                        <span
+                                                            class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
+                                                <p>{{ media.createdAt|format_date('long') }}</p>
+                                            </div>
+                                        {% endif %}
+                                        {#                                                {% if media.file.metadata.extension is defined %}#}
+                                        {#                                                    <div class="detail-wrap extension">#}
+                                        {#                                                        <span#}
+                                        {#                                                            class="detail-label">{% trans %}Filetype:{% endtrans %}:</span>#}
+                                        {#                                                        <p>{{ media.file.metadata.extension }}</p>#}
+                                        {#                                                    </div>#}
+                                        {#                                                {% endif %}#}
+                                    </div>
+                                </div>
+
+                                <button id="bulkselection_{{ media.id }}" type="button"
+                                        class="bulkselectionbutton check" tabindex="-1">
+                                            <span class="media-modal-icon">
+                                                <i class="fa fa-check"></i>
+                                            </span>
+                                    <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                </button>
+                            </li>
+
+
+                        {% endfor %}
+                    </div>
+
+                    <div class="media-wrapper" id="grid_view">
                         {% if paginator.items|length == 0 %}
                             <div>
                                 {% trans %} No results with this selection. {% endtrans %}
@@ -293,13 +433,6 @@
                                                         <p>{{ media.createdAt|format_date('long') }}</p>
                                                     </div>
                                                 {% endif %}
-{#                                                {% if media.file.metadata.extension is defined %}#}
-{#                                                    <div class="detail-wrap extension">#}
-{#                                                        <span#}
-{#                                                            class="detail-label">{% trans %}Filetype:{% endtrans %}:</span>#}
-{#                                                        <p>{{ media.file.metadata.extension }}</p>#}
-{#                                                    </div>#}
-{#                                                {% endif %}#}
                                             </div>
                                         </div>
 
@@ -317,10 +450,9 @@
                     </div>
                 </div>
 
-                <!-- PAGINATOR CONTROLS -->
                 <div>
-                    {% if paginator.amountOfPages > 1 %}
-                        {% for i in range(1, paginator.amountOfPages) %}
+                    {% if paginator.getCustomParameter('amountOfPages') > 1 %}
+                        {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
                             {% if i == paginator.currentPageNumber %}
                                 <a class="text-red-500 bg-red-200 p-2"
                                    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
@@ -333,217 +465,135 @@
                         {% endfor %}
 
                         <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
-                        <span>{% trans %} Showing {% endtrans %} {{ paginator.showingStart }} {% trans %} till {% endtrans %} {{ paginator.showingEnd }}.</span>
+                        <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
                     {% endif %}
                 </div>
 
             </section>
         </div>
     </div>
+
+<script>
+    let toggle_view = 'GRID_VIEW'
+    let show_modal = false
+
+    window.onload = function() {
+        $(".toggle_view").on("click", function () {
+            console.log("toggle")
+            if (toggle_view == 'GRID_VIEW') {
+                $("#grid_view").hide()
+                $("#table_view").show()
+                toggle_view = 'TABLE_VIEW'
+            } else {
+                $("#grid_view").show()
+                $("#table_view").hide()
+                toggle_view = 'GRID_VIEW'
+            }
+        });
+
+        $('#modal_button').on("click", async function() {
+            if (show_modal === false) {
+                $('#popup-modal').removeClass('hidden')
+                show_modal = true
+
+                options = []
+                const response = await fetch('/admin/content/e8e681dd4c693d5c8ba99ef5fc37c46a?lock=7f64bbff-7a90-4e2a-b7cc-21ad63794cec', options);
+
+                const whereToAdd = '#popup-modal-content'
+                document.querySelector(whereToAdd).innerHTML = await response.text()
+            } else {
+                $('#popup-modal').addClass('hidden')
+                show_modal = false
+            }
+        })
+    }
+
+    let current_drop_target = ''
+
+    async function fetch_component_upload_images(event) {
+        const whereToAdd = '#photo_upload_area'
+        const url = '/admin/media/upload'
+        const options = []
+
+        //toggle if needed
+        if (current_drop_target === whereToAdd) {
+            $(`#photo_upload_area`).hide()
+            current_drop_target = ''
+            $('.media-wrapper').show()
+            return
+        } else {
+            $('.media-wrapper').hide()
+            $(`#photo_upload_area`).show()
+            current_drop_target = whereToAdd
+        }
+
+        const response = await fetch(url, options);
+
+        document.querySelector(whereToAdd).innerHTML = await response.text()
+
+        let uppy = inititalizeUppy('/admin/media/upload_file')
+    }
+
+    function inititalizeUppy(endpoint_url) {
+        let uppy = new Uppy({
+            onBeforeFileAdded: (currentFile, files) => currentFile,
+            onBeforeUpload(files) {
+
+                let current_category_id = new URL(location.href).searchParams.get("media_taxonomy_id") || "";
+
+                for (const [key, file] of Object.entries(files)) {
+                    if (!file.meta.userCaption) {
+                        file.meta.userTitle = "Dit is mijn titel"
+                        file.meta.category_id_target = current_category_id
+                    }
+                }
+            },
+        }).use(Dashboard, {
+            inline: true,
+            target: '#photo_upload_area',
+            height: 600,
+            proudlyDisplayPoweredByUppy: false,
+            showProgressDetails: true,
+            metaFields: [
+                { id: 'userTitle', name: 'Title', placeholder: 'file name' },
+                { id: 'userCaption', name: 'Description', placeholder: 'specify Description' },
+                { id: 'userTags', name: 'Tags', placeholder: 'Tags' },
+                // { id: 'category_id_target', name: 'Category', placeholder: 'specify Category' },
+            ],
+        })
+
+        uppy.use(XHRUpload, {
+            endpoint: endpoint_url
+        })
+
+        uppy.use(ImageEditor, {
+            target: Dashboard,
+            quality: 0.8,
+        })
+
+        uppy.on('file-added', (file) => {
+            uppy.setFileMeta(file.id, {
+                test: 'hello'
+            });
+        });
+
+        uppy.on('complete', (result) => {
+            console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        })
+
+        return uppy
+    }
+
+    let path = '{{ path('integrated_content_media_manage_relations') }}'
+</script>
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
-            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-    <script
-        src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
-        integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0="
-        crossorigin="anonymous"></script>
-
-    <script>
-        //BULKSELECTION FUNCTIONALITY
-        let bulkSelectionEnabled = false; //this controls if we show an icon with each image
-        let bulkSelection = []; //this keeps track which items are selected
-        let latestBulkSelectionItemClicked = null; //so we can handle a shift click with a from - to
-        let draggingAmountOfItems = 1;
-
-        $('#bulkselection').on('click', async function() {
-            if (bulkSelectionEnabled) {
-                await disableBulkSelection();
-            } else {
-                await enableBulkSelection();
-            }
-            bulkSelectionEnabled = !bulkSelectionEnabled;
-        });
-
-        async function enableBulkSelection() {
-            $('.bulkselectionbutton').removeClass('bulkselected');
-            $('.media-container').addClass('mode-select');
-
-            $('.media-item').on('click', function(event) {
-                handleBulkItemClick(event);
-            });
-        }
-
-        function handleBulkItemClick(event) {
-            let media_id = null;
-            if (event.shiftKey === true) {
-                //SHIFT CLICK
-                if (latestBulkSelectionItemClicked === null) {
-                    latestBulkSelectionItemClicked = 1;
-                }
-
-                let step_from = latestBulkSelectionItemClicked * 1;
-                step_to = event.currentTarget.getAttribute('data-media_id') * 1;
-
-                for (let step = step_from; step <= step_to; step++) {
-                    let element = document.querySelector('.media-item[data-media_id="' + step + '"]');
-
-                    media_id = element.getAttribute('data-id');
-
-                    bulkSelection.push(media_id);
-                    $('#' + element.id).addClass('selected');
-                }
-            } else {
-                //SINGLE CLICK
-                media_id = event.currentTarget.getAttribute('data-id');
-
-                if (bulkSelection.includes(media_id)) {
-                    bulkSelection = bulkSelection.filter(item => item !== media_id);
-                    $('#' + event.currentTarget.id).removeClass('selected');
-                } else {
-                    bulkSelection.push(media_id);
-                    $('#' + event.currentTarget.id).addClass('selected');
-                }
-            }
-
-            latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id');
-
-            draggingAmountOfItems = bulkSelection.length;
-        }
-
-        async function disableBulkSelection() {
-            bulkSelection = [];
-            $('.media-container').removeClass('mode-select');
-            $('.media-item').removeClass('selected');
-            draggingAmountOfItems = 1;
-        }
-
-        //DRAG AND DROP FUNCTIONALITY
-        (function($) {
-            $(function() {
-                let $gallery = $('#gallery');
-                let $media_items = $('.media_category');
-
-                //GOED VOORBEELD: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
-                $('li.media-item', $gallery).draggable({
-                    // cancel: "a.ui-icon", // clicking an icon won't initiate dragging
-                    // containment: '#parent',
-                    helper: 'clone',
-                    // cursor: "move",
-                    cursorAt: { left: 10, top: 10 },
-                    start: function(ev, ui) {
-                        offset = $(this).offset();
-                        // offset = {
-                        //     top: 50,
-                        //     left: 50,
-                        // };
-                    },
-                });
-
-                // Let the media items be droppable, accepting the gallery items
-                $media_items.droppable({
-                    activate: function(event, ui) {
-                        $('.ui-draggable-dragging').
-                            html('<div class="drag-media">' + draggingAmountOfItems +
-                                ' item(s)</div>');
-                    },
-                    accept: '#gallery > li.media-item',
-                    cursorAt: { left: 5, top: 5 },
-                    classes: {
-                        'ui-droppable-active': 'ui-state-highlight',
-                    },
-                    drop: function(event, ui) {
-                        moveImage(ui.draggable, event, this.id);
-                    },
-                    over: function(event, ui) {
-
-                    },
-                });
-
-                function onlyUnique(value, index, self) {
-                    return self.indexOf(value) === index;
-                }
-
-                function moveImage($item, event, category_id = null) {
-                    let media_id = $item[0].id || null;
-
-                    //So here we want to send something to the server
-                    if (bulkSelection.length > 0) {
-                        console.log('Were bulk moving!');
-                        let duplicatesRemoved = bulkSelection.filter(onlyUnique);
-                        console.log(duplicatesRemoved);
-                        sendAjaxRequest(category_id, duplicatesRemoved);
-                    } else {
-                        console.log('We`re single moving:');
-                        sendAjaxRequest(category_id, media_id);
-                        console.log(media_id);
-                    }
-                    console.log('To: ' + category_id);
-                    $('.media_category').removeClass('flash');
-                    $('#' + category_id).addClass('flash');
-                }
-
-                function get_current_category_id() {
-                    return new URL(location.href).searchParams.get('media_taxonomy_id') || '';
-                }
-
-                function sendAjaxRequest(category_id, media_id) {
-                    if (get_current_category_id() === category_id) {
-                        return;
-                    }
-
-                    let jsonContent = JSON.stringify({
-                        csrf: document.querySelector('#media_category_csrf').value,
-                        category_id_target: category_id,
-                        media_id: media_id,
-                        category_id_origin: get_current_category_id(),
-                    });
-
-                    //TODO how to get the proper path?
-                    let path = 'https://localhost.integratedfordevelopers.com/admin/media/manage_relations';
-
-                    postData(path, jsonContent).then((data) => {
-                        console.log(data); // JSON data parsed by `data.json()` call
-                    });
-
-                    async function postData(url = '', data = {}) {
-                        const response = await fetch(url, {
-                            method: 'PUT',
-                            mode: 'cors',
-                            cache: 'no-cache',
-                            credentials: 'same-origin',
-                            redirect: 'follow',
-                            referrerPolicy: 'no-referrer',
-                            body: data,
-                        });
-
-                        return response;
-                    }
-                }
-            });
-        })(jQuery);
-
-        function asideFolderSearch(elem) {
-            // Declare variables
-
-            var input, filter, ul, li, a, i, txtValue;
-            input = elem;
-            filter = input.value.toUpperCase();
-            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
-            li = ul.getElementsByTagName('li');
-
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName('a')[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].classList.remove('menu-item-hidden');
-                } else {
-                    li[i].classList.add('menu-item-hidden');
-                }
-            }
-        };
-    </script>
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/mediagallery.css') }}">
 {% endblock %}

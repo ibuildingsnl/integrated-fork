@@ -16,8 +16,12 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::menu</default>
     </route>
 
-    <route id="integrated_content_media_test" path="/test" methods="GET, POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::test</default>
+    <route id="integrated_content_media_upload" path="/upload" methods="GET">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::getUploadComponent</default>
+    </route>
+
+    <route id="integrated_content_media_upload_file" path="/upload_file" methods="POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::upload_file</default>
     </route>
 
 </routes>

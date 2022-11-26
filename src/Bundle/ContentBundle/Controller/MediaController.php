@@ -11,24 +11,25 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\Persistence\ObjectRepository;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
-use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use Integrated\Common\Security\PermissionInterface;
-use Integrated\Common\Solr\Indexer\IndexerInterface;
-use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
+use Integrated\Bundle\StorageBundle\Storage\Reader\UploadedFileReader;
+use Integrated\Common\Storage\ManagerInterface;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\Routing\Annotation\Route;
 
 /*
  * Goal for the user:
@@ -45,7 +46,7 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class MediaController extends AbstractController
 {
-    public const PAGINATOR_LIMIT = 50;
+    public const PAGINATOR_LIMIT = 40;
     public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
     public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
@@ -77,27 +78,14 @@ class MediaController extends AbstractController
         ],
     ];
     public const SOLR_ALL_MEDIA_CLASS_STRING = 'File';
-    private $mediaGalleryMenu;
-    private $userManager;
-    private $provider;
-    private $repository;
-    private $authorizationChecker;
-    private $queueSubscriber;
-    private $indexer;
-    private TaxonomyRelationManager $taxonomyRelationManager;
-    private $dm;
 
-    public function __construct(MediaGalleryMenu $mediaGalleryMenu, UserManagerInterface $userManager, ContentProvider $provider, ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, TaxonomyRelationManager $taxonomyRelationManager)
-    {
-        $this->provider = $provider;
-        $this->userManager = $userManager;
-        $this->mediaGalleryMenu = $mediaGalleryMenu;
-        $this->repository = $repository;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->indexer = $indexer;
-        $this->taxonomyRelationManager = $taxonomyRelationManager;
-        $this->dm = null;
+    public function __construct(
+        private DocumentManager $documentManager,
+        private MediaGalleryMenu $mediaGalleryMenu,
+        private ContentProvider $provider,
+        private TaxonomyRelationManager $taxonomyRelationManager,
+        private ManagerInterface $manager,
+    ) {
     }
 
     /**
@@ -105,27 +93,12 @@ class MediaController extends AbstractController
      *
      * @return Response
      */
-    // TODO: Use translations in Twig
     // TODO: Either work with ID`s or do some checks that a category has a unique name
-    public function index(Request $requestSource)
+    public function index(Request $requestSource): Response
     {
         $requestCopy = $this->setAndGetClassString($requestSource);
-        $params = [];
 
-        $this->dm = $this->getDoctrineODM()->getManager();
-
-        $menu = $this->mediaGalleryMenu->createMenu($this);
-
-        $otherMenu = $this->mediaGalleryMenu->getMenuItemsFromDB();
-
-        // TODO: With my installation, I cant add groups, work this out later
-        foreach ($otherMenu as $menuItem) {
-            if (false === $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem)) {
-                dump('false');
-                continue;
-            }
-            dump('true');
-        }
+        $menu = $this->mediaGalleryMenu->createMenu();
 
         if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
             $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
@@ -138,13 +111,9 @@ class MediaController extends AbstractController
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
 
-        if (\count($items) === 0) {
-            $message = 'No results with this selection.';
-        }
-
         $dateFilter = $this->getYearMonthDates($requestCopy);
 
-        $params = array_merge($params, $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
+        $params = array_merge([], $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
@@ -158,6 +127,83 @@ class MediaController extends AbstractController
         ]);
     }
 
+    #[Route('/api/components/upload_images', name: 'getUploadComponent', methods: ['GET'])]
+    public function getUploadComponent() {
+        return $this->render('@IntegratedContent/media/upload.html.twig', [
+        ]);
+    }
+
+    public function upload_file(Request $request) {
+        $entityManager = $this->getDoctrineODM()->getManager();
+
+        //check filetype
+        $uploadedFileExtension = $request->files->get('file')->getClientOriginalExtension();
+        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
+        $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
+        $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
+        $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
+
+        // is this file allowed?
+        $isAllowed = in_array($uploadedFileExtension, [...$image_filetypes, ...$video_filetypes, ...$file_filetypes]);
+        if ($isAllowed !== true) {
+            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
+        }
+
+        // Find a matching class with the extension
+        if (in_array($uploadedFileExtension, $image_filetypes)) {
+            $file = new Image;
+            $file->setContentType('image');
+        } else if (in_array($uploadedFileExtension, $video_filetypes)) {
+            $file = new Video;
+            $file->setContentType('video');
+        } else if (in_array($uploadedFileExtension, $file_filetypes)) {
+            $file = new File;
+            $file->setContentType('file');
+        } else {
+            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
+        }
+
+        // Get user / system data:
+        $uploadedFile = $request->files->get('file');
+        $urlCategoryId = $request->get('categoryId');
+        $userChosenCategory = $request->get('userCategory');
+        $userChosenTitle = $request->get('userTitle');
+        $userChosenCaption = $request->get('userCaption');
+        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+
+
+
+//        if (null !== $userChosenTitle && '' !== $userChosenTitle ) {
+//            $file->setTitle($userChosenTitle);
+//        } else {
+//            $file->setTitle($originalFilename);
+//        }
+        $file->setTitle("UPPY UPLOAD");
+
+        $storage = $this->manager->write(
+            new MemoryReader(
+                file_get_contents($request->files->get('file')),
+                new Metadata(
+                    $uploadedFileExtension,
+                    $uploadedFileMimetype,
+                    new ArrayCollection(),
+                    new ArrayCollection()
+                )
+            )
+        );
+
+        $file->setFile($storage);
+
+        $entityManager->persist($file);
+        $entityManager->flush();
+
+        $request->attributes->set('media_id', $file->getId());
+
+        $this->taxonomyRelationManager->manageRelations($request);
+
+        return new JsonResponse(array('message' => 'file is uploaded.', 'content' => json_encode($file)));
+    }
+
     /**
      * @param $request
      *
@@ -169,7 +215,7 @@ class MediaController extends AbstractController
      *               -----xx                      xx
      *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
      */
-    public function setAndGetClassString($requestSource)
+    public function setAndGetClassString($requestSource): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
@@ -203,10 +249,10 @@ class MediaController extends AbstractController
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
-    public function getContentTypes()
+    public function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
-        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->dm->getRepository(ContentType::class)->findAll());
+        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->documentManager->getRepository(ContentType::class)->findAll());
 
         return array_filter($contentTypeNames);
     }
@@ -277,7 +323,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getParams($request, $uniqueContentTypes, $dateFilter)
+    public function getParams(Request $request, array $uniqueContentTypes, array $dateFilter): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -326,7 +372,7 @@ class MediaController extends AbstractController
         return $this->checkIfCurrentExistsAsKey($paramsExtended);
     }
 
-    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter)
+    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter): array
     {
         foreach ($uniqueContentTypes as $uniqueContentType) {
             // The default categories are always there, and dont need to be added again.
@@ -374,7 +420,7 @@ class MediaController extends AbstractController
         return $paramsExtended;
     }
 
-    public function createPaginator($items, $requestSource): SlidingPagination
+    private function createPaginator(array $items, Request $requestSource): SlidingPagination
     {
         $paginator = $this->getPaginator()->paginate(
             $items,
@@ -382,63 +428,20 @@ class MediaController extends AbstractController
             $this::PAGINATOR_LIMIT
         );
 
-        $paginator->amountOfPages = ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage());
-        $paginator->showingStart = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1;
-        $paginator->showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($paginator->showingEnd > $paginator->getTotalItemCount()) {
-            $paginator->showingEnd = $paginator->getTotalItemCount();
+        $showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
+        if ($showingEnd > $paginator->getTotalItemCount()) {
+            $showingEnd = $paginator->getTotalItemCount();
         }
+        $paginator->setCustomParameters([
+            'amountOfPages' => ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage()),
+            'showingStart' => $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1,
+            'showingEnd' => $showingEnd,
+        ]);
 
         return $paginator;
     }
 
-    /**
-     * @deprecated
-     */
-    public function getDatesOfItems($items)
-    {
-        $dates = [];
-        foreach ($items as $item) {
-            $yearMonth = $item->getCreatedAt()->format('Y-m-d');
-            if (\array_key_exists($yearMonth, $dates)) {
-                ++$dates[$yearMonth];
-            } else {
-                $dates[$yearMonth] = 1;
-            }
-        }
-
-        return $this->transformDateYearToFrontendArray($dates);
-    }
-
-    public function getChannels()
-    {
-        $channels = [];
-        if ($channelResult = $this->dm->getRepository(Channel::class)->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
-            }
-        }
-
-        $channelAuthorisations = [];
-        foreach ($channels as $index => $value) {
-            $read = $this->authorizationChecker->isGranted(PermissionInterface::READ, $value);
-            $write = $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value);
-
-            // TODO Enable this when we have proper data
-//          if ($read === true || $write === true) {
-            $channelAuthorisations[] = $value;
-//                $channelAuthorisations[$value ] = [
-//                    "read" => $read,
-//                    "write" => $write
-//                ];
-//            }
-        }
-
-        return $channelAuthorisations;
-    }
-
-    public function getContentTypeName($item)
+    public function getContentTypeName(ContentType $item): string
     {
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $className = $item->getClass();
@@ -446,35 +449,21 @@ class MediaController extends AbstractController
         if (\in_array($className, $contentTypes)) {
             return $item->getName();
         }
+
+        return '';
     }
 
-    public function manageRelations(Request $request)
+    public function manageRelations(Request $request): Response
     {
         return $this->taxonomyRelationManager->manageRelations($request);
     }
 
-    // TODO later make this
-    public function menu()
+    public function menu(): Response
     {
-        $dm = $this->getDoctrineODM()->getManager();
-        $channels = [];
-        if ($channelResult = $dm->getRepository(Channel::class)->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
-            }
-        }
-
-        $menuItems = [];
-        if ($mediaGalleryMenuResult = $dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'MediaGalleryMenuTree'])) {
-            /* @var menuItem \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-//            foreach ($mediaGalleryMenuResult as $menuItem) {
-//                $menuItems[$menuItem->getId()] = $channel->getName();
-//            }
-        }
+        $menu = $this->mediaGalleryMenu->createMenu();
 
         return $this->render('@IntegratedContent/media/menu.html.twig', [
-            'channels' => $channels,
+            'menu' => $menu,
         ]);
     }
 }

@@ -13,6 +13,8 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Common\Security\PermissionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class MediaGalleryMenu.
@@ -28,12 +30,12 @@ class MediaGalleryMenu
      *
      * @param DocumentManager $dm
      */
-    public function __construct(DocumentManager $dm)
+    public function __construct(DocumentManager $dm, private AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->dm = $dm;
     }
 
-    public function createMenu()
+    public function createMenu(): array
     {
         $menuItems = $this->getMenuItems();
 
@@ -62,18 +64,28 @@ class MediaGalleryMenu
         }
     }
 
-    public function getMenuItemsFromDB()
+    public function getMenuItemsFromDB(): array
     {
         return $this->dm->getRepository(Taxonomy::class)->findBy(['contentType' => 'media_taxonomy']);
     }
 
-    public function getMenuItems()
+    public function isGranted(Taxonomy $menuItem): bool
     {
-        // Alle MediaGalleryMenuTree items ophalen om de categorieen te tonen aan de linkerkant
+        return $this->authorizationChecker->isGranted(PermissionInterface::READ, $menuItem);
+    }
+
+    public function getMenuItems(): array
+    {
+        // Get MediaGalleryMenuItems to show in the menu on the left side.
         $menuItems = [];
 
         if ($mediaGalleryMenuResult = $this->getMenuItemsFromDB()) {
             foreach ($mediaGalleryMenuResult as $menuItem) {
+                // Does the user have the right rights?
+                if (false === $this->isGranted($menuItem)) {
+                    continue;
+                }
+
                 $menuItems[] = [
                     'ID' => $menuItem->getId(),
                     'title' => $menuItem->getTitle(),
@@ -85,7 +97,6 @@ class MediaGalleryMenu
         return $menuItems;
     }
 
-    // FIND SELECTED MENU TITLES
     public function findSelectedMenuTitles(array $menu, string $only_allowed_taxonomy_id): array
     {
         $allSelectedTaxonomys = $this->findCurrentlySelectedMenu($menu, $only_allowed_taxonomy_id);

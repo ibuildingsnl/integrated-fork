@@ -65,10 +65,8 @@ class ParentIDController extends AbstractController
      */
     public function lookup(Request $request)
     {
-        $limit = 1000;
-
         $request->query->set('contenttypes', ['media_taxonomy']);
-        $content = $this->contentProvider->getContentFromSolr($request, $limit);
+        $content = $this->contentProvider->getContentFromSolr($request, 1000);
 
         $result = [];
         foreach ($content as $content_item) {
