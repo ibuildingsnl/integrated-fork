@@ -9,13 +9,11 @@
                 <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
-                        <div class="p-4">
-                            <div class="text-black p-4">
-                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                    <i class="iconoir-folder"></i><span
-                                        class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
-                                </a>
-                            </div>
+                        <div class="aside-folder-header">
+                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                <i class="iconoir-folder"></i><span
+                                    class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                            </a>
                         </div>
                         <div class="aside-item-list-container">
                             <div class="aside-item-search">
@@ -137,8 +135,8 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button class="toggle_view toggle switcher active mr-2"><i class="iconoir-list"></i></button>
-                        <button class="toggle_view switcher mr-2"><i class="iconoir-view-grid"></i></button>
+                        <button class="toggle_view grid active switcher mr-2"><i class="iconoir-view-grid"></i></button>
+                        <button class="toggle_view list switcher mr-2"><i class="iconoir-list"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
@@ -187,7 +185,7 @@
                                 </ul>
                             </li>
                         </ul>
-                        <button class="btn btn-action"
+                        <button class="btn btn-action mr-2"
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
 
@@ -239,108 +237,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="media-wrapper" id="table_view" style="display: none;">
-                        {% for media in paginator.items %}
-
-                            {% set thumbnail = integrated_image(media.file).zoomCrop(80, 80) %}
-
-                            <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
-                                id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                    {#                                    <div class="media-preview"> #}
-                                    {#                                        <div class="thumbnail"> #}
-                                    {#                                            <div class="centered"> #}
-                                    {#                                                <img src="{{ thumbnail }}" #}
-                                    {#                                                     alt="{{ media.title }}"> #}
-                                    {#                                            </div> #}
-                                    {#                                        </div> #}
-                                    {#                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %} #}
-                                    {#                                            <div class="filetype"> #}
-                                    {#                                                {{ media.file|split('.')|last | lower }} #}
-                                    {#                                            </div> #}
-                                    {#                                        {% endif %} #}
-                                    {#                                    </div> #}
-                                </a>
-
-                                <button id="bulkselection_{{ media.id }}" type="button"
-                                        class="bulkselectionbutton check" tabindex="-1">
-                                            <span class="media-modal-icon">
-                                                <i class="iconoir-check"></i>
-                                            </span>
-                                    <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                </button>
-                            </li>
-
-                            <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
-                                id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                    <div class="media-preview">
-                                        <div class="thumbnail">
-                                            <div class="centered">
-                                                <img src="{{ thumbnail }}"
-                                                     alt="{{ media.title }}">
-                                            </div>
-                                        </div>
-                                        {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                            <div class="filetype">
-                                                {{ media.file|split('.')|last | lower }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                                <div class="details flex">
-                                    <div class="w-full md:w-1/2">
-                                        <div class="detail-wrap title">
-                                            <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
-                                            <h3>{{ media.title }}</h3>
-                                        </div>
-                                        {% if media.description %}
-                                            <div class="detail-wrap description">
-                                                        <span
-                                                            class="detail-label">{% trans %}Description{% endtrans %}:</span>
-                                                <p>{{ media.description }}</p>
-                                            </div>
-                                        {% endif %}
-                                        {% if media.credits %}
-                                            <div class="detail-wrap credits">
-                                                        <span
-                                                            class="detail-label">{% trans %}Credits{% endtrans %}:</span>
-                                                <p>{{ media.credits }}</p>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="w-full md:w-1/2">
-                                        {% if media.createdAt is defined %}
-                                            <div class="detail-wrap created-at flex justify-end">
-                                                        <span
-                                                            class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
-                                                <p>{{ media.createdAt|format_date('long') }}</p>
-                                            </div>
-                                        {% endif %}
-                                        {#                                                {% if media.file.metadata.extension is defined %} #}
-                                        {#                                                    <div class="detail-wrap extension"> #}
-                                        {#                                                        <span #}
-                                        {#                                                            class="detail-label">{% trans %}Filetype:{% endtrans %}:</span> #}
-                                        {#                                                        <p>{{ media.file.metadata.extension }}</p> #}
-                                        {#                                                    </div> #}
-                                        {#                                                {% endif %} #}
-                                    </div>
-                                </div>
-
-                                <button id="bulkselection_{{ media.id }}" type="button"
-                                        class="bulkselectionbutton check" tabindex="-1">
-                                            <span class="media-modal-icon">
-                                                <i class="iconoir-check"></i>
-                                            </span>
-                                    <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                </button>
-                            </li>
-
-
-                        {% endfor %}
-                    </div>
-
-                    <div class="media-wrapper" id="grid_view">
+                    <div class="media-wrapper grid_view" style="">
                         {% if paginator.items|length == 0 %}
                             <div>
                                 {% trans %} No results with this selection. {% endtrans %}
@@ -348,6 +245,7 @@
                         {% endif %}
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                             {% for media in paginator.items %}
+
                                 {% if media.contentType == 'image' %}
                                     {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
                                     {#                                    {% set thumbnail = integrated_image(media.file) %} #}
@@ -360,93 +258,64 @@
                                     {# TODO How to handle custom ContentTypes that can be anything? #}
                                     {# We could check pathname / identifier, but that is not so elegant# #}
                                 {% endif %}
-                                {% set gallery = 'grid' %}
-                                {% if gallery is same as('grid') %}
-                                    <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
-                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                            <div class="media-preview">
-                                                <div class="thumbnail">
-                                                    <div class="centered">
-                                                        <img src="{{ thumbnail }}"
-                                                             alt="{{ media.title }}">
-                                                    </div>
-                                                </div>
-                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                                    <div class="filetype">
-                                                        {{ media.file|split('.')|last | lower }}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </a>
 
-                                        <button id="bulkselection_{{ media.id }}" type="button"
-                                                class="bulkselectionbutton check" tabindex="-1">
-                                            <span class="media-modal-icon">
-                                                <i class="iconoir-check"></i>
-                                            </span>
-                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                        </button>
-                                    </li>
-                                {% else %}
-                                    <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
-                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                            <div class="media-preview">
-                                                <div class="thumbnail">
-                                                    <div class="centered">
-                                                        <img src="{{ thumbnail }}"
-                                                             alt="{{ media.title }}">
-                                                    </div>
+                                <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
+                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                    <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                        <div class="media-preview">
+                                            <div class="thumbnail">
+                                                <div class="centered">
+                                                    <img src="{{ thumbnail }}"
+                                                         alt="{{ media.title }}">
                                                 </div>
-                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                                    <div class="filetype">
-                                                        {{ media.file|split('.')|last | lower }}
-                                                    </div>
-                                                {% endif %}
                                             </div>
-                                        </a>
-                                        <div class="details flex">
-                                            <div class="w-full md:w-1/2">
-                                                <div class="detail-wrap title">
-                                                    <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
-                                                    <h3>{{ media.title }}</h3>
+                                            {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                                <div class="filetype">
+                                                    {{ media.file|split('.')|last | lower }}
                                                 </div>
-                                                {% if media.description %}
-                                                    <div class="detail-wrap description">
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                    <div class="details flex">
+                                        <div class="w-full md:w-1/2">
+                                            <div class="detail-wrap title">
+                                                <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
+                                                <h3>{{ media.title }}</h3>
+                                            </div>
+                                            {% if media.description %}
+                                                <div class="detail-wrap description">
                                                         <span
                                                             class="detail-label">{% trans %}Description{% endtrans %}:</span>
-                                                        <p>{{ media.description }}</p>
-                                                    </div>
-                                                {% endif %}
-                                                {% if media.credits %}
-                                                    <div class="detail-wrap credits">
+                                                    <p>{{ media.description }}</p>
+                                                </div>
+                                            {% endif %}
+                                            {% if media.credits %}
+                                                <div class="detail-wrap credits">
                                                         <span
                                                             class="detail-label">{% trans %}Credits{% endtrans %}:</span>
-                                                        <p>{{ media.credits }}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="w-full md:w-1/2">
-                                                {% if media.createdAt is defined %}
-                                                    <div class="detail-wrap created-at flex justify-end">
+                                                    <p>{{ media.credits }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="w-full md:w-1/2">
+                                            {% if media.createdAt is defined %}
+                                                <div class="detail-wrap created-at flex justify-end">
                                                         <span
                                                             class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
-                                                        <p>{{ media.createdAt|format_date('long') }}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
+                                                    <p>{{ media.createdAt|format_date('long') }}</p>
+                                                </div>
+                                            {% endif %}
                                         </div>
+                                    </div>
 
-                                        <button id="bulkselection_{{ media.id }}" type="button"
-                                                class="bulkselectionbutton check" tabindex="-1">
+                                    <button id="bulkselection_{{ media.id }}" type="button"
+                                            class="bulkselectionbutton check" tabindex="-1">
                                             <span class="media-modal-icon">
                                                 <i class="iconoir-check"></i>
                                             </span>
-                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                        </button>
-                                    </li>
-                                {% endif %}
+                                        <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                    </button>
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -483,12 +352,16 @@
             $('.toggle_view').on('click', function() {
                 console.log('toggle');
                 if (toggle_view == 'GRID_VIEW') {
-                    $('#grid_view').hide();
-                    $('#table_view').show();
+                    $('.toggle_view.list').addClass('active');
+                    $('.toggle_view.grid').removeClass('active');
+                    $('.media-item').removeClass('grid');
+                    $('.media-item').addClass('list');
                     toggle_view = 'TABLE_VIEW';
                 } else {
-                    $('#grid_view').show();
-                    $('#table_view').hide();
+                    $('.toggle_view.grid').addClass('active');
+                    $('.toggle_view.list').removeClass('active');
+                    $('.media-item').removeClass('list');
+                    $('.media-item').addClass('grid');
                     toggle_view = 'GRID_VIEW';
                 }
             });
@@ -555,7 +428,8 @@
             }).use(Dashboard, {
                 inline: true,
                 target: '#photo_upload_area',
-                height: 600,
+                width: '100%',
+                height: 400,
                 proudlyDisplayPoweredByUppy: false,
                 showProgressDetails: true,
                 metaFields: [
@@ -595,6 +469,29 @@
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+    <script>
+
+        function asideFolderSearch(elem) {
+            // Declare variables
+
+            var input, filter, ul, li, a, i, txtValue;
+            input = elem;
+            filter = input.value.toUpperCase();
+            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName('a')[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].classList.remove('menu-item-hidden');
+                } else {
+                    li[i].classList.add('menu-item-hidden');
+                }
+            }
+        };
+    </script>
 {% endblock %}
 
 {% block style %}

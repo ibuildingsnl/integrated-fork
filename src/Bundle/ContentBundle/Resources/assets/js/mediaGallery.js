@@ -51,18 +51,18 @@ function handleBulkItemClick(event) {
             media_id = element.getAttribute('data-id')
 
             bulkSelection.push(media_id)
-            $('#' + element.id).addClass('selected')
+            $('#' + media_id).addClass('selected')
         }
     } else {
         //SINGLE CLICK
         media_id = event.currentTarget.getAttribute('data-id')
-
+        console.log('#' + media_id)
         if (bulkSelection.includes(media_id)) {
             bulkSelection = bulkSelection.filter(item => item !== media_id)
-            $('#' + event.currentTarget.id).removeClass('selected')
+            $('#' + media_id).removeClass('selected')
         } else {
             bulkSelection.push(media_id)
-            $('#' + event.currentTarget.id).addClass('selected')
+            $('#' + media_id).addClass('selected')
         }
     }
 
@@ -89,10 +89,6 @@ async function disableBulkSelection() {
             helper: "clone",
             cursorAt: { left: 10, top: 10 },
             start: function (ev, ui) {
-                // offset = {
-                //     top: 50,
-                //     left: 50
-                // }
             }
         });
 
@@ -177,26 +173,5 @@ async function disableBulkSelection() {
                 return response;
             }
         }
-
-        function asideFolderSearch(elem) {
-            // Declare variables
-
-            var input, filter, ul, li, a, i, txtValue;
-            input = elem;
-            filter = input.value.toUpperCase();
-            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
-            li = ul.getElementsByTagName('li');
-
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName('a')[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].classList.remove('menu-item-hidden');
-                } else {
-                    li[i].classList.add('menu-item-hidden');
-                }
-            }
-        };
     });
 })(jQuery);
