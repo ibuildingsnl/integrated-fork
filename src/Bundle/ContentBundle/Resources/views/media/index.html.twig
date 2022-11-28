@@ -34,13 +34,13 @@
                             </form>
                             <ul class="aside-filter-menu">
                                 {% for key, menu_item in menu %}
-                                    <li class="menu-parent {% if params.media_taxonomy.current == menu_item.title %}current-menu-item{% endif %}">
-                                        {% if params.media_taxonomy.current == menu_item.title %}
+                                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
+                                        {% if selectedMediaTaxonomy.current == menu_item.title %}
                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                                         {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
-                                                merge({'MediaTaxonomy': menu_item.title == params.media_taxonomy.default ? null : menu_item.title })|
+                                                merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
                                                 merge({'media_taxonomy_id':menu_item.ID})|
                                                 merge({'page':1})
                                             ) }}"
@@ -55,13 +55,13 @@
                                         {% if menu_item.children %}
                                             <ul class="child-menu">
                                                 {% for key_1, menu_item_1 in menu_item.children %}
-                                                    <li class="menu-child {% if params.media_taxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
-                                                        {% if params.media_taxonomy.current == menu_item_1.title %}
+                                                    <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
+                                                        {% if selectedMediaTaxonomy.current == menu_item_1.title %}
                                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
                                                         {% else %}
                                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                                 app.request.query.all|
-                                                                merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                                                merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
                                                                 merge({'media_taxonomy_id':menu_item_1.ID})|
                                                                 merge({'page':1})
                                                             ) }}"
@@ -75,13 +75,13 @@
                                                         {% if menu_item_1.children %}
                                                             <ul class="child-menu">
                                                                 {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                                    <li class="menu-child {% if params.media_taxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
-                                                                        {% if params.media_taxonomy.current == menu_item_2.title %}
+                                                                    <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
+                                                                        {% if selectedMediaTaxonomy.current == menu_item_2.title %}
                                                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_2.ID }}">
                                                                         {% else %}
                                                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                                                 app.request.query.all|
-                                                                                merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                                                merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title }) |
                                                                                 merge({'media_taxonomy_id':menu_item_2.ID})|
                                                                                 merge({'page':1})
                                                                             ) }}"
@@ -119,11 +119,11 @@
                             <i class="fa fa-plus"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                            {% for type_key, type in params.types %}
+                            {% for type_key, type in contentTypeSelectOptions %}
                                 {% if type %}
                                     <li role="presentation">
-                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type_key | title | lower | replace({' ': '_'}) }}">
-                                            {{ type.label_singular | title }}
+                                        <a href="{{ path('integrated_content_content_new') }}?type={{ type.getId }}">
+                                            {{ type.getName | title }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -138,20 +138,21 @@
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
-                                   class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label_plural|trans }}</span>
+                                   class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
                                     <i class="fa fa-angle-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                    {% for content_type_key, content_type in params.content_types.options %}
+                                    {% for content_type_key, content_type in contentTypeFilterOptions.options %}
+{#                                        {{ dump(content_type) }}#}
 
-                                        <li {% if content_type_key == params.content_types.current %}class="active"
+                                        <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'class_string': content_type_key == params.content_types.default ? null : content_type_key })|
+                                                merge({'class_string': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
-                                               role="menuitem">{{ content_type.label_plural|trans|capitalize }}</a>
+                                               role="menuitem">{{ content_type.name|trans|capitalize }}</a>
                                         </li>
 
                                     {% endfor %}
@@ -162,16 +163,16 @@
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
-                                   class="btn btn-select space-between"><span>{{ params.date_filter.options[params.date_filter.current].label|trans }}</span>
+                                   class="btn btn-select space-between"><span>{{ dateFilterOptions.options[dateFilterOptions.current].label|trans }}</span>
                                     <i class="fa fa-angle-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                                    {% for year_month_key, year_month in params.date_filter.options %}
+                                    {% for year_month_key, year_month in dateFilterOptions.options %}
                                         {% if year_month.label != 'File' %}
-                                            <li {% if year_month.name == params.date_filter.current %}class="active"
+                                            <li {% if year_month.name == dateFilterOptions.current %}class="active"
                                                 {% endif %}role="presentation">
                                                 <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                    merge({'year_month': year_month_key == params.date_filter.default ? null : year_month_key })|
+                                                    merge({'year_month': year_month_key == dateFilterOptions.default ? null : year_month_key })|
                                                     merge({'page':1})
                                                 ) }}"
                                                    tabindex="-1"
