@@ -8,7 +8,7 @@
 
             <li class="dropdown-assigned-to-me dropdown top-bar hidden-xs">
                 <a href="#" class="btn btn-orange icon-left" data-toggle="dropdown">
-                    <i class="fa-solid fa-bell"></i>
+                    <i class="iconoir-bell-notification"></i>
                     <span>{{ assignedContent|length }}</span>
                 </a>
                 <ul class="dropdown-menu-left dropdown-icons">
@@ -28,7 +28,7 @@
                                                 {% set status_icon = doc.workflow_icon_string|first %}
                                             {% endif %}
                                             <div class="workflow-status" style="background-color:{{ status_color }};">
-                                                <i class="fa-solid {{ status_icon }}"></i>
+                                                <i class="iconoir-{{ status_icon }}"></i>
                                             </div>
                                             <span class="item-title">{{ doc.title|default }}</span>
                                         </a>
@@ -50,7 +50,7 @@
 
             <li class="dropdown-queue dropdown top-bar hidden-xs">
                 <a href="#" class="btn btn-green icon-left" data-toggle="dropdown">
-                    <i class="fa-solid fa-database"></i>
+                    <i class="iconoir-database-backup"></i>
                     <span class="">{{ queuecount }}</span>
                 </a>
                 <ul class="dropdown-menu-left dropdown-icons">
@@ -93,7 +93,7 @@
                             {{ app.user.username|default('') }}
                         {% endif %}
                     </span>
-                    <i class="integrate-icon-down-open"></i>
+                    <i class="iconoir-nav-arrow-down"></i>
                 </a>
 
                 <ul class="dropdown-menu-right">
@@ -116,7 +116,7 @@
                                 <li class="divider"></li>
                                 <li>
                                     <a href="{{ path('integrated_user_logout') }}" class="btn btn-dark-green w-full justify-between mt-2">
-                                        <span>{% trans %}Log out{% endtrans %}</span><i class="fa-solid fa-arrow-right-from-bracket rotate-180"></i>
+                                        <span>{% trans %}Log out{% endtrans %}</span><i class="iconoir-log-out rotate-180"></i>
                                     </a>
                                 </li>
                             </ul>

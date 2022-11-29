@@ -55,7 +55,7 @@ class Article extends Content implements RankableInterface
      *          }
      *     },
      *     location= "sidebar",
-     *     icon= "fa-feather",
+     *     icon= "feather",
      * )
      */
     protected $authors;
@@ -65,7 +65,7 @@ class Article extends Content implements RankableInterface
      *
      * @Type\Field(
      *      location= "sidebar",
-     *      icon= "fa-megaphone",
+     *      icon= "megaphone",
      * )
      */
     protected $source;
@@ -80,7 +80,7 @@ class Article extends Content implements RankableInterface
      *          }
      *     },
      *     location = "sidebar",
-     *     icon = "fa-arrow-up-right-from-square",
+     *     icon = "arrow-up-right-from-square",
      * )
      */
     protected $sourceUrl;

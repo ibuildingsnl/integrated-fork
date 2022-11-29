@@ -15,16 +15,16 @@
                     {% block sidebar %}
                         {% block content_meta %}
                             {% if form.permissions is defined %}
-                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'fa-key', 'state': 'show'}) }}
+                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options_publication is defined %}
-                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'fa-link', 'state': 'show'}) }}
+                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'link', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options_workflow is defined %}
-                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'fa-droplet', 'state': 'show'}) }}
+                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'stackoverflow', 'state': 'show'}) }}
                             {% endif %}
                             {% if form.options is defined %}
-                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'fa-cog', 'state': 'show'}) }}
+                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                             {% endif %}
                         {% endblock %}
 
@@ -60,5 +60,6 @@
 {% endblock %}
 
 {% block webpack_js %}
+    {{ parent() }}
     <script src="{{ asset('bundles/integratedintegrated/collection.js') }}"></script>
 {% endblock %}

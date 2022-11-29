@@ -97,40 +97,5 @@ class MediaGalleryMenu
         return $menuItems;
     }
 
-    public function findSelectedMenuTitles(array $menu, string $only_allowed_taxonomy_id): array
-    {
-        $allSelectedTaxonomys = $this->findCurrentlySelectedMenu($menu, $only_allowed_taxonomy_id);
 
-        // TODO change this to ID!
-        return $this->arrayColumnRecursive($allSelectedTaxonomys, 'title');
-    }
-
-    public function findCurrentlySelectedMenu($inArray, $target)
-    {
-        foreach ($inArray as $key => $tuple) {
-            if ($tuple['ID'] === $target) {
-                return $tuple;
-            }
-
-            if (\count($tuple['children']) > 0) {
-                $found = $this->findCurrentlySelectedMenu($tuple['children'], $target);
-
-                if ($found !== null) {
-                    return $found;
-                }
-            }
-        }
-    }
-
-    public function arrayColumnRecursive(array $haystack, $needle)
-    {
-        $found = [];
-        array_walk_recursive($haystack, function ($value, $key) use (&$found, $needle) {
-            if ($key == $needle) {
-                $found[] = $value;
-            }
-        });
-
-        return $found;
-    }
 }
