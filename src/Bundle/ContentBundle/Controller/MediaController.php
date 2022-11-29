@@ -340,13 +340,4 @@ class MediaController extends AbstractController
     {
         return $this->taxonomyRelationManager->manageRelations($request);
     }
-
-    public function menu(): Response
-    {
-        $menu = $this->mediaGalleryMenu->createMenu();
-
-        return $this->render('@IntegratedContent/media/menu.html.twig', [
-            'menu' => $menu,
-        ]);
-    }
 }

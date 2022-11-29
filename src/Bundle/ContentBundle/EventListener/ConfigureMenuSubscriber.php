@@ -81,8 +81,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
             $menuManage->addChild('Media', ['route' => 'integrated_content_media_index']);
 
-            $menuManage->addChild('Media menu', ['route' => 'integrated_content_media_menu']);
-
             if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
                 $menuManage->addChild('Relations', ['route' => 'integrated_content_relation_index']);
             }
