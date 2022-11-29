@@ -48,7 +48,6 @@ class MediaController extends AbstractController
 {
     public const PAGINATOR_LIMIT = 40;
     public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
-    public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
@@ -99,26 +98,27 @@ class MediaController extends AbstractController
         $requestCopy = $this->setAndGetClassString($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
-
-        if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
-            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
-            $requestCopy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
-        }
-
-        $uniqueContentTypes = $this->getContentTypes();
-
+        
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
 
-        $dateFilter = $this->getYearMonthDates($requestCopy);
+        $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
 
-        $params = array_merge([], $this->getParams($requestCopy, $uniqueContentTypes, $dateFilter));
+        $contentTypeSelectOptions = $this->getContentTypes();
+
+        $contentTypeFilterOptions = $this->getContentTypeFilterOptions($requestCopy);
+
+        $dateFilter = $this->getYearMonthDates($requestCopy);
+        $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
             'items' => $items,
-            'params' => $params,
+            'contentTypeSelectOptions' => $contentTypeSelectOptions,
+            'contentTypeFilterOptions' => $contentTypeFilterOptions,
+            'dateFilterOptions' => $dateFilterOptions,
+            'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
             'menu' => $menu,
             'not_shown_filetypes' => array_map(
                 fn ($item) => strtolower($item),
@@ -252,9 +252,18 @@ class MediaController extends AbstractController
     public function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
-        $contentTypeNames = array_map([$this, 'getContentTypeName'], $this->documentManager->getRepository(ContentType::class)->findAll());
+        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
+        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
-        return array_filter($contentTypeNames);
+        $result = [];
+        foreach ($allContentTypes as $contentType) {
+            $className = $contentType->getClass();
+            if (\in_array($className, $contentTypes)) {
+                $result[] = $contentType;
+            }
+        }
+
+        return $result;
     }
 
     public function setYearMonthFilter($request)
@@ -323,7 +332,34 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getParams(Request $request, array $uniqueContentTypes, array $dateFilter): array
+    public function getContentTypeFilterOptions(Request $request): array
+    {
+        $filter = [
+            'options' => [
+                'all_files' => [
+                    "id" => "all_files",
+                    "name" => "Alle mediafiles",
+                ],
+            ],
+            'current' => $request->query->get('class_string'),
+            'default' => 'All mediafiles',
+        ];
+
+        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
+        $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
+
+        foreach ($allContentTypes as $contentType) {
+            $className = $contentType->getClass();
+
+            if (\in_array($className, $contentTypes)) {
+                $filter["options"][$contentType->getId()] = $contentType;
+            }
+        }
+
+        return $filter;
+    }
+
+    public function getSelectedMediaTaxonomy(Request $request): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -333,91 +369,10 @@ class MediaController extends AbstractController
             $mediaTaxonomy = $request->query->get('MediaTaxonomy');
         }
 
-        $params = [
-            'date_filter' => [
-                'options' => [
-                    'all_dates' => [
-                        'name' => 'Alles',
-                        'label' => 'All dates',
-                    ],
-                ],
-                'current' => $request->query->get('year_month'),
-                'default' => 'all_dates',
-            ],
-            'content_types' => [
-                'options' => [
-                    'all_files' => [
-                        'label_plural' => 'All mediafiles',
-                    ],
-                ],
-                'current' => $request->query->get('class_string'),
-                'default' => 'All mediafiles',
-            ],
-            // NEW ITEMS
-            'types' => [
-            ],
-            'media_taxonomy' => [
-                'current' => $mediaTaxonomy,
-                'default' => null,
-            ],
+        return [
+            'current' => $mediaTaxonomy,
+            'default' => null,
         ];
-
-        foreach ($this::DEFAULT_FILE_TYPES as $file_type_key => $file_type) {
-            $params['content_types']['options'][$file_type_key] = $file_type;
-            $params['types'][$file_type_key] = $file_type;
-        }
-
-        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
-
-        return $this->checkIfCurrentExistsAsKey($paramsExtended);
-    }
-
-    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter): array
-    {
-        foreach ($uniqueContentTypes as $uniqueContentType) {
-            // The default categories are always there, and dont need to be added again.
-            if (\in_array($uniqueContentType, array_column($this::DEFAULT_FILE_TYPES, 'class_name'))) {
-                continue;
-            }
-
-            // For filtering of content_types
-            $params['content_types']['options'][$uniqueContentType] = [
-                'name' => $uniqueContentType,
-                'label_plural' => ucfirst($uniqueContentType),
-            ];
-
-            // For new items of content_type:
-            $params['types'][$uniqueContentType] = [
-                'type' => $uniqueContentType,
-                'label_singular' => ucfirst($uniqueContentType),
-            ];
-        }
-
-        foreach ($dateFilter as $yearMonth) {
-            $params['date_filter']['options'][$yearMonth['yearMonth']] = [
-                'type' => $yearMonth['yearMonth'],
-                'label' => $yearMonth['label'],
-                'name' => $yearMonth['label'],
-            ];
-        }
-
-        return $params;
-    }
-
-    public function checkIfCurrentExistsAsKey(array $paramsExtended): array
-    {
-        $currentDate = $paramsExtended['date_filter']['current'];
-
-        if (false === \array_key_exists($currentDate, $paramsExtended['date_filter']['options'])) {
-            $paramsExtended['date_filter']['current'] = 'all_dates';
-        }
-
-        $currentContentType = $paramsExtended['content_types']['current'];
-        if (false === \array_key_exists($currentContentType, $paramsExtended['content_types']['options'])) {
-            $paramsExtended['content_types']['current'] = null;
-        }
-
-        return $paramsExtended;
     }
 
     private function createPaginator(array $items, Request $requestSource): SlidingPagination
@@ -439,18 +394,6 @@ class MediaController extends AbstractController
         ]);
 
         return $paginator;
-    }
-
-    public function getContentTypeName(ContentType $item): string
-    {
-        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
-        $className = $item->getClass();
-
-        if (\in_array($className, $contentTypes)) {
-            return $item->getName();
-        }
-
-        return '';
     }
 
     public function manageRelations(Request $request): Response
