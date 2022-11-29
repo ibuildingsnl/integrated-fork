@@ -4,22 +4,99 @@
     overflow: hidden;
     padding-bottom: 0px !important;
     position: relative;
-    z-index:1000;
+    z-index: 1000;
+
     .sidebar {
         background-color: $sidebar-green;
         width: 250px;
         height: calc(100vh - 50px);
         flex-shrink: 0;
-        ul.sidebar-menu {
-            padding:2rem;
+
+        div.sidebar-menu {
+            padding: 1rem;
+
             a {
-                color:white;
-            }
-            li.menu-label {
                 color: white;
-                font-weight: bold;
-                font-size: 20px;
-                margin-top: 10px;
+            }
+
+            div.menu-label {
+                color: white;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                padding: 0.75rem 0;
+
+                i {
+                    margin-right: 10px;
+
+                    &:before {
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+
+            .sidebar-sub-menu {
+                border-bottom: 1px solid #3e515a;
+                padding: 0 1rem;
+
+                .sub-menu-children {
+                    display: none;
+                    height: 0;
+                    overflow: hidden;
+                    transition: height 0.35s ease-in-out;
+                    margin-left: -10px;
+                    margin-right: -10px;
+
+                    li {
+                        a {
+                            padding: 3px 0rem 3px 38px;
+                            margin-bottom: 1px;
+                            display: block;
+                            width: 100%;
+                            position: relative;
+                        }
+
+                        &.current {
+                            a {
+                                background-color: #345767;
+                                border-radius: 8px;
+                                padding: 3px 0rem 3px 38px;
+                                &:before{
+                                    content: "";
+                                    display: inline-block;
+                                    width: 5px;
+                                    position: absolute;
+                                    height: 5px;
+                                    -moz-border-radius: 7.5px;
+                                    -webkit-border-radius: 7.5px;
+                                    border-radius: 7.5px;
+                                    background-color: #f5f5f5;
+                                    left: 17px;
+                                    top: 12px;
+                                }
+                            }
+                        }
+
+                        &:hover {
+                            a {
+                                background-color: #345767;
+                                border-radius: 8px;
+                            }
+                        }
+                        &.last {
+                            margin-bottom: 10px;
+                        }
+                    }
+                }
+
+                &.show {
+                    .sub-menu-children {
+                        display: block;
+                        height: auto;
+                    }
+                }
             }
         }
     }
@@ -27,6 +104,6 @@
 
 body.modal-open {
     #wrapper-holder {
-        z-index:unset;
+        z-index: unset;
     }
 }

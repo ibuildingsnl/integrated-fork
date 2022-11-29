@@ -127,6 +127,14 @@
             }
         }
     }
+    span.locked-text {
+        display: flex;
+        align-items: center;
+        i:before {
+            width: 15px;
+            height: 15px;
+        }
+    }
 }
 
 .screen-reader-text {

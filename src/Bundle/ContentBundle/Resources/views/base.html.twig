@@ -209,16 +209,19 @@
     // JS
     var sidebarfilter = document.getElementsByClassName('aside-item-header');
     var editorsettings = document.getElementsByClassName('editor-item-header');
+    var sidebarMenu = document.getElementsByClassName('menu-label');
 
     for (var i = 0; i < sidebarfilter.length; i++) {
         sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
-    }
-    ;
+    };
 
-    for (var ii = 0; ii < editorsettings.length; ii++) {
-        editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
-    }
-    ;
+    for (var i = 0; i < editorsettings.length; i++) {
+        editorsettings[i].addEventListener('click', toggleOptionsElement, false);
+    };
+
+    for (var i = 0; i < sidebarMenu.length; i++) {
+        sidebarMenu[i].addEventListener('click', toggleSidebarElement, false);
+    };
 
     function toggleOptionsElement(event) {
         var options = this.parentNode.querySelector('.aside-item-list');
@@ -234,9 +237,20 @@
         toggleElement(options);
     };
 
+    function toggleSidebarElement(event) {
+        var menu = this.parentNode.querySelector('.sub-menu-children');
+        // Prevent default link behavior
+        event.preventDefault();
+
+        if (!menu) return;
+
+        // Toggle the content
+        toggleElement(menu);
+    };
+
     // Show an element
     var showElement = function(elem) {
-
+        console.log(elem)
         // Get the natural height of the element
         var getHeight = function() {
             elem.style.display = 'block'; // Make it visible
@@ -277,9 +291,8 @@
 
     // Toggle element visibility
     var toggleElement = function(elem, timing) {
-
         // If the element is visible, hide it
-        if (elem.parentNode.classList.contains('show')) {
+        if (elem.parentNode.classList.contains('show') || elem.classList.contains('show')) {
             hideElement(elem);
             return;
         }

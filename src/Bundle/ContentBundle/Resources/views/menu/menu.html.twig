@@ -1,15 +1,12 @@
 {% extends '@IntegratedContent/menu/bootstrap.html.twig' %}
 
 {% block list %}
+    {% dump(item) %}
     {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
         {% if item.level == 0 %}
-            <ul class="sidebar-menu">
-                <li>
-                    <div class="megamenu-content">
-                        {{ block('children') }}
-                    </div>
-                </li>
-            </ul>
+            <div class="sidebar-menu">
+                {{ block('children') }}
+            </div>
         {% else %}
             {{ block('children') }}
         {% endif %}
@@ -42,20 +39,35 @@
         {%- endif %}
 
         {%- set attributes = item.attributes %}
+        {% if item.level == 1 %}
+            {% if 'current_ancestor' in classes %}
+                {% set state = 'sidebar-sub-menu show' %}
+            {% else %}
+                {% set state = 'sidebar-sub-menu hide' %}
+            {% endif %}
+            {%- set classes = classes|merge({'class': state}) %}
+        {% endif %}
         {%- if classes is not empty %}
             {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
         {%- endif %}
+
+        {% dump(attributes) %}
         {# displaying the item #}
         {% import _self as knp_menu %}
         {% if item.level == 1 %}
-            <ul {{ knp_menu.attributes(attributes) }} class="sub-menu">
-                <li class="menu-label">
-                    {{ block('label') }}
-                </li>
-                {{ block('list') }}
-            </ul>
+            <div {{ knp_menu.attributes(attributes) }}>
+                <div class="menu-label">
+                    {% if item.extra('icon') is not empty %}
+                        <i class="{{ item.extra('icon') }}"></i>
+                    {% endif %}
+                    <span class="">{{ block('label') }}</span>
+                </div>
+                <ul class="sub-menu-children">
+                    {{ block('list') }}
+                </ul>
+            </div>
         {% else %}
-            <li{{ knp_menu.attributes(attributes) }}>
+            <li {{ knp_menu.attributes(attributes) }}>
                 {%- if item.uri is not empty and (not matcher.isCurrent(item) or options.currentAsLink) %}
                     {{ block('linkElement') }}
                 {%- else %}
