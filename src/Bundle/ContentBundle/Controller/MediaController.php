@@ -11,25 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
-use Integrated\Bundle\StorageBundle\Storage\Reader\UploadedFileReader;
-use Integrated\Common\Storage\ManagerInterface;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
-use Symfony\Component\Routing\Annotation\Route;
 
 /*
  * Goal for the user:
@@ -83,7 +73,6 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
-        private ManagerInterface $manager,
     ) {
     }
 
@@ -98,7 +87,7 @@ class MediaController extends AbstractController
         $requestCopy = $this->setAndGetClassString($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
-        
+
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
@@ -203,6 +192,34 @@ class MediaController extends AbstractController
 
         return new JsonResponse(array('message' => 'file is uploaded.', 'content' => json_encode($file)));
     }
+
+    private function getDateFilterOptions(Request $request, array $dateFilter): array
+    {
+        $currentSelection = $request->query->get('year_month');
+
+        $filter = [
+            'options' => [
+                'all_dates' => [
+                    'name' => 'Alles',
+                    'label' => 'All dates',
+                ],
+            ],
+            'default' => 'all_dates',
+        ];
+
+        foreach ($dateFilter as $yearMonth) {
+            $filter['options'][$yearMonth['yearMonth']] = [
+                'type' => $yearMonth['yearMonth'],
+                'label' => $yearMonth['label'],
+                'name' => $yearMonth['label'],
+            ];
+        }
+
+        $filter["current"] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
+
+        return $filter;
+    }
+
 
     /**
      * @param $request

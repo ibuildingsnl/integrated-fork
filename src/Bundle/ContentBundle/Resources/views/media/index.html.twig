@@ -37,8 +37,9 @@
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                                         {% else %}
-                                    <li class="menu-parent {% if params.media_taxonomy.current == menu_item.title %}current-menu-item{% endif %}">
-                                        {% if params.media_taxonomy.current == menu_item.title %}
+                                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
+                                        {% endif %}
+                                        {% if selectedMediaTaxonomy.current == menu_item.title %}
                                         <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                                             {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
@@ -58,14 +59,14 @@
                                             {% if menu_item.children %}
                                                 <ul class="child-menu">
                                                     {% for key_1, menu_item_1 in menu_item.children %}
-                                                        <li class="menu-child {% if params.media_taxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
-                                                            {% if params.media_taxonomy.current == menu_item_1.title %}
+                                                        <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
+                                                            {% if selectedMediaTaxonomy.current == menu_item_1.title %}
                                                             <a tabindex="-1" role="menuitem" class="media_category"
                                                                id="{{ menu_item_1.ID }}">
                                                                 {% else %}
                                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                                     app.request.query.all|
-                                                                    merge({'MediaTaxonomy': menu_item_1.title == params.media_taxonomy.default ? null : menu_item_1.title })|
+                                                                    merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
                                                                     merge({'media_taxonomy_id':menu_item_1.ID})|
                                                                     merge({'page':1})
                                                                 ) }}"
@@ -79,15 +80,15 @@
                                                                 {% if menu_item_1.children %}
                                                                     <ul class="child-menu">
                                                                         {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                                            <li class="menu-child {% if params.media_taxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
-                                                                                {% if params.media_taxonomy.current == menu_item_2.title %}
+                                                                            <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
+                                                                                {% if selectedMediaTaxonomy.current == menu_item_2.title %}
                                                                                 <a tabindex="-1" role="menuitem"
                                                                                    class="media_category"
                                                                                    id="{{ menu_item_2.ID }}">
                                                                                     {% else %}
                                                                                     <a href="{{ path(app.request.attributes.get('_route'),
                                                                                         app.request.query.all|
-                                                                                        merge({'MediaTaxonomy': menu_item_2.title == params.media_taxonomy.default ? null : menu_item_2.title }) |
+                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title }) |
                                                                                         merge({'media_taxonomy_id':menu_item_2.ID})|
                                                                                         merge({'page':1})
                                                                                     ) }}"
@@ -144,7 +145,7 @@
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
-                                   class="btn btn-select space-between"><span>{{ params.content_types.options[params.content_types.current].label_plural|trans }}</span>
+                                   class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
                                     <i class="iconoir-nav-arrow-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
@@ -169,7 +170,7 @@
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
-                                   class="btn btn-select space-between"><span>{{ params.date_filter.options[params.date_filter.current].label|trans }}</span>
+                                   class="btn btn-select space-between"><span>{{ dateFilterOptions.options[dateFilterOptions.current].label|trans }}</span>
                                     <i class="iconoir-nav-arrow-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
