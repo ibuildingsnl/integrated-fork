@@ -84,7 +84,7 @@ class MediaController extends AbstractController
     // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource): Response
     {
-        $requestCopy = $this->setAndGetClassString($requestSource);
+        $requestCopy = $this->setAndGetMediaType($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
         
@@ -155,7 +155,7 @@ class MediaController extends AbstractController
      *               -----xx                      xx
      *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
      */
-    public function setAndGetClassString($requestSource): Request
+    public function setAndGetMediaType($requestSource): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
@@ -170,15 +170,15 @@ class MediaController extends AbstractController
             $request->query->set('MediaTaxonomy[]', [$request->query->get('MediaTaxonomy')]);
         }
 
-        $classString = $request->query->get('class_string');
-        if (null === $classString || '' === $classString || 'all_files' === $classString) {
-            $request->query->set('class_string', 'all_files');
-            $request->query->set('solr_class_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
-        } elseif (\in_array($classString, array_keys($this::DEFAULT_FILE_TYPES))) {
-            $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]['solr_name']);
+        $mediaTypeString = $request->query->get('media_type_string');
+        if (null === $mediaTypeString || '' === $mediaTypeString || 'all_files' === $mediaTypeString) {
+            $request->query->set('media_type_string', 'all_files');
+            $request->query->set('solr_media_type_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
+        } elseif (\in_array($mediaTypeString, array_keys($this::DEFAULT_FILE_TYPES))) {
+            $request->query->set('solr_media_type_string', $this::DEFAULT_FILE_TYPES[$mediaTypeString]['solr_name']);
         } else {
-            $camelCase = $this->kebabToCamel($classString);
-            $request->query->set('solr_class_string', $camelCase);
+            $camelCase = $this->kebabToCamel($mediaTypeString);
+            $request->query->set('solr_media_type_string', $camelCase);
         }
 
         return $request;
@@ -281,7 +281,7 @@ class MediaController extends AbstractController
                     "name" => "Alle mediafiles",
                 ],
             ],
-            'current' => $request->query->get('class_string'),
+            'current' => $request->query->get('media_type_string'),
             'default' => 'All mediafiles',
         ];
 

@@ -81,8 +81,8 @@ class ContentProvider
         $query = $this->client->createSelect();
 
         // Filter on ContentType
-        $query->createFilterQuery('class_string')
-            ->setQuery('class_string: '.$request->query->get('solr_class_string'));
+        $query->createFilterQuery('media_type_string')
+            ->setQuery('media_type_string: '.$request->query->get('solr_media_type_string'));
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
@@ -138,10 +138,10 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
-        if ($class = $request->query->get('solr_class_string')) {
+        if ($class = $request->query->get('solr_media_type_string')) {
             $query
-                ->createFilterQuery('class_string')
-                ->setQuery('class_string: '.$class);
+                ->createFilterQuery('media_type_string')
+                ->setQuery('media_type_string: '.$class);
         }
 
         if ($timePeriod = $request->query->get('year_month_day_filter')) {
