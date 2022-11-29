@@ -16,10 +16,12 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /*
  * Goal for the user:
@@ -73,6 +75,7 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
+        protected AuthorizationCheckerInterface $authorizationChecker
     ) {
     }
 
@@ -197,6 +200,10 @@ class MediaController extends AbstractController
 
         $result = [];
         foreach ($allContentTypes as $contentType) {
+            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                continue;
+            }
+
             $className = $contentType->getClass();
             if (\in_array($className, $contentTypes)) {
                 $result[] = $contentType;
@@ -289,6 +296,10 @@ class MediaController extends AbstractController
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
         foreach ($allContentTypes as $contentType) {
+            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                continue;
+            }
+
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
