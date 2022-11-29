@@ -538,9 +538,9 @@
             {% set label = name|humanize %}
         {% endif %}
         {% if type is defined and type == 'submit' %}
-            {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' btn btn-'~button_class|default('primary'))|trim }) %}
+            {% set attr = attr|merge({ 'class': (attr.class|default('') ~ 'no-icon btn btn-'~button_class|default('primary'))|trim }) %}
         {% else %}
-            {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' btn btn-'~button_class|default('default'))|trim }) %}
+            {% set attr = attr|merge({ 'class': (attr.class|default('') ~ 'no-icon btn btn-'~button_class|default('default'))|trim }) %}
         {% endif %}
         {% if translation_domain is not same as (false) %}
             {% set label = label|trans({}, translation_domain) %}

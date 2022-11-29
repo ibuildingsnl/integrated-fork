@@ -151,6 +151,16 @@
         });
     }
 
+
+    function toggleFilterMenu() {
+        var searchMenu = document.querySelector('.aside-filters');
+        if (!searchMenu.classList.contains('show')) {
+            searchMenu.classList.add('show');
+        } else {
+            searchMenu.classList.remove('show');
+        }
+    }
+
     function hideDropDownBackgroud(event) {
         var searchMenu = document.querySelector('.search-form .form-control');
         var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');

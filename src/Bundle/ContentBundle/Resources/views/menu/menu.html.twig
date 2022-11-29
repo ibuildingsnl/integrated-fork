@@ -57,10 +57,13 @@
         {% if item.level == 1 %}
             <div {{ knp_menu.attributes(attributes) }}>
                 <div class="menu-label">
+                    <span class="label">
                     {% if item.extra('icon') is not empty %}
                         <i class="{{ item.extra('icon') }}"></i>
                     {% endif %}
-                    <span class="">{{ block('label') }}</span>
+                        {{ block('label') }}
+                    </span>
+                    <i class="toggle iconoir-nav-arrow-down"></i>
                 </div>
                 <ul class="sub-menu-children">
                     {{ block('list') }}

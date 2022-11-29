@@ -15,7 +15,7 @@
 
 {% block content %}
     <div class="row flex flex-wrap">
-        <div class="w-full md:w-4/5 mb-4 pr-4 md:mb-0">
+        <div class="index-wrapper">
 
             <div class="page-title">
                 <h1 class="heading">{% trans %}Blocks{% endtrans %}</h1>
@@ -45,7 +45,7 @@
 
         </div>
 
-        <div class="w-full md:w-1/5 pl-4">
+        <div class="aside-filters">
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     {{ form_start(facetFilter) }}

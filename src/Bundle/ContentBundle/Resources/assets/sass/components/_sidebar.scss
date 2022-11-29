@@ -20,27 +20,38 @@
             }
 
             div.menu-label {
-                color: white;
-                font-size: 18px;
                 display: flex;
                 align-items: center;
-                cursor: pointer;
-                padding: 0.75rem 0;
+                justify-content: space-between;
 
-                i {
-                    margin-right: 10px;
+                span {
+                    color: white;
+                    font-size: 18px;
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 0.75rem 0;
 
-                    &:before {
-                        width: 18px;
-                        height: 18px;
+                    i {
+                        margin-right: 10px;
+
+                        &:before {
+                            width: 18px;
+                            height: 18px;
+                        }
                     }
+                }
+
+                i.toggle {
+                    color: #515864;
+                    transition: all .3s;
                 }
             }
 
             .sidebar-sub-menu {
-                border-bottom: 1px solid #3e515a;
+                border-bottom: 1px solid #515864;
                 padding: 0 1rem;
-
+                cursor: pointer;
                 .sub-menu-children {
                     display: none;
                     height: 0;
@@ -63,7 +74,8 @@
                                 background-color: #345767;
                                 border-radius: 8px;
                                 padding: 3px 0rem 3px 38px;
-                                &:before{
+
+                                &:before {
                                     content: "";
                                     display: inline-block;
                                     width: 5px;
@@ -85,6 +97,7 @@
                                 border-radius: 8px;
                             }
                         }
+
                         &.last {
                             margin-bottom: 10px;
                         }
@@ -95,6 +108,13 @@
                     .sub-menu-children {
                         display: block;
                         height: auto;
+                    }
+
+                    div.menu-label {
+                        i.toggle {
+                            rotate: 180deg;
+                            transition: all .3s;
+                        }
                     }
                 }
             }

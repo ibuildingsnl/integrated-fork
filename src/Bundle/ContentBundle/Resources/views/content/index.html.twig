@@ -3,9 +3,12 @@
 {% block content %}
     <div class="flex flex-wrap ">
 
-        <div class="md:w-4/5 pr-4 mb-4 md:mb-0">
+        <div class="index-wrapper">
             <div class="page-title">
-                <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
+                <div class="heading">
+                    <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
+                    <button class="open-filters" onclick="toggleFilterMenu()">Filteren</button>
+                </div>
                 <div class="options">
                     <ul class="">
                         <li class="dropdown">
@@ -118,18 +121,10 @@
                                 {% if content.workflow_state is defined %}
                                     {% if content.workflow_color_string is defined %}
                                         {% set status_color = content.workflow_color_string|first %}
-                                        {% set status_icon = content.workflow_icon_string|first %}
                                     {% endif %}
-                                    {% dump(content) %}
-                                    {% if (content is defined and ('now'|date('U') < content.pub_time |date('U'))) %}
-                                        <div class="workflow-status" style="background-color:#5F84DB;">
-                                            {% trans %}Planned{% endtrans %}
-                                        </div>
-                                    {% else %}
-                                        <div class="workflow-status" style="background-color:{{ status_color }};">
-                                            {{ content.workflow_state|default }}
-                                        </div>
-                                    {% endif %}
+                                    <div class="workflow-status" style="background-color:{{ status_color }};">
+                                    {{ content.workflow_state|default }}
+                                    </div>
                                     {% set status_color = '' %}
                                 {% endif %}
                             </td>
@@ -158,7 +153,7 @@
             </section>
         </div>
 
-        <div class="sm:w-1/5 pl-4">
+        <div class="aside-filters">
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header"><span>Filteren</span><a href="#"><span>Verwijder actieve filters </span><i
@@ -222,7 +217,7 @@
                                                                 {% else %}
                                                                     {{ title }}
                                                                 {% endif %}
-                                                                <span class="value"> ({{ count }})</span>
+                                                                <span class="value">({{ count }})</span>
                                                             </label>
                                                         </li>
                                                     {% endfor %}
@@ -263,5 +258,6 @@
                 }
             }
         });
+
     </script>
 {% endblock %}

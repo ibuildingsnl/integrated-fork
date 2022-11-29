@@ -36,24 +36,23 @@
         </div>
     {% endif %}
 
-    <div class="page-title">
-        <h1 class="heading">{% trans %}Pages{% endtrans %}</h1>
-        <ul class="create">
-            <li>
-                <a class="btn btn-create-new" href="{{ path('integrated_page_page_new') }}">
-                    <span>{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}</span>
-                    <i class="iconoir-plus"></i>
-                </a>
-                <a class="btn btn-create-new" href="{{ path('integrated_page_page_copy') }}">
-                    <span>{% trans %}Copy{% endtrans %} {% trans %}page{% endtrans %}</span>
-                    <i class="iconoir-copy"></i>
-                </a>
-            </li>
-        </ul>
-    </div>
-
     <div class="row flex flex-wrap">
-        <div class="w-full md:w-4/5 pr-4">
+        <div class="index-wrapper">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Pages{% endtrans %}</h1>
+                <ul class="create">
+                    <li>
+                        <a class="btn btn-create-new" href="{{ path('integrated_page_page_new') }}">
+                            <span>{% trans %}New{% endtrans %} {% trans %}page{% endtrans %}</span>
+                            <i class="iconoir-plus"></i>
+                        </a>
+                        <a class="btn btn-create-new" href="{{ path('integrated_page_page_copy') }}">
+                            <span>{% trans %}Copy{% endtrans %} {% trans %}page{% endtrans %}</span>
+                            <i class="iconoir-copy"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <section class="section-white section-radius">
 
                 <table class="table table-hover">
@@ -132,7 +131,7 @@
                 {{ knp_pagination_render(pages) }}
             </section>
         </div>
-        <div class="w-full md:w-1/5 pl-4">
+        <div class="aside-filters">
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     {{ form_start(filterForm) }}

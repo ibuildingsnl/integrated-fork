@@ -1,9 +1,9 @@
 .content-wrapper {
-    padding-bottom: 120px;
+    //padding-bottom: 120px;
     position: relative;
     overflow: hidden;
     width: calc(100vw - 200px);
-    padding: 2rem;
+    //padding: 2rem;
     background-color: $bg-gray;
 
     &.iframe {
@@ -34,6 +34,25 @@
             background-color: white;
             padding: 2rem;
             border-radius: 15px;
+        }
+    }
+
+    .index-wrapper {
+        width: calc(100% - 350px);
+        max-height: calc(100vh - 60px);
+        overflow: auto;
+        position: relative;
+        padding-bottom: 100px;
+        padding:2rem;
+        @include media(max-lg) {
+            width: 100%;
+            padding:1rem;
+        }
+        .open-filters {
+            display: none;
+            @include media(max-lg) {
+                display: block;
+            }
         }
     }
 
@@ -87,12 +106,6 @@
 body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
     .content-wrapper {
         padding: 50px 0 0;
-    }
-}
-
-body[class*="_index"] {
-    .content-wrapper {
-        overflow-y:scroll;
     }
 }
 
