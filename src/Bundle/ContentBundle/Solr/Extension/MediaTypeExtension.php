@@ -20,7 +20,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Video;
 /**
  * @author Wouter Koppers
  */
-class MultivaluedFieldExtension implements TypeExtensionInterface
+class MediaTypeExtension implements TypeExtensionInterface
 {
     /**
      * {@inheritdoc}
