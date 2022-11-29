@@ -49,7 +49,6 @@ class MediaTypeExtension implements TypeExtensionInterface
 
         $container->remove('media_type_string');
 
-        $this->addValueToKey($container, 'media_type_string', 'ContentType');
         $this->addValueToKey($container, 'media_type_string', 'File');
 
         $contentType = $data->getRelations()->getOwner()->getContentType();
@@ -59,6 +58,8 @@ class MediaTypeExtension implements TypeExtensionInterface
         } elseif ($data instanceof Video) {
             $this->addValueToKey($container, 'media_type_string', 'Video');
         } else {
+            //We cant use instanceof File to improve this code,
+            //Since all contentTypes have something like /File/Video or File/Image
             if ($contentType !== 'video' &&
                 $contentType !== 'image' &&
                 $contentType !== 'file') {
