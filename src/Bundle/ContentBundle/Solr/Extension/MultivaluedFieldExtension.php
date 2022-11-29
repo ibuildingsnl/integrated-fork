@@ -38,7 +38,7 @@ class MultivaluedFieldExtension implements TypeExtensionInterface
      * Then Based on the ContentType, it adds one more, based on what it is.
      *  - Video -> Video
      *  - Image -> Image
-     *  - File -> NonMedia (So we can distinguish between File and NonMedia)
+     *  - File -> OtherFile (So we can distinguish between File and OtherFile)
      *  - Other -> Other (Can be anything)
      */
     public function buildClassStringExtension(ContainerInterface $container, $data, array $options = [])
@@ -64,7 +64,7 @@ class MultivaluedFieldExtension implements TypeExtensionInterface
                 $contentType !== 'file') {
                 $this->addValueToKey($container, 'media_type_string', $contentType);
             } else {
-                $this->addValueToKey($container, 'media_type_string', 'NonMedia');
+                $this->addValueToKey($container, 'media_type_string', 'OtherFile');
             }
         }
     }

@@ -29,7 +29,7 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
  *
  * Codewise:
  *  - Media items are ContentType of the sort: File.
- *  - A Media item can be a Video, Image, File(NonMedia), or a custom type. But they are all extended from file.
+ *  - A Media item can be a Video, Image, File(OtherFile), or a custom type. But they are all extended from file.
  *  - To work with database, you are working with the classnames, so: Image, Video, CustomContentType
  *  - To work with url, you work with camelcase, so: image, custom_content_type
  */
@@ -60,7 +60,7 @@ class MediaController extends AbstractController
         'file' => [
             'label_singular' => 'File',
             'label_plural' => 'Files',
-            'solr_name' => 'NonMedia',
+            'solr_name' => 'OtherFile',
             'new_type_location' => 'file',
             'class_name' => 'File',
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\File',
@@ -161,7 +161,7 @@ class MediaController extends AbstractController
          * - what the user asks for
          * - what we query
          * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
-         * but when the user clicks on 'Files' we want to query on 'NonMedia'.
+         * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
         $request = clone $requestSource;
 
