@@ -36,11 +36,6 @@
                                     <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                        {% else %}
-                                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
-                                        {% endif %}
-                                        {% if selectedMediaTaxonomy.current == menu_item.title %}
-                                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
                                             {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
@@ -61,8 +56,7 @@
                                                     {% for key_1, menu_item_1 in menu_item.children %}
                                                         <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
                                                             {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category"
-                                                               id="{{ menu_item_1.ID }}">
+                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
                                                                 {% else %}
                                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                                     app.request.query.all|

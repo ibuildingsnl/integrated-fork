@@ -272,11 +272,6 @@ class MediaController extends AbstractController
         return $request;
     }
 
-    public function kebabToCamel($input): string
-    {
-        return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
-    }
-
     public function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
@@ -403,103 +398,6 @@ class MediaController extends AbstractController
         ];
     }
 
-    public function getParams(Request $request, array $uniqueContentTypes, array $dateFilter): array
-    {
-        // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
-        $mediaTaxonomy = 'null';
-        if (\is_array($request->query->get('MediaTaxonomy'))) {
-            $mediaTaxonomy = $request->query->get('MediaTaxonomy')[0];
-        } elseif (\is_string($request->query->get('MediaTaxonomy'))) {
-            $mediaTaxonomy = $request->query->get('MediaTaxonomy');
-        }
-
-        $params = [
-            'date_filter' => [
-                'options' => [
-                    'all_dates' => [
-                        'name' => 'Alles',
-                        'label' => 'All dates',
-                    ],
-                ],
-                'current' => $request->query->get('year_month'),
-                'default' => 'all_dates',
-            ],
-            'content_types' => [
-                'options' => [
-                    'all_files' => [
-                        'label_plural' => 'All mediafiles',
-                    ],
-                ],
-                'current' => $request->query->get('class_string'),
-                'default' => 'All mediafiles',
-            ],
-            // NEW ITEMS
-            'types' => [
-            ],
-            'media_taxonomy' => [
-                'current' => $mediaTaxonomy,
-                'default' => null,
-            ],
-        ];
-
-        foreach ($this::DEFAULT_FILE_TYPES as $file_type_key => $file_type) {
-            $params['content_types']['options'][$file_type_key] = $file_type;
-            $params['types'][$file_type_key] = $file_type;
-        }
-
-        $paramsExtended = $this->addContentTypesToUserOptions($uniqueContentTypes, $params, $dateFilter);
-
-        return $this->checkIfCurrentExistsAsKey($paramsExtended);
-    }
-
-    public function addContentTypesToUserOptions(array $uniqueContentTypes, array $params, array $dateFilter): array
-    {
-        foreach ($uniqueContentTypes as $uniqueContentType) {
-            // The default categories are always there, and dont need to be added again.
-            if (\in_array($uniqueContentType, array_column($this::DEFAULT_FILE_TYPES, 'class_name'))) {
-                continue;
-            }
-
-            // For filtering of content_types
-            $params['content_types']['options'][$uniqueContentType] = [
-                'name' => $uniqueContentType,
-                'label_plural' => ucfirst($uniqueContentType),
-            ];
-
-            // For new items of content_type:
-            $params['types'][$uniqueContentType] = [
-                'type' => $uniqueContentType,
-                'label_singular' => ucfirst($uniqueContentType),
-            ];
-        }
-
-        foreach ($dateFilter as $yearMonth) {
-            $params['date_filter']['options'][$yearMonth['yearMonth']] = [
-                'type' => $yearMonth['yearMonth'],
-                'label' => $yearMonth['label'],
-                'name' => $yearMonth['label'],
-            ];
-        }
-
-        return $params;
-    }
-
-    public function checkIfCurrentExistsAsKey(array $paramsExtended): array
-    {
-        $currentDate = $paramsExtended['date_filter']['current'];
-
-        if (false === \array_key_exists($currentDate, $paramsExtended['date_filter']['options'])) {
-            $paramsExtended['date_filter']['current'] = 'all_dates';
-        }
-
-        $currentContentType = $paramsExtended['content_types']['current'];
-        if (false === \array_key_exists($currentContentType, $paramsExtended['content_types']['options'])) {
-            $paramsExtended['content_types']['current'] = null;
-        }
-
-        return $paramsExtended;
-    }
-
     private function createPaginator(array $items, Request $requestSource): SlidingPagination
     {
         $paginator = $this->getPaginator()->paginate(
@@ -521,17 +419,17 @@ class MediaController extends AbstractController
         return $paginator;
     }
 
-    public function getContentTypeName(ContentType $item): string
-    {
-        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
-        $className = $item->getClass();
-
-        if (\in_array($className, $contentTypes)) {
-            return $item->getName();
-        }
-
-        return '';
-    }
+//    public function getContentTypeName(ContentType $item): string
+//    {
+//        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
+//        $className = $item->getClass();
+//
+//        if (\in_array($className, $contentTypes)) {
+//            return $item->getName();
+//        }
+//
+//        return '';
+//    }
 
     public function manageRelations(Request $request): Response
     {

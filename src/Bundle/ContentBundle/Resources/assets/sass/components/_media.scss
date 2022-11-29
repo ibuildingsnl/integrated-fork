@@ -172,6 +172,8 @@
         &.ui-draggable-dragging {
             height: 0;
             width: 120px;
+            display: block;
+            border: none;
         }
         .thumbnail {
             overflow: hidden;
