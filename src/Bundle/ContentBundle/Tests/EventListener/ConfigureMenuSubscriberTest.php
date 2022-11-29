@@ -290,7 +290,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         ;
 
         $menuManage
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('addChild')
         ;
 
