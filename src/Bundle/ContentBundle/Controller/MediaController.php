@@ -98,7 +98,7 @@ class MediaController extends AbstractController
         $requestCopy = $this->setAndGetClassString($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
-        
+
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
@@ -204,6 +204,34 @@ class MediaController extends AbstractController
         return new JsonResponse(array('message' => 'file is uploaded.', 'content' => json_encode($file)));
     }
 
+    private function getDateFilterOptions(Request $request, array $dateFilter): array
+    {
+        $currentSelection = $request->query->get('year_month');
+
+        $filter = [
+            'options' => [
+                'all_dates' => [
+                    'name' => 'Alles',
+                    'label' => 'All dates',
+                ],
+            ],
+            'default' => 'all_dates',
+        ];
+
+        foreach ($dateFilter as $yearMonth) {
+            $filter['options'][$yearMonth['yearMonth']] = [
+                'type' => $yearMonth['yearMonth'],
+                'label' => $yearMonth['label'],
+                'name' => $yearMonth['label'],
+            ];
+        }
+
+        $filter["current"] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
+
+        return $filter;
+    }
+
+
     /**
      * @param $request
      *
@@ -242,11 +270,6 @@ class MediaController extends AbstractController
         }
 
         return $request;
-    }
-
-    public function kebabToCamel($input): string
-    {
-        return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
     public function getContentTypes(): array
@@ -395,6 +418,18 @@ class MediaController extends AbstractController
 
         return $paginator;
     }
+
+//    public function getContentTypeName(ContentType $item): string
+//    {
+//        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
+//        $className = $item->getClass();
+//
+//        if (\in_array($className, $contentTypes)) {
+//            return $item->getName();
+//        }
+//
+//        return '';
+//    }
 
     public function manageRelations(Request $request): Response
     {

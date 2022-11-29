@@ -51,18 +51,18 @@ function handleBulkItemClick(event) {
             media_id = element.getAttribute('data-id')
 
             bulkSelection.push(media_id)
-            $('#' + element.id).addClass('selected')
+            $('#' + media_id).addClass('selected')
         }
     } else {
         //SINGLE CLICK
         media_id = event.currentTarget.getAttribute('data-id')
-
+        console.log('#' + media_id)
         if (bulkSelection.includes(media_id)) {
             bulkSelection = bulkSelection.filter(item => item !== media_id)
-            $('#' + event.currentTarget.id).removeClass('selected')
+            $('#' + media_id).removeClass('selected')
         } else {
             bulkSelection.push(media_id)
-            $('#' + event.currentTarget.id).addClass('selected')
+            $('#' + media_id).addClass('selected')
         }
     }
 
@@ -85,24 +85,24 @@ async function disableBulkSelection() {
         let $media_items = $(".media_category");
 
         //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
-        $("li", $gallery).draggable({
+        $('li.media-item', $gallery).draggable({
             helper: "clone",
+            cursorAt: { left: 10, top: 10 },
             start: function (ev, ui) {
-                // offset = {
-                //     top: 50,
-                //     left: 50
-                // }
             }
         });
 
         // Let the media items be droppable, accepting the gallery items
         $media_items.droppable({
-            activate: function (event, ui) {
-                $('.ui-draggable-dragging').html('<div class="border border-black p-2 bg-white bg-red-500">' + draggingAmountOfItems + ' item(s)</div>')
+            activate: function(event, ui) {
+                $('.ui-draggable-dragging').
+                    html('<div class="drag-media">' + draggingAmountOfItems +
+                        ' item(s)</div>');
             },
-            accept: "#gallery > li",
+            accept: '#gallery > li.media-item',
+            cursorAt: { left: 5, top: 5 },
             classes: {
-                "ui-droppable-active": "ui-state-highlight"
+                'ui-droppable-active': 'ui-state-highlight',
             },
             drop: function (event, ui) {
                 moveImage(ui.draggable, event, this.id);

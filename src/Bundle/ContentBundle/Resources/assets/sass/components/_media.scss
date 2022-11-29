@@ -108,6 +108,8 @@
         -webkit-user-select: none;
         user-select: none;
         box-sizing: border-box;
+        border: none;
+        background-color: transparent;
         @include media('xl') {
             width: 20%;
         }
@@ -155,7 +157,11 @@
                 left: -3px;
             }
         }
-
+        &.grid {
+            .details {
+                display: none;
+            }
+        }
         .drag-media {
             background-color: #e0e3e9;
             border: 1px solid #e0e3e9;
@@ -166,6 +172,8 @@
         &.ui-draggable-dragging {
             height: 0;
             width: 120px;
+            display: block;
+            border: none;
         }
         .thumbnail {
             overflow: hidden;
@@ -321,13 +329,16 @@
 
     aside {
         .aside-holder {
+            form {
+                padding:0;
+            }
             .aside-item-wrapper {
                 border: none;
                 border-radius: 1rem;
 
                 .aside-item-search {
                     background-color: transparent;
-                    padding: 1rem 2rem;
+                    padding: 0.5rem 1.5rem;
                 }
 
                 .aside-item-list-container {
@@ -337,9 +348,10 @@
                 }
 
                 ul.aside-filter-menu {
-                    padding: 0.5rem 2rem;
+                    padding: 0.5rem 1.5rem;
 
                     li {
+                        padding: 0;
                         &.menu-item-hidden {
                             > a {
                                 display: none;
@@ -365,6 +377,9 @@
                             color: black;
                             display: block;
                             padding: 0.35rem 0.75rem;
+                            display: flex;
+                            align-items: center;
+                            margin: 0.5rem 0;
 
                             i {
                                 font-size: 16px;
@@ -373,6 +388,11 @@
                             span {
                                 margin-left: 1rem;
                                 font-size: 14px;
+                            }
+                            &.ui-state-highlight {
+                                background: #e5f6f4;
+                                border: none;
+                                border-radius: 8px;
                             }
                         }
 
@@ -412,19 +432,19 @@
                     }
                 }
 
-                .aside-item-header {
-                    padding: 1rem 2rem;
+                .aside-folder-header {
+                    padding: 0.5rem 1.5rem;
                     border-bottom: 1px solid $border-color;
 
                     a {
                         color: black;
-
+                        display: flex;
+                        align-items: center;
                         i {
                             font-size: 18px;
                         }
 
                         span {
-                            margin-left: 1rem;
                             font-size: 14px;
                         }
                     }
