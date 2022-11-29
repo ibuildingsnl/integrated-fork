@@ -6,6 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
 use Symfony\Component\HttpFoundation\Request;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
@@ -31,31 +32,24 @@ class TaxonomyRelationManager
 
     public function manageRelations(Request $request)
     {
-        $params = json_decode($request->getContent(), true);
-
-//      Explanation of fields that can be send:
-//      "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, one or many
-//      "category_id_target" => "category_2-1"                               REQUIRED, one
-//      "category_id_origin" => "3324234"                                    REQUIRED, one
+        $taxonomyRelation = new TaxonomyRelationModel($request);
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
-        if ($params['category_id_target'] === $params['category_id_origin']) {
+        if (true === $taxonomyRelation->isTargetSameAsOrigin()) {
             return new JsonResponse('Origin is same as target');
         }
 
-        $taxonomy = $this->getTaxonomy($params);
+        $taxonomy = $this->getTaxonomy($taxonomyRelation);
 
-        $params = $this->makeSureMediaIDIsArray($params);
-
-        $mediaItems = $this->getMediaItems($params);
+        $mediaItems = $this->getMediaItems($taxonomyRelation);
 
         foreach ($mediaItems as $mediaItem) {
             $relations = $this->getOrCreateRelation($mediaItem);
 
             $relationIDs = $this->getArrayOfRelationIDs($relations);
 
-            $this->removeRelationIfNeeded($relations, $params, $relationIDs);
+            $this->removeRelationIfNeeded($relations, $taxonomyRelation, $relationIDs);
 
             $this->addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs);
 
@@ -65,27 +59,17 @@ class TaxonomyRelationManager
         return new JsonResponse('Ok');
     }
 
-    public function getTaxonomy($params)
+    public function getTaxonomy($taxonomyRelation)
     {
-        // get the Taxonomy (Category) with $params["category_id"]
-        if ($params['category_id_target']) {
-            return $this->dm->getRepository(Taxonomy::class)->find($params['category_id_target']);
+        if ($taxonomyRelation->getCategoryIdTarget()) {
+            return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
         }
     }
 
-    public function makeSureMediaIDIsArray($params)
-    {
-        if (true === \is_string($params['media_id'])) {
-            $params['media_id'] = [$params['media_id']];
-        }
-
-        return $params;
-    }
-
-    public function getMediaItems($params)
+    public function getMediaItems($taxonomyRelation)
     {
         return $this->dm->createQueryBuilder(File::class)
-            ->field('id')->in($params['media_id'])
+            ->field('id')->in($taxonomyRelation->getMediaId())
             ->getQuery()
             ->execute()->toArray();
     }
@@ -109,11 +93,11 @@ class TaxonomyRelationManager
         })->toArray();
     }
 
-    public function removeRelationIfNeeded($relations, $params, $relationIDs)
+    public function removeRelationIfNeeded($relations, $taxonomyRelation, $relationIDs)
     {
-        if ('' !== $params['category_id_origin']) {
-            if (\in_array($params['category_id_origin'], $relationIDs)) {
-                $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($params['category_id_origin']);
+        if ('' !== $taxonomyRelation->getCategoryIdOrigin()) {
+            if (\in_array($taxonomyRelation->getCategoryIdOrigin(), $relationIDs)) {
+                $removeThisTaxonomy = $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdOrigin());
                 $relations->removeReference($removeThisTaxonomy);
             }
         }
@@ -123,7 +107,6 @@ class TaxonomyRelationManager
     {
         if (false === \in_array($taxonomy->getID(), $relationIDs)) {
             $messages[] = 'not in array';
-            // Add the new taxonomy item
             $relations->addReference($taxonomy);
             $mediaItem->addRelation($relations);
         }
