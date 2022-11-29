@@ -155,7 +155,7 @@ class MediaController extends AbstractController
      *               -----xx                      xx
      *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
      */
-    public function setAndGetMediaType($requestSource): Request
+    private function setAndGetMediaType($requestSource): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
@@ -184,12 +184,12 @@ class MediaController extends AbstractController
         return $request;
     }
 
-    public function kebabToCamel($input): string
+    private function kebabToCamel($input): string
     {
         return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
-    public function getContentTypes(): array
+    private function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
@@ -206,7 +206,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function setYearMonthFilter($request)
+    private function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
 
@@ -244,14 +244,14 @@ class MediaController extends AbstractController
         }
     }
 
-    public function getYearMonthDates(Request $request): array
+    private function getYearMonthDates(Request $request): array
     {
         $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON);
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }
 
-    public function transformDateYearToFrontendArray($dates): array
+    private function transformDateYearToFrontendArray($dates): array
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
@@ -272,7 +272,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getContentTypeFilterOptions(Request $request): array
+    private function getContentTypeFilterOptions(Request $request): array
     {
         $filter = [
             'options' => [
@@ -299,7 +299,7 @@ class MediaController extends AbstractController
         return $filter;
     }
 
-    public function getSelectedMediaTaxonomy(Request $request): array
+    private function getSelectedMediaTaxonomy(Request $request): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
