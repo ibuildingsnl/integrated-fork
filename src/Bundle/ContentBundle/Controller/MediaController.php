@@ -36,9 +36,8 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class MediaController extends AbstractController
 {
-    public const PAGINATOR_LIMIT = 10;
+    public const PAGINATOR_LIMIT = 40;
     public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
-    public const SHOW_FILES_OF_SUBCATEGORY = false; // true is not fully implemented yet. Missing: properly handle the relations when dragging from and to categories
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
@@ -88,12 +87,7 @@ class MediaController extends AbstractController
         $requestCopy = $this->setAndGetClassString($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
-
-        if (true === $this::SHOW_FILES_OF_SUBCATEGORY && null !== $requestCopy->query->get('media_taxonomy_id')) {
-            $allSelectedCategoryTitles = $this->mediaGalleryMenu->findSelectedMenuTitles($menu, $requestCopy->query->get('media_taxonomy_id'));
-            $requestCopy->query->set($this::HARD_CODED_CATEGORY, $allSelectedCategoryTitles);
-        }
-
+        
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
