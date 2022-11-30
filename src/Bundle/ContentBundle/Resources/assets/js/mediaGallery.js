@@ -127,7 +127,7 @@ async function disableBulkSelection() {
                 sendAjaxRequest(category_id, duplicatesRemoved)
             } else {
                 console.log("We`re single moving:")
-                sendAjaxRequest(category_id, media_id)
+                sendAjaxRequest(category_id, [media_id])
                 console.log(media_id)
             }
             console.log("To: " + category_id)

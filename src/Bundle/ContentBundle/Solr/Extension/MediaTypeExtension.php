@@ -20,7 +20,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Video;
 /**
  * @author Wouter Koppers
  */
-class MultivaluedFieldExtension implements TypeExtensionInterface
+class MediaTypeExtension implements TypeExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -32,13 +32,13 @@ class MultivaluedFieldExtension implements TypeExtensionInterface
 
     /*
      * What this does:
-     * It sets the class_string in Solr. This key can hold multiple values.
+     * It sets the media_type_string in Solr. This key can hold multiple values.
      * It always adds: ContentType, so we can search for this
      * It always adds: File, so we can search for all Files
      * Then Based on the ContentType, it adds one more, based on what it is.
      *  - Video -> Video
      *  - Image -> Image
-     *  - File -> NonMedia (So we can distinguish between File and NonMedia)
+     *  - File -> OtherFile (So we can distinguish between File and OtherFile)
      *  - Other -> Other (Can be anything)
      */
     public function buildClassStringExtension(ContainerInterface $container, $data, array $options = [])
@@ -47,22 +47,25 @@ class MultivaluedFieldExtension implements TypeExtensionInterface
             return;
         }
 
-        $container->remove('class_string');
+        $container->remove('media_type_string');
 
-        $this->addValueToKey($container, 'class_string', 'ContentType');
-        $this->addValueToKey($container, 'class_string', 'File');
+        $this->addValueToKey($container, 'media_type_string', 'File');
+
+        $contentType = $data->getRelations()->getOwner()->getContentType();
 
         if ($data instanceof Image) {
-            $this->addValueToKey($container, 'class_string', 'Image');
+            $this->addValueToKey($container, 'media_type_string', 'Image');
         } elseif ($data instanceof Video) {
-            $this->addValueToKey($container, 'class_string', 'Video');
+            $this->addValueToKey($container, 'media_type_string', 'Video');
         } else {
-            if ($data->getRelations()->getOwner()->getContentType() !== 'video' &&
-                $data->getRelations()->getOwner()->getContentType() !== 'image' &&
-                $data->getRelations()->getOwner()->getContentType() !== 'file') {
-                $this->addValueToKey($container, 'class_string', $data->getRelations()->getOwner()->getContentType());
+            //We cant use instanceof File to improve this code,
+            //Since all contentTypes have something like /File/Video or File/Image
+            if ($contentType !== 'video' &&
+                $contentType !== 'image' &&
+                $contentType !== 'file') {
+                $this->addValueToKey($container, 'media_type_string', $contentType);
             } else {
-                $this->addValueToKey($container, 'class_string', 'NonMedia');
+                $this->addValueToKey($container, 'media_type_string', 'OtherFile');
             }
         }
     }

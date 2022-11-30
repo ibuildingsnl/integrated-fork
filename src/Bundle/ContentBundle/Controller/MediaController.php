@@ -25,10 +25,12 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\UploadedFileReader;
 use Integrated\Common\Storage\ManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /*
@@ -39,7 +41,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * Codewise:
  *  - Media items are ContentType of the sort: File.
- *  - A Media item can be a Video, Image, File(NonMedia), or a custom type. But they are all extended from file.
+ *  - A Media item can be a Video, Image, File(OtherFile), or a custom type. But they are all extended from file.
  *  - To work with database, you are working with the classnames, so: Image, Video, CustomContentType
  *  - To work with url, you work with camelcase, so: image, custom_content_type
  */
@@ -70,7 +72,7 @@ class MediaController extends AbstractController
         'file' => [
             'label_singular' => 'File',
             'label_plural' => 'Files',
-            'solr_name' => 'NonMedia',
+            'solr_name' => 'OtherFile',
             'new_type_location' => 'file',
             'class_name' => 'File',
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\File',
@@ -83,6 +85,7 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
+        protected AuthorizationCheckerInterface $authorizationChecker,
         private ManagerInterface $manager,
     ) {
     }
@@ -95,7 +98,7 @@ class MediaController extends AbstractController
     // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource): Response
     {
-        $requestCopy = $this->setAndGetClassString($requestSource);
+        $requestCopy = $this->setAndGetMediaType($requestSource);
 
         $menu = $this->mediaGalleryMenu->createMenu();
 
@@ -243,13 +246,13 @@ class MediaController extends AbstractController
      *               -----xx                      xx
      *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
      */
-    public function setAndGetClassString($requestSource): Request
+    private function setAndGetMediaType($requestSource): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
          * - what we query
          * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
-         * but when the user clicks on 'Files' we want to query on 'NonMedia'.
+         * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
         $request = clone $requestSource;
 
@@ -258,21 +261,26 @@ class MediaController extends AbstractController
             $request->query->set('MediaTaxonomy[]', [$request->query->get('MediaTaxonomy')]);
         }
 
-        $classString = $request->query->get('class_string');
-        if (null === $classString || '' === $classString || 'all_files' === $classString) {
-            $request->query->set('class_string', 'all_files');
-            $request->query->set('solr_class_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
-        } elseif (\in_array($classString, array_keys($this::DEFAULT_FILE_TYPES))) {
-            $request->query->set('solr_class_string', $this::DEFAULT_FILE_TYPES[$classString]['solr_name']);
+        $mediaTypeString = $request->query->get('media_type_string');
+        if (null === $mediaTypeString || '' === $mediaTypeString || 'all_files' === $mediaTypeString) {
+            $request->query->set('media_type_string', 'all_files');
+            $request->query->set('solr_media_type_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
+        } elseif (\in_array($mediaTypeString, array_keys($this::DEFAULT_FILE_TYPES))) {
+            $request->query->set('solr_media_type_string', $this::DEFAULT_FILE_TYPES[$mediaTypeString]['solr_name']);
         } else {
-            $camelCase = $this->kebabToCamel($classString);
-            $request->query->set('solr_class_string', $camelCase);
+            $camelCase = $this->kebabToCamel($mediaTypeString);
+            $request->query->set('solr_media_type_string', $camelCase);
         }
 
         return $request;
     }
 
-    public function getContentTypes(): array
+    private function kebabToCamel($input): string
+    {
+        return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
+    }
+
+    private function getContentTypes(): array
     {
         // TODO: Make sure File and or Files are shown correctly. Not sure if it shows both File and Files due to data.
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
@@ -280,6 +288,10 @@ class MediaController extends AbstractController
 
         $result = [];
         foreach ($allContentTypes as $contentType) {
+            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                continue;
+            }
+
             $className = $contentType->getClass();
             if (\in_array($className, $contentTypes)) {
                 $result[] = $contentType;
@@ -289,7 +301,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function setYearMonthFilter($request)
+    private function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
 
@@ -327,14 +339,14 @@ class MediaController extends AbstractController
         }
     }
 
-    public function getYearMonthDates(Request $request): array
+    private function getYearMonthDates(Request $request): array
     {
         $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON);
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }
 
-    public function transformDateYearToFrontendArray($dates): array
+    private function transformDateYearToFrontendArray($dates): array
     {
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
@@ -355,7 +367,7 @@ class MediaController extends AbstractController
         return $result;
     }
 
-    public function getContentTypeFilterOptions(Request $request): array
+    private function getContentTypeFilterOptions(Request $request): array
     {
         $filter = [
             'options' => [
@@ -364,7 +376,7 @@ class MediaController extends AbstractController
                     "name" => "Alle mediafiles",
                 ],
             ],
-            'current' => $request->query->get('class_string'),
+            'current' => $request->query->get('media_type_string'),
             'default' => 'All mediafiles',
         ];
 
@@ -372,6 +384,10 @@ class MediaController extends AbstractController
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
         foreach ($allContentTypes as $contentType) {
+            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
+                continue;
+            }
+
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
@@ -382,7 +398,7 @@ class MediaController extends AbstractController
         return $filter;
     }
 
-    public function getSelectedMediaTaxonomy(Request $request): array
+    private function getSelectedMediaTaxonomy(Request $request): array
     {
         // Handle that MediaTaxonomy can be "WATER" or "[WATER]" or null
         $mediaTaxonomy = 'null';
@@ -419,29 +435,8 @@ class MediaController extends AbstractController
         return $paginator;
     }
 
-//    public function getContentTypeName(ContentType $item): string
-//    {
-//        $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
-//        $className = $item->getClass();
-//
-//        if (\in_array($className, $contentTypes)) {
-//            return $item->getName();
-//        }
-//
-//        return '';
-//    }
-
     public function manageRelations(Request $request): Response
     {
         return $this->taxonomyRelationManager->manageRelations($request);
-    }
-
-    public function menu(): Response
-    {
-        $menu = $this->mediaGalleryMenu->createMenu();
-
-        return $this->render('@IntegratedContent/media/menu.html.twig', [
-            'menu' => $menu,
-        ]);
     }
 }
