@@ -43,6 +43,8 @@ class MediaTypeExtension implements TypeExtensionInterface
      */
     public function buildClassStringExtension(ContainerInterface $container, $data, array $options = [])
     {
+        return;
+
         if (!$data instanceof File) {
             return;
         }

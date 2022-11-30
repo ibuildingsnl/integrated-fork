@@ -135,6 +135,7 @@
                     <div class="left flex">
                         <button class="switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
                         <button class="switcher mr-2"><i class="fa-solid fa-table-cells-large"></i></button>
+
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
@@ -143,12 +144,10 @@
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
-{#                                        {{ dump(content_type) }}#}
-
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'media_type_string': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
+                                                merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
@@ -160,6 +159,7 @@
                                 </ul>
                             </li>
                         </ul>
+
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
