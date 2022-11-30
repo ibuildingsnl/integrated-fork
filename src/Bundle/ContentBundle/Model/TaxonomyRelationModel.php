@@ -23,32 +23,34 @@ class TaxonomyRelationModel
     private string $categoryIdOrigin;
 
     /**
-     * @param Request           $request
-     *       Explanation of fields that can be send:
-     *       "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, array with one or many
-     *       "category_id_target" => "category_2-1"                               REQUIRED, one
-     *       "category_id_origin" => "3324234"                                    REQUIRED, one
+     * @param Request $request
+     *                         Explanation of fields that can be send:
+     *                         "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, array with one or many
+     *                         "category_id_target" => "category_2-1"                               REQUIRED, one
+     *                         "category_id_origin" => "3324234"                                    REQUIRED, one
      */
     public function __construct(protected Request $request)
     {
         $this->setup($request);
     }
 
-    private function setup($request): void {
+    private function setup($request): void
+    {
         $params = json_decode($request->getContent(), true);
 
-        if (array_key_exists("media_id", $params)) {
-            $this->setMediaId($params["media_id"]);
+        if (\array_key_exists('media_id', $params)) {
+            $this->setMediaId($params['media_id']);
         }
-        if (array_key_exists("category_id_target", $params)) {
-            $this->setCategoryIdTarget($params["category_id_target"]);
+        if (\array_key_exists('category_id_target', $params)) {
+            $this->setCategoryIdTarget($params['category_id_target']);
         }
-        if (array_key_exists("category_id_origin", $params)) {
-            $this->setCategoryIdOrigin($params["category_id_origin"]);
+        if (\array_key_exists('category_id_origin', $params)) {
+            $this->setCategoryIdOrigin($params['category_id_origin']);
         }
     }
 
-    public function isTargetSameAsOrigin() {
+    public function isTargetSameAsOrigin()
+    {
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }
 

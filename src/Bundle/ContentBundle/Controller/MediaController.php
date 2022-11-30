@@ -83,9 +83,9 @@ class MediaController extends AbstractController
 
         $requestCopy = clone $requestSource;
 
-        //Todo: Update this code when the contentprovides is updated
+        // Todo: Update this code when the contentprovides is updated
         $givenContentType = $requestCopy->get('contenttypes');
-        if (is_array($givenContentType) && count($givenContentType) > 0) {
+        if (\is_array($givenContentType) && \count($givenContentType) > 0) {
             $givenContentType = $givenContentType[0];
         }
         if ($givenContentType !== 'all_files' && $givenContentType !== null) {
@@ -97,7 +97,7 @@ class MediaController extends AbstractController
         $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
 
         $menu = $this->mediaGalleryMenu->createMenu();
-        
+
         $this->setYearMonthFilter($requestCopy);
 
         $items = $this->provider->getContentFromSolr($requestCopy, 2000);
@@ -146,13 +146,9 @@ class MediaController extends AbstractController
             ];
         }
 
-        $filter["current"] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
+        $filter['current'] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
 
         return $filter;
-    }
-
-    private function getListOfContentTypeIDs() {
-
     }
 
     private function setAndGetMediaType(Request $request, $contentTypeSelectOptions): Request
@@ -163,7 +159,6 @@ class MediaController extends AbstractController
          * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
          * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
-
         $contentType = $request->query->get('contenttypes');
         if (null === $contentType || 'all_files' === $contentType) {
             $contentTypes = [];
@@ -280,8 +275,8 @@ class MediaController extends AbstractController
         $filter = [
             'options' => [
                 'all_files' => [
-                    "id" => "all_files",
-                    "name" => "Alle mediafiles",
+                    'id' => 'all_files',
+                    'name' => 'Alle mediafiles',
                 ],
             ],
             'current' => $request->query->get('contenttypes'),
@@ -299,7 +294,7 @@ class MediaController extends AbstractController
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
-                $filter["options"][$contentType->getId()] = $contentType;
+                $filter['options'][$contentType->getId()] = $contentType;
             }
         }
 
