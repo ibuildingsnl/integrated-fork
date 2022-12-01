@@ -315,10 +315,11 @@ class MediaController extends AbstractController
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
+                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
+                        $year = (int) $year + 1;
                     }
-                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
                     $fullDateFilter = $startDate.' TO '.$endDate;
 
