@@ -30,7 +30,7 @@ class TaxonomyRelationManager
         $this->indexer = $indexer;
     }
 
-    public function manageRelations(Request $request)
+    public function manageRelations(Request $request): JsonResponse
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
 
@@ -59,14 +59,14 @@ class TaxonomyRelationManager
         return new JsonResponse('Ok');
     }
 
-    public function getTaxonomy($taxonomyRelation)
+    private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
     {
         if ($taxonomyRelation->getCategoryIdTarget()) {
             return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
         }
     }
 
-    public function getMediaItems($taxonomyRelation)
+    private function getMediaItems(TaxonomyRelationModel$taxonomyRelation): array
     {
         return $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($taxonomyRelation->getMediaId())
@@ -74,7 +74,7 @@ class TaxonomyRelationManager
             ->execute()->toArray();
     }
 
-    public function getOrCreateRelation($mediaItem)
+    private function getOrCreateRelation(mixed $mediaItem): Relation
     {
         if ($relations = $mediaItem->getRelation('mediataxonomy')) {
             return $relations;
@@ -86,14 +86,14 @@ class TaxonomyRelationManager
         return $relations;
     }
 
-    public function getArrayOfRelationIDs($relations)
+    private function getArrayOfRelationIDs(Relation $relations): array
     {
         return $relations->getReferences()->map(function ($item) {
             return $item->getID();
         })->toArray();
     }
 
-    public function removeRelationIfNeeded($relations, $taxonomyRelation, $relationIDs)
+    private function removeRelationIfNeeded(Relation $relations, TaxonomyRelationModel $taxonomyRelation, array $relationIDs): void
     {
         if ('' !== $taxonomyRelation->getCategoryIdOrigin()) {
             if (\in_array($taxonomyRelation->getCategoryIdOrigin(), $relationIDs)) {
@@ -103,7 +103,7 @@ class TaxonomyRelationManager
         }
     }
 
-    public function addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs)
+    private function addRelationIfNotExists(mixed $mediaItem, Relation $relations, Taxonomy $taxonomy, array $relationIDs): void
     {
         if (false === \in_array($taxonomy->getID(), $relationIDs)) {
             $messages[] = 'not in array';
@@ -112,7 +112,7 @@ class TaxonomyRelationManager
         }
     }
 
-    public function updateQueueToSolr($content)
+    private function updateQueueToSolr(mixed $content): void
     {
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);

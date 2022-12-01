@@ -38,6 +38,7 @@ class ContentParentIDType extends AbstractType
      * @var array|null
      */
     protected $params;
+    private const VARNAMES = ['route', 'params', 'allow_clear'];
 
     /**
      * @param DocumentManager $dm
@@ -58,8 +59,7 @@ class ContentParentIDType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $varNames = ['route', 'params', 'allow_clear'];
-        foreach ($varNames as $varName) {
+        foreach ($this::VARNAMES as $varName) {
             $view->vars[$varName] = $options[$varName];
         }
 

@@ -71,7 +71,8 @@
                                                                id="{{ menu_item_1.ID }}">
                                                         {% endif %}
                                                                 <i class="fa fa-folder"></i>
-                                                                <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
+                                                                <span>{{ menu_item_1.title|trans|capitalize }}</span>
+                                                            </a>
                                                         {% if menu_item_1.children %}
                                                             <ul class="child-menu">
                                                                 {% for key_2, menu_item_2 in menu_item_1.children %}
@@ -140,7 +141,8 @@
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
                                    class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
-                                    <i class="fa fa-angle-down"></i></a>
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
@@ -151,7 +153,8 @@
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
-                                               role="menuitem">{{ content_type.name|trans|capitalize }}</a>
+                                               role="menuitem">{{ content_type.name|trans|capitalize }}
+                                            </a>
                                         </li>
 
                                     {% endfor %}
@@ -164,7 +167,8 @@
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
                                    class="btn btn-select space-between"><span>{{ dateFilterOptions.options[dateFilterOptions.current].label|trans }}</span>
-                                    <i class="fa fa-angle-down"></i></a>
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for year_month_key, year_month in dateFilterOptions.options %}
@@ -176,7 +180,8 @@
                                                     merge({'page':1})
                                                 ) }}"
                                                    tabindex="-1"
-                                                   role="menuitem">{{ year_month.label|trans|capitalize }}</a>
+                                                   role="menuitem">{{ year_month.label|trans|capitalize }}
+                                                </a>
                                             </li>
                                         {% endif %}
                                     {% endfor %}
@@ -319,11 +324,13 @@
                             {% if i == paginator.currentPageNumber %}
                                 <a class="text-red-500 bg-red-200 p-2"
                                    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
+                                   tabindex="-1" role="menuitem">{{ i }}
+                                </a>
                             {% else %}
                                 <a class="p-2"
                                    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
+                                   tabindex="-1" role="menuitem">{{ i }}
+                                </a>
                             {% endif %}
                         {% endfor %}
 
@@ -337,7 +344,7 @@
     </div>
 
 <script>
-    let path = '{{ path('integrated_content_media_manage_relations') }}'
+    const path = '{{ path('integrated_content_media_manage_relations') }}'
 </script>
 {% endblock %}
 
