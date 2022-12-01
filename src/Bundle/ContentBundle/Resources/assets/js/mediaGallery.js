@@ -43,7 +43,7 @@ function handleBulkItemClick(event) {
         }
 
         let step_from = latestBulkSelectionItemClicked * 1
-        step_to = event.currentTarget.getAttribute('data-media_id') * 1
+        let step_to = event.currentTarget.getAttribute('data-media_id') * 1
 
         for (let step = step_from; step <= step_to; step++) {
             let element = document.querySelector('.media-item[data-media_id="' + step + '"]')

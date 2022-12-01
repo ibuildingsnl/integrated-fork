@@ -76,13 +76,31 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear): array
+    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear, $contentTypeSelectOptions): array
     {
         $query = $this->client->createSelect();
 
+        $helper = $query->getHelper();
+        $filter = function ($param) use ($helper) {
+            return $helper->escapePhrase($param);
+        };
+
         // Filter on ContentType
-        $query->createFilterQuery('media_type_string')
-            ->setQuery('media_type_string: '.$request->query->get('solr_media_type_string'));
+        $contentType = $request->query->get('contenttypes');
+        if (null === $contentType) {
+            $contentType = [];
+            foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
+                $contentType[] = $contentTypeSelectOption->getId();
+            }
+        }
+
+        if (\is_array($contentType)) {
+            if (\count($contentType)) {
+                $query
+                    ->createFilterQuery('contenttypes')
+                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+            }
+        }
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
@@ -138,12 +156,6 @@ class ContentProvider
     {
         $query = $this->client->createSelect();
 
-        if ($class = $request->query->get('solr_media_type_string')) {
-            $query
-                ->createFilterQuery('media_type_string')
-                ->setQuery('media_type_string: '.$class);
-        }
-
         if ($timePeriod = $request->query->get('year_month_day_filter')) {
             $query
                 ->createFilterQuery('pub_created')
@@ -194,6 +206,8 @@ class ContentProvider
                     ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
             }
         }
+
+//        dd($contentType);
 
         if (\is_array($contentType)) {
             if (\count($contentType)) {

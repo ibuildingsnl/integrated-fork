@@ -36,7 +36,7 @@
                                     <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                            {% else %}
+                                        {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
                                                 merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
@@ -149,7 +149,7 @@
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'media_type_string': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
+                                                merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"

@@ -41,26 +41,13 @@ class TaxonomyRelationManager
     }
 
     public function findParams(Request $request): array {
-        if (null !== json_decode($request->getContent(), true)) {
-            return json_decode($request->getContent(), true);
-        }
 
-        if (null !== $request->get('category_id_target')) {
-            return [
-                'category_id_origin' => '',
-                'category_id_target' => $request->get('category_id_target'),
-                'media_id' => $request->get('media_id'),
-            ];
-        }
 
     }
 
     public function manageRelations(Request $request)
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
-
-        //fix this
-        $params = $this->findParams($request);
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra

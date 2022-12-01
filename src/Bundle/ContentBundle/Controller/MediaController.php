@@ -57,7 +57,6 @@ class MediaController extends AbstractController
             'label_singular' => 'Image',
             'label_plural' => 'Images',
             'solr_name' => 'Image',
-            'new_type_location' => 'image',
             'class_name' => 'Image',
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\Image',
         ],
@@ -65,7 +64,6 @@ class MediaController extends AbstractController
             'label_singular' => 'Video',
             'label_plural' => 'Videos',
             'solr_name' => 'Video',
-            'new_type_location' => 'video',
             'class_name' => 'Video',
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\Video',
         ],
@@ -73,7 +71,6 @@ class MediaController extends AbstractController
             'label_singular' => 'File',
             'label_plural' => 'Files',
             'solr_name' => 'OtherFile',
-            'new_type_location' => 'file',
             'class_name' => 'File',
             'class_path' => 'Integrated\Bundle\ContentBundle\Document\Content\File',
         ],
@@ -90,15 +87,25 @@ class MediaController extends AbstractController
     ) {
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
     // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource): Response
     {
-        $requestCopy = $this->setAndGetMediaType($requestSource);
+        $contentTypeSelectOptions = $this->getContentTypes();
+
+        $requestCopy = clone $requestSource;
+
+        // Todo: Update this code when the contentprovides is updated
+        $givenContentType = $requestCopy->get('contenttypes');
+        if (\is_array($givenContentType) && \count($givenContentType) > 0) {
+            $givenContentType = $givenContentType[0];
+        }
+        if ($givenContentType !== 'all_files' && $givenContentType !== null) {
+            $requestCopy->query->set('contenttypes', [$givenContentType]);
+        } else {
+            $requestSource->query->set('contenttypes', 'all_files');
+        }
+
+        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
 
         $menu = $this->mediaGalleryMenu->createMenu();
 
@@ -108,11 +115,9 @@ class MediaController extends AbstractController
 
         $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
 
-        $contentTypeSelectOptions = $this->getContentTypes();
+        $contentTypeFilterOptions = $this->getContentTypeFilterOptions($requestSource);
 
-        $contentTypeFilterOptions = $this->getContentTypeFilterOptions($requestCopy);
-
-        $dateFilter = $this->getYearMonthDates($requestCopy);
+        $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
@@ -229,24 +234,12 @@ class MediaController extends AbstractController
             ];
         }
 
-        $filter["current"] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
+        $filter['current'] = \array_key_exists($currentSelection, $filter['options']) ? $currentSelection : 'all_dates';
 
         return $filter;
     }
 
-
-    /**
-     * @param $request
-     *
-     * @return mixed
-     *               specific day:
-     *               --------xx                      xx
-     *               2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
-     *               specific month:
-     *               -----xx                      xx
-     *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
-     */
-    private function setAndGetMediaType($requestSource): Request
+    private function setAndGetMediaType(Request $request, $contentTypeSelectOptions): Request
     {
         /** we want to keep two things separate:
          * - what the user asks for
@@ -254,30 +247,21 @@ class MediaController extends AbstractController
          * because with the user selection 'Alle Mediafiles' we want to query for the class: File.
          * but when the user clicks on 'Files' we want to query on 'OtherFile'.
          */
-        $request = clone $requestSource;
+        $contentType = $request->query->get('contenttypes');
+        if (null === $contentType || 'all_files' === $contentType) {
+            $contentTypes = [];
+            foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
+                $contentTypes[] = $contentTypeSelectOption->getId();
+            }
+            $request->query->set('contenttypes', $contentTypes);
+        }
 
-        if (null !== $requestSource->query->get('MediaTaxonomy')) {
-            $request->query->set('MediaTaxonomy', [$requestSource->query->get('MediaTaxonomy')]);
+        if (null !== $request->query->get('MediaTaxonomy')) {
+            $request->query->set('MediaTaxonomy', [$request->query->get('MediaTaxonomy')]);
             $request->query->set('MediaTaxonomy[]', [$request->query->get('MediaTaxonomy')]);
         }
 
-        $mediaTypeString = $request->query->get('media_type_string');
-        if (null === $mediaTypeString || '' === $mediaTypeString || 'all_files' === $mediaTypeString) {
-            $request->query->set('media_type_string', 'all_files');
-            $request->query->set('solr_media_type_string', $this::SOLR_ALL_MEDIA_CLASS_STRING);
-        } elseif (\in_array($mediaTypeString, array_keys($this::DEFAULT_FILE_TYPES))) {
-            $request->query->set('solr_media_type_string', $this::DEFAULT_FILE_TYPES[$mediaTypeString]['solr_name']);
-        } else {
-            $camelCase = $this->kebabToCamel($mediaTypeString);
-            $request->query->set('solr_media_type_string', $camelCase);
-        }
-
         return $request;
-    }
-
-    private function kebabToCamel($input): string
-    {
-        return strtolower(str_replace(' ', '_', ucwords(str_replace('_', ' ', $input))));
     }
 
     private function getContentTypes(): array
@@ -301,6 +285,13 @@ class MediaController extends AbstractController
         return $result;
     }
 
+    /*              specific day:
+    *               --------xx                      xx
+    *               2022-09-17T00:00:00Z TO 2022-09-17T23:59:59Z
+    *               specific month:
+    *               -----xx                      xx
+    *               2022-09-01T00:00:00Z TO 2022-10-01T00:00:00Z
+    */
     private function setYearMonthFilter($request)
     {
         $yearMonthFilter = $request->query->get('year_month');
@@ -339,9 +330,9 @@ class MediaController extends AbstractController
         }
     }
 
-    private function getYearMonthDates(Request $request): array
+    private function getYearMonthDates(Request $request, $contentTypeSelectOptions): array
     {
-        $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON);
+        $dateAmount = $this->provider->getFilterOptionsFromSolr($request, $this::DATE_FILTER_ON, $contentTypeSelectOptions);
 
         return $this->transformDateYearToFrontendArray($dateAmount);
     }
@@ -372,11 +363,11 @@ class MediaController extends AbstractController
         $filter = [
             'options' => [
                 'all_files' => [
-                    "id" => "all_files",
-                    "name" => "Alle mediafiles",
+                    'id' => 'all_files',
+                    'name' => 'Alle mediafiles',
                 ],
             ],
-            'current' => $request->query->get('media_type_string'),
+            'current' => $request->query->get('contenttypes'),
             'default' => 'All mediafiles',
         ];
 
@@ -391,7 +382,7 @@ class MediaController extends AbstractController
             $className = $contentType->getClass();
 
             if (\in_array($className, $contentTypes)) {
-                $filter["options"][$contentType->getId()] = $contentType;
+                $filter['options'][$contentType->getId()] = $contentType;
             }
         }
 

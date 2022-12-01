@@ -18,37 +18,55 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TaxonomyRelationModel
 {
-    private array $mediaId;
-    private string $categoryIdTarget;
-    private string $categoryIdOrigin;
+    private array $mediaId = [];
+    private string $categoryIdTarget = '';
+    private string $categoryIdOrigin = '';
 
     /**
-     * @param Request           $request
-     *       Explanation of fields that can be send:
-     *       "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, array with one or many
-     *       "category_id_target" => "category_2-1"                               REQUIRED, one
-     *       "category_id_origin" => "3324234"                                    REQUIRED, one
+     * @param Request $request
+     *                         Explanation of fields that can be send:
+     *                         "media_id" => "daf99de93f2f3d5e97306bbab4ae5abb"                     REQUIRED, array with one or many
+     *                         "category_id_target" => "category_2-1"                               REQUIRED, one
+     *                         "category_id_origin" => "3324234"                                    REQUIRED, one
      */
     public function __construct(protected Request $request)
     {
         $this->setup($request);
     }
 
-    private function setup($request): void {
+    private function setup($request): void
+    {
+        // From the url (when dragging and dropping)
         $params = json_decode($request->getContent(), true);
 
-        if (array_key_exists("media_id", $params)) {
-            $this->setMediaId($params["media_id"]);
+        // From form parameters (when using Uppy for example)
+        if (null === $params) {
+
+            $params = [
+                'category_id_target' => $request->get('category_id_target'),
+                'media_id' => [$request->get('media_id')],
+
+                //optional, are we going to need these?
+                'userTitle' => $request->get('userTitle'),
+                'userCaption' => $request->get('userCaption'),
+                'userTags' => $request->get('userTags'),
+            ];
+
         }
-        if (array_key_exists("category_id_target", $params)) {
-            $this->setCategoryIdTarget($params["category_id_target"]);
+
+        if (\array_key_exists('media_id', $params)) {
+            $this->setMediaId($params['media_id']);
         }
-        if (array_key_exists("category_id_origin", $params)) {
-            $this->setCategoryIdOrigin($params["category_id_origin"]);
+        if (\array_key_exists('category_id_target', $params) && $params['category_id_target'] !== null) {
+            $this->setCategoryIdTarget($params['category_id_target']);
+        }
+        if (\array_key_exists('category_id_origin', $params)) {
+            $this->setCategoryIdOrigin($params['category_id_origin']);
         }
     }
 
-    public function isTargetSameAsOrigin() {
+    public function isTargetSameAsOrigin()
+    {
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }
 
