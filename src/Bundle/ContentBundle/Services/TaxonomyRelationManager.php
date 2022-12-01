@@ -61,12 +61,10 @@ class TaxonomyRelationManager
 
     private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
     {
-        if ($taxonomyRelation->getCategoryIdTarget()) {
-            return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
-        }
+        return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
     }
 
-    private function getMediaItems(TaxonomyRelationModel$taxonomyRelation): array
+    private function getMediaItems(TaxonomyRelationModel $taxonomyRelation): array
     {
         return $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($taxonomyRelation->getMediaId())
