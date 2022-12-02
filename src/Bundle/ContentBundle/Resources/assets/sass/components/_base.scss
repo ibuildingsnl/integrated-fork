@@ -2,10 +2,15 @@
     //padding-bottom: 120px;
     position: relative;
     overflow: hidden;
-    width: calc(100vw - 200px);
+    width: calc(100vw - 250px);
     //padding: 2rem;
     background-color: $bg-gray;
-
+    @include media(max-xl) {
+        width: calc(100vw - 50px);
+    }
+    @include media(max-sm) {
+        width: 100%;
+    }
     &.iframe {
         width: 100vw;
         max-height: calc(100vh - 50px);
@@ -29,7 +34,9 @@
         position: relative;
         background-color: white;
         padding-bottom: 100px;
-
+        @include media(max-lg) {
+            width: 100%;
+        }
         .editor-wrapped {
             background-color: white;
             padding: 2rem;
@@ -42,16 +49,27 @@
         max-height: calc(100vh - 60px);
         overflow: auto;
         position: relative;
-        padding-bottom: 100px;
         padding:2rem;
+        padding-bottom: 100px;
+        &-full {
+            width: 100%;
+            max-height: calc(100vh - 60px);
+            overflow: auto;
+            position: relative;
+            padding:2rem;
+            padding-bottom: 100px;
+            @include media(max-lg) {
+                padding:1rem;
+            }
+        }
         @include media(max-lg) {
             width: 100%;
             padding:1rem;
         }
-        .open-filters {
+        .toggle-filters {
             display: none;
             @include media(max-lg) {
-                display: block;
+                display: inline-flex;
             }
         }
     }
@@ -106,6 +124,33 @@
 body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
     .content-wrapper {
         padding: 50px 0 0;
+    }
+}
+
+body.show-options {
+    @include media(max-lg) {
+        #wrapper-holder {
+            .editor-wrapper {
+                width: calc(100% - 350px);
+            }
+        }
+    }
+    @include media(max-md) {
+        #wrapper-holder {
+            position: inherit;
+
+            .content-wrapper {
+                position: inherit;
+            }
+        }
+    }
+}
+
+body.hide-options {
+    #wrapper-holder {
+        .editor-wrapper {
+            width:100%;
+        }
     }
 }
 

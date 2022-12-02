@@ -6,13 +6,13 @@
     position: relative;
     z-index: 1000;
 
-    .sidebar {
+    #sidebar-menu {
         background-color: $sidebar-green;
-        width: 250px;
         height: calc(100vh - 50px);
         flex-shrink: 0;
+        width: 250px;
 
-        div.sidebar-menu {
+        .sidebar-menu-wrapper {
             padding: 1rem;
 
             a {
@@ -24,7 +24,7 @@
                 align-items: center;
                 justify-content: space-between;
 
-                span {
+                div.label {
                     color: white;
                     font-size: 18px;
                     display: flex;
@@ -52,6 +52,7 @@
                 border-bottom: 1px solid #515864;
                 padding: 0 1rem;
                 cursor: pointer;
+
                 .sub-menu-children {
                     display: none;
                     height: 0;
@@ -117,6 +118,106 @@
                         }
                     }
                 }
+            }
+        }
+
+        @media only screen and (min-width: 640px) and (max-width: 1280px) {
+
+            width: 50px;
+            padding-top: 10px;
+            .sidebar-menu-wrapper {
+                padding: 0;
+
+                div.menu-label {
+                    display: block;
+
+                    div.label {
+                        color: white;
+                        font-size: 18px;
+                        display: flex;
+                        align-items: center;
+                        cursor: pointer;
+                        padding: 1.5rem 0;
+                        justify-content: center;
+                        border-bottom: 1px solid #345767;
+
+                        i {
+                            margin: 0;
+                        }
+
+                        span.title {
+                            display: none;
+                        }
+                    }
+
+                    i.toggle {
+                        display: none;
+                    }
+                }
+
+                .sidebar-sub-menu {
+                    position: relative;
+                    padding: 0;
+                    border: none;
+                    margin: 0;
+                    &.show {
+                        .sub-menu-children {
+                            display: none;
+                        }
+                    }
+                    .sub-menu-children {
+                        display: none;
+                        position: absolute;
+                        left: 50px;
+                        z-index: 1050;
+                        width: 200px;
+                        height: auto !important;
+                        top: 0;
+                        background-color: #345767;
+                        padding: 0.5rem;
+                        margin: 0;
+
+                        li {
+                            a {
+                                color: white;
+                                padding: 0.25rem 0.5rem;
+                                display: block;
+
+                                &:hover {
+                                    background-color: #18303b;
+                                    border-radius: 8px;
+                                }
+                            }
+                            &.current {
+                                a {
+                                    background-color: #18303b;
+                                    border-radius: 8px;
+                                    padding: 0.25rem 0.5rem;
+                                    &:before {
+                                        content:unset;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        .sub-menu-children {
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+        @include media(max-sm) {
+            width: 250px;
+            position: absolute;
+            left: -250px;
+            z-index: 1050;
+            transition: all .3s;
+            &.show {
+                left:0;
+                transition: all .3s;
             }
         }
     }

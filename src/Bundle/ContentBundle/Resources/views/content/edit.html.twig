@@ -28,8 +28,12 @@
         {% endblock toolbar %}
         <div class="aside-options">
             <aside>
-                <div class="aside-holder section-gray section-radius">
+                <div class="aside-holder">
                     {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i></button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
@@ -41,8 +45,14 @@
                             <div class="aside-item-list">
                                 <div class="aside-item-list-container">
                                     <div class="status-info">
+                                        {% dump(form) %}
                                         {% if form.publishTime is defined %}
                                             {{ form_row(form.publishTime, {style: 'inline'}) }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="workflow">
+                                        {% if form.extension_workflow is defined %}
+                                            {{ form_row(form.extension_workflow, {style: 'inline'}) }}
                                         {% endif %}
                                     </div>
                                     <div class="status-options">

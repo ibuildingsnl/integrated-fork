@@ -50,7 +50,7 @@
 
 </head>
 <body style="overflow: hidden;"
-      class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
+      class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }} auto-hide">
 {% block form_theme %}
     {% if form is defined %}
         {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
@@ -59,7 +59,10 @@
 
 {% block header %}
     <nav class="navbar">
-        <div class="flex justify-between sm:px-4 w-full">
+        <div class="flex justify-between xl:px-4 w-full">
+            <button class="mobile-menu-toggle" onclick="toggleMobileSidebarMenu()" type="button">
+                <i class="iconoir-menu"></i>
+            </button>
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
             <div class="flex wrap w-full">
@@ -83,7 +86,7 @@
     <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
         {% block sidebar_menu %}
-            <div class="sidebar">
+            <div id="sidebar-menu">
                 {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
             </div>
         {% endblock sidebar_menu %}
@@ -151,18 +154,51 @@
         });
     }
 
+    function toggleOptionsSidebar(event) {
+        let viewportWidth = window.innerWidth;
+        var optionsMenu = document.querySelector('.aside-options');
+        var dropDownUnderlay = document.querySelector('#dropdown_overlay');
+        if ((viewportWidth < 1200 && !optionsMenu.classList.contains('show')) || document.body.classList.contains('hide-options')) {
+            document.body.classList.add("show-options");
+            optionsMenu.classList.add('show');
 
-    function toggleFilterMenu() {
-        var searchMenu = document.querySelector('.aside-filters');
-        if (!searchMenu.classList.contains('show')) {
-            searchMenu.classList.add('show');
+            document.body.classList.remove("hide-options");
+            optionsMenu.classList.remove('hide');
         } else {
-            searchMenu.classList.remove('show');
+            document.body.classList.remove("show-options");
+            optionsMenu.classList.remove('show');
+
+            document.body.classList.add("hide-options");
+            optionsMenu.classList.add('hide');
+        }
+    }
+
+    function toggleMobileSidebarMenu(event) {
+        var mobileSidebarMenu = document.querySelector('#sidebar-menu');
+        var dropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!mobileSidebarMenu.classList.contains("show")) {
+            mobileSidebarMenu.classList.add("show");
+            dropDownUnderlay.classList.remove("hide");
+        } else {
+            mobileSidebarMenu.classList.remove("show");
+            dropDownUnderlay.classList.add("hide");
+        }
+    }
+
+    function toggleFilterMenu(event) {
+        var filterMenu = document.querySelector('.aside-filters');
+        var dropDownUnderlay = document.querySelector('#dropdown_overlay');
+        if (!filterMenu.classList.contains('show')) {
+            filterMenu.classList.add('show');
+            dropDownUnderlay.classList.remove('hide');
+        } else {
+            filterMenu.classList.remove('show');
+            dropDownUnderlay.classList.add('hide');
         }
     }
 
     function hideDropDownBackgroud(event) {
-        var searchMenu = document.querySelector('.search-form .form-control');
         var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
 
         if (!menuItemDropDownUnderlay.classList.contains('hide')) {
@@ -172,28 +208,66 @@
 
     function showDropDownBackGround(event) {
         var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-        if (event.currentTarget.clickableElement.classList.contains('open')) {
+
+        if (event && event.currentTarget.clickableElement.classList.contains('open')) {
             menuItemDropDownUnderlay.classList.add('hide');
         } else {
             menuItemDropDownUnderlay.classList.remove('hide');
         }
     }
 
-    document.addEventListener('DOMContentLoaded', initMenu);
+    function hideButtonIfNoOptions() {
+        const optionsToggle = document.querySelector(".toggle-settings");
+        const optionsDiv = document.querySelector(".aside-options");
+        if (optionsDiv.childNodes.length = 0) {
+            optionsToggle.classList.add('hidden');
+        }
+        console.log('test');
+    }
+
+
+    document.addEventListener('DOMContentLoaded', initMenu)
+    document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions)
 
     window.addEventListener('click', function(event) {
-        if (!event.srcElement.classList.contains('tt-input')) {
+        if (event.srcElement.classList.contains('modal_overlay')) {
             hideDropDownBackgroud();
         }
     });
 
-    jQuery('.search-form .form-control').focus(function() {
-        showDropDownBackGround();
-    });
+    $(document).mouseup(function(e)
+    {
+        var filterMenu = $('.aside-filters');
 
-    jQuery('.search-form .form-control').blur(function() {
+        // if the target of the click isn't the container nor a descendant of the container
+        if (!filterMenu.is(e.target) && filterMenu.has(e.target).length === 0)
+        {
+            filterMenu.removeClass('show');
+        }
+    })
+
+    $(document).mouseup(function(e)
+    {
+        var mobileSidebarMenu = $('#sidebar-menu');
+        var mobileSidebarMenuToggle = $('.mobile-menu-toggle');
+
+        // if the target of the click isn't the container nor a descendant of the container
+        if ((!mobileSidebarMenu.is(e.target) && mobileSidebarMenu.has(e.target).length === 0) &&
+            (!mobileSidebarMenuToggle.is(e.target) && mobileSidebarMenuToggle.has(e.target).length === 0))
+        {
+            mobileSidebarMenu.removeClass('show');
+        }
+    })
+
+    $('.search-form .form-control').focus(function() {
+        showDropDownBackGround();
+    })
+
+    $('.search-form .form-control').blur(function() {
         hideDropDownBackgroud();
-    });
+    })
+
+
 
     function asideItemsSearch(elem) {
         // Declare variables

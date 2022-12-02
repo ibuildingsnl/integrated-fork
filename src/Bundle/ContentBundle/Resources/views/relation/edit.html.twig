@@ -1,15 +1,22 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit {% endtrans %} {{ relation.name }}{% endblock title %}
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
-        {% endblock %}
-        {% block toolbar %}
-            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-        {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
+<div class="flex flex-wrap edit-form">
+    {% block form_start %}
+        {{ form_start(form, { 'style': 'horizontal' }) }}
+    {% endblock %}
+    {% block toolbar %}
+        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+    {% endblock toolbar %}
+    <div class="aside-options">
+        <aside>
+            <div class="aside-holder">
+                {% block sidebar %}
+                <div class="aside-header">
+                    <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i>
+                    </button>
+                    <span>{% trans %}Options{% endtrans %}</span>
+                </div>
                 <div class="aside-item-wrapper show">
                     <div class="aside-item-header">
                         <h3 class="aside-item-title">
@@ -52,35 +59,37 @@
                 {% if form.options is defined %}
                     {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                 {% endif %}
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Edit{% endtrans %} {{ relation.name }}</h1>
+                {% endblock %}
             </div>
-            <section class="editor editor-wrapped">
-                {% if form.name is defined %}
-                {{ form_row(form.name) }}
-                {% endif %}
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
+        </aside>
     </div>
+    <div class="editor-wrapper">
+        <div class="page-title">
+            <h1 class="heading">{% trans %}Edit{% endtrans %} {{ relation.name }}</h1>
+        </div>
+        <section class="editor editor-wrapped">
+            {% if form.name is defined %}
+                {{ form_row(form.name) }}
+            {% endif %}
+            {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+        </section>
+    </div>
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
+</div>
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('#integrated_relation_sources').select2();
-        $('#integrated_relation_targets').select2();
-    });
-    $(function () {
-        $('[data-toggle="popover"]').popover();
-    });
-    </script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#integrated_relation_sources').select2();
+    $('#integrated_relation_targets').select2();
+});
+$(function () {
+    $('[data-toggle="popover"]').popover();
+});
+</script>
 {% endblock javascript %}

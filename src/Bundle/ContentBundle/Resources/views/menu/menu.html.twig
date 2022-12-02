@@ -1,10 +1,9 @@
 {% extends '@IntegratedContent/menu/bootstrap.html.twig' %}
 
 {% block list %}
-    {% dump(item) %}
     {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
         {% if item.level == 0 %}
-            <div class="sidebar-menu">
+            <div class="sidebar-menu-wrapper">
                 {{ block('children') }}
             </div>
         {% else %}
@@ -51,18 +50,17 @@
             {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
         {%- endif %}
 
-        {% dump(attributes) %}
         {# displaying the item #}
         {% import _self as knp_menu %}
         {% if item.level == 1 %}
             <div {{ knp_menu.attributes(attributes) }}>
                 <div class="menu-label">
-                    <span class="label">
+                    <div class="label">
                     {% if item.extra('icon') is not empty %}
                         <i class="{{ item.extra('icon') }}"></i>
                     {% endif %}
-                        {{ block('label') }}
-                    </span>
+                        <span class="title">{{ block('label') }}</span>
+                    </div>
                     <i class="toggle iconoir-nav-arrow-down"></i>
                 </div>
                 <ul class="sub-menu-children">

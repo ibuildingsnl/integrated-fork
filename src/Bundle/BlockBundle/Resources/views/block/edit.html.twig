@@ -2,15 +2,22 @@
 {% block title %}{% trans %}Edit block{% endtrans %}{% endblock title %}
 
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
-        {% endblock %}
-        {% block toolbar %}
-            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-        {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
+<div class="flex flex-wrap edit-form">
+    {% block form_start %}
+        {{ form_start(form, { 'style': 'horizontal' }) }}
+    {% endblock %}
+    {% block toolbar %}
+        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+    {% endblock toolbar %}
+    <div class="aside-options">
+        <aside>
+            <div class="aside-holder">
+                {% block sidebar %}
+                <div class="aside-header">
+                    <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i>
+                    </button>
+                    <span>{% trans %}Options{% endtrans %}</span>
+                </div>
                 <div class="aside-item-wrapper show">
                     <div class="aside-item-header">
                         <h3 class="aside-item-title">
@@ -23,7 +30,8 @@
                         <div class="aside-item-list-container">
                             <div class="status-info">
                                 <div class="form-group">
-                                    <label class="control-label col-sm-4 required" for="block_edit_searchSelection">Block type</label>
+                                    <label class="control-label col-sm-4 required" for="block_edit_searchSelection">Block
+                                        type</label>
                                     <div class="w-full sm:w-2/3">
                                         {{ blockType }}
                                     </div>
@@ -62,28 +70,30 @@
                 {% if form.groups is defined %}
                     {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
                 {% endif %}
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}block{% endtrans %}</h1>
+                {% endblock %}
             </div>
-            <section class="editor editor-wrapped">
-                <div id="integrated_block_block">
-                    {{ form_errors(form) }}
-
-                    {% if form.title is defined %}
-                        {{ form_row(form.title, {'style': 'horizontal'}) }}
-                    {% endif %}
-
-                    {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-                </div>
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
+        </aside>
     </div>
+    <div class="editor-wrapper">
+        <div class="page-title">
+            <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}block{% endtrans %}</h1>
+        </div>
+        <section class="editor editor-wrapped">
+            <div id="integrated_block_block">
+                {{ form_errors(form) }}
+
+                {% if form.title is defined %}
+                    {{ form_row(form.title, {'style': 'horizontal'}) }}
+                {% endif %}
+
+                {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+            </div>
+        </section>
+    </div>
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
+</div>
 {% endblock %}
 
 {% block webpack_js %}
@@ -91,8 +101,8 @@
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/integratedblock/js/published_title.js') }}"></script>
+{{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/integratedblock/js/published_title.js') }}"></script>
 {% endblock %}
 
 {% block style %}

@@ -16,6 +16,9 @@
             display: flex;
             align-items: center;
             margin-right: 20px;
+            @include media(max-xl) {
+                margin-right: 10px;
+            }
         }
 
         .preview {
@@ -28,9 +31,25 @@
         align-items: center;
         display: flex;
         margin-left: 27px;
+        @include media(max-xl) {
+            margin-left:15px;
+        }
+        @include media(max-md) {
+            margin-left:5px;
+        }
     }
 
     a {
         color: $green;
+    }
+    .toggle-settings {
+        //display: none;
+        padding: 0 0.8rem;
+        @include media(max-lg) {
+            //display: inherit;
+        }
+        &.hidden {
+            display:none !important;
+        }
     }
 }

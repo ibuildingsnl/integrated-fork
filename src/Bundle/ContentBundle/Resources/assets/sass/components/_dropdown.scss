@@ -111,8 +111,8 @@ li.dropdown {
 
     .dropdown-menu {
         background-color: #fff;
-        border-radius: 0 0 8px 8px;
-        border: 1px solid $border-color;
+        border-radius: 8px;
+        border: 1px solid #DEE3E9;
         display: none;
         float: left;
         font-size: 13px;
@@ -121,11 +121,13 @@ li.dropdown {
         margin: -6px 0 0;
         min-width: 160px;
         padding: 5px 0;
-        position: static;
+        margin-top: 5px;
+        position: absolute;
         text-align: left;
         top: 100%;
+        width: auto;
         z-index: 900;
-        border-top: 0;
+        min-width: 100%;
 
         &.alt {
             border: 1px solid $border-color;
@@ -321,6 +323,11 @@ li.dropdown {
             .item-title {
                 font-weight: 500;
                 color: #2371b1;
+            }
+             a {
+                width: 100%;
+                display: flex;
+                align-items: center;
             }
         }
         li.header {

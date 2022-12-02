@@ -11,8 +11,12 @@
         {% endblock toolbar %}
         <div class="aside-options">
             <aside>
-                <div class="aside-holder section-gray section-radius">
+                <div class="aside-holder">
                     {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i></button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
                         {% block content_meta %}
                             {% if form.permissions is defined %}
                                 {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}

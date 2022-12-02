@@ -37,7 +37,10 @@
             filter: none;
             top: 140px;
             position: relative;
-
+            padding: 0 25px !important;
+            @include media(max-sm) {
+                padding: 0 25px !important;
+            }
             iframe {
                 position: relative;
             }

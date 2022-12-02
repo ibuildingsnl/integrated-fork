@@ -54,6 +54,7 @@
                 {% if form.actions.create is defined %}
                     {{ form_row(form.actions.create) }}
                 {% endif %}
+                <button type="button" onclick="toggleOptionsSidebar()" onload="hideButtonIfNoOptions(this)" class="toggle-settings btn btn-white ml-2"><i class="iconoir-settings"></i></button>
             {% endblock %}
         </div>
     </div>

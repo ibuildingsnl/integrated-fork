@@ -28,6 +28,27 @@
         &.show {
             transition: all .3s;
             right: 0;
+            z-index: 1050;
+        }
+        .aside-header > span {
+            padding-left: 28px;
+        }
+    }
+    .toggle-filters {
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        left: 0;
+        top: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid #dfe3e9;
+        &:hover {
+            background-color:#f2f2f2;
+        }
+        @include media(max-lg) {
+            display: inline-flex;
         }
     }
 }
@@ -129,7 +150,7 @@
             ul {
                 padding: 0.5rem 1.5rem;
                 max-height: 180px;
-                overflow-y: scroll;
+                overflow-y: auto;
 
                 &.jFiler-items-list {
                     max-height: 100%;
@@ -206,6 +227,7 @@
     border-bottom: 1px solid $border-color;
     display: flex;
     justify-content: space-between;
+    position: relative;
 
     span {
         color: rgba(0, 0, 0, .5);
@@ -262,6 +284,12 @@
     }
 }
 
+body.hide-options {
+    .aside-options {
+        display: none;
+    }
+}
+
 .aside-options {
     background-color: white;
     height: calc(100vh - 110px);
@@ -269,7 +297,55 @@
     border-left: 1px solid $border-color;
     overflow: auto;
     order: 1;
-
+    margin-top:-1px;
+    @include media(max-lg) {
+        display: none;
+        &.show {
+            display: block;
+            position: absolute;
+            right:0;
+            height: 100%;
+        }
+    }
+    @include media(max-md) {
+        display: none;
+        &.show {
+            display: block;
+            position: absolute;
+            z-index: 1050;
+            top: 0;
+            left: 0;
+            right:auto;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    }
+    .aside-header {
+        display:none;
+        @include media(max-md) {
+            display: flex;
+            justify-items: flex-start;
+            border-bottom: none;
+        }
+        span {
+            padding-left: 35px;
+        }
+    }
+    .toggle-filters {
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        left: 0;
+        top: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid #dfe3e9;
+        @include media(max-md) {
+            display: flex;
+        }
+    }
     &:empty {
         background-color: transparent !important;
         border: 1px solid transparent;
