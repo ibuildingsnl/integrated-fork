@@ -78,7 +78,9 @@
         .editor-wrapper {
             background-color: $bg-gray;
             padding: 2rem;
-
+            @include media(max-lg) {
+                padding:1rem;
+            }
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
@@ -121,10 +123,21 @@
     }
 }
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
+body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm {
     .content-wrapper {
         padding: 50px 0 0;
     }
+}
+
+body.bulk_select, body.bulk_configure, body.bulk_confirm {
+    .form-wrapper.compound .form-group > div {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+hr {
+    margin: 1rem 0;
 }
 
 body.show-options {
@@ -189,6 +202,16 @@ body.hide-options {
         display: flex;
         margin-top: 1rem;
         width: 100%;
+        @include media(max-sm) {
+            height:auto;
+            padding: 1rem 1rem 0 1rem;
+            li {
+                margin-bottom:1rem;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
     }
 
     .options-no-bg {

@@ -54,7 +54,7 @@
                         </li>
                     </ul>
                 </div>
-                <button class="toggle-filters btn btn-orange icon-left" onclick="toggleFilterMenu()"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
+                <button class="toggle-filters btn btn-orange icon-left" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
             </div>
             <section class="section-white section-radius">
 
@@ -138,7 +138,7 @@
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters" onclick="toggleFilterMenu()"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
                         <a href="#" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>

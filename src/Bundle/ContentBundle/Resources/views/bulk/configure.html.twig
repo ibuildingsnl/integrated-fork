@@ -17,59 +17,70 @@
 
     {{ form_start(form, {'style': 'horizontal', 'label_col': 3, 'widget_col': 9, 'col_size': 'sm'}) }}
 
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_bulk_select", {'id': id }) }}">{% trans %}Back{% endtrans %}</a>&nbsp;
-        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
-    </div>
-
-    <h1>{% trans %}Step 2 of 3: Choose Operation{% endtrans %}</h1>
-
     <div class="row">
-        <section class="section-white section-padding section-radius section-margin">
-
-            <div class="container">
-                {% trans %}Choose the operation you wish to perform on the selected content items (%selection%){% endtrans %}
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="options">
+                    <div class="form-actions">
+                        <button class="no-icon btn btn-green" type="submit">{% trans %}Next{% endtrans %}</button>
+                    </div>
+                </div>
+                <div class="back">
+                    <a class="no-icon btn btn-white icon-left"
+                       href="{{ path("integrated_content_bulk_select", {'id': id }) }}"><i
+                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+                </div>
             </div>
+        {% endblock toolbar %}
+        <div class="index-wrapper-full">
 
-            <hr/>
+            <h1>{% trans %}Step 2 of 3: Choose Operation{% endtrans %}</h1>
 
-            {{ form_errors(form) }}
-            {{ form_row(form.actions) }}
+            <div class="row">
+                <section class="section-white section-padding section-radius section-margin">
 
-        </section>
+                    <div class="container">
+                        {% trans %}Choose the operation you wish to perform on the selected content items (%selection%){% endtrans %}
+                    </div>
+
+                    <hr/>
+
+                    {{ form_errors(form) }}
+                    {{ form_row(form.actions) }}
+
+                </section>
+            </div>
+        </div>
     </div>
-
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_bulk_select", {'id': id }) }}">{% trans %}Back{% endtrans %}</a>
-        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
-    </div>
-
     {{ form_end(form) }}
 
 {% endblock content %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-        $(document).ready(function () {
-            implementSelect2();
+<script>
+    $(document).ready(function () {
+        implementSelect2();
 
-            $('[data-action-toggle="1"] input:checkbox')
-                .click(toggle)
-                .each(toggle);
+        $('[data-action-toggle="1"] input:checkbox')
+            .click(toggle)
+            .each(toggle);
 
-            function toggle() {
-                var self = $(this);
+        function toggle() {
+            var self = $(this);
 
-                if (self.is(':checked')) {
-                    self.parents('[data-action-toggle="1"]').next().show()
-                } else {
-                    self.parents('[data-action-toggle="1"]').next().hide()
-                }
+            if (self.is(':checked')) {
+                self.parents('[data-action-toggle="1"]').next().show();
+            } else {
+                self.parents('[data-action-toggle="1"]').next().hide();
             }
-        });
-    </script>
+        }
+    });
+</script>
 
-    <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
+<script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
 {% endblock javascript %}

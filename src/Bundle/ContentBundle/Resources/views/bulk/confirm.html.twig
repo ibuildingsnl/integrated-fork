@@ -1,49 +1,59 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block content %}
 
-    {{ form_start(form, {'style': 'horizontal', 'label_col': 3, 'widget_col': 9, 'col_size': 'sm'}) }}
-
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_bulk_configure", {'id': id }) }}">{% trans %}Back{% endtrans %}</a>&nbsp;
-        <button class="btn btn-orange" type="submit">{% trans %}Confirm{% endtrans %}</button>
-    </div>
-    <h1>{% trans %}Step 3 of 3: Confirmation{% endtrans %}</h1>
     <div class="row">
-        <section class="section-white section-padding section-radius section-margin">
-
-            <div class="container">
-                {% trans %}Please confirm that you wish to execute the following actions on the selected content items (%selection%){% endtrans %}
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'inline' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="options">
+                    <div class="form-actions">
+                        <button class="no-icon btn btn-green" type="submit">{% trans %}Confirm{% endtrans %}</button>
+                    </div>
+                </div>
+                <div class="back">
+                    <a class="no-icon btn btn-white icon-left"
+                       href="{{ path("integrated_content_bulk_configure", {'id': id }) }}"><i
+                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+                </div>
             </div>
+        {% endblock toolbar %}
+        <div class="index-wrapper-full">
+            <h1>{% trans %}Step 3 of 3: Confirmation{% endtrans %}</h1>
+            <div class="row">
+                <section class="section-white section-padding section-radius section-margin">
 
-            <hr/>
+                    <div class="container">
+                        {% trans %}Please confirm that you wish to execute the following actions on the selected content items (%selection%){% endtrans %}
+                    </div>
 
-            {{ form_errors(form) }}
+                    <hr/>
 
-            <div class="bulk-readonly">
-                {{ form_row(form.actions) }}
+                    {{ form_errors(form) }}
 
-                <div class="bulk-readonly-overlay"></div>
+                    <div class="bulk-readonly">
+                        {{ form_row(form.actions) }}
+
+{#                        <div class="bulk-readonly-overlay"></div> TODO:What's this used for? #}
+                    </div>
+
+                </section>
             </div>
-
-        </section>
+            {{ form_end(form) }}
+        </div>
     </div>
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_bulk_configure", {'id': id }) }}">{% trans %}Back{% endtrans %}</a>&nbsp;
-        <button class="btn btn-orange" type="submit">{% trans %}Confirm{% endtrans %}</button>
-    </div>
-
-    {{ form_end(form) }}
 
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-        $(document).ready(function () {
-            implementSelect2();
-        });
-    </script>
+<script>
+    $(document).ready(function () {
+        implementSelect2();
+    });
+</script>
 
-    <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
+<script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
 {% endblock javascript %}

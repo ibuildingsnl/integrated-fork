@@ -1,17 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit{% endtrans %} {{ contentType.name }}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_type_index') }}">{% trans %}Content types{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}Edit{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 
 {% block content %}
     <div class="flex flex-wrap edit-form">
@@ -26,7 +14,7 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         <div class="aside-header">
-                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i></button>
+                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options" type="button"><i class="iconoir-cancel"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         {% block content_meta %}

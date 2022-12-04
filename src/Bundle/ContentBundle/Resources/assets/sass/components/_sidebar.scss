@@ -6,7 +6,7 @@
     position: relative;
     z-index: 1000;
 
-    #sidebar-menu {
+    .sidebar-menu {
         background-color: $sidebar-green;
         height: calc(100vh - 50px);
         flex-shrink: 0;

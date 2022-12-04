@@ -53,6 +53,9 @@
             top: 0;
             z-index: 9;
             padding-left: 23px;
+            @include media(max-md) {
+                padding-left:10px;
+            }
         }
 
         .tox-toolbar-grp {

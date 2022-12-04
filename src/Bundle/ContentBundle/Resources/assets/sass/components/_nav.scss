@@ -173,13 +173,15 @@ body div#dropdown_overlay {
             @include media(max-md) {
                 top: 60px;
                 position: fixed;
+                width:100%;
+                display: block;
             }
         }
 
         &.new-contenttype {
             ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
                 max-height: calc(100vh - 100px);
-                overflow-y: scroll;
+                overflow: auto;
             }
         }
         &.dropdown-assigned-to-me {
@@ -211,10 +213,14 @@ body div#dropdown_overlay {
             border-top-left-radius: 0;
             border-top-right-radius: 0;
             left: 0;
+            width:100%;
+            display: block;
         }
         .megamenu-content {
             display: flex;
-            flex-wrap:wrap;
+            @include media(max-md) {
+                flex-wrap:wrap;
+            }
         }
         &.dropdown-assigned-to-me {
             ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {

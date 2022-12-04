@@ -19,7 +19,7 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         <div class="aside-header">
-                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" type="button"><i class="iconoir-cancel"></i></button>
+                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options" type="button"><i class="iconoir-cancel"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         {% block content_meta %}
@@ -80,5 +80,5 @@
 {% block javascript %}
     {{ parent() }}
 
-    <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}" />
+    <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}"></script>
 {% endblock javascript %}

@@ -321,12 +321,25 @@ body.hide-options {
             border: none;
         }
     }
+    .aside-holder {
+        @include media(max-md) {
+            padding-top: 37px;
+        }
+    }
     .aside-header {
         display:none;
         @include media(max-md) {
             display: flex;
             justify-items: flex-start;
-            border-bottom: none;
+            background-color: white;
+            border-bottom:0;
+            width: 100%;
+            @include media(max-sm) {
+                position: fixed;
+                top: 0;
+                z-index: 1;
+                border-bottom: 1px solid #dfe3e9;
+            }
         }
         span {
             padding-left: 35px;
@@ -585,6 +598,9 @@ ul {
             background-color: #e0e3e9;
             border-radius: 0 0 8px 8px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 }
