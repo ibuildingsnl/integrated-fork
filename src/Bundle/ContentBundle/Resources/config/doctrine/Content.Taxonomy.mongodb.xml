@@ -8,6 +8,7 @@
         <field field-name="title" type="string" />
         <field field-name="description" type="string" />
         <field field-name="rank" type="string" index="true" />
+        <field field-name="parent_id" type="string" index="false" />
 
     </document>
 

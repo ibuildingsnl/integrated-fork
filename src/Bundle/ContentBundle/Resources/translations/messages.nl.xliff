@@ -554,6 +554,62 @@
                 <source>Keep current position</source>
                 <target>Behoud huidige positie</target>
             </trans-unit>
+            <trans-unit id="142">
+                <source>Media Library</source>
+                <target>Media Bibliotheek</target>
+            </trans-unit>
+            <trans-unit id="143">
+                <source>Overview</source>
+                <target>Beheer</target>
+            </trans-unit>
+            <trans-unit id="144">
+                <source>Alle files</source>
+                <target>Alle bestanden</target>
+            </trans-unit>
+            <trans-unit id="145">
+                <source>Categories</source>
+                <target>Categorieën</target>
+            </trans-unit>
+            <trans-unit id="146">
+                <source>New</source>
+                <target>Nieuw</target>
+            </trans-unit>
+            <trans-unit id="147">
+                <source>Bulk selection</source>
+                <target>Bulkselectie</target>
+            </trans-unit>
+            <trans-unit id="148">
+                <source>Deselect</source>
+                <target>Deselecteren</target>
+            </trans-unit>
+            <trans-unit id="149">
+                <source>Total</source>
+                <target>Totaal</target>
+            </trans-unit>
+            <trans-unit id="150">
+                <source>Items</source>
+                <target>Items</target>
+            </trans-unit>
+            <trans-unit id="151">
+                <source>Showing</source>
+                <target>Toon</target>
+            </trans-unit>
+            <trans-unit id="152">
+                <source>till</source>
+                <target>tot</target>
+            </trans-unit>
+            <trans-unit id="153">
+                <source>Search</source>
+                <target>Zoeken</target>
+            </trans-unit>
+            <trans-unit id="154">
+                <source>Files</source>
+                <target>Bestanden</target>
+            </trans-unit>
+            <trans-unit id="">
+                <source>No results with this selection.</source>
+                <target>Geen resultaten met deze selectie.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

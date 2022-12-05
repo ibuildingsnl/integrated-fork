@@ -76,6 +76,76 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear, $contentTypeSelectOptions): array
+    {
+        $query = $this->client->createSelect();
+
+        $helper = $query->getHelper();
+        $filter = function ($param) use ($helper) {
+            return $helper->escapePhrase($param);
+        };
+
+        // Filter on ContentType
+        $contentType = $request->query->get('contenttypes');
+        if (null === $contentType) {
+            $contentType = [];
+            foreach ($contentTypeSelectOptions as $contentTypeSelectOption) {
+                $contentType[] = $contentTypeSelectOption->getId();
+            }
+        }
+
+        if (\is_array($contentType)) {
+            if (\count($contentType)) {
+                $query
+                    ->createFilterQuery('contenttypes')
+                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+            }
+        }
+
+        // Filter on Category
+        if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
+            $relation = $this->dm->getRepository(Relation::class)->find('mediataxonomy');
+
+            // No Results;
+            if (null === $relation) {
+                return [];
+            }
+
+            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
+
+            $query
+                ->createFilterQuery($name)
+                ->addTag($name)
+                ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', $selectedCategory)]);
+        }
+
+        // Filter on dates
+        // TODO with some more data, update this to MONTH
+        $facetSet = $query->getFacetSet();
+        $facet = $facetSet->createFacetRange('pub_created');
+        $facet->setField('pub_created');
+        $facet->setStart('2022-01-01T00:00:00Z'); // TODO Can we fill this dynamically with Lowest?
+        $facet->setGap($filterOnDayOrYear);
+        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z'); // Is there a prettier way?
+
+        $resultSet = $this->client->select($query);
+
+        $facet = $resultSet->getFacetSet()->getFacet('pub_created');
+
+        $facetValues = $facet->getValues();
+
+        $result = [];
+        foreach ($facetValues as $key => $val) {
+            $yyyy_mm_dd = substr($key, 0, 10);
+
+            if ($val !== 0) {
+                $result[$yyyy_mm_dd] = $val;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param Request $request
      * @param $limit
@@ -85,6 +155,12 @@ class ContentProvider
     public function getContentFromSolr(Request $request, $limit)
     {
         $query = $this->client->createSelect();
+
+        if ($timePeriod = $request->query->get('year_month_day_filter')) {
+            $query
+                ->createFilterQuery('pub_created')
+                ->setQuery('pub_created: '.'['.$timePeriod.']');
+        }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
         // to filter on these targets.
