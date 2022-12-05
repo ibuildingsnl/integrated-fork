@@ -58,6 +58,7 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager" />
+            <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="integrated_storage.manager" />
 
             <tag name="controller.service_arguments" />

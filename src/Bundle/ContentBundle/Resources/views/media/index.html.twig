@@ -36,7 +36,7 @@
                                     <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
                                             <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                            {% else %}
+                                        {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
                                                 merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
@@ -149,7 +149,7 @@
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'class_string': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
+                                                merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
@@ -210,11 +210,11 @@
                     <div id="photo_upload_area">
                     </div>
 
-                    <button id="modal_button"
-                            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            type="button" data-modal-toggle="popup-modal">
-                        Toggle modal
-                    </button>
+{#                    <button id="modal_button"#}
+{#                            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"#}
+{#                            type="button" data-modal-toggle="popup-modal">#}
+{#                        Toggle modal#}
+{#                    </button>#}
 
                     <div id="popup-modal" tabindex="-1"
                          class="hidden bg-red-200 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-24 md:inset-0 h-modal md:h-full">
@@ -429,7 +429,7 @@
                 inline: true,
                 target: '#photo_upload_area',
                 width: '100%',
-                height: 400,
+                height: 750,
                 proudlyDisplayPoweredByUppy: false,
                 showProgressDetails: true,
                 metaFields: [

@@ -96,6 +96,4 @@ class MediaGalleryMenu
 
         return $menuItems;
     }
-
-
 }

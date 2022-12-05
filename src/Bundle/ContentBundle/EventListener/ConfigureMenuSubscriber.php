@@ -67,6 +67,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         $menuContent->addChild('Content navigator', ['route' => 'integrated_content_content_index']);
         $menuContent->addChild('Search selections', ['route' => 'integrated_content_search_selection_index']);
+        $menuContent->addChild('Media', ['route' => 'integrated_content_media_index']);
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN) || $this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER)) {
             if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
@@ -78,10 +79,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             }
 
             $menuManage->addChild('Channels', ['route' => 'integrated_content_channel_index']);
-
-            $menuManage->addChild('Media', ['route' => 'integrated_content_media_index']);
-
-            $menuManage->addChild('Media menu', ['route' => 'integrated_content_media_menu']);
 
             if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
                 $menuManage->addChild('Relations', ['route' => 'integrated_content_relation_index']);
