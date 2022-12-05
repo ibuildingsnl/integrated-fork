@@ -45,6 +45,10 @@ if (modal.length && form.length){
         const url = $(this).attr('href');
 
         if (url && url !== '#') {
+            if ($(this).attr('target') === '_blank') {
+                return;
+            }
+
             e.preventDefault();
 
             if (form.data('changed')) {
