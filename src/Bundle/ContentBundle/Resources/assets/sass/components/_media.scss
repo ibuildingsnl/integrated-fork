@@ -70,6 +70,20 @@
     }
     .media-gallery {
         width: calc(100% - (280px + 2rem));
+        div#photo_upload_area {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            height: 100%;
+            margin: 2rem;
+            z-index: 1050;
+            display: none;
+            .uppy-Dashboard-inner {
+                height: calc(100vh - (60px + 4rem)) !important;
+            }
+        }
     }
     .media-preview {
         position: relative;

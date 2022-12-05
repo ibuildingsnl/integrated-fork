@@ -35,8 +35,8 @@
                                 {% for key, menu_item in menu %}
                                     <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
-                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                        {% else %}
+                                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
+                                            {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
                                                 merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
@@ -56,7 +56,8 @@
                                                     {% for key_1, menu_item_1 in menu_item.children %}
                                                         <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
                                                             {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
+                                                            <a tabindex="-1" role="menuitem" class="media_category"
+                                                               id="{{ menu_item_1.ID }}">
                                                                 {% else %}
                                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                                     app.request.query.all|
@@ -144,7 +145,7 @@
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
-{#                                        {{ dump(content_type) }}#}
+                                        {#                                        {{ dump(content_type) }} #}
 
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
@@ -189,7 +190,7 @@
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
 
-                        <button onclick="fetch_component_upload_images(event)" class="btn btn-action">
+                        <button onclick="fetch_component_upload_images(event)" class="btn btn-action" type="button">
                             <i class="iconoir-add-media-image"></i>
                         </button>
 
@@ -210,11 +211,11 @@
                     <div id="photo_upload_area">
                     </div>
 
-{#                    <button id="modal_button"#}
-{#                            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"#}
-{#                            type="button" data-modal-toggle="popup-modal">#}
-{#                        Toggle modal#}
-{#                    </button>#}
+                    {#                    <button id="modal_button" #}
+                    {#                            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" #}
+                    {#                            type="button" data-modal-toggle="popup-modal"> #}
+                    {#                        Toggle modal #}
+                    {#                    </button> #}
 
                     <div id="popup-modal" tabindex="-1"
                          class="hidden bg-red-200 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-24 md:inset-0 h-modal md:h-full">
@@ -393,16 +394,9 @@
             const options = [];
 
             //toggle if needed
-            if (current_drop_target === whereToAdd) {
-                $(`#photo_upload_area`).hide();
-                current_drop_target = '';
-                $('.media-wrapper').show();
-                return;
-            } else {
-                $('.media-wrapper').hide();
-                $(`#photo_upload_area`).show();
-                current_drop_target = whereToAdd;
-            }
+
+            $(`#photo_upload_area`).show();
+            $('#dropdown_overlay').removeClass('hide');
 
             const response = await fetch(url, options);
 
@@ -491,6 +485,15 @@
                 }
             }
         };
+
+        jQuery(document).mouseup(function(e) {
+            var uppyModal = $('#photo_upload_area');
+
+            // if the target of the click isn't the container nor a descendant of the container
+            if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
+                uppyModal.hide();
+            }
+        });
     </script>
 {% endblock %}
 
