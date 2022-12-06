@@ -117,7 +117,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "endroid/installer": true
         }
     },
     "extra": {
@@ -125,11 +126,6 @@
             "dev-release/0.29": "0.29.x-dev",
             "dev-release/0.30": "0.30.x-dev",
             "dev-release/0.80": "0.80.x-dev"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "endroid/installer": true
         }
     }
 }
