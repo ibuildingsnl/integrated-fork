@@ -10,11 +10,40 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
+import UppyDutch from '@uppy/locales/lib/nl_NL'
+global.UppyDutch = UppyDutch
+
 //BULKSELECTION FUNCTIONALITY
 let bulkSelectionEnabled = false //this controls if we show an icon with each image
 let bulkSelection = [] //this keeps track which items are selected
 let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 let draggingAmountOfItems = 1
+
+window.toggle_upload_view = function() {
+    $('#upload_container').show();
+    $('#dropdown_overlay').removeClass('hide');
+}
+
+window.disable_x = function(view) {
+    $('.toggle_view.'+view).removeClass('active');
+    $('.media-item').removeClass(view);
+}
+
+window.enable_x = function(view) {
+    $('.toggle_view.'+view).addClass('active');
+    $('.media-item').addClass(view);
+}
+
+window.enable_grid_view = function() {
+    disable_x('list')
+    enable_x('grid')
+}
+
+window.enable_list_view = function() {
+    disable_x('grid')
+    enable_x('list')
+}
+
 
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
@@ -78,7 +107,35 @@ async function disableBulkSelection() {
     draggingAmountOfItems = 1
 }
 
-//DRAG AND DROP FUNCTIONALITY
+window.asideFolderSearch = function(elem) {
+    let filter, ul, li, a, i, txtValue;
+
+    filter = elem.value.toUpperCase();
+    ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
+    li = ul.getElementsByTagName('li');
+
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName('a')[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].classList.remove('menu-item-hidden');
+        } else {
+            li[i].classList.add('menu-item-hidden');
+        }
+    }
+};
+
+//hide uploadimages view when clicked outside of uploadimages modal:
+jQuery(document).mouseup(function(e) {
+    var uppyModal = $('#upload_container');
+
+    // if the target of the click isn't the container nor a descendant of the container
+    if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
+        uppyModal.hide();
+    }
+});
+
 (function ($) {
     $(function () {
         let $gallery = $("#gallery")

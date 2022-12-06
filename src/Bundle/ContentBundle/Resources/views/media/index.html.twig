@@ -19,9 +19,9 @@
                             <div class="aside-item-search">
                                 <i class="iconoir-search"></i>
                                 <input type="text" class="list-search"
-                                       onchange="asideFolderSearch(this)"
-                                       onkeyup="asideFolderSearch(this)"
-                                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
+                                   onchange="asideFolderSearch(this)"
+                                   onkeyup="asideFolderSearch(this)"
+                                   placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
                             </div>
 
                             <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
@@ -56,8 +56,7 @@
                                                     {% for key_1, menu_item_1 in menu_item.children %}
                                                         <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
                                                             {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category"
-                                                               id="{{ menu_item_1.ID }}">
+                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
                                                                 {% else %}
                                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                                     app.request.query.all|
@@ -135,8 +134,8 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button class="toggle_view grid active switcher mr-2"><i class="iconoir-view-grid"></i></button>
-                        <button class="toggle_view list switcher mr-2"><i class="iconoir-list"></i></button>
+                        <button onclick="enable_grid_view()" class="toggle_view grid active switcher mr-2"><i class="iconoir-view-grid"></i></button>
+                        <button onclick="enable_list_view()" class="toggle_view list switcher mr-2"><i class="iconoir-list"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
@@ -145,7 +144,6 @@
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
-                                        {#                                        {{ dump(content_type) }} #}
 
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
@@ -190,7 +188,7 @@
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
 
-                        <button onclick="fetch_component_upload_images(event)" class="btn btn-action" type="button">
+                        <button onclick="toggle_upload_view()" class="btn btn-action">
                             <i class="iconoir-add-media-image"></i>
                         </button>
 
@@ -206,38 +204,20 @@
                 </div>
             </div>
             <section class="section-white section-radius p-4">
+
+                <div id="upload_container" class="hidden">
+                    {% include '@IntegratedContent/media/upload.html.twig'
+                        with {
+                        'language': 'nl',
+                        'endpoint': '/admin/media/upload_file',
+                        'height': '750px',
+                        'imageEditorEnabled': true,
+                        'target': '#drag-drop-area',
+                    } %}
+                </div>
+
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
-                    <div id="photo_upload_area">
-                    </div>
-
-                    {#                    <button id="modal_button" #}
-                    {#                            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" #}
-                    {#                            type="button" data-modal-toggle="popup-modal"> #}
-                    {#                        Toggle modal #}
-                    {#                    </button> #}
-
-                    <div id="popup-modal" tabindex="-1"
-                         class="hidden bg-red-200 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-24 md:inset-0 h-modal md:h-full">
-                        <div class="relative w-full max-w-md h-full md:h-auto">
-                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                <button type="button"
-                                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                                        data-modal-toggle="popup-modal">
-                                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                              clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="sr-only">Close modal</span>
-                                </button>
-                                <div id="popup-modal-content" class="p-6 text-center">
-                                    <div>THIS CONTENT WILL BE REPLACED WITH FETCH RESULT</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="media-wrapper grid_view" style="">
                         {% if paginator.items|length == 0 %}
                             <div>
@@ -320,25 +300,25 @@
                             {% endfor %}
                         </ul>
                     </div>
-                </div>
 
-                <div>
-                    {% if paginator.getCustomParameter('amountOfPages') > 1 %}
-                        {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
-                            {% if i == paginator.currentPageNumber %}
-                                <a class="text-red-500 bg-red-200 p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
-                            {% else %}
-                                <a class="p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
-                            {% endif %}
-                        {% endfor %}
+                    <div class="mt-2">
+                        {% if paginator.getCustomParameter('amountOfPages') > 1 %}
+                            {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
+                                {% if i == paginator.currentPageNumber %}
+                                    <a class="text-red-500 bg-red-200 p-2"
+                                       href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                       tabindex="-1" role="menuitem">{{ i }}</a>
+                                {% else %}
+                                    <a class="p-2"
+                                       href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                       tabindex="-1" role="menuitem">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
 
-                        <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
-                        <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
-                    {% endif %}
+                            <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
+                            <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
+                        {% endif %}
+                    </div>
                 </div>
 
             </section>
@@ -346,155 +326,14 @@
     </div>
 
     <script>
-        let toggle_view = 'GRID_VIEW';
-        let show_modal = false;
-
-        window.onload = function() {
-            $('.toggle_view').on('click', function() {
-                console.log('toggle');
-                if (toggle_view == 'GRID_VIEW') {
-                    $('.toggle_view.list').addClass('active');
-                    $('.toggle_view.grid').removeClass('active');
-                    $('.media-item').removeClass('grid');
-                    $('.media-item').addClass('list');
-                    toggle_view = 'TABLE_VIEW';
-                } else {
-                    $('.toggle_view.grid').addClass('active');
-                    $('.toggle_view.list').removeClass('active');
-                    $('.media-item').removeClass('list');
-                    $('.media-item').addClass('grid');
-                    toggle_view = 'GRID_VIEW';
-                }
-            });
-
-            $('#modal_button').on('click', async function() {
-                if (show_modal === false) {
-                    $('#popup-modal').removeClass('hidden');
-                    show_modal = true;
-
-                    options = [];
-                    const response = await fetch(
-                        '/admin/content/e8e681dd4c693d5c8ba99ef5fc37c46a?lock=7f64bbff-7a90-4e2a-b7cc-21ad63794cec',
-                        options);
-
-                    const whereToAdd = '#popup-modal-content';
-                    document.querySelector(whereToAdd).innerHTML = await response.text();
-                } else {
-                    $('#popup-modal').addClass('hidden');
-                    show_modal = false;
-                }
-            });
-        };
-
-        let current_drop_target = '';
-
-        async function fetch_component_upload_images(event) {
-            const whereToAdd = '#photo_upload_area';
-            const url = '/admin/media/upload';
-            const options = [];
-
-            //toggle if needed
-
-            $(`#photo_upload_area`).show();
-            $('#dropdown_overlay').removeClass('hide');
-
-            const response = await fetch(url, options);
-
-            document.querySelector(whereToAdd).innerHTML = await response.text();
-
-            let uppy = inititalizeUppy('/admin/media/upload_file');
-        }
-
-        function inititalizeUppy(endpoint_url) {
-            let uppy = new Uppy({
-                onBeforeFileAdded: (currentFile, files) => currentFile,
-                onBeforeUpload(files) {
-
-                    let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
-
-                    for (const [key, file] of Object.entries(files)) {
-                        if (!file.meta.userCaption) {
-                            file.meta.userTitle = 'Dit is mijn titel';
-                            file.meta.category_id_target = current_category_id;
-                        }
-                    }
-                },
-            }).use(Dashboard, {
-                inline: true,
-                target: '#photo_upload_area',
-                width: '100%',
-                height: 750,
-                proudlyDisplayPoweredByUppy: false,
-                showProgressDetails: true,
-                metaFields: [
-                    {id: 'userTitle', name: 'Title', placeholder: 'file name'},
-                    {id: 'userCaption', name: 'Description', placeholder: 'specify Description'},
-                    {id: 'userTags', name: 'Tags', placeholder: 'Tags'},
-                    // { id: 'category_id_target', name: 'Category', placeholder: 'specify Category' },
-                ],
-            });
-
-            uppy.use(XHRUpload, {
-                endpoint: endpoint_url,
-            });
-
-            uppy.use(ImageEditor, {
-                target: Dashboard,
-                quality: 0.8,
-            });
-
-            uppy.on('file-added', (file) => {
-                uppy.setFileMeta(file.id, {
-                    test: 'hello',
-                });
-            });
-
-            uppy.on('complete', (result) => {
-                console.log('Upload complete! We’ve uploaded these files:', result.successful);
-            });
-
-            return uppy;
-        }
 
         let path = '{{ path('integrated_content_media_manage_relations') }}';
     </script>
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-    <script>
-
-        function asideFolderSearch(elem) {
-            // Declare variables
-
-            var input, filter, ul, li, a, i, txtValue;
-            input = elem;
-            filter = input.value.toUpperCase();
-            ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
-            li = ul.getElementsByTagName('li');
-
-            // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName('a')[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].classList.remove('menu-item-hidden');
-                } else {
-                    li[i].classList.add('menu-item-hidden');
-                }
-            }
-        };
-
-        jQuery(document).mouseup(function(e) {
-            var uppyModal = $('#photo_upload_area');
-
-            // if the target of the click isn't the container nor a descendant of the container
-            if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
-                uppyModal.hide();
-            }
-        });
-    </script>
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
 {% endblock %}
 
 {% block style %}

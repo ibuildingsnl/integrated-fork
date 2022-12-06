@@ -21,7 +21,6 @@ use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
-use Integrated\Bundle\StorageBundle\Storage\Reader\UploadedFileReader;
 use Integrated\Common\Storage\ManagerInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -136,61 +135,45 @@ class MediaController extends AbstractController
     }
 
     #[Route('/api/components/upload_images', name: 'getUploadComponent', methods: ['GET'])]
-    public function getUploadComponent() {
+    public function getUploadComponent()
+    {
         return $this->render('@IntegratedContent/media/upload.html.twig', [
         ]);
     }
 
-    public function upload_file(Request $request) {
+    public function upload_file(Request $request)
+    {
         $entityManager = $this->getDoctrineODM()->getManager();
 
-        //check filetype
-        $uploadedFileExtension = $request->files->get('file')->getClientOriginalExtension();
+        // check filetype
+        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         $uploadedFileMimetype = $request->files->get('file')->getMimeType();
         $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
         $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
         $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
 
-        // is this file allowed?
-        $isAllowed = in_array($uploadedFileExtension, [...$image_filetypes, ...$video_filetypes, ...$file_filetypes]);
-        if ($isAllowed !== true) {
-            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
-        }
-
         // Find a matching class with the extension
-        if (in_array($uploadedFileExtension, $image_filetypes)) {
-            $file = new Image;
+        if (\in_array($uploadedFileExtension, $image_filetypes)) {
+            $file = new Image();
             $file->setContentType('image');
-        } else if (in_array($uploadedFileExtension, $video_filetypes)) {
-            $file = new Video;
+        } elseif (\in_array($uploadedFileExtension, $video_filetypes)) {
+            $file = new Video();
             $file->setContentType('video');
-        } else if (in_array($uploadedFileExtension, $file_filetypes)) {
-            $file = new File;
+        } elseif (\in_array($uploadedFileExtension, $file_filetypes)) {
+            $file = new File();
             $file->setContentType('file');
         } else {
-            return new JsonResponse(array('message' => 'This filetype is not allowed.'));
+            return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
-        // Get user / system data:
+        // Get file title
         $uploadedFile = $request->files->get('file');
-        $urlCategoryId = $request->get('categoryId');
-        $userChosenCategory = $request->get('userCategory');
-        $userChosenTitle = $request->get('userTitle');
-        $userChosenCaption = $request->get('userCaption');
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-
-
-
-//        if (null !== $userChosenTitle && '' !== $userChosenTitle ) {
-//            $file->setTitle($userChosenTitle);
-//        } else {
-//            $file->setTitle($originalFilename);
-//        }
-        $file->setTitle("UPPY UPLOAD");
+        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
+        $file->setTitle($originalFilename);
 
         $storage = $this->manager->write(
             new MemoryReader(
-                file_get_contents($request->files->get('file')),
+                file_get_contents($uploadedFile),
                 new Metadata(
                     $uploadedFileExtension,
                     $uploadedFileMimetype,
@@ -209,7 +192,7 @@ class MediaController extends AbstractController
 
         $this->taxonomyRelationManager->manageRelations($request);
 
-        return new JsonResponse(array('message' => 'file is uploaded.', 'content' => json_encode($file)));
+        return new JsonResponse(['message' => 'file is uploaded.', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

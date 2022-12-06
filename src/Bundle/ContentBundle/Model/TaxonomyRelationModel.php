@@ -41,17 +41,15 @@ class TaxonomyRelationModel
 
         // From form parameters (when using Uppy for example)
         if (null === $params) {
-
             $params = [
                 'category_id_target' => $request->get('category_id_target'),
                 'media_id' => [$request->get('media_id')],
 
-                //optional, are we going to need these?
+                // optional, are we going to need these?
                 'userTitle' => $request->get('userTitle'),
                 'userCaption' => $request->get('userCaption'),
                 'userTags' => $request->get('userTags'),
             ];
-
         }
 
         if (\array_key_exists('media_id', $params)) {
@@ -67,6 +65,10 @@ class TaxonomyRelationModel
 
     public function isTargetSameAsOrigin()
     {
+        if ($this->getCategoryIdTarget() === '') {
+            return false;
+        }
+
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }
 

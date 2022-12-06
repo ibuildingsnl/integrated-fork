@@ -15,6 +15,7 @@
     },
     "dependencies": {
         "@melloware/coloris": "^0.16.1",
+        "@uppy/locales": "^3.0.4",
         "bootstrap-sass": "^3.4.1",
         "bootstrap3-wysihtml5-bower": "~0.3",
         "components-jqueryui": "~1.12",

@@ -30,19 +30,15 @@ class TaxonomyRelationManager
         $this->indexer = $indexer;
     }
 
-    public function manageRelationsWithParams($params) {
-        $request = new Request;
+    public function manageRelationsWithParams($params)
+    {
+        $request = new Request();
 
         foreach ($params as $key => $value) {
             $request->attributes->set($key, $value);
         }
 
         $this->manageRelations($request);
-    }
-
-    public function findParams(Request $request): array {
-
-
     }
 
     public function manageRelations(Request $request)
@@ -56,7 +52,6 @@ class TaxonomyRelationManager
         }
 
         $taxonomy = $this->getTaxonomy($taxonomyRelation);
-
         $mediaItems = $this->getMediaItems($taxonomyRelation);
 
         foreach ($mediaItems as $mediaItem) {
@@ -129,6 +124,10 @@ class TaxonomyRelationManager
 
     public function addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs)
     {
+        if (null === $taxonomy) {
+            return;
+        }
+
         if (false === \in_array($taxonomy->getID(), $relationIDs)) {
             $messages[] = 'not in array';
             $relations->addReference($taxonomy);
