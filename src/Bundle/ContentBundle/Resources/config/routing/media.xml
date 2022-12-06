@@ -17,7 +17,7 @@
     </route>
 
     <route id="integrated_content_media_upload_file" path="/upload_file" methods="POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::upload_file</default>
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::uploadFile</default>
     </route>
 
 </routes>

@@ -44,7 +44,6 @@ window.enable_list_view = function() {
     enable_x('list')
 }
 
-
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
         await disableBulkSelection()
@@ -136,7 +135,7 @@ jQuery(document).mouseup(function(e) {
     }
 });
 
-(function ($) {
+
     $(function () {
         let $gallery = $("#gallery")
         let $media_items = $(".media_category");
@@ -231,4 +230,3 @@ jQuery(document).mouseup(function(e) {
             }
         }
     });
-})(jQuery);

@@ -141,7 +141,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function upload_file(Request $request)
+    public function uploadFile(Request $request)
     {
         $entityManager = $this->getDoctrineODM()->getManager();
 
