@@ -48,6 +48,43 @@ class Company extends Relation
     protected $logo;
 
     /**
+     * @var StorageInterface
+     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\MediaGalleryImageType")
+     */
+    protected StorageInterface $mediaGalleryImage;
+
+    public function getMediaGalleryImage(): StorageInterface|null
+    {
+        return $this->mediaGalleryImage;
+    }
+
+    public function setMediaGalleryImage(StorageInterface $mediaGalleryImage = null): Company
+    {
+        $this->mediaGalleryImage = $mediaGalleryImage;
+
+        return $this;
+    }
+
+    /**
+     * @var string
+     * @Slug(fields={"custominput"})
+     * @Type\Field
+     */
+    protected $custominput;
+
+    public function getCustominput(): string|null
+    {
+        return $this->custominput;
+    }
+
+    public function setCustominput(string $custominput = null): string
+    {
+        $this->custominput = $custominput;
+
+        return $this;
+    }
+
+    /**
      * @var string
      *
      * @Type\Field

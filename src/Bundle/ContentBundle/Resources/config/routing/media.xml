@@ -8,6 +8,10 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index</default>
     </route>
 
+    <route id="integrated_content_media_index_component" path="/index_component" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index_component</default>
+    </route>
+
     <route id="integrated_content_media_manage_relations" path="/manage_relations" methods="GET, PUT">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::manageRelations</default>
     </route>

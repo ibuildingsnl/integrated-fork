@@ -113,7 +113,13 @@
                         <string>@slug</string>
                     </array>
                 </array>
+                <string key="custominput">custominput</string>
+            </options>
+        </type>
 
+        <type name="integrated.storage">
+            <options>
+                <string key="mediaGalleryImage">mediaGalleryImage</string>
             </options>
         </type>
 
@@ -123,15 +129,10 @@
             </options>
         </type>
 
-
         <type name="integrated.storage">
-
             <options>
-
                 <string key="cover">cover</string>
-
             </options>
-
         </type>
 
     </class>

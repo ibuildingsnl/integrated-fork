@@ -116,3 +116,41 @@
 {% block integrated_image_dropzone_row %}
     {{ block('integrated_file_dropzone_row') }}
 {% endblock %}
+
+{% block integrated_media_gallery_image_row %}
+    {% apply spaceless %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% set state = state|default(tailwind_get_state()) %}
+
+        <div id="photo_upload_area">WOUTER</div>
+
+        <button id="load_media_gallery" >click me</button>
+
+        <script>
+            document.getElementById("load_media_gallery").addEventListener("click", function(event){
+                event.preventDefault()
+                show_upload_modal()
+            });
+
+            window.selectAnImage = function(given_object) {
+                event.preventDefault()
+                console.log("ive selected an image")
+                console.log(given_object)
+            }
+
+            async function show_upload_modal() {
+                getMediaGallery()
+            }
+
+            async function getMediaGallery() {
+                const whereToAdd = '#photo_upload_area';
+                const url = '/admin/media/index_component';
+                const options = [];
+                const response = await fetch(url, options);
+                document.querySelector(whereToAdd).innerHTML = await response.text();
+            }
+        </script>
+
+    {% endapply %}
+{% endblock %}

@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * This file is part of the Integrated package.
  *
  * (c) e-Active B.V. <integrated@e-active.nl>
@@ -110,6 +111,53 @@ class MediaController extends AbstractController
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
+            'paginator' => $this->createPaginator($items, $requestSource),
+            'items' => $items,
+            'contentTypeSelectOptions' => $contentTypeSelectOptions,
+            'contentTypeFilterOptions' => $contentTypeFilterOptions,
+            'dateFilterOptions' => $dateFilterOptions,
+            'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
+            'menu' => $menu,
+            'not_shown_filetypes' => array_map(
+                fn ($item) => strtolower($item),
+                $this::NOT_SHOWN_FILETYPES
+            ),
+        ]);
+    }
+
+    public function index_component(Request $requestSource): Response
+    {
+        $contentTypeSelectOptions = $this->getContentTypes();
+
+        $requestCopy = clone $requestSource;
+
+        // Todo: Update this code when the contentprovides is updated
+        $givenContentType = $requestCopy->get('contenttypes');
+        if (\is_array($givenContentType) && \count($givenContentType) > 0) {
+            $givenContentType = $givenContentType[0];
+        }
+        if ($givenContentType !== 'all_files' && $givenContentType !== null) {
+            $requestCopy->query->set('contenttypes', [$givenContentType]);
+        } else {
+            $requestSource->query->set('contenttypes', 'all_files');
+        }
+
+        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
+
+        $menu = $this->mediaGalleryMenu->createMenu();
+
+        $this->setYearMonthFilter($requestCopy);
+
+        $items = $this->provider->getContentFromSolr($requestCopy, 2000);
+
+        $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
+
+        $contentTypeFilterOptions = $this->getContentTypeFilterOptions($requestSource);
+
+        $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
+        $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
+
+        return $this->render('@IntegratedContent/media/index_component.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
             'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,
