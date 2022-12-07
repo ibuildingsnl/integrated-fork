@@ -13,8 +13,10 @@ namespace Integrated\Bundle\MenuBundle\Tests\Provider;
 use Integrated\Bundle\MenuBundle\Provider\BreadcrumbMenuProvider;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbItem;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver;
+use InvalidArgumentException;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BreadcrumbProviderTest extends TestCase
@@ -23,17 +25,17 @@ class BreadcrumbProviderTest extends TestCase
     public const INVALID_MENU = 'invalid_menu';
 
     /**
-     * @var FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FactoryInterface|MockObject
      */
     protected $menuFactory;
 
     /**
-     * @var BreadcrumbMenuProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbMenuProvider|MockObject
      */
     protected $breadcrumbMenuProvider;
 
     /**
-     * @var BreadcrumbResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbResolver|MockObject
      */
     protected $breadcrumbResolver;
 
@@ -77,7 +79,7 @@ class BreadcrumbProviderTest extends TestCase
      */
     public function testGetFunctionWithInvalidMenu()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->breadcrumbMenuProvider->get(self::INVALID_MENU);
     }
