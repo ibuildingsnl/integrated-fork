@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\ProfileFormType;
@@ -100,12 +101,7 @@ class ProfileController extends AbstractController
             ]
         );
 
-        $form->add('actions', FormActionsType::class, [
-            'buttons' => [
-                'save' => ['type' => SubmitType::class, 'options' => ['label' => 'Save']],
-                'cancel' => ['type' => SubmitType::class, 'options' => ['label' => 'Cancel', 'attr' => ['type' => 'default', 'formnovalidate' => true]]],
-            ],
-        ]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
 
         return $form;
     }

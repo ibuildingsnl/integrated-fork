@@ -133,6 +133,7 @@ div#dropdown_overlay {
     right: 0;
     top: 60px;
     z-index: 1040;
+    height: -webkit-fill-available;
 }
 
 body div#dropdown_overlay {

@@ -25,7 +25,7 @@
                         <ul class="options-no-bg">
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
-                                    <span>{% trans %}New{% endtrans %} {% trans %}Block{% endtrans %}</span>
+                                    <span>{% trans %}New{% endtrans %} {% trans %}block{% endtrans %}</span>
                                     <i class="iconoir-plus"></i>
                                 </a>
                                 <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
@@ -48,13 +48,13 @@
 
         </div>
 
-        <div class="aside-filters">
+        <div class="aside-filters close-outside">
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
                         <button class="toggle-filters" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="#" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_block_block_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>

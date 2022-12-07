@@ -1,3 +1,18 @@
+body, html {
+    height: -webkit-fill-available;
+    -webkit-overflow-scrolling : touch !important;
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+body {
+    position: absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+}
+
 .content-wrapper {
     //padding-bottom: 120px;
     position: relative;
@@ -13,7 +28,7 @@
     }
     &.iframe {
         width: 100vw;
-        max-height: calc(100vh - 50px);
+        max-height: calc(100vh - 60px);
         .aside-options {
             height: 100vh
         }
@@ -77,9 +92,9 @@
     .edit-form {
         .editor-wrapper {
             background-color: $bg-gray;
-            padding: 2rem;
+            padding: 2rem 2rem 100px 2rem;
             @include media(max-lg) {
-                padding:1rem;
+                padding: 1rem 1rem 100px 1rem;
             }
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
@@ -123,7 +138,7 @@
     }
 }
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm {
+body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index {
     .content-wrapper {
         padding: 50px 0 0;
     }
@@ -133,6 +148,14 @@ body.bulk_select, body.bulk_configure, body.bulk_confirm {
     .form-wrapper.compound .form-group > div {
         width: 100%;
         margin-bottom: 1rem;
+    }
+}
+
+@include media(max-sm) {
+    .content_index {
+        .section-white {
+            background:transparent;
+        }
     }
 }
 
@@ -149,6 +172,7 @@ body.show-options {
         }
     }
     @include media(max-md) {
+        position: inherit;
         #wrapper-holder {
             position: inherit;
 
@@ -207,9 +231,6 @@ body.hide-options {
             padding: 1rem 1rem 0 1rem;
             li {
                 margin-bottom:1rem;
-                &:last-child {
-                    margin-bottom: 0;
-                }
             }
         }
     }

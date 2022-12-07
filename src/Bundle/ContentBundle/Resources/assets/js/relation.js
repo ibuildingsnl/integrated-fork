@@ -120,7 +120,7 @@ $('.relations').on('click', '[data-modal]', function(e){
 
     modal.find('.modal-title').text($(this).data('title'));
 
-    iFrame.css('display', 'block').attr('src', $(this).data('href')).load(function(e){
+    iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function(e){
 
         iFrame.show();
         modal.modal('show');

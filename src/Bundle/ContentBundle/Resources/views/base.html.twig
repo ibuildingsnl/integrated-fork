@@ -60,7 +60,8 @@
 {% block header %}
     <nav class="navbar">
         <div class="flex justify-between xl:px-4 w-full">
-            <button class="mobile-menu-toggle" onclick="toggleDataTarget(this)" type="button" data-target="sidebar-menu">
+            <button class="mobile-menu-toggle toggle-button" onclick="toggleDataTarget(this)" type="button"
+                    data-target="sidebar-menu">
                 <i class="iconoir-menu"></i>
             </button>
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
@@ -86,7 +87,7 @@
     <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
         {% block sidebar_menu %}
-            <div class="sidebar-menu">
+            <div class="sidebar-menu close-outside">
                 {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
             </div>
         {% endblock sidebar_menu %}
@@ -135,127 +136,76 @@
 {% endblock javascript %}
 
 <script>
-    //DROPDOWN MENU
-    function initMenu() {
-
-        var menus = document.querySelectorAll('.dropdown.top-bar');
-        menus.forEach((menu) => {
-            if (menu != null) {
-                for (var i = 0; i < menu.children.length; i++) {
-                    var menuClasses = menu.children[i];
-                    var cList = menuClasses.classList;
-                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
-                        cList.contains('dropdown-menu-right')) {
-                        menu.addEventListener('click', showDropDownBackGround, false);
-                        menu.clickableElement = menu;
-                    }
-                }
-            }
-        });
-    }
-
     function toggleOptionsSidebar(event) {
         let viewportWidth = window.innerWidth;
         var optionsMenu = document.querySelector('.aside-options');
         var dropDownUnderlay = document.querySelector('#dropdown_overlay');
-        if ((viewportWidth < 1025 && !optionsMenu.classList.contains('show')) || document.body.classList.contains('hide-options')) {
-            document.body.classList.add("show-options");
+        if ((viewportWidth < 1025 && !optionsMenu.classList.contains('show')) ||
+            document.body.classList.contains('hide-options')) {
+            document.body.classList.add('show-options');
             optionsMenu.classList.add('show');
 
-            document.body.classList.remove("hide-options");
+            document.body.classList.remove('hide-options');
             optionsMenu.classList.remove('hide');
         } else {
-            document.body.classList.remove("show-options");
+            document.body.classList.remove('show-options');
             optionsMenu.classList.remove('show');
 
-            document.body.classList.add("hide-options");
+            document.body.classList.add('hide-options');
             optionsMenu.classList.add('hide');
         }
     }
 
+    $(document).mouseup(function(e) {
+        var closeOutside = $('.close-outside');
+        var toggleButton = $('.toggle-button');
+
+        if (((!closeOutside.is(e.target) && closeOutside.has(e.target).length === 0) &&
+                (!toggleButton.is(e.target) && toggleButton.has(e.target).length === 0)) &&
+            !event.srcElement.classList.contains('tt-input') && !event.srcElement.classList.contains('dropdown-menu')
+        ) {
+            closeOutside.removeClass('show');
+            hideDropDownBackgroud();
+        }
+    });
+
     function toggleDataTarget(obj) {
         var targetElement = document.querySelector('.' + obj.getAttribute('data-target'));
         var dropDownUnderlay = document.querySelector('#dropdown_overlay');
-        if (!targetElement.classList.contains("show")) {
-            targetElement.classList.add("show");
-            if (obj.getAttribute('data-underlay') != 'no' ) {
-                dropDownUnderlay.classList.remove("hide");
-            }
-        } else {
-            targetElement.classList.remove("show");
+        if (!targetElement.classList.contains('show')) {
+            targetElement.classList.add('show');
             if (obj.getAttribute('data-underlay') != 'no') {
-                dropDownUnderlay.classList.add("hide");
+                dropDownUnderlay.classList.remove('hide');
+            }
+        } else {
+            targetElement.classList.remove('show');
+            if (obj.getAttribute('data-underlay') != 'no') {
+                dropDownUnderlay.classList.add('hide');
             }
         }
     }
 
-    function hideDropDownBackgroud(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-
-        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
-            menuItemDropDownUnderlay.classList.add('hide');
-        }
-    }
-
-    function showDropDownBackGround(event) {
-        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
-
-        if (event && event.currentTarget.clickableElement.classList.contains('open')) {
-            menuItemDropDownUnderlay.classList.add('hide');
-        } else {
-            menuItemDropDownUnderlay.classList.remove('hide');
-        }
-    }
+    document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 
     function hideButtonIfNoOptions() {
-        const optionsToggle = document.querySelector(".toggle-settings");
-        const optionsDiv = document.querySelector(".aside-options");
-        console.log(optionsDiv.childNodes.length);
+        const optionsToggle = document.querySelector('.toggle-settings');
+        const optionsDiv = document.querySelector('.aside-options');
         if (optionsDiv && (optionsDiv.childNodes.length === 0)) {
             optionsToggle.classList.add('hidden');
         }
     }
 
-    document.addEventListener('DOMContentLoaded', initMenu)
-    document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions)
-
-    window.addEventListener('click', function(event) {
-        if (event.srcElement.classList.contains('modal_overlay')) {
-            hideDropDownBackgroud();
-        }
-    });
-
-    $(document).mouseup(function(e)
-    {
-        var filterMenu = $('.aside-filters');
-
-        // if the target of the click isn't the container nor a descendant of the container
-        if (!filterMenu.is(e.target) && filterMenu.has(e.target).length === 0)
-        {
-            filterMenu.removeClass('show');
-        }
-    })
-
-    $(document).mouseup(function(e)
-    {
-        var mobileSidebarMenu = $('.sidebar-menu');
-        var mobileSidebarMenuToggle = $('.mobile-menu-toggle');
-
-        // if the target of the click isn't the container nor a descendant of the container
-        if ((!mobileSidebarMenu.is(e.target) && mobileSidebarMenu.has(e.target).length === 0) &&
-            (!mobileSidebarMenuToggle.is(e.target) && mobileSidebarMenuToggle.has(e.target).length === 0))
-        {
-            mobileSidebarMenu.removeClass('show');
-        }
-    })
-
     $('.search-form .form-control').focus(function() {
         showDropDownBackGround();
-    })
+    });
 
     $('.search-form .form-control').blur(function() {
         hideDropDownBackgroud();
-    })
+    });
+
+    $(document).on('click', '.navbar .dropdown.top-bar ul', function(e) {
+        e.stopPropagation();
+    });
 
     function asideItemsSearch(elem) {
         // Declare variables
@@ -278,6 +228,52 @@
         }
     };
 
+    document.addEventListener('DOMContentLoaded', initMenu);
+
+    //DROPDOWN MENU
+    function initMenu() {
+
+        var menus = document.querySelectorAll('.dropdown.top-bar');
+        menus.forEach((menu) => {
+            if (menu != null) {
+                for (var i = 0; i < menu.children.length; i++) {
+                    var menuClasses = menu.children[i];
+                    var cList = menuClasses.classList;
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
+                        cList.contains('dropdown-menu-right')) {
+                        menu.addEventListener('click', showDropDownBackGround, menu.clickableElement);
+                        menu.clickableElement = menu;
+                    }
+                }
+            }
+        });
+    }
+
+    function hideDropDownBackgroud(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        if (isElement(this) && this.classList.contains('open')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        } else {
+            menuItemDropDownUnderlay.classList.remove('hide');
+        }
+    }
+
+    //Returns true if it is a DOM element
+    function isElement(o) {
+        return (
+            typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
+                o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string'
+        );
+    }
+
     // JS
     var sidebarfilter = document.getElementsByClassName('aside-item-header');
     var editorsettings = document.getElementsByClassName('editor-item-header');
@@ -285,15 +281,18 @@
 
     for (var i = 0; i < sidebarfilter.length; i++) {
         sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
-    };
+    }
+    ;
 
     for (var i = 0; i < editorsettings.length; i++) {
         editorsettings[i].addEventListener('click', toggleOptionsElement, false);
-    };
+    }
+    ;
 
     for (var i = 0; i < sidebarMenu.length; i++) {
         sidebarMenu[i].addEventListener('click', toggleSidebarElement, false);
-    };
+    }
+    ;
 
     function toggleOptionsElement(event) {
         var options = this.parentNode.querySelector('.aside-item-list');

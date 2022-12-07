@@ -147,6 +147,7 @@
     .modal-header {
         padding: 15px;
         border-bottom: 1px solid #e5e5e5;
+        position: relative;
 
         &:before, &:after {
             content: " ";
@@ -156,9 +157,25 @@
         &:after {
             clear: both
         }
-        .close {
-            margin-top: -2px
+        button.close {
+            top: 0;
+            height: 50px;
+            width: 50px;
+            display: flex;
+            right: 0;
+            align-items: center;
+            justify-content: center;
+            i:before {
+                width: 30px;
+                height: 30px;
+            }
+            span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
+
     }
 
     .modal-content {

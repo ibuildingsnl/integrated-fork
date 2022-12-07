@@ -153,13 +153,13 @@
             </section>
         </div>
 
-        <div class="aside-filters">
+        <div class="aside-filters close-outside">
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header">
                         <button class="toggle-filters" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="#" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>
@@ -183,7 +183,7 @@
                                                     {% endif %}
                                                 </span>
                                             </h3>
-                                            <i class="iconoir-nav-arrow-up"></i>
+                                            <i class="iconoir-nav-arrow-down"></i>
                                         </div>
                                         <div class="aside-item-list">
                                             <div class="aside-item-list-container">

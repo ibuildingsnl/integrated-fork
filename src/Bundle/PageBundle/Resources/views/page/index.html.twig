@@ -134,13 +134,13 @@
                 {{ knp_pagination_render(pages) }}
             </section>
         </div>
-        <div class="aside-filters">
+        <div class="aside-filters close-outside">
             <aside>
                 <div class="aside-holder section-gray section-radius">
                     <div class="aside-header">
                         <button class="toggle-filters" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="#" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_page_page_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>

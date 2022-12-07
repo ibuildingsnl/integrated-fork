@@ -21,6 +21,14 @@
         "/bundles/integratedintegrated/collection.js"
       ]
     },
+    "mediagallery": {
+      "css": [
+        "/bundles/integratedintegrated/mediagallery.css"
+      ],
+      "js": [
+        "/bundles/integratedintegrated/mediagallery.js"
+      ]
+    },
     "iframe": {
       "css": [
         "/bundles/integratedintegrated/iframe.css"
