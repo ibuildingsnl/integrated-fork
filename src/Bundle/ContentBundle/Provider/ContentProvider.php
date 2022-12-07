@@ -207,8 +207,6 @@ class ContentProvider
             }
         }
 
-//        dd($contentType);
-
         if (\is_array($contentType)) {
             if (\count($contentType)) {
                 $query

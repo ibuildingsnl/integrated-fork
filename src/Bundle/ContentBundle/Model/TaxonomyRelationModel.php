@@ -34,7 +34,7 @@ class TaxonomyRelationModel
         $this->setup($request);
     }
 
-    private function setup($request): void
+    private function setup(Request $request): void
     {
         // From the url (when dragging and dropping)
         $params = json_decode($request->getContent(), true);
@@ -63,7 +63,7 @@ class TaxonomyRelationModel
         }
     }
 
-    public function isTargetSameAsOrigin()
+    public function isTargetSameAsOrigin(): bool
     {
         if ($this->getCategoryIdTarget() === '') {
             return false;
@@ -87,7 +87,7 @@ class TaxonomyRelationModel
         return $this->categoryIdTarget;
     }
 
-    public function setCategoryIdTarget($categoryIdTarget): void
+    public function setCategoryIdTarget(string $categoryIdTarget): void
     {
         $this->categoryIdTarget = $categoryIdTarget;
     }
@@ -97,7 +97,7 @@ class TaxonomyRelationModel
         return $this->categoryIdOrigin;
     }
 
-    public function setCategoryIdOrigin($categoryIdOrigin): void
+    public function setCategoryIdOrigin(string $categoryIdOrigin): void
     {
         $this->categoryIdOrigin = $categoryIdOrigin;
     }

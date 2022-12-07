@@ -74,7 +74,7 @@ function handleBulkItemClick(event) {
         let step_to = event.currentTarget.getAttribute('data-media_id') * 1
 
         for (let step = step_from; step <= step_to; step++) {
-            let element = document.querySelector('.media-item[data-media_id="' + step + '"]')
+            const element = document.querySelector('.media-item[data-media_id="' + step + '"]')
 
             media_id = element.getAttribute('data-id')
 
@@ -137,8 +137,8 @@ jQuery(document).mouseup(function(e) {
 
 
     $(function () {
-        let $gallery = $("#gallery")
-        let $media_items = $(".media_category");
+        const $gallery = $("#gallery")
+        const $media_items = $(".media_category");
 
         //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
         $('li.media-item', $gallery).draggable({
@@ -177,16 +177,11 @@ jQuery(document).mouseup(function(e) {
 
             //So here we want to send something to the server
             if (bulkSelection.length > 0) {
-                console.log("Were bulk moving!")
                 let duplicatesRemoved = bulkSelection.filter(onlyUnique);
-                console.log(duplicatesRemoved)
                 sendAjaxRequest(category_id, duplicatesRemoved)
             } else {
-                console.log("We`re single moving:")
                 sendAjaxRequest(category_id, [media_id])
-                console.log(media_id)
             }
-            console.log("To: " + category_id)
             $('.media_category').removeClass('flash')
             $('#' + category_id).addClass("flash");
         }
@@ -207,13 +202,7 @@ jQuery(document).mouseup(function(e) {
                 category_id_origin: get_current_category_id(),
             })
 
-            //TODO how to get the proper path? For now I`ve added this in the twig template
-            //let path = 'https://localhost.integratedfordevelopers.com/admin/media/manage_relations'
-            // let path = "{{ path("integrated_content_media_manage_relations") }}'
-
-            postData(path, jsonContent).then((data) => {
-                console.log(data); // JSON data parsed by `data.json()` call
-            });
+            postData(path, jsonContent)
 
             async function postData(url = '', data = {}) {
                 const response = await fetch(url, {

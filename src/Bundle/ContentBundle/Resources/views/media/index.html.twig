@@ -152,7 +152,8 @@
                                                 merge({'page':1})
                                             ) }}"
                                                tabindex="-1"
-                                               role="menuitem">{{ content_type.name|trans|capitalize }}</a>
+                                               role="menuitem">{{ content_type.name|trans|capitalize }}
+                                            </a>
                                         </li>
 
                                     {% endfor %}
@@ -176,7 +177,8 @@
                                                     merge({'page':1})
                                                 ) }}"
                                                    tabindex="-1"
-                                                   role="menuitem">{{ year_month.label|trans|capitalize }}</a>
+                                                   role="menuitem">{{ year_month.label|trans|capitalize }}
+                                                </a>
                                             </li>
                                         {% endif %}
                                     {% endfor %}
@@ -338,5 +340,4 @@
 
 {% block style %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/mediagallery.css') }}">
 {% endblock %}

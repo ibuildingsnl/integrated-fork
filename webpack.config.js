@@ -23,7 +23,6 @@ webpackConfig = Encore.setOutputPath(
     ])
     .addEntry('mediagallery', [
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
-        './src/Bundle/ContentBundle/Resources/assets/css/mediaGallery.css',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',
     ])
     .addEntry('iframe', [
