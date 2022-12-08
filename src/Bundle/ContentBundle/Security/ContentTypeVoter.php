@@ -25,11 +25,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class ContentTypeVoter implements VoterInterface
 {
     /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
      * @var ObjectRepository
      */
     private $repository;
@@ -40,13 +35,11 @@ class ContentTypeVoter implements VoterInterface
     private $permissions;
 
     /**
-     * @param ResolverInterface $resolver
      * @param ObjectRepository  $repository
      * @param array             $permissions
      */
-    public function __construct(ResolverInterface $resolver, ObjectRepository $repository, array $permissions = [])
+    public function __construct(ObjectRepository $repository, array $permissions = [])
     {
-        $this->resolver = $resolver;
         $this->repository = $repository;
         $this->permissions = $this->getOptionsResolver()->resolve($permissions);
     }
