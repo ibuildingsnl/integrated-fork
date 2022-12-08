@@ -156,6 +156,10 @@ class ImageExtension extends AbstractExtension
             return $this->imageJson($image);
         }
 
+        if (\in_array(pathinfo($image, PATHINFO_EXTENSION), $this->mimicFormats)) {
+            return $this->imageMimicHandling->open($image);
+        }
+
         return $this->imageHandling->open($image);
     }
 
