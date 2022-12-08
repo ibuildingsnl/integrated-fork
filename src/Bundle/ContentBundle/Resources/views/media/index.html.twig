@@ -1,20 +1,25 @@
-{% extends '@IntegratedContent/base.html.twig' %}
+{#{% extends '@IntegratedContent/base.html.twig' %}#}
+
+{% extends selected_modus == 'media_gallery'
+? '@IntegratedContent/base.html.twig'
+: '@IntegratedContent/empty.html.twig' %}
+
+{% set selected_modus = 'media_gallery' %}
 {% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
-
+    {{ dump(selected_modus|default('media_gallery')) }}
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
-        selected_modus: 'media_gallery',
+        selected_modus: selected_modus|default('media_gallery'),
     }  %}
 
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
-
-        const selected_modus = 'select_multiple'
+        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
     </script>
+
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
 {% endblock %}

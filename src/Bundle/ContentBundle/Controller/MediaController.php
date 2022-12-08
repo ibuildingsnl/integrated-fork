@@ -157,7 +157,8 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
-        return $this->render('@IntegratedContent/media/index_component.html.twig', [
+        return $this->render('@IntegratedContent/media/index.html.twig', [
+            'selected_modus' => 'select_one',
             'paginator' => $this->createPaginator($items, $requestSource),
             'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,

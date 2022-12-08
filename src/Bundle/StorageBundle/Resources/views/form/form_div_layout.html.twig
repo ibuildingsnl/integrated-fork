@@ -119,38 +119,48 @@
 
 {% block integrated_media_gallery_image_row %}
 
-        <div id="photo_upload_area">WOUTER</div>
+    <div id="photo_upload_area">WOUTER</div>
 
-        <button id="load_media_gallery" >click me</button>
+    <object data="https://localhost.integratedfordevelopers.com/admin/media/" width="600" height="400">
+        <embed src="https://localhost.integratedfordevelopers.com/admin/media/" width="600" height="400"> </embed>
+            Error: Embedded data could not be displayed.
+    </object>
 
-        <script>
-            document.getElementById("load_media_gallery").addEventListener("click", function(event){
-                event.preventDefault()
-                show_upload_modal()
-            });
+    <button id="load_media_gallery" >click me</button>
 
-            window.selectAnImage = function(given_object) {
-                event.preventDefault()
-                console.log("ive selected an image")
-                console.log(given_object)
-                closeMediaGallery()
-            }
+{#    {% embed '@IntegratedContent/media/index.html.twig' %}#}
+{#        {% block first %}First Product Page{% endblock %}#}
+{#        {% block last %}Last Product Page{% endblock %}#}
+{#    {% endembed %}#}
 
-            async function show_upload_modal() {
-                getMediaGallery()
-            }
+    <script>
+        document.getElementById("load_media_gallery").addEventListener("click", function(event){
+            event.preventDefault()
+            show_upload_modal()
+        });
 
-            function closeMediaGallery() {
-                document.querySelector('#photo_upload_area').innerHTML = 'CLOSED'
-            }
+        window.selectAnImage = function(given_object) {
+            event.preventDefault()
+            console.log("ive selected an image")
+            console.log(given_object)
+            closeMediaGallery()
+        }
 
-            async function getMediaGallery() {
-                const whereToAdd = '#photo_upload_area';
-                const url = '/admin/media/index_component';
-                const options = [];
-                const response = await fetch(url, options);
-                document.querySelector(whereToAdd).innerHTML = await response.text();
-            }
-        </script>
+        async function show_upload_modal() {
+            getMediaGallery()
+        }
+
+        function closeMediaGallery() {
+            document.querySelector('#photo_upload_area').innerHTML = 'CLOSED'
+        }
+
+        async function getMediaGallery() {
+            const whereToAdd = '#photo_upload_area';
+            const url = '/admin/media/index_component';
+            const options = [];
+            const response = await fetch(url, options);
+            document.querySelector(whereToAdd).innerHTML = await response.text();
+        }
+    </script>
 
 {% endblock %}

@@ -4,7 +4,7 @@
     <div class="media-sidebar">
 
         {% if selected_modus != 'media_gallery' %}
-            <button onclick="selectAnImage(this)" class="p-2 bg-red-200">upload this image</button>
+            <button id="confirm_selection" onclick="window.selectAnImage(this)" class="p-2 bg-red-200">upload this image</button>
         {% endif %}
 
         <aside>
@@ -191,9 +191,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <button class="btn btn-action"
-                            id="bulkselection">{% trans %} Bulkselection {% endtrans %}
-                    </button>
+                    <button class="btn btn-action" id="bulkselection">{% trans %} Bulkselection {% endtrans %}</button>
                 </div>
                 <form action="" class="media-search-form" method="get">
                     <div class="form-group relative" style="width: 250px">

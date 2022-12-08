@@ -1,25 +1,28 @@
 //BULKSELECTION FUNCTIONALITY
 //this controls if we show an icon with each image
 
-const selected_modus = 'media_gallery'
+// const selected_modus = 'media_gallery'
 
 console.log("selected modus: " + selected_modus)
 
 const modi = {
     'select_one': {
-        bulkSelectionEnabled: false,
+        bulkSelectionEnabled: true,
         showSelectButton: true,
         showBulkSelectionButton: false,
+        selectOnlyOneEnabled: true,
     },
     'select_multiple': {
         bulkSelectionEnabled: true,
         showSelectButton: true,
         showBulkSelectionButton: false,
+        selectOnlyOneEnabled: false,
     },
     'media_gallery': {
         bulkSelectionEnabled: false,
         showSelectButton: false,
         showBulkSelectionButton: true,
+        selectOnlyOneEnabled: false,
     }
 }
 
@@ -28,13 +31,6 @@ let showSelectButton = modi[selected_modus].showSelectButton
 let bulkSelection = [] //this keeps track which items are selected
 let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 let draggingAmountOfItems = 1
-
-if (bulkSelectionEnabled) {
-    enableBulkSelection()
-}
-if (showSelectButton) {
-
-}
 
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
@@ -55,39 +51,50 @@ async function enableBulkSelection() {
 }
 
 function handleBulkItemClick(event) {
-    let media_id = null
-    if (event.shiftKey === true) {
-        //SHIFT CLICK
-        if (latestBulkSelectionItemClicked === null) {
-            latestBulkSelectionItemClicked = 1
+    if (modi[selected_modus].selectOnlyOneEnabled) {
+        const element_id = event.currentTarget.getAttribute('data-id')
+        if (bulkSelection.length > 0) {
+            $('#' + bulkSelection[0]).removeClass('selected')
         }
-
-        let step_from = latestBulkSelectionItemClicked * 1
-        step_to = event.currentTarget.getAttribute('data-media_id') * 1
-
-        for (let step = step_from; step <= step_to; step++) {
-            const element = document.querySelector('.media-item[data-media_id="' + step + '"]')
-
-            media_id = element.getAttribute('data-id')
-
-            bulkSelection.push(media_id)
-            $('#' + element.id).addClass('selected')
-        }
+        localStorage.setItem("age", 38)
+        bulkSelection = [event.currentTarget.getAttribute('data-id')]
+        $('#' + element_id).addClass('selected')
     } else {
-        //SINGLE CLICK
-        media_id = event.currentTarget.getAttribute('data-id')
+    let media_id = null
+        if (event.shiftKey === true) {
+            //SHIFT CLICK
+            if (latestBulkSelectionItemClicked === null) {
+                latestBulkSelectionItemClicked = 1
+            }
 
-        if (bulkSelection.includes(media_id)) {
-            bulkSelection = bulkSelection.filter(item => item !== media_id)
-            $('#' + event.currentTarget.id).removeClass('selected')
+            let step_from = latestBulkSelectionItemClicked * 1
+            step_to = event.currentTarget.getAttribute('data-media_id') * 1
+
+            for (let step = step_from; step <= step_to; step++) {
+                const element = document.querySelector('.media-item[data-media_id="' + step + '"]')
+
+                media_id = element.getAttribute('data-id')
+
+                bulkSelection.push(media_id)
+                $('#' + element.id).addClass('selected')
+            }
         } else {
-            bulkSelection.push(media_id)
-            $('#' + event.currentTarget.id).addClass('selected')
+            //SINGLE CLICK
+            media_id = event.currentTarget.getAttribute('data-id')
+
+            if (bulkSelection.includes(media_id)) {
+                bulkSelection = bulkSelection.filter(item => item !== media_id)
+                $('#' + event.currentTarget.id).removeClass('selected')
+            } else {
+                bulkSelection.push(media_id)
+                $('#' + event.currentTarget.id).addClass('selected')
+            }
         }
+
+        latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
     }
 
-    latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
-
+    console.log(bulkSelection)
     draggingAmountOfItems = bulkSelection.length
 }
 
@@ -183,4 +190,20 @@ async function disableBulkSelection() {
             }
         }
     });
+
+    if (bulkSelectionEnabled) {
+        enableBulkSelection()
+    }
+
+    if (modi[selected_modus].showBulkSelectionButton == false) {
+        console.log("hide")
+        $('#bulkselection').hide()
+    }
+
+    if (!showSelectButton) {
+        $('#confirm_selection').hide()
+    }
+
+
+
 })(jQuery);
