@@ -1,8 +1,40 @@
 //BULKSELECTION FUNCTIONALITY
-let bulkSelectionEnabled = false //this controls if we show an icon with each image
+//this controls if we show an icon with each image
+
+const selected_modus = 'media_gallery'
+
+console.log("selected modus: " + selected_modus)
+
+const modi = {
+    'select_one': {
+        bulkSelectionEnabled: false,
+        showSelectButton: true,
+        showBulkSelectionButton: false,
+    },
+    'select_multiple': {
+        bulkSelectionEnabled: true,
+        showSelectButton: true,
+        showBulkSelectionButton: false,
+    },
+    'media_gallery': {
+        bulkSelectionEnabled: false,
+        showSelectButton: false,
+        showBulkSelectionButton: true,
+    }
+}
+
+let bulkSelectionEnabled = modi[selected_modus].bulkSelectionEnabled
+let showSelectButton = modi[selected_modus].showSelectButton
 let bulkSelection = [] //this keeps track which items are selected
 let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 let draggingAmountOfItems = 1
+
+if (bulkSelectionEnabled) {
+    enableBulkSelection()
+}
+if (showSelectButton) {
+
+}
 
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {

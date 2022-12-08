@@ -118,10 +118,6 @@
 {% endblock %}
 
 {% block integrated_media_gallery_image_row %}
-    {% apply spaceless %}
-        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        {% set style = style|default(tailwind_get_style()) %}
-        {% set state = state|default(tailwind_get_state()) %}
 
         <div id="photo_upload_area">WOUTER</div>
 
@@ -137,10 +133,15 @@
                 event.preventDefault()
                 console.log("ive selected an image")
                 console.log(given_object)
+                closeMediaGallery()
             }
 
             async function show_upload_modal() {
                 getMediaGallery()
+            }
+
+            function closeMediaGallery() {
+                document.querySelector('#photo_upload_area').innerHTML = 'CLOSED'
             }
 
             async function getMediaGallery() {
@@ -152,5 +153,4 @@
             }
         </script>
 
-    {% endapply %}
 {% endblock %}
