@@ -34,9 +34,10 @@ class Group implements GroupInterface
      */
     protected $roles;
 
-    public function __construct()
+    public function __construct(string $id = null)
     {
         $this->roles = new ArrayCollection();
+        $this->id = $id;
     }
 
     /**
