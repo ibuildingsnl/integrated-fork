@@ -3,7 +3,7 @@
 <script type="module">
     let uppyOptions = {
         endpoint: '{{ endpoint|default('/admin/media/upload_file') }}',
-        language: '{{ language|default('') }}', //"default = en
+        language: '{{ language|default('en') }}',
         height: '{{ height|default('750px') }}',
         imageEditorEnabled: {{ imageEditorEnabled|default(true) }},
         target: '{{ target|default('#drag-drop-area') }}'
@@ -46,8 +46,7 @@
             endpoint: uppyOptions.endpoint,
         });
 
-        // We get a 1 from twig
-        if (true == uppyOptions.imageEditorEnabled) {
+        if (uppyOptions.imageEditorEnabled) {
             uppy.use(ImageEditor, {
                 target: Dashboard,
                 quality: 0.9,

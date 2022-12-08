@@ -44,11 +44,6 @@ class TaxonomyRelationModel
             $params = [
                 'category_id_target' => $request->get('category_id_target'),
                 'media_id' => [$request->get('media_id')],
-
-                // optional, are we going to need these?
-                'userTitle' => $request->get('userTitle'),
-                'userCaption' => $request->get('userCaption'),
-                'userTags' => $request->get('userTags'),
             ];
         }
 

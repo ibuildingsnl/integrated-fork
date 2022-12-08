@@ -30,7 +30,7 @@ class TaxonomyRelationManager
         $this->indexer = $indexer;
     }
 
-    public function manageRelationsWithParams($params)
+    public function manageRelationsWithParams(array $params): void
     {
         $request = new Request();
 
@@ -41,7 +41,7 @@ class TaxonomyRelationManager
         $this->manageRelations($request);
     }
 
-    public function manageRelations(Request $request)
+    public function manageRelations(Request $request): JsonResponse
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
 
@@ -74,7 +74,7 @@ class TaxonomyRelationManager
         return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
     }
 
-    public function makeSureMediaIDIsArray($params)
+    public function makeSureMediaIDIsArray(array $params): array
     {
         if (true === \is_string($params['media_id'])) {
             $params['media_id'] = [$params['media_id']];
@@ -83,7 +83,7 @@ class TaxonomyRelationManager
         return $params;
     }
 
-    public function getMediaItems($taxonomyRelation)
+    public function getMediaItems(TaxonomyRelationModel $taxonomyRelation): array
     {
         return $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($taxonomyRelation->getMediaId())
@@ -122,12 +122,7 @@ class TaxonomyRelationManager
 
     private function addRelationIfNotExists(mixed $mediaItem, Relation $relations, Taxonomy $taxonomy, array $relationIDs): void
     {
-        if (null === $taxonomy) {
-            return;
-        }
-
         if (false === \in_array($taxonomy->getID(), $relationIDs)) {
-            $messages[] = 'not in array';
             $relations->addReference($taxonomy);
             $mediaItem->addRelation($relations);
         }

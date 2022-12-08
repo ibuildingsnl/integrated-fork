@@ -11,8 +11,8 @@
                     <div class="aside-item-wrapper">
                         <div class="aside-folder-header">
                             <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                <i class="iconoir-folder"></i><span
-                                    class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                                <i class="iconoir-folder"></i>
+                                <span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
                             </a>
                         </div>
                         <div class="aside-item-list-container">
@@ -56,7 +56,8 @@
                                                     {% for key_1, menu_item_1 in menu_item.children %}
                                                         <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
                                                             {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
+                                                            <a tabindex="-1" role="menuitem" class="media_category"
+                                                               id="{{ menu_item_1.ID }}">
                                                                 {% else %}
                                                                 <a href="{{ path(app.request.attributes.get('_route'),
                                                                     app.request.query.all|
@@ -134,8 +135,10 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button onclick="enable_grid_view()" class="toggle_view grid active switcher mr-2"><i class="iconoir-view-grid"></i></button>
-                        <button onclick="enable_list_view()" class="toggle_view list switcher mr-2"><i class="iconoir-list"></i></button>
+                        <button onclick="enable_grid_view()" class="toggle_view grid active switcher mr-2"><i
+                                    class="iconoir-view-grid"></i></button>
+                        <button onclick="enable_list_view()" class="toggle_view list switcher mr-2"><i
+                                    class="iconoir-list"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
@@ -205,12 +208,13 @@
                     </form>
                 </div>
             </div>
+
             <section class="section-white section-radius p-4">
 
                 <div id="upload_container" class="hidden">
                     {% include '@IntegratedContent/media/upload.html.twig'
                         with {
-                        'language': 'nl',
+                        'language': app.request.defaultLocale,
                         'endpoint': '/admin/media/upload_file',
                         'height': '750px',
                         'imageEditorEnabled': true,
@@ -248,8 +252,7 @@
                                         <div class="media-preview">
                                             <div class="thumbnail">
                                                 <div class="centered">
-                                                    <img src="{{ thumbnail }}"
-                                                         alt="{{ media.title }}">
+                                                    <img src="{{ thumbnail }}" alt="{{ media.title }}">
                                                 </div>
                                             </div>
                                             {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
@@ -267,15 +270,13 @@
                                             </div>
                                             {% if media.description %}
                                                 <div class="detail-wrap description">
-                                                        <span
-                                                            class="detail-label">{% trans %}Description{% endtrans %}:</span>
+                                                    <span class="detail-label">{% trans %}Description{% endtrans %}:</span>
                                                     <p>{{ media.description }}</p>
                                                 </div>
                                             {% endif %}
                                             {% if media.credits %}
                                                 <div class="detail-wrap credits">
-                                                        <span
-                                                            class="detail-label">{% trans %}Credits{% endtrans %}:</span>
+                                                    <span class="detail-label">{% trans %}Credits{% endtrans %}:</span>
                                                     <p>{{ media.credits }}</p>
                                                 </div>
                                             {% endif %}
@@ -283,8 +284,7 @@
                                         <div class="w-full md:w-1/2">
                                             {% if media.createdAt is defined %}
                                                 <div class="detail-wrap created-at flex justify-end">
-                                                        <span
-                                                            class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
+                                                    <span class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
                                                     <p>{{ media.createdAt|format_date('long') }}</p>
                                                 </div>
                                             {% endif %}
@@ -328,7 +328,7 @@
     </div>
 
     <script>
-        let path = '{{ path('integrated_content_media_manage_relations') }}';
+        const path = '{{ path('integrated_content_media_manage_relations') }}';
     </script>
 {% endblock %}
 
