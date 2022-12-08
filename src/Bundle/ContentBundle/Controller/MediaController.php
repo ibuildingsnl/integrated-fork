@@ -147,10 +147,10 @@ class MediaController extends AbstractController
 
         // check filetype
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
-        //QUESTION: What do you guys think about using this as whitelist:
-        //https://gist.github.com/tylerlee/53609bff1346cebf8f0a85b6be29a88e
+        // QUESTION: What do you guys think about using this as whitelist:
+        // https://gist.github.com/tylerlee/53609bff1346cebf8f0a85b6be29a88e
         $uploadedFileMimetype = $request->files->get('file')->getMimeType();
-        //TODO: perfect these filetypes, maybe put these in a config file?:
+        // TODO: perfect these filetypes, maybe put these in a config file?:
         $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
         $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
         $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
