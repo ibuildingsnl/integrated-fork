@@ -100,7 +100,8 @@
         "integrated/theme-bundle": "self.version",
         "integrated/user-bundle": "self.version",
         "integrated/website-bundle": "self.version",
-        "integrated/workflow-bundle": "self.version"
+        "integrated/workflow-bundle": "self.version",
+        "integrated/taxonomy-bundle": "self.version"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1",
