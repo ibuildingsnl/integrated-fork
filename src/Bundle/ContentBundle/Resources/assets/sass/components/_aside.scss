@@ -154,6 +154,10 @@
                     overflow-y: unset;
                     padding: 0;
                 }
+                &.used-by {
+                    padding: 10px 10px 0;
+                    margin-bottom: 0;
+                }
             }
 
             .checkbox {
@@ -177,6 +181,27 @@
             right: 11px;
             top: 12px;
             width: 20px;
+        }
+
+        .textworkflow.status {
+            display:none;
+        }
+        .workflow-info {
+            margin-top: 1rem;
+        }
+        .workflow {
+            .select2-selection {
+                height: 33px;
+                min-height: 33px;
+                padding: 0;
+
+                .select2-selection__rendered {
+                    line-height: 33px;
+                }
+                .select2-selection__arrow {
+                    top: 4px !important;
+                }
+            }
         }
     }
 
@@ -412,7 +437,7 @@ body.hide-options {
 
         .status-options {
             display: flex;
-            margin-top: 10px;
+            margin-top: 1rem;
 
             .status {
                 display: flex;
@@ -457,6 +482,10 @@ body.hide-options {
                 flex-shrink: 0;
                 margin-left: 10px;
             }
+        }
+        #integrated_content_extension_workflow_comment {
+            margin-bottom: -5px;
+            display: block;
         }
     }
 }

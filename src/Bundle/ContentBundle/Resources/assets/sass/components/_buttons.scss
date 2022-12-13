@@ -15,6 +15,7 @@
     -o-appearance: none;
     appearance: none;
     cursor: pointer;
+    white-space: nowrap;
 
     &:visited {
         color: inherit;

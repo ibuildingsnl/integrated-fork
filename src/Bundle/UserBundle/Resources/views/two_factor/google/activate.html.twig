@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{# //TODO: Rework this page #}
 {% block header %}
     {% if not config.required %}
         {{ parent() }}
@@ -10,22 +10,6 @@
             </div>
         </nav>
     {% endif %}
-{% endblock %}
-
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                {% if not config.required %}
-                <li>
-                    <a href="{{ path('integrated_content_content_index') }}">{% trans %}Home{% endtrans %}</a>
-                </li>
-                {% endif %}
-
-                <li class="active">{% trans %}Profile{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
 {% endblock %}
 
 {% block content %}

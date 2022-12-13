@@ -44,7 +44,6 @@
         border-radius: 1rem;
         padding: 2rem;
         position: relative;
-
         &.auth {
             width: 415px;
 
@@ -111,7 +110,14 @@
     z-index: 1070;
     -webkit-overflow-scrolling: touch;
     outline: 0;
-
+    &.add-modal {
+        .modal-dialog {
+            .modal-content {
+                max-width: 1280px;
+                width:90vw
+            }
+        }
+    }
     &.fade {
         .modal-dialog {
             -webkit-transform: translate(0, -25%);

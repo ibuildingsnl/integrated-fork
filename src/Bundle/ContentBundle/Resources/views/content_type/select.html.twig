@@ -1,17 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Select content type{% endtrans %}{% endblock title %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_type_index') }}">{% trans %}Content types{% endtrans %}</a>
-                </li>
-                <li class="active">{% trans %}Select{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="index-wrapper-full">

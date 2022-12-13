@@ -324,10 +324,11 @@
         {% if attr.state is defined and attr.state is not empty %}
             {% set state = attr.state %}
         {% endif %}
+
         {% if style == 'horizontal' %}
             <div
                 class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
-                {% if show_label != false %}
+                {% if show_label is not same as ('false')  %}
                     {{ form_label(form) }}
                 {% endif %}
                 <div class="w-full {{ widget_col }} widget">
@@ -377,7 +378,7 @@
             </div>
         {% else %}
             <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %}">
-                {% if show_label != false %}
+                {% if show_label is not same as ('false')  %}
                     {{ form_label(form) }}
                 {% endif %}
                 {{ block('form_input_group') }}

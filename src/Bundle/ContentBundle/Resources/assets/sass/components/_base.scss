@@ -49,6 +49,9 @@ body {
         position: relative;
         background-color: white;
         padding-bottom: 100px;
+        &-full {
+            width:100%;
+        }
         @include media(max-lg) {
             width: 100%;
         }
@@ -110,6 +113,28 @@ body {
                     }
                 }
             }
+            .editor {
+                div.form-group {
+                    border: 1px solid #dee3e9;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-top: 2rem;
+                    .subheader {
+                        position: absolute;
+                        top: -11px;
+                        left: 11px;
+
+                        strong {
+                            background-color: #dee3e9;
+                            padding: 0 1rem;
+                            display: inline-block;
+                            border-radius: 8px;
+                        }
+                    }
+                }
+
+
+            }
         }
 
         form {
@@ -138,12 +163,11 @@ body {
     }
 }
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index {
+body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index, body.history_index, body.page_copy {
     .content-wrapper {
         padding: 50px 0 0;
     }
 }
-
 body.bulk_select, body.bulk_configure, body.bulk_confirm {
     .form-wrapper.compound .form-group > div {
         width: 100%;

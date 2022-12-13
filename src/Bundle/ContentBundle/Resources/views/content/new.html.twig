@@ -1,22 +1,6 @@
 {% extends '@IntegratedContent/content/edit.html.twig' %}
 {% block title %}{% trans %}New{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_content_content_index') }}">{% trans %}Content navigator{% endtrans %}</a>
-                </li>
-                <li>
-                    <a href="{{ path('integrated_content_content_index', {'contenttypes[]': type.id} ) }}">{{ type.name }}</a>
-                </li>
-                <li class="active">{% trans %}New{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
-
 {% block content_title %}
     <h1 class="main-title font-regular">{% trans %}New{% endtrans %} {{ type.name|trans }}</h1>
 {% endblock %}

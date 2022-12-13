@@ -16,7 +16,7 @@
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
         {% set state = state|default(tailwind_get_state()) %}
-
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% set show_placeholder = show_placeholder|default(tailwind_get_show_placeholder()) %}
 
         {% if simple_col is not defined and tailwind_get_simple_col() %}
@@ -102,7 +102,7 @@
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
         <div {{ block('widget_container_attributes') }} class="collection-widget">
-            <ul class="bc-collection list-unstyled">
+            <ul class="integrated-collection list-unstyled">
                 {% for field in form %}
                     <li>
                         <div class="row">
@@ -280,7 +280,7 @@
             {% if style == 'horizontal' %}
                 <label class="{{ label_col }}"></label>
             {% endif %}
-            <div class="{{ class }} widget">
+            <div class="w-full widget">
         {% elseif no_form_group is not defined or no_form_group == false %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
@@ -592,7 +592,6 @@
             {% set widget_col = attr.widget_col %}
         {% endif %}
 
-        {#        {% if label is not same as (false) and show_label is not same as (false) %} #}
         {% if label is not same as (false) %}
             {% set style = style|default(tailwind_get_style()) %}
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
@@ -843,19 +842,19 @@
             {{ tailwind_set_state('') }}
         {% endif %}
         {% if tailwind_get_label_col() %}
-            {{ tailwind_set_label_col('sm:w-2/12 2xl:w-1/12') }}
+            {{ tailwind_set_label_col('md:w-3/12 xl:w-2/12 3xl:w-1/12') }}
         {% endif %}
         {% if tailwind_get_widget_col() %}
-            {{ tailwind_set_widget_col('sm:w-10/12 2xl:w-11/12') }}
+            {{ tailwind_set_widget_col('md:w-9/12 xl:w-10/12 3xl:w-11/12') }}
         {% endif %}
         {% if tailwind_get_show_placeholder() %}
-            {{ tailwind_set_show_placeholder(true) }}
+            {{ tailwind_set_show_placeholder('') }}
         {% endif %}
         {% if tailwind_get_simple_col() %}
             {{ tailwind_set_simple_col(false) }}
         {% endif %}
         {% if tailwind_get_show_label() %}
-            {{ tailwind_set_show_label(true) }}
+            {{ tailwind_set_show_label('') }}
         {% endif %}
         {{ tailwind_restore_form_settings() }}
     {% endapply %}
@@ -903,9 +902,10 @@
     {% apply spaceless %}
         {% set style = style|default(tailwind_get_style()) %}
         {% set state = state|default(tailwind_get_state()) %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% for child in form %}
             {% if not child.rendered %}
-                {{ form_row(child, {'style': style, 'state': state}) }}
+                {{ form_row(child, {'style': style, 'state': state, 'show_label': show_label}) }}
             {% endif %}
         {% endfor %}
         {#        {% endif %} #}
@@ -920,6 +920,7 @@
             {% set childAttr = {} %}
             {% set style = style|default(tailwind_get_style()) %}
             {% set state = state|default(tailwind_get_state()) %}
+            {% set show_label = show_label|default(tailwind_get_show_label()) %}
             {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
             {% if attr.widget_col is defined %}
@@ -931,21 +932,14 @@
             {% if attr.show_placeholder is defined %}
                 {% set childAttr = childAttr|merge({ 'show_placeholder': attr.show_placeholder }) %}
             {% endif %}
+            {% if show_label is defined %}
+                {% set childAttr = childAttr|merge({ 'show_label': show_label }) %}
+            {% endif %}
             {% if attr.simple_col is defined %}
                 {% set childAttr = childAttr|merge({ 'simple_col': attr.simple_col }) %}
             {% endif %}
-            {% if attr.show_label is defined %}
-                {% set childAttr = childAttr|merge({ 'show_label': attr.show_label }) %}
-            {% endif %}
             {% if attr.style is defined %}
                 {% set childAttr = childAttr|merge({ 'style': attr.style }) %}
-                {#            {% else %} #}
-                {#                {% set childAttr = childAttr|merge({ 'style': style|default(tailwind_get_style()) }) %} #}
-            {% endif %}
-            {% if attr.state is defined %}
-                {% set childAttr = childAttr|merge({ 'state': attr.state }) %}
-                {#            {% else %} #}
-                {#                {% set childAttr = childAttr|merge({ 'state': state|default(tailwind_get_state()) }) %} #}
             {% endif %}
             {% if attr.state is defined %}
                 {% set childAttr = childAttr|merge({ 'state': attr.state }) %}

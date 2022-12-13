@@ -3,7 +3,7 @@
 
     <div class="row">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'inline' }) }}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -56,4 +56,5 @@
 </script>
 
 <script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
+
 {% endblock javascript %}

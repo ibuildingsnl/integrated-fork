@@ -7,10 +7,32 @@
     border-color: $border-color;
 }
 
-.tox-fullscreen nav.navbar {
-    z-index: 0;
+.tox-fullscreen {
+    .tox-editor-header {
+        top: 0 !important;
+    }
+    .tox-sidebar-wrap {
+        padding-bottom: 0 !important;
+    }
+    .tox {
+        .tox-menubar {
+            justify-content: center;
+        }
+        .tox-menubar {
+            justify-content: center;
+        }
+        .tox-toolbar__primary {
+            justify-content: center;
+        }
+    }
+    nav.navbar {
+        z-index: 0;
+    }
+    .fancy_tinymce div.tox-edit-area {
+        top: 0 !important;
+        height: 100%;
+    }
 }
-
 .fancy_tinymce {
     .tox-container-body {
         //overflow: hidden;
@@ -35,7 +57,7 @@
         .tox-edit-area {
             background: #fff;
             filter: none;
-            top: 140px;
+            top: 96px;
             position: relative;
             padding: 0 25px !important;
             @include media(max-sm) {
@@ -79,14 +101,6 @@
         }
         .tox .tox-menubar+.tox-toolbar, .tox .tox-menubar+.tox-toolbar-overlord {
             padding-left: 12px;
-        }
-    }
-}
-
-.tox-fullscreen {
-    .fancy_tinymce {
-        div.tox-edit-area {
-            padding-top: 50px !important;
         }
     }
 }

@@ -657,6 +657,9 @@ video {
 .pl-0{
   padding-left: 0px;
 }
+.pr-2{
+  padding-right: 0.5rem;
+}
 .text-center{
   text-align: center;
 }
@@ -1028,6 +1031,7 @@ p a {
   -o-appearance: none;
   appearance: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 .btn:visited {
   color: inherit;
@@ -1654,6 +1658,7 @@ label {
   -ms-user-select: none;
   user-select: none;
   font-weight: 300;
+  flex-wrap: wrap;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
   /* On mouse-over, add a grey background color */
@@ -2961,6 +2966,9 @@ body {
   background-color: white;
   padding-bottom: 100px;
 }
+.content-wrapper .editor-wrapper-full {
+  width: 100%;
+}
 @media only screen and (max-width: 1024px) {
   .content-wrapper .editor-wrapper {
     width: 100%;
@@ -3022,6 +3030,23 @@ body {
   border-radius: 15px;
   padding: 1rem 2rem;
 }
+.content-wrapper .edit-form .editor-wrapper .editor div.form-group {
+  border: 1px solid #dee3e9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+.content-wrapper .edit-form .editor-wrapper .editor div.form-group .subheader {
+  position: absolute;
+  top: -11px;
+  left: 11px;
+}
+.content-wrapper .edit-form .editor-wrapper .editor div.form-group .subheader strong {
+  background-color: #dee3e9;
+  padding: 0 1rem;
+  display: inline-block;
+  border-radius: 8px;
+}
 .content-wrapper .edit-form form {
   display: flex;
   flex-wrap: wrap;
@@ -3038,7 +3063,7 @@ body {
   color: rgba(0, 0, 0, 0.5);
 }
 
-body[class*=_edit] .content-wrapper, body[class*=_new] .content-wrapper, body[class*=_show] .content-wrapper, body[class*=_delete] .content-wrapper, body[class*=_update] .content-wrapper, body.bulk_select .content-wrapper, body.bulk_configure .content-wrapper, body.bulk_confirm .content-wrapper, body.profile_index .content-wrapper {
+body[class*=_edit] .content-wrapper, body[class*=_new] .content-wrapper, body[class*=_show] .content-wrapper, body[class*=_delete] .content-wrapper, body[class*=_update] .content-wrapper, body.bulk_select .content-wrapper, body.bulk_configure .content-wrapper, body.bulk_confirm .content-wrapper, body.profile_index .content-wrapper, body.history_index .content-wrapper, body.page_copy .content-wrapper {
   padding: 50px 0 0;
 }
 
@@ -3592,6 +3617,10 @@ dd {
   overflow-y: unset;
   padding: 0;
 }
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.used-by {
+  padding: 10px 10px 0;
+  margin-bottom: 0;
+}
 .aside-item-wrapper .aside-item-list .aside-item-list-container .checkbox label {
   font-weight: 300;
 }
@@ -3607,6 +3636,23 @@ dd {
   right: 11px;
   top: 12px;
   width: 20px;
+}
+.aside-item-wrapper .aside-item-list .textworkflow.status {
+  display: none;
+}
+.aside-item-wrapper .aside-item-list .workflow-info {
+  margin-top: 1rem;
+}
+.aside-item-wrapper .aside-item-list .workflow .select2-selection {
+  height: 33px;
+  min-height: 33px;
+  padding: 0;
+}
+.aside-item-wrapper .aside-item-list .workflow .select2-selection .select2-selection__rendered {
+  line-height: 33px;
+}
+.aside-item-wrapper .aside-item-list .workflow .select2-selection .select2-selection__arrow {
+  top: 4px !important;
 }
 .aside-item-wrapper .aside-item-search {
   align-items: center;
@@ -3818,7 +3864,7 @@ body.hide-options .aside-options {
 }
 .aside-options .aside-item-wrapper .status-options {
   display: flex;
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 .aside-options .aside-item-wrapper .status-options .status {
   display: flex;
@@ -3857,6 +3903,10 @@ body.hide-options .aside-options {
   border-radius: 8px;
   flex-shrink: 0;
   margin-left: 10px;
+}
+.aside-options .aside-item-wrapper #integrated_content_extension_workflow_comment {
+  margin-bottom: -5px;
+  display: block;
 }
 
 /* jFiler Custom */
@@ -4437,7 +4487,6 @@ ul.jFiler-items-grid .jFiler-item .icon-jfi-trash:before {
   padding-right: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   flex-wrap: wrap;
 }
 .select2-container .select2-selection--multiple {
@@ -5283,6 +5332,10 @@ thead {
   background-color: #f2f2f2;
   color: black;
 }
+.pagination span.disabled {
+  background-color: #dee3e9;
+  color: #404040;
+}
 .pagination span:hover {
   background-color: #2fa3f9;
 }
@@ -5305,8 +5358,24 @@ thead {
   border-color: #DEE3E9;
 }
 
+.tox-fullscreen .tox-editor-header {
+  top: 0 !important;
+}
+.tox-fullscreen .tox-sidebar-wrap {
+  padding-bottom: 0 !important;
+}
+.tox-fullscreen .tox .tox-menubar {
+  justify-content: center;
+}
+.tox-fullscreen .tox .tox-toolbar__primary {
+  justify-content: center;
+}
 .tox-fullscreen nav.navbar {
   z-index: 0;
+}
+.tox-fullscreen .fancy_tinymce div.tox-edit-area {
+  top: 0 !important;
+  height: 100%;
 }
 
 .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
@@ -5325,7 +5394,7 @@ thead {
 .fancy_tinymce .tox-tinymce .tox-edit-area {
   background: #fff;
   filter: none;
-  top: 140px;
+  top: 96px;
   position: relative;
   padding: 0 25px !important;
 }
@@ -5368,10 +5437,6 @@ thead {
 }
 .fancy_tinymce .tox-tinymce .tox .tox-menubar + .tox-toolbar, .fancy_tinymce .tox-tinymce .tox .tox-menubar + .tox-toolbar-overlord {
   padding-left: 12px;
-}
-
-.tox-fullscreen .fancy_tinymce div.tox-edit-area {
-  padding-top: 50px !important;
 }
 
 /* TYPEAHEAD */
@@ -5563,6 +5628,10 @@ thead {
   z-index: 1070;
   -webkit-overflow-scrolling: touch;
   outline: 0;
+}
+.modal.add-modal .modal-dialog .modal-content {
+  max-width: 1280px;
+  width: 90vw;
 }
 .modal.fade .modal-dialog {
   -webkit-transform: translate(0, -25%);
@@ -5930,14 +5999,36 @@ thead {
 }
 
 .alert {
-  border-radius: 8px;
-  box-shadow: 0 0 15px 5px #ccc;
-  padding: 2rem;
-  position: absolute;
-  min-width: 25vw;
-  z-index: 1040;
-  right: 2rem;
   bottom: 2rem;
+  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.1);
+  min-width: 25vw;
+  padding: 1rem 3rem 1rem 1rem;
+  right: 1rem;
+  z-index: 1040;
+  border-radius: 4px;
+  position: absolute;
+}
+
+.alert-inline {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: none;
+  margin-bottom: 1rem;
+}
+
+.form-wrapper .alert {
+  position: relative;
+  width: 100%;
+  min-width: 100%;
+  padding: 1rem;
+  right: auto;
+  display: block;
+  bottom: auto;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 0 0;
 }
 
 .close {
@@ -5945,30 +6036,34 @@ thead {
   font-size: 1.6rem;
   height: 20px;
   opacity: 1;
-  position: absolute;
   right: 10px;
   text-align: center;
-  top: 25px;
+  top: 15px;
   width: 20px;
+  position: absolute;
 }
 
 .alert-simple {
-  background-color: #ebebeb;
+  background-color: white;
+  border: 1px solid #6c6c6c;
   border-left: 5px solid #6c6c6c;
 }
 
 .alert-success {
-  background-color: #a8f0c6;
+  background-color: white;
+  border: 1px solid #178344;
   border-left: 5px solid #178344;
 }
 
 .alert-danger {
-  background-color: #f7a7a3;
+  background-color: white;
+  border: 1px solid #8f130c;
   border-left: 5px solid #8f130c;
 }
 
 .alert-warning {
-  background-color: #ffd48a;
+  background-color: white;
+  border: 1px solid #8a5700;
   border-left: 5px solid #8a5700;
 }
 
@@ -6115,6 +6210,30 @@ pre#editor {
 
 .collapse {
   visibility: unset;
+}
+
+.copy-pages-blocks-wrapper {
+  border: 1px solid #dee3e9;
+  border-radius: 8px;
+  margin: 1rem;
+  display: block;
+  padding: 1rem;
+}
+.copy-pages-blocks-wrapper select {
+  padding: 3px;
+}
+.copy-pages-blocks-wrapper > div {
+  border-bottom: 1px solid #dee3e9;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+.copy-pages-blocks-wrapper > div:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.copy-pages-blocks-wrapper:empty {
+  display: none;
 }
 
 .workflow-status {
@@ -6923,12 +7042,6 @@ label.is-primary-channel {
   .sm\:w-1\/2{
     width: 50%;
   }
-  .sm\:w-2\/12{
-    width: 16.666667%;
-  }
-  .sm\:w-10\/12{
-    width: 83.333333%;
-  }
 }
 
 @media (min-width: 768px){
@@ -6937,6 +7050,12 @@ label.is-primary-channel {
   }
   .md\:w-1\/2{
     width: 50%;
+  }
+  .md\:w-3\/12{
+    width: 25%;
+  }
+  .md\:w-9\/12{
+    width: 75%;
   }
   .md\:w-1\/3{
     width: 33.333333%;
@@ -6956,17 +7075,23 @@ label.is-primary-channel {
 }
 
 @media (min-width: 1280px){
+  .xl\:w-2\/12{
+    width: 16.666667%;
+  }
+  .xl\:w-10\/12{
+    width: 83.333333%;
+  }
   .xl\:px-4{
     padding-left: 1rem;
     padding-right: 1rem;
   }
 }
 
-@media (min-width: 1536px){
-  .\32xl\:w-1\/12{
+@media (min-width: 1768px){
+  .\33xl\:w-1\/12{
     width: 8.333333%;
   }
-  .\32xl\:w-11\/12{
+  .\33xl\:w-11\/12{
     width: 91.666667%;
   }
 }

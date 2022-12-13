@@ -17,24 +17,6 @@
                     </button>
                     <span>{% trans %}Options{% endtrans %}</span>
                 </div>
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                            <i class="iconoir-info-empty"></i>
-                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                        </h3>
-                        <i class="iconoir-nav-arrow-up"></i>
-                    </div>
-                    <div class="aside-item-list">
-                        <div class="aside-item-list-container">
-                            <div class="status-options">
-                                <div class="status draft">
-                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {% if form.location is defined %}
                     {{ form_row(form.location, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
                 {% endif %}
@@ -50,7 +32,7 @@
     </div>
     <div class="editor-wrapper">
         <div class="page-title">
-            <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}relation{% endtrans %}</h1>
+            <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}relation{% endtrans %}</h1>
         </div>
         <section class="editor">
             <section class="section-white section-padding section-radius">

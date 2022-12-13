@@ -745,7 +745,7 @@ $(function () {
   var contentType = $('.content-type-hidden').val();
   var currentStateId = $('.current-state').data('value');
   var changeState = function changeState() {
-    var status = $('input:checked', $nextStatus).val();
+    var status = $('select:selected', $nextStatus).val();
     if (status == undefined) {
       status = currentStateId;
     }
@@ -788,7 +788,7 @@ $(function () {
       }
     });
   };
-  $('input', $nextStatus).change(changeState);
+  $('select', $nextStatus).change(changeState);
   changeState();
 });
 $(document).ready(function () {

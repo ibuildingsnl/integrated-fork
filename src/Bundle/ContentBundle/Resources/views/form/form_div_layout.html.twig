@@ -414,11 +414,11 @@
 {% apply spaceless %}
     <div class="form-group w-full flex flex-wrap">
 
-        <div class="sm:w-1/4" data-action-toggle="1">
+        <div class="w-full" data-action-toggle="1">
             {{ form_row(form.active, {'no_form_group': true}) }}
         </div>
 
-        <div class="w-full sm:w-3/4"{% if not form.active.vars['data'] %} style=""{% endif %}>
+        <div class="w-full"{% if not form.active.vars['data'] %} style=""{% endif %}>
             {{ form_widget(form.action) }}
         </div>
 
@@ -429,8 +429,6 @@
 {% block integrated_content_bulk_action_readonly_row %}
 {% apply spaceless %}
     <div class="form-group w-full flex flex-wrap">
-        {{ form_label(form.active) }}
-
         <div class="w-full sm:w-3/4">
             {{ form_widget(form.action) }}
         </div>

@@ -14,12 +14,9 @@
 {% endblock form_errors %}
 
 {% block content %}
-
-    {{ form_start(form, {'style': 'horizontal', 'label_col': 3, 'widget_col': 9, 'col_size': 'sm'}) }}
-
     <div class="row">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
+            {{ form_start(form, { 'style': 'inline' }) }}
         {% endblock %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -49,7 +46,7 @@
                     <hr/>
 
                     {{ form_errors(form) }}
-                    {{ form_row(form.actions) }}
+                    {{ form_row(form.actions, {'style': 'horizontal'}) }}
 
                 </section>
             </div>
@@ -61,6 +58,7 @@
 
 {% block javascript %}
 {{ parent() }}
+
 
 <script>
     $(document).ready(function () {

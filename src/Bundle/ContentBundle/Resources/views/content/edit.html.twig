@@ -21,7 +21,7 @@
 
     <div class="flex flex-wrap {{ form_class }}">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
+            {{ form_start(form, { 'style': 'horizontal'}) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
@@ -31,7 +31,8 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         <div class="aside-header">
-                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options" type="button"><i class="iconoir-cancel"></i></button>
+                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options"
+                                    type="button"><i class="iconoir-cancel"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         <div class="aside-item-wrapper show">
@@ -45,33 +46,46 @@
                             <div class="aside-item-list">
                                 <div class="aside-item-list-container">
                                     <div class="status-info">
-                                        {% dump(form) %}
                                         {% if form.publishTime is defined %}
                                             {{ form_row(form.publishTime, {style: 'inline'}) }}
                                         {% endif %}
                                     </div>
-                                    <div class="workflow">
+                                    <div class="workflow-info">
                                         {% if form.extension_workflow is defined %}
-                                            {{ form_row(form.extension_workflow, {style: 'inline'}) }}
+                                            {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
                                         {% endif %}
                                     </div>
+                                    {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
+                                        {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
+                                    {% endif %}
                                     <div class="status-options">
-                                        {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
-                                            <div class="status published">
-                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                        {% if workflow is defined %}
+                                            <div class="status {{ workflow.name|lower }}"
+                                                 style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
+                                                <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
                                                 <i class="iconoir-trash"></i>
                                             </a>
-                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
-                                            <div class="status planned">
-                                                <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                            </div>
                                         {% else %}
-                                            <div class="status draft">
-                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                            </div>
+                                            {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
+                                                <div class="status published">
+                                                    <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                                <div class="status planned">
+                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                                </div>
+                                            {% else %}
+                                                <div class="status draft">
+                                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                                </div>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -223,7 +237,9 @@
                                 <div class="editor-item-wrapper relations">
                                     <div class="editor-item-header">
                                         <h3 class="editor-item-title">
-                                            <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                            {% if relation.vars.attr['data-icon'] is defined %}
+                                                <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                            {% endif %}
                                             <label
                                                 class="editor-item-icon"
                                                 for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
@@ -288,7 +304,7 @@
                  </div>
                 {{/equals}}
                 {{/if}}
-                <div class="modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal add-modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -360,8 +376,8 @@
 
                 editor = document.querySelector('div.tox-edit-area');
                 wrapper = document.querySelector('div.tox-sidebar-wrap');
-                editor.style.top = (46 + height) + 'px';
-                wrapper.style.paddingBottom = (46 + height) + 'px';
+                editor.style.top = (height) + 'px';
+                wrapper.style.paddingBottom = (height) + 'px';
             });
 
             //TODO: Need to fix comments alignment.
@@ -387,11 +403,13 @@
                 if (data.pagination.numFound == 0) {
                     cnt.hide();
                 }
-                cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
+                cnt.html(optionsTemplate(data)).find('.content_column_inner .aside-item-list-container').append(paginationTemplate(data));
                 cnt.find('.pagination a').click(function(ev) {
                     ev.preventDefault();
                     loadUsedBy($(this).attr('href'));
                 });
+                var toggle = $('#used-by .aside-item-header');
+                toggle.click(toggleOptionsElement);
             };
 
             var loadUsedBy = function(url) {
@@ -423,7 +441,9 @@
                 iframe.attr('height', height);
             }, false);
 
+
         });
+
     </script>
 {% endif %}
 {% if editable %}

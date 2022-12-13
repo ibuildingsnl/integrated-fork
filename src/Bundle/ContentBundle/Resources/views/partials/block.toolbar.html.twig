@@ -1,17 +1,26 @@
+{% if type is defined and
+    ('Article' in type.class or 'News' in type.class or 'Product' in type.class or 'Company' in type.class or 'Jobposting' in type.class or 'Form' in type.class or 'Event' in type.class) %}
+    {% set convert = true %}
+    {% set preview = true %}
+{% else %}
+    {% set convert = false %}
+    {% set preview = false %}
+{% endif %}
+
 <div id="toolbar" class="w-full flex justify-between">
     <div class="options">
         <div class="form-actions-extra">
-            <div class="convert">
-                {% if content is defined %}
+            {% if content is defined and convert is same as (true) %}
+                <div class="convert">
                     {% if (content.isPublished and content.getChannels|length > 0) or (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                         <!-- TODO: Make a function for this -->
                         <a href="#">{% trans %}Convert to draft{% endtrans %}</a>
                     {% endif %}
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
             {% block content_website_links %}
-                <div class="preview">
-                    {% if content is defined %}
+                {% if content is defined and preview is same as (true) %}
+                    <div class="preview">
                         {% if content.getChannels|length > 0 %}
                             <ul class="options-no-bg">
                                 <li class="dropdown">
@@ -38,11 +47,12 @@
                                 </li>
                             </ul>
                         {% endif %}
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             {% endblock %}
         </div>
-        <button class="form-actions-extra-toggle" onclick="toggleDataTarget(this)" data-target="form-actions-extra" data-underlay="no" type="button">
+        <button class="form-actions-extra-toggle" onclick="toggleDataTarget(this)" data-target="form-actions-extra"
+                data-underlay="no" type="button">
             <i class="iconoir-more-horiz"></i>
         </button>
         <div class="form-actions">
@@ -59,8 +69,12 @@
                 {% if form.actions.create is defined %}
                     {{ form_row(form.actions.create) }}
                 {% endif %}
+                {% if form.actions.copy is defined %}
+                    {{ form_row(form.actions.copy) }}
+                {% endif %}
                 <button type="button" onclick="toggleOptionsSidebar()" onload="hideButtonIfNoOptions(this)"
-                        class="toggle-settings btn btn-white ml-2" data-target="aside-options"><i class="iconoir-settings"></i></button>
+                        class="toggle-settings btn btn-white ml-2" data-target="aside-options"><i
+                        class="iconoir-settings"></i></button>
             {% endblock %}
         </div>
     </div>

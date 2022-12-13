@@ -17,39 +17,6 @@
                     </button>
                     <span>{% trans %}Options{% endtrans %}</span>
                 </div>
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                            <i class="iconoir-info-empty"></i>
-                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                        </h3>
-                        <i class="iconoir-nav-arrow-up"></i>
-                    </div>
-                    <div class="aside-item-list">
-                        <div class="aside-item-list-container">
-                            <div class="status-info">
-                                {% if relation.createdAt is defined %}
-                                    Aangemaakt op: {{ relation.createdAt|date }}
-                                {% endif %}
-                            </div>
-                            <div class="status-options">
-                                {% if relation is defined and relation.createdAt is defined %}
-                                    <div class="status published">
-                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
-                                    </div>
-                                    <a class="delete"
-                                       href="{{ path('integrated_content_relation_delete', {'id': relation.id}) }}">
-                                        <i class="iconoir-trash"></i>
-                                    </a>
-                                {% else %}
-                                    <div class="status draft">
-                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {% if form.location is defined %}
                     {{ form_row(form.location, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
                 {% endif %}

@@ -281,18 +281,15 @@
 
     for (var i = 0; i < sidebarfilter.length; i++) {
         sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
-    }
-    ;
+    };
 
     for (var i = 0; i < editorsettings.length; i++) {
         editorsettings[i].addEventListener('click', toggleOptionsElement, false);
-    }
-    ;
+    };
 
     for (var i = 0; i < sidebarMenu.length; i++) {
         sidebarMenu[i].addEventListener('click', toggleSidebarElement, false);
-    }
-    ;
+    };
 
     function toggleOptionsElement(event) {
         var options = this.parentNode.querySelector('.aside-item-list');

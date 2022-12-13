@@ -71,6 +71,7 @@ class ContentHistoryController extends AbstractController
         );
 
         return $this->render('@IntegratedContentHistory/content_history/index.html.twig', [
+            'content' => $content,
             'paginator' => $paginator,
         ]);
     }

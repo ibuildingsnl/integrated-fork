@@ -294,6 +294,11 @@ thead {
             color: black;
         }
 
+        &.disabled {
+            background-color: #dee3e9;
+            color: #404040;
+        }
+
         &:hover {
             background-color: #2fa3f9;
 
