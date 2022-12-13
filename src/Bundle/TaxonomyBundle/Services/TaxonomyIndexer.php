@@ -10,6 +10,7 @@ final class TaxonomyIndexer
 {
     public function __construct(
         private readonly ObjectRepository $taxonomies,
+        private readonly UsageCounter $usage,
     ) {}
 
     /** @return IndexedItem[] */
@@ -57,7 +58,7 @@ final class TaxonomyIndexer
             $taxonomy->getId(),
             $taxonomy->getTitle(),
             $taxonomy->getSlug(),
-            1,
+            $this->usage->countUsages($taxonomy->getId()),
             $depth
         );
     }

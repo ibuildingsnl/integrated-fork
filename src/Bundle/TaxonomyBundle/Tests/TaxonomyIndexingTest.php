@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\UsageCounter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -14,12 +15,17 @@ final class TaxonomyIndexingTest extends TestCase
     private TaxonomyIndexer $indexer;
     /** @var ObjectRepository&MockObject  */
     private ObjectRepository $taxonomies;
+    /** @var UsageCounter&MockObject  */
+    private UsageCounter $usageCounter;
+    private bool $usagesDeclared = false;
 
     protected function setUp(): void
     {
         $this->taxonomies = $this->createMock(ObjectRepository::class);
+        $this->usageCounter = $this->createMock(UsageCounter::class);
         $this->indexer = new TaxonomyIndexer(
-            $this->taxonomies
+            $this->taxonomies,
+            $this->usageCounter,
         );
     }
 
@@ -138,9 +144,80 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(0, $list[4]->depth);
     }
 
+    /** @test */
+    public function viewing_the_usage_count_for_each_taxonomy_item()
+    {
+        $this->setUsages(['foo' => 0, 'bar' => 1001]);
+        $this->add(
+            $this->taxonomy('foo', 'Unused', 'unused'),
+            $this->taxonomy('bar', 'Many Usages', 'used'),
+        );
+
+        $list = $this->indexer->buildTaxonomyIndex();
+
+        self::assertEquals(1001, $list[0]->count);
+        self::assertEquals(0, $list[1]->count);
+    }
+
+    /** @test */
+    public function indexing_multiple_children_with_ranked_grandchildren_and_usage_counts()
+    {
+        $this->setUsages([
+            'bar' => 2,
+            'baz' => 5,
+            'foo' => 1,
+            'qux' => 100,
+            'fred' => 16,
+            'zoo' => 52,
+        ]);
+        $this->add(
+            $this->taxonomy('bar', 'Child', 'child', 'm', 'foo'),
+            $this->taxonomy('baz', 'Grandchild', 'grand-child', null, 'bar'),
+            $this->taxonomy('foo', 'Parent!', 'parent', 'b'),
+            $this->taxonomy('qux', 'Other Child', 'other-child', 'c', 'foo'),
+            $this->taxonomy('fred', 'Without Children', 'parent-without-children', 'a'),
+            $this->taxonomy('zoo', 'Other Grandchild', 'other-grand-child', 'f', 'bar'),
+        );
+
+        $list = $this->indexer->buildTaxonomyIndex();
+
+        self::assertEquals('Without Children', $list[0]->title);
+        self::assertEquals(16, $list[0]->count);
+        self::assertEquals(0, $list[0]->depth);
+
+        self::assertEquals('Parent!', $list[1]->title);
+        self::assertEquals(1, $list[1]->count);
+        self::assertEquals(0, $list[1]->depth);
+
+        self::assertEquals('Other Child', $list[2]->title);
+        self::assertEquals(100, $list[2]->count);
+        self::assertEquals(1, $list[2]->depth);
+
+        self::assertEquals('Child', $list[3]->title);
+        self::assertEquals(2, $list[3]->count);
+        self::assertEquals(1, $list[3]->depth);
+
+        self::assertEquals('Grandchild', $list[4]->title);
+        self::assertEquals(5, $list[4]->count);
+        self::assertEquals(2, $list[4]->depth);
+
+        self::assertEquals('Other Grandchild', $list[5]->title);
+        self::assertEquals(52, $list[5]->count);
+        self::assertEquals(2, $list[5]->depth);
+    }
+
     private function add(Taxonomy ...$taxonomies): void
     {
         $this->taxonomies->method('findAll')->willReturn($taxonomies);
+        if (!$this->usagesDeclared) {
+            $this->usageCounter->method('countUsages')->willReturn(0);
+        }
+    }
+
+    private function setUsages(array $usageCounts): void
+    {
+        $this->usageCounter->method('countUsages')->willReturnCallback(fn(string $id) => $usageCounts[$id] ?? 0);
+        $this->usagesDeclared = true;
     }
 
     private function taxonomy(string $id, string $title, string $slug, string $rank = null, string $parent = null): Taxonomy
