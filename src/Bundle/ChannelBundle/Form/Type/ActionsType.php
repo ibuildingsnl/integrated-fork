@@ -71,8 +71,8 @@ class ActionsType extends BaseActionsType
                         'attr' => [
                             'onclick' => '$(\'#page_copy_action\').val(\'\');',
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ]
         );
     }
