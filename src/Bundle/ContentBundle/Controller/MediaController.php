@@ -110,9 +110,13 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
+//        dd( json_encode ( $this->createPaginator($items, $requestSource)->getItems() ) );
+//        dd( json_encode( $this->createPaginator($items, $requestSource)->get ) );
+
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
-            'items' => $items,
+//            'paginator_items2' => json_encode( $this->createPaginator($items, $requestSource)->getItems() ),
+//            'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
@@ -125,7 +129,31 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function index_component(Request $requestSource): Response
+    public function select_one(Request $request): Response
+    {
+//        $request->query->set('contenttypes', 'image');
+//        if ($request->query->get('contenttypes')) {
+//
+//        }
+
+        $data = $this->index_component($request);
+
+        return $this->render('@IntegratedContent/media/select_one.html.twig', [
+            'selected_modus' => 'select_one',
+            ...$data
+        ]);
+    }
+
+    public function select_multiple(Request $request): Response {
+        $data = $this->index_component($request);
+
+        return $this->render('@IntegratedContent/media/select_multiple.html.twig', [
+            'selected_modus' => 'select_multiple',
+            ...$data
+        ]);
+    }
+
+    public function index_component(Request $requestSource): array
     {
         $contentTypeSelectOptions = $this->getContentTypes();
 
@@ -157,7 +185,7 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
-        return $this->render('@IntegratedContent/media/index.html.twig', [
+        return [
             'selected_modus' => 'select_one',
             'paginator' => $this->createPaginator($items, $requestSource),
             'items' => $items,
@@ -170,7 +198,7 @@ class MediaController extends AbstractController
                 fn ($item) => strtolower($item),
                 $this::NOT_SHOWN_FILETYPES
             ),
-        ]);
+        ];
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

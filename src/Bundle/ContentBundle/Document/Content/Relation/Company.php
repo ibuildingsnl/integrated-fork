@@ -51,7 +51,7 @@ class Company extends Relation
      * @var StorageInterface
      * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\MediaGalleryImageType")
      */
-    protected StorageInterface $mediaGalleryImage;
+    protected $mediaGalleryImage;
 
     public function getMediaGalleryImage(): StorageInterface|null
     {

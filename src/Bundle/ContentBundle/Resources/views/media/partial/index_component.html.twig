@@ -4,7 +4,7 @@
     <div class="media-sidebar">
 
         {% if selected_modus != 'media_gallery' %}
-            <button id="confirm_selection" onclick="window.selectAnImage(this)" class="p-2 bg-red-200">upload this image</button>
+            <button class="p-2 bg-red-200" onclick="send_message_to_parent()">send message to parent</button>
         {% endif %}
 
         <aside>
@@ -115,6 +115,7 @@
     <div class="media-gallery">
         <div class="page-title">
             <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
+            {% if selected_modus == 'media_gallery' %}
             <ul class="options-no-bg">
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
@@ -134,6 +135,7 @@
                     </ul>
                 </li>
             </ul>
+            {% endif %}
             <div class="options flex justify-between">
                 <div class="left flex">
                     <button class="switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
@@ -214,8 +216,10 @@
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                         {% for media in paginator.items %}
+{#                            {{ dump(media) }}#}
                             {% if media.contentType == 'image' %}
                                 {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
+{#                                {{ dump(thumbnail) }}#}
                                 {#                                    {% set thumbnail = integrated_image(media.file) %} #}
                             {% elseif media.contentType == 'video' %}
                                 {% set thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg==' %}
@@ -229,7 +233,7 @@
                             {% set gallery = 'grid' %}
                             {% if gallery is same as('grid') %}
                                 <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
-                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}" data-thumbnail="{{ thumbnail }}" data-file="{{ media.file }}" data-content_type="{{ media.contentType }}">
                                     <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
                                         <div class="media-preview">
                                             <div class="thumbnail">
@@ -256,7 +260,7 @@
                                 </li>
                             {% else %}
                                 <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
-                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}" data-thumbnail="{{ thumbnail }}" data-file="{{ media.file }}" data-content_type="{{ media.contentType }}">
                                     <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
                                         <div class="media-preview">
                                             <div class="thumbnail">
@@ -340,5 +344,13 @@
             </div>
 
         </section>
+        {{ dump(paginator.items|json_encode(constant('JSON_OBJECT_AS_ARRAY') b-or constant('JSON_HEX_QUOT'))) }}
     </div>
 </div>
+
+<script>
+
+    {#window.paginator_items = JSON.parse({{ paginator.items|json_encode(#}
+    {#    constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_NUMERIC_CHECK')#}
+    {#)  }})#}
+</script>

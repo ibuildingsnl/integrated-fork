@@ -1,27 +1,248 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <title>{% block title %}{% trans %}Index{% endtrans %}{% endblock title %} | Integrated</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 
-{% block style %}
+    {% block style %}
+        <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 
-{% endblock style %}
+        {{ integrated_stylesheets() }}
 
-{% block header %}
+        <script>
+            var loadedScripts = [],
+                callbacks = [];
 
-{% endblock header %}
+            function require(url, callback) {
 
-{% block body %}
-{#BASE#}
-{% endblock body %}
+                callbacks.push(callback);
 
-{% block content %}
-    {#BASE#}
-{% endblock content %}
-{#{% block edit_modal %}{% endblock edit_modal %}#}
+                if (loadedScripts[url]) {
+                    script = loadedScripts[url];
+                } else {
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
 
-{#{% block javascript %}#}
-{% block webpack_js %}
+                    script.src = url;
+                    document.getElementsByTagName('head')[0].appendChild(script);
 
+                    loadedScripts[url] = script;
+                }
+
+                if (script.readyState) {  //IE
+                    script.onreadystatechange = function() {
+                        if (script.readyState == 'loaded' ||
+                            script.readyState == 'complete') {
+                            script.onreadystatechange = null;
+                            callback();
+                        }
+                    };
+                } else {  //Others
+                    script.onload = function() {
+                        for (var key in callbacks) {
+                            callbacks[key]();
+                        }
+                    };
+                }
+            }
+        </script>
+    {% endblock style %}
+
+</head>
+<body style="overflow: hidden;"
+      class="{{ app.request.attributes.get('_route')|replace({'integrated_content_': '', 'integrated_user_': '', 'integrated_page_': '', 'integrated_block_': '', 'integrated_': ''}) }}">
+{% block form_theme %}
+    {% if form is defined %}
+        {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+    {% endif %}
 {% endblock %}
 
-{#{% block locking %}#}
+{% block header %}
+{% endblock %}
 
-{#{% endblock locking %}#}
-{#{% endblock javascript %}#}
+{% block body %}
+    <div id="wrapper-holder">
+        <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
+        <div class="content-wrapper">
+            {% block content %}{% endblock content %}
+        </div>
+    </div>
+{% endblock body %}
+
+{% block edit_modal %}{% endblock edit_modal %}
+
+{% block javascript %}
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}
+
+{% if app.request.locale %}
+<script>
+    moment.locale('{{ app.request.locale }}');
+</script>
+{% endif %}
+
+{{ integrated_javascripts() }}
+
+{% block locking %}
+    {% if locking is defined and locking.lock is defined and locking.locked == false %}
+        {% include '@IntegratedLocking/locking.refresh.html.twig' with { 'lock': locking.lock } %}
+    {% endif %}
+{% endblock locking %}
+{% endblock javascript %}
+
+<script>
+    //DROPDOWN MENU
+    function initMenu() {
+
+        var menus = document.querySelectorAll('.dropdown.top-bar');
+        menus.forEach((menu) => {
+            if (menu != null) {
+                for (var i = 0; i < menu.children.length; i++) {
+                    var menuClasses = menu.children[i];
+                    var cList = menuClasses.classList;
+                    if (cList.contains('dropdown-menu') || cList.contains('dropdown-menu-left') ||
+                        cList.contains('dropdown-menu-right')) {
+                        menu.addEventListener('click', showDropDownBackGround, false);
+                    }
+                }
+            }
+        });
+    }
+
+    function hideDropDownBackgroud(event) {
+        var searchMenu = document.querySelector('.search-form .form-control');
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+
+        if (!menuItemDropDownUnderlay.classList.contains('hide')) {
+            menuItemDropDownUnderlay.classList.add('hide');
+        }
+    }
+
+    function showDropDownBackGround(event) {
+        var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        menuItemDropDownUnderlay.classList.remove('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', initMenu);
+
+    window.addEventListener('click', function(event) {
+        if (!event.srcElement.classList.contains('tt-input')) {
+            hideDropDownBackgroud();
+        }
+    });
+
+    jQuery('.search-form .form-control').focus(function() {
+        showDropDownBackGround();
+    });
+
+    jQuery('.search-form .form-control').blur(function() {
+        hideDropDownBackgroud();
+    });
+
+    function asideItemsSearch(elem) {
+        // Declare variables
+
+        var input, filter, ul, li, a, i, txtValue;
+        input = elem;
+        filter = input.value.toUpperCase();
+        ul = elem.parentNode.parentNode.querySelector('.aside-item-list .aside-item-list-container > ul');
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName('label')[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
+    };
+
+    // JS
+    var sidebarfilter = document.getElementsByClassName('aside-item-header');
+    var editorsettings = document.getElementsByClassName('editor-item-header');
+
+    for (var i = 0; i < sidebarfilter.length; i++) {
+        sidebarfilter[i].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
+
+    for (var ii = 0; ii < editorsettings.length; ii++) {
+        editorsettings[ii].addEventListener('click', toggleOptionsElement, false);
+    }
+    ;
+
+    function toggleOptionsElement(event) {
+        var options = this.parentNode.querySelector('.aside-item-list');
+        if (!options) {
+            var options = this.parentNode.querySelector('.editor-item-list');
+        }
+        // Prevent default link behavior
+        event.preventDefault();
+
+        if (!options) return;
+
+        // Toggle the content
+        toggleElement(options);
+    };
+
+    // Show an element
+    var showElement = function(elem) {
+
+        // Get the natural height of the element
+        var getHeight = function() {
+            elem.style.display = 'block'; // Make it visible
+            var height = elem.scrollHeight + 'px'; // Get it's height
+            elem.style.display = ''; //  Hide it again
+            return height;
+        };
+
+        var height = getHeight(); // Get the natural height
+        // elem.classList.add('show'); // Make the element visible
+        elem.parentNode.classList.add('show'); // Make the element visible
+        elem.style.height = height; // Update the max-height
+
+        // Once the transition is complete, remove the inline max-height so the content can scale responsively
+        window.setTimeout(function() {
+            elem.style.height = '';
+        }, 350);
+    };
+
+    // Hide an element
+    var hideElement = function(elem) {
+
+        // Give the element a height to change from
+        elem.style.height = elem.scrollHeight + 'px';
+
+        // Set the height back to 0
+        window.setTimeout(function() {
+            elem.style.height = '0';
+        }, 1);
+
+        // When the transition is complete, hide it
+        window.setTimeout(function() {
+            elem.classList.remove('show');
+            elem.parentNode.classList.remove('show');
+        }, 350);
+
+    };
+
+    // Toggle element visibility
+    var toggleElement = function(elem, timing) {
+
+        // If the element is visible, hide it
+        if (elem.parentNode.classList.contains('show')) {
+            hideElement(elem);
+            return;
+        }
+
+        // Otherwise, show it
+        showElement(elem);
+
+    };
+</script>
+</body>
+</html>

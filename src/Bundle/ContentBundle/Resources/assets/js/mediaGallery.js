@@ -50,6 +50,18 @@ async function enableBulkSelection() {
     });
 }
 
+function getAdditionalInfo(media_id) {
+    return $('#' + media_id)[0]
+}
+
+window.send_message_to_parent = function() {
+    const selection = bulkSelection.map((key) => {
+        return getAdditionalInfo(key).dataset
+    })
+
+    window.parent.postMessage(JSON.stringify(selection), '*');
+}
+
 function handleBulkItemClick(event) {
     if (modi[selected_modus].selectOnlyOneEnabled) {
         const element_id = event.currentTarget.getAttribute('data-id')
@@ -203,7 +215,5 @@ async function disableBulkSelection() {
     if (!showSelectButton) {
         $('#confirm_selection').hide()
     }
-
-
 
 })(jQuery);

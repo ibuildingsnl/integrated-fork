@@ -4,13 +4,13 @@
 ? '@IntegratedContent/base.html.twig'
 : '@IntegratedContent/empty.html.twig' %}
 
-{% set selected_modus = 'media_gallery' %}
+{% set selected_modus = 'select_multiple' %}
 {% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
-    {{ dump(selected_modus|default('media_gallery')) }}
-    <button onclick="send_message_to_parent()">send message to parent</button>
+{#    {{ dump(selected_modus|default('media_gallery')) }}#}
+{#    <button onclick="send_message_to_parent()">send message to parent</button>#}
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
-        selected_modus: selected_modus|default('media_gallery'),
+        selected_modus: selected_modus|default('select_multiple'),
     }  %}
 
 {% endblock %}
@@ -20,11 +20,11 @@
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
 
-        // function send_message_to_parent() {
-        //     console.log("sending")
-        //     let message = bulkSelection
-        //     window.parent.postMessage(message, '*');
-        // }
+        function send_message_to_parent() {
+            console.log("multiple - send_message_to_parent")
+            let message = "hi from iframe"
+            window.parent.postMessage(message, '*');
+        }
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>

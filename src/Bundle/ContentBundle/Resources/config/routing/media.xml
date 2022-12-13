@@ -8,8 +8,12 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index</default>
     </route>
 
-    <route id="integrated_content_media_index_component" path="/index_component" methods="GET, POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index_component</default>
+    <route id="integrated_content_media_select_one" path="/select_one" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::select_one</default>
+    </route>
+
+    <route id="integrated_content_media_select_multiple" path="/select_multiple" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::select_multiple</default>
     </route>
 
     <route id="integrated_content_media_manage_relations" path="/manage_relations" methods="GET, PUT">
