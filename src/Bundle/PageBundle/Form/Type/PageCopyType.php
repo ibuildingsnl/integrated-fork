@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -51,14 +51,7 @@ class PageCopyType extends AbstractType
                 'targetChannel' => $options['targetChannel'],
             ]);
 
-            $builder->add('actions', SaveCancelType::class, [
-                'cancel_route' => 'integrated_page_page_index',
-                'label' => 'Copy pages',
-                'button_class' => '',
-                'attr' => [
-                    'onclick' => '$(\'#page_copy_action\').val(\'\');',
-                ],
-            ]);
+            $builder->add('actions', ActionsType::class, ['buttons' => ['copy', 'cancel']]);
         }
     }
 

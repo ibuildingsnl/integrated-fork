@@ -63,6 +63,16 @@ class ActionsType extends BaseActionsType
                         ],
                     ],
                 ],
+                'copy' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Copy pages',
+                        'button_class' => 'green no-icon',
+                        'attr' => [
+                            'onclick' => '$(\'#page_copy_action\').val(\'\');',
+                        ],
+                    ]
+                ]
             ]
         );
     }
