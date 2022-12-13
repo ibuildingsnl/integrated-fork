@@ -26,7 +26,7 @@ final class TaxonomyIndexer
             $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
         }
 
-        return $this->sortTaxonomies($byParent);
+        return $this->toSortedIndex($byParent);
     }
 
     /**
@@ -36,7 +36,7 @@ final class TaxonomyIndexer
      * @param IndexedItem[] $sorted
      * @return IndexedItem[]
      */
-    private function sortTaxonomies(array $byParent, ?string $key = 'root', int $depth = 0, array $sorted = []): array
+    private function toSortedIndex(array $byParent, ?string $key = 'root', int $depth = 0, array $sorted = []): array
     {
         if (null === $key || !isset($byParent[$key])) {
             return $sorted;
@@ -47,7 +47,7 @@ final class TaxonomyIndexer
         );
         foreach ($byParent[$key] as $taxonomy) {
             $sorted[] = $this->toIndexed($taxonomy, $depth);
-            $sorted = $this->sortTaxonomies($byParent, $taxonomy->getId(), $depth + 1, $sorted);
+            $sorted = $this->toSortedIndex($byParent, $taxonomy->getId(), $depth + 1, $sorted);
         }
         return $sorted;
     }
