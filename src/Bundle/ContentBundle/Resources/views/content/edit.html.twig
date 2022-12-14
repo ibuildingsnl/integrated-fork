@@ -81,10 +81,26 @@
                                                 <div class="status planned">
                                                     <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                                 </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                                <div class="status planned">
+                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
                                             {% else %}
                                                 <div class="status draft">
                                                     <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                                 </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
                                             {% endif %}
                                         {% endif %}
                                     </div>

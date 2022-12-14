@@ -61,7 +61,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
             if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
-                $menuManage = $menu->addChild(self::MENU_MANAGE);
+                $menuManage = $menu->addChild(self::MENU_MANAGE)->setExtra('icon', 'iconoir-settings');
             }
 
             $menuManage->addChild('Workflow', ['route' => 'integrated_workflow_index']);

@@ -344,7 +344,7 @@ body.hide-options {
         }
     }
     .aside-holder {
-        @include media(max-md) {
+        @include media(max-sm) {
             padding-top: 37px;
         }
     }

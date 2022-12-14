@@ -64,7 +64,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         if ($admin || $this->authorizationChecker->isGranted(self::ROLE_USER_MANAGER)) {
             if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
-                $menuManage = $menu->addChild(self::MENU_MANAGE);
+                $menuManage = $menu->addChild(self::MENU_MANAGE)->setExtra('icon', 'iconoir-settings');
             }
 
             $menuManage->addChild('Users', ['route' => 'integrated_user_user_index']);

@@ -1,5 +1,6 @@
 {% if type is defined and
-    ('Article' in type.class or 'News' in type.class or 'Product' in type.class or 'Company' in type.class or 'Jobposting' in type.class or 'Form' in type.class or 'Event' in type.class) %}
+    ('Article' in type.class or 'News' in type.class or 'Product' in type.class or 'Company' in type.class or 'Jobposting' in type.class or 'Form' in type.class or 'Event' in type.class)
+    and form.actions.delete is not defined %}
     {% set convert = true %}
     {% set preview = true %}
 {% else %}

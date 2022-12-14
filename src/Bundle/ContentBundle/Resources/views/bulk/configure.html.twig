@@ -59,9 +59,9 @@
 {% block javascript %}
 {{ parent() }}
 
-
 <script>
     $(document).ready(function () {
+        console.log('test');
         implementSelect2();
 
         $('[data-action-toggle="1"] input:checkbox')
@@ -78,7 +78,10 @@
             }
         }
     });
+
 </script>
 
-<script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}" />
+<script src="{{ asset('bundles/integratedcontent/js/bulk_relation.js') }}">
+</script>
+
 {% endblock javascript %}
