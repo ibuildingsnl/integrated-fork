@@ -27,18 +27,3 @@ parameters:
 			count: 1
 			path: src/Bundle/ContentBundle/Tests/Form/DataTransformer/ContentType/Field/CustomTransformerTest.php
 
-		-
-			message: """
-				#^Call to method createTestEntityManager\\(\\) of deprecated class Symfony\\\\Bridge\\\\Doctrine\\\\Test\\\\DoctrineTestHelper\\:
-				since Symfony 5\\.3$#
-			"""
-			count: 1
-			path: src/Bundle/ContentBundle/Tests/Form/Type/RelationTypeTest.php
-
-		-
-			message: """
-				#^Class Integrated\\\\Bundle\\\\UserBundle\\\\Form\\\\DataMapper\\\\UserMapper extends deprecated class Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\DataMapper\\\\PropertyPathMapper\\:
-				since symfony/form 5\\.2\\. Use \\{@see DataMapper\\} instead\\.$#
-			"""
-			count: 1
-			path: src/Bundle/UserBundle/Form/DataMapper/UserMapper.php
