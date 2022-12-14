@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Form\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
-use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
+use Integrated\Bundle\ContentBundle\Tests\Fixtures\TestEntityManagerFactory;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 /**
@@ -26,7 +26,7 @@ class RelationTypeTest extends TypeTestCase
     {
         parent::setUp();
 
-        DoctrineTestHelper::createTestEntityManager();
+        TestEntityManagerFactory::create();
     }
 
     protected function createRegistryMock($name, $em)
