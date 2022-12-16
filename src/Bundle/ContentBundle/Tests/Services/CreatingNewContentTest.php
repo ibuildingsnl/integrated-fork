@@ -11,7 +11,6 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Security\ContentTypeVoter;
 use Integrated\Bundle\ContentBundle\Services\ContentCreator;
-use Integrated\Bundle\ContentBundle\Services\Flusher;
 use Integrated\Bundle\FormTypeBundle\Form\Extension\ButtonTypeExtension;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\Role;
@@ -31,6 +30,7 @@ use Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationE
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
@@ -43,12 +43,14 @@ class CreatingNewContentTest extends TypeTestCase
     private TokenStorage $tokenStorage;
     private ContentCreator $creator;
     private ObjectManager&MockObject $objectManager;
+    private RouterInterface&MockObject $router;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->tokenStorage = new TokenStorage();
         $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->router = $this->createMock(RouterInterface::class);
 
         $this->creator = new ContentCreator(
             new MemoryResolver([
@@ -71,7 +73,7 @@ class CreatingNewContentTest extends TypeTestCase
                 ),
             ),
             $this->factory,
-            'foo',
+            $this->router,
         );
     }
 
@@ -110,6 +112,20 @@ class CreatingNewContentTest extends TypeTestCase
         ]));
 
         self::assertFalse($form->isSubmitted());
+        self::assertEquals('', $form->getConfig()->getAction());
+    }
+
+    /** @test */
+    public function generating_a_taxonomy_form_with_action_route()
+    {
+        $this->router->method('generate')->with('route')->willReturn('foo/bar');
+        $this->tokenStorage->setToken($this->user('ok'));
+        $form = $this->creator->new(Request::create('foo/bar', 'GET', [
+            "type" => "taxonomy",
+        ]), 'route');
+
+        self::assertFalse($form->isSubmitted());
+        self::assertEquals('foo/bar', $form->getConfig()->getAction());
     }
 
     /** @test */
