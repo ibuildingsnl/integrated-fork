@@ -6,13 +6,14 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\UsageCounter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class TaxonomyIndexingTest extends TestCase
 {
-    private TaxonomyIndexer $indexer;
+    private TaxonomyIndexerInterface $indexer;
     /** @var ObjectRepository&MockObject  */
     private ObjectRepository $taxonomies;
     /** @var UsageCounter&MockObject  */

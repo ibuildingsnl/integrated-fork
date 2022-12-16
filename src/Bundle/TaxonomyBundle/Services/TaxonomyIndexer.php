@@ -6,7 +6,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 
-final class TaxonomyIndexer
+final class TaxonomyIndexer implements TaxonomyIndexerInterface
 {
     public function __construct(
         private readonly ObjectRepository $taxonomies,
