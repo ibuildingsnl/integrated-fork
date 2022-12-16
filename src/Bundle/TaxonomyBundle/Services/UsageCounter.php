@@ -12,8 +12,8 @@ class UsageCounter
 
     public function countUsages(string $taxonomyId): int
     {
-        $criteria = new Criteria();
-        $criteria->where(new Comparison('relations.references.$id', '=', $taxonomyId));
-        return count($this->content->matching($criteria));
+        return count($this->content->matching(new Criteria(
+            new Comparison('relations.references.$id', '=', $taxonomyId)
+        )));
     }
 }
