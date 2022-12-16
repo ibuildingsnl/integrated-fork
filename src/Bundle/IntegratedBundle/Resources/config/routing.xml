@@ -36,4 +36,7 @@
 
     <import resource="@IntegratedWorkflowBundle/Resources/config/routing.xml" type="xml">
     </import>
+
+    <import resource="@IntegratedTaxonomyBundle/Resources/config/routing.xml" type="xml">
+    </import>
 </routes>

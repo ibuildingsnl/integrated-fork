@@ -44,7 +44,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
             $this->authorizationChecker->isGranted(PermissionInterface::READ, $taxonomyType)
         )) {
             $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
-            $menuAdmin->addChild('Taxonomies', ['route' => '@todo']);
+            $menuAdmin->addChild('Taxonomies', ['route' => 'integrated_taxonomy_index']);
         }
     }
 }

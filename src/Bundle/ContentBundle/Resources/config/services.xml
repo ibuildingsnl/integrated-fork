@@ -25,5 +25,24 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
+        <service id="integrated_content.services.content.creator" class="Integrated\Bundle\ContentBundle\Services\ContentCreator">
+            <argument type="service" id="integrated.form.resolver" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="router" />
+        </service>
+
+        <service id="integrated_content.services.flusher" class="Integrated\Bundle\ContentBundle\Services\LockingIndexingFlusher">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
+            <argument type="service" id="integrated_workflow.lock.factory" />
+            <argument type="service" id="integrated_solr.indexer" />
+        </service>
+
+        <service id="integrated_content.content.repository" class="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Content</argument>
+        </service>
     </services>
 </container>
