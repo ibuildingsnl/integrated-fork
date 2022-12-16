@@ -2,6 +2,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
+use Doctrine\Persistence\ObjectManager;
+use Integrated\Bundle\ContentBundle\Controller\ContentController;
 use Integrated\Bundle\ContentBundle\Services\Exception\StorageException;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
@@ -11,6 +13,7 @@ use Symfony\Component\Lock\LockFactory;
 final class LockingIndexingFlusher implements Flusher
 {
     public function __construct(
+        private readonly ObjectManager $doctrine,
         private readonly QueueSubscriber $queueSubscriber,
         private readonly LockFactory $lockFactory,
         private readonly IndexerInterface $indexer,
@@ -18,7 +21,9 @@ final class LockingIndexingFlusher implements Flusher
 
     public function flush(): void
     {
-        $lock = $this->lockFactory->createLock(self::class);
+        $this->doctrine->flush();
+
+        $lock = $this->lockFactory->createLock(ContentController::class);
         $lock->acquire(true);
         $this->queueSubscriber->setPriority(QueueInterface::PRIORITY_HIGH);
 

@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\Persistence\ObjectManager;
-use Integrated\Bundle\ContentBundle\Services\Exception\StorageException;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ResolverInterface;
@@ -21,18 +20,15 @@ class ContentCreator
         private readonly ObjectManager                 $objectManager,
         private readonly AuthorizationCheckerInterface $checker,
         private readonly FormFactoryInterface          $formFactory,
-        private readonly Flusher                       $flusher,
         private readonly string                        $action,
     ) {}
 
     /**
      * @param Request $request       The users original request
-     * @param bool $flush            Whether to synchronize the persistence context with the data store
      * @return FormInterface|null    The form element for further processing, or null when the user cancels
      * @throws AccessDeniedException When the user does not have permission to create this (type of) content
-     * @throws StorageException      When something went wrong while saving the content
      */
-    public function new(Request $request, bool $flush = false): ?FormInterface
+    public function new(Request $request): ?FormInterface
     {
         $contentType = $this->typeResolver->getType($request->get('type'));
 
@@ -69,9 +65,6 @@ class ContentCreator
         }
 
         $this->objectManager->persist($content);
-        if ($flush) {
-            $this->flusher->flush();
-        }
 
         return $form;
     }

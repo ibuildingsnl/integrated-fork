@@ -43,14 +43,12 @@ class CreatingNewContentTest extends TypeTestCase
     private TokenStorage $tokenStorage;
     private ContentCreator $creator;
     private ObjectManager&MockObject $objectManager;
-    private Flusher $flusher;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->tokenStorage = new TokenStorage();
         $this->objectManager = $this->createMock(ObjectManager::class);
-        $this->flusher = $this->createMock(Flusher::class);
 
         $this->creator = new ContentCreator(
             new MemoryResolver([
@@ -73,7 +71,6 @@ class CreatingNewContentTest extends TypeTestCase
                 ),
             ),
             $this->factory,
-            $this->flusher,
             'foo',
         );
     }
@@ -200,26 +197,6 @@ class CreatingNewContentTest extends TypeTestCase
                 "primaryChannel" => "",
             ],
         ]));
-
-        self::assertTrue($form->isSubmitted());
-        self::assertTrue($form->isValid());
-    }
-
-    /** @test */
-    public function creating_a_new_taxonomy_item_and_flushing_it_to_the_data_store()
-    {
-        $this->tokenStorage->setToken($this->user('ok'));
-        $this->flusher->expects($this->once())->method('flush');
-
-        $form = $this->creator->new(Request::create('foo/bar', 'POST', [
-            "type" => "taxonomy",
-            "integrated_content" => [
-                "actions" => ["create" => ""],
-                "title" => "Tax!",
-                "description" => "Taxonomy!!!",
-                "primaryChannel" => "",
-            ],
-        ]), true);
 
         self::assertTrue($form->isSubmitted());
         self::assertTrue($form->isValid());
