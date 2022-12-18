@@ -79,10 +79,20 @@ body {
             @include media(max-lg) {
                 padding:1rem;
             }
+            @include media(max-md) {
+                * {
+                    word-break: break-word;
+                }
+            }
         }
         @include media(max-lg) {
             width: 100%;
             padding:1rem;
+        }
+        @include media(max-md) {
+            * {
+                word-break: break-word;
+            }
         }
         .toggle-filters {
             display: none;
@@ -176,7 +186,7 @@ body.bulk_select, body.bulk_configure, body.bulk_confirm {
 }
 
 @include media(max-sm) {
-    .content_index {
+    body[class*="_index"] {
         .section-white {
             background:transparent;
         }
@@ -288,6 +298,7 @@ body.hide-options {
 
     .editor-item-list-container {
         padding: 0 2rem 2rem;
+        position: relative;
     }
 
     .editor-item-header {

@@ -130,13 +130,10 @@ $(function () {
                 .attr('data-comment-id', commentId).data('comment-id', commentId)
                 .data('parent', $parent)
                 .append($('<i>').addClass('iconoir-chat-bubble'));
-            console.log(comment);
             if ($label) {
-                console.log('label = true')
                 //if input has label place it inside label
                 $label.append(comment)
             } else {
-                console.log('label = false')
                 //else place it after input
                 $parent.after(comment);
             }

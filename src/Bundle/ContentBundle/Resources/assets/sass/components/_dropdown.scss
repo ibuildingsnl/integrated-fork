@@ -222,7 +222,7 @@ li.dropdown {
         }
     }
 
-    &.open {
+    &.show {
         > .dropdown-menu {
             display: block;
         }
@@ -252,7 +252,7 @@ li.dropdown {
     }
 }
 
-.open {
+.show {
     > .dropdown-menu {
         display: block;
     }
@@ -294,7 +294,7 @@ li.dropdown {
 }
 
 .dropdown-assigned-to-me.dropdown.top-bar {
-    &.open {
+    &.show {
         .dropdown-menu-left {
             position: fixed;
         }

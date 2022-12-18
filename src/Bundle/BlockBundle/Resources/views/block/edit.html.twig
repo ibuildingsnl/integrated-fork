@@ -14,7 +14,7 @@
             <div class="aside-holder">
                 {% block sidebar %}
                 <div class="aside-header">
-                    <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options" type="button"><i class="iconoir-cancel"></i>
+                    <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button"><i class="iconoir-cancel"></i>
                     </button>
                     <span>{% trans %}Options{% endtrans %}</span>
                 </div>
@@ -30,7 +30,7 @@
                         <div class="aside-item-list-container">
                             <div class="status-info">
                                 <div class="form-group">
-                                    <label class="control-label col-sm-4 required" for="block_edit_searchSelection">Block
+                                    <label class="control-label w-full sm:w-1/3 required" for="block_edit_searchSelection">Block
                                         type</label>
                                     <div class="w-full sm:w-2/3">
                                         {{ blockType }}

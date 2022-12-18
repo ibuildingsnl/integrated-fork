@@ -1,4 +1,4 @@
-ul.integrated-collection > li {
+div:not(.channel-domains) > ul.integrated-collection > li {
     background-color: #f2f2f2;
     border-radius: 8px;
     display: block;
@@ -6,12 +6,13 @@ ul.integrated-collection > li {
     position: relative;
 }
 
-ul.integrated-collection > li + li {
+div:not(.channel-domains) > ul.integrated-collection > li + li {
     margin-top: 10px;
 }
 
-ul.integrated-collection > li:after {
+div:not(.channel-domains) > ul.integrated-collection > li:after {
     content: " ";
     display: table;
     clear: both;
 }
+

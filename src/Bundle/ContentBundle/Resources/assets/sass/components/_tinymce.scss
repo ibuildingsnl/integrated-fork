@@ -7,7 +7,7 @@
     border-color: $border-color;
 }
 
-.tox-fullscreen {
+body.tox-fullscreen {
     .tox-editor-header {
         top: 0 !important;
     }
@@ -31,6 +31,11 @@
     .fancy_tinymce div.tox-edit-area {
         top: 0 !important;
         height: 100%;
+    }
+    .content-wrapper {
+        position: fixed;
+        top: 0;
+        padding: 0;
     }
 }
 .fancy_tinymce {

@@ -31,7 +31,7 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         <div class="aside-header">
-                            <button class="toggle-filters" onclick="toggleOptionsSidebar()" data-target="aside-options"
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
                                     type="button"><i class="iconoir-cancel"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
@@ -97,10 +97,12 @@
                                                 <div class="status draft">
                                                     <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                                 </div>
-                                                <a class="delete"
-                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                    <i class="iconoir-trash"></i>
-                                                </a>
+                                                {% if content is defined %}
+                                                    <a class="delete"
+                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                        <i class="iconoir-trash"></i>
+                                                    </a>
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
                                     </div>
@@ -350,8 +352,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button"
-                            class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
-                    <button type="button" class="btn btn-gray-thin"
+                            class="btn btn-dark-green live-page">{% trans %}Leave this page{% endtrans %}</button>
+                    <button type="button" class="btn btn-white"
                             data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
                 </div>
             </div>
@@ -369,16 +371,17 @@
     textarea = document.querySelector('.title_tinymce_input');
     if (textarea !== null) {
         textarea.addEventListener('input', autoResize, false);
-        textarea.addEventListener('DOMContentLoaded', autoResize, false);
-
         textarea.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
             }
         });
+
+        autoResize();
+
         function autoResize() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
 
         setTimeout(function() {

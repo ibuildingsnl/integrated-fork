@@ -7,12 +7,12 @@
             <div class="page-title">
                 <div class="heading flex justify-between w-full">
                     <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
-                    <button class="toggle-filters btn btn-orange icon-left" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"  data-target="aside-filters"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
                 </div>
                 <div class="options">
                     <ul class="">
-                        <li class="dropdown">
-                            <a href data-toggle="dropdown" role="button" id="sorting-list"
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" id="sorting-list"
                                class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
                                 : {{ params.sort.options[params.sort.current].label|trans }}</span>
                                 <i class="iconoir-nav-arrow-down"></i></a>
@@ -27,8 +27,8 @@
                             </ul>
                         </li>
                         {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
-                        <li class="dropdown">
-                            <a href data-toggle="dropdown" role="button"
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button"
                                class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
                                 <i class="iconoir-nav-arrow-down"></i></a>
 
@@ -157,7 +157,7 @@
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters" onclick="toggleDataTarget(this)" data-target="aside-filters"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
                         <a href="{{ path('integrated_content_content_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
@@ -191,8 +191,6 @@
                                                     <div class="aside-item-search">
                                                         <i class="iconoir-search"></i>
                                                         <input type="text" class="list-search"
-                                                               onchange="asideItemsSearch(this)"
-                                                               onkeyup="asideItemsSearch(this)"
                                                                placeholder="{% trans %}Search in{% endtrans %} {% if key == 'contenttypes' %}{% trans %}Content types{% endtrans %}{% elseif facetTitles[key]|default %}{{ facetTitles[key]|default|trans }}{% else %}{{ key|capitalize }}{% endif %}">
                                                     </div>
                                                 {% endif %}

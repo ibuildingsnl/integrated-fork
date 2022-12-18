@@ -24,7 +24,7 @@
                     <div class="preview">
                         {% if content.getChannels|length > 0 %}
                             <ul class="options-no-bg">
-                                <li class="dropdown">
+                                <li class="dropdown close-outside" data-underlay="no">
                                     <a href="#" data-toggle="dropdown" role="button" id="drop_1"
                                        class="btn btn-dropdown">
                                         <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
@@ -52,7 +52,7 @@
                 {% endif %}
             {% endblock %}
         </div>
-        <button class="form-actions-extra-toggle" onclick="toggleDataTarget(this)" data-target="form-actions-extra"
+        <button class="form-actions-extra-toggle toggle-data-target"  data-target="form-actions-extra"
                 data-underlay="no" type="button">
             <i class="iconoir-more-horiz"></i>
         </button>
@@ -73,8 +73,8 @@
                 {% if form.actions.copy is defined %}
                     {{ form_row(form.actions.copy) }}
                 {% endif %}
-                <button type="button" onclick="toggleOptionsSidebar()" onload="hideButtonIfNoOptions(this)"
-                        class="toggle-settings btn btn-white ml-2" data-target="aside-options"><i
+                <button type="button"
+                        class="toggle-settings toggle-options-sidebar btn btn-white ml-2" data-target="aside-options"><i
                         class="iconoir-settings"></i></button>
             {% endblock %}
         </div>
