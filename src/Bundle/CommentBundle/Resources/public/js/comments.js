@@ -118,6 +118,8 @@ $(function () {
             $parent.closest('.editor-item-wrapper').addClass('comment-set');
         } else if ($parent.parent().hasClass("aside-item-list-container")) {
             $parent.closest('.aside-item-wrapper').addClass('comment-set');
+        } else if ($parent.parent().parent().hasClass("title_tinymce")) {
+            $parent.closest('.form-item').addClass('comment-set');
         } else {
             $label = $parent.closest('.form-group').find('label');
             $parent.closest('.form-group').addClass('comment-set');
@@ -239,9 +241,12 @@ $(function () {
                 $('.integrated-comment[data-comment-id="' + data.id + '"]', tinymce.activeEditor.getDoc()).contents().unwrap();
             }
 
-
-            $('[data-comment-id="' + data.id + '"]').closest('[class*="item-wrapper"]').removeClass('comment-set');
-            $('[data-comment-id="' + data.id + '"]').removeAttr('data-comment-id').removeData('comment-id');
+            let element = $('[data-comment-id="' + data.id + '"]');
+            element.closest('[class*="item-wrapper"]').removeClass('comment-set');
+            if (element.parent().parent().hasClass("title_tinymce")) {
+                element.parent().parent().removeClass('comment-set');
+            }
+            element.removeAttr('data-comment-id').removeData('comment-id');
         });
         return false;
     });

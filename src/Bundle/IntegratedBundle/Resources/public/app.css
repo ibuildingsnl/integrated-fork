@@ -5672,12 +5672,14 @@ body.tox-fullscreen .content-wrapper {
   transform: translate(0, 0);
 }
 .modal .modal-dialog {
-  width: auto;
+  width: 100vw;
   margin: 0;
   display: flex;
   min-height: 100vh;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  z-index: 1070;
 }
 .modal .modal-header {
   padding: 15px;
@@ -5907,6 +5909,9 @@ body.tox-fullscreen .content-wrapper {
 .editor-item-wrapper.comment-set .editor-item-header, .editor-item-wrapper.comment-set .aside-item-header, .aside-item-wrapper.comment-set .editor-item-header, .aside-item-wrapper.comment-set .aside-item-header, .form-group.comment-set .editor-item-header, .form-group.comment-set .aside-item-header {
   background-color: transparent;
 }
+.editor-item-wrapper.comment-set .editor-item-header h3.aside-item-title i, .editor-item-wrapper.comment-set .editor-item-header h3.editor-item-title i, .editor-item-wrapper.comment-set .aside-item-header h3.aside-item-title i, .editor-item-wrapper.comment-set .aside-item-header h3.editor-item-title i, .aside-item-wrapper.comment-set .editor-item-header h3.aside-item-title i, .aside-item-wrapper.comment-set .editor-item-header h3.editor-item-title i, .aside-item-wrapper.comment-set .aside-item-header h3.aside-item-title i, .aside-item-wrapper.comment-set .aside-item-header h3.editor-item-title i, .form-group.comment-set .editor-item-header h3.aside-item-title i, .form-group.comment-set .editor-item-header h3.editor-item-title i, .form-group.comment-set .aside-item-header h3.aside-item-title i, .form-group.comment-set .aside-item-header h3.editor-item-title i {
+  color: #ffa620;
+}
 .editor-item-wrapper.comment-set .editor-item-list input, .editor-item-wrapper.comment-set .editor-item-list textarea, .editor-item-wrapper.comment-set .aside-item-list input, .editor-item-wrapper.comment-set .aside-item-list textarea, .aside-item-wrapper.comment-set .editor-item-list input, .aside-item-wrapper.comment-set .editor-item-list textarea, .aside-item-wrapper.comment-set .aside-item-list input, .aside-item-wrapper.comment-set .aside-item-list textarea, .form-group.comment-set .editor-item-list input, .form-group.comment-set .editor-item-list textarea, .form-group.comment-set .aside-item-list input, .form-group.comment-set .aside-item-list textarea {
   padding-left: 3rem;
 }
@@ -5925,6 +5930,34 @@ body.tox-fullscreen .content-wrapper {
 }
 .editor-item-wrapper.comment-set.show .editor-item-header, .editor-item-wrapper.comment-set.show .aside-item-header, .aside-item-wrapper.comment-set.show .editor-item-header, .aside-item-wrapper.comment-set.show .aside-item-header, .form-group.comment-set.show .editor-item-header, .form-group.comment-set.show .aside-item-header {
   background-color: transparent;
+}
+.editor-item-wrapper.comment-set .form-control:focus, .aside-item-wrapper.comment-set .form-control:focus, .form-group.comment-set .form-control:focus {
+  border-color: #ffa620;
+}
+
+.title_tinymce.comment-set {
+  background-color: #ffedd8;
+}
+.title_tinymce.comment-set textarea {
+  background-color: #ffedd8;
+}
+.title_tinymce.comment-set .widget {
+  position: relative;
+}
+.title_tinymce.comment-set .added-comment-line {
+  position: absolute;
+  top: 0;
+  left: -50px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.title_tinymce.comment-set .added-comment-line i:before {
+  width: 25px;
+  height: 25px;
 }
 
 #relations-search {

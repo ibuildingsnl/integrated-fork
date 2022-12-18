@@ -97,18 +97,6 @@ $(".relation-items").each(function() {
     $addWrapper.html(html);
 });
 
-var resizeIFrame = function(height, iFrame) {
-    if (height <= 0) {
-        height = $(window).height() - 120;
-    }
-
-    if ((height + 20) >= $(window).height()) {
-        height = $(window).height() - 120;
-    }
-
-    iFrame.attr('height', height);
-};
-
 $('.relations').on('click', '[data-modal]', function(e){
     e.preventDefault();
     if ($(this).parents('.add-relation').length) {
@@ -116,6 +104,7 @@ $('.relations').on('click', '[data-modal]', function(e){
     } else {
         var modal = $(this).next('#relation-add-modal');
     }
+
     var iFrame = modal.find('iframe');
 
     modal.find('.modal-title').text($(this).data('title'));
@@ -123,15 +112,8 @@ $('.relations').on('click', '[data-modal]', function(e){
     iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function(e){
 
         iFrame.show();
-        modal.modal('show');
-
-        var height = $(window).height() - 120;
-        if ((iFrame.contents().height() + 20) < $(window).height()) {
-            // todo: this does not work in IE
-            height = iFrame.contents().height() -100;
-        }
-
-        resizeIFrame(height, iFrame);
+        modal.show();
+        modal.append('<div class="modal-backdrop fade in"></div>');
 
         iFrame.contents().find('*[data-dismiss="modal"]').click(function(ev){
             ev.preventDefault();
@@ -139,4 +121,11 @@ $('.relations').on('click', '[data-modal]', function(e){
 
         iFrame.unbind('load');
     });
+});
+
+/* handle Closing the modal */
+$('button[data-dismiss="modal"]').on('click', function() {
+    var modal = $(this).closest('#relation-add-modal');
+    modal.hide();
+    $('.modal-backdrop').remove();
 });

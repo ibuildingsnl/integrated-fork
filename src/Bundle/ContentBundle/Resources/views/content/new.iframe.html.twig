@@ -41,6 +41,9 @@
         #wrapper-holder {
             height: 100%;
         }
+        #toolbar .back .form-group {
+            display: none;
+        }
     </style>
 {% endblock %}
 
@@ -54,7 +57,9 @@
     {{ parent() }}
     <script>
         $('button[data-dismiss="modal"]').click(function() {
-            parent.$("#relation-add-modal.modal").modal('hide');
+            parent.$('.modal-backdrop').remove();
+            parent.$("#relation-add-modal.modal").hide();
+
         });
     </script>
 {% endblock %}
