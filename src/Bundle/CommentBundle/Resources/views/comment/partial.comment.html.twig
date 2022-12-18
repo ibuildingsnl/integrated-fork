@@ -1,36 +1,35 @@
 {% set commentId = parent|default ? parent.id : comment.id %}
 {% set replyId = parent|default ? comment.id : null %}
-
-<div class="media">
-    {% if comment.author.picture|default(comment.author.cover|default) %}
-        <div class="media-left">
-            <img class="media-object img-circle" src="{{ integrated_image(comment.author.picture|default(comment.author.cover)).cropResize(50) }}">
-        </div>
-    {% endif %}
-    <div class="media-body">
-        {% if comment.author|default %}
-            <h4 class="media-heading">{{ comment.author }}</h4>
+<div class="comment">
+    <div class="comment-metadata">
+        {% if comment.author.picture|default(comment.author.cover|default) %}
+            <div class="profile-image">
+                <img class="media-object rounded-full"
+                     src="{{ integrated_image(comment.author.picture|default(comment.author.cover)).cropResize(50) }}">
+            </div>
         {% endif %}
-        <p>
-            <small>
-                <span class="date">
-                    {{ comment.date|date('d-m-Y H:s') }}
-                </span>
-            </small>
-            -
-            <a class="delete-comment" href="
+        <div class="metadata-body">
+            <div class="metadata-content">
+                <a class="delete-comment remove" href="
                     {%- if replyId -%}
                         {{ path('integrated_comment_delete_reply', {'comment': commentId, 'replyId': replyId}) }}
                     {%- else -%}
                         {{ path('integrated_comment_delete', {'comment': commentId}) }}
                     {%- endif -%}
                 ">
-                <span class="iconoir-trash"></span>
-            </a>
-        </p>
+                    <span class="iconoir-cancel"></span>
+                </a>
+                {% if comment.author|default %}
+                    <span class="comment-username font-bold mr-2">{{ comment.author }}</span>
+                {% endif %}
+                <span class="date text-sm">
+                    {{ comment.date|date('d-m-Y H:s') }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="comment-text">
+        {{ comment.text }}
     </div>
 </div>
-
-<p>
-    {{ comment.text }}
-</p>

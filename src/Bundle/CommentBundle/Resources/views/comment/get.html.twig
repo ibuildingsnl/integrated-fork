@@ -18,17 +18,17 @@
 
         <div class="comment-footer">
             {{ form_start(form) }}
-                <div class="form-group">
-                    <div class="row">
-                        <div class="w-full sm:w-3/4 push-down">
-                            {{ form_widget(form.text) }}
-                        </div>
+            <div class="form-group">
+                <div class="flex">
+                    <div class="w-full comment-textarea">
+                        {{ form_widget(form.text) }}
+                    </div><!-- col -->
 
-                        <div class="col-sm-3">
-                            <button type="submit" class="btn btn-gray-thin">{{ 'Reply'|trans }}</button>
-                        </div>
+                    <div class="flex ml-2">
+                        <button type="submit" class="btn btn-dark-green">{{ 'Reply'|trans }}</button>
                     </div>
                 </div>
+            </div>
             {{ form_end(form) }}
         </div>
     </div>

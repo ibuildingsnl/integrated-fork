@@ -1,18 +1,19 @@
 <div class="comment-holder hold">
     <div class="comment-inner arrow-up arrow-left">
         <div class="comment-body">
+            <h3>{{ 'Add a Comment'|trans }}</h3>
             <p>
                 <a href="#" class="cancel-comment"><i class="iconoir-cancel"></i></a>
             </p>
             {{ form_start(form) }}
                 <div class="form-group">
-                    <div class="row">
-                        <div class="w-full sm:w-2/3 push-down">
+                    <div class="flex">
+                        <div class="w-full comment-textarea">
                             {{ form_widget(form.text) }}
                         </div><!-- col -->
 
-                        <div class="col-sm-4">
-                            <button type="submit" class="btn btn-gray-thin">{{ 'Add Comment'|trans }}</button>
+                        <div class="flex ml-2">
+                            <button type="submit" class="btn btn-dark-green">{{ 'Add'|trans }}</button>
                         </div>
                     </div>
                 </div>

@@ -26,7 +26,7 @@ class CommentType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('text', TextType::class, ['attr' => ['placeholder' => 'Add a comment']]);
+        $builder->add('text', TextType::class, ['attr' => ['placeholder' => 'Your comment']]);
     }
 
     /**

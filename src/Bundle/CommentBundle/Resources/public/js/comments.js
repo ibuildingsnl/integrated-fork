@@ -7,8 +7,8 @@ $(function () {
      * @param {jQuery} $parent
      * @param {jQuery} $container
      */
-    var showCommentButton = function(fieldName, position, $parent, $container) {
-        var $div = $('<div class="add-comment-button hold">Add a Comment</div>');
+    let showCommentButton = function(fieldName, position, $parent, $container) {
+        let $div = $('<div class="add-comment-button btn btn-dark-green hold">Add a Comment</div>');
 
         $div.mousedown(function(e) {
             newComment(fieldName, position, $parent, $container);
@@ -27,7 +27,7 @@ $(function () {
      * @param {jQuery} $parent
      * @param {jQuery} $container
      */
-    var newComment = function (fieldName, position, $parent, $container) {
+    let newComment = function (fieldName, position, $parent, $container) {
         $.ajax({
             type: 'GET',
             url: integrated_comment_urls.new.replace('__content__', $('.content-form').data('content-id')).replace('__field__', fieldName),
@@ -43,7 +43,7 @@ $(function () {
      * @param {jQuery} $parent
      * @param {jQuery} $container
      */
-    var showAddedComment = function(commentId, position, $parent, $container) {
+    let showAddedComment = function(commentId, position, $parent, $container) {
         $.ajax({
             type: 'GET',
             url: integrated_comment_urls.get.replace('__comment__', commentId),
@@ -59,26 +59,30 @@ $(function () {
      * @param {jQuery} $parent
      * @param {jQuery} $container
      */
-    var showModalComment = function(response, position, $parent, $container) {
+    let showModalComment = function(response, position, $parent, $container) {
         removeControls();
 
-        var $modal = $(response);
+        let $modal = $(response);
         $container.append($modal);
 
         positionElement($modal, position);
+
+        $('.fancy_tinymce').
+            append('<div class="modal-backdrop fade in"></div>');
 
         $('form', $modal).bind('submit', function(e){
             e.preventDefault();
 
             postComment($(this), $parent);
         });
+
     };
 
     /**
      * @param {jQuery} $form
      * @param {jQuery} $parent
      */
-    var postComment = function ($form, $parent) {
+    let postComment = function ($form, $parent) {
         $.ajax({
             type: 'POST',
             data: $form.serialize(),
@@ -105,23 +109,34 @@ $(function () {
      * Add comment icon in the label of an integrated field
      * @param $parent
      */
-    var createAddedCommentLine = function($parent) {
-        var commentId = $parent.data('comment-id');
-        var $label = $parent.closest('.form-group').find('label');
+    let createAddedCommentLine = function($parent) {
+        let commentId = $parent.data('comment-id');
 
-        //remove existing
+
+        let $label = false;
+        if ($parent.parent().hasClass("editor-item-list-container")) {
+            $parent.closest('.editor-item-wrapper').addClass('comment-set');
+        } else if ($parent.parent().hasClass("aside-item-list-container")) {
+            $parent.closest('.aside-item-wrapper').addClass('comment-set');
+        } else {
+            $label = $parent.closest('.form-group').find('label');
+            $parent.closest('.form-group').addClass('comment-set');
+        }
+        // remove existing
         $('.added-comment-line[data-comment-id="' + commentId + '"]').remove();
 
         if (commentId) {
-            var comment = $('<div>').addClass('added-comment-line')
+            let comment = $('<div>').addClass('added-comment-line')
                 .attr('data-comment-id', commentId).data('comment-id', commentId)
                 .data('parent', $parent)
-                .append($('<span>').addClass('iconoir-chat-bubble'));
-
+                .append($('<i>').addClass('iconoir-chat-bubble'));
+            console.log(comment);
             if ($label) {
+                console.log('label = true')
                 //if input has label place it inside label
                 $label.append(comment)
             } else {
+                console.log('label = false')
                 //else place it after input
                 $parent.after(comment);
             }
@@ -132,9 +147,8 @@ $(function () {
      * @param {jQuery} $element
      * @returns {{top: *, left: *}}
      */
-    var calculatePosition = function ($element) {
-        var offset = $element.offset();
-
+    let calculatePosition = function ($element) {
+        let offset = $element.offset();
         return {top: (offset.top + $element.outerHeight()), left: offset.left};
     };
 
@@ -144,27 +158,27 @@ $(function () {
      * @param {jQuery} $element
      * @param {object} position
      */
-    var positionElement = function ($element, position) {
+    let positionElement = function ($element, position) {
         $element.css({
-            'z-index': 999,
+            'z-index': 9999,
             position: 'absolute',
+            top: position.top,
             left: position.left,
-            top: position.top
         });
     };
 
     /**
      * Removes all buttons and modals related to comment bundle
      */
-    var removeControls = function() {
-        $('.comment-holder, .add-comment-button').remove();
+    let removeControls = function() {
+        $('.comment-holder, .add-comment-button, .modal-backdrop').remove();
     };
 
     /**
      * @param {string} fullName
      * @returns {string}
      */
-    var getFieldName = function(fullName) {
+    let getFieldName = function(fullName) {
         return /\[(.+)\]$/.exec(fullName)[1];
     };
 
@@ -183,8 +197,8 @@ $(function () {
      */
     $('input:text, textarea').bind('select', function (e) {
         if (e.target.selectionStart != e.target.selectionEnd) {
-            var position = calculatePosition($(this));
-            var $container =  $('body');
+            let position = calculatePosition($(this));
+            let $container =  $('body');
 
             if ($(this).data('comment-id') !== undefined) {
                 showAddedComment($(this).data('comment-id'), position, $(this), $container);
@@ -208,7 +222,9 @@ $(function () {
     /**
      * Check if someone clicks on a comment icon, if so show the comment modal
      */
-    $(document).on('click', '.added-comment-line', function () {
+    $(document).on('click', '.added-comment-line', function (e) {
+        e.preventDefault();
+
         showAddedComment($(this).data('comment-id'), calculatePosition($(this)), $(this).data('parent'), $('body'));
     });
 
@@ -226,6 +242,8 @@ $(function () {
                 $('.integrated-comment[data-comment-id="' + data.id + '"]', tinymce.activeEditor.getDoc()).contents().unwrap();
             }
 
+
+            $('[data-comment-id="' + data.id + '"]').closest('[class*="item-wrapper"]').removeClass('comment-set');
             $('[data-comment-id="' + data.id + '"]').removeAttr('data-comment-id').removeData('comment-id');
         });
         return false;
@@ -234,7 +252,18 @@ $(function () {
     /**
      * Remove comment modal
      */
-    $(document).on('click', '.comment-holder .integrate-icon-cancel', function(e) {
+    $(document).on('click', '.comment-holder .cancel-comment .iconoir-cancel', function(e) {
+        e.preventDefault();
+
+        removeControls();
+
+        return false;
+    });
+
+    /**
+     * Remove comment modal
+     */
+    $(document).on('click', '.fancy_tinymce .modal-backdrop', function(e) {
         e.preventDefault();
 
         removeControls();
@@ -248,17 +277,17 @@ $(function () {
     //
     //
 
-    var tinyCommentCheckSelect = function (e) {
+    let tinyCommentCheckSelect = function (e) {
         if ($(e.target).hasClass('hold')) {
             return;
         }
 
         removeControls();
 
-        var editor = tinymce.activeEditor;
-        var selectionContent = editor.selection.getContent();
-        var $container = $(editor.getContainer().parentNode);
-        var position = tinymcePosition();
+        let editor = tinymce.activeEditor;
+        let selectionContent = editor.selection.getContent();
+        let $container = $(editor.getContainer().parentNode);
+        let position = tinymcePosition();
 
         if ($(e.target).hasClass('integrated-comment') && selectionContent == '') {
             showAddedComment($(e.target).data('comment-id'), position, null, $container);
@@ -272,7 +301,7 @@ $(function () {
             return;
         }
 
-        var fieldName = getFieldName($(editor.getElement()).attr('name'));
+        let fieldName = getFieldName($(editor.getElement()).attr('name'));
 
         showCommentButton(fieldName, position, null, $container);
     };
@@ -280,19 +309,20 @@ $(function () {
     /**
      * @returns {{left: *, top: *}}
      */
-    var tinymcePosition = function () {
-        var rectangle = tinymce.activeEditor.selection.getSel().getRangeAt(0).getBoundingClientRect();
-        var $container = $(tinymce.activeEditor.getContainer().parentNode);
-        var toolbarHeight = $('.mce-toolbar-grp', $container).outerHeight();
+    let tinymcePosition = function () {
+        let rectangle = tinymce.activeEditor.selection.getSel().getRangeAt(0).getBoundingClientRect();
+        let $container = $(tinymce.activeEditor.getContainer().parentNode);
+        let toolbarHeight = $('.tox-editor-header', $container).outerHeight();
+        let tinyTitle = $('.title_tinymce_input').height();
 
-        //bottom position + toolbarheight + 10 pixel margin
-        return {left: rectangle.left, top: (rectangle.bottom + toolbarHeight + 10)};
+        //bottom position + toolbarheight + 5 pixel margin + TinyMCE overlay title
+        return {left: rectangle.left, top: (rectangle.bottom + toolbarHeight + 5 + tinyTitle)};
     };
 
     /**
      * Add event listeners to tinymce after tinymce is loaded
      */
-    var tinymceInit = function () {
+    let tinymceInit = function () {
         if (typeof tinymce == 'undefined' || tinymce.activeEditor == undefined || tinymce.activeEditor.formatter == undefined) {
             return;
         }
@@ -305,5 +335,5 @@ $(function () {
         tinymce.activeEditor.dom.loadCSS("/bundles/integratedcomment/css/comments.css");
     };
 
-    var waitForTiny = setInterval(tinymceInit, 100);
+    let waitForTiny = setInterval(tinymceInit, 100);
 });
