@@ -46,9 +46,9 @@
                     {% endif %}
                 {% endfor %}
             {% endif %}
-                <a href="#todo">{{ item.title }}</a>
+                <a href="{{ path('integrated_content_content_edit', { 'id': item.taxonomyId }) }}">{{ item.title }}</a>
                 {% if item.count %}
-                    (<a href="#todo">used {{ item.count }} times</a>)
+                    (<a href="{{ path('integrated_content_content_index', { 'Keywords': [item.title] }) }}">used {{ item.count }} times</a>)
                 {% else %}
                     (unused)
                 {% endif %}
