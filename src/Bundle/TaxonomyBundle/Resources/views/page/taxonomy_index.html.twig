@@ -37,10 +37,21 @@
         <ul>
         {% for item in index %}
             <li>
-            {% for i in range(0, item.depth) %}
-                &nbsp;&nbsp;&nbsp;&nbsp;
-            {% endfor %}
-                <a href="#todo">{{ item.title }}</a> (<a href="#todo">{{ item.count }} usages</a>)
+            {% if item.depth %}
+                {% for i in range(0, item.depth-1) %}
+                    {% if i == item.depth-1 %}
+                        &dash;
+                    {% else %}
+                        &nbsp;&nbsp;
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+                <a href="#todo">{{ item.title }}</a>
+                {% if item.count %}
+                    (<a href="#todo">used {{ item.count }} times</a>)
+                {% else %}
+                    (unused)
+                {% endif %}
             </li>
         {% endfor %}
         </ul>
