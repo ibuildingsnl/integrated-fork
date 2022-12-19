@@ -99,6 +99,10 @@
     position: relative;
 }
 
+a[data-toggle="dropdown"] {
+    cursor: pointer;
+}
+
 .dropdown-toggle {
     &:focus {
         outline: 0;

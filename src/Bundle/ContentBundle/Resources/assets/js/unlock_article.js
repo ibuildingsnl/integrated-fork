@@ -6,7 +6,6 @@ const form = $('form.content-form');
 const modal = $('#content-edit-modal');
 
 if (modal.length && form.length) {
-
     /* handle BACK|FORWARD buttons in browser */
     history.pushState(null, null, location.href);
     window.onpopstate = function(e) {
@@ -29,7 +28,7 @@ if (modal.length && form.length) {
     });
 
     $(function() {
-        if (typeof tinymce !== 'undefined') {
+        if (typeof tinymce !== 'undefined' && tinymce.activeEditor !== null) {
             /* this works for one editor, not for multiple */
             tinymce.activeEditor.on('Change', function(e) {
                 form.data('changed', true);
@@ -37,7 +36,7 @@ if (modal.length && form.length) {
         }
     });
 
-//var is set in view
+    //var is set in view
     if (global.formInvalid) {
         form.data('changed', true);
     }

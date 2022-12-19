@@ -507,7 +507,7 @@ if (modal.length && form.length) {
     form.data('changed', true);
   });
   $(function () {
-    if (typeof tinymce !== 'undefined') {
+    if (typeof tinymce !== 'undefined' && tinymce.activeEditor !== null) {
       /* this works for one editor, not for multiple */
       tinymce.activeEditor.on('Change', function (e) {
         form.data('changed', true);
@@ -715,8 +715,8 @@ $(function () {
   var $control = $('.login-visible-control');
   $control.change(function () {
     var $wrap = $('.integrated-user-form');
-    var $parent = $(this).parents('.form-group');
-    var items = $wrap.find('.form-group').not($parent);
+    var $parent = $(this).closest('.form-group');
+    var items = $wrap.find('.form-item').not($parent);
     if ($(this).is(':checked')) {
       items.show();
     } else {

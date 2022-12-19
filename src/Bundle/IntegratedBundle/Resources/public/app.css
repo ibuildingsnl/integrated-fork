@@ -2474,6 +2474,10 @@ ul:last-child {
   position: relative;
 }
 
+a[data-toggle=dropdown] {
+  cursor: pointer;
+}
+
 .dropdown-toggle:focus {
   outline: 0;
 }
@@ -5590,6 +5594,7 @@ body.tox-fullscreen .content-wrapper {
 .modal-wrapper.auth .modal-dialog {
   height: auto;
   min-height: auto;
+  position: relative;
 }
 .modal-wrapper .modal {
   background-color: white;
