@@ -4,9 +4,6 @@
     {{ parent() }}
 
     <style>
-        .taxonomy-index {
-            display: flex;
-        }
         .taxonomy-index ul {
             font-size: larger;
             line-height: 3em;
@@ -20,7 +17,10 @@
         .taxonomy-index .form-vertical {
             display: block;
         }
-        @media only screen and (min-width: 600px)  {
+        @media only screen and (min-width: 1000px)  {
+            .taxonomy-index {
+                display: flex;
+            }
             .taxonomy-index .form-vertical {
                 width: 45%;
                 margin-right: 5%;
