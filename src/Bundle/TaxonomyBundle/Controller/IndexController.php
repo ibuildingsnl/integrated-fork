@@ -32,7 +32,7 @@ final class IndexController extends AbstractController
             return $this->redirectToRoute('integrated_taxonomy_index');
         }
 
-        return $this->render('@IntegratedTaxonomy/page/page.html.twig', [
+        return $this->render('@IntegratedTaxonomy/page/taxonomy_index.html.twig', [
             'form' => $form->createView(),
             'index' => $this->indexer->buildTaxonomyIndex(),
         ]);

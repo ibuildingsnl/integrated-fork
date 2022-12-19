@@ -1,0 +1,48 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Taxonomy index{% endtrans %}{% endblock title %}
+{% block style %}
+    {{ parent() }}
+
+    <style>
+        .taxonomy-index {
+            display: flex;
+        }
+        .taxonomy-index ul {
+            font-size: larger;
+            line-height: 3em;
+        }
+        .taxonomy-index ul a {
+            color: #1b3149;
+        }
+        .taxonomy-index ul a:hover {
+            color: #1c6ca1;
+        }
+        .taxonomy-index .form-vertical {
+            display: block;
+        }
+        @media only screen and (min-width: 600px)  {
+            .taxonomy-index .form-vertical {
+                width: 45%;
+                margin-right: 5%;
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="taxonomy-index">
+        {{ form_start(form, { 'style': 'vertical' }) }}
+            {{ form_rest(form) }}
+        {{ form_end(form) }}
+
+        <ul>
+        {% for item in index %}
+            <li>
+            {% for i in range(0, item.depth) %}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            {% endfor %}
+                <a href="#todo">{{ item.title }}</a> (<a href="#todo">{{ item.count }} usages</a>)
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}
