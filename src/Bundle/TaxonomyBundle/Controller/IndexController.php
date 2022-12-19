@@ -29,6 +29,7 @@ final class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->flusher->flush();
             $this->addFlash('success', 'Taxonomy created');
+            return $this->redirectToRoute('integrated_taxonomy_index');
         }
 
         return $this->render('@IntegratedTaxonomy/page/page.html.twig', [
