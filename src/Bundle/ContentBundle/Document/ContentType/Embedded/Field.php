@@ -73,19 +73,4 @@ class Field implements ContentTypeFieldInterface
 
         return $this;
     }
-
-    /**
-     * Added shortcut to getLabel of field.
-     *
-     * @return string
-     *
-     * @deprecated since version 0.7, this object does not contain all the options
-     *             so the label can not be determined based solely on this object.
-     */
-    public function getLabel()
-    {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 0.7.', \E_USER_DEPRECATED);
-
-        return isset($this->options['label']) ? $this->options['label'] : ucfirst($this->getName());
-    }
 }

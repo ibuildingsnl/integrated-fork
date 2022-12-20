@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Fixtures;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,12 +18,14 @@ class TestEntityManagerFactory
             TestCase::markTestSkipped('Extension pdo_sqlite is required.');
         }
 
-        return EntityManager::create(
-            [
+        $config = self::createConfiguration();
+
+        return new EntityManager(
+            DriverManager::getConnection([
                 'driver' => 'pdo_sqlite',
                 'memory' => true,
-            ],
-            self::createConfiguration()
+            ], $config),
+            $config
         );
     }
 
