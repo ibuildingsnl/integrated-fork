@@ -17,8 +17,7 @@ final class LockingIndexingFlusher implements Flusher
         private readonly QueueSubscriber $queueSubscriber,
         private readonly LockFactory $lockFactory,
         private readonly IndexerInterface $indexer,
-    )
-    {
+    ) {
     }
 
     public function flush(): void

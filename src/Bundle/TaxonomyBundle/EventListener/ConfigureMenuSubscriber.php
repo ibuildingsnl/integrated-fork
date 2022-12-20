@@ -17,8 +17,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly ObjectRepository $contentTypes,
-    )
-    {
+    ) {
     }
 
     /**

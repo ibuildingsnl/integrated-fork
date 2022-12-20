@@ -11,8 +11,7 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     public function __construct(
         private readonly ObjectRepository $taxonomies,
         private readonly UsageCounter $usage,
-    )
-    {
+    ) {
     }
 
     /** @return IndexedItem[] */
