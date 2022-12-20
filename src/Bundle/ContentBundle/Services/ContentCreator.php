@@ -22,7 +22,9 @@ class ContentCreator
         private readonly AuthorizationCheckerInterface $checker,
         private readonly FormFactoryInterface          $formFactory,
         private readonly RouterInterface               $router,
-    ) {}
+    )
+    {
+    }
 
     /**
      * @param Request $request       The users original request

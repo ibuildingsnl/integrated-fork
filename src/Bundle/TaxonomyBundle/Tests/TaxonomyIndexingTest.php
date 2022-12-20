@@ -31,7 +31,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function viewing_an_empty_list_when_there_are_no_taxonomies()
+    public function viewingAnEmptyListWhenThereAreNoTaxonomies()
     {
         $this->add();
 
@@ -41,7 +41,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function viewing_a_one_item_list_when_there_is_one_taxonomy()
+    public function viewingOneItemListWhenThereIsOneTaxonomy()
     {
         $this->add($this->taxonomy('foo', 'One', 'one'));
 
@@ -52,7 +52,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function sorting_items_by_ranking()
+    public function sortingItemsByRanking()
     {
         $this->add(
             $this->taxonomy('foo', 'Two', 'two', 'm'),
@@ -67,7 +67,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function sorting_items_by_ranking_and_then_by_title()
+    public function sortingItemsByRankingAndThenByTitle()
     {
         $this->add(
             $this->taxonomy('baz', 'B', 'b', 'm'),
@@ -86,7 +86,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function adding_a_depth_to_an_item_with_a_parent()
+    public function addingDepthToAnItemWithParent()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -102,7 +102,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function adding_a_deeper_depth_to_an_item_with_chain_of_parents()
+    public function addingDeeperDepthToAnItemWithChainOfParents()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -121,7 +121,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function indexing_multiple_children_with_grandchildren()
+    public function indexingMultipleChildrenWithGrandchildren()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -146,7 +146,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function viewing_the_usage_count_for_each_taxonomy_item()
+    public function viewingTheUsageCountForEachTaxonomyItem()
     {
         $this->setUsages(['foo' => 0, 'bar' => 1001]);
         $this->add(
@@ -161,7 +161,7 @@ final class TaxonomyIndexingTest extends TestCase
     }
 
     /** @test */
-    public function indexing_multiple_children_with_ranked_grandchildren_and_usage_counts()
+    public function indexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
     {
         $this->setUsages([
             'bar' => 2,

@@ -10,5 +10,7 @@ final class IndexedItem
         public readonly string $slug,
         public readonly int    $count,
         public readonly int    $depth,
-    ) {}
+    )
+    {
+    }
 }

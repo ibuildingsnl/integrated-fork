@@ -104,7 +104,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function generating_a_taxonomy_form()
+    public function generatingTheTaxonomyForm()
     {
         $this->tokenStorage->setToken($this->user('ok'));
         $form = $this->creator->new(Request::create('foo/bar', 'GET', [
@@ -116,7 +116,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function generating_a_taxonomy_form_with_action_route()
+    public function generatingTheTaxonomyFormWithActionRoute()
     {
         $this->router->method('generate')->with('route')->willReturn('foo/bar');
         $this->tokenStorage->setToken($this->user('ok'));
@@ -129,7 +129,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function not_showing_taxonomy_form_when_not_having_write_access()
+    public function notShowingTaxonomyFormWhenNotHavingWriteAccess()
     {
         $this->tokenStorage->setToken($this->user('not-ok'));
 
@@ -147,7 +147,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function creating_a_new_taxonomy_item()
+    public function creatingANewTaxonomyItem()
     {
         $this->tokenStorage->setToken($this->user('ok'));
 
@@ -173,7 +173,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function cancelling_the_creation_of_a_new_taxonomy_item()
+    public function cancellingTheCreationOfANewTaxonomyItem()
     {
         $this->tokenStorage->setToken($this->user('ok'));
 
@@ -191,7 +191,7 @@ class CreatingNewContentTest extends TypeTestCase
     }
 
     /** @test */
-    public function creating_a_new_article()
+    public function creatingANewArticle()
     {
         $this->tokenStorage->setToken($this->user('writers'));
 
@@ -218,7 +218,7 @@ class CreatingNewContentTest extends TypeTestCase
         self::assertTrue($form->isValid());
     }
 
-    private function contentType(string $id, string $class, array $fields, array $permissions = [])
+    private function contentType(string $id, string $class, array $fields, array $permissions = []): ContentType
     {
         $type = new ContentType();
         $type->setId($id);

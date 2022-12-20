@@ -51,7 +51,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function showing_taxonomy_option_to_admins()
+    public function showingTaxonomyOptionToAdmins()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('no-access', 'ROLE_ADMIN'));
@@ -66,7 +66,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function hiding_taxonomy_option_when_there_is_no_such_content_type()
+    public function hidingTaxonomyOptionWhenThereIsNoSuchContentType()
     {
         $this->tokenStorage->setToken($this->user('no-access', 'ROLE_ADMIN'));
 
@@ -77,7 +77,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function hiding_taxonomy_option_when_the_user_has_no_access()
+    public function hidingTaxonomyOptionWhenTheUserHasNoAccess()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('no-access'));
@@ -89,7 +89,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function showing_taxonomy_option_when_the_user_has_access()
+    public function showingTaxonomyOptionWhenTheUserHasAccess()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('taxonomy-access'));
@@ -104,7 +104,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function not_adding_the_menu_section_if_it_already_exists()
+    public function notAddingTheMenuSectionIfItAlreadyExists()
     {
         $this->withTaxonomyContentType();
         $this->menu->addChild('Taxonomy');
@@ -116,7 +116,7 @@ final class MenuTest extends TestCase
     }
 
     /** @test */
-    public function not_adding_taxonomy_sections_to_unrelated_menus()
+    public function notAddingTaxonomySectionsToUnrelatedMenus()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('taxonomy-access'));

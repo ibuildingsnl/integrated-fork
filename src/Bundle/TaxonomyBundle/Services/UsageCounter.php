@@ -8,7 +8,9 @@ use Doctrine\Common\Collections\Selectable;
 
 class UsageCounter
 {
-    public function __construct(private readonly Selectable $content) {}
+    public function __construct(private readonly Selectable $content)
+    {
+    }
 
     public function countUsages(string $taxonomyId): int
     {

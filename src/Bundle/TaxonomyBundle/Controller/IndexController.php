@@ -15,7 +15,9 @@ final class IndexController extends AbstractController
         private readonly TaxonomyIndexerInterface $indexer,
         private readonly ContentCreator $creator,
         private readonly Flusher $flusher,
-    ) {}
+    )
+    {
+    }
 
     public function taxonomyIndexPage(Request $request): Response
     {
