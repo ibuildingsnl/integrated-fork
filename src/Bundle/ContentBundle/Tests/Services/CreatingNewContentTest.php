@@ -25,7 +25,6 @@ use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Security\Permission;
 use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Test\TestBrowserToken;
 use Symfony\Component\Form\Extension\HttpFoundation\Type\FormTypeHttpFoundationExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -243,6 +242,7 @@ class CreatingNewContentTest extends TypeTestCase
         foreach ($roles as $role) {
             $user->addRole(new Role($role));
         }
+
         return new PreAuthenticatedToken($user, 'main', ['foo']);
     }
 
