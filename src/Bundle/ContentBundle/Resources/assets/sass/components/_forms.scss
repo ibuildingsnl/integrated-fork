@@ -7,6 +7,7 @@
     width: 100%;
     box-shadow: none;
     border-color: $border-color;
+    -webkit-appearance: none;
     @include custom-placeholder($color: $input-color-placeholder, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 
     &:focus {
@@ -552,16 +553,29 @@ label {
     }
 }
 
+.workflow-state {
+    @include media(max-sm) {
+        .remove {
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+    }
+}
 
 .definition-state-collection-widget .widget {
     ul[id^='integrated_workflow_definition_states'] {
         display: flex;
         margin: -.5rem;
-
+        @include media(max-sm) {
+            flex-wrap: wrap;
+        }
         li {
             display: inline-block;
             width: 33.333%;
             padding: .5rem;
+            @include media(max-sm) {
+                width:100%;
+            }
 
             .radio {
                 label {
@@ -581,6 +595,10 @@ label {
     .remove {
         top: 16px;
         right: 16px;
+        @include media(max-sm) {
+            top: -4px;
+            right: -4px;
+        }
     }
 
     li {
@@ -668,6 +686,25 @@ label {
         .row .radiobutton-container .background {
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
+        }
+    }
+    @include media(max-sm) {
+        label.primary-domain {
+            .radiobutton-label {
+                display: none;
+            }
+        }
+        .row {
+            input {
+                padding-left: 55px;
+            }
+        }
+        .list-unstyled .remove {
+            top: 16px;
+            right: 16px;
+        }
+        .radiobutton-container .radiobutton {
+            margin-right:0;
         }
     }
 }

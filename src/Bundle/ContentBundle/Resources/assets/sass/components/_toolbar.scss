@@ -52,6 +52,9 @@
             margin-right: 10px;
             align-items: center;
             justify-content: center;
+            &.hidden {
+                display: none;
+            }
             i:before {
                 width: 25px;
                 height: 25px;

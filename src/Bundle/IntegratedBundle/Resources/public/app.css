@@ -673,6 +673,9 @@ video {
 .font-bold{
   font-weight: 700;
 }
+.uppercase{
+  text-transform: uppercase;
+}
 .capitalize{
   text-transform: capitalize;
 }
@@ -684,6 +687,10 @@ video {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
+.antialiased{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .shadow{
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
@@ -691,6 +698,14 @@ video {
 }
 .outline{
   outline-style: solid;
+}
+.blur{
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.grayscale{
+  --tw-grayscale: grayscale(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .invert{
   --tw-invert: invert(100%);
@@ -1267,6 +1282,7 @@ button * {
   width: 100%;
   box-shadow: none;
   border-color: #DEE3E9;
+  -webkit-appearance: none;
 }
 .form-control:-moz-placeholder {
   color: #999999;
@@ -1833,14 +1849,31 @@ label {
   color: white;
 }
 
+@media only screen and (max-width: 640px) {
+  .workflow-state .remove {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
 .definition-state-collection-widget .widget ul[id^=integrated_workflow_definition_states] {
   display: flex;
   margin: -0.5rem;
+}
+@media only screen and (max-width: 640px) {
+  .definition-state-collection-widget .widget ul[id^=integrated_workflow_definition_states] {
+    flex-wrap: wrap;
+  }
 }
 .definition-state-collection-widget .widget ul[id^=integrated_workflow_definition_states] li {
   display: inline-block;
   width: 33.333%;
   padding: 0.5rem;
+}
+@media only screen and (max-width: 640px) {
+  .definition-state-collection-widget .widget ul[id^=integrated_workflow_definition_states] li {
+    width: 100%;
+  }
 }
 .definition-state-collection-widget .widget ul[id^=integrated_workflow_definition_states] li .radio label {
   width: 100%;
@@ -1855,6 +1888,12 @@ label {
 .list-unstyled .remove {
   top: 16px;
   right: 16px;
+}
+@media only screen and (max-width: 640px) {
+  .list-unstyled .remove {
+    top: -4px;
+    right: -4px;
+  }
 }
 .list-unstyled li {
   margin-bottom: 1rem;
@@ -1924,6 +1963,21 @@ label {
 .channel-domains .row .row .radiobutton-container .background {
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
+}
+@media only screen and (max-width: 640px) {
+  .channel-domains label.primary-domain .radiobutton-label {
+    display: none;
+  }
+  .channel-domains .row input {
+    padding-left: 55px;
+  }
+  .channel-domains .list-unstyled .remove {
+    top: 16px;
+    right: 16px;
+  }
+  .channel-domains .radiobutton-container .radiobutton {
+    margin-right: 0;
+  }
 }
 
 /* HREFS */
@@ -2986,6 +3040,11 @@ body {
   padding: 2rem;
   border-radius: 15px;
 }
+@media only screen and (max-width: 640px) {
+  .content-wrapper .editor-wrapper .editor-wrapped {
+    padding: 1rem;
+  }
+}
 .content-wrapper .index-wrapper {
   width: calc(100% - 350px);
   max-height: calc(100vh - 60px);
@@ -3015,7 +3074,7 @@ body {
 @media only screen and (max-width: 1024px) {
   .content-wrapper .index-wrapper {
     width: 100%;
-    padding: 1rem;
+    padding: 1rem 1rem 5rem 1rem;
   }
 }
 @media only screen and (max-width: 768px) {
@@ -3033,11 +3092,11 @@ body {
 }
 .content-wrapper .edit-form .editor-wrapper {
   background-color: #f2f2f2;
-  padding: 2rem 2rem 100px 2rem;
+  padding: 2rem 2rem 5rem 2rem;
 }
 @media only screen and (max-width: 1024px) {
   .content-wrapper .edit-form .editor-wrapper {
-    padding: 1rem 1rem 100px 1rem;
+    padding: 1rem 1rem 10rem 1rem;
   }
 }
 .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item, .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .editor-item-wrapper {
@@ -3045,15 +3104,14 @@ body {
   border-radius: 15px;
   border: 0;
 }
+@media only screen and (max-width: 640px) {
+  .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item, .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .editor-item-wrapper {
+    margin-bottom: 1rem;
+  }
+}
 .content-wrapper .edit-form .editor-wrapper .editor:not(.editor-wrapped) .form-item input {
   border-radius: 15px;
   padding: 1rem 2rem;
-}
-.content-wrapper .edit-form .editor-wrapper .editor div.form-group {
-  border: 1px solid #dee3e9;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 2rem;
 }
 .content-wrapper .edit-form .editor-wrapper .editor div.form-group .subheader {
   position: absolute;
@@ -3183,6 +3241,11 @@ body.hide-options #wrapper-holder .editor-wrapper {
 .editor-item-wrapper .editor-item-list-container {
   padding: 0 2rem 2rem;
   position: relative;
+}
+@media only screen and (max-width: 640px) {
+  .editor-item-wrapper .editor-item-list-container {
+    padding: 0 1rem 1rem;
+  }
 }
 .editor-item-wrapper .editor-item-header {
   background-color: #ffffff;
@@ -5595,6 +5658,7 @@ body.tox-fullscreen .content-wrapper {
   height: auto;
   min-height: auto;
   position: relative;
+  width: auto;
 }
 .modal-wrapper .modal {
   background-color: white;
@@ -5881,7 +5945,7 @@ body.tox-fullscreen .content-wrapper {
 .comment-body {
   padding: 1rem;
   max-height: 270px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .comment-footer {
@@ -6069,6 +6133,9 @@ body.tox-fullscreen .content-wrapper {
   margin-right: 10px;
   align-items: center;
   justify-content: center;
+}
+#toolbar .options button.form-actions-extra-toggle.hidden {
+  display: none;
 }
 #toolbar .options button.form-actions-extra-toggle i:before {
   width: 25px;
@@ -6481,6 +6548,69 @@ pre#editor {
 
 [class*=" iconoir-"], [class^=iconoir-] {
   display: inline-block;
+}
+
+.contenttypes .required {
+  position: absolute;
+  right: 0;
+}
+.contenttypes .required .checkbox-container input:checked ~ .checkmark {
+  background-color: #ee0000;
+  border-color: #ee0000;
+}
+.contenttypes .required .checkbox {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.contenttypes .required .checkbox .background {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.select-channels .options {
+  position: absolute;
+  display: flex;
+  right: 0;
+}
+.select-channels .options .restrict .checkbox {
+  border-radius: 0;
+  border-right: none;
+}
+.select-channels .options .restrict .checkbox .background {
+  border-radius: 0;
+}
+.select-channels .options .enforce .checkbox {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.select-channels .options .enforce .checkbox .background {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.select-channels .required .checkbox-container:hover input ~ .checkmark, .select-channels .options .checkbox-container:hover input ~ .checkmark, .contenttypes .required .checkbox-container:hover input ~ .checkmark, .contenttypes .options .checkbox-container:hover input ~ .checkmark {
+  background-color: #f2f2f2;
+  border-color: #ee0000;
+}
+.select-channels .required .checkbox-container input:checked ~ .checkmark, .select-channels .options .checkbox-container input:checked ~ .checkmark, .contenttypes .required .checkbox-container input:checked ~ .checkmark, .contenttypes .options .checkbox-container input:checked ~ .checkmark {
+  background-color: #ee0000;
+  border-color: #ee0000;
+}
+.select-channels .required .checkbox-container input:checked ~ .background, .select-channels .options .checkbox-container input:checked ~ .background, .contenttypes .required .checkbox-container input:checked ~ .background, .contenttypes .options .checkbox-container input:checked ~ .background {
+  background-color: rgba(239, 1, 1, 0.1);
+}
+@media only screen and (max-width: 640px) {
+  .select-channels .checkbox-label, .contenttypes .checkbox-label {
+    display: none;
+  }
+}
+.select-channels .checkbox-label-mobile, .contenttypes .checkbox-label-mobile {
+  display: none;
+}
+@media only screen and (max-width: 640px) {
+  .select-channels .checkbox-label-mobile, .contenttypes .checkbox-label-mobile {
+    display: block;
+  }
 }
 
 .clr-picker {
@@ -7213,6 +7343,11 @@ div:not(.channel-domains) > ul.integrated-collection > li {
     display: block;
     padding: 2rem;
     position: relative;
+}
+@media only screen and (max-width: 640px) {
+    div:not(.channel-domains) > ul.integrated-collection > li {
+        padding: 1rem;
+    }
 }
 
 div:not(.channel-domains) > ul.integrated-collection > li + li {

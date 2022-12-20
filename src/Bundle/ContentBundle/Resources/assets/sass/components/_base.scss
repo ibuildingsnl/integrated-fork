@@ -59,6 +59,9 @@ body {
             background-color: white;
             padding: 2rem;
             border-radius: 15px;
+            @include media(max-sm) {
+                padding: 1rem;
+            }
         }
     }
 
@@ -87,7 +90,7 @@ body {
         }
         @include media(max-lg) {
             width: 100%;
-            padding:1rem;
+            padding: 1rem 1rem 5rem 1rem;
         }
         @include media(max-md) {
             * {
@@ -105,15 +108,18 @@ body {
     .edit-form {
         .editor-wrapper {
             background-color: $bg-gray;
-            padding: 2rem 2rem 100px 2rem;
+            padding: 2rem 2rem 5rem 2rem;
             @include media(max-lg) {
-                padding: 1rem 1rem 100px 1rem;
+                padding: 1rem 1rem 10rem 1rem;
             }
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
                     border-radius: 15px;
                     border: 0;
+                    @include media(max-sm) {
+                        margin-bottom: 1rem;
+                    }
                 }
 
                 .form-item {
@@ -125,10 +131,10 @@ body {
             }
             .editor {
                 div.form-group {
-                    border: 1px solid #dee3e9;
-                    padding: 1rem;
-                    border-radius: 8px;
-                    margin-top: 2rem;
+                    //border: 1px solid #dee3e9;
+                    //padding: 1rem;
+                    //border-radius: 8px;
+                    //margin-top: 2rem;
                     .subheader {
                         position: absolute;
                         top: -11px;
@@ -299,6 +305,9 @@ body.hide-options {
     .editor-item-list-container {
         padding: 0 2rem 2rem;
         position: relative;
+        @include media(max-sm) {
+            padding: 0 1rem 1rem;
+        }
     }
 
     .editor-item-header {
