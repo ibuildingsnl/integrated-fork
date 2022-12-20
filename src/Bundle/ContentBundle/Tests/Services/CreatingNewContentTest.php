@@ -31,6 +31,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
@@ -242,10 +243,7 @@ class CreatingNewContentTest extends TypeTestCase
         foreach ($roles as $role) {
             $user->addRole(new Role($role));
         }
-        $token = new TestBrowserToken($roles, $user);
-        $token->setAuthenticated(true);
-
-        return $token;
+        return new PreAuthenticatedToken($user, 'main', ['foo']);
     }
 
     private function permission(string $group, int $mask): Permission

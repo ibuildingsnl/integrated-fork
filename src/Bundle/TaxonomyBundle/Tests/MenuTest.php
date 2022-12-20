@@ -18,6 +18,7 @@ use Knp\Menu\MenuItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\TestBrowserToken;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -139,9 +140,7 @@ final class MenuTest extends TestCase
         foreach ($roles as $role) {
             $user->addRole(new Role($role));
         }
-        $token = new TestBrowserToken($roles, $user);
-        $token->setAuthenticated(true);
 
-        return $token;
+        return new PreAuthenticatedToken($user, 'main', ['foo']);
     }
 }
