@@ -88,6 +88,7 @@ class CreatingNewContentTest extends TypeTestCase
             new Attribute('subtitle'),
             new Attribute('intro'),
         ]);
+
         return [new PreloadedExtension([new ContentFormType(
             $metadataFactory,
             $this->createMock(ResolverInterface::class),
@@ -103,51 +104,47 @@ class CreatingNewContentTest extends TypeTestCase
         ];
     }
 
-    /** @test */
-    public function generatingTheTaxonomyForm()
+    public function testGeneratingTheTaxonomyForm()
     {
         $this->tokenStorage->setToken($this->user('ok'));
         $form = $this->creator->new(Request::create('foo/bar', 'GET', [
-            "type" => "taxonomy",
+            'type' => 'taxonomy',
         ]));
 
         self::assertFalse($form->isSubmitted());
         self::assertEquals('', $form->getConfig()->getAction());
     }
 
-    /** @test */
-    public function generatingTheTaxonomyFormWithActionRoute()
+    public function testGeneratingTheTaxonomyFormWithActionRoute()
     {
         $this->router->method('generate')->with('route')->willReturn('foo/bar');
         $this->tokenStorage->setToken($this->user('ok'));
         $form = $this->creator->new(Request::create('foo/bar', 'GET', [
-            "type" => "taxonomy",
+            'type' => 'taxonomy',
         ]), 'route');
 
         self::assertFalse($form->isSubmitted());
         self::assertEquals('foo/bar', $form->getConfig()->getAction());
     }
 
-    /** @test */
-    public function notShowingTaxonomyFormWhenNotHavingWriteAccess()
+    public function testNotShowingTaxonomyFormWhenNotHavingWriteAccess()
     {
         $this->tokenStorage->setToken($this->user('not-ok'));
 
         $this->expectException(AccessDeniedException::class);
 
         $this->creator->new(Request::create('foo/bar', 'POST', [
-            "type" => "taxonomy",
-            "integrated_content" => [
-                "actions" => ["create" => ""],
-                "title" => "Tax!",
-                "description" => "Taxonomy!!!",
-                "primaryChannel" => "",
+            'type' => 'taxonomy',
+            'integrated_content' => [
+                'actions' => ['create' => ''],
+                'title' => 'Tax!',
+                'description' => 'Taxonomy!!!',
+                'primaryChannel' => '',
             ],
         ]));
     }
 
-    /** @test */
-    public function creatingANewTaxonomyItem()
+    public function testCreatingANewTaxonomyItem()
     {
         $this->tokenStorage->setToken($this->user('ok'));
 
@@ -159,12 +156,12 @@ class CreatingNewContentTest extends TypeTestCase
         $this->shouldPersist($expected);
 
         $form = $this->creator->new(Request::create('foo/bar', 'POST', [
-            "type" => "taxonomy",
-            "integrated_content" => [
-                "actions" => ["create" => ""],
-                "title" => "Tax!",
-                "description" => "Taxonomy!!!",
-                "primaryChannel" => "",
+            'type' => 'taxonomy',
+            'integrated_content' => [
+                'actions' => ['create' => ''],
+                'title' => 'Tax!',
+                'description' => 'Taxonomy!!!',
+                'primaryChannel' => '',
             ],
         ]));
 
@@ -172,26 +169,24 @@ class CreatingNewContentTest extends TypeTestCase
         self::assertTrue($form->isValid());
     }
 
-    /** @test */
-    public function cancellingTheCreationOfANewTaxonomyItem()
+    public function testCancellingTheCreationOfANewTaxonomyItem()
     {
         $this->tokenStorage->setToken($this->user('ok'));
 
         $form = $this->creator->new(Request::create('foo/bar', 'POST', [
-            "type" => "taxonomy",
-            "integrated_content" => [
-                "actions" => ["cancel" => ""],
-                "title" => "Tax!",
-                "description" => "Taxonomy!!!",
-                "primaryChannel" => "",
+            'type' => 'taxonomy',
+            'integrated_content' => [
+                'actions' => ['cancel' => ''],
+                'title' => 'Tax!',
+                'description' => 'Taxonomy!!!',
+                'primaryChannel' => '',
             ],
         ]));
 
         self::assertNull($form);
     }
 
-    /** @test */
-    public function creatingANewArticle()
+    public function testCreatingANewArticle()
     {
         $this->tokenStorage->setToken($this->user('writers'));
 
@@ -204,13 +199,13 @@ class CreatingNewContentTest extends TypeTestCase
         $this->shouldPersist($expected);
 
         $form = $this->creator->new(Request::create('foo/bar', 'POST', [
-            "type" => "article",
-            "integrated_content" => [
-                "actions" => ["create" => ""],
-                "title" => "Art!",
-                "subtitle" => "Article!!!",
-                "intro" => "Amazing Article",
-                "primaryChannel" => "",
+            'type' => 'article',
+            'integrated_content' => [
+                'actions' => ['create' => ''],
+                'title' => 'Art!',
+                'subtitle' => 'Article!!!',
+                'intro' => 'Amazing Article',
+                'primaryChannel' => '',
             ],
         ]));
 
@@ -227,6 +222,7 @@ class CreatingNewContentTest extends TypeTestCase
         foreach ($permissions as $permission) {
             $type->addPermission($permission);
         }
+
         return $type;
     }
 
@@ -235,6 +231,7 @@ class CreatingNewContentTest extends TypeTestCase
         $field = new Field();
         $field->setName($name);
         $field->setOptions($options);
+
         return $field;
     }
 
@@ -247,6 +244,7 @@ class CreatingNewContentTest extends TypeTestCase
         }
         $token = new TestBrowserToken($roles, $user);
         $token->setAuthenticated(true);
+
         return $token;
     }
 
@@ -255,6 +253,7 @@ class CreatingNewContentTest extends TypeTestCase
         $permission = new Permission();
         $permission->setGroup($group);
         $permission->setMask($mask);
+
         return $permission;
     }
 

@@ -30,7 +30,7 @@ final class MenuTest extends TestCase
 {
     private AuthorizationCheckerInterface $authorizationChecker;
     private TokenStorageInterface $tokenStorage;
-    /** @var ObjectRepository&MockObject  */
+    /** @var ObjectRepository&MockObject */
     private ObjectRepository $repository;
     private ItemInterface $menu;
     private ConfigureMenuSubscriber $menuSubscriber;
@@ -50,8 +50,7 @@ final class MenuTest extends TestCase
         $this->menu = new MenuItem('integrated_menu', new MenuFactory());
     }
 
-    /** @test */
-    public function showingTaxonomyOptionToAdmins()
+    public function testShowingTaxonomyOptionToAdmins()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('no-access', 'ROLE_ADMIN'));
@@ -65,8 +64,7 @@ final class MenuTest extends TestCase
         self::assertInstanceOf(MenuItem::class, $item);
     }
 
-    /** @test */
-    public function hidingTaxonomyOptionWhenThereIsNoSuchContentType()
+    public function testHidingTaxonomyOptionWhenThereIsNoSuchContentType()
     {
         $this->tokenStorage->setToken($this->user('no-access', 'ROLE_ADMIN'));
 
@@ -76,8 +74,7 @@ final class MenuTest extends TestCase
         self::assertEmpty($this->menu->getChildren());
     }
 
-    /** @test */
-    public function hidingTaxonomyOptionWhenTheUserHasNoAccess()
+    public function testHidingTaxonomyOptionWhenTheUserHasNoAccess()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('no-access'));
@@ -88,8 +85,7 @@ final class MenuTest extends TestCase
         self::assertEmpty($this->menu->getChildren());
     }
 
-    /** @test */
-    public function showingTaxonomyOptionWhenTheUserHasAccess()
+    public function testShowingTaxonomyOptionWhenTheUserHasAccess()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('taxonomy-access'));
@@ -103,8 +99,7 @@ final class MenuTest extends TestCase
         self::assertInstanceOf(MenuItem::class, $item);
     }
 
-    /** @test */
-    public function notAddingTheMenuSectionIfItAlreadyExists()
+    public function testNotAddingTheMenuSectionIfItAlreadyExists()
     {
         $this->withTaxonomyContentType();
         $this->menu->addChild('Taxonomy');
@@ -115,8 +110,7 @@ final class MenuTest extends TestCase
         self::assertCount(1, $this->menu->getChildren());
     }
 
-    /** @test */
-    public function notAddingTaxonomySectionsToUnrelatedMenus()
+    public function testNotAddingTaxonomySectionsToUnrelatedMenus()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('taxonomy-access'));
@@ -147,6 +141,7 @@ final class MenuTest extends TestCase
         }
         $token = new TestBrowserToken($roles, $user);
         $token->setAuthenticated(true);
+
         return $token;
     }
 }

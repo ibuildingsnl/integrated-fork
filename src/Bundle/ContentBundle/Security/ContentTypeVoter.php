@@ -15,7 +15,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\ContentType\ContentTypeInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -35,8 +34,8 @@ class ContentTypeVoter implements VoterInterface
     private $permissions;
 
     /**
-     * @param ObjectRepository  $repository
-     * @param array             $permissions
+     * @param ObjectRepository $repository
+     * @param array            $permissions
      */
     public function __construct(ObjectRepository $repository, array $permissions = [])
     {

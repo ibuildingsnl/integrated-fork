@@ -31,10 +31,11 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /**
-     * @param Taxonomy[][] $byParent
-     * @param string|null $key
-     * @param int $depth
+     * @param Taxonomy[][]  $byParent
+     * @param string|null   $key
+     * @param int           $depth
      * @param IndexedItem[] $sorted
+     *
      * @return IndexedItem[]
      */
     private function toSortedIndex(array $byParent, ?string $key = 'root', int $depth = 0, array $sorted = []): array
@@ -44,12 +45,15 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
         }
         usort(
             $byParent[$key],
-            fn(Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ? $a->getRank() <=> $b->getRank() : $a->getTitle() <=> $b->getTitle()
+            fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
+                $a->getRank() <=> $b->getRank() :
+                $a->getTitle() <=> $b->getTitle()
         );
         foreach ($byParent[$key] as $taxonomy) {
             $sorted[] = $this->toIndexed($taxonomy, $depth);
             $sorted = $this->toSortedIndex($byParent, $taxonomy->getId(), $depth + 1, $sorted);
         }
+
         return $sorted;
     }
 

@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 final class TaxonomyIndexingTest extends TestCase
 {
     private TaxonomyIndexerInterface $indexer;
-    /** @var ObjectRepository&MockObject  */
+    /** @var ObjectRepository&MockObject */
     private ObjectRepository $taxonomies;
-    /** @var UsageCounter&MockObject  */
+    /** @var UsageCounter&MockObject */
     private UsageCounter $usageCounter;
     private bool $usagesDeclared = false;
 
@@ -30,8 +30,7 @@ final class TaxonomyIndexingTest extends TestCase
         );
     }
 
-    /** @test */
-    public function viewingAnEmptyListWhenThereAreNoTaxonomies()
+    public function testViewingAnEmptyListWhenThereAreNoTaxonomies()
     {
         $this->add();
 
@@ -40,8 +39,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEmpty($list);
     }
 
-    /** @test */
-    public function viewingOneItemListWhenThereIsOneTaxonomy()
+    public function testViewingOneItemListWhenThereIsOneTaxonomy()
     {
         $this->add($this->taxonomy('foo', 'One', 'one'));
 
@@ -51,8 +49,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertInstanceOf(IndexedItem::class, $list[0]);
     }
 
-    /** @test */
-    public function sortingItemsByRanking()
+    public function testSortingItemsByRanking()
     {
         $this->add(
             $this->taxonomy('foo', 'Two', 'two', 'm'),
@@ -66,8 +63,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals('Two', $list[1]->title);
     }
 
-    /** @test */
-    public function sortingItemsByRankingAndThenByTitle()
+    public function testSortingItemsByRankingAndThenByTitle()
     {
         $this->add(
             $this->taxonomy('baz', 'B', 'b', 'm'),
@@ -85,8 +81,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals('Last', $list[3]->title);
     }
 
-    /** @test */
-    public function addingDepthToAnItemWithParent()
+    public function testAddingDepthToAnItemWithParent()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -101,8 +96,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(1, $list[1]->depth);
     }
 
-    /** @test */
-    public function addingDeeperDepthToAnItemWithChainOfParents()
+    public function testAddingDeeperDepthToAnItemWithChainOfParents()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -120,8 +114,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(2, $list[2]->depth);
     }
 
-    /** @test */
-    public function indexingMultipleChildrenWithGrandchildren()
+    public function testIndexingMultipleChildrenWithGrandchildren()
     {
         $this->add(
             $this->taxonomy('bar', 'Child', 'child', null, 'foo'),
@@ -145,8 +138,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(0, $list[4]->depth);
     }
 
-    /** @test */
-    public function viewingTheUsageCountForEachTaxonomyItem()
+    public function testViewingTheUsageCountForEachTaxonomyItem()
     {
         $this->setUsages(['foo' => 0, 'bar' => 1001]);
         $this->add(
@@ -160,8 +152,7 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertEquals(0, $list[1]->count);
     }
 
-    /** @test */
-    public function indexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
+    public function testIndexingMultipleChildrenWithRankedGrandchildrenAndUsageCounts()
     {
         $this->setUsages([
             'bar' => 2,
@@ -217,7 +208,7 @@ final class TaxonomyIndexingTest extends TestCase
 
     private function setUsages(array $usageCounts): void
     {
-        $this->usageCounter->method('countUsages')->willReturnCallback(fn(string $id) => $usageCounts[$id] ?? 0);
+        $this->usageCounter->method('countUsages')->willReturnCallback(fn (string $id) => $usageCounts[$id] ?? 0);
         $this->usagesDeclared = true;
     }
 
@@ -229,6 +220,7 @@ final class TaxonomyIndexingTest extends TestCase
         $taxonomy->setSlug($slug);
         $taxonomy->setRank($rank);
         $taxonomy->setParentID($parent);
+
         return $taxonomy;
     }
 }

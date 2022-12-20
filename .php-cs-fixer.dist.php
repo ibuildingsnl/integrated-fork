@@ -15,6 +15,7 @@ return (new PhpCsFixer\Config())
         'single_line_throw' => false,
         'php_unit_mock_short_will_return' => false,
         'ordered_imports' => false,
+        'global_namespace_import' => ['import_constants' => null, 'import_functions' => null, 'import_classes' => null],
     ])
     ->setRiskyAllowed(true)
     ->setFinder(

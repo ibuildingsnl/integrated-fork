@@ -8,8 +8,8 @@ final class IndexedItem
         public readonly string $taxonomyId,
         public readonly string $title,
         public readonly string $slug,
-        public readonly int    $count,
-        public readonly int    $depth,
+        public readonly int $count,
+        public readonly int $depth,
     ) {
     }
 }

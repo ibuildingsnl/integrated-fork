@@ -17,17 +17,19 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ContentCreator
 {
     public function __construct(
-        private readonly ResolverInterface             $typeResolver,
-        private readonly ObjectManager                 $objectManager,
+        private readonly ResolverInterface $typeResolver,
+        private readonly ObjectManager $objectManager,
         private readonly AuthorizationCheckerInterface $checker,
-        private readonly FormFactoryInterface          $formFactory,
-        private readonly RouterInterface               $router,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly RouterInterface $router,
     ) {
     }
 
     /**
-     * @param Request $request       The users original request
-     * @return FormInterface|null    The form element for further processing, or null when the user cancels
+     * @param Request $request The users original request
+     *
+     * @return FormInterface|null The form element for further processing, or null when the user cancels
+     *
      * @throws AccessDeniedException When the user does not have permission to create this (type of) content
      */
     public function new(Request $request, ?string $route = null): ?FormInterface
