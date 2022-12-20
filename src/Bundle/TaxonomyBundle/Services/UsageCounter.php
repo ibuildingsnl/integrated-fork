@@ -5,7 +5,6 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Selectable;
-use function count;
 
 class UsageCounter
 {
@@ -15,7 +14,7 @@ class UsageCounter
 
     public function countUsages(string $taxonomyId): int
     {
-        return count($this->content->matching(new Criteria(
+        return \count($this->content->matching(new Criteria(
             new Comparison('relations.references.$id', '=', $taxonomyId)
         )));
     }
