@@ -105,7 +105,7 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1",
-        "phpunit/phpunit": "^8.5.26",
+        "phpunit/phpunit": "^9.5.27",
         "friendsofphp/php-cs-fixer": "^3.4",
         "phpstan/phpstan": "^1.9.4",
         "phpstan/phpstan-doctrine": "^1",
