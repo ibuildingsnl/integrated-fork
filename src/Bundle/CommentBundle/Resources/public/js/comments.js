@@ -131,7 +131,7 @@ $(function () {
             let comment = $('<div>').addClass('added-comment-line')
                 .attr('data-comment-id', commentId).data('comment-id', commentId)
                 .data('parent', $parent)
-                .append($('<i>').addClass('iconoir-chat-bubble'));
+                .append($('<i>').addClass('iconoir-message-text'));
             if ($label) {
                 //if input has label place it inside label
                 $label.append(comment)
