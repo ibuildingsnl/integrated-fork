@@ -137,6 +137,28 @@
 {% endblock javascript %}
 
 <script>
+
+    $(document).mouseup(function(e) {
+        var closeOutside = $('.close-outside');
+        var toggleButton = $('.toggle-button');
+
+        if (((!closeOutside.is(e.target) && closeOutside.has(e.target).length === 0) &&
+                (!toggleButton.is(e.target) && toggleButton.has(e.target).length === 0)) &&
+            !event.srcElement.classList.contains('tt-input') && !event.srcElement.classList.contains('dropdown-menu')
+        ) {
+            closeOutside.removeClass('show');
+            hideDropDownBackgroud();
+        }
+    });
+
+    $('.search-form .form-control').focus(function() {
+        showDropDownBackGround();
+    });
+
+    $('.search-form .form-control').blur(function() {
+        hideDropDownBackgroud();
+    });
+
     document.querySelectorAll('a[data-toggle="dropdown"]').forEach(function(el) {
         el.addEventListener('click', toggleDropdown, false);
     });
@@ -173,6 +195,11 @@
         const optionsDiv = document.querySelector('.aside-options');
         if (optionsDiv && (optionsDiv.childNodes.length === 0)) {
             optionsToggle.classList.add('hidden');
+        }
+        const actionsToggle = document.querySelector('.form-actions-extra-toggle');
+        const actionsDiv = document.querySelector('.form-actions-extra');
+        if (actionsDiv && (actionsDiv.childNodes.length < 2)) {
+            actionsToggle.classList.add('hidden');
         }
     }
 
