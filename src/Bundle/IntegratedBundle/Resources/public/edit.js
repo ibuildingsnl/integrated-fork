@@ -465,6 +465,11 @@ $(document).ready(function () {
   }
 });
 
+/* handle closing of Alerts */
+$('.alert.alert-dismissible .close').on('click', function () {
+  $(this).parent().remove();
+});
+
 /***/ }),
 
 /***/ "./src/Bundle/ContentBundle/Resources/assets/js/unlock_article.js":

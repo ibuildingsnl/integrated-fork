@@ -61,14 +61,6 @@
                         {{ form_row(form.name, {'style': 'inline'}) }}
                     {% endif %}
 
-                    {% if form.domains is defined %}
-                        {{ form_row(form.domains, {'style': 'editor','state': 'show'}) }}
-                    {% endif %}
-
-                    {% if form.options is defined %}
-                        {{ form_row(form.options, {'style': 'editor', 'state': 'show'}) }}
-                    {% endif %}
-
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
             </section>
