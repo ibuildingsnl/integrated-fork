@@ -634,6 +634,7 @@ class ContentController extends AbstractController
                         $locking['release']();
                     }
                 }
+
                 return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
             }
             // reload_changed is just submitting without saving so the changes made are
