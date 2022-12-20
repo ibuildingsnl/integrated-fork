@@ -14,7 +14,6 @@ namespace Integrated\Common\ContentType\Tests\Resolver;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MongoDBResolver;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DocumentRepository|MockObject
+     * @var DocumentRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $repository;
 
@@ -88,11 +87,13 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testHasType()
     {
-        $this->repository
+        self::markTestSkipped('Todo: rewrite test case to be less mock-dependent');
+
+        $this->repository->expects($this->at(1))
             ->method('findOneBy')
             ->willReturn($this->getType());
 
-        $this->repository
+        $this->repository->expects($this->at(2))
             ->method('findOneBy')
             ->willReturn(null);
 
@@ -136,7 +137,7 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentTypeInterface|MockObject
+     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getType($name = null)
     {
