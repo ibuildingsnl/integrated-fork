@@ -12,7 +12,6 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public const MENU = 'integrated_menu';
     public const MENU_TAXONOMIES = 'Taxonomy';
-    private const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
 
     public function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
@@ -40,10 +39,10 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         $taxonomyType = $this->contentTypes->find('taxonomy');
 
-        if ($taxonomyType && (
-            $this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER) ||
-            $this->authorizationChecker->isGranted(PermissionInterface::READ, $taxonomyType)
-        )) {
+        if (
+            $taxonomyType &&
+            $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)
+        ) {
             $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
             $menuAdmin->addChild('Taxonomies', ['route' => 'integrated_taxonomy_index']);
         }

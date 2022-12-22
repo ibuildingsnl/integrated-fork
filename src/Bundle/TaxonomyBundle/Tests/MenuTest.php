@@ -85,7 +85,18 @@ final class MenuTest extends TestCase
         self::assertEmpty($this->menu->getChildren());
     }
 
-    public function testShowingTaxonomyOptionWhenTheUserHasAccess()
+    public function testHidingTaxonomyOptionWhenTheUserHasOnlyReadAccess()
+    {
+        $this->withTaxonomyContentType();
+        $this->tokenStorage->setToken($this->user('taxonomy-read'));
+
+        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
+
+        self::assertNull($this->menu->getChild('Taxonomy'));
+        self::assertEmpty($this->menu->getChildren());
+    }
+
+    public function testShowingTaxonomyOptionWhenTheUserHasWriteAccess()
     {
         $this->withTaxonomyContentType();
         $this->tokenStorage->setToken($this->user('taxonomy-access'));
@@ -125,10 +136,8 @@ final class MenuTest extends TestCase
     {
         $taxonomy = new ContentType();
         $taxonomy->setId('taxonomy');
-        $permission = new Permission();
-        $permission->setMask(PermissionInterface::READ);
-        $permission->setGroup('taxonomy-access');
-        $taxonomy->addPermission($permission);
+        $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, 'taxonomy-access'));
+        $taxonomy->addPermission($this->permission(PermissionInterface::READ, 'taxonomy-read'));
         $this->repository->method('find')->willReturn($taxonomy);
     }
 
@@ -141,5 +150,13 @@ final class MenuTest extends TestCase
         }
 
         return new PreAuthenticatedToken($user, 'main', ['foo']);
+    }
+
+    private function permission(int $type, string $group): Permission
+    {
+        $permission = new Permission();
+        $permission->setMask($type);
+        $permission->setGroup($group);
+        return $permission;
     }
 }
