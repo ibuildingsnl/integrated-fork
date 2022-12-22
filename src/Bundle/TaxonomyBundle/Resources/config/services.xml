@@ -10,7 +10,7 @@
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Taxonomy</argument>
         </service>
         <service id="integrated_taxonomy.taxonomy.usage_counter" class="Integrated\Bundle\TaxonomyBundle\Services\UsageCounter">
-            <argument type="service" id="integrated_content.content.repository" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
         <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />

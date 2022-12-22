@@ -2,20 +2,23 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Services;
 
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Expr\Comparison;
-use Doctrine\Common\Collections\Selectable;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 
 class UsageCounter
 {
-    public function __construct(private readonly Selectable $content)
+    public function __construct(private readonly DocumentManager $content)
     {
     }
 
     public function countUsages(string $taxonomyId): int
     {
-        return \count($this->content->matching(new Criteria(
-            new Comparison('relations.references.$id', '=', $taxonomyId)
-        )));
+        return $this->content->createQueryBuilder(Content::class)
+            ->field('relations.references.$id')
+            ->equals($taxonomyId)
+            ->count()
+            ->hydrate(false)
+            ->getQuery()
+            ->execute();
     }
 }
