@@ -11,4 +11,3 @@ phpunit.xml
 phpcs.xml
 yarn-error.log
 package-lock.json
-src/Bundle/IntegratedBundle/Resources/public/
