@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
-use Integrated\Bundle\ContentBundle\Services\Exception\StorageException;
+use Integrated\Bundle\ContentBundle\Services\Exception\FlushingException;
 
 interface Flusher
 {
@@ -11,7 +11,7 @@ interface Flusher
      *
      * @return void
      *
-     * @throws StorageException when something goes wrong with saving the content
+     * @throws FlushingException when something goes wrong with saving the content
      */
     public function flush(): void;
 }
