@@ -33,11 +33,23 @@
             <argument type="service" id="router" />
         </service>
 
-        <service id="integrated_content.services.flusher" class="Integrated\Bundle\ContentBundle\Services\LockingIndexingFlusher">
+        <service id="integrated_content.services.flusher" class="Integrated\Bundle\ContentBundle\Services\CombinedFlusher">
+            <argument type="service" id="integrated_content.services.doctrine-flusher" />
+            <argument type="service" id="integrated_content.services.locking-flusher" />
+        </service>
+
+        <service id="integrated_content.services.doctrine-flusher" class="Integrated\Bundle\ContentBundle\Services\DoctrineFlusher">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+        </service>
+
+        <service id="integrated_content.services.solr-flusher" class="Integrated\Bundle\ContentBundle\Services\SolrIndexingFlusher">
             <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
-            <argument type="service" id="integrated_workflow.lock.factory" />
             <argument type="service" id="integrated_solr.indexer" />
+        </service>
+
+        <service id="integrated_content.services.locking-flusher" class="Integrated\Bundle\ContentBundle\Services\LockingFlusher">
+            <argument type="service" id="integrated_workflow.lock.factory" />
+            <argument type="service" id="integrated_content.services.solr-flusher" />
         </service>
 
         <service id="integrated_content.content.repository" class="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository">
