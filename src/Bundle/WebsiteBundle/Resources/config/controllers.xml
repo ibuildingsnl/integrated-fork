@@ -77,7 +77,7 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.menu" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
+        <service id="integrated_website.controller.search_selection" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
             <argument type="service" id="integrated_content.provider.solarium" />
 
             <tag name="controller.service_arguments" />
