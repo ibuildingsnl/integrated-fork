@@ -205,7 +205,7 @@ class ChannelController extends AbstractController
 
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
 
-//            return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
+            return $this->redirectToRoute('integrated_content_channel_edit', ['id' => $channel->getId()]);
         }
 
         return $this->render('@IntegratedContent/channel/edit.html.twig', [

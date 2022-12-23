@@ -43,7 +43,7 @@ class ChannelType extends AbstractType
 
         $builder->add('logo', ImageDropzoneType::class);
         $builder->add('color', ColorType::class, ['label' => 'Primary Color', 'required' => false]);
-        $builder->add('secondary_color', ColorType::class, ['label' => 'Secondary Color','required' => false]);
+        $builder->add('secondarycolor', ColorType::class, ['label' => 'Secondary Color','required' => false]);
 
         $builder->add('domains', TailwindCollectionType::class, [
             'label' => 'Domains (example.com)',
