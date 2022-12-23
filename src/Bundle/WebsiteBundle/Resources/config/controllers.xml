@@ -63,7 +63,7 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.menu" class="Integrated\Bundle\WebsiteBundle\Controller\MenuController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\MenuController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_menu.provider.integrated_menu_provider" />
             <argument type="service" id="integrated.menu_factory.database" />

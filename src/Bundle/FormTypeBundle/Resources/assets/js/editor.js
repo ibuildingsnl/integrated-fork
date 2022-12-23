@@ -58,7 +58,7 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline | bullist numlist | " +
-            "link integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
+            "link anchor integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
             "charmap pagebreak | pastetext searchreplace | code fullscreen",
         toolbar_sticky: true,
         toolbar_sticky_offset: 110,
