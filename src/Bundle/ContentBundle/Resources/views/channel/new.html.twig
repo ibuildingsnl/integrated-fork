@@ -36,6 +36,9 @@
                             {% if form.color is defined %}
                                 {{ form_row(form.color, {'style': 'sidebar', 'icon':'droplet', 'state': 'show'}) }}
                             {% endif %}
+                            {% if form.secondary_color is defined %}
+                                {{ form_row(form.secondary_color, {'style': 'sidebar', 'icon':'droplet', 'state': 'show'}) }}
+                            {% endif %}
                             {% if form.logo is defined %}
                                 {{ form_row(form.logo, {'style': 'sidebar', 'icon':'media-image', 'state': 'show'}) }}
                             {% endif %}

@@ -55,6 +55,11 @@ class Channel implements ChannelInterface
     protected $color;
 
     /**
+     * @var string
+     */
+    protected $secondary_color;
+
+    /**
      * @var array
      */
     protected $domains;
@@ -176,6 +181,26 @@ class Channel implements ChannelInterface
      * @return $this
      */
     public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecondaryColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param string $color
+     *
+     * @return $this
+     */
+    public function setSecondaryColor($color)
     {
         $this->color = $color;
 
