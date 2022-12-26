@@ -3,13 +3,60 @@
 {% block style %}
     {{ parent() }}
 
-    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
+    <style>
+        #wrapper-holder {
+            padding-bottom: 85px;
+            top: 0px;
+        }
+
+        #wrapper-holder > .container {
+            width: auto;
+            background: #fff;
+        }
+
+        #wrapper-holder > .container .section-radius {
+            box-shadow: none;
+        }
+
+        .add-relation {
+            display: none;
+        }
+
+        .prefooter-holder {
+            border-top: 1px solid #e5e5e5;
+            background: #fcfcfc;
+        }
+
+        .aside-options {
+            height: calc(100vh - 50px);
+        }
+
+        .aside-options .aside-holder {
+            padding-top: 0;
+        }
+
+        .sidebar {
+            display: none;
+        }
+
+        .content-wrapper {
+            width: 100%;
+        }
+
+        #wrapper-holder {
+            height: 100%;
+        }
+
+        #toolbar .back .form-group {
+            display: none;
+        }
+
+    </style>
 {% endblock %}
+
 
 {% block header %}{% endblock %}
 {% block crumbs %}{% endblock %}
-{% block body %}
-<div class="content-wrapper iframe">
-    {{ block('form_section') }}
-</div>
-{% endblock %}
+{% block sidebar_menu %}{% endblock %}
+{% block filters %}{% endblock %}
+{% block main_title %}{% endblock %}
