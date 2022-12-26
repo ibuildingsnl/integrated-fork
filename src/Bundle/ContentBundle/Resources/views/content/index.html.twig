@@ -7,7 +7,8 @@
             <div class="page-title">
                 <div class="heading flex justify-between w-full">
                     <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
-                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"  data-target="aside-filters"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
+                            data-target="aside-filters"><i class="iconoir-filter-alt"></i><span>Filteren</span></button>
                 </div>
                 <div class="options">
                     <ul class="">
@@ -118,15 +119,20 @@
                                 {% endif %}
                             </td>
                             <td class="state">
-                                {% if content.workflow_state is defined %}
+                                {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
                                     {% if content.workflow_color_string is defined %}
                                         {% set status_color = content.workflow_color_string|first %}
                                     {% endif %}
                                     <div class="workflow-status" style="background-color:{{ status_color }};">
-                                    {{ content.workflow_state|default }}
+                                        {{ content.workflow_state|default }}
                                     </div>
                                     {% set status_color = '' %}
+                                {% elseif content.workflow_state is defined %}
+                                    <div class="workflow-status" style="background-color:#5f84db;">
+                                        {% trans %}Planned{% endtrans %}
+                                    </div>
                                 {% endif %}
+
                             </td>
                         </tr>
                     {% else %}
@@ -157,9 +163,11 @@
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target"  data-target="aside-filters"><i class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
+                                class="iconoir-cancel"></i></button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_content_content_index') }}"
+                           class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>
