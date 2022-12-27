@@ -38,8 +38,8 @@ class Channel implements ChannelInterface
 
     /**
      * @var string the name of the channel
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**

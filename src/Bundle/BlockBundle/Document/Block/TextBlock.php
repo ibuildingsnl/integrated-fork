@@ -31,13 +31,13 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
 
     /**
      * @var string
-     * @Assert\NotBlank
      * @Type\Field(
      *       options={
      *          "attr"={"class"="main-title"}
      *       }
      * )
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

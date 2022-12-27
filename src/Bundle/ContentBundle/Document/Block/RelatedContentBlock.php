@@ -42,14 +42,13 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
-     * @Assert\NotBlank
      * @Type\Field
      */
+    #[Assert\NotBlank]
     protected $publishedTitle;
 
     /**
      * @var int
-     * @Assert\NotBlank
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
      *     options={
@@ -61,6 +60,7 @@ class RelatedContentBlock extends Block
      *     }
      * )
      */
+    #[Assert\NotBlank]
     protected $typeBlock;
 
     /**
@@ -78,7 +78,6 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
-     * @Assert\NotBlank
      * @Type\Field(
      *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
      *     options={
@@ -90,6 +89,7 @@ class RelatedContentBlock extends Block
      *     }
      * )
      */
+    #[Assert\NotBlank]
     protected $sortBy;
 
     /**
@@ -108,7 +108,6 @@ class RelatedContentBlock extends Block
 
     /**
      * @var int
-     * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
@@ -118,11 +117,11 @@ class RelatedContentBlock extends Block
      *      }
      * )
      */
+    #[Assert\Length(min: 0)]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
-     * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
@@ -133,6 +132,7 @@ class RelatedContentBlock extends Block
      *      }
      * )
      */
+    #[Assert\Length(min: 0)]
     protected $maxItems;
 
     /**

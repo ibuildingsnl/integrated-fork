@@ -36,26 +36,26 @@ class Relation implements RelationInterface
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $type;
 
     /**
      * @var ContentTypeInterface[]
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $sources;
 
     /**
      * @var ContentTypeInterface[]
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $targets;
 
     /**

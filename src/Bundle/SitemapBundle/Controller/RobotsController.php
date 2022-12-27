@@ -20,8 +20,8 @@ class RobotsController
 {
     /**
      * @return array
-     * @Template
      */
+    #[Template]
     public function index()
     {
         return [];

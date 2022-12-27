@@ -32,9 +32,9 @@ abstract class Block implements BlockInterface
 
     /**
      * @var string
-     * @Assert\NotBlank
      * @Type\Field
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

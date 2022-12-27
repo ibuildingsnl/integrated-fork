@@ -37,14 +37,14 @@ class ContentType implements ContentTypeInterface
 
     /**
      * @var string The class of the content type
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $class;
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**

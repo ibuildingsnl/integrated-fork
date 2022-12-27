@@ -38,7 +38,6 @@ class ContentBlock extends Block
 
     /**
      * @var int
-     * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
@@ -48,11 +47,11 @@ class ContentBlock extends Block
      *      }
      * )
      */
+    #[Assert\Length(min: 0)]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
-     * @Assert\Length(min=0)
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
@@ -63,6 +62,7 @@ class ContentBlock extends Block
      *      }
      * )
      */
+    #[Assert\Length(min: 0)]
     protected $maxItems;
 
     /**
@@ -91,13 +91,13 @@ class ContentBlock extends Block
 
     /**
      * @var string
-     * @Assert\NotBlank
      * @Type\Field(
      *       options={
      *          "attr"={"class"="main-title"}
      *       }
      * )
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

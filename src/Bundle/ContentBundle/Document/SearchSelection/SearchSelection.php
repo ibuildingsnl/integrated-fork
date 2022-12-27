@@ -29,8 +29,8 @@ class SearchSelection
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

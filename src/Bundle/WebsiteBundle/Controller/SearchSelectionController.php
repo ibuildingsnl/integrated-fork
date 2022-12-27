@@ -34,13 +34,12 @@ class SearchSelectionController extends AbstractController
     }
 
     /**
-     * @Template
      *
      * @param Request         $request
      * @param SearchSelection $selection
-     *
      * @return array
      */
+    #[Template]
     public function rss(Request $request, SearchSelection $selection)
     {
         $block = new ContentBlock();

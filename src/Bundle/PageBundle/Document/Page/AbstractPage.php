@@ -32,14 +32,14 @@ abstract class AbstractPage
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $path;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $layout;
 
     /**
