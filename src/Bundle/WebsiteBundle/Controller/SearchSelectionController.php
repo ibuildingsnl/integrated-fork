@@ -34,9 +34,9 @@ class SearchSelectionController extends AbstractController
     }
 
     /**
-     *
      * @param Request         $request
      * @param SearchSelection $selection
+     *
      * @return array
      */
     #[Template]

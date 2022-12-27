@@ -29,13 +29,20 @@ class Field
     /**
      * Constructor.
      *
-     * @param array $data
-     *
      * @throws \BadMethodCallException
      */
-    public function __construct(array $data = [])
+    public function __construct($exactly = null, string $type = null, array $options = [], array $extra = [])
     {
-        foreach ($data as $key => $value) {
+        if (\is_array($exactly)) {
+            $extra = array_merge($exactly, $extra);
+        }
+
+        unset($extra['value']);
+
+        $extra['type'] = $type ?? $extra['type'] ?? null;
+        $extra['options'] = $options ?? $extra['options'] ?? null;
+
+        foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
                 throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));

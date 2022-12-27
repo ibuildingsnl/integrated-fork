@@ -62,7 +62,6 @@ class DefaultController extends AbstractController
     /**
      * @return array
      *
-     *
      * @throws \Exception
      */
     #[Template]
@@ -101,7 +100,6 @@ class DefaultController extends AbstractController
      * @param $page
      *
      * @return array
-     *
      *
      * @throws \Exception
      */

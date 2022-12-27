@@ -22,18 +22,20 @@ class Document
     /**
      * Constructor.
      *
-     * @param array $data
-     *
      * @throws \BadMethodCallException
      */
-    public function __construct(array $data = [])
+    public function __construct($exactly = [], string $name = null, array $extra = [])
     {
-        if (isset($data['value'])) {
-            $data['name'] = $data['value'];
-            unset($data['value']);
+        if (\is_array($exactly)) {
+            $extra = array_merge($exactly, $extra);
+            $exactly = $extra['value'] ?? null;
         }
 
-        foreach ($data as $key => $value) {
+        unset($extra['value']);
+
+        $extra['name'] = $name ?? $exactly ?? $extra['name'] ?? null;
+
+        foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
                 throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
