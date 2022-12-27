@@ -22,6 +22,7 @@ use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ThemeManagerPas
 use Integrated\Bundle\ContentBundle\DependencyInjection\IntegratedContentExtension;
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
+use Integrated\Common\Mapping\Registry\DriverRegistryPass;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -52,6 +53,7 @@ class IntegratedContentBundle extends Bundle
         $container->addCompilerPass(new FactoryRegistryBuilderPass('integrated_content.bulk.handler_registry_builder', 'integrated_content.bulk.handler'));
         $container->addCompilerPass(new ConfigProviderBuilderPass('integrated_content.bulk.form.chain_provider_builder', 'integrated_content.bulk.form.provider'));
         $container->addCompilerPass(new ContentProviderPass());
+        $container->addCompilerPass(new DriverRegistryPass('integrated_content.metadata.driver.registry', 'integrated.mapping.driver'));
     }
 
     /**

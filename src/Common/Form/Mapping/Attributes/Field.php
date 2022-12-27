@@ -9,18 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Common\Form\Mapping\Annotations;
+namespace Integrated\Common\Form\Mapping\Attributes;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-/**
- * Annotation for defining field options for properties of a document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- * @Annotation
- *
- * @deprecated
- */
+#[\Attribute()]
 class Field
 {
     /**
@@ -40,7 +33,7 @@ class Field
      *
      * @throws \BadMethodCallException
      */
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);

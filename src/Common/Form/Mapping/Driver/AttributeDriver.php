@@ -11,38 +11,23 @@
 
 namespace Integrated\Common\Form\Mapping\Driver;
 
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Integrated\Common\Form\Mapping\Annotations\Document;
-use Integrated\Common\Form\Mapping\Annotations\Field;
+use Integrated\Common\Form\Mapping\Attributes\Document;
+use Integrated\Common\Form\Mapping\Attributes\Field;
 use Integrated\Common\Form\Mapping\DriverInterface;
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
+use Integrated\Common\Mapping\Reader\AttributeReader;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- *
- * @deprecated
- */
-class AnnotationDriver implements DriverInterface
+class AttributeDriver implements DriverInterface
 {
-    public const DOCUMENT_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Document';
+    protected MappingDriver $driver;
 
-    public const FIELD_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Field';
+    private AttributeReader $reader;
 
-    /**
-     * @var MappingDriver
-     */
-    protected $driver;
-
-    /**
-     * @var Reader
-     */
-    protected $reader;
-
-    public function __construct(MappingDriver $driver, Reader $reader)
+    public function __construct(MappingDriver $driver)
     {
         $this->driver = $driver;
-        $this->reader = $reader;
+        $this->reader = new AttributeReader();
     }
 
     /**
@@ -61,7 +46,7 @@ class AnnotationDriver implements DriverInterface
     public function loadMetadataForClass(MetadataEditorInterface $metadata): void
     {
         /* @var $document Document */
-        $document = $this->reader->getClassAnnotation($metadata->getReflection(), self::DOCUMENT_CLASS);
+        $document = $this->reader->getClassAttribute($metadata->getReflection(), Document::class);
 
         if ($document == null) {
             return;
@@ -71,7 +56,7 @@ class AnnotationDriver implements DriverInterface
 
         foreach ($metadata->getReflection()->getProperties() as $prop) {
             /* @var $field Field */
-            $field = $this->reader->getPropertyAnnotation($prop, self::FIELD_CLASS);
+            $field = $this->reader->getPropertyAttribute($prop, Field::class);
 
             if ($field == null) {
                 continue;
@@ -89,6 +74,6 @@ class AnnotationDriver implements DriverInterface
     {
         $reflection = new \ReflectionClass($class);
 
-        return (bool) $this->reader->getClassAnnotation($reflection, self::DOCUMENT_CLASS);
+        return (bool) $this->reader->getClassAttribute($reflection, Document::class);
     }
 }

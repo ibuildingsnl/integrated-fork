@@ -9,16 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Bundle\SlugBundle\Mapping\Annotations;
+namespace Integrated\Bundle\SlugBundle\Mapping\Attributes;
 
 use BadMethodCallException;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- *
- * @deprecated
- */
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Slug
 {
     /**
@@ -44,55 +39,37 @@ class Slug
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new BadMethodCallException(sprintf("Unknown property '%s' on attribute '%s'.", $key, static::class));
             }
             $this->$method($value);
         }
     }
 
-    /**
-     * @return string[]
-     */
     public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param string[] $fields
-     */
     public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return string
-     */
     public function getSeparator(): string
     {
         return $this->separator;
     }
 
-    /**
-     * @param string $separator
-     */
     public function setSeparator(string $separator): void
     {
         $this->separator = $separator;
     }
 
-    /**
-     * @return int
-     */
     public function getLengthLimit(): int
     {
         return $this->lengthLimit;
     }
 
-    /**
-     * @param int $lengthLimit
-     */
     public function setLengthLimit(int $lengthLimit): void
     {
         $this->lengthLimit = $lengthLimit;

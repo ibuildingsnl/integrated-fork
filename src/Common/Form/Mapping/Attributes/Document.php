@@ -9,16 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Common\Form\Mapping\Annotations;
+namespace Integrated\Common\Form\Mapping\Attributes;
 
-/**
- * Annotation for defining metadata for a document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- * @Annotation
- *
- * @deprecated
- */
+#[\Attribute()]
 class Document
 {
     /**
@@ -33,7 +26,7 @@ class Document
      *
      * @throws \BadMethodCallException
      */
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
         if (isset($data['value'])) {
             $data['name'] = $data['value'];
