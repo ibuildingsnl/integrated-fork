@@ -73,4 +73,14 @@ class Field implements ContentTypeFieldInterface
 
         return $this;
     }
+
+    /**
+     * Added shortcut to getLabel of field.
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return isset($this->options['label']) ? $this->options['label'] : ucfirst($this->getName());
+    }
 }
