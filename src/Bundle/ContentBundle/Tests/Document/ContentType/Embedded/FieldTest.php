@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType\Embedded;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
+use Integrated\Common\ContentType\ContentTypeFieldInterface;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -36,7 +37,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Integrated\Common\ContentType\ContentTypeFieldInterface', $this->field);
+        $this->assertInstanceOf(ContentTypeFieldInterface::class, $this->field);
     }
 
     /**
@@ -55,20 +56,5 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     {
         $options = ['label' => 'label', 'required' => false];
         $this->assertEquals($options, $this->field->setOptions($options)->getOptions());
-    }
-
-    /**
-     * Test getLabel function.
-     */
-    public function testGetLabelFunction()
-    {
-        $name = 'name';
-        $this->field->setName($name);
-
-        $this->assertSame(ucfirst($name), $this->field->getLabel());
-
-        $label = 'label';
-        $this->field->setOptions(['label' => $label]);
-        $this->assertSame($label, $this->field->getLabel());
     }
 }
