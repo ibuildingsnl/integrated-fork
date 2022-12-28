@@ -11,31 +11,30 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("JobPosting")
  */
+#[Type\Document('JobPosting')]
 class JobPosting extends Article
 {
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $jobTitle;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $salary;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $applyUrl;
 
     /**

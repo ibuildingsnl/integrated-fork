@@ -9,14 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Bundle\SlugBundle\Tests\Mapping\Annotations;
+namespace Integrated\Bundle\SlugBundle\Tests\Mapping\Attributes;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @deprecated
- */
 class SlugTest extends TestCase
 {
     /**

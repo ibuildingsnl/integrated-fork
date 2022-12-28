@@ -13,44 +13,35 @@ namespace Integrated\Bundle\ContentBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Facet block document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Facet block")
  */
+#[Type\Document('Facet block')]
 class FacetBlock extends Block
 {
     /**
      * @var ContentBlock
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="Integrated\Bundle\ContentBundle\Document\Block\ContentBlock",
-     *          "choice_label"="title",
-     *          "placeholder"=""
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock',
+        'choice_label' => 'title',
+        'placeholder' => '',
+    ])]
     protected $block;
 
     /**
      * @var ArrayCollection
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType",
-     *      options={
-     *          "entry_type"="Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType",
-     *          "entry_options"={
-     *              "data_class"="Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField"
-     *          },
-     *          "allow_add"=true,
-     *          "allow_delete"=true
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType', options: [
+        'entry_type' => 'Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType',
+        'entry_options' => ['data_class' => 'Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField'],
+        'allow_add' => true,
+        'allow_delete' => true,
+    ])]
     protected $fields;
 
     public function __construct($id = null)

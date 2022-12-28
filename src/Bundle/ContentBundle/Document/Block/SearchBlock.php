@@ -12,39 +12,26 @@
 namespace Integrated\Bundle\ContentBundle\Document\Block;
 
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Search block document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Search block")
  */
+#[Type\Document('Search block')]
 class SearchBlock extends Block
 {
     /**
      * @var ContentBlock
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="Integrated\Bundle\ContentBundle\Document\Block\ContentBlock",
-     *          "choice_label"="title",
-     *          "placeholder"=""
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: ['class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock', 'choice_label' => 'title', 'placeholder' => ''])]
     protected $block;
 
     /**
      * @var string
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\TextType",
-     *      options={
-     *          "label"="Results page URL"
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['label' => 'Results page URL'])]
     protected $url;
 
     /**

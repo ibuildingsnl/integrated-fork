@@ -52,10 +52,10 @@ class NewsController extends AbstractController
 
     /**
      * @return array
+     * @Template
      *
      * @throws \Exception
      */
-    #[Template]
     public function index()
     {
         $channel = $this->context->getChannel();

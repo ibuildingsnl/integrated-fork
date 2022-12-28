@@ -42,9 +42,9 @@ class Slug
 
         unset($extra['value']);
 
-        $extra['fields'] = $fields ?? $extra['fields'] ?? null;
-        $extra['separator'] = $separator ?? $extra['separator'] ?? null;
-        $extra['lengthLimit'] = $lengthLimit ?? $extra['lengthLimit'] ?? null;
+        $extra['fields'] = $fields ?? $extra['fields'] ?? $this->fields;
+        $extra['separator'] = $separator ?? $extra['separator'] ?? $this->separator;
+        $extra['lengthLimit'] = $lengthLimit ?? $extra['lengthLimit'] ?? $this->lengthLimit;
 
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);

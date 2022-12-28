@@ -14,46 +14,45 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type File.
  *
  * @author Johnny Borg <johnny@e-active.nl>
- *
- * @Type\Document("File")
  */
+#[Type\Document('File')]
 class File extends Content implements FileInterface
 {
     /**
      * @var string
-     * @Slug(fields={"title"})
-     * @Type\Field
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
+    #[Type\Field]
     protected $slug;
 
     /**
      * @var StorageInterface
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType')]
     protected $file;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $description;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $credits;
 
     /**

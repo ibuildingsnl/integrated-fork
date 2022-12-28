@@ -22,9 +22,8 @@ class CustomField extends Field
 {
     /**
      * {@inheritdoc}
-     *
-     * @Slug(fields={"getLabel"})
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['getLabel'])]
     protected $name;
 
     /**

@@ -23,8 +23,8 @@ class SearchSelection
 {
     /**
      * @var string
-     * @Slug(fields={"title"})
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
     protected $id;
 
     /**

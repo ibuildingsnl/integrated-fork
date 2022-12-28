@@ -62,9 +62,10 @@ class DefaultController extends AbstractController
     /**
      * @return array
      *
+     * @Template
+     *
      * @throws \Exception
      */
-    #[Template]
     public function index()
     {
         $channel = $this->context->getChannel();
@@ -101,9 +102,10 @@ class DefaultController extends AbstractController
      *
      * @return array
      *
+     * @Template
+     *
      * @throws \Exception
      */
-    #[Template]
     public function list($page)
     {
         $channel = $this->context->getChannel();

@@ -11,28 +11,17 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Integrated\Common\Form\Mapping\Attributes as Type;
+
 trait PublishTitleTrait
 {
     /**
      * @var string
-     * @Type\Field(
-     *       options={
-     *          "required"=false,
-     *          "attr"={"class"="published-title"}
-     *       }
-     * )
      */
+    #[Type\Field(options: ['required' => false, 'attr' => ['class' => 'published-title']])]
     protected $publishedTitle = '';
 
-    /**
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *      options={
-     *          "required"=false,
-     *          "attr"={"class"="use-title"}
-     *      }
-     * )
-     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'attr' => ['class' => 'published-title']])]
     protected $useTitle;
 
     /**

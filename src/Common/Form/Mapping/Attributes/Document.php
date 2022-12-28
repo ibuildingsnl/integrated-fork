@@ -17,7 +17,7 @@ class Document
     /**
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * Constructor.
@@ -33,7 +33,7 @@ class Document
 
         unset($extra['value']);
 
-        $extra['name'] = $name ?? $exactly ?? $extra['name'] ?? null;
+        $extra['name'] = $name ?? $exactly ?? $extra['name'] ?? $this->name;
 
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
@@ -44,27 +44,13 @@ class Document
         }
     }
 
-    /**
-     * Get the name of the document.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Set the name of the document.
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 }

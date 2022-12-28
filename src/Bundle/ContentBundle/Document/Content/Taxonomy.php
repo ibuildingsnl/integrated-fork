@@ -14,36 +14,35 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Taxonomy.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @Type\Document("Taxonomy")
  */
+#[Type\Document('Taxonomy')]
 class Taxonomy extends Content implements RankableInterface
 {
     use RankTrait;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var string
-     * @Slug(fields={"title"})
-     * @Type\Field
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
+    #[Type\Field]
     protected $slug;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $description;
 
     /**

@@ -32,8 +32,8 @@ class Channel implements ChannelInterface
 
     /**
      * @var string
-     * @Slug(fields={"name"}, separator="_")
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**

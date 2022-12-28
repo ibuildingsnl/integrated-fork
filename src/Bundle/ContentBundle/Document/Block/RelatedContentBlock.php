@@ -13,16 +13,15 @@ namespace Integrated\Bundle\ContentBundle\Document\Block;
 
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Related content block document.
  *
  * @author Vasil Pascal <developer.optimum@gmail.com>
- *
- * @Type\Document("Related Content block")
  */
+#[Type\Document('Related Content block')]
 class RelatedContentBlock extends Block
 {
     /**
@@ -42,108 +41,71 @@ class RelatedContentBlock extends Block
 
     /**
      * @var string
-     * @Type\Field
      */
     #[Assert\NotBlank]
+    #[Type\Field]
     protected $publishedTitle;
 
     /**
      * @var int
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *     options={
-     *         "choices"={
-     *             "Show items which have the current document linked"="1",
-     *             "Show items which share linked items with the current document"="2",
-     *             "Show items linked by the current document"="3",
-     *          },
-     *     }
-     * )
      */
     #[Assert\NotBlank]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            'Show items which have the current document linked' => 1,
+            'Show items which share linked items with the current document' => 2,
+            'Show items linked by the current document' => 3,
+        ],
+    ])]
     protected $typeBlock;
 
     /**
      * @var Relation
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
-     *          "choice_label"="name",
-     *          "placeholder"=""
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
+        'choice_label' => 'name',
+        'placeholder' => '',
+    ])]
     protected $relation;
 
     /**
      * @var string
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *     options={
-     *         "choices"={
-     *             "Publication date"="publishTime.startDate",
-     *             "Title"="title",
-     *             "Linked order"="linked"
-     *          },
-     *     }
-     * )
      */
     #[Assert\NotBlank]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            'Publication date' => 'publishTime.startDate',
+            'Title' => 'title',
+            'Linked order' => 'linked',
+        ],
+    ])]
     protected $sortBy;
 
     /**
      * @var string
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *     options={
-     *         "choices"={
-     *             "asc"="asc",
-     *             "desc"="desc"
-     *          },
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['choices' => ['asc' => 'asc', 'desc' => 'desc']])]
     protected $sortDirection;
 
     /**
      * @var int
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
-     *      options={
-     *          "attr"={
-     *              "min"=0
-     *          }
-     *      }
-     * )
      */
     #[Assert\Length(min: 0)]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
-     *      options={
-     *          "required"=false,
-     *          "attr"={
-     *              "min"=0,
-     *          }
-     *      }
-     * )
      */
     #[Assert\Length(min: 0)]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
     protected $maxItems;
 
     /**
      * @var array
-     * @Type\Field(
-     *     type="Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice",
-     *     options={
-     *         "required"=false
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice', options: ['required' => false])]
     protected $contentTypes;
 
     /**

@@ -11,15 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type News.
  *
  * @author Koen Prins <koen@e-active.nl>
- *
- * @Type\Document("News")
  */
+#[Type\Document('News')]
 class News extends Article
 {
 }

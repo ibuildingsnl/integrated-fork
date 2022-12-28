@@ -9,16 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Common\Form\Tests\Mapping\Annotations;
+namespace Integrated\Common\Form\Tests\Mapping\Attributes;
 
-use Integrated\Common\Form\Mapping\Annotations\Field;
+use Integrated\Common\Form\Mapping\Attributes\Field;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @deprecated
- */
 class FieldTest extends \PHPUnit\Framework\TestCase
 {
     /**

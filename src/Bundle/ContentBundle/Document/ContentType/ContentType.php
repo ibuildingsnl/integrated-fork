@@ -31,8 +31,8 @@ class ContentType implements ContentTypeInterface
 
     /**
      * @var string
-     * @Slug(fields={"name"}, separator="_")
      */
+    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**

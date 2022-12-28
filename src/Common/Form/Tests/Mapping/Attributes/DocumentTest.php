@@ -9,15 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Common\Form\Tests\Mapping\Annotations;
+namespace Integrated\Common\Form\Tests\Mapping\Attributes;
 
-use Integrated\Common\Form\Mapping\Annotations\Document;
+use Integrated\Common\Form\Mapping\Attributes\Document;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @deprecated
- */
 class DocumentTest extends \PHPUnit\Framework\TestCase
 {
     /**

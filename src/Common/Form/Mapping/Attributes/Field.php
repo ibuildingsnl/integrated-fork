@@ -31,7 +31,7 @@ class Field
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($exactly = null, string $type = null, array $options = [], array $extra = [])
+    public function __construct($exactly = null, string $type = null, array $options = null, array $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);
@@ -39,8 +39,8 @@ class Field
 
         unset($extra['value']);
 
-        $extra['type'] = $type ?? $extra['type'] ?? null;
-        $extra['options'] = $options ?? $extra['options'] ?? null;
+        $extra['type'] = $type ?? $extra['type'] ?? $this->type;
+        $extra['options'] = $options ?? $extra['options'] ?? $this->options;
 
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
