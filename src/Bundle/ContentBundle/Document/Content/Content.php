@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\ConnectorInterface;
@@ -49,7 +49,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['id'])]
+    #[Slug(fields: ['id'])]
     #[Type\Field]
     protected $slug;
 

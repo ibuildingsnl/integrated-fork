@@ -20,7 +20,7 @@ use Integrated\Common\Mapping\Reader\AttributeReader;
 
 class AttributeDriver implements DriverInterface
 {
-    protected MappingDriver $driver;
+    private MappingDriver $driver;
 
     private AttributeReader $reader;
 

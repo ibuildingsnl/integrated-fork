@@ -29,7 +29,7 @@ This bundle can be installed following these steps:
 ## Example
     
     use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-    use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+    use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
     
     class Article
     {

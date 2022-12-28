@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
@@ -33,7 +33,7 @@ class Company extends Relation
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['name'])]
+    #[Slug(fields: ['name'])]
     #[Type\Field]
     protected $slug;
 

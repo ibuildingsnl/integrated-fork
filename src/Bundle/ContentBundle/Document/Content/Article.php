@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Content\RankableInterface;
@@ -40,7 +40,7 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
+    #[Slug(fields: ['title'])]
     #[Type\Field]
     protected $slug;
 

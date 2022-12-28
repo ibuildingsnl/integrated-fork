@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -33,7 +33,7 @@ class Channel implements ChannelInterface
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['name'], separator: '_')]
+    #[Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
 use Integrated\Common\Form\Mapping\Attributes as Type;
@@ -35,7 +35,7 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
+    #[Slug(fields: ['title'])]
     #[Type\Field]
     protected $slug;
 

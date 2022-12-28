@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
@@ -27,7 +27,7 @@ abstract class Block implements BlockInterface
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'], separator: '_')]
+    #[Slug(fields: ['title'], separator: '_')]
     protected $id;
 
     /**

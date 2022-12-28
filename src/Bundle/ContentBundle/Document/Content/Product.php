@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
@@ -31,7 +31,7 @@ class Product extends Content
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['title'])]
+    #[Slug(fields: ['title'])]
     #[Type\Field]
     protected $slug;
 

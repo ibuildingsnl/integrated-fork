@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
@@ -59,7 +59,7 @@ class Person extends Relation
     /**
      * @var string
      */
-    #[\Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug(fields: ['firstName', 'lastName'])]
+    #[Slug(fields: ['firstName', 'lastName'])]
     #[Type\Field]
     protected $slug;
 
