@@ -57,4 +57,19 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $options = ['label' => 'label', 'required' => false];
         $this->assertEquals($options, $this->field->setOptions($options)->getOptions());
     }
+
+    /**
+     * Test getLabel function.
+     */
+    public function testGetLabelFunction()
+    {
+        $name = 'name';
+        $this->field->setName($name);
+
+        $this->assertSame(ucfirst($name), $this->field->getLabel());
+
+        $label = 'label';
+        $this->field->setOptions(['label' => $label]);
+        $this->assertSame($label, $this->field->getLabel());
+    }
 }

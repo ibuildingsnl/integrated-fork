@@ -39,19 +39,4 @@ class CustomFieldTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertInstanceOf(Field::class, $this->field);
     }
-
-    /**
-     * Test getLabel function.
-     */
-    public function testGetLabelFunction()
-    {
-        $name = 'name';
-        $this->field->setName($name);
-
-        $this->assertSame(ucfirst($name), $this->field->getLabel());
-
-        $label = 'label';
-        $this->field->setOptions(['label' => $label]);
-        $this->assertSame($label, $this->field->getLabel());
-    }
 }
