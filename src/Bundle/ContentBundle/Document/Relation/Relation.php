@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Relation;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Relation\RelationInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,32 +30,32 @@ class Relation implements RelationInterface
 {
     /**
      * @var string
-     * @Slug(fields={"name"}, separator="_")
      */
+    #[Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $type;
 
     /**
      * @var ContentTypeInterface[]
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $sources;
 
     /**
      * @var ContentTypeInterface[]
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $targets;
 
     /**

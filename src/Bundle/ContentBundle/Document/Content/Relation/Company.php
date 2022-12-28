@@ -11,43 +11,42 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Relation\Company.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @Type\Document("Company")
  */
+#[Type\Document('Company')]
 class Company extends Relation
 {
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $name;
 
     /**
      * @var string
-     * @Slug(fields={"name"})
-     * @Type\Field
      */
+    #[Slug(fields: ['name'])]
+    #[Type\Field]
     protected $slug;
 
     /**
      * @var StorageInterface
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageType')]
     protected $logo;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $website;
 
     /**

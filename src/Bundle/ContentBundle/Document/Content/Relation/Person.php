@@ -14,69 +14,65 @@ namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Relation\Person.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @Type\Document("Person")
  */
+#[Type\Document('Person')]
 class Person extends Relation
 {
     /**
      * @var string
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *     options={"choices"={"Male"="Male", "Female"="Female"}}
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['choices' => ['Male' => 'Male', 'Female' => 'Female']])]
     protected $gender;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $prefix;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $nickname;
 
     /**
      * @var string
-     * @Type\Field(options={"label"="First name"})
      */
+    #[Type\Field(options: ['label' => 'First name'])]
     protected $firstName;
 
     /**
      * @var string
-     * @Type\Field(options={"label"="Last name"})
      */
+    #[Type\Field(options: ['label' => 'Last name'])]
     protected $lastName;
 
     /**
      * @var string
-     * @Slug(fields={"firstName", "lastName"})
-     * @Type\Field
      */
+    #[Slug(fields: ['firstName', 'lastName'])]
+    #[Type\Field]
     protected $slug;
 
     /**
      * @var Collection Job[]
-     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType')]
     protected $jobs;
 
     /**
      * @var StorageInterface|null
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageType')]
     protected $picture;
 
     /**

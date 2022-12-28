@@ -19,6 +19,9 @@ use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
 use ReflectionClass;
 use ReflectionException;
 
+/**
+ * @deprecated
+ */
 class AnnotationDriver implements DriverInterface
 {
     /**

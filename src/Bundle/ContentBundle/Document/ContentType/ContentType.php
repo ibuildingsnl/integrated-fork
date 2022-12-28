@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\ContentType;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Security\PermissionTrait;
@@ -31,20 +31,20 @@ class ContentType implements ContentTypeInterface
 
     /**
      * @var string
-     * @Slug(fields={"name"}, separator="_")
      */
+    #[Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**
      * @var string The class of the content type
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $class;
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**

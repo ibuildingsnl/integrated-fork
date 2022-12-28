@@ -22,24 +22,21 @@ class ContentTypePage extends AbstractPage
 {
     /**
      * @var string
-     * @Assert\NotBlank
-     * @Assert\Regex(
-     *     pattern="/{slug}/",
-     *     message="Url must contain {slug}"
-     * )
      */
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/{slug}/', message: 'Url must contain {slug}')]
     protected $path;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $controllerService;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $controllerAction;
 
     /**

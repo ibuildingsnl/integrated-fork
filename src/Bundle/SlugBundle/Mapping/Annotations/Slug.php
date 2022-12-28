@@ -16,6 +16,8 @@ use BadMethodCallException;
 /**
  * @Annotation
  * @Target({"PROPERTY"})
+ *
+ * @deprecated
  */
 class Slug
 {

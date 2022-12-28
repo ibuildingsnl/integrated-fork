@@ -12,84 +12,60 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block\Embedded;
 
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
- *
- * @Type\Document("FeaturedItemsItem")
  */
+#[Type\Document('FeaturedItemsItem')]
 class FeaturedItemsItem
 {
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var StorageInterface
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\ImageType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageType')]
     protected $image;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $link;
 
     /**
      * @var string
-     * @Type\Field(
-     *     options={
-     *         "required"=false
-     *     }
-     * )
      */
+    #[Type\Field(options: ['required' => false])]
     protected $linkText;
 
     /**
      * @var string
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *      options={
-     *          "label"="Link target",
-     *          "expanded"=true,
-     *          "choices"={
-     *               "Current window"="_self",
-     *               "New window"="_blank"
-     *          }
-     *      }
-     *  )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['label' => 'Link target', 'expanded' => true, 'choices' => ['Current window' => '_self', 'New window' => '_blank']])]
     protected $target = '_self';
 
     /**
      * @var string
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
     protected $text;
 
     /**
      * @var bool
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *      options={
-     *          "required"=false,
-     *          "attr"={"align_with_widget"=true}
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'attr' => ['align_with_widget' => true]])]
     protected $disabled = false;
 
     /**
      * @var int
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\HiddenType",
-     *     options={"attr"={"data-itemorder"="collection"}}
-     *  )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
     protected $order;
 
     /**

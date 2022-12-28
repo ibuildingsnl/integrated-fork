@@ -18,6 +18,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  * @Annotation
+ *
+ * @deprecated
  */
 class Field
 {

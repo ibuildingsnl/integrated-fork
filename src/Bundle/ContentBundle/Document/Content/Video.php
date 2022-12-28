@@ -12,22 +12,21 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Document type Image.
  *
  * @author Johnny Borg <johnny@e-active.nl>
- *
- * @Type\Document("Video")
  */
+#[Type\Document('Video')]
 class Video extends File
 {
     /**
      * @var StorageInterface
-     * @Type\Field(type="Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType")
-     * @Assert\File(mimeTypes="video/*")
      */
+    #[Assert\File(mimeTypes: 'video/*')]
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType')]
     protected $file;
 }

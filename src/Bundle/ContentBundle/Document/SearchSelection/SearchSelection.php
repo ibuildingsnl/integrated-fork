@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\SearchSelection;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,14 +23,14 @@ class SearchSelection
 {
     /**
      * @var string
-     * @Slug(fields={"title"})
      */
+    #[Slug(fields: ['title'])]
     protected $id;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

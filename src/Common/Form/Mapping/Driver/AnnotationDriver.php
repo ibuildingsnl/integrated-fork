@@ -20,6 +20,8 @@ use Integrated\Common\Form\Mapping\MetadataEditorInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
+ *
+ * @deprecated
  */
 class AnnotationDriver implements DriverInterface
 {
@@ -46,15 +48,17 @@ class AnnotationDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function getAllClassNames()
+    public function getAllClassNames(): array
     {
-        return $this->driver->getAllClassNames();
+        return array_filter($this->driver->getAllClassNames(), function (string $class) {
+            return $this->isSupported($class);
+        });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass($class, MetadataEditorInterface $metadata)
+    public function loadMetadataForClass(MetadataEditorInterface $metadata): void
     {
         /* @var $document Document */
         $document = $this->reader->getClassAnnotation($metadata->getReflection(), self::DOCUMENT_CLASS);
@@ -79,5 +83,12 @@ class AnnotationDriver implements DriverInterface
 
             $metadata->addField($metadataField);
         }
+    }
+
+    public function isSupported(string $class): bool
+    {
+        $reflection = new \ReflectionClass($class);
+
+        return (bool) $this->reader->getClassAnnotation($reflection, self::DOCUMENT_CLASS);
     }
 }
