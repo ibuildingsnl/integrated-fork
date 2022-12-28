@@ -50,7 +50,7 @@ class TaxonomyRelationModel
         if (\array_key_exists('media_id', $params)) {
             $this->setMediaId($params['media_id']);
         }
-        if (\array_key_exists('category_id_target', $params) && $params['category_id_target'] !== null) {
+        if (isset($params['category_id_target'])) {
             $this->setCategoryIdTarget($params['category_id_target']);
         }
         if (\array_key_exists('category_id_origin', $params)) {
@@ -58,12 +58,26 @@ class TaxonomyRelationModel
         }
     }
 
-    public function isTargetSameAsOrigin(): bool
+    private function isThereATarget(): bool
     {
         if ($this->getCategoryIdTarget() === '') {
             return false;
         }
 
+        return true;
+    }
+
+    public function isManagingRelationRequired(): bool
+    {
+        if ($this->isThereATarget() === true && $this->isTargetSameAsOrigin() === false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isTargetSameAsOrigin(): bool
+    {
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }
 

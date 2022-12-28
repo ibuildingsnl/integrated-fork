@@ -18,10 +18,8 @@
                         <div class="aside-item-list-container">
                             <div class="aside-item-search">
                                 <i class="iconoir-search"></i>
-                                <input type="text" class="list-search"
-                                   onchange="asideFolderSearch(this)"
-                                   onkeyup="asideFolderSearch(this)"
-                                   placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
+                                <input type="text" class="input_aside_folder_search list-search"
+                                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
                             </div>
 
                             <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
@@ -83,7 +81,7 @@
                                                                                     {% else %}
                                                                                     <a href="{{ path(app.request.attributes.get('_route'),
                                                                                         app.request.query.all|
-                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title }) |
+                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title })|
                                                                                         merge({'media_taxonomy_id':menu_item_2.ID})|
                                                                                         merge({'page':1})
                                                                                     ) }}"
@@ -135,9 +133,9 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button onclick="enable_grid_view()" class="toggle_view grid active switcher mr-2"><i
+                        <button class="button_enable_grid_view toggle_view grid active switcher mr-2"><i
                                     class="iconoir-view-grid"></i></button>
-                        <button onclick="enable_list_view()" class="toggle_view list switcher mr-2"><i
+                        <button class="button_enable_list_view toggle_view list switcher mr-2"><i
                                     class="iconoir-list"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
@@ -193,7 +191,7 @@
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
 
-                        <button onclick="toggle_upload_view()" class="btn btn-action">
+                        <button class="button_toggle_upload_view btn btn-action">
                             <i class="iconoir-add-media-image"></i>
                         </button>
 
@@ -212,10 +210,11 @@
             <section class="section-white section-radius p-4">
 
                 <div id="upload_container" class="hidden">
+{#                    'language': app.request.defaultLocale,#}
                     {% include '@IntegratedContent/media/upload.html.twig'
                         with {
-                        'language': app.request.defaultLocale,
-                        'endpoint': '/admin/media/upload_file',
+                        'language': 'nl',
+                        'endpoint': path('integrated_content_media_upload_file'),
                         'height': '750px',
                         'imageEditorEnabled': true,
                         'target': '#drag-drop-area',
@@ -224,7 +223,7 @@
 
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
-                    <div class="media-wrapper grid_view" style="">
+                    <div class="media-wrapper grid_view">
                         {% if paginator.items|length == 0 %}
                             <div>
                                 {% trans %} No results with this selection. {% endtrans %}
@@ -255,9 +254,9 @@
                                                     <img src="{{ thumbnail }}" alt="{{ media.title }}">
                                                 </div>
                                             </div>
-                                            {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
+                                            {% if media.file|split('.')|last|lower not in not_shown_filetypes %}
                                                 <div class="filetype">
-                                                    {{ media.file|split('.')|last | lower }}
+                                                    {{ media.file|split('.')|last|lower }}
                                                 </div>
                                             {% endif %}
                                         </div>

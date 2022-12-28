@@ -47,7 +47,7 @@ class TaxonomyRelationManager
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
-        if (true === $taxonomyRelation->isTargetSameAsOrigin()) {
+        if (false === $taxonomyRelation->isManagingRelationRequired()) {
             return new JsonResponse('Origin is same as target');
         }
 
@@ -72,15 +72,6 @@ class TaxonomyRelationManager
     private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
     {
         return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
-    }
-
-    public function makeSureMediaIDIsArray(array $params): array
-    {
-        if (true === \is_string($params['media_id'])) {
-            $params['media_id'] = [$params['media_id']];
-        }
-
-        return $params;
     }
 
     public function getMediaItems(TaxonomyRelationModel $taxonomyRelation): array

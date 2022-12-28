@@ -1,60 +1,9 @@
-<div id="drag-drop-area"></div>
+<div class="drag-drop-area" id="drag-drop-area"
+     data-endpoint="{{ endpoint|default('/admin/media/upload_file') }}"
+     data-language="{{ language|default('nl') }}"
+     data-height="{{ height|default('400px') }}"
+     data-imageEditorEnabled="{{ imageEditorEnabled|default(true) }}"
+     data-target="{{ target|default('.drag-drop-areaa') }}">
+</div>
 
-<script type="module">
-    let uppyOptions = {
-        endpoint: '{{ endpoint|default('/admin/media/upload_file') }}',
-        language: '{{ language|default('en') }}',
-        height: '{{ height|default('750px') }}',
-        imageEditorEnabled: {{ imageEditorEnabled|default(true) }},
-        target: '{{ target|default('#drag-drop-area') }}'
-    }
-
-    function inititalizeUppy(uppyOptions) {
-        let default_height = '750px'
-        let default_language = '' //defaults to eng
-        if (! ("target" in uppyOptions)) {
-            console.log("No target given for the Uppy component")
-            return false
-        }
-        if (! ("endpoint" in uppyOptions)) {
-            console.log("No endpoint given for the Uppy component")
-            return false
-        }
-
-        let uppy = new Uppy({
-            locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
-            onBeforeUpload(files) {
-                let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
-                if (null !== current_category_id && '' !== current_category_id) {
-                    for (const [key, file] of Object.entries(files)) {
-                        file.meta.category_id_target = current_category_id;
-                    }
-                }
-            },
-        })
-
-        uppy.use(Dashboard, {
-            inline: true,
-            target: uppyOptions.target,
-            width: '100%',
-            height: uppyOptions.height || '750px',
-            proudlyDisplayPoweredByUppy: false,
-            showProgressDetails: true,
-        });
-
-        uppy.use(XHRUpload, {
-            endpoint: uppyOptions.endpoint,
-        });
-
-        if (uppyOptions.imageEditorEnabled) {
-            uppy.use(ImageEditor, {
-                target: Dashboard,
-                quality: 0.9,
-            });
-        }
-
-        return uppy;
-    }
-
-    let uppy = inititalizeUppy(uppyOptions)
-</script>
+<script src="{{ asset('bundles/integratedintegrated/upload_uppy.js') }}"></script>

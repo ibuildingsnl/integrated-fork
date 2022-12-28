@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Storage\ManagerInterface;
@@ -83,6 +84,7 @@ class MediaController extends AbstractController
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
         private ManagerInterface $manager,
+        private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
 
@@ -134,66 +136,17 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/api/components/upload_images', name: 'getUploadComponent', methods: ['GET'])]
-    public function getUploadComponent()
-    {
-        return $this->render('@IntegratedContent/media/upload.html.twig', [
-        ]);
-    }
-
     public function uploadFile(Request $request)
     {
-        $entityManager = $this->getDoctrineODM()->getManager();
+        try {
+            $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
-        // check filetype
-        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
-        // QUESTION: What do you guys think about using this as whitelist:
-        // https://gist.github.com/tylerlee/53609bff1346cebf8f0a85b6be29a88e
-        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
-        // TODO: perfect these filetypes, maybe put these in a config file?:
-        $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
-        $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
-        $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
+            $request->attributes->set('media_id', $file->getId());
 
-        // Find a matching class with the extension
-        if (\in_array($uploadedFileExtension, $image_filetypes)) {
-            $file = new Image();
-            $file->setContentType('image');
-        } elseif (\in_array($uploadedFileExtension, $video_filetypes)) {
-            $file = new Video();
-            $file->setContentType('video');
-        } elseif (\in_array($uploadedFileExtension, $file_filetypes)) {
-            $file = new File();
-            $file->setContentType('file');
-        } else {
+            $this->taxonomyRelationManager->manageRelations($request);
+        } catch (\Exception $e) {
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
-
-        // Get file title
-        $uploadedFile = $request->files->get('file');
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
-        $file->setTitle($originalFilename);
-
-        $storage = $this->manager->write(
-            new MemoryReader(
-                file_get_contents($uploadedFile),
-                new Metadata(
-                    $uploadedFileExtension,
-                    $uploadedFileMimetype,
-                    new ArrayCollection(),
-                    new ArrayCollection()
-                )
-            )
-        );
-
-        $file->setFile($storage);
-
-        $entityManager->persist($file);
-        $entityManager->flush();
-
-        $request->attributes->set('media_id', $file->getId());
-
-        $this->taxonomyRelationManager->manageRelations($request);
 
         return new JsonResponse(['message' => 'file is uploaded.', 'content' => json_encode($file)]);
     }

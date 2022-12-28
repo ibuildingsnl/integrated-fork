@@ -29,6 +29,11 @@
         "/bundles/integratedintegrated/mediagallery.js"
       ]
     },
+    "upload_uppy": {
+      "js": [
+        "/bundles/integratedintegrated/upload_uppy.js"
+      ]
+    },
     "iframe": {
       "css": [
         "/bundles/integratedintegrated/iframe.css"

@@ -13,6 +13,24 @@ global.ImageEditor = ImageEditor
 import UppyDutch from '@uppy/locales/lib/nl_NL'
 global.UppyDutch = UppyDutch
 
+$('.button_enable_grid_view').bind( "click", function() {
+    enable_grid_view()
+});
+
+$('.button_enable_list_view').bind( "click", function() {
+    enable_list_view()
+});
+
+$('.button_toggle_upload_view').bind( "click", function() {
+    toggle_upload_view()
+});
+
+$('.input_aside_folder_search').change(function() {
+    asideFolderSearch(this)
+}).keyup(function() {
+    asideFolderSearch(this)
+});
+
 //BULKSELECTION FUNCTIONALITY
 let bulkSelectionEnabled = false //this controls if we show an icon with each image
 let bulkSelection = [] //this keeps track which items are selected
@@ -106,6 +124,7 @@ async function disableBulkSelection() {
 }
 
 window.asideFolderSearch = function(elem) {
+    console.log("searching")
     let filter, ul, li, a, i, txtValue;
 
     filter = elem.value.toUpperCase();
