@@ -11,19 +11,17 @@
 
 namespace Integrated\Common\Content;
 
+use Integrated\Common\Form\Mapping\Attributes as Type;
+
 trait ParentIDTrait
 {
     /**
      * @var string|null
-     *
-     * @Type\Field(
-     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentParentIDType",
-     *     options={
-     *         "label" = "Parent",
-     *         "route" = "integrated_content_parent_id_lookup"
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentParentIDType', options: [
+        'label' => 'Parent',
+        'route' => 'integrated_content_parent_id_lookup',
+    ])]
     protected $parent_id;
 
     /**
@@ -37,7 +35,7 @@ trait ParentIDTrait
     /**
      * @param string|null $parent_id
      */
-    public function setParentID(string $parent_id = null)
+    public function setParentID(string $parent_id = null): void
     {
         $this->parent_id = $parent_id;
     }
