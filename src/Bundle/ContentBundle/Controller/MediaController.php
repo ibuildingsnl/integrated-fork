@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -21,9 +20,7 @@ use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Storage\ManagerInterface;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +28,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Routing\Annotation\Route;
 
 /*
  * Goal for the user:

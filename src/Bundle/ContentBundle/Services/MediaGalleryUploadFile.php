@@ -39,8 +39,7 @@ class MediaGalleryUploadFile
         private DocumentManager $dm,
         private AuthorizationCheckerInterface $authorizationChecker,
         private ManagerInterface $manager,
-    )
-    {
+    ) {
     }
 
     public function handleUpload(Request $request)
@@ -98,4 +97,3 @@ class MediaGalleryUploadFile
         return $file;
     }
 }
-
