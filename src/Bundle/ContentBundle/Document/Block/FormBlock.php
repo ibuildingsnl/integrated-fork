@@ -15,63 +15,45 @@ use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\PublishTitleTrait;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Form block document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Form block")
  */
+#[Type\Document('Form block')]
 class FormBlock extends Block
 {
     use PublishTitleTrait;
 
     /**
      * @var ContentType
-     *
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="Integrated\Bundle\ContentBundle\Document\ContentType\ContentType",
-     *          "choice_label"="name",
-     *          "placeholder"=""
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\ContentType\ContentType',
+        'choice_label' => 'name',
+        'placeholder' => '',
+    ])]
     protected $contentType;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
     protected $content;
 
     /**
      * @var string
-     *
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\TextType",
-     *     options={
-     *          "required"=false,
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['required' => false])]
     protected $returnUrl;
 
     /**
      * @var string
-     *
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\TextareaType",
-     *     options={
-     *          "required"=false,
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: ['required' => false])]
     protected $textAfterSubmit;
 
     /**
@@ -80,47 +62,36 @@ class FormBlock extends Block
      * @Assert\All({
      *     @Assert\Email
      * })
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType",
-     *      options={
-     *          "label"="Sent form to e-mail address(es)",
-     *          "entry_type"="Symfony\Component\Form\Extension\Core\Type\EmailType",
-     *          "allow_add"=true,
-     *          "allow_delete"=true,
-     *          "required"=false,
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
+        'label' => 'Sent form to e-mail address(es)',
+        'entry_type' => 'Symfony\Component\Form\Extension\Core\Type\EmailType',
+        'allow_add' => true,
+        'allow_delete' => true,
+        'required' => false,
+    ])]
     protected $emailAddresses = [];
 
     /**
      * @var bool
-     *
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *      options={
-     *          "label"="Enable reCaptcha for this form",
-     *          "required"=false,
-     *          "attr"={"align_with_widget"=true}
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
+        'label' => 'Enable reCaptcha for this form',
+        'required' => false,
+        'attr' => ['align_with_widget' => true],
+    ])]
     protected $recaptcha = false;
 
     /**
      * @var Relation
-     *
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "label"="Link to content item",
-     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
-     *          "choice_label"="name",
-     *          "placeholder"="Do not link",
-     *          "required"=false,
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'label' => 'Link to content item',
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
+        'choice_label' => 'name',
+        'placeholder' => 'Do not link',
+        'required' => false,
+    ])]
     protected $linkRelation;
 
     /**

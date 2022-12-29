@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\ConnectorInterface;
@@ -29,7 +29,7 @@ use Integrated\Common\Content\MetadataInterface;
 use Integrated\Common\Content\PublishableInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Abstract base class for document types.
@@ -48,13 +48,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
-     *
-     * @Slug(fields={"id"})
-     * @Type\Field(
-     *     location = "sidebar",
-     *     icon = "link"
-     * )
      */
+    #[Slug(fields: ['id'])]
+    #[Type\Field]
     protected $slug;
 
     /**
@@ -79,9 +75,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var PublishTime
-     *
-     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType')]
     protected $publishTime;
 
     /**
@@ -91,18 +86,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var bool
-     *
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *     options={
-     *          "attr"={
-     *              "align_with_widget"=true,
-     *          }
-     *     },
-     *     location = "sidebar",
-     *     icon = "copyright"
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true]])]
     protected $disabled = false;
 
     /**
@@ -127,15 +112,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @var string
-     *
-     * @Type\Field(
-     *     options={
-     *          "label" = "Copyright restrictions",
-     *          },
-     *     location = "sidebar",
-     *     icon = "copyright"
-     *     )
      */
+    #[Type\Field(options: ['label' => 'Copyright restrictions'])]
     protected $copyrightRestrictions;
 
     /**

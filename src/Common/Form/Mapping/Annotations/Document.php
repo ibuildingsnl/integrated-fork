@@ -17,6 +17,8 @@ namespace Integrated\Common\Form\Mapping\Annotations;
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  *
  * @Annotation
+ *
+ * @deprecated
  */
 class Document
 {

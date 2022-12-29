@@ -13,32 +13,25 @@ namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\BlockBundle\Document\Block\Embedded\FeaturedItemsItem;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
- *
- * @Type\Document("Feature item block")
  */
+#[Type\Document('Feature item block')]
 class FeaturedItemsBlock extends Block
 {
     use PublishTitleTrait;
 
     /**
      * @var ArrayCollection
-     *
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
-     *      options={
-     *          "entry_type"="Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType",
-     *          "entry_options"={
-     *              "data_class"="Integrated\Bundle\BlockBundle\Document\Block\Embedded\FeaturedItemsItem"
-     *          },
-     *          "allow_add"=true,
-     *          "allow_delete"=true
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'entry_type' => 'Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType',
+        'entry_options' => ['data_class' => 'Integrated\Bundle\BlockBundle\Document\Block\Embedded\FeaturedItemsItem'],
+        'allow_add' => true,
+        'allow_delete' => true,
+    ])]
     protected $items;
 
     /**

@@ -15,63 +15,47 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Block\BlockRequiredItemsInterface;
 use Integrated\Common\Content\ContentInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @Type\Document("HTML block")
- */
+#[Type\Document('HTML block')]
 class HtmlBlock extends Block implements BlockRequiredItemsInterface
 {
     use PublishTitleTrait;
 
     /**
      * @var string
-     *
-     * @Assert\NotBlank
-     * @Type\Field(
-     *       options={
-     *          "attr"={"class"="main-title"}
-     *       }
-     * )
      */
+    #[Assert\NotBlank]
+    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\AceType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\AceType')]
     protected $content;
 
     /**
      * @var Relation
-     *
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="Integrated\Bundle\ContentBundle\Document\Relation\Relation",
-     *          "choice_label"="name",
-     *          "placeholder"="Select a relation",
-     *          "label"="Require relation",
-     *          "required"=false
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
+        'choice_label' => 'name',
+        'placeholder' => 'Select a relation',
+        'label' => 'Require relation',
+        'required' => false,
+    ])]
     protected $requiredRelation;
 
     /**
      * @var ArrayCollection
-     *
-     * @Type\Field(
-     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType",
-     *     options={
-     *         "label"="Require relation with",
-     *         "required"=false,
-     *         "allow_clear"=true
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: [
+        'label' => 'Require relation with',
+        'required' => false,
+        'allow_clear' => true,
+    ])]
     protected $requiredItems;
 
     /**

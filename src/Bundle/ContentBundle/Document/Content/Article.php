@@ -14,75 +14,58 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Article.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @Type\Document("Article")
  */
+#[Type\Document('Article')]
 class Article extends Content implements RankableInterface
 {
     use RankTrait;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Slug(fields: ['title'])]
+    #[Type\Field]
+    protected $slug;
+
+    /**
+     * @var string
+     */
+    #[Type\Field]
     protected $subtitle;
 
     /**
      * @var ArrayCollection Embedded\Author[]
-     *
-     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AuthorType",
-     *     options={
-     *          "attr"={
-     *              "label"= "Authors",
-     *          }
-     *     },
-     *     location= "sidebar",
-     *     icon= "feather",
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: ['label' => 'Authors'])]
     protected $authors;
 
     /**
      * @var string
-     *
-     * @Type\Field(
-     *      location= "sidebar",
-     *      icon= "megaphone",
-     * )
      */
+    #[Type\Field]
     protected $source;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\UrlType",
-     *      options={
-     *          "attr"={
-     *              "label"= "Source URL",
-     *          }
-     *     },
-     *     location = "sidebar",
-     *     icon = "arrow-up-right-from-square",
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: ['label' => 'Source URL'])]
     protected $sourceUrl;
 
     /**
@@ -92,33 +75,26 @@ class Article extends Content implements RankableInterface
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
     protected $intro;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
     protected $description;
 
     /**
      * @var string
-     *
-     * @Type\Field(
-     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",
-     *     options={"attr"={"placeholder"="Your article starts here"}}
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['placeholder' => 'Your article starts here'])]
     protected $content;
 
     /**
      * @var Embedded\Address
-     *
-     * @Type\Field(type="Integrated\Bundle\ContentBundle\Form\Type\AddressType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType')]
     protected $address;
 
     /**

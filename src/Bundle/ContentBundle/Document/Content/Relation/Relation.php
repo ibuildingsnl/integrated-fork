@@ -18,7 +18,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Phonenumber;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Class for Relations.
@@ -31,54 +31,43 @@ abstract class Relation extends Content implements RankableInterface
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $accountnumber;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
     protected $description;
 
     /**
      * @var Phonenumber[]|Collection
-     *
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
-     *      options={
-     *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType",
-     *          "allow_add"=true,
-     *          "allow_delete"=true,
-     *          "add_button_text"="Add Phonenumber"
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType',
+        'allow_add' => true,
+        'allow_delete' => true,
+        'add_button_text' => 'Add Phonenumber',
+    ])]
     protected $phonenumbers;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\EmailType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
     protected $email;
 
     /**
      * @var Address[]
-     *
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
-     *      options={
-     *          "entry_type"="Integrated\Bundle\ContentBundle\Form\Type\AddressType",
-     *          "default_title"="New address",
-     *          "allow_add"=true,
-     *          "allow_delete"=true,
-     *          "add_button_text"="Add Address"
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\AddressType',
+        'default_title' => 'New address',
+        'allow_add' => true,
+        'allow_delete' => true,
+        'add_button_text' => 'Add Address',
+    ])]
     protected $addresses;
 
     /**

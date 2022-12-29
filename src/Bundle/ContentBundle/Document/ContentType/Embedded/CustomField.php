@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\ContentType\Embedded;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 
 /**
  * Embedded document CustomField.
@@ -22,9 +22,8 @@ class CustomField extends Field
 {
     /**
      * {@inheritdoc}
-     *
-     * @Slug(fields={"getLabel"})
      */
+    #[Slug(fields: ['getLabel'])]
     protected $name;
 
     /**
@@ -52,15 +51,5 @@ class CustomField extends Field
         $this->type = $type;
 
         return $this;
-    }
-
-    /**
-     * Added shortcut to getLabel of field.
-     *
-     * @return string
-     */
-    public function getLabel()
-    {
-        return isset($this->options['label']) ? $this->options['label'] : ucfirst($this->getName());
     }
 }

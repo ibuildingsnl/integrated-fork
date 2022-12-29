@@ -12,20 +12,18 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
- *
- * @Type\Document("Content items block")
  */
+#[Type\Document('Content items block')]
 class ContentItemsBlock extends Block
 {
     /**
      * @var ArrayCollection
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType')]
     protected $items;
 
     /**

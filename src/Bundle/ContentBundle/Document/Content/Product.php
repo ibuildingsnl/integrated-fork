@@ -11,45 +11,40 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Product.
- *
- * @Type\Document("Product")
  */
+#[Type\Document('Product')]
 class Product extends Content
 {
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var string
-     *
-     * @Slug(fields={"title"})
-     * @Type\Field
      */
+    #[Slug(fields: ['title'])]
+    #[Type\Field]
     protected $slug;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $reference;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $variant;
 
     /**
@@ -59,47 +54,32 @@ class Product extends Content
 
     /**
      * @var float
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\MoneyType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType')]
     protected $price;
 
     /**
      * @var int
-     *
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
-     *     options={
-     *         "label"="Stock quantity"
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['label' => 'Stock quantity'])]
     protected $stockQuantity;
 
     /**
      * @var bool
-     *
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *     options={
-     *         "attr"={"align_with_widget"=true}
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true]])]
     protected $orderable;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\TextareaType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
     protected $description;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
     protected $content;
 
     /**
