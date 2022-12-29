@@ -42,8 +42,6 @@ interface ManagerInterface /* extends Countable */
     /**
      * Finds the objects by a set of criteria.
      *
-     * @param array $criteria
-     *
      * @return object[]
      */
     public function findBy(array $criteria);

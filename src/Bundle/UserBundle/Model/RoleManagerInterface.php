@@ -27,15 +27,11 @@ interface RoleManagerInterface extends ManagerInterface
 
     /**
      * Change or add the role to the manager.
-     *
-     * @param RoleInterface $role
      */
     public function persist(RoleInterface $role);
 
     /**
      * Remove the role from the manager.
-     *
-     * @param RoleInterface $role
      */
     public function remove(RoleInterface $role);
 
@@ -71,8 +67,6 @@ interface RoleManagerInterface extends ManagerInterface
 
     /**
      * Finds the roles by a set of criteria.
-     *
-     * @param array $criteria
      *
      * @return RoleInterface[]
      */

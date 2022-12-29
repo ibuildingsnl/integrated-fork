@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\ProfileFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
@@ -19,6 +18,7 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
@@ -35,11 +35,6 @@ class ProfileController extends AbstractController
      */
     protected $hasherFactory;
 
-    /**
-     * @param UserManagerInterface           $userManager
-     * @param PasswordHasherFactoryInterface $hasherFactory
-     * @param ContainerInterface             $container
-     */
     public function __construct(
         UserManagerInterface $userManager,
         PasswordHasherFactoryInterface $hasherFactory,
@@ -51,8 +46,6 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -85,8 +78,6 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createProfileForm(UserInterface $user)

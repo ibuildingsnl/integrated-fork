@@ -41,10 +41,7 @@ class WebFormatConverter
     private $format;
 
     /**
-     * @param Container $container
-     * @param WebFormat $webFormat
-     * @param AppCache  $appCache
-     * @param string    $format
+     * @param string $format
      */
     public function __construct(Container $container, WebFormat $webFormat, AppCache $appCache, $format)
     {
@@ -55,8 +52,6 @@ class WebFormatConverter
     }
 
     /**
-     * @param StorageInterface $image
-     *
      * @return \SplFileInfo
      */
     public function convert(StorageInterface $image)

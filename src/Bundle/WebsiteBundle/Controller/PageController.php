@@ -25,17 +25,12 @@ class PageController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ThemeManager $themeManager
-     */
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;
     }
 
     /**
-     * @param Page $page
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(Page $page)

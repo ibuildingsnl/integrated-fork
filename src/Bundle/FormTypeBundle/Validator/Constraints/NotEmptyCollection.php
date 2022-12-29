@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
+ *
  * @Annotation
  */
 class NotEmptyCollection extends Constraint

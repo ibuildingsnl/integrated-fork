@@ -32,9 +32,6 @@ class UserProfileOptionalListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         $data = $event->getData();
@@ -48,9 +45,6 @@ class UserProfileOptionalListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $data = $event->getData();

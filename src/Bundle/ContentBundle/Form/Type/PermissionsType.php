@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Common\Form\Type\PermissionsType as CommonPermissionsType;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\PermissionTransformer;
+use Integrated\Common\Form\Type\PermissionsType as CommonPermissionsType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PermissionsType extends CommonPermissionsType

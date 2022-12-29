@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Entity\Workflow;
 
-use DateTime;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
@@ -32,7 +31,7 @@ class Log
     private $owner;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $timestamp;
 
@@ -62,13 +61,13 @@ class Log
     private $comment = null;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $deadline = null;
 
     public function __construct()
     {
-        $this->timestamp = new DateTime();
+        $this->timestamp = new \DateTime();
     }
 
     /**
@@ -108,7 +107,7 @@ class Log
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getTimestamp()
     {
@@ -116,11 +115,11 @@ class Log
     }
 
     /**
-     * @param DateTime $timestamp
+     * @param \DateTime $timestamp
      *
      * @return $this
      */
-    public function setTimestamp(DateTime $timestamp = null)
+    public function setTimestamp(\DateTime $timestamp = null)
     {
         $this->timestamp = $timestamp;
 
@@ -208,7 +207,7 @@ class Log
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDeadline()
     {
@@ -216,11 +215,11 @@ class Log
     }
 
     /**
-     * @param DateTime $deadline
+     * @param \DateTime $deadline
      *
      * @return $this
      */
-    public function setDeadline(DateTime $deadline = null)
+    public function setDeadline(\DateTime $deadline = null)
     {
         $this->deadline = $deadline;
 

@@ -151,8 +151,6 @@ class Product extends Content
     /**
      * Set the reference of the document.
      *
-     * @param string $reference
-     *
      * @return $this
      */
     public function setReference(string $reference): self
@@ -174,8 +172,6 @@ class Product extends Content
 
     /**
      * Set the variant of the document.
-     *
-     * @param string $variant
      *
      * @return $this
      */
@@ -223,8 +219,6 @@ class Product extends Content
     /**
      * Set price of the product.
      *
-     * @param float $price
-     *
      * @return $this
      */
     public function setPrice(float $price): self
@@ -247,8 +241,6 @@ class Product extends Content
     /**
      * Set stock quantity.
      *
-     * @param int $stockQuantity
-     *
      * @return $this
      */
     public function setStockQuantity(int $stockQuantity): self
@@ -260,8 +252,6 @@ class Product extends Content
 
     /**
      * Get orderable status of the product.
-     *
-     * @return bool
      */
     public function isOrderable(): bool
     {
@@ -270,8 +260,6 @@ class Product extends Content
 
     /**
      * Set orderable status of the product.
-     *
-     * @param bool $orderable
      *
      * @return $this
      */
@@ -351,9 +339,6 @@ class Product extends Content
         return null;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return (string) $this->title;

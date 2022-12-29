@@ -18,7 +18,6 @@ use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
-use RuntimeException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -35,10 +34,6 @@ class ExporterFactory implements ExportableInterface
      */
     private $urlResolver;
 
-    /**
-     * @param Facebook    $facebook
-     * @param UrlResolver $urlResolver
-     */
     public function __construct(Facebook $facebook, UrlResolver $urlResolver)
     {
         $this->facebook = $facebook;
@@ -62,7 +57,7 @@ class ExporterFactory implements ExportableInterface
 
         // It should contain at least the token.
         if (!$options->has('token')) {
-            throw new RuntimeException('A access token is required to create a facebook exporter');
+            throw new \RuntimeException('A access token is required to create a facebook exporter');
         }
 
         return new Exporter($this->facebook, $config, $this->urlResolver);

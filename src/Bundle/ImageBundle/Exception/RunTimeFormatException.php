@@ -17,8 +17,6 @@ namespace Integrated\Bundle\ImageBundle\Exception;
 class RunTimeFormatException extends \ErrorException
 {
     /**
-     * @param $outputFormat
-     *
      * @return static
      */
     public static function conversionFileCreateFail($converter, $outputFormat, $file)

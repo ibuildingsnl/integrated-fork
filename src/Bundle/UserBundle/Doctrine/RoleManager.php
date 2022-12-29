@@ -16,7 +16,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Event\ConfigureRolesEvent;
 use Integrated\Bundle\UserBundle\Model\RoleInterface;
 use Integrated\Bundle\UserBundle\Model\RoleManagerInterface;
-use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -52,10 +51,8 @@ class RoleManager implements RoleManagerInterface
     /**
      * RoleManager constructor.
      *
-     * @param ObjectManager            $om
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param string                   $class
-     * @param string[]                 $roles
+     * @param string   $class
+     * @param string[] $roles
      */
     public function __construct(ObjectManager $om, EventDispatcherInterface $eventDispatcher, $class, array $roles = [])
     {
@@ -65,7 +62,7 @@ class RoleManager implements RoleManagerInterface
         $this->roles = $roles;
 
         if (!is_subclass_of($this->repository->getClassName(), RoleInterface::class)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(sprintf(
                 'The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\RoleInterface',
                 $this->repository->getClassName()
             ));

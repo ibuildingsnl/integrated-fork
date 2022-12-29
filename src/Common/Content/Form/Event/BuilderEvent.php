@@ -60,9 +60,6 @@ class BuilderEvent extends FormEvent
         return $this->builder;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options)
     {
         $this->options = $options;

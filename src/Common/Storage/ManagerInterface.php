@@ -28,39 +28,31 @@ interface ManagerInterface
 
     /**
      * The (queued) command (message) bus strategy.
-     *
-     * @param CommandInterface $command
      */
     public function handle(CommandInterface $command);
 
     /**
      * Fast and simple read action (without a promise).
      *
-     * @param StorageInterface $storage
+     * @return string
      *
      * @throws \LogicException
-     *
-     * @return string
      */
     public function read(StorageInterface $storage);
 
     /**
      * Write the file in the storage, all filesystems or specified.
      *
-     * @param ReaderInterface $reader
      * @param ArrayCollection $filesystems
      *
-     * @throws \Exception
-     *
      * @return StorageInterface
+     *
+     * @throws \Exception
      */
     public function write(ReaderInterface $reader, ArrayCollection $filesystems = null);
 
     /**
      * Move the file to the specified filesystems.
-     *
-     * @param StorageInterface $storage
-     * @param ArrayCollection  $filesystems
      *
      * @return StorageInterface
      */
@@ -68,8 +60,6 @@ interface ManagerInterface
 
     /**
      * Delete the file in all known filesystems.
-     *
-     * @param StorageInterface $storage
      */
     public function delete(StorageInterface $storage);
 }

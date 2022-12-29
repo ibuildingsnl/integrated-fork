@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentHistoryBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Bundle\ContentHistoryBundle\History\Cleaner;
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,10 +32,6 @@ class CleanCommand extends Command
      */
     private $cleaner;
 
-    /**
-     * @param DocumentManager $documentManager
-     * @param Cleaner         $cleaner
-     */
     public function __construct(DocumentManager $documentManager, Cleaner $cleaner)
     {
         parent::__construct();
@@ -60,7 +55,7 @@ class CleanCommand extends Command
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

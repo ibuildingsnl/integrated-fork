@@ -43,8 +43,6 @@ class SearchBlock extends Block
     }
 
     /**
-     * @param ContentBlock $block
-     *
      * @return $this
      */
     public function setBlock(ContentBlock $block)

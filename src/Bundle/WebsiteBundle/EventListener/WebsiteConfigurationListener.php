@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -39,11 +39,6 @@ class WebsiteConfigurationListener implements EventSubscriberInterface
      */
     private $resolver;
 
-    /**
-     * @param ChannelContextInterface $context
-     * @param ThemeManager            $themeManager
-     * @param ThemeResolver           $resolver
-     */
     public function __construct(
         ChannelContextInterface $context,
         ThemeManager $themeManager,
@@ -64,9 +59,6 @@ class WebsiteConfigurationListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         $channel = $this->context->getChannel();

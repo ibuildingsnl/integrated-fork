@@ -28,10 +28,6 @@ class BreadcrumbMenuProvider implements MenuProviderInterface
      */
     private $breadcrumbResolver;
 
-    /**
-     * @param FactoryInterface   $menuFactory
-     * @param BreadcrumbResolver $breadcrumbResolver
-     */
     public function __construct(FactoryInterface $menuFactory, BreadcrumbResolver $breadcrumbResolver)
     {
         $this->menuFactory = $menuFactory;

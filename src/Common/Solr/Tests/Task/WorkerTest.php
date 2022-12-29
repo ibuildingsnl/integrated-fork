@@ -11,14 +11,12 @@
 
 namespace Integrated\Common\Solr\Tests\Task;
 
-use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Task\Event\ErrorEvent;
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
 use Integrated\Common\Solr\Task\Registry;
 use Integrated\Common\Solr\Task\Worker;
-use stdClass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -79,8 +77,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        $task1 = new stdClass();
-        $task2 = new stdClass();
+        $task1 = new \stdClass();
+        $task2 = new \stdClass();
 
         $this->queue->expects($this->atLeastOnce())
             ->method('pull')
@@ -152,8 +150,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $this->queue->expects($this->atLeastOnce())
             ->method('pull')
             ->willReturnOnConsecutiveCalls(
-                [$message = $this->getMessage(new stdClass())],
-                [$this->getMessage($task = new stdClass())],
+                [$message = $this->getMessage(new \stdClass())],
+                [$this->getMessage($task = new \stdClass())],
                 []
             );
 
@@ -164,7 +162,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->exactly(2))
             ->method('getHandler')
             ->with($this->equalTo('stdClass'))
-            ->willReturnOnConsecutiveCalls($this->throwException($exception = new Exception()), $callback);
+            ->willReturnOnConsecutiveCalls($this->throwException($exception = new \Exception()), $callback);
 
         $callback = [
             function (WorkerEvent $event) use ($instance) {
@@ -203,7 +201,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->queue->expects($this->exactly($count))
             ->method('pull')
-            ->willReturn($count ? [$this->getMessage(new stdClass())] : [null]);
+            ->willReturn($count ? [$this->getMessage(new \stdClass())] : [null]);
 
         $this->registry->expects($this->exactly($count))
             ->method('getHandler')

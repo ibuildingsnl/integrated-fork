@@ -37,7 +37,6 @@ class MemoryResolverBuilder
      *
      * if $channel is left empty then every channel supplied will match.
      *
-     * @param ConfigInterface         $config
      * @param string|ChannelInterface $channel
      *
      * @return self

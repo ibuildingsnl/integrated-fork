@@ -11,16 +11,13 @@
 
 namespace Integrated\Bundle\SolrBundle\Tests\Fixtures;
 
-use ArrayObject;
-use DateTime;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class TestObject
 {
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     public $datetime;
 
@@ -59,7 +56,7 @@ class TestObject
     protected $field4 = 'field4';
 
     /**
-     * @var ArrayObject
+     * @var \ArrayObject
      */
     public $arrayObject;
 
@@ -68,25 +65,25 @@ class TestObject
      */
     public function __construct()
     {
-        $this->datetime = new DateTime('2014-01-01 00:30 CET');
+        $this->datetime = new \DateTime('2014-01-01 00:30 CET');
 
-        $this->arrayObject = new ArrayObject([
+        $this->arrayObject = new \ArrayObject([
             'field1' => 'field1',
             'field2' => 'field2',
             'field3' => 'field3',
 
-            'array1' => new ArrayObject([
+            'array1' => new \ArrayObject([
                 'field1' => 'array1.1',
                 'field2' => 'array1.2',
                 'field3' => 'array1.3',
-            ], ArrayObject::ARRAY_AS_PROPS),
+            ], \ArrayObject::ARRAY_AS_PROPS),
 
-            'array2' => new ArrayObject([
+            'array2' => new \ArrayObject([
                 'field1' => 'array2.1',
                 'field2' => 'array2.2',
                 'field3' => 'array2.3',
-            ], ArrayObject::ARRAY_AS_PROPS),
-        ], ArrayObject::ARRAY_AS_PROPS);
+            ], \ArrayObject::ARRAY_AS_PROPS),
+        ], \ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**

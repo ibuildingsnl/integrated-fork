@@ -25,9 +25,6 @@ class ContentTypeField implements DataTransformerInterface
      */
     private $field;
 
-    /**
-     * @param AttributeInterface $field
-     */
     public function __construct(AttributeInterface $field)
     {
         $this->field = $field;

@@ -31,9 +31,6 @@ class IntegratedContentExtension extends Extension implements PrependExtensionIn
 
     /**
      * Load the configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Form\Tests\EventListener;
 
-use ArrayIterator;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormEvent;
@@ -92,7 +91,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
         if (null !== $children) {
             $mock->expects($this->once())
                 ->method('getIterator')
-                ->willReturn(new ArrayIterator($children));
+                ->willReturn(new \ArrayIterator($children));
         }
 
         return $mock;

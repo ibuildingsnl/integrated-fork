@@ -27,9 +27,6 @@ class UrlExtension implements TypeExtensionInterface
      */
     protected $urlResolver;
 
-    /**
-     * @param UrlResolver $urlResolver
-     */
     public function __construct(UrlResolver $urlResolver)
     {
         $this->urlResolver = $urlResolver;

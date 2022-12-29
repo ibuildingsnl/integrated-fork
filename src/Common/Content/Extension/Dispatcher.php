@@ -20,9 +20,9 @@ use Integrated\Common\Content\Extension\Event\Subscriber\ContentTypeSubscriberIn
 use Integrated\Common\Content\Extension\Event\Subscriber\MetadataSubscriberInterface;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -43,9 +43,6 @@ class Dispatcher implements DispatcherInterface, RegistryInterface
         'metadata' => null,
     ];
 
-    /**
-     * @param RegistryInterface $registry
-     */
     public function __construct(RegistryInterface $registry)
     {
         $this->registry = $registry;

@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Provider;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
@@ -47,11 +46,6 @@ class SolariumProvider
      */
     private $registry = [];
 
-    /**
-     * @param Client             $client
-     * @param DocumentManager    $dm
-     * @param PaginatorInterface $paginator
-     */
     public function __construct(Client $client, DocumentManager $dm, PaginatorInterface $paginator)
     {
         $this->client = $client;
@@ -61,17 +55,15 @@ class SolariumProvider
 
     /**
      * @param ContentBlock|SearchSelection $subject
-     * @param Request                      $request
-     * @param array                        $options
      *
      * @return \Knp\Component\Pager\Pagination\PaginationInterface
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function execute($subject, Request $request, array $options = [])
     {
         if (!$subject instanceof ContentBlock && !$subject instanceof SearchSelection) {
-            throw new Exception('subject is not supported. Only ContentBlock and SearchSelection are supported');
+            throw new \Exception('subject is not supported. Only ContentBlock and SearchSelection are supported');
         }
 
         $pageParam = (null !== $subject->getId() ? $subject->getId().'-' : '').'page';
@@ -111,8 +103,6 @@ class SolariumProvider
 
     /**
      * @param ContentBlock|SearchSelection $subject
-     * @param Request                      $request
-     * @param array                        $options
      *
      * @return Query
      */
@@ -176,10 +166,7 @@ class SolariumProvider
     }
 
     /**
-     * @param Query                        $query
      * @param ContentBlock|SearchSelection $subject
-     * @param array                        $request
-     * @param array                        $options
      *
      * @return int
      */

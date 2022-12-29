@@ -35,10 +35,6 @@ class FileEventListener implements EventSubscriber
      */
     private $intentTransformer;
 
-    /**
-     * @param ManagerInterface         $manager
-     * @param StorageIntentTransformer $intentTransformer
-     */
     public function __construct(ManagerInterface $manager, StorageIntentTransformer $intentTransformer)
     {
         $this->manager = $manager;
@@ -58,8 +54,6 @@ class FileEventListener implements EventSubscriber
 
     /**
      * This event will be called on a document persist.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
@@ -68,8 +62,6 @@ class FileEventListener implements EventSubscriber
 
     /**
      * This event will be called on any flush in doctrine.
-     *
-     * @param PreFlushEventArgs $args
      */
     public function preFlush(PreFlushEventArgs $args)
     {

@@ -11,9 +11,9 @@
 
 namespace Integrated\Common\Form\Mapping;
 
-use Integrated\Common\Mapping\Registry\DriverRegistry;
 use Integrated\Common\Form\Mapping\Event\MetadataEvent;
 use Integrated\Common\Form\Mapping\Metadata\Document;
+use Integrated\Common\Mapping\Registry\DriverRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -60,9 +60,6 @@ class MetadataFactory implements MetadataFactoryInterface
         return $this->dispatcher;
     }
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;

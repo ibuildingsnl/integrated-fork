@@ -34,9 +34,6 @@ class CustomFieldListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param BuilderEvent $event
-     */
     public function onPostBuild(BuilderEvent $event)
     {
         $type = $event->getContentType();

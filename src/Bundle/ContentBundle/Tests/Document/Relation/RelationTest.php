@@ -80,7 +80,6 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test get- and setSources function with valid collection.
      *
-     * @param ArrayCollection $collection
      * @dataProvider validCollectionProvider
      */
     public function testGetAndSetSourcesFunctionWithValidCollection(ArrayCollection $collection)
@@ -94,7 +93,6 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test get- and setSources function with invalid collection.
      *
-     * @param ArrayCollection $collection
      * @dataProvider invalidCollectionProvider
      */
     public function testGetAndSetSourcesFunctionWithInvalidCollection(ArrayCollection $collection)
@@ -153,7 +151,6 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test get- and setTargets function with valid collection.
      *
-     * @param ArrayCollection $collection
      * @dataProvider validCollectionProvider
      */
     public function testGetAndSetTargetsFunctionWithValidCollection(ArrayCollection $collection)
@@ -167,7 +164,6 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test get- and setTargets function with invalid collection.
      *
-     * @param ArrayCollection $collection
      * @dataProvider invalidCollectionProvider
      */
     public function testGetAndSetTargetsFunctionWithInvalidCollection(ArrayCollection $collection)

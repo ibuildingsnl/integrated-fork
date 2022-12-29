@@ -263,8 +263,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param $relationType
-     *
      * @return ArrayCollection|false
      */
     public function getRelationsByRelationType($relationType)
@@ -281,8 +279,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param $relationType
-     *
      * @return array|bool
      */
     public function getReferencesByRelationType($relationType)
@@ -302,8 +298,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param array $relationTypes
-     *
      * @return array|bool
      */
     public function getReferencesByRelationTypes(array $relationTypes)
@@ -321,8 +315,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param $relationType
-     *
      * @return Content|null
      */
     public function getReferenceByRelationType($relationType)
@@ -391,8 +383,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Set the createdAt of the document.
      *
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -414,8 +404,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * Set the updatedAt of the document.
-     *
-     * @param \DateTime $updatedAt
      *
      * @return $this
      */
@@ -600,8 +588,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param ChannelInterface|null $primaryChannel
-     *
      * @return $this
      */
     public function setPrimaryChannel(ChannelInterface $primaryChannel = null)
@@ -624,8 +610,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param RegistryInterface|null $customFields
-     *
      * @return $this
      */
     public function setCustomFields(RegistryInterface $customFields = null)
@@ -649,8 +633,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param ?string $copyrightRestrictions
-     *
-     * @return Content
      */
     public function setCopyrightRestrictions(?string $copyrightRestrictions): self
     {

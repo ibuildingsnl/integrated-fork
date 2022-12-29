@@ -17,8 +17,6 @@ namespace Integrated\Common\Bulk\Action;
 interface HandlerFactoryInterface
 {
     /**
-     * @param array $options
-     *
      * @return HandlerInterface
      */
     public function createHandler(array $options);

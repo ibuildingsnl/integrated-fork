@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\ContentBundle\Routing;
 
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator as SymfonyUrlGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
 /**
@@ -31,9 +31,6 @@ class UrlGenerator implements UrlGeneratorInterface
      */
     private $context;
 
-    /**
-     * @param UrlGeneratorInterface $genrator
-     */
     public function __construct(UrlGeneratorInterface $genrator)
     {
         $this->generator = $genrator;
@@ -70,9 +67,7 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
     /**
-     * @param ContentInterface $content
-     * @param array            $parameters
-     * @param int              $referenceType
+     * @param int $referenceType
      *
      * @return string
      */

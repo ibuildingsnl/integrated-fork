@@ -32,8 +32,6 @@ class CustomFieldsTypeTest extends TypeTestCase
      * @dataProvider getValidData
      *
      * @see http://symfony.com/doc/current/cookbook/form/unit_testing.html
-     *
-     * @param array $data
      */
     public function testSubmitValidData(array $data)
     {

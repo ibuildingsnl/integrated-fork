@@ -27,9 +27,6 @@ class WorkflowDefaultDataListener implements EventSubscriberInterface
      */
     private $storage;
 
-    /**
-     * @param TokenStorageInterface $storage
-     */
     public function __construct(TokenStorageInterface $storage)
     {
         $this->storage = $storage;
@@ -45,9 +42,6 @@ class WorkflowDefaultDataListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreData(FormEvent $event)
     {
         if ($event->getData() !== null) {

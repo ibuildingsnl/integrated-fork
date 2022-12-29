@@ -19,8 +19,6 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 interface CacheInterface
 {
     /**
-     * @param StorageInterface $storage
-     *
      * @return \SplFileInfo $path
      */
     public function path(StorageInterface $storage);

@@ -24,8 +24,6 @@ interface AttributeEditorInterface extends AttributeInterface
     public function setType($type);
 
     /**
-     * @param array $options
-     *
      * @return self
      */
     public function setOptions(array $options);

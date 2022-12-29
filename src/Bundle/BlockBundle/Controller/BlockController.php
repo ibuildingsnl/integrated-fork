@@ -11,22 +11,22 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
-use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Form\FormInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
+use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -53,12 +53,6 @@ class BlockController extends AbstractController
      */
     protected $provider;
 
-    /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param DocumentManager          $documentManager
-     * @param PaginatorInterface       $paginator
-     * @param FilterQueryProvider      $provider
-     */
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         DocumentManager $documentManager,
@@ -72,8 +66,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -105,9 +97,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return Response
      */
     public function show(Request $request, Block $block)
@@ -124,8 +113,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return RedirectResponse|Response
      */
     public function new(Request $request)
@@ -172,8 +159,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function newChannelBlock(Request $request)
@@ -206,9 +191,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return array|RedirectResponse|Response
      */
     public function edit(Request $request, Block $block)
@@ -254,9 +236,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return RedirectResponse|Response
      */
     public function delete(Request $request, Block $block)
@@ -295,8 +274,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param $id
-     *
      * @return FormInterface
      */
     protected function createDeleteForm($id)

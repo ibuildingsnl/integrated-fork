@@ -12,27 +12,27 @@
 namespace Integrated\Bundle\WorkflowBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionFormType;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -64,8 +64,6 @@ class WorkflowController extends AbstractController
     /**
      * Generate a list of workflow definitions.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -83,8 +81,6 @@ class WorkflowController extends AbstractController
 
     /**
      * Create a new workflow definition.
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -115,8 +111,6 @@ class WorkflowController extends AbstractController
 
     /**
      * Edit a workflow definition.
-     *
-     * @param Request $request
      *
      * @return Response
      *
@@ -161,8 +155,6 @@ class WorkflowController extends AbstractController
     /**
      * Delete a workflow definition.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Request $request)
@@ -201,8 +193,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function changeState(Request $request)
@@ -340,8 +330,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Definition $workflow
-     *
      * @return FormInterface
      */
     protected function createEditForm(Definition $workflow)
@@ -366,8 +354,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Definition $workflow
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(Definition $workflow)

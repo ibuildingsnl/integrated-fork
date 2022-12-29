@@ -45,11 +45,6 @@ class RelatedContentBlockHandler extends BlockHandler
      */
     private $dm;
 
-    /**
-     * @param PaginatorInterface $paginator
-     * @param RequestStack       $requestStack
-     * @param DocumentManager    $dm
-     */
     public function __construct(PaginatorInterface $paginator, RequestStack $requestStack, DocumentManager $dm)
     {
         $this->paginator = $paginator;
@@ -87,9 +82,6 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param RelatedContentBlock $block
-     * @param Request             $request
-     *
      * @return \Knp\Component\Pager\Pagination\PaginationInterface|null
      *
      * @throws \Exception
@@ -116,8 +108,6 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param RelatedContentBlock $block
-     *
      * @return \Doctrine\MongoDB\Query\Builder|\Doctrine\Common\Collections\ArrayCollection|null
      */
     protected function getQuery(RelatedContentBlock $block)
@@ -170,9 +160,6 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param Content             $document
-     * @param RelatedContentBlock $block
-     *
      * @return \Doctrine\ODM\MongoDB\Query\Builder
      */
     protected function getLinkedByQuery(Content $document, RelatedContentBlock $block)
@@ -188,10 +175,6 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param Builder             $query
-     * @param Content             $document
-     * @param RelatedContentBlock $block
-     *
      * @return ArrayCollection
      */
     protected function getSortedLinkedByItems(Builder $query, Content $document, RelatedContentBlock $block)

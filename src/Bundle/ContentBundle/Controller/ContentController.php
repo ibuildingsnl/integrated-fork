@@ -12,25 +12,25 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
-use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
-use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
-use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Common\ContentType\ResolverInterface;
-use Integrated\Common\Locks\Provider\DBAL\Manager;
-use Integrated\Common\Locks\Resource;
-use Integrated\Common\Locks\Filter;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ContentTypeInterface;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Locks;
+use Integrated\Common\Locks\Filter;
+use Integrated\Common\Locks\Provider\DBAL\Manager;
+use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
@@ -41,7 +41,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -127,8 +126,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -454,9 +451,6 @@ class ContentController extends AbstractController
     /**
      * Show a document.
      *
-     * @param Request $request
-     * @param Content $content
-     *
      * @return Response
      */
     public function show(Request $request, Content $content)
@@ -468,8 +462,6 @@ class ContentController extends AbstractController
 
     /**
      * Create a new document.
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -542,9 +534,6 @@ class ContentController extends AbstractController
 
     /**
      * Update a existing document.
-     *
-     * @param Request $request
-     * @param Content $content
      *
      * @return Response
      */
@@ -682,9 +671,6 @@ class ContentController extends AbstractController
 
     /**
      * Delete a document.
-     *
-     * @param Request $request
-     * @param Content $content
      *
      * @return Response
      */
@@ -903,11 +889,9 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param Traversable $iterator
-     *
      * @return array
      */
-    protected function getLocks(Traversable $iterator)
+    protected function getLocks(\Traversable $iterator)
     {
         $results = [];
 
@@ -957,8 +941,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function navdropdowns(Request $request)
@@ -1008,9 +990,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param Content $content
-     * @param Request $request
-     *
      * @return Response
      */
     public function usedBy(Content $content, Request $request)
@@ -1058,10 +1037,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     * @param ContentInterface     $content
-     * @param Request              $request
-     *
      * @return FormInterface
      */
     protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request)
@@ -1086,11 +1061,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     * @param ContentInterface     $content
-     * @param array                $locking
-     * @param Request|null         $request
-     *
      * @return FormInterface
      */
     protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking, Request $request = null)
@@ -1137,9 +1107,7 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param ContentInterface $content
-     * @param array            $locking
-     * @param bool             $notDelete
+     * @param bool $notDelete
      *
      * @return FormInterface
      */
@@ -1159,8 +1127,6 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @param ContentInterface $content
-     *
      * @return array
      */
     protected function getReferences(ContentInterface $content)

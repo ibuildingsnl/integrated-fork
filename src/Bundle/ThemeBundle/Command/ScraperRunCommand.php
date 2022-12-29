@@ -16,8 +16,6 @@ class ScraperRunCommand extends Command
 
     /**
      * ScraperCommand constructor.
-     *
-     * @param Scraper $scraper
      */
     public function __construct(Scraper $scraper)
     {

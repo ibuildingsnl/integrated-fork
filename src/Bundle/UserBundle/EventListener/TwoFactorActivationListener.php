@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\UserBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Integrated\Bundle\UserBundle\Security\TwoFactor\Http\ContextResolverInterface;
 use Integrated\Bundle\UserBundle\Security\TwoFactor\Http\WhitelistProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;

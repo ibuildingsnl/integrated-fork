@@ -156,8 +156,6 @@ class State
     }
 
     /**
-     * @param Definition|null $workflow
-     *
      * @return $this
      */
     public function setWorkflow(Definition $workflow = null)
@@ -250,8 +248,6 @@ class State
     }
 
     /**
-     * @param Permission $permission
-     *
      * @return $this
      */
     public function addPermission(Permission $permission)
@@ -269,8 +265,6 @@ class State
     }
 
     /**
-     * @param Permission $permission
-     *
      * @return $this
      */
     public function removePermission(Permission $permission)
@@ -283,8 +277,6 @@ class State
     }
 
     /**
-     * @param Collection $transitions
-     *
      * @return $this
      */
     public function setTransitions(Collection $transitions)
@@ -308,8 +300,6 @@ class State
     }
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
     public function addTransition(self $state)
@@ -322,8 +312,6 @@ class State
     }
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
     public function removeTransition(self $state)

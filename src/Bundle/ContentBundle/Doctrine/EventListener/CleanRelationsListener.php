@@ -35,9 +35,6 @@ class CleanRelationsListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         // Get document

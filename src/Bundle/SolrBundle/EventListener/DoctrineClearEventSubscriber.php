@@ -32,10 +32,6 @@ class DoctrineClearEventSubscriber implements EventSubscriberInterface
      */
     private $entityManager;
 
-    /**
-     * @param DocumentManager $documentManager
-     * @param EntityManager   $entityManager
-     */
     public function __construct(DocumentManager $documentManager, EntityManager $entityManager)
     {
         $this->documentManager = $documentManager;
@@ -52,9 +48,6 @@ class DoctrineClearEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param MessageEvent $messageEvent
-     */
     public function processedEvent(MessageEvent $messageEvent)
     {
         $this->documentManager->clear();

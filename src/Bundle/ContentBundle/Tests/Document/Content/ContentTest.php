@@ -151,8 +151,6 @@ abstract class ContentTest extends \PHPUnit\Framework\TestCase
      * Test get- and setChannels function.
      *
      * @dataProvider getChannels
-     *
-     * @param ArrayCollection $channels
      */
     public function testGetAndSetChannelsFunction(ArrayCollection $channels)
     {
@@ -163,8 +161,6 @@ abstract class ContentTest extends \PHPUnit\Framework\TestCase
      * Test addChannel function.
      *
      * @dataProvider getChannels
-     *
-     * @param ArrayCollection $channels
      */
     public function testAddChannelFunction(ArrayCollection $channels)
     {

@@ -73,8 +73,6 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ManifestInterface $manifest
-     *
      * @return AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getAdapter(ManifestInterface $manifest)
@@ -88,8 +86,6 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $name
-     *
      * @return ManifestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getManifest($name)

@@ -99,9 +99,6 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
         return $this->requiredRelation;
     }
 
-    /**
-     * @param Relation|null $requiredRelation
-     */
     public function setRequiredRelation(?Relation $requiredRelation)
     {
         $this->requiredRelation = $requiredRelation;

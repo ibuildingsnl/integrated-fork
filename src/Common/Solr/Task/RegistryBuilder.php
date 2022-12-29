@@ -22,17 +22,13 @@ class RegistryBuilder
     private $handlers = [];
 
     /**
-     * @param string   $class
-     * @param callable $handler
+     * @param string $class
      */
     public function addHandler($class, callable $handler)
     {
         $this->handlers[strtolower($class)] = $handler;
     }
 
-    /**
-     * @param array $handlers
-     */
     public function addHandlers(array $handlers)
     {
         foreach ($handlers as $class => $handler) {

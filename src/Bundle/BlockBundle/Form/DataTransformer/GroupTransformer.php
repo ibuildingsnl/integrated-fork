@@ -21,9 +21,6 @@ class GroupTransformer implements DataTransformerInterface
      */
     private $groupManager;
 
-    /**
-     * @param GroupManagerInterface $groupManager
-     */
     public function __construct(GroupManagerInterface $groupManager)
     {
         $this->groupManager = $groupManager;

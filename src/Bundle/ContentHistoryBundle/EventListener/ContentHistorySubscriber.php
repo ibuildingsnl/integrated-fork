@@ -35,8 +35,7 @@ class ContentHistorySubscriber implements EventSubscriber
     protected $className;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param string                   $className
+     * @param string $className
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, $className)
     {
@@ -54,9 +53,6 @@ class ContentHistorySubscriber implements EventSubscriber
         ];
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $dm = $args->getDocumentManager();
@@ -68,9 +64,7 @@ class ContentHistorySubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager $dm
-     * @param array           $documents
-     * @param string          $action
+     * @param string $action
      */
     protected function dispatch(DocumentManager $dm, array $documents, $action)
     {
@@ -94,9 +88,7 @@ class ContentHistorySubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager  $dm
-     * @param ContentInterface $document
-     * @param string           $action
+     * @param string $action
      *
      * @return array
      */

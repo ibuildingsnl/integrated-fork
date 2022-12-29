@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Form\Mapping;
 
-use ReflectionClass;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -28,7 +26,7 @@ interface MetadataInterface
     public function isTypeOf($class);
 
     /**
-     * @return ReflectionClass
+     * @return \ReflectionClass
      */
     public function getReflection();
 

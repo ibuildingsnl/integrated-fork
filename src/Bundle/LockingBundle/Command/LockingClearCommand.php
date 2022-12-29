@@ -28,8 +28,6 @@ class LockingClearCommand extends Command
 
     /**
      * LockingClearCommand constructor.
-     *
-     * @param ManagerInterface $manager
      */
     public function __construct(ManagerInterface $manager)
     {

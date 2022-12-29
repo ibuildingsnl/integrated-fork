@@ -16,9 +16,6 @@ class ContentPathExtension extends AbstractExtension
      */
     private $documentManager;
 
-    /**
-     * @param DocumentManager $documentManager
-     */
     public function __construct(DocumentManager $documentManager)
     {
         $this->documentManager = $documentManager;

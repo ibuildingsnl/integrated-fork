@@ -24,9 +24,6 @@ class BootstrapButtonExtension extends AbstractExtension
         'attr' => [],
     ];
 
-    /**
-     * @param BootstrapIconExtension $iconExtension
-     */
     public function __construct(BootstrapIconExtension $iconExtension)
     {
         $this->iconExtension = $iconExtension;
@@ -44,8 +41,6 @@ class BootstrapButtonExtension extends AbstractExtension
     }
 
     /**
-     * @param array $options
-     *
      * @return string
      */
     public function buttonFunction(array $options = [])
@@ -64,8 +59,6 @@ class BootstrapButtonExtension extends AbstractExtension
     }
 
     /**
-     * @param array $options
-     *
      * @return string
      */
     public function buttonLinkFunction(array $options = [])

@@ -39,10 +39,6 @@ class FacetBlockHandler extends BlockHandler
      */
     private $requestStack;
 
-    /**
-     * @param BlockHandlerRegistryInterface $blockRegistry
-     * @param RequestStack                  $requestStack
-     */
     public function __construct(BlockHandlerRegistryInterface $blockRegistry, RequestStack $requestStack)
     {
         $this->blockRegistry = $blockRegistry;

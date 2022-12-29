@@ -2,9 +2,9 @@
 
 namespace Integrated\Bundle\InstallerBundle\Doctrine\ODM\Migration;
 
+use AntiMattr\MongoDB\Migrations;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use AntiMattr\MongoDB\Migrations;
 
 abstract class AbstractMigration extends Migrations\AbstractMigration implements ContainerAwareInterface
 {
@@ -21,9 +21,6 @@ abstract class AbstractMigration extends Migrations\AbstractMigration implements
      */
     protected $container;
 
-    /**
-     * @param ContainerInterface|null $container
-     */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;

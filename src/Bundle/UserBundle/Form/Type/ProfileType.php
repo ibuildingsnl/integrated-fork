@@ -26,9 +26,6 @@ class ProfileType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param UserManagerInterface $manager
-     */
     public function __construct(UserManagerInterface $manager)
     {
         $this->manager = $manager;

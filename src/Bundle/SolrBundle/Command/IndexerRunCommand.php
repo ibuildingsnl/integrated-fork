@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
-use Exception;
 use Integrated\Bundle\SolrBundle\EventListener\DoctrineClearEventSubscriber;
 use Integrated\Bundle\SolrBundle\Process\ArgumentProcess;
 use Integrated\Bundle\SolrBundle\Process\ProcessPoolGenerator;
@@ -65,12 +64,7 @@ class IndexerRunCommand extends Command
     /**
      * IndexerRunCommand constructor.
      *
-     * @param Indexer                      $indexer
-     * @param QueueProvider                $queueProvider
-     * @param LockFactory                  $lockFactory
-     * @param DoctrineClearEventSubscriber $clearEventSubscriber
-     * @param KernelInterface              $kernel
-     * @param string                       $workingDirectory
+     * @param string $workingDirectory
      */
     public function __construct(
         Indexer $indexer,
@@ -131,12 +125,6 @@ The <info>%command.name%</info> command starts a indexer run.
 ');
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($argument = $input->getArgument('processes')) {
@@ -149,8 +137,7 @@ The <info>%command.name%</info> command starts a indexer run.
     }
 
     /**
-     * @param string          $lock
-     * @param OutputInterface $output
+     * @param string $lock
      *
      * @return int
      */
@@ -169,7 +156,7 @@ The <info>%command.name%</info> command starts a indexer run.
             } finally {
                 $lock->release();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln('Aborting: '.$e->getMessage(), ($e instanceof LockConflictedException) ? OutputInterface::VERBOSITY_VERBOSE : 0);
 
             return 1;
@@ -179,9 +166,6 @@ The <info>%command.name%</info> command starts a indexer run.
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     private function runExternal(InputInterface $input, OutputInterface $output)
@@ -222,10 +206,6 @@ The <info>%command.name%</info> command starts a indexer run.
     }
 
     /**
-     * @param ArgumentProcess $argument
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     private function runProcess(ArgumentProcess $argument, InputInterface $input, OutputInterface $output)

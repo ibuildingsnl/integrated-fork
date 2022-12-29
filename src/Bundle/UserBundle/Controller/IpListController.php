@@ -12,13 +12,13 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\IpListFormType;
 use Integrated\Bundle\UserBundle\Model\IpList;
 use Integrated\Bundle\UserBundle\Model\IpListManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,8 +35,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -57,8 +55,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -95,9 +91,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList  $list
-     * @param Request $request
-     *
      * @return Response
      */
     public function edit(IpList $list, Request $request)
@@ -133,9 +126,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList  $list
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(IpList $list, Request $request)
@@ -195,8 +185,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList $list
-     *
      * @return FormInterface
      */
     protected function createEditForm(IpList $list)
@@ -221,8 +209,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList $list
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(IpList $list)

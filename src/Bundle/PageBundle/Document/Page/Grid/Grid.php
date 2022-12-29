@@ -68,8 +68,6 @@ class Grid implements ItemsInterface
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
     public function setItems(array $items = [])
@@ -80,8 +78,6 @@ class Grid implements ItemsInterface
     }
 
     /**
-     * @param Item $item
-     *
      * @return $this
      */
     public function addItem(Item $item)
@@ -92,8 +88,6 @@ class Grid implements ItemsInterface
     }
 
     /**
-     * @param Item $item
-     *
      * @return $this
      */
     public function removeItem(Item $item)

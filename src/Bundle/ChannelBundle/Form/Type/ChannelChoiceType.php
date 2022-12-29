@@ -31,8 +31,6 @@ class ChannelChoiceType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param ObjectRepository $repository
      */
     public function __construct(ObjectRepository $repository)
     {

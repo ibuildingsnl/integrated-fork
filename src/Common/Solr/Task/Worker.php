@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Task;
 
-use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Configurable;
@@ -43,9 +42,6 @@ class Worker extends Configurable
 
     /**
      * Constructor.
-     *
-     * @param Registry       $registry
-     * @param QueueInterface $queue
      */
     public function __construct(Registry $registry, QueueInterface $queue)
     {
@@ -69,8 +65,6 @@ class Worker extends Configurable
 
     /**
      * Set the event dispatcher.
-     *
-     * @param EventDispatcherInterface $dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
@@ -107,7 +101,7 @@ class Worker extends Configurable
         while (++$handled <= $handledMax && $message = $this->getMessage()) {
             try {
                 \call_user_func($this->getCallable($task = $message->getPayload()), $task);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $dispatcher->dispatch(new ErrorEvent($this, $message, $e), Events::ERROR);
             } finally {
                 $message->delete();

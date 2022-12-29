@@ -39,7 +39,6 @@ class UploadedFileReader implements ReaderInterface
     private $data;
 
     /**
-     * @param UploadedFile        $uploadedFile
      * @param IdentifierInterface $identifier
      */
     public function __construct(UploadedFile $uploadedFile, IdentifierInterface $identifier = null)

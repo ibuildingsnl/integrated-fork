@@ -12,8 +12,8 @@
 namespace Integrated\Common\Content\Extension\Adaptor\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Proxy;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Proxy;
 use Integrated\Common\Content\Extension\Adaptor\AbstractAdaptor;
 use Integrated\Common\Content\Extension\Events;
 

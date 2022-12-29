@@ -32,10 +32,6 @@ class PersonController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param ThemeManager   $themeManager
-     */
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
@@ -43,9 +39,6 @@ class PersonController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param Person          $person
-     *
      * @return Response
      *
      * @throws CircularFallbackException

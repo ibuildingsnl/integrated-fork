@@ -58,6 +58,7 @@ class FormBlock extends Block
 
     /**
      * @var array
+     *
      * @Assert\All({
      *     @Assert\Email
      * })
@@ -98,8 +99,6 @@ class FormBlock extends Block
     }
 
     /**
-     * @param ContentType $contentType
-     *
      * @return $this
      */
     public function setContentType(ContentType $contentType)
@@ -178,8 +177,6 @@ class FormBlock extends Block
     }
 
     /**
-     * @param array $emailAddresses
-     *
      * @return $this
      */
     public function setEmailAddresses(array $emailAddresses = [])

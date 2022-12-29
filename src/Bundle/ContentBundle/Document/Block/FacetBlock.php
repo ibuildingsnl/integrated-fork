@@ -60,8 +60,6 @@ class FacetBlock extends Block
     }
 
     /**
-     * @param ContentBlock $block
-     *
      * @return $this
      */
     public function setBlock(ContentBlock $block)
@@ -80,8 +78,6 @@ class FacetBlock extends Block
     }
 
     /**
-     * @param array $fields
-     *
      * @return $this
      */
     public function setFields(array $fields)

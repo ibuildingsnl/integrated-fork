@@ -94,9 +94,6 @@ class Reply
         return $this->author;
     }
 
-    /**
-     * @param Person|null $author
-     */
     public function setAuthor(Person $author = null)
     {
         $this->author = $author;

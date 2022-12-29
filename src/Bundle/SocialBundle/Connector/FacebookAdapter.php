@@ -36,8 +36,6 @@ class FacebookAdapter implements AdapterInterface, ConfigurableInterface, Export
 
     /**
      * Constructor.
-     *
-     * @param ExportableInterface $factory
      */
     public function __construct(ExportableInterface $factory)
     {

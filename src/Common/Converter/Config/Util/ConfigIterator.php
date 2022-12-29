@@ -20,7 +20,7 @@ use Iterator;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIterator implements Iterator
+class ConfigIterator implements \Iterator
 {
     /**
      * @var TypeConfigInterface[]
@@ -29,8 +29,6 @@ class ConfigIterator implements Iterator
 
     /**
      * Constructor.
-     *
-     * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
     {
@@ -67,8 +65,6 @@ class ConfigIterator implements Iterator
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function valid(): bool
     {

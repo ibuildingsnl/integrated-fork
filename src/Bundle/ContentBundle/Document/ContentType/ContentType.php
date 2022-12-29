@@ -143,8 +143,6 @@ class ContentType implements ContentTypeInterface
     /**
      * Set the name of content type.
      *
-     * @param $name
-     *
      * @return $this
      */
     public function setName($name)
@@ -289,8 +287,6 @@ class ContentType implements ContentTypeInterface
 
     /**
      * Set the createdAt of the content type.
-     *
-     * @param \DateTime $createdAt
      *
      * @return $this
      */
