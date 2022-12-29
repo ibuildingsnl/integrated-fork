@@ -13,8 +13,8 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
-use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,8 +58,6 @@ class MenuController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function renderMenu(Request $request)
@@ -78,8 +76,6 @@ class MenuController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function save(Request $request)

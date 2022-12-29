@@ -54,12 +54,6 @@ class BlockManager
      */
     protected $document;
 
-    /**
-     * @param BlockHandlerRegistryInterface $blockRegistry
-     * @param ThemeManager                  $themeManager
-     * @param DocumentManager               $dm
-     * @param Environment                   $twig
-     */
     public function __construct(BlockHandlerRegistryInterface $blockRegistry, ThemeManager $themeManager, DocumentManager $dm, Environment $twig)
     {
         $this->blockRegistry = $blockRegistry;
@@ -70,7 +64,6 @@ class BlockManager
 
     /**
      * @param BlockInterface|string $block
-     * @param array                 $options
      *
      * @return string|null
      */
@@ -123,8 +116,6 @@ class BlockManager
     }
 
     /**
-     * @param ContentInterface $document
-     *
      * @return $this
      */
     public function setDocument(ContentInterface $document)

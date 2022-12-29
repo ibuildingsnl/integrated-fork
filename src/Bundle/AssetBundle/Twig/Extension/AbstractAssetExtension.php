@@ -27,9 +27,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
      */
     protected $manager;
 
-    /**
-     * @param AssetManager $manager
-     */
     public function __construct(AssetManager $manager)
     {
         $this->manager = $manager;
@@ -60,8 +57,6 @@ abstract class AbstractAssetExtension extends AbstractExtension
     }
 
     /**
-     * @param Environment $environment
-     *
      * @return string
      */
     public function render(Environment $environment)

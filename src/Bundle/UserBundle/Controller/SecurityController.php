@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Twig\Error\Error;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Form\Type\LoginFormType;
 use Integrated\Bundle\UserBundle\Form\Type\PasswordChangeType;
@@ -22,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Error\Error;
 
 /**
  * The login controller.
@@ -45,11 +45,6 @@ class SecurityController extends AbstractController
      */
     private $keyGenerator;
 
-    /**
-     * @param UserManager  $userManager
-     * @param Mailer       $mailer
-     * @param KeyGenerator $keyGenerator
-     */
     public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator)
     {
         $this->userManager = $userManager;
@@ -108,11 +103,6 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param int     $id
-     * @param int     $timestamp
-     * @param string  $key
-     *
      * @return RedirectResponse|Response
      *
      * @throws Error

@@ -25,9 +25,6 @@ class IntegratedLockingExtension extends Extension
 {
     /**
      * Load the configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {

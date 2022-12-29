@@ -24,9 +24,6 @@ class ContentTypeEvent extends Event
      */
     protected $contentType;
 
-    /**
-     * @param ContentType $contentType
-     */
     public function __construct(ContentType $contentType)
     {
         $this->contentType = $contentType;

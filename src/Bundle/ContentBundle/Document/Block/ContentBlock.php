@@ -155,8 +155,6 @@ class ContentBlock extends Block
     }
 
     /**
-     * @param array $facetFields
-     *
      * @return $this
      */
     public function setFacetFields(array $facetFields = [])

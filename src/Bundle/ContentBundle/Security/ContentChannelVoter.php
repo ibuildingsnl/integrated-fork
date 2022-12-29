@@ -38,11 +38,6 @@ class ContentChannelVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ResolverInterface              $resolver
-     * @param AccessDecisionManagerInterface $decisionManager
-     * @param array                          $permissions
-     */
     public function __construct(
         ResolverInterface $resolver,
         AccessDecisionManagerInterface $decisionManager,

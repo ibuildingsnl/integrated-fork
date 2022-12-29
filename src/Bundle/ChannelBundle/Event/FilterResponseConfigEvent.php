@@ -25,11 +25,6 @@ class FilterResponseConfigEvent extends ConfigEvent
      */
     private $response;
 
-    /**
-     * @param Config   $config
-     * @param Request  $request
-     * @param Response $response
-     */
     public function __construct(Config $config, Request $request, Response $response)
     {
         parent::__construct($config, $request);

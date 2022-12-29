@@ -41,11 +41,6 @@ class Exporter implements ExporterInterface
      */
     private $urlResolver;
 
-    /**
-     * @param Facebook        $facebook
-     * @param ConfigInterface $config
-     * @param UrlResolver     $urlResolver
-     */
     public function __construct(Facebook $facebook, ConfigInterface $config, UrlResolver $urlResolver)
     {
         $this->facebook = $facebook;

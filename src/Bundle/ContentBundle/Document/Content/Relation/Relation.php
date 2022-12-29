@@ -252,8 +252,6 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * Set the addresses of the document.
      *
-     * @param Collection $addresses
-     *
      * @return $this
      */
     public function setAddresses(Collection $addresses)
@@ -280,8 +278,6 @@ abstract class Relation extends Content implements RankableInterface
     }
 
     /**
-     * @param Address $address
-     *
      * @return bool
      */
     public function removeAddress(Address $address)

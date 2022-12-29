@@ -20,8 +20,5 @@ use Integrated\Common\Storage\ManagerInterface;
  */
 interface CommandInterface
 {
-    /**
-     * @param ManagerInterface $manager
-     */
     public function execute(ManagerInterface $manager);
 }

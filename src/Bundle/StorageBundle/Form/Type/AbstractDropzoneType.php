@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\StorageBundle\Form\Type;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -20,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -52,11 +52,7 @@ abstract class AbstractDropzoneType extends AbstractType
     private $type;
 
     /**
-     * @param AssetManager        $stylesheets
-     * @param AssetManager        $javascripts
-     * @param TranslatorInterface $translator
-     * @param ImageExtension      $imageExtension
-     * @param string              $type
+     * @param string $type
      */
     protected function __construct(
         AssetManager $stylesheets,

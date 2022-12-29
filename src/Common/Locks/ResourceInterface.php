@@ -17,8 +17,6 @@ namespace Integrated\Common\Locks;
 interface ResourceInterface
 {
     /**
-     * @param ResourceInterface $resource
-     *
      * @return bool
      */
     public function equals(self $resource);

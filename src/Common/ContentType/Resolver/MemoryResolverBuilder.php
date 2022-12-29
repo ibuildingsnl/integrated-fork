@@ -26,8 +26,6 @@ class MemoryResolverBuilder
     /**
      * Add the content type to the builder.
      *
-     * @param ContentTypeInterface $type
-     *
      * @return MemoryResolverBuilder
      */
     public function addContentType(ContentTypeInterface $type)

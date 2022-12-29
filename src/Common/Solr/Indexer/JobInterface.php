@@ -11,12 +11,10 @@
 
 namespace Integrated\Common\Solr\Indexer;
 
-use Serializable;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface JobInterface extends Serializable
+interface JobInterface extends \Serializable
 {
     /**
      * Get the action.

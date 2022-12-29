@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Util;
 
-use ArrayIterator;
 use Iterator;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,7 +28,7 @@ class ProgressIteratorUtil
     public const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
 
     /**
-     * @var Iterator
+     * @var \Iterator
      */
     private $iterator;
 
@@ -38,26 +37,20 @@ class ProgressIteratorUtil
      */
     private $output;
 
-    /**
-     * @param Iterator        $iterator
-     * @param OutputInterface $output
-     */
-    public function __construct(Iterator $iterator, OutputInterface $output)
+    public function __construct(\Iterator $iterator, OutputInterface $output)
     {
         $this->iterator = $iterator;
         $this->output = $output;
     }
 
     /**
-     * @param \Closure $closure
-     *
      * @return $this
      */
     public function map(\Closure $closure)
     {
         if (\count($this->iterator->toArray())) {
             $progress = $this->createProgress();
-            $iterator = new ArrayIterator();
+            $iterator = new \ArrayIterator();
 
             foreach ($this->iterator as $item) {
                 $result = $closure($item);
@@ -77,8 +70,6 @@ class ProgressIteratorUtil
     }
 
     /**
-     * @param \Closure $closure
-     *
      * @return $this
      */
     public function walk(\Closure $closure)

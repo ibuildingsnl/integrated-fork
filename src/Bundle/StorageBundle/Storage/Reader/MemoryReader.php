@@ -30,8 +30,7 @@ class MemoryReader implements ReaderInterface
     protected $metadata;
 
     /**
-     * @param string            $content
-     * @param MetadataInterface $metadata
+     * @param string $content
      */
     public function __construct($content, MetadataInterface $metadata)
     {

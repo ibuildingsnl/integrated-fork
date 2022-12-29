@@ -29,10 +29,6 @@ class PropertyTypeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider buildProvider
-     *
-     * @param ContentInterface $content
-     * @param array            $options
-     * @param array            $expected
      */
     public function testBuild(ContentInterface $content, array $options, array $expected)
     {

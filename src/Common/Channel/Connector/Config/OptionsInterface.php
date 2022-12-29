@@ -34,8 +34,6 @@ interface OptionsInterface extends \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Get the value from the given key.
      *
-     * @param $key
-     *
      * @return mixed
      */
     public function get($key);
@@ -43,16 +41,12 @@ interface OptionsInterface extends \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Remove the value for the given key.
      *
-     * @param $key
-     *
      * @return self
      */
     public function remove($key);
 
     /**
      * Check if a option key exists.
-     *
-     * @param $key
      *
      * @return bool
      */

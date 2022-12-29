@@ -39,7 +39,6 @@ class Relations implements DataTransformerInterface
 
     /**
      * @param RelationInterface[] $relations
-     * @param ObjectManager       $om
      */
     public function __construct($relations, ObjectManager $om)
     {

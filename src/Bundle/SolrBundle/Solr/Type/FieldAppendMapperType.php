@@ -27,8 +27,7 @@ class FieldAppendMapperType extends FieldMapperType
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
+     * @param string $field
      */
     protected function remove(ContainerInterface $container, $field)
     {

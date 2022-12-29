@@ -50,9 +50,6 @@ class BlockUsageProvider
      */
     protected $channels = [];
 
-    /**
-     * @param ManagerRegistry $mr
-     */
     public function __construct(ManagerRegistry $mr)
     {
         $this->mr = $mr;

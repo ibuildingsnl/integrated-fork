@@ -21,9 +21,6 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 class BlockRepository extends DocumentRepository
 {
     /**
-     * @param MetadataFactoryInterface $factory
-     * @param array|null               $ids
-     *
      * @return array
      */
     public function getTypeChoices(MetadataFactoryInterface $factory, array $ids = null)
@@ -62,8 +59,6 @@ class BlockRepository extends DocumentRepository
     }
 
     /**
-     * @param Block $block
-     *
      * @return \Doctrine\ODM\MongoDB\Query\Query
      *
      * @internal heavy query, multiple calls make page slow
@@ -118,8 +113,6 @@ class BlockRepository extends DocumentRepository
 
     /**
      * Check if given block is used on some page.
-     *
-     * @param Block $block
      *
      * @return bool
      *

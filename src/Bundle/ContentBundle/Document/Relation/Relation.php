@@ -154,8 +154,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param Collection $sources
-     *
      * @return $this
      */
     public function setSources(Collection $sources)
@@ -170,8 +168,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return $this
      */
     public function addSource(ContentTypeInterface $contentType)
@@ -184,8 +180,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return bool true if the collection contains the element, false otherwise
      */
     public function hasSource(ContentTypeInterface $contentType)
@@ -194,8 +188,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return bool true if this collection contained the specified element, false otherwise
      */
     public function removeSource(ContentTypeInterface $contentType)
@@ -212,8 +204,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param Collection $targets
-     *
      * @return $this
      */
     public function setTargets(Collection $targets)
@@ -228,8 +218,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return $this
      */
     public function addTarget(ContentTypeInterface $contentType)
@@ -242,8 +230,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return bool true if the collection contains the element, false otherwise
      */
     public function hasTarget(ContentTypeInterface $contentType)
@@ -252,8 +238,6 @@ class Relation implements RelationInterface
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     *
      * @return bool true if this collection contained the specified element, false otherwise
      */
     public function removeTarget(ContentTypeInterface $contentType)
@@ -313,8 +297,6 @@ class Relation implements RelationInterface
 
     /**
      * Set the createdAt of the channel.
-     *
-     * @param \DateTime $createdAt
      *
      * @return $this
      */

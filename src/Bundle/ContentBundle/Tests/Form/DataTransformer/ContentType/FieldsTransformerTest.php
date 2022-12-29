@@ -42,6 +42,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
      * Test transform function with empty data.
      *
      * @param mixed $input
+     *
      * @dataProvider getInvalidTransformData
      */
     public function testTransformFunctionWithInvalidData($input)
@@ -53,8 +54,6 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * Test transform function with data.
      *
-     * @param array $input
-     * @param array $output
      * @dataProvider getValidTransformData
      */
     public function testTransformFunctionWithValidData(array $input, array $output)
@@ -66,6 +65,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
      * Test reverseTransform function with invalid data.
      *
      * @param mixed $input
+     *
      * @dataProvider getInvalidReverseTransformData
      */
     public function testReverseTransformFunctionWithInvalidData($input)
@@ -76,7 +76,6 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * Test reverseTransform function with valid data.
      *
-     * @param array $input
      * @dataProvider getValidReverseTransformData
      */
     public function testReverseTransformFunctionWithValidData(array $input)

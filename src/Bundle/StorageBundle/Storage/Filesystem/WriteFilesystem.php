@@ -25,21 +25,17 @@ class WriteFilesystem
      */
     private $filesystem;
 
-    /**
-     * @param Filesystem $filesystem
-     */
     public function __construct(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
     }
 
     /**
-     * @param string          $identifier
-     * @param ReaderInterface $reader
-     *
-     * @throws \LogicException
+     * @param string $identifier
      *
      * @return mixed
+     *
+     * @throws \LogicException
      */
     public function write($identifier, ReaderInterface $reader)
     {

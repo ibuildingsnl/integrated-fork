@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
-use Integrated\Bundle\UserBundle\Validator\Constraints\Authenticator;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Integrated\Bundle\UserBundle\Validator\Constraints\Authenticator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;

@@ -26,9 +26,6 @@ class RecursiveActiveMatcher
      */
     protected $matcher;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         // Store voters in array
@@ -49,9 +46,6 @@ class RecursiveActiveMatcher
         $this->matcher = new Matcher($voters);
     }
 
-    /**
-     * @param ItemInterface $menuItem
-     */
     public function setActive(ItemInterface $menuItem)
     {
         foreach ($menuItem->getChildren() as $item) {

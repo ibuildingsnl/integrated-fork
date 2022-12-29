@@ -56,11 +56,7 @@ class ContentProvider
     /**
      * ContentProvider constructor.
      *
-     * @param Client                $client
-     * @param DocumentManager       $dm
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationChecker  $authorizationChecker
-     * @param bool                  $workflowExtension
+     * @param bool $workflowExtension
      */
     public function __construct(
         Client $client,
@@ -77,9 +73,6 @@ class ContentProvider
     }
 
     /**
-     * @param Request $request
-     * @param $limit
-     *
      * @return array
      */
     public function getContentFromSolr(Request $request, $limit)
@@ -255,8 +248,6 @@ class ContentProvider
     }
 
     /**
-     * @param Query $query
-     *
      * @return \Solarium\QueryType\Select\Query\FilterQuery
      */
     protected function addWorkflowFilter(Query $query)

@@ -29,9 +29,6 @@ class EditorType extends AbstractType
      */
     private $contentStyles;
 
-    /**
-     * @param array $contentStyles
-     */
     public function __construct(array $contentStyles)
     {
         $this->contentStyles = $contentStyles;

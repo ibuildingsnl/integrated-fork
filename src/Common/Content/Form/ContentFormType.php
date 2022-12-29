@@ -49,8 +49,6 @@ class ContentFormType extends AbstractType
     protected $dispatcher = null;
 
     /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param ResolverInterface        $resolver
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(

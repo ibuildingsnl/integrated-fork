@@ -52,25 +52,16 @@ class IpList
         return $this->ip;
     }
 
-    /**
-     * @param IP $ip
-     */
     public function setIp(IP $ip): void
     {
         $this->ip = $ip;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
     public function setDescription(string $description): void
     {
         $this->description = $description;

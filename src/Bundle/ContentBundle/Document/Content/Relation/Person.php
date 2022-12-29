@@ -241,8 +241,6 @@ class Person extends Relation
     /**
      * Set the jobs of the document.
      *
-     * @param Collection $jobs
-     *
      * @return $this
      */
     public function setJobs(Collection $jobs)
@@ -294,8 +292,6 @@ class Person extends Relation
 
     /**
      * Set the picture of the document.
-     *
-     * @param StorageInterface|null $picture
      *
      * @return $this
      */

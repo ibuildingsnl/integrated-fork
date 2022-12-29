@@ -207,9 +207,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($graphNodeArray['id'], $response->getExternalId());
     }
 
-    /**
-     * @return Exporter
-     */
     protected function getInstance(): Exporter
     {
         return new Exporter($this->facebook, $this->config, $this->urlResolver);

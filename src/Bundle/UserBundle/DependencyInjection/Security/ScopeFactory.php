@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\UserBundle\DependencyInjection\Security;
 
+use Integrated\Bundle\UserBundle\Security\Firewall\ScopeListener;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\FirewallListenerFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Integrated\Bundle\UserBundle\Security\Firewall\ScopeListener;
 
 class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFactoryInterface
 {

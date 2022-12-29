@@ -11,13 +11,12 @@
 
 namespace Integrated\Common\Channel\Connector\Config\Util;
 
-use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIterator extends ArrayIterator
+class ConfigIterator extends \ArrayIterator
 {
     /**
      * {@inheritdoc}

@@ -36,9 +36,6 @@ class RelationsType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param ManagerRegistry $manager
-     */
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;

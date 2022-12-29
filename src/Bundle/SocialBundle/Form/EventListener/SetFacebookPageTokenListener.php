@@ -14,9 +14,6 @@ class SetFacebookPageTokenListener implements EventSubscriberInterface
      */
     private $facebook;
 
-    /**
-     * @param Facebook $facebook
-     */
     public function __construct(Facebook $facebook)
     {
         $this->facebook = $facebook;
@@ -33,8 +30,6 @@ class SetFacebookPageTokenListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FormEvent $event
-     *
      * @throws \Facebook\Exceptions\FacebookSDKException
      */
     public function onSubmit(FormEvent $event)

@@ -56,9 +56,6 @@ class InlineTextBlock extends Block
      */
     protected $disabled = false;
 
-    /**
-     * @param AbstractPage $page
-     */
     public function __construct(AbstractPage $page)
     {
         parent::__construct();

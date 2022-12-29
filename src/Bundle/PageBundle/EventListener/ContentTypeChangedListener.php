@@ -47,12 +47,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
      */
     private $contentTypeInformation;
 
-    /**
-     * @param DocumentManager        $dm
-     * @param ContentTypePageService $contentTypePageService
-     * @param RouteCache             $routeCache
-     * @param ContentTypeInformation $contentTypeInformation
-     */
     public function __construct(
         DocumentManager $dm,
         ContentTypePageService $contentTypePageService,
@@ -77,9 +71,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentTypeEvent $event
-     */
     public function contentTypeChanged(ContentTypeEvent $event)
     {
         $contentType = $event->getContentType();
@@ -106,17 +97,11 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ContentTypeEvent $event
-     */
     public function contentTypeDeleted(ContentTypeEvent $event)
     {
         $this->deletePagesByContentType($event->getContentType());
     }
 
-    /**
-     * @param ContentType $contentType
-     */
     protected function deletePagesByContentType(ContentType $contentType, $channelId = null)
     {
         $criteria = ['contentType.$id' => $contentType->getId()];

@@ -23,9 +23,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class PaginateSolariumQuerySubscriber implements EventSubscriberInterface
 {
-    /**
-     * @param ItemsEvent $event
-     */
     public function items(ItemsEvent $event)
     {
         if (\is_array($event->target) && 2 == \count($event->target)) {

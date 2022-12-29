@@ -133,21 +133,11 @@ class ArrayComparerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $old
-     * @param array $new
-     * @param array $expected
-     */
     protected function assertDiff(array $old = [], array $new = [], array $expected = [])
     {
         $this->assertEquals($expected, ArrayComparer::diff($old, $new));
     }
 
-    /**
-     * @param array $old
-     * @param array $new
-     * @param array $expected
-     */
     protected function assertNormalize(array $old = [], array $new = [], array $expected = [])
     {
         $this->assertEquals($expected, ArrayComparer::normalizeArrays($old, $new));

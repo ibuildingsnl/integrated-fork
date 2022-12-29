@@ -49,8 +49,6 @@ class ContainerBlock extends Block
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
     public function setItems(array $items)

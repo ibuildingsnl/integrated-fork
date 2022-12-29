@@ -49,12 +49,6 @@ class UrlResolver
      */
     protected $dm;
 
-    /**
-     * @param ContentTypeControllerManager $controllerManager
-     * @param ChannelContextInterface      $channelContext
-     * @param RouterInterface              $router
-     * @param DocumentManager              $dm
-     */
     public function __construct(
         ContentTypeControllerManager $controllerManager,
         ChannelContextInterface $channelContext,
@@ -70,8 +64,6 @@ class UrlResolver
     /**
      * Returns the correct path for symfony routing module (replace "#[string]#" with "{[string}").
      *
-     * @param ContentTypePage $page
-     *
      * @return string
      */
     public function getRoutePath(ContentTypePage $page)
@@ -86,8 +78,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return string
      */
     public function getRouteName(ContentTypePage $page)
@@ -96,9 +86,7 @@ class UrlResolver
     }
 
     /**
-     * @param ContentInterface $document
-     * @param null             $channelId
-     * @param bool             $fallback
+     * @param null $channelId
      *
      * @return string|null
      */
@@ -127,9 +115,6 @@ class UrlResolver
     /**
      * todo INTEGRATED-440 add Slug and getReferenceByRelationIdto ContentInterface.
      *
-     * @param ContentTypePage  $page
-     * @param ContentInterface $document
-     *
      * @return string
      */
     public function getContentTypePageUrl(ContentTypePage $page, ContentInterface $document)
@@ -141,8 +126,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return array
      */
     protected function getRoutingParamaters(ContentTypePage $page, ContentInterface $content)
@@ -167,8 +150,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return array
      */
     protected function getRelationIds(ContentTypePage $page)
@@ -185,9 +166,6 @@ class UrlResolver
     }
 
     /**
-     * @param $channelId
-     * @param $contentTypeId
-     *
      * @return ContentTypePage
      */
     protected function getContentTypePageById($contentTypeId, $channelId = null)

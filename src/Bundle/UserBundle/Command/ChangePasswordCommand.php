@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Command;
 
-use Exception;
 use Integrated\Bundle\UserBundle\Doctrine\ScopeManager;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -44,11 +43,6 @@ class ChangePasswordCommand extends Command
      */
     private $hasherFactory;
 
-    /**
-     * @param ScopeManager                   $scopeManager
-     * @param UserManagerInterface           $userManager
-     * @param PasswordHasherFactoryInterface $hasherFactory
-     */
     public function __construct(
         ScopeManager $scopeManager,
         UserManagerInterface $userManager,
@@ -122,7 +116,7 @@ The <info>%command.name%</info> command replaces the password of the user
 
         try {
             $this->userManager->persist($user);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
 
             return 1;
@@ -133,11 +127,10 @@ The <info>%command.name%</info> command replaces the password of the user
 
     /**
      * @param string $username
-     * @param Scope  $scope
      *
      * @return UserInterface|null
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function findUserByScope($username, Scope $scope)
     {

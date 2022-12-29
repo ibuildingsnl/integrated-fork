@@ -27,8 +27,7 @@ class ProcessorRegistryBuilder
     protected $processorIndex = [];
 
     /**
-     * @param ProcessorInterface $processor
-     * @param string             $class
+     * @param string $class
      */
     public function addProcessor(ProcessorInterface $processor, $class)
     {

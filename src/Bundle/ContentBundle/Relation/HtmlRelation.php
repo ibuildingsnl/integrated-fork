@@ -20,8 +20,6 @@ use Integrated\Bundle\ContentBundle\Std\DOMDocument;
 class HtmlRelation
 {
     /**
-     * @param $html
-     *
      * @return Content[]
      */
     public function read($html)

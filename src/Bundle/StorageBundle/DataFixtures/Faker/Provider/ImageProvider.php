@@ -13,8 +13,8 @@ namespace Integrated\Bundle\StorageBundle\DataFixtures\Faker\Provider;
 
 use Faker\Provider\Image;
 use Integrated\Bundle\StorageBundle\DataFixtures\Faker\Util\CreateUtil;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
 class ImageProvider
 {
@@ -23,9 +23,6 @@ class ImageProvider
      */
     private $sm;
 
-    /**
-     * @param Manager $sm
-     */
     public function __construct(Manager $sm)
     {
         $this->sm = $sm;

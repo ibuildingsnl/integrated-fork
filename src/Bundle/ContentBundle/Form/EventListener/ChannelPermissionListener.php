@@ -41,9 +41,6 @@ class ChannelPermissionListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         if (!\count($this->notPermittedChannels)) {

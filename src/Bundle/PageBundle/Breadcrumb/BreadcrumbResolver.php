@@ -47,12 +47,6 @@ class BreadcrumbResolver
      */
     protected $request;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param RequestStack            $requestStack
-     * @param DocumentManager         $documentManager
-     * @param UrlResolver             $urlResolver
-     */
     public function __construct(DocumentManager $documentManager, UrlResolver $urlResolver, ChannelContextInterface $channelContext, RequestStack $requestStack)
     {
         $this->documentManager = $documentManager;

@@ -37,8 +37,6 @@ class AdapterReader implements ReaderInterface
     protected $identifier;
 
     /**
-     * @param Adapter             $adapter
-     * @param StorageInterface    $storage
      * @param IdentifierInterface $identifier
      */
     public function __construct(Adapter $adapter, StorageInterface $storage, IdentifierInterface $identifier = null)

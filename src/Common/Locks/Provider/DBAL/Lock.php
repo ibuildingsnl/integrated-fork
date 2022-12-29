@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Locks\Provider\DBAL;
 
-use DateTime;
 use Integrated\Common\Locks\LockInterface;
 use Integrated\Common\Locks\RequestInterface;
 
@@ -31,22 +30,20 @@ class Lock implements LockInterface
     private $request;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $created;
 
     /**
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     private $expires;
 
     /**
-     * @param string           $id
-     * @param RequestInterface $request
-     * @param DateTime         $created
-     * @param DateTime         $expires
+     * @param string    $id
+     * @param \DateTime $expires
      */
-    public function __construct($id, RequestInterface $request, DateTime $created, DateTime $expires = null)
+    public function __construct($id, RequestInterface $request, \DateTime $created, \DateTime $expires = null)
     {
         $this->id = (string) $id;
         $this->request = $request;
@@ -55,21 +52,19 @@ class Lock implements LockInterface
     }
 
     /**
-     * @param array $data
-     *
      * @return self
      */
     public static function factory(array $data)
     {
         $request = new Request(Resource::unserialize($data['resource']), Resource::unserialize($data['resource_owner']), $data['timeout']);
 
-        $created = new DateTime();
+        $created = new \DateTime();
         $created->setTimestamp($data['created']);
 
         $expires = null;
 
         if ($data['expires']) {
-            $expires = new DateTime();
+            $expires = new \DateTime();
             $expires->setTimestamp($data['expires']);
         }
 

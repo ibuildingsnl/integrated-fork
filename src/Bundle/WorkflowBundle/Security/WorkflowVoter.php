@@ -59,12 +59,6 @@ class WorkflowVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ManagerRegistry          $manager
-     * @param ResolverInterface        $resolver
-     * @param MetadataFactoryInterface $metadata
-     * @param array                    $permissions
-     */
     public function __construct(ManagerRegistry $manager, ResolverInterface $resolver, MetadataFactoryInterface $metadata, array $permissions = [])
     {
         $this->manager = $manager;
@@ -255,8 +249,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param $class
-     *
      * @return MetadataInterface
      */
     protected function getMetadata($class)
@@ -277,9 +269,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param ContentInterface $content
-     * @param Definition       $workflow
-     *
      * @return Definition\State
      */
     protected function getState(ContentInterface $content, Definition $workflow)
@@ -299,8 +288,7 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param GroupableInterface $user
-     * @param Permission[]       $permissionGroups
+     * @param Permission[] $permissionGroups
      *
      * @return array
      */
@@ -310,9 +298,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param GroupableInterface $user
-     * @param ContentInterface   $content
-     *
      * @return bool
      */
     protected function isAssigned(GroupableInterface $user, ContentInterface $content)
@@ -339,9 +324,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param User             $user
-     * @param ContentInterface $content
-     *
      * @return bool
      */
     protected function isAuthor(User $user, ContentInterface $content)

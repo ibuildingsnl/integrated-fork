@@ -47,9 +47,6 @@ class RequestSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onChange(ContentHistoryEvent $event)
     {
         if ($this->requestStack instanceof RequestStack) {

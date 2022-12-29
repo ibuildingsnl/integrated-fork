@@ -27,9 +27,6 @@ class DocumentNotFoundListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param DocumentNotFoundEventArgs $args
-     */
     public function documentNotFound(DocumentNotFoundEventArgs $args)
     {
         $args->disableException();

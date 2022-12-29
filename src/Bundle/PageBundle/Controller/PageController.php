@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\PageBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -55,10 +55,6 @@ class PageController extends AbstractController
 
     /**
      * PageController constructor.
-     *
-     * @param DocumentManager $documentManager
-     * @param PageCopyService $pageCopyService
-     * @param RouteCache      $routeCache
      */
     public function __construct(DocumentManager $documentManager, PageCopyService $pageCopyService, RouteCache $routeCache)
     {
@@ -68,8 +64,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -132,8 +126,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
     public function new(Request $request)
@@ -166,9 +158,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Page    $page
-     *
      * @return Response|RedirectResponse
      */
     public function edit(Request $request, Page $page)
@@ -199,9 +188,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Page    $page
-     *
      * @return Response|RedirectResponse
      */
     public function delete(Request $request, Page $page)
@@ -235,8 +221,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws MappingException
@@ -287,8 +271,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Page $page
-     *
      * @return FormInterface
      */
     protected function createCreateForm(Page $page)
@@ -312,8 +294,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Page $page
-     *
      * @return FormInterface
      */
     protected function createEditForm(Page $page)
@@ -354,8 +334,6 @@ class PageController extends AbstractController
     }
 
     /**
-     * @param Builder $builder
-     *
      * @throws MongoDBException
      */
     protected function displayPathErrors(Builder $builder)
@@ -377,18 +355,12 @@ class PageController extends AbstractController
         }
     }
 
-    /**
-     * @param SessionInterface $session
-     * @param Page             $page
-     */
     private function setLastEditPage(SessionInterface $session, Page $page)
     {
         $session->set('page_lastedit_id', $page->getId());
     }
 
     /**
-     * @param SessionInterface $session
-     *
      * @return Page|null
      */
     private function getLastEditPage(SessionInterface $session)

@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
-use DateTime;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -28,10 +26,7 @@ interface ConfigInterface
      */
     public function getAdapter();
 
-    /**
-     * @return DateTime|null
-     */
-    public function getPublicationStartDate(): ?DateTime;
+    public function getPublicationStartDate(): ?\DateTime;
 
     /**
      * @return OptionsInterface

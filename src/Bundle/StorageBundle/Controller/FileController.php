@@ -41,10 +41,6 @@ class FileController
      */
     private $imageHandling;
 
-    /**
-     * @param MetadataFactoryInterface $metadata
-     * @param WebFormatConverter       $webFormatConverter
-     */
     public function __construct(MetadataFactoryInterface $metadata, WebFormatConverter $webFormatConverter, ImageHandling $imageHandling)
     {
         $this->metadata = $metadata;
@@ -53,10 +49,6 @@ class FileController
     }
 
     /**
-     * @param Content  $document
-     * @param int|null $width
-     * @param int|null $height
-     *
      * @return RedirectResponse
      */
     public function file(Content $document, int $width = null, int $height = null)

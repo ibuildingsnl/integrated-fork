@@ -44,11 +44,6 @@ class TwitterChannelConfigSubscriber implements EventSubscriberInterface
      */
     private $generator;
 
-    /**
-     * @param TwitterFactory         $factory
-     * @param ConfigManagerInterface $manager
-     * @param UrlGeneratorInterface  $generator
-     */
     public function __construct(TwitterFactory $factory, ConfigManagerInterface $manager, UrlGeneratorInterface $generator)
     {
         $this->factory = $factory;
@@ -70,8 +65,6 @@ class TwitterChannelConfigSubscriber implements EventSubscriberInterface
 
     /**
      * Request a access token the current config is missing one.
-     *
-     * @param FormConfigEvent $event
      */
     public function onSubmit(FormConfigEvent $event)
     {
@@ -119,8 +112,6 @@ class TwitterChannelConfigSubscriber implements EventSubscriberInterface
     /**
      * Check if the request got a oauth verifier and if so use that to get a access token
      * and store it in the config.
-     *
-     * @param GetResponseConfigEvent $event
      */
     public function onRequest(GetResponseConfigEvent $event)
     {

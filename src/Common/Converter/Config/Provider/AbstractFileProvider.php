@@ -80,8 +80,6 @@ abstract class AbstractFileProvider implements TypeProviderInterface
     /**
      * Load all the types from the given file.
      *
-     * @param SplFileInfo $file
-     *
      * @return TypeConfigInterface[]
      */
     abstract protected function load(SplFileInfo $file);

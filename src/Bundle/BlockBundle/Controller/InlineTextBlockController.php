@@ -22,9 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 class InlineTextBlockController extends BlockController
 {
     /**
-     * @param Request      $request
-     * @param AbstractPage $page
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function create(Request $request, AbstractPage $page)

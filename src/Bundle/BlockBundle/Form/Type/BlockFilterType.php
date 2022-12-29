@@ -41,11 +41,6 @@ class BlockFilterType extends AbstractType
      */
     private $blockUsageProvider;
 
-    /**
-     * @param MetadataFactoryInterface $factory
-     * @param DocumentManager          $dm
-     * @param BlockUsageProvider       $blockUsageProvider
-     */
     public function __construct(
         MetadataFactoryInterface $factory,
         DocumentManager $dm,
@@ -93,9 +88,6 @@ class BlockFilterType extends AbstractType
         );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('blockIds');
@@ -111,8 +103,6 @@ class BlockFilterType extends AbstractType
     }
 
     /**
-     * @param array $blockIds
-     *
      * @return mixed
      */
     private function getTypeChoices(array $blockIds)
@@ -124,8 +114,6 @@ class BlockFilterType extends AbstractType
     }
 
     /**
-     * @param array $blockIds
-     *
      * @return array
      */
     private function getChannelChoices(array $blockIds)

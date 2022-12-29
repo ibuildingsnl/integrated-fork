@@ -50,13 +50,6 @@ class ImageExtension extends AbstractExtension
      */
     private $imageMimicHandling;
 
-    /**
-     * @param ImageHandling      $imageHandling
-     * @param ImageTwig          $imageTwig
-     * @param WebFormatConverter $webFormatConverter
-     * @param array              $mimicFormats
-     * @param ImageHandling      $imageMimicHandling
-     */
     public function __construct(ImageHandling $imageHandling, ImageTwig $imageTwig, WebFormatConverter $webFormatConverter, array $mimicFormats, ImageHandling $imageMimicHandling)
     {
         $this->imageHandling = $imageHandling;
@@ -82,8 +75,6 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @param $image
-     *
      * @return \Gregwar\ImageBundle\ImageHandler
      */
     public function imageJson($image)
@@ -108,8 +99,6 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @param $image
-     *
      * @return \Gregwar\ImageBundle\ImageHandler
      */
     public function webImage($image)
@@ -127,8 +116,6 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @param $image
-     *
      * @return \Gregwar\ImageBundle\ImageHandler
      */
     public function image($image)
@@ -158,8 +145,6 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @param $image
-     *
      * @return string
      */
     public function imageCredits($image)
@@ -179,8 +164,6 @@ class ImageExtension extends AbstractExtension
     }
 
     /**
-     * @param $image
-     *
      * @return string
      */
     public function imageDescription($image)

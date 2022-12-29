@@ -12,9 +12,6 @@ class FilterQueryProvider
      */
     private $userManager;
 
-    /**
-     * @param UserManager $userManager
-     */
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;

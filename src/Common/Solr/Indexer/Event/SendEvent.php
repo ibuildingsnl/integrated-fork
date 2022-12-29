@@ -26,9 +26,6 @@ class SendEvent extends IndexerEvent
 
     /**
      * Event constructor.
-     *
-     * @param IndexerInterface $indexer
-     * @param Query            $query
      */
     public function __construct(IndexerInterface $indexer, Query $query)
     {

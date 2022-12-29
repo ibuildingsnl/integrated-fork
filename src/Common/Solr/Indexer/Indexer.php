@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Indexer;
 
-use Exception;
 use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 use Integrated\Common\Queue\Queue;
 use Integrated\Common\Queue\QueueInterface;
@@ -64,8 +63,7 @@ class Indexer extends Configurable implements IndexerInterface
     /**
      * Indexer constructor.
      *
-     * @param CommandFactoryInterface $factory
-     * @param Batch                   $batch
+     * @param Batch $batch
      */
     public function __construct(CommandFactoryInterface $factory, Batch $batch = null)
     {
@@ -93,8 +91,6 @@ class Indexer extends Configurable implements IndexerInterface
 
     /**
      * Set the event dispatcher.
-     *
-     * @param EventDispatcherInterface $dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
@@ -189,8 +185,6 @@ class Indexer extends Configurable implements IndexerInterface
     /**
      * A queue message it not send to the solr server but grouped in a
      * batch to send more operations at ones.
-     *
-     * @param QueueMessageInterface $message
      */
     protected function batch(QueueMessageInterface $message)
     {
@@ -246,7 +240,7 @@ class Indexer extends Configurable implements IndexerInterface
 
         try {
             $result = $this->getClient()->execute($query);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new ClientException($e->getMessage(), $e->getCode(), $e);
         }
 
