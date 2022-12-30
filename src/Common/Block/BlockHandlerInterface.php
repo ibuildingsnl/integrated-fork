@@ -19,9 +19,6 @@ interface BlockHandlerInterface
     /**
      * Execute block logic.
      *
-     * @param BlockInterface $block
-     * @param array          $options
-     *
      * @return string|null
      */
     public function execute(BlockInterface $block, array $options);

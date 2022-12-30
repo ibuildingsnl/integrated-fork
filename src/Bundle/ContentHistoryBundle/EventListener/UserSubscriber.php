@@ -29,9 +29,6 @@ class UserSubscriber implements EventSubscriberInterface
      */
     protected $tokenStorage;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
@@ -49,9 +46,6 @@ class UserSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onChange(ContentHistoryEvent $event)
     {
         $token = $this->tokenStorage->getToken();

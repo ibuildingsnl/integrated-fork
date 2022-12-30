@@ -33,8 +33,6 @@ class ContentWorkflowIntegrationListener implements EventSubscriberInterface
 
     /**
      * Dynamically add the workflow form type to the content form.
-     *
-     * @param BuilderEvent $event
      */
     public function buildForm(BuilderEvent $event)
     {

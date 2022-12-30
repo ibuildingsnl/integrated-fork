@@ -12,7 +12,6 @@
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
 use Integrated\Common\Queue\Provider\Memory\QueueMessage;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -29,7 +28,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPayload()
     {
-        $payload = new stdClass();
+        $payload = new \stdClass();
         $message = new QueueMessage($payload, 0, 0, 0, 0, 0, function () {
         });
 

@@ -29,9 +29,6 @@ class LayoutLocator
      */
     private $layouts;
 
-    /**
-     * @param ThemeManager $themeManager
-     */
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;

@@ -53,6 +53,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
             ->method('insert')
             ->with($this->identicalTo('queue'));
 
-        $this->provider->push('channel', new stdClass());
+        $this->provider->push('channel', new \stdClass());
     }
 }

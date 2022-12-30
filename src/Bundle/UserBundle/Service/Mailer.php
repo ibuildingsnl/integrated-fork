@@ -10,11 +10,11 @@
 
 namespace Integrated\Bundle\UserBundle\Service;
 
+use Integrated\Bundle\UserBundle\Model\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Integrated\Bundle\UserBundle\Model\User;
 
 class Mailer
 {
@@ -53,8 +53,6 @@ class Mailer
     }
 
     /**
-     * @param User $user
-     *
      * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
     public function sendPasswordResetMail(User $user): void

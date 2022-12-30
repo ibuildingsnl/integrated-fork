@@ -39,9 +39,6 @@ class ContentTypePageController extends AbstractController
 
     /**
      * PageController constructor.
-     *
-     * @param DocumentManager $documentManager
-     * @param RouteCache      $routeCache
      */
     public function __construct(DocumentManager $documentManager, RouteCache $routeCache)
     {
@@ -50,9 +47,6 @@ class ContentTypePageController extends AbstractController
     }
 
     /**
-     * @param Request         $request
-     * @param ContentTypePage $page
-     *
      * @return Response|RedirectResponse
      */
     public function edit(Request $request, ContentTypePage $page)
@@ -81,8 +75,6 @@ class ContentTypePageController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return FormInterface
      */
     protected function createEditForm(ContentTypePage $page)

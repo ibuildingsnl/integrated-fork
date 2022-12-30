@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkActionConfirmType;
 use Integrated\Bundle\ContentBundle\Form\Type\BulkConfigureType;
@@ -45,12 +44,6 @@ class BulkController extends AbstractController
      */
     protected $bulkHandler;
 
-    /**
-     * @param DocumentManager      $dm
-     * @param ContentProvider      $contentProvider
-     * @param BulkHandlerInterface $bulkHandler
-     * @param ContainerInterface   $container
-     */
     public function __construct(
         DocumentManager $dm,
         ContentProvider $contentProvider,
@@ -64,7 +57,6 @@ class BulkController extends AbstractController
     }
 
     /**
-     * @param Request    $request
      * @param BulkAction $bulk
      *
      * @return RedirectResponse|Response
@@ -107,9 +99,6 @@ class BulkController extends AbstractController
     }
 
     /**
-     * @param Request    $request
-     * @param BulkAction $bulk
-     *
      * @return RedirectResponse|Response
      */
     public function configure(Request $request, BulkAction $bulk)
@@ -135,9 +124,6 @@ class BulkController extends AbstractController
     }
 
     /**
-     * @param Request    $request
-     * @param BulkAction $bulk
-     *
      * @return RedirectResponse|Response
      */
     public function confirm(Request $request, BulkAction $bulk)
@@ -161,7 +147,7 @@ class BulkController extends AbstractController
                 $this->addFlash('success', 'All bulk actions were executed successfully. Indexing operations will be executed in the background');
 
                 return $this->redirectToRoute('integrated_content_content_index', $bulk->getFilters());
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->addFlash(
                     'danger',
                     'Whoops! It seems something went wrong during the execution of this bulk action! The following error has given: "'.$e->getMessage().'"'

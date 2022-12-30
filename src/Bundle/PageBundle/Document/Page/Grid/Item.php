@@ -137,8 +137,6 @@ class Item
     }
 
     /**
-     * @param array $attributes
-     *
      * @return $this
      */
     public function setAttributes(array $attributes = [])

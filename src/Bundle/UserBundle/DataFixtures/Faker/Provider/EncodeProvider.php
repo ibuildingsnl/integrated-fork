@@ -12,16 +12,12 @@ class EncodeProvider
      */
     private $factory;
 
-    /**
-     * @param PasswordHasherFactoryInterface $factory
-     */
     public function __construct(PasswordHasherFactoryInterface $factory)
     {
         $this->factory = $factory;
     }
 
     /**
-     * @param User   $user
      * @param string $password
      *
      * @return string

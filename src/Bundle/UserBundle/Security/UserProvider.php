@@ -30,9 +30,6 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      */
     private $manager;
 
-    /**
-     * @param UserManagerInterface $manager
-     */
     public function __construct(UserManagerInterface $manager)
     {
         $this->manager = $manager;

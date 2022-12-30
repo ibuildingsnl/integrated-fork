@@ -12,7 +12,6 @@
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Exception;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
@@ -29,9 +28,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     protected $dm = null;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
@@ -52,7 +48,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
 

@@ -20,32 +20,16 @@ class KeyGenerator
      */
     private $userManager;
 
-    /**
-     * @param UserManager $userManager
-     */
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
     }
 
-    /**
-     * @param int           $timestamp
-     * @param UserInterface $user
-     *
-     * @return string
-     */
     public function generateKey(int $timestamp, UserInterface $user): string
     {
         return sha1($timestamp.$user->getPassword().$user->getId());
     }
 
-    /**
-     * @param int    $id
-     * @param int    $timestamp
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isValidKey(int $id, int $timestamp, string $key): bool
     {
         if ($timestamp > time() || $timestamp < (time() - 24 * 3600)) {

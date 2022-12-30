@@ -47,12 +47,6 @@ class ChannelChangedListener implements EventSubscriberInterface
      */
     private $contentTypeInformation;
 
-    /**
-     * @param DocumentManager        $dm
-     * @param ContentTypePageService $contentTypePageService
-     * @param RouteCache             $routeCache
-     * @param ContentTypeInformation $contentTypeInformation
-     */
     public function __construct(
         DocumentManager $dm,
         ContentTypePageService $contentTypePageService,
@@ -77,9 +71,6 @@ class ChannelChangedListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ChannelEvent $event
-     */
     public function channelChanged(ChannelEvent $event)
     {
         $channel = $event->getChannel();
@@ -109,17 +100,11 @@ class ChannelChangedListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ChannelEvent $event
-     */
     public function channelDeleted(ChannelEvent $event)
     {
         $this->deletePagesByChannel($event->getChannel());
     }
 
-    /**
-     * @param Channel $channel
-     */
     protected function deletePagesByChannel(Channel $channel)
     {
         $pages = $this->getPageRepository()->findBy(['channel.$id' => $channel->getId()]);
@@ -130,9 +115,6 @@ class ChannelChangedListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ContentType $contentType
-     */
     protected function deletePagesByContentType(ContentType $contentType, $channelId)
     {
         $criteria = ['contentType.$id' => $contentType->getId()];

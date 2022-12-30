@@ -21,17 +21,12 @@ class ContentTypeInformation
      */
     private $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
     }
 
     /**
-     * @param string $channelId
-     *
      * @return array
      */
     public function getPublishingAllowedContentTypes(string $channelId)

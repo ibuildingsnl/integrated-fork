@@ -11,23 +11,24 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping;
 
+use Integrated\Bundle\SlugBundle\Mapping\Driver\DriverRegistry;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\ClassMetadata;
 
 class MetadataFactory implements MetadataFactoryInterface
 {
     /**
-     * @var DriverInterface
+     * @var DriverRegistry
      */
-    private $driver;
+    private $registry;
 
     /**
      * @var ClassMetadataInterface[]
      */
     private $data = [];
 
-    public function __construct(DriverInterface $driver)
+    public function __construct(DriverRegistry $registry)
     {
-        $this->driver = $driver;
+        $this->registry = $registry;
     }
 
     public function getMetadata(string $class): ClassMetadataInterface
@@ -41,7 +42,11 @@ class MetadataFactory implements MetadataFactoryInterface
 
     private function loadMetadata(string $class): ClassMetadataInterface
     {
-        $this->driver->loadMetadataForClass($class, $metadata = new ClassMetadata());
+        $metadata = new ClassMetadata();
+
+        foreach ($this->registry->getDrivers() as $driver) {
+            $driver->loadMetadataForClass($class, $metadata);
+        }
 
         return $metadata;
     }

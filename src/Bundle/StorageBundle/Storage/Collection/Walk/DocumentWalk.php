@@ -20,8 +20,6 @@ use Integrated\Common\Storage\Database\DatabaseInterface;
 class DocumentWalk
 {
     /**
-     * @param DatabaseInterface $database
-     *
      * @return \Closure
      */
     public static function save(DatabaseInterface $database)

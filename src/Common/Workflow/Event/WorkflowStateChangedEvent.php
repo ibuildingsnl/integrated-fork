@@ -30,10 +30,6 @@ class WorkflowStateChangedEvent extends Event
      */
     protected $content;
 
-    /**
-     * @param State            $state
-     * @param ContentInterface $content
-     */
     public function __construct(State $state, ContentInterface $content)
     {
         $this->state = $state;

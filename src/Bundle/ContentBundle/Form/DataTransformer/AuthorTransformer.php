@@ -29,8 +29,6 @@ class AuthorTransformer implements DataTransformerInterface
 
     /**
      * AuthorTransformer constructor.
-     *
-     * @param ManagerRegistry $mr
      */
     public function __construct(ManagerRegistry $mr)
     {

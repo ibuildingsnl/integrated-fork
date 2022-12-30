@@ -41,10 +41,6 @@ class ContentTypeHandlerFactory implements HandlerFactoryInterface
 
     /**
      * Constructor.
-     *
-     * @param DocumentManager         $documentManager
-     * @param Queue                   $solrQueue
-     * @param SearchContentReferenced $searchContentReferenced
      */
     public function __construct(DocumentManager $documentManager, Queue $solrQueue, SearchContentReferenced $searchContentReferenced)
     {

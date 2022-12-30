@@ -44,11 +44,6 @@ class DefaultController extends AbstractController
      */
     protected $tokenStorage;
 
-    /**
-     * @param DocumentManager       $dm
-     * @param FormFactory           $formFactory
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
         DocumentManager $dm,
         FormFactory $formFactory,
@@ -60,9 +55,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param Content $content
-     * @param string  $field
-     * @param Request $request
+     * @param string $field
      *
      * @return \Symfony\Component\HttpFoundation\Response|JsonResponse
      */
@@ -96,9 +89,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Comment $comment
-     *
      * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function getComment(Request $request, Comment $comment)
@@ -131,8 +121,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param Comment $comment
-     *
      * @return JsonResponse
      */
     public function delete(Comment $comment)
@@ -147,9 +135,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param Comment $comment
-     * @param $replyId
-     *
      * @return JsonResponse
      */
     public function deleteReply(Comment $comment, $replyId)

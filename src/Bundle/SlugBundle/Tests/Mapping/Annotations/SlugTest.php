@@ -14,6 +14,9 @@ namespace Integrated\Bundle\SlugBundle\Tests\Mapping\Annotations;
 use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @deprecated
+ */
 class SlugTest extends TestCase
 {
     /**

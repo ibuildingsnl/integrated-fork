@@ -39,11 +39,6 @@ class ContentTypeVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ResolverInterface $resolver
-     * @param ObjectRepository  $repository
-     * @param array             $permissions
-     */
     public function __construct(ResolverInterface $resolver, ObjectRepository $repository, array $permissions = [])
     {
         $this->resolver = $resolver;

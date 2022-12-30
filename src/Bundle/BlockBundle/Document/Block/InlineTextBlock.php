@@ -12,20 +12,18 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
- *
- * @Type\Document("Inline text block")
  */
+#[Type\Document('Inline text block')]
 class InlineTextBlock extends Block
 {
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
     protected $content;
 
     /**
@@ -58,9 +56,6 @@ class InlineTextBlock extends Block
      */
     protected $disabled = false;
 
-    /**
-     * @param AbstractPage $page
-     */
     public function __construct(AbstractPage $page)
     {
         parent::__construct();

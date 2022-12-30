@@ -18,7 +18,6 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBContentTypeListener;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -65,7 +64,7 @@ class MongoDBContenTypeListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance()->postUpdate($this->getEvent(new stdClass()));
+        $this->getInstance()->postUpdate($this->getEvent(new \stdClass()));
     }
 
     /**

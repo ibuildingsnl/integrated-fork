@@ -34,11 +34,6 @@ class ProfileController extends AbstractController
      */
     protected $hasherFactory;
 
-    /**
-     * @param UserManagerInterface           $userManager
-     * @param PasswordHasherFactoryInterface $hasherFactory
-     * @param ContainerInterface             $container
-     */
     public function __construct(
         UserManagerInterface $userManager,
         PasswordHasherFactoryInterface $hasherFactory,
@@ -50,8 +45,6 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -84,8 +77,6 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createProfileForm(UserInterface $user)

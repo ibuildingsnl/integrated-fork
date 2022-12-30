@@ -56,11 +56,7 @@ class ContentProvider
     /**
      * ContentProvider constructor.
      *
-     * @param Client                $client
-     * @param DocumentManager       $dm
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationChecker  $authorizationChecker
-     * @param bool                  $workflowExtension
+     * @param bool $workflowExtension
      */
     public function __construct(
         Client $client,
@@ -147,9 +143,6 @@ class ContentProvider
     }
 
     /**
-     * @param Request $request
-     * @param $limit
-     *
      * @return array
      */
     public function getContentFromSolr(Request $request, $limit)
@@ -159,7 +152,7 @@ class ContentProvider
         if ($timePeriod = $request->query->get('year_month_day_filter')) {
             $query
                 ->createFilterQuery('pub_created')
-                ->setQuery('pub_created: '.'['.$timePeriod.']');
+                ->setQuery('pub_created: ['.$timePeriod.']');
         }
 
         // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
@@ -331,8 +324,6 @@ class ContentProvider
     }
 
     /**
-     * @param Query $query
-     *
      * @return \Solarium\QueryType\Select\Query\FilterQuery
      */
     protected function addWorkflowFilter(Query $query)

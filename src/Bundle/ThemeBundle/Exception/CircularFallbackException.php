@@ -18,7 +18,6 @@ class CircularFallbackException extends \ErrorException
 {
     /**
      * @param string $template
-     * @param array  $fallbackStack
      *
      * @return CircularFallbackException
      */

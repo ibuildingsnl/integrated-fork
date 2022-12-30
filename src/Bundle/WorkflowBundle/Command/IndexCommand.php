@@ -11,15 +11,12 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Doctrine\Persistence\ObjectRepository;
-use Exception;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
-use InvalidArgumentException;
-use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,8 +51,6 @@ class IndexCommand extends Command
 
     /**
      * IndexCommand constructor.
-     *
-     * @param StateManager $stateManager
      */
     public function __construct(StateManager $stateManager, ResolverInterface $resolver, ObjectRepository $workflowRepository, LockFactory $lockFactory)
     {
@@ -94,7 +89,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$input->getArgument('id') && !$input->getOption('full')) {
-            throw new InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
+            throw new \InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
         }
 
         $lock = $this->getLock();
@@ -126,7 +121,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
                     }
 
                     if ($invalid) {
-                        throw new InvalidArgumentException(sprintf(
+                        throw new \InvalidArgumentException(sprintf(
                             'The workflow ids "%s" do not exists',
                             implode(', ', $invalid)
                         ));
@@ -152,14 +147,14 @@ The <info>%command.name%</info> command starts a index of all the content from t
 
             try {
                 $command = $this->getApplication()->find('solr:indexer:queue');
-            } catch (Exception $e) {
-                throw new RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
+            } catch (\Exception $e) {
+                throw new \RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
             }
 
             try {
                 return $command->run(new ArrayInput(['--ignore' => true, 'id' => $types]), $output);
-            } catch (Exception $e) {
-                throw new RuntimeException(sprintf(
+            } catch (\Exception $e) {
+                throw new \RuntimeException(sprintf(
                     'An error occurred when executing the command "%s"',
                     'solr:indexer:queue'
                 ), 0, $e);

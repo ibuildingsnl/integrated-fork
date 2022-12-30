@@ -60,9 +60,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * ScraperPageLoader constructor.
-     *
-     * @param EntityManagerInterface  $entityManager
-     * @param ChannelContextInterface $channelContext
      */
     public function __construct(EntityManagerInterface $entityManager, ChannelContextInterface $channelContext)
     {
@@ -77,8 +74,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * @param string $name
-     *
-     * @return Source
      *
      * @throws LoaderError
      */
@@ -97,8 +92,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * @param string $name
-     *
-     * @return bool
      *
      * @throws InvalidArgumentException
      */
@@ -119,8 +112,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * @param string $name
-     *
-     * @return string
      */
     public function getCacheKey($name): string
     {
@@ -134,8 +125,6 @@ class ScraperPageLoader implements LoaderInterface
     /**
      * @param string $name
      * @param int    $time
-     *
-     * @return bool
      *
      * @throws LoaderError
      */
@@ -153,8 +142,6 @@ class ScraperPageLoader implements LoaderInterface
     }
 
     /**
-     * @param bool $force
-     *
      * @throws InvalidArgumentException
      */
     public function pageListCacheWarmup(bool $force = false): void

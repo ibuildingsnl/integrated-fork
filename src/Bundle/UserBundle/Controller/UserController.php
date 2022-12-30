@@ -13,16 +13,16 @@ namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\UserBundle\Form\Type\UserFilterType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -46,8 +46,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -78,8 +76,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -112,8 +108,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws NotFoundHttpException
@@ -153,8 +147,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Request $request)
@@ -215,8 +207,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createEditForm(UserInterface $user)
@@ -240,8 +230,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(UserInterface $user)

@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Command;
 
-use Exception;
 use Integrated\Bundle\UserBundle\Doctrine\RoleManager;
 use Integrated\Bundle\UserBundle\Doctrine\ScopeManager;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -54,13 +53,6 @@ class CreateUserCommand extends Command
      */
     private $hasherFactory;
 
-    /**
-     * @param ScopeManager                   $scopeManager
-     * @param RoleManager                    $roleManager
-     * @param UserManagerInterface           $userManager
-     * @param ValidatorInterface             $validator
-     * @param PasswordHasherFactoryInterface $hasherFactory
-     */
     public function __construct(
         ScopeManager $scopeManager,
         RoleManager $roleManager,
@@ -178,7 +170,7 @@ The <info>%command.name%</info> command creates a new user
 
         try {
             $this->userManager->persist($user);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
 
             return 1;

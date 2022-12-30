@@ -29,7 +29,7 @@ This bundle can be installed following these steps:
 ## Example
     
     use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-    use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+    use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
     
     class Article
     {
@@ -42,8 +42,8 @@ This bundle can be installed following these steps:
         /**
          * @var string
          * @ODM\String
-         * @Slug(fields={"title"})
          */
+        #Slug[fields: ['getSlug']]
         protected $slug;
         
         ...
@@ -51,15 +51,15 @@ This bundle can be installed following these steps:
 
 ### Multiple fields
 
-    @Slug(fields={"title", "anotherField"})
+    #Slug[fields: ['title', 'anotherField']]
     
 ### Custom seperator
 
-     @Slug(fields={"title"}, seperator="_")
+     #Slug[fields: ['title'], seperator: '_']
     
 ### Custom method to generate slug
     
-    @Slug(fields={"getSlug"})
+    #Slug[fields: ['getSlug']]
 
 ## License ##
 This bundle is under the MIT license. See the complete license in the bundle:

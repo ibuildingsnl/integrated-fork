@@ -27,9 +27,8 @@ class ContainerAwareFileEventListener extends FileEventListener
     private $initializer;
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $manager
-     * @param string             $intentTransformer
+     * @param string $manager
+     * @param string $intentTransformer
      */
     public function __construct(ContainerInterface $container, $manager, $intentTransformer)
     {

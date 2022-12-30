@@ -18,7 +18,6 @@ use Integrated\Bundle\UserBundle\Form\EventListener\UserProfileOptionalListener;
 use Integrated\Bundle\UserBundle\Form\EventListener\UserProfilePasswordListener;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use ReflectionClass;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -49,9 +48,6 @@ class UserFormType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param UserManagerInterface           $manager
-     * @param PasswordHasherFactoryInterface $hasherFactory
      */
     public function __construct(UserManagerInterface $manager, PasswordHasherFactoryInterface $hasherFactory)
     {
@@ -182,7 +178,7 @@ class UserFormType extends AbstractType
                 // yeah now we are going to cheat as we don't want to rewrite what is already
                 // made by someone else.
 
-                $reflection = new ReflectionClass('Symfony\Component\Form\Extension\Validator\Constraints\FormValidator');
+                $reflection = new \ReflectionClass('Symfony\Component\Form\Extension\Validator\Constraints\FormValidator');
 
                 $method = $reflection->getMethod('getValidationGroups');
                 $method->setAccessible(true);

@@ -131,8 +131,6 @@ class MemoryResolverBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $name
-     *
      * @return ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getConfig($name)

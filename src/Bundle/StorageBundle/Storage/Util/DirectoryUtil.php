@@ -19,9 +19,8 @@ use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 class DirectoryUtil
 {
     /**
-     * @param string           $directory
-     * @param StorageInterface $storage
-     * @param string|null      $overwriteExtension
+     * @param string      $directory
+     * @param string|null $overwriteExtension
      *
      * @return \SplFileInfo
      */

@@ -15,6 +15,8 @@ use Integrated\Common\Form\Mapping\Annotations\Document;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
+ * @deprecated
  */
 class DocumentTest extends \PHPUnit\Framework\TestCase
 {

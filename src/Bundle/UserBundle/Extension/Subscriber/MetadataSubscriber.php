@@ -30,9 +30,6 @@ class MetadataSubscriber implements MetadataSubscriberInterface
      */
     private $extension;
 
-    /**
-     * @param ExtensionInterface $extension
-     */
     public function __construct(ExtensionInterface $extension)
     {
         $this->extension = $extension;

@@ -34,11 +34,6 @@ class SearchController extends AbstractController
      */
     protected $serializer;
 
-    /**
-     * @param Client             $client
-     * @param Serializer         $serializer
-     * @param ContainerInterface $container
-     */
     public function __construct(Client $client, Serializer $serializer, ContainerInterface $container)
     {
         $this->client = $client;
@@ -47,8 +42,7 @@ class SearchController extends AbstractController
     }
 
     /**
-     * @param string  $query
-     * @param Request $request
+     * @param string $query
      *
      * @return Response
      */

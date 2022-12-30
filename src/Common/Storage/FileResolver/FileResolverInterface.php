@@ -17,7 +17,6 @@ namespace Integrated\Common\Storage\FileResolver;
 interface FileResolverInterface
 {
     /**
-     * @param array  $options
      * @param string $identifier
      */
     public function __construct(array $options, $identifier);

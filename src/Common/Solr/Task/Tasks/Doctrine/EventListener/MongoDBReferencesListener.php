@@ -30,8 +30,6 @@ class MongoDBReferencesListener implements EventSubscriber
 
     /**
      * constructor.
-     *
-     * @param QueueInterface $queue
      */
     public function __construct(QueueInterface $queue)
     {
@@ -49,25 +47,16 @@ class MongoDBReferencesListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process($event);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postUpdate(LifecycleEventArgs $event)
     {
         $this->process($event);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     protected function process(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

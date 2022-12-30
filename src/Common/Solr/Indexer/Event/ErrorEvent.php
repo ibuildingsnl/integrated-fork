@@ -28,10 +28,6 @@ class ErrorEvent extends MessageEvent
 
     /**
      * Event constructor.
-     *
-     * @param IndexerInterface      $indexer
-     * @param QueueMessageInterface $message
-     * @param ExceptionInterface    $exception
      */
     public function __construct(IndexerInterface $indexer, QueueMessageInterface $message, ExceptionInterface $exception)
     {
@@ -43,7 +39,7 @@ class ErrorEvent extends MessageEvent
     /**
      * Get the exception object for this event.
      *
-     * @return ExceptionInterface|Exception
+     * @return ExceptionInterface|\Exception
      */
     public function getException()
     {

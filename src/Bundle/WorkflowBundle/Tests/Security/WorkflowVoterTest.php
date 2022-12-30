@@ -574,8 +574,6 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $groups
-     *
      * @return GroupableInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getUser(array $groups = [])
@@ -637,8 +635,6 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $permissions
-     *
      * @return State|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getState(array $permissions = [], $never = false)

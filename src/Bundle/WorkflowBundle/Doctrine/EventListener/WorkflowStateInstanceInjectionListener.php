@@ -12,9 +12,9 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 
 /**
@@ -32,10 +32,6 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
      */
     protected $odm;
 
-    /**
-     * @param ManagerRegistry $orm
-     * @param ManagerRegistry $odm
-     */
     public function __construct(ManagerRegistry $orm, ManagerRegistry $odm)
     {
         $this->orm = $orm;
@@ -57,8 +53,6 @@ class WorkflowStateInstanceInjectionListener implements EventSubscriber
     /**
      * Add the user and content instance or a proxy of the instances to the State
      * entity.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function postLoad(LifecycleEventArgs $args)
     {

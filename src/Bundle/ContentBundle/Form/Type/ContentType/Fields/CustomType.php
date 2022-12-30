@@ -33,8 +33,6 @@ class CustomType extends AbstractType
 
     /**
      * CustomType constructor.
-     *
-     * @param RegistryInterface $registry
      */
     public function __construct(RegistryInterface $registry)
     {

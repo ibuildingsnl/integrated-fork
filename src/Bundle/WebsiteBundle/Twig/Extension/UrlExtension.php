@@ -32,10 +32,6 @@ class UrlExtension extends AbstractExtension
      */
     protected $solrUrlExtractor;
 
-    /**
-     * @param UrlResolver      $urlResolver
-     * @param SolrUrlExtractor $solrUrlExtractor
-     */
     public function __construct(UrlResolver $urlResolver, SolrUrlExtractor $solrUrlExtractor)
     {
         $this->urlResolver = $urlResolver;

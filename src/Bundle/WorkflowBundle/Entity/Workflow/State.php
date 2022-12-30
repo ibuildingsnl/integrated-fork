@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Entity\Workflow;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
@@ -71,7 +70,7 @@ class State
     private $assigned_instance = null;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $deadline = null;
 
@@ -102,8 +101,6 @@ class State
     }
 
     /**
-     * @param Definition\State $state
-     *
      * @return $this
      */
     public function setState(Definition\State $state)
@@ -212,7 +209,7 @@ class State
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDeadline()
     {
@@ -220,11 +217,11 @@ class State
     }
 
     /**
-     * @param DateTime $deadline
+     * @param \DateTime $deadline
      *
      * @return $this
      */
-    public function setDeadline(DateTime $deadline = null)
+    public function setDeadline(\DateTime $deadline = null)
     {
         $this->deadline = $deadline;
 
@@ -260,8 +257,6 @@ class State
     }
 
     /**
-     * @param Log $log
-     *
      * @return $this
      */
     public function addLog(Log $log)
@@ -279,8 +274,6 @@ class State
     }
 
     /**
-     * @param Log $log
-     *
      * @return $this
      */
     public function removeLog(Log $log)

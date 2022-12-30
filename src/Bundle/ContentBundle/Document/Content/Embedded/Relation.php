@@ -92,8 +92,6 @@ class Relation implements RelationInterface
     /**
      * Set references of Relations.
      *
-     * @param Collection $references
-     *
      * @return $this
      */
     public function setReferences(Collection $references)
@@ -114,8 +112,6 @@ class Relation implements RelationInterface
     /**
      * Add references to references collection.
      *
-     * @param Collection $references
-     *
      * @return $this
      */
     public function addReferences(Collection $references)
@@ -130,8 +126,6 @@ class Relation implements RelationInterface
     /**
      * Add reference to references collection.
      *
-     * @param ContentInterface $reference
-     *
      * @return $this
      */
     public function addReference(ContentInterface $reference)
@@ -145,8 +139,6 @@ class Relation implements RelationInterface
 
     /**
      * Remove reference from references collection.
-     *
-     * @param ContentInterface $reference
      *
      * @return bool true if this collection contained the specified element, false otherwise
      */

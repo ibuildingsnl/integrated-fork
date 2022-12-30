@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
-use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -59,8 +59,6 @@ class SearchSelectionController extends AbstractController
     /**
      * Lists all the SearchSelection documents.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -74,8 +72,6 @@ class SearchSelectionController extends AbstractController
 
     /**
      * Creates a new SearchSelection document.
-     *
-     * @param Request $request
      *
      * @return Response|RedirectResponse
      */
@@ -111,9 +107,6 @@ class SearchSelectionController extends AbstractController
     /**
      * Edits an existing SearchSelection document.
      *
-     * @param Request         $request
-     * @param SearchSelection $searchSelection
-     *
      * @return Response|RedirectResponse
      */
     public function edit(Request $request, SearchSelection $searchSelection)
@@ -142,9 +135,6 @@ class SearchSelectionController extends AbstractController
 
     /**
      * Deletes a SearchSelection document.
-     *
-     * @param Request         $request
-     * @param SearchSelection $searchSelection
      *
      * @return Response|RedirectResponse
      */
@@ -201,8 +191,6 @@ class SearchSelectionController extends AbstractController
     /**
      * Creates a form to create a SearchSelection document.
      *
-     * @param SearchSelection $searchSelection
-     *
      * @return FormInterface
      */
     protected function createCreateForm(SearchSelection $searchSelection)
@@ -230,8 +218,6 @@ class SearchSelectionController extends AbstractController
     /**
      * Creates a form to edit a SearchSelection document.
      *
-     * @param SearchSelection $searchSelection
-     *
      * @return FormInterface
      */
     protected function createEditForm(SearchSelection $searchSelection)
@@ -256,7 +242,6 @@ class SearchSelectionController extends AbstractController
     /**
      * Creates a form to delete a SearchSelection document by id.
      *
-     * @param $id
      * @param bool|false $notDelete
      *
      * @return FormInterface

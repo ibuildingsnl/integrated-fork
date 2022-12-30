@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -32,10 +32,6 @@ class WebsiteEditableListener implements EventSubscriberInterface
      */
     protected $javascripts;
 
-    /**
-     * @param EditableChecker $websiteEditableChecker
-     * @param AssetManager    $javascripts
-     */
     public function __construct(EditableChecker $websiteEditableChecker, AssetManager $javascripts)
     {
         $this->websiteEditableChecker = $websiteEditableChecker;
@@ -52,9 +48,6 @@ class WebsiteEditableListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onController(ControllerEvent $event)
     {
         if (!$this->websiteEditableChecker->checkEditable()) {

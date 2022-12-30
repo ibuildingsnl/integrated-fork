@@ -31,9 +31,6 @@ class ClickedButtonListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         foreach ($event->getForm() as $child) {

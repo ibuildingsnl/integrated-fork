@@ -42,9 +42,7 @@ class JobFactory implements JobFactoryInterface
     /**
      * constructor.
      *
-     * @param SerializerInterface $serializer
-     * @param ObjectManager       $manager
-     * @param string              $format
+     * @param string $format
      */
     public function __construct(SerializerInterface $serializer, ObjectManager $manager, $format = 'json')
     {

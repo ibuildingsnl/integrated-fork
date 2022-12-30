@@ -29,9 +29,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
      */
     protected $authorizationChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -47,9 +44,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ConfigureMenuEvent $event
-     */
     public function onMenuConfigure(ConfigureMenuEvent $event): void
     {
         $menu = $event->getMenu();

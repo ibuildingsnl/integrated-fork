@@ -11,9 +11,6 @@
 
 namespace Integrated\Common\Content;
 
-use ArrayIterator;
-use Traversable;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -24,9 +21,6 @@ class Registry implements RegistryInterface
      */
     protected $data;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -115,9 +109,9 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 
     /**

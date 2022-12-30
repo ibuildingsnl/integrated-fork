@@ -22,10 +22,6 @@ class SearchSelectionsExtension extends AbstractExtension
      */
     private $tokenStorage;
 
-    /**
-     * @param DocumentManager       $manager
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(DocumentManager $manager, TokenStorageInterface $tokenStorage)
     {
         $this->repository = $manager->getRepository(SearchSelection::class);

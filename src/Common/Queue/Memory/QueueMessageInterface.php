@@ -17,22 +17,16 @@ interface QueueMessageInterface extends BaseQueueMessageInterface
 {
     /**
      * The timestamp when this message is created.
-     *
-     * @return int
      */
     public function getCreatedAt(): int;
 
     /**
      * The timestamp when this message is updated.
-     *
-     * @return int
      */
     public function getUpdatedAt(): int;
 
     /**
      * The timestamp when this message should be picked up from the queue.
-     *
-     * @return int
      */
     public function getExecuteAt(): int;
 }

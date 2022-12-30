@@ -38,10 +38,6 @@ class ChannelAddHandler implements HandlerInterface
 
     /**
      * Constructor.
-     *
-     * @param string               $channel
-     * @param ObjectRepository     $repository
-     * @param AuthorizationChecker $authorizationChecker
      */
     public function __construct(string $channel, ObjectRepository $repository, AuthorizationChecker $authorizationChecker)
     {

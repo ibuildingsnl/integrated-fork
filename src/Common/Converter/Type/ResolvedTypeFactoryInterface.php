@@ -19,7 +19,6 @@ interface ResolvedTypeFactoryInterface
     /**
      * Create a resolved type from the given type and extensions.
      *
-     * @param TypeInterface            $type
      * @param TypeExtensionInterface[] $extensions
      *
      * @return ResolvedTypeInterface

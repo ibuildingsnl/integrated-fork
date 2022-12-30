@@ -11,13 +11,12 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Common\Queue\QueueInterface;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -73,7 +72,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostPersistNoWorkflow()
     {
-        $event = $this->getEvent(new stdClass());
+        $event = $this->getEvent(new \stdClass());
 
         $this->queue->expects($this->never())
             ->method('push');
@@ -123,7 +122,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostUpdateNoWorkflow()
     {
-        $event = $this->getEvent(new stdClass());
+        $event = $this->getEvent(new \stdClass());
 
         $this->queue->expects($this->never())
             ->method('push');
@@ -158,8 +157,6 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $object
-     *
      * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEvent($object)
@@ -173,8 +170,6 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
      * @return State|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getState($id)
@@ -188,8 +183,6 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
      * @return Definition|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getDefinition($id)

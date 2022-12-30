@@ -39,8 +39,6 @@ class ChainProvider implements TypeProviderInterface
 
     /**
      * Add the provider to the chain.
-     *
-     * @param TypeProviderInterface $provider
      */
     public function addProvider(TypeProviderInterface $provider)
     {
@@ -51,8 +49,6 @@ class ChainProvider implements TypeProviderInterface
 
     /**
      * Check if the provider is added to the chain.
-     *
-     * @param TypeProviderInterface $provider
      *
      * @return bool
      */
@@ -67,8 +63,6 @@ class ChainProvider implements TypeProviderInterface
 
     /**
      * Remove the provider from the chain.
-     *
-     * @param TypeProviderInterface $provider
      */
     public function removeProvider(TypeProviderInterface $provider)
     {

@@ -19,8 +19,6 @@ interface ResolvedProcessorFactoryInterface
     /**
      * Create a resolved processor from the given processors.
      *
-     * @param array $processors
-     *
      * @return ResolvedProcessorInterface
      */
     public function createProcessor(array $processors);

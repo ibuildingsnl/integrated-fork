@@ -81,8 +81,6 @@ interface ChannelManagerInterface
     /**
      * Finds the channel by a set of criteria.
      *
-     * @param array $criteria
-     *
      * @return ChannelInterface[]
      */
     public function findBy(array $criteria);

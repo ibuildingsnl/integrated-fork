@@ -145,9 +145,6 @@ class Comment
         $this->replies = $replies;
     }
 
-    /**
-     * @param Reply $reply
-     */
     public function addReply(Reply $reply)
     {
         if (!$this->replies->contains($reply)) {
@@ -156,8 +153,6 @@ class Comment
     }
 
     /**
-     * @param $replyId
-     *
      * @return Reply|null
      */
     public function getReplyById($replyId)
@@ -170,8 +165,6 @@ class Comment
     }
 
     /**
-     * @param $replyId
-     *
      * @return bool
      */
     public function removeReplyById($replyId)
@@ -191,9 +184,6 @@ class Comment
         return $this->author;
     }
 
-    /**
-     * @param Person|null $author
-     */
     public function setAuthor(Person $author = null)
     {
         $this->author = $author;

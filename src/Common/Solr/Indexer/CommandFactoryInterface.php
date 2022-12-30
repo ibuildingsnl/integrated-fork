@@ -21,8 +21,6 @@ interface CommandFactoryInterface
     /**
      * Create a solarium update command from a job.
      *
-     * @param JobInterface $job
-     *
      * @return AbstractCommand
      */
     public function create(JobInterface $job);

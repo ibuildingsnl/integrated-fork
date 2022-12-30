@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
-use ArrayIterator;
 use ReturnTypeWillChange;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -27,8 +25,6 @@ class Options implements OptionsInterface
 
     /**
      * Constructor.
-     *
-     * @param array $data
      */
     public function __construct(array $data = [])
     {
@@ -106,9 +102,9 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 
     /**
@@ -122,7 +118,7 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset): mixed
     {
         return $this->get($offset);

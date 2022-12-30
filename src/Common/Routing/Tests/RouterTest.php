@@ -11,10 +11,9 @@
 
 namespace Integrated\Common\Routing\Tests;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Integrated\Common\Routing\Router;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
@@ -82,9 +81,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->router->expects($this->exactly(3))
@@ -114,9 +113,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $request = [
@@ -148,9 +147,9 @@ class RouterTest extends TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $request = [
@@ -233,9 +232,9 @@ class RouterTest extends TestCase
     public function testGetRouteCollection()
     {
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->router->expects($this->exactly(3))

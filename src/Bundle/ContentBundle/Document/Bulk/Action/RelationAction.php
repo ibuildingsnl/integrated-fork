@@ -73,8 +73,6 @@ class RelationAction implements BulkActionInterface
     }
 
     /**
-     * @param Relation $relation
-     *
      * @return $this
      */
     public function setRelation(Relation $relation)
@@ -110,8 +108,6 @@ class RelationAction implements BulkActionInterface
     }
 
     /**
-     * @param ContentInterface $reference
-     *
      * @return $this
      */
     public function addReference(ContentInterface $reference)
@@ -124,8 +120,6 @@ class RelationAction implements BulkActionInterface
     }
 
     /**
-     * @param ContentInterface $reference
-     *
      * @return $this
      */
     public function removeReference(ContentInterface $reference)

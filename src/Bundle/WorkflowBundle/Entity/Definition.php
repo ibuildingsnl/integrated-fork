@@ -102,8 +102,6 @@ class Definition
     }
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
     public function addState(State $state)
@@ -121,8 +119,6 @@ class Definition
     }
 
     /**
-     * @param State $state
-     *
      * @return bool
      */
     public function hasState(State $state)
@@ -131,8 +127,6 @@ class Definition
     }
 
     /**
-     * @param State $state
-     *
      * @return $this
      */
     public function removeState(State $state)

@@ -18,7 +18,6 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
-use stdClass;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ContentTypeExtension
@@ -33,10 +32,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param array  $expected
-     *
      * @dataProvider buildProvider
      */
     public function testBuild(string $type, string $name, array $expected)
@@ -76,7 +71,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $container->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance($this->getResolver())->build($container, new stdClass());
+        $this->getInstance($this->getResolver())->build($container, new \stdClass());
     }
 
     public function testGetName()
@@ -85,8 +80,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ResolverInterface $resolver
-     *
      * @return ContentTypeExtension
      */
     protected function getInstance(ResolverInterface $resolver)
@@ -106,8 +99,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $type
-     *
      * @return Content|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContent(string $type)
@@ -121,8 +112,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $name
-     *
      * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContentType(string $name)
@@ -136,9 +125,6 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string|null               $type
-     * @param ContentTypeInterface|null $contentType
-     *
      * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
