@@ -426,7 +426,7 @@ body.hide-options {
         }
 
         .aside-item-list {
-            input[type=text] {
+            input[type=text], input[type=number] {
                 height: 33px;
             }
 
