@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
@@ -20,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ParentIDController extends AbstractController
 {
@@ -43,10 +43,6 @@ class ParentIDController extends AbstractController
      */
     private $translator;
 
-    /**
-     * @param DocumentManager $dm
-     * @param ContentProvider $contentProvider
-     */
     public function __construct(
         DocumentManager $dm,
         ContentProvider $contentProvider,
@@ -58,7 +54,6 @@ class ParentIDController extends AbstractController
     }
 
     /**
-     * @param Request    $request
      * @param BulkAction $bulk
      *
      * @return RedirectResponse|Response

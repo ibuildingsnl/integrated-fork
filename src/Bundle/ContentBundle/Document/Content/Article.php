@@ -88,7 +88,7 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['placeholder' => 'Your article starts here'])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
     protected $content;
 
     /**

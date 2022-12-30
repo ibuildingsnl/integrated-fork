@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ThemeBundle\Controller;
 
-use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper;
 use Integrated\Bundle\ThemeBundle\Form\Type\ScraperType;
@@ -154,8 +154,6 @@ class ScraperController extends AbstractController
     /**
      * Creates a form to edit a Scraper.
      *
-     * @param Scraper $scraper
-     *
      * @return FormInterface
      */
     protected function createEditForm(Scraper $scraper)
@@ -175,8 +173,6 @@ class ScraperController extends AbstractController
     }
 
     /**
-     * @param Scraper $scraper
-     *
      * @return FormInterface
      */
     protected function createNewForm(Scraper $scraper)
@@ -195,11 +191,6 @@ class ScraperController extends AbstractController
         return $form;
     }
 
-    /**
-     * @param Scraper $scraper
-     *
-     * @return Form
-     */
     protected function createDeleteForm(Scraper $scraper): Form
     {
         $form = $this->createForm(

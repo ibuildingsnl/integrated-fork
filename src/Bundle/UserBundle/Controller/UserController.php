@@ -13,16 +13,16 @@ namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Integrated\Bundle\UserBundle\Form\Type\UserFilterType;
 use Integrated\Bundle\UserBundle\Form\Type\UserFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
+use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

@@ -24,9 +24,6 @@ class TailwindButtonExtension extends AbstractExtension
         'attr' => [],
     ];
 
-    /**
-     * @param TailwindIconExtension $iconExtension
-     */
     public function __construct(TailwindIconExtension $iconExtension)
     {
         $this->iconExtension = $iconExtension;

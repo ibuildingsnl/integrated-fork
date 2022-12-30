@@ -29,9 +29,6 @@ class TailwindIconExtension extends AbstractExtension
      */
     private $iconTag;
 
-    /**
-     * @param string $iconPrefix
-     */
     public function __construct(string $iconPrefix)
     {
         $this->iconPrefix = $iconPrefix;

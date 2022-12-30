@@ -11,22 +11,22 @@
 
 namespace Integrated\Bundle\BlockBundle\Controller;
 
-use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
-use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Form\FormInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
+use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
+use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>

@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -27,8 +27,6 @@ class MediaGalleryMenu
 
     /**
      * SearchContentReferenced constructor.
-     *
-     * @param DocumentManager $dm
      */
     public function __construct(DocumentManager $dm, private AuthorizationCheckerInterface $authorizationChecker)
     {
