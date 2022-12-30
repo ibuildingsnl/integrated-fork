@@ -55,8 +55,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -77,8 +75,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -111,9 +107,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope   $scope
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws NotFoundHttpException
@@ -147,9 +140,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope   $scope
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Scope $scope, Request $request)
@@ -224,8 +214,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope $scope
-     *
      * @return FormInterface
      */
     protected function createEditForm(Scope $scope)
@@ -245,8 +233,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope $scope
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(Scope $scope)

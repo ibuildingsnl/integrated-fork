@@ -22,9 +22,6 @@ class ChannelProvider
      */
     private $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;

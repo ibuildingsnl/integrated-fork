@@ -46,8 +46,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -78,8 +76,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -112,8 +108,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws NotFoundHttpException
@@ -153,8 +147,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Request $request)
@@ -215,8 +207,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createEditForm(UserInterface $user)
@@ -240,8 +230,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(UserInterface $user)

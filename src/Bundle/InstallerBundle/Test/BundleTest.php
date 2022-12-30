@@ -15,8 +15,6 @@ class BundleTest
 
     /**
      * Migrations constructor.
-     *
-     * @param array $bundles
      */
     public function __construct(array $bundles)
     {

@@ -35,10 +35,6 @@ class ScraperController extends AbstractController
      */
     private $scraper;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param ScraperService         $scraper
-     */
     public function __construct(EntityManagerInterface $entityManager, ScraperService $scraper)
     {
         $this->entityManager = $entityManager;
@@ -47,8 +43,6 @@ class ScraperController extends AbstractController
 
     /**
      * Lists all the Scrapers.
-     *
-     * @return Response
      */
     public function index(): Response
     {
@@ -63,8 +57,6 @@ class ScraperController extends AbstractController
 
     /**
      * Creates a new Scraper.
-     *
-     * @param Request $request
      *
      * @return Response|RedirectResponse
      */
@@ -101,9 +93,6 @@ class ScraperController extends AbstractController
     /**
      * Edits an existing Scraper.
      *
-     * @param Scraper $scraper
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
     public function edit(Scraper $scraper, Request $request): Response
@@ -133,11 +122,6 @@ class ScraperController extends AbstractController
 
     /**
      * Deletes a Scraper.
-     *
-     * @param Scraper $scraper
-     * @param Request $request
-     *
-     * @return Response
      */
     public function delete(Scraper $scraper, Request $request): Response
     {

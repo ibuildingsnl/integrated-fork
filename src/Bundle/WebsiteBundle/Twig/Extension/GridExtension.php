@@ -60,10 +60,8 @@ class GridExtension extends AbstractExtension
     }
 
     /**
-     * @param Environment $environment
-     * @param array       $context
-     * @param string      $id
-     * @param array       $options
+     * @param array  $context
+     * @param string $id
      *
      * @return string
      */

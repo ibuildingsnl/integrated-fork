@@ -63,8 +63,6 @@ class WorkflowController extends AbstractController
     /**
      * Generate a list of workflow definitions.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -82,8 +80,6 @@ class WorkflowController extends AbstractController
 
     /**
      * Create a new workflow definition.
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -114,8 +110,6 @@ class WorkflowController extends AbstractController
 
     /**
      * Edit a workflow definition.
-     *
-     * @param Request $request
      *
      * @return Response
      *
@@ -158,8 +152,6 @@ class WorkflowController extends AbstractController
     /**
      * Delete a workflow definition.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Request $request)
@@ -198,8 +190,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function changeState(Request $request)
@@ -332,8 +322,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Definition $workflow
-     *
      * @return FormInterface
      */
     protected function createEditForm(Definition $workflow)
@@ -353,8 +341,6 @@ class WorkflowController extends AbstractController
     }
 
     /**
-     * @param Definition $workflow
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(Definition $workflow)

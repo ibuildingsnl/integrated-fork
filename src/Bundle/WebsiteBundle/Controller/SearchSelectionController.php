@@ -36,9 +36,6 @@ class SearchSelectionController extends AbstractController
     /**
      * @Template
      *
-     * @param Request         $request
-     * @param SearchSelection $selection
-     *
      * @return array
      */
     public function rss(Request $request, SearchSelection $selection)

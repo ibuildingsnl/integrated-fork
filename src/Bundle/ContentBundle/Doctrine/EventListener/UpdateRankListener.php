@@ -37,8 +37,6 @@ class UpdateRankListener implements EventSubscriber
     }
 
     /**
-     * @param OnFlushEventArgs $args
-     *
      * @throws \Exception
      */
     public function onFlush(OnFlushEventArgs $args)
@@ -94,9 +92,6 @@ class UpdateRankListener implements EventSubscriber
     /**
      * Calculate a new rank by calculating the middle between the min and max string.
      *
-     * @param string $min
-     * @param string $max
-     *
      * @return string
      */
     private function calculateRank(string $min, string $max)
@@ -132,8 +127,6 @@ class UpdateRankListener implements EventSubscriber
     /**
      * Get a numeric representation of an a-zA-Z character, starting with A.
      *
-     * @param string $char
-     *
      * @return int
      */
     private function charToNum(string $char)
@@ -150,8 +143,6 @@ class UpdateRankListener implements EventSubscriber
 
     /**
      * Convert a numeric representation of an a-zA-Z character (starting with A) back to the character.
-     *
-     * @param int $number
      *
      * @return string
      */

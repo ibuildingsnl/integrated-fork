@@ -26,9 +26,6 @@ class GroupType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param GroupManagerInterface $manager
-     */
     public function __construct(GroupManagerInterface $manager)
     {
         $this->manager = $manager;

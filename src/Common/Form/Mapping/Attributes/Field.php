@@ -88,8 +88,6 @@ class Field
     /**
      * Set the label of the field.
      *
-     * @param array $options
-     *
      * @return $this
      */
     public function setOptions(array $options)

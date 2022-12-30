@@ -19,8 +19,6 @@ use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 interface ExportableInterface
 {
     /**
-     * @param ConfigInterface $config
-     *
      * @return ConfigInterface
      */
     public function getExporter(ConfigInterface $config);

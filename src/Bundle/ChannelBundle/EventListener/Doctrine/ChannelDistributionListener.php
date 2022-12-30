@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\EventListener\Doctrine;
 
-use DateTime;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
@@ -37,10 +36,6 @@ class ChannelDistributionListener implements EventSubscriber
      */
     private $serializer;
 
-    /**
-     * @param QueueInterface             $queue
-     * @param RequestSerializerInterface $serializer
-     */
     public function __construct(QueueInterface $queue, RequestSerializerInterface $serializer)
     {
         $this->queue = $queue;
@@ -59,9 +54,6 @@ class ChannelDistributionListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();
@@ -73,17 +65,11 @@ class ChannelDistributionListener implements EventSubscriber
         $this->process($document, 'delete');
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->postUpdate($event);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postUpdate(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();
@@ -103,7 +89,7 @@ class ChannelDistributionListener implements EventSubscriber
         if ($document->isPublished(false)) {
             $this->process($document, 'add', $this->getDelay($publishTime->getStartDate()));
 
-            $maxDate = new DateTime(PublishTimeInterface::DATE_MAX);
+            $maxDate = new \DateTime(PublishTimeInterface::DATE_MAX);
 
             if ($publishTime->getEndDate() && $publishTime->getEndDate() != $maxDate) {
                 $this->process($document, 'delete', $this->getDelay($publishTime->getEndDate()));
@@ -114,9 +100,8 @@ class ChannelDistributionListener implements EventSubscriber
     }
 
     /**
-     * @param ChannelableInterface $document
-     * @param string               $state
-     * @param int                  $delay
+     * @param string $state
+     * @param int    $delay
      */
     protected function process(ChannelableInterface $document, $state, $delay = 0)
     {
@@ -132,14 +117,9 @@ class ChannelDistributionListener implements EventSubscriber
         }
     }
 
-    /**
-     * @param DateTime|null $date
-     *
-     * @return int
-     */
-    private function getDelay(DateTime $date = null): int
+    private function getDelay(\DateTime $date = null): int
     {
-        $now = DateTime::createFromFormat('U', time()); // Needed for testing
+        $now = \DateTime::createFromFormat('U', time()); // Needed for testing
 
         if (!$date || $date <= $now) {
             return 0;

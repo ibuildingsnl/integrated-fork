@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\SlugBundle\Mapping\Metadata;
 
 use Integrated\Bundle\SlugBundle\Mapping\PropertyMetadataInterface;
-use ReflectionProperty;
 
 class PropertyMetadata implements PropertyMetadataInterface
 {
@@ -37,7 +36,7 @@ class PropertyMetadata implements PropertyMetadataInterface
     private $lengthLimit;
 
     /**
-     * @var ReflectionProperty
+     * @var \ReflectionProperty
      */
     private $reflection;
 
@@ -51,13 +50,10 @@ class PropertyMetadata implements PropertyMetadataInterface
         $this->separator = $separator;
         $this->lengthLimit = $lengthLimit;
 
-        $this->reflection = new ReflectionProperty($class, $name);
+        $this->reflection = new \ReflectionProperty($class, $name);
         $this->reflection->setAccessible(true);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -71,17 +67,11 @@ class PropertyMetadata implements PropertyMetadataInterface
         return $this->fields;
     }
 
-    /**
-     * @return string
-     */
     public function getSeparator(): string
     {
         return $this->separator;
     }
 
-    /**
-     * @return int
-     */
     public function getLengthLimit(): int
     {
         return $this->lengthLimit;

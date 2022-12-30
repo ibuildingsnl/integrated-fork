@@ -38,10 +38,6 @@ class AuthorType extends AbstractType
      */
     private $contentTypeManager;
 
-    /**
-     * @param ManagerRegistry    $mr
-     * @param ContentTypeManager $contentTypeManager
-     */
     public function __construct(ManagerRegistry $mr, ContentTypeManager $contentTypeManager)
     {
         $this->mr = $mr;

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Tests\Task\Event;
 
-use Exception;
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Task\Event\ErrorEvent;
 
@@ -21,7 +20,7 @@ use Integrated\Common\Solr\Task\Event\ErrorEvent;
 class ErrorEventTest extends WorkerEventTest
 {
     /**
-     * @var Exception|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Exception|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $exception;
 
@@ -35,7 +34,7 @@ class ErrorEventTest extends WorkerEventTest
         parent::setUp();
 
         $this->message = $this->createMock(QueueMessageInterface::class);
-        $this->exception = $this->createMock(Exception::class);
+        $this->exception = $this->createMock(\Exception::class);
     }
 
     public function testGetMessage()

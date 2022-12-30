@@ -44,11 +44,6 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
      */
     private $generator;
 
-    /**
-     * @param Facebook               $facebook
-     * @param ConfigManagerInterface $manager
-     * @param UrlGeneratorInterface  $generator
-     */
     public function __construct(Facebook $facebook, ConfigManagerInterface $manager, UrlGeneratorInterface $generator)
     {
         $this->facebook = $facebook;
@@ -70,8 +65,6 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
 
     /**
      * Request a access token the current config is missing one.
-     *
-     * @param FormConfigEvent $event
      */
     public function onSubmit(FormConfigEvent $event)
     {
@@ -104,8 +97,6 @@ class FacebookChannelConfigSubscriber implements EventSubscriberInterface
 
     /**
      * Check if the request got a access token and if to store it in the config.
-     *
-     * @param GetResponseConfigEvent $event
      *
      * @throws \Facebook\Exceptions\FacebookSDKException
      */

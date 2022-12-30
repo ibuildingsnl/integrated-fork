@@ -60,12 +60,6 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
      */
     private $comments = null;
 
-    /**
-     * @param DocumentManager $documentManager
-     * @param AssetManager    $stylesheets
-     * @param AssetManager    $javascripts
-     * @param RequestStack    $requestStack
-     */
     public function __construct(
         DocumentManager $documentManager,
         UrlGeneratorInterface $generator,
@@ -91,9 +85,6 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FieldEvent $event
-     */
     public function onBuildField(FieldEvent $event)
     {
         $masterRequest = $this->requestStack->getMainRequest();
@@ -126,9 +117,6 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         $this->javascripts->add('bundles/integratedcomment/js/comments.js');
     }
 
-    /**
-     * @param BuilderEvent $event
-     */
     public function postBuildField(BuilderEvent $event)
     {
         if (!$event->getBuilder()->has($event->getField())) {

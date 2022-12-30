@@ -38,8 +38,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -60,8 +58,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -94,8 +90,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws NotFoundHttpException
@@ -135,8 +129,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Request $request)
@@ -194,8 +186,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param GroupInterface $group
-     *
      * @return FormInterface
      */
     protected function createEditForm(GroupInterface $group)
@@ -215,8 +205,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @param GroupInterface $group
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(GroupInterface $group)

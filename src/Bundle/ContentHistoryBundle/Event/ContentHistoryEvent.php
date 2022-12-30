@@ -41,11 +41,6 @@ final class ContentHistoryEvent extends Event
      */
     protected $originalData;
 
-    /**
-     * @param ContentHistory   $contentHistory
-     * @param ContentInterface $document
-     * @param array            $originalData
-     */
     public function __construct(ContentHistory $contentHistory, ContentInterface $document, array $originalData = [])
     {
         $this->contentHistory = $contentHistory;

@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
-use Exception;
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\OptionsTransformer;
 use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
@@ -38,8 +37,6 @@ class ConfigFormType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param RegistryInterface $registry
      */
     public function __construct(RegistryInterface $registry)
     {
@@ -120,7 +117,7 @@ class ConfigFormType extends AbstractType
             if (\is_string($adapter)) {
                 try {
                     $adapter = $this->registry->getAdapter($adapter);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $adapter = null;
                 }
             }

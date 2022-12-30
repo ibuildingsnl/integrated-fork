@@ -26,17 +26,11 @@ class ScopeEventSubscriber
      */
     private $entityManager;
 
-    /**
-     * @param EntityManager $entityManager
-     */
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @param LifecycleEventArgs $eventArgs
-     */
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
         $channel = $eventArgs->getDocument();

@@ -53,12 +53,6 @@ class BlockController extends AbstractController
      */
     protected $provider;
 
-    /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param DocumentManager          $documentManager
-     * @param PaginatorInterface       $paginator
-     * @param FilterQueryProvider      $provider
-     */
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         DocumentManager $documentManager,
@@ -72,8 +66,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -105,9 +97,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return Response
      */
     public function show(Request $request, Block $block)
@@ -124,8 +113,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return RedirectResponse|Response
      */
     public function new(Request $request)
@@ -177,8 +164,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function newChannelBlock(Request $request)
@@ -211,9 +196,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return array|RedirectResponse|Response
      */
     public function edit(Request $request, Block $block)
@@ -264,9 +246,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
      * @return RedirectResponse|Response
      */
     public function delete(Request $request, Block $block)
@@ -310,8 +289,6 @@ class BlockController extends AbstractController
     }
 
     /**
-     * @param $id
-     *
      * @return FormInterface
      */
     protected function createDeleteForm($id)

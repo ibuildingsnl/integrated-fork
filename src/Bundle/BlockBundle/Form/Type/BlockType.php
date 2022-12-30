@@ -29,9 +29,6 @@ class BlockType extends AbstractType
      */
     protected $repository;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->repository = $dm->getRepository(Block::class);

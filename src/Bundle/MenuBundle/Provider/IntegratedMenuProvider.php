@@ -52,12 +52,6 @@ class IntegratedMenuProvider implements MenuProviderInterface
      */
     private $urlExtractor;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param DocumentRepository      $repository
-     * @param SolariumProvider        $solariumProvider
-     * @param solrUrlExtractor        $urlExtractor
-     */
     public function __construct(ChannelContextInterface $channelContext, DocumentRepository $repository, SolariumProvider $solariumProvider, SolrUrlExtractor $urlExtractor)
     {
         $this->channelContext = $channelContext;
@@ -119,9 +113,6 @@ class IntegratedMenuProvider implements MenuProviderInterface
         return null;
     }
 
-    /**
-     * @param ItemInterface $menu
-     */
     protected function resolveParent(ItemInterface $menu)
     {
         foreach ($menu->getChildren() as $child) {
@@ -133,9 +124,6 @@ class IntegratedMenuProvider implements MenuProviderInterface
         }
     }
 
-    /**
-     * @param ItemInterface $menu
-     */
     protected function parseSearchSelections(ItemInterface $menu)
     {
         $factory = new MenuFactory();

@@ -44,8 +44,6 @@ class TailwindButtonExtension extends AbstractExtension
     }
 
     /**
-     * @param array $options
-     *
      * @return string
      */
     public function buttonFunction(array $options = [])
@@ -64,8 +62,6 @@ class TailwindButtonExtension extends AbstractExtension
     }
 
     /**
-     * @param array $options
-     *
      * @return string
      */
     public function buttonLinkFunction(array $options = [])

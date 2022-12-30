@@ -11,9 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
@@ -24,12 +21,15 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Event\FormBlockEvent;
 use Integrated\Bundle\ContentBundle\Mailer\FormMailer;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Form\ContentFormType;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,14 +72,6 @@ class FormBlockHandler extends BlockHandler
      */
     protected $eventDispatcher;
 
-    /**
-     * @param FormFactory              $formFactory
-     * @param DocumentManager          $documentManager
-     * @param RequestStack             $requestStack
-     * @param FormMailer               $formMailer
-     * @param ChannelContextInterface  $channelContext
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         FormFactory $formFactory,
         DocumentManager $documentManager,
@@ -158,7 +150,6 @@ class FormBlockHandler extends BlockHandler
 
     /**
      * @param mixed     $data
-     * @param array     $options
      * @param FormBlock $block
      *
      * @return FormInterface
@@ -213,9 +204,6 @@ class FormBlockHandler extends BlockHandler
 
     /**
      * Link active document to content item as integrated relation.
-     *
-     * @param FormBlock $block
-     * @param Content   $content
      */
     public function linkActiveDocument(FormBlock $block, Content $content)
     {

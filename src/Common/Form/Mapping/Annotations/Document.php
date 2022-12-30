@@ -30,8 +30,6 @@ class Document
     /**
      * Constructor.
      *
-     * @param array $data
-     *
      * @throws \BadMethodCallException
      */
     public function __construct(array $data)

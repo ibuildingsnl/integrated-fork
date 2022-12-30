@@ -29,8 +29,7 @@ class Queue implements QueueInterface
     protected $provider;
 
     /**
-     * @param QueueProviderInterface $provider
-     * @param string                 $channel
+     * @param string $channel
      */
     public function __construct(QueueProviderInterface $provider, $channel)
     {

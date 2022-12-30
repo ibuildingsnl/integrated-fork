@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,10 +34,6 @@ class ChannelExceptionSubscriber implements EventSubscriberInterface
      */
     private $channelContext;
 
-    /**
-     * @param UrlGeneratorInterface   $generator
-     * @param ChannelContextInterface $channelContext
-     */
     public function __construct(UrlGeneratorInterface $generator, ChannelContextInterface $channelContext)
     {
         $this->generator = $generator;
@@ -52,9 +48,6 @@ class ChannelExceptionSubscriber implements EventSubscriberInterface
         return [KernelEvents::EXCEPTION => 'onKernelException'];
     }
 
-    /**
-     * @param ExceptionEvent $event
-     */
     public function onKernelException(ExceptionEvent $event)
     {
         if (!$event->isMainRequest()) {

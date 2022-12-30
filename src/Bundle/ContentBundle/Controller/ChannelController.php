@@ -47,11 +47,6 @@ class ChannelController extends AbstractController
      */
     protected $dispatcher;
 
-    /**
-     * @param DocumentManager          $documentManager
-     * @param SearchContentReferenced  $searchContentReferenced
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(
         DocumentManager $documentManager,
         SearchContentReferenced $searchContentReferenced,
@@ -82,8 +77,6 @@ class ChannelController extends AbstractController
 
     /**
      * Finds and displays a Channel document.
-     *
-     * @param Channel $channel
      *
      * @return Response
      */
@@ -121,8 +114,6 @@ class ChannelController extends AbstractController
     /**
      * Creates a new Channel document.
      *
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
     public function create(Request $request)
@@ -159,8 +150,6 @@ class ChannelController extends AbstractController
     /**
      * Display a form to edit an existing ContentType document.
      *
-     * @param Channel $channel
-     *
      * @return Response
      */
     public function edit(Channel $channel)
@@ -179,9 +168,6 @@ class ChannelController extends AbstractController
 
     /**
      * Edits an existing Channel document.
-     *
-     * @param Request $request
-     * @param Channel $channel
      *
      * @return Response|RedirectResponse
      */
@@ -216,9 +202,6 @@ class ChannelController extends AbstractController
 
     /**
      * Deletes a Channel document.
-     *
-     * @param Request $request
-     * @param Channel $channel
      *
      * @return RedirectResponse
      */
@@ -258,8 +241,6 @@ class ChannelController extends AbstractController
     /**
      * Creates a form to create a ContentType document.
      *
-     * @param Channel $channel
-     *
      * @return FormInterface
      */
     protected function createCreateForm(Channel $channel)
@@ -281,8 +262,6 @@ class ChannelController extends AbstractController
     /**
      * Creates a form to edit a ContentType document.
      *
-     * @param Channel $channel
-     *
      * @return FormInterface
      */
     protected function createEditForm(Channel $channel)
@@ -300,8 +279,7 @@ class ChannelController extends AbstractController
     /**
      * Creates a form to delete a Channel document by id.
      *
-     * @param mixed $id            The document id
-     * @param bool  $deleteAllowed
+     * @param mixed $id The document id
      *
      * @return FormInterface
      */

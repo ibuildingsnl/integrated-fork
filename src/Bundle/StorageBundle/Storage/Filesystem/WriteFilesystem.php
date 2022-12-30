@@ -25,17 +25,13 @@ class WriteFilesystem
      */
     private $filesystem;
 
-    /**
-     * @param Filesystem $filesystem
-     */
     public function __construct(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
     }
 
     /**
-     * @param string          $identifier
-     * @param ReaderInterface $reader
+     * @param string $identifier
      *
      * @return mixed
      *

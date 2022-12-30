@@ -52,13 +52,6 @@ class IntegratedInstallCommand extends Command
      */
     private $bundleTest;
 
-    /**
-     * @param EntityManager   $entityManager
-     * @param DocumentManager $documentManager
-     * @param Client          $solrClient
-     * @param MySQLMigrations $migrations
-     * @param BundleTest      $bundleTest
-     */
     public function __construct(EntityManager $entityManager, DocumentManager $documentManager, Client $solrClient, MySQLMigrations $migrations, MongoDBMigrations $mongoDBMigrations, BundleTest $bundleTest)
     {
         $this->migrations = $migrations;
@@ -85,9 +78,6 @@ class IntegratedInstallCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int|void|null
      */
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -133,10 +123,6 @@ class IntegratedInstallCommand extends Command
         return 0;
     }
 
-    /**
-     * @param $command
-     * @param OutputInterface $output
-     */
     protected function executeCommand($command, OutputInterface $output)
     {
         $php = self::getPhp(false);

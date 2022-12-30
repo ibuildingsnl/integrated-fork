@@ -35,10 +35,6 @@ class ArticleController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param ThemeManager   $themeManager
-     */
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
@@ -46,9 +42,6 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param Article         $article
-     *
      * @return Response
      *
      * @throws CircularFallbackException

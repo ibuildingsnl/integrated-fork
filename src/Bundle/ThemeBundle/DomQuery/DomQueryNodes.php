@@ -2,8 +2,6 @@
 
 namespace Integrated\Bundle\ThemeBundle\DomQuery;
 
-use Traversable;
-
 /**
  * Class DomQueryNodes.
  *
@@ -164,8 +162,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Use xpath and return new DomQuery with resulting nodes.
      *
-     * @param string $xpath_query
-     *
      * @return static
      */
     public function xpath(string $xpath_query)
@@ -220,8 +216,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Set dom document.
      *
-     * @param \DOMDocument $document
-     *
      * @return void
      *
      * @throws \Exception if other document is already set
@@ -237,8 +231,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Add nodes from dom node list to result set.
-     *
-     * @param \DOMNodeList $dom_node_list
      *
      * @return void
      *
@@ -262,8 +254,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Add node to result set.
      *
-     * @param \DOMNode $dom_node
-     * @param bool     $prepend
+     * @param bool $prepend
      *
      * @return void
      */
@@ -282,7 +273,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Load html or xml content.
      *
-     * @param string $content
      * @param string $encoding
      *
      * @return void
@@ -398,8 +388,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Get next element from node.
      *
-     * @param \DOMNode $node
-     *
      * @return \DOMNode
      */
     protected static function getNextElement(\DOMNode $node)
@@ -415,8 +403,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Get next element from node.
-     *
-     * @param \DOMNode $node
      *
      * @return \DOMNode
      */
@@ -468,8 +454,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Iterate over result set and executing a callback for each node.
      *
-     * @param callable $callback
-     *
      * @return $this
      */
     public function each(callable $callback)
@@ -488,8 +472,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Pass each element in the current matched set through a function,
      * producing an array containing the return values.
-     *
-     * @param callable $callback
      *
      * @return array
      */
@@ -628,7 +610,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      * Call method on first DOMElement.
      *
      * @param string $name
-     * @param $arguments
      *
      * @return mixed
      *
@@ -645,9 +626,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Perform query via xpath expression (using DOMXPath::query).
-     *
-     * @param string        $expression
-     * @param \DOMNode|null $context_node
      *
      * @return \DOMNodeList|false
      *
@@ -692,8 +670,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Countable: get count.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -741,8 +717,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Get id for node.
-     *
-     * @param \DOMElement $node
      *
      * @return string $node_id
      */
@@ -817,7 +791,7 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @return \ArrayIterator containing nodes as instances of DomQuery
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         $iteration_result = [];
         if (\is_array($this->nodes)) {
@@ -833,8 +807,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      * ArrayAccess: offset exists.
      *
      * @param mixed $key
-     *
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -845,8 +817,6 @@ class DomQueryNodes implements \Countable, \IteratorAggregate, \ArrayAccess
      * ArrayAccess: get offset.
      *
      * @param mixed $key
-     *
-     * @return DomQueryNodes
      */
     public function offsetGet($key): self
     {

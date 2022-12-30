@@ -49,8 +49,6 @@ class FilterContainerTest extends ContainerTest
 
     /**
      * @dataProvider controlCharacterProvider
-     *
-     * @param $character
      */
     public function testSetAddAndGetControlCharacters($character)
     {

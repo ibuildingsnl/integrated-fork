@@ -52,8 +52,6 @@ class Field
     /**
      * Constructor.
      *
-     * @param array $data
-     *
      * @throws \BadMethodCallException
      */
     public function __construct(array $data)
@@ -175,8 +173,6 @@ class Field
 
     /**
      * Set the label of the field.
-     *
-     * @param array $options
      *
      * @return $this
      */

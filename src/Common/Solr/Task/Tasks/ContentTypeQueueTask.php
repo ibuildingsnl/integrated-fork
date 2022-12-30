@@ -11,12 +11,10 @@
 
 namespace Integrated\Common\Solr\Task\Tasks;
 
-use Serializable;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentTypeQueueTask implements Serializable
+class ContentTypeQueueTask implements \Serializable
 {
     /**
      * @var string

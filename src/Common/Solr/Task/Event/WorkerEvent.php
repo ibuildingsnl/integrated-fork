@@ -26,8 +26,6 @@ class WorkerEvent extends Event
 
     /**
      * Event constructor.
-     *
-     * @param Worker $worker
      */
     public function __construct(Worker $worker)
     {

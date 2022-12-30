@@ -34,8 +34,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -56,8 +54,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -94,9 +90,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList  $list
-     * @param Request $request
-     *
      * @return Response
      */
     public function edit(IpList $list, Request $request)
@@ -132,9 +125,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList  $list
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(IpList $list, Request $request)
@@ -189,8 +179,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList $list
-     *
      * @return FormInterface
      */
     protected function createEditForm(IpList $list)
@@ -210,8 +198,6 @@ class IpListController extends AbstractController
     }
 
     /**
-     * @param IpList $list
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(IpList $list)

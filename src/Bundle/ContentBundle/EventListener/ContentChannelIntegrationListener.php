@@ -39,10 +39,6 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      */
     private $authorizationChecker;
 
-    /**
-     * @param ObjectRepository              $repository
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(ObjectRepository $repository, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->repository = $repository;

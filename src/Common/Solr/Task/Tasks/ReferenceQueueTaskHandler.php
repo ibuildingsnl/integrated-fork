@@ -38,10 +38,6 @@ class ReferenceQueueTaskHandler
 
     /**
      * Constructor.
-     *
-     * @param ContentProviderInterface $provider
-     * @param QueueInterface           $queue
-     * @param JobFactory               $factory
      */
     public function __construct(ContentProviderInterface $provider, QueueInterface $queue, JobFactory $factory)
     {

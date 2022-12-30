@@ -24,9 +24,6 @@ abstract class AbstractAdaptor implements AdaptorInterface
      */
     protected $dispatcher = null;
 
-    /**
-     * @param DispatcherInterface $dispatcher
-     */
     public function setDispatcher(DispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;

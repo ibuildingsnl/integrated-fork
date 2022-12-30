@@ -38,9 +38,6 @@ class ContentTypePageType extends AbstractType
 
     /**
      * ContentTypePageType constructor.
-     *
-     * @param ContentTypeControllerManager $controllerManager
-     * @param ThemeResolver                $themeResolver
      */
     public function __construct(ContentTypeControllerManager $controllerManager, ThemeResolver $themeResolver)
     {

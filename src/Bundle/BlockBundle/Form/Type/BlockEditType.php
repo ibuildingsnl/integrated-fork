@@ -42,11 +42,6 @@ class BlockEditType extends AbstractType
      */
     private $groupManager;
 
-    /**
-     * @param LayoutLocator                 $layoutLocator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param GroupManagerInterface         $groupManager
-     */
     public function __construct(
         LayoutLocator $layoutLocator,
         AuthorizationCheckerInterface $authorizationChecker,

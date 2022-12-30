@@ -40,9 +40,6 @@ class ChannelChoiceLoader implements ChoiceLoaderInterface
 
     /**
      * Constructor.
-     *
-     * @param ObjectRepository           $repository
-     * @param ChoiceListFactoryInterface $factory
      */
     public function __construct(ObjectRepository $repository, ChoiceListFactoryInterface $factory)
     {

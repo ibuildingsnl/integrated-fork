@@ -21,8 +21,7 @@ interface JobFactoryInterface
     /**
      * Create a new Job object.
      *
-     * @param string           $action
-     * @param ContentInterface $content
+     * @param string $action
      *
      * @return JobInterface
      */

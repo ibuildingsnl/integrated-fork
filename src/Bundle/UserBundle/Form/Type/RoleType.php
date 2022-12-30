@@ -28,8 +28,6 @@ class RoleType extends AbstractType
 
     /**
      * RoleType constructor.
-     *
-     * @param RoleManager $manager
      */
     public function __construct(RoleManager $manager)
     {

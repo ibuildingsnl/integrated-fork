@@ -30,8 +30,6 @@ class ActionsType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param array $buttons
      */
     public function __construct(array $buttons)
     {

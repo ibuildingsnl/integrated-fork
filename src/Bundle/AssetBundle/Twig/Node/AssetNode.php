@@ -25,8 +25,6 @@ class AssetNode extends Node
     private $extension;
 
     /**
-     * @param array  $nodes
-     * @param array  $attributes
      * @param int    $lineno
      * @param string $tag
      * @param string $extension

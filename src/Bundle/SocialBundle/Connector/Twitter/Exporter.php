@@ -38,11 +38,6 @@ class Exporter implements ExporterInterface
      */
     private $urlResolver;
 
-    /**
-     * @param TwitterOAuth    $twitter
-     * @param ConfigInterface $config
-     * @param UrlResolver     $urlResolver
-     */
     public function __construct(TwitterOAuth $twitter, ConfigInterface $config, UrlResolver $urlResolver)
     {
         $this->twitter = $twitter;

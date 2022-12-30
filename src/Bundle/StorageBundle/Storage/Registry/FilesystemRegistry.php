@@ -28,9 +28,6 @@ class FilesystemRegistry implements FilesystemRegistryInterface
      */
     protected $filesystemMap;
 
-    /**
-     * @param FilesystemMap $filesystemMap
-     */
     public function __construct(FilesystemMap $filesystemMap)
     {
         $this->filesystemMap = $filesystemMap;

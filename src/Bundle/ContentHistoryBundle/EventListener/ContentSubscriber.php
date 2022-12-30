@@ -32,9 +32,6 @@ class ContentSubscriber implements EventSubscriberInterface
      */
     protected $documentManager;
 
-    /**
-     * @param DocumentManager $documentManager
-     */
     public function __construct(DocumentManager $documentManager)
     {
         $this->persistenceBuilder = new PersistenceBuilder($documentManager);
@@ -53,9 +50,6 @@ class ContentSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onInsert(ContentHistoryEvent $event)
     {
         $event->getContentHistory()->setChangeSet(
@@ -63,9 +57,6 @@ class ContentSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onUpdate(ContentHistoryEvent $event)
     {
         $document = $event->getDocument();
@@ -75,9 +66,6 @@ class ContentSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onDelete(ContentHistoryEvent $event)
     {
         $event->getContentHistory()->setChangeSet(

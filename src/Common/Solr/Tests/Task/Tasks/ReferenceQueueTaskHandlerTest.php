@@ -17,7 +17,6 @@ use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Task\Provider\ContentProviderInterface;
 use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTask;
 use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTaskHandler;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -50,7 +49,7 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $content1 = $this->createMock(ContentInterface::class);
         $content2 = $this->createMock(ContentInterface::class);
-        $content3 = new stdClass();
+        $content3 = new \stdClass();
         $content4 = $this->createMock(ContentInterface::class);
 
         $this->provider->expects($this->once())
@@ -58,9 +57,9 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo('content-id'))
             ->willReturn([$content1, $content2, $content3, $content4]);
 
-        $job1 = new stdClass();
-        $job2 = new stdClass();
-        $job3 = new stdClass();
+        $job1 = new \stdClass();
+        $job2 = new \stdClass();
+        $job3 = new \stdClass();
 
         $this->factory->expects($this->exactly(3))
             ->method('create')

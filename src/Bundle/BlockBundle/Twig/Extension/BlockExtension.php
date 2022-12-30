@@ -11,15 +11,15 @@
 
 namespace Integrated\Bundle\BlockBundle\Twig\Extension;
 
-use Psr\Log\LoggerInterface;
-use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -67,15 +67,6 @@ class BlockExtension extends AbstractExtension
      */
     private $environment;
 
-    /**
-     * @param BlockManager             $blockManager
-     * @param ThemeManager             $themeManager
-     * @param BlockUsageProvider       $blockUsageProvider
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param ChannelContextInterface  $channelContext
-     * @param LoggerInterface          $logger
-     * @param string                   $environment
-     */
     public function __construct(
         BlockManager $blockManager,
         ThemeManager $themeManager,
@@ -129,7 +120,6 @@ class BlockExtension extends AbstractExtension
     /**
      * @param \Twig_Environment     $environment
      * @param BlockInterface|string $block
-     * @param array                 $options
      *
      * @return string|null
      *
@@ -171,10 +161,6 @@ class BlockExtension extends AbstractExtension
 
     /**
      * @param \Twig_Environment $environment
-     * @param string            $id
-     * @param string            $name
-     * @param string            $class
-     * @param array             $options
      *
      * @return string|null
      *
@@ -205,8 +191,6 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @param BlockInterface $block
-     *
      * @return Channel[]
      */
     public function findChannels(BlockInterface $block)
@@ -226,8 +210,6 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @param BlockInterface $block
-     *
      * @return array
      */
     public function findPages(BlockInterface $block)
@@ -236,8 +218,6 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @param BlockInterface $block
-     *
      * @return string
      */
     public function getBlockTypeName(BlockInterface $block)

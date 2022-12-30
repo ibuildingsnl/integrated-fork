@@ -16,8 +16,6 @@ use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
 use Integrated\Bundle\SlugBundle\Mapping\ClassMetadataInterface;
 use Integrated\Bundle\SlugBundle\Mapping\DriverInterface;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * @deprecated
@@ -35,11 +33,11 @@ class AnnotationDriver implements DriverInterface
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     public function loadMetadataForClass(string $class, ClassMetadataInterface $metadata): void
     {
-        $reflectionClass = new ReflectionClass($class);
+        $reflectionClass = new \ReflectionClass($class);
 
         foreach ($reflectionClass->getProperties() as $property) {
             /** @var Slug $slug */

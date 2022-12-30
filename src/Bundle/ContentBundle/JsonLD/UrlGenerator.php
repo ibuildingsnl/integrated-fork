@@ -45,8 +45,6 @@ class UrlGenerator
     }
 
     /**
-     * @param Image $content
-     *
      * @return string
      */
     protected function generateImageUrl(Image $content)
@@ -78,8 +76,6 @@ class UrlGenerator
     }
 
     /**
-     * @param Content $content
-     *
      * @return string
      */
     protected function generateContentUrl(Content $content)

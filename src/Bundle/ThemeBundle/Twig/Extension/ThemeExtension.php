@@ -25,9 +25,6 @@ class ThemeExtension extends AbstractExtension
      */
     protected $themeManager;
 
-    /**
-     * @param ThemeManager $themeManager
-     */
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;

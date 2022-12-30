@@ -38,8 +38,6 @@ interface ContainerInterface extends \Countable, \IteratorAggregate
     /**
      * Remove the value for the given container key.
      *
-     * @param $key
-     *
      * @return ContainerInterface
      */
     public function remove($key);
@@ -47,16 +45,12 @@ interface ContainerInterface extends \Countable, \IteratorAggregate
     /**
      * Check if a container key exists.
      *
-     * @param $key
-     *
      * @return bool
      */
     public function has($key);
 
     /**
      * Get the value from the given container key.
-     *
-     * @param $key
      *
      * @return mixed[]
      */

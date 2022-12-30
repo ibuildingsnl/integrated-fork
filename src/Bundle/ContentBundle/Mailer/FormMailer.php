@@ -11,15 +11,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Mailer;
 
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Twig\Environment;
 use Twig\Error\Error;
-use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
-use Integrated\Common\Content\Channel\ChannelContextInterface;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -67,13 +67,8 @@ class FormMailer
     private $name;
 
     /**
-     * @param MailerInterface         $mailer
-     * @param ChannelContextInterface $channelContext
-     * @param Environment             $twig
-     * @param ThemeManager            $themeManager
-     * @param TranslatorInterface     $translator
-     * @param string                  $from
-     * @param string                  $name
+     * @param string $from
+     * @param string $name
      */
     public function __construct(MailerInterface $mailer, ChannelContextInterface $channelContext, Environment $twig, ThemeManager $themeManager, TranslatorInterface $translator, $from, $name)
     {
@@ -87,10 +82,6 @@ class FormMailer
     }
 
     /**
-     * @param array       $data
-     * @param array       $emailAddresses
-     * @param string|null $title
-     *
      * @throws CircularFallbackException
      * @throws Error
      */

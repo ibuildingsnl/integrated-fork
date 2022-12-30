@@ -24,9 +24,6 @@ class ChannelEvent extends Event
      */
     protected $channel;
 
-    /**
-     * @param Channel $channel
-     */
     public function __construct(Channel $channel)
     {
         $this->channel = $channel;
