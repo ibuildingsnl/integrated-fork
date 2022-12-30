@@ -45,6 +45,9 @@
                             {% if form.maxItems is defined %}
                                 {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
                             {% endif %}
+                            {% if form.gridSize is defined %}
+                                {{ form_row(form.gridSize, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
+                            {% endif %}
                             {% if form.groups is defined %}
                                 {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
                             {% endif %}

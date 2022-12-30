@@ -2,98 +2,103 @@
 {% block title %}{% trans %}Edit block{% endtrans %}{% endblock title %}
 
 {% block content %}
-<div class="flex flex-wrap edit-form">
-    {% block form_start %}
-        {{ form_start(form, { 'style': 'horizontal' }) }}
-    {% endblock %}
-    {% block toolbar %}
-        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-    {% endblock toolbar %}
-    <div class="aside-options">
-        <aside>
-            <div class="aside-holder">
-                {% block sidebar %}
-                <div class="aside-header">
-                    <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button"><i class="iconoir-cancel"></i>
-                    </button>
-                    <span>{% trans %}Options{% endtrans %}</span>
-                </div>
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                            <i class="iconoir-info-empty"></i>
-                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                        </h3>
-                        <i class="iconoir-nav-arrow-up"></i>
-                    </div>
-                    <div class="aside-item-list">
-                        <div class="aside-item-list-container">
-                            <div class="status-info">
-                                <div class="form-group">
-                                    <label class="control-label w-full sm:w-1/3 required" for="block_edit_searchSelection">Block
-                                        type</label>
-                                    <div class="w-full sm:w-2/3">
-                                        {{ blockType }}
+    <div class="flex flex-wrap edit-form">
+        {% block form_start %}
+            {{ form_start(form, { 'style': 'horizontal' }) }}
+        {% endblock %}
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
+        <div class="aside-options">
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
+                                    type="button"><i class="iconoir-cancel"></i>
+                            </button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
+                        <div class="aside-item-wrapper show">
+                            <div class="aside-item-header">
+                                <h3 class="aside-item-title">
+                                    <i class="iconoir-info-empty"></i>
+                                    <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                                </h3>
+                                <i class="iconoir-nav-arrow-up"></i>
+                            </div>
+                            <div class="aside-item-list">
+                                <div class="aside-item-list-container">
+                                    <div class="status-info">
+                                        <div class="form-group">
+                                            <label class="control-label w-full sm:w-1/3 required"
+                                                   for="block_edit_searchSelection">Block
+                                                type</label>
+                                            <div class="w-full sm:w-2/3">
+                                                {{ blockType }}
+                                            </div>
+                                        </div>
+                                        {% if form.publishedAt is defined %}
+                                            {{ form_row(form.publishedAt) }}
+                                        {% endif %}
+                                        {% if form.publishedUntil is defined %}
+                                            {{ form_row(form.publishedUntil) }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="status-options">
+                                        {% if form.publishedAt is defined %}
+                                            <div class="status published">
+                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                            </div>
+                                            <a class="delete"
+                                               href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
+                                                <i class="iconoir-trash"></i>
+                                            </a>
+                                        {% else %}
+                                            <div class="status draft">
+                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                {% if form.publishedAt is defined %}
-                                    {{ form_row(form.publishedAt) }}
-                                {% endif %}
-                                {% if form.publishedUntil is defined %}
-                                    {{ form_row(form.publishedUntil) }}
-                                {% endif %}
-                            </div>
-                            <div class="status-options">
-                                {% if form.publishedAt is defined %}
-                                    <div class="status published">
-                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
-                                    </div>
-                                    <a class="delete"
-                                       href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
-                                        <i class="iconoir-trash"></i>
-                                    </a>
-                                {% else %}
-                                    <div class="status draft">
-                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                {% endif %}
                             </div>
                         </div>
-                    </div>
+                        {% if form.itemsPerPage is defined %}
+                            {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'grid-add', 'state': 'show'}) }}
+                        {% endif %}
+                        {% if form.maxItems is defined %}
+                            {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
+                        {% endif %}
+                        {% if form.gridSize is defined %}
+                            {{ form_row(form.gridSize, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
+                        {% endif %}
+                        {% if form.groups is defined %}
+                            {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
+                        {% endif %}
+                    {% endblock %}
                 </div>
-                {% if form.itemsPerPage is defined %}
-                    {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'grid-add', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.maxItems is defined %}
-                    {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.groups is defined %}
-                    {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
-                {% endif %}
-                {% endblock %}
-            </div>
-        </aside>
-    </div>
-    <div class="editor-wrapper">
-        <div class="page-title">
-            <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}block{% endtrans %}</h1>
+            </aside>
         </div>
-        <section class="editor editor-wrapped">
-            <div id="integrated_block_block">
-                {{ form_errors(form) }}
-
-                {% if form.title is defined %}
-                    {{ form_row(form.title, {'style': 'horizontal'}) }}
-                {% endif %}
-
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+        <div class="editor-wrapper">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Edit{% endtrans %} {% trans %}block{% endtrans %}</h1>
             </div>
-        </section>
+            <section class="editor editor-wrapped">
+                <div id="integrated_block_block">
+                    {{ form_errors(form) }}
+
+                    {% if form.title is defined %}
+                        {{ form_row(form.title, {'style': 'horizontal'}) }}
+                    {% endif %}
+
+                    {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+                </div>
+            </section>
+        </div>
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
     </div>
-    {% block form_end %}
-        {{ form_end(form) }}
-    {% endblock %}
-</div>
 {% endblock %}
 
 {% block webpack_js %}

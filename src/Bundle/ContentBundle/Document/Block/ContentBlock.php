@@ -44,6 +44,7 @@ class ContentBlock extends Block
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
+     *          "label"="Items per page",
      *          "attr"={
      *              "min"=0
      *          }
@@ -59,6 +60,7 @@ class ContentBlock extends Block
      * @Type\Field(
      *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
      *      options={
+     *          "label"="Max items",
      *          "required"=false,
      *          "attr"={
      *              "min"=0,
@@ -67,6 +69,25 @@ class ContentBlock extends Block
      * )
      */
     protected $maxItems;
+
+    /**
+     * @var int
+     *
+     * @Assert\NotBlank
+     * @Type\Field(
+     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
+     *     options={
+     *         "choices"={
+     *             "1 Column"="1",
+     *             "2 Columns"="2",
+     *             "3 Columns"="3",
+     *             "4 Columns"="4",
+     *             "5 Columns"="5",
+     *          },
+     *     }
+     * )
+     */
+    protected $gridSize;
 
     /**
      * @var string
@@ -162,6 +183,26 @@ class ContentBlock extends Block
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $maxItems;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGridSize()
+    {
+        return $this->gridSize;
+    }
+
+    /**
+     * @param int $gridSize
+     *
+     * @return $this
+     */
+    public function setGridSize($gridSize)
+    {
+        $this->gridSize = $gridSize;
 
         return $this;
     }
