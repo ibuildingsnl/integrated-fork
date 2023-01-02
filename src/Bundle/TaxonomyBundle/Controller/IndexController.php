@@ -5,6 +5,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Controller;
 use Integrated\Bundle\ContentBundle\Services\ContentCreator;
 use Integrated\Bundle\ContentBundle\Services\Flusher;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ final class IndexController extends AbstractController
         private readonly TaxonomyIndexerInterface $indexer,
         private readonly ContentCreator $creator,
         private readonly Flusher $flusher,
+        private readonly PaginatorInterface $paginator,
     ) {
     }
 
@@ -36,7 +38,11 @@ final class IndexController extends AbstractController
 
         return $this->render('@IntegratedTaxonomy/page/taxonomy_index.html.twig', [
             'form' => $form->createView(),
-            'index' => $this->indexer->buildTaxonomyIndex(),
+            'index' => $this->paginator->paginate(
+                $this->indexer->buildTaxonomyIndex(),
+                $request->query->getInt('page', 1),
+                25,
+            ),
         ]);
     }
 }

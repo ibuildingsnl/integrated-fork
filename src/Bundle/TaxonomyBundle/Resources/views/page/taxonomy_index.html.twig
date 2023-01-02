@@ -34,28 +34,35 @@
             {{ form_rest(form) }}
         {{ form_end(form) }}
 
-        <ul>
-        {% for item in index %}
-            <li>
-                {% if item.depth %}
-                    {% for i in range(0, item.depth-1) %}
-                        {% if i == item.depth-1 %}
-                            &dash;
-                        {% else %}
-                            &nbsp;&nbsp;
+        <div>
+            <div>
+                <ul>
+                {% for item in index %}
+                    <li>
+                        {% if item.depth %}
+                            {% for i in range(0, item.depth-1) %}
+                                {% if i == item.depth-1 %}
+                                    &dash;
+                                {% else %}
+                                    &nbsp;&nbsp;
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
-                    {% endfor %}
-                {% endif %}
-                <a href="{{ path('integrated_content_content_edit', { 'id': item.taxonomyId }) }}">{{ item.title }}</a>
-                {% if item.count %}
-                    <a href="{{ path('integrated_content_content_index', { 'Keywords': [item.title] }) }}">
-                        {{ "(used %d times)"|trans|format(item.count) }}
-                    </a>
-                {% else %}
-                    {{ "(unused)"|trans }}
-                {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
+                        <a href="{{ path('integrated_content_content_edit', { 'id': item.taxonomyId }) }}">{{ item.title }}</a>
+                        {% if item.count %}
+                            <a href="{{ path('integrated_content_content_index', { 'Keywords': [item.title] }) }}">
+                                {{ "(used %d times)"|trans|format(item.count) }}
+                            </a>
+                        {% else %}
+                            {{ "(unused)"|trans }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div>
+                {{ knp_pagination_render(index) }}
+            </div>
+        </div>
     </div>
 {% endblock content %}

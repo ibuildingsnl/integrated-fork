@@ -9,6 +9,7 @@
             <argument type="service" id="integrated_taxonomy.taxonomy.indexer"/>
             <argument type="service" id="integrated_content.services.content.creator"/>
             <argument type="service" id="integrated_content.services.flusher"/>
+            <argument type="service" id="knp_paginator"/>
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
