@@ -24,9 +24,6 @@ class FilesystemValidation
      */
     protected $registry;
 
-    /**
-     * @param FilesystemRegistryInterface $registry
-     */
     public function __construct(FilesystemRegistryInterface $registry)
     {
         $this->registry = $registry;

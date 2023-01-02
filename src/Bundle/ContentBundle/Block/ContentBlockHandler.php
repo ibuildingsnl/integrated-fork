@@ -36,10 +36,6 @@ class ContentBlockHandler extends BlockHandler
      */
     private $requestStack;
 
-    /**
-     * @param SolariumProvider $provider
-     * @param RequestStack     $requestStack
-     */
     public function __construct(SolariumProvider $provider, RequestStack $requestStack)
     {
         $this->provider = $provider;
@@ -76,10 +72,6 @@ class ContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param ContentBlock $block
-     * @param Request      $request
-     * @param array        $options
-     *
      * @return \Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination
      */
     public function getPagination(ContentBlock $block, Request $request, array $options = [])

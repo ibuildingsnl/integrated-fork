@@ -32,8 +32,7 @@ class BatchOperation
     /**
      * Create a batch operation.
      *
-     * @param QueueMessageInterface $message
-     * @param AbstractCommand       $command
+     * @param AbstractCommand $command
      */
     public function __construct(QueueMessageInterface $message, AbstractCommand $command = null)
     {

@@ -36,9 +36,6 @@ class PageLoader implements LoaderInterface
      */
     protected $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;

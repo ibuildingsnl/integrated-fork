@@ -13,6 +13,7 @@ namespace Integrated\Common\Form\Mapping;
 
 use Integrated\Common\Form\Mapping\Event\MetadataEvent;
 use Integrated\Common\Form\Mapping\Metadata\Document;
+use Integrated\Common\Mapping\Registry\DriverRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -27,9 +28,9 @@ class MetadataFactory implements MetadataFactoryInterface
     private $dispatcher = null;
 
     /**
-     * @var DriverInterface
+     * @var DriverRegistry
      */
-    private $driver;
+    private $registry;
 
     /**
      * @var string
@@ -41,9 +42,9 @@ class MetadataFactory implements MetadataFactoryInterface
      */
     protected $data = [];
 
-    public function __construct(DriverInterface $driver, $type = null)
+    public function __construct(DriverRegistry $registry, string $type = null)
     {
-        $this->driver = $driver;
+        $this->registry = $registry;
         $this->type = $type;
     }
 
@@ -59,9 +60,6 @@ class MetadataFactory implements MetadataFactoryInterface
         return $this->dispatcher;
     }
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
@@ -69,10 +67,12 @@ class MetadataFactory implements MetadataFactoryInterface
 
     /**
      * @return DriverInterface
+     *
+     * @deprecated
      */
     public function getDriver()
     {
-        return $this->driver;
+        return $this->registry->getDrivers()[0];
     }
 
     /**
@@ -82,11 +82,13 @@ class MetadataFactory implements MetadataFactoryInterface
     {
         $metadata = [];
 
-        foreach ($this->driver->getAllClassNames() as $class) {
-            $data = $this->getMetadata($class);
+        foreach ($this->registry->getDrivers() as $driver) {
+            foreach ($driver->getAllClassNames() as $class) {
+                $data = $this->getMetadata($class);
 
-            if ($data->isTypeOf($this->type)) {
-                $metadata[] = $data;
+                if ($data->isTypeOf($this->type)) {
+                    $metadata[] = $data;
+                }
             }
         }
 
@@ -125,8 +127,12 @@ class MetadataFactory implements MetadataFactoryInterface
         $metadata = $this->newMetadata($class);
 
         if ($metadata->isTypeOf($this->type)) {
-            $this->driver->loadMetadataForClass($class, $metadata);
-            $this->getEventDispatcher()->dispatch(new MetadataEvent($metadata), Events::METADATA);
+            foreach ($this->registry->getDrivers() as $driver) {
+                if ($driver->isSupported($class)) {
+                    $driver->loadMetadataForClass($metadata);
+                    $this->getEventDispatcher()->dispatch(new MetadataEvent($metadata), Events::METADATA);
+                }
+            }
         }
 
         return $metadata;

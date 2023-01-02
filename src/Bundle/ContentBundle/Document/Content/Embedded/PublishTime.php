@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
-use DateTime;
 use Integrated\Common\Content\PublishTimeInterface;
 
 /**
@@ -32,7 +31,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function getStartDate(): ?DateTime
+    public function getStartDate(): ?\DateTime
     {
         return $this->startDate;
     }
@@ -40,7 +39,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function setStartDate(DateTime $startDate = null)
+    public function setStartDate(\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
 
@@ -50,7 +49,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function getEndDate(): ?DateTime
+    public function getEndDate(): ?\DateTime
     {
         return $this->endDate;
     }
@@ -58,7 +57,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function setEndDate(DateTime $endDate = null)
+    public function setEndDate(\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
 
@@ -68,7 +67,7 @@ class PublishTime implements PublishTimeInterface
     /**
      * {@inheritdoc}
      */
-    public function isPublished(DateTime $date = null): bool
+    public function isPublished(\DateTime $date = null): bool
     {
         if (null === $date) {
             $date = new \DateTime();

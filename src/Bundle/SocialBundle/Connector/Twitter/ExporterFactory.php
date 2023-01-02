@@ -11,14 +11,13 @@
 
 namespace Integrated\Bundle\SocialBundle\Connector\Twitter;
 
+use Integrated\Bundle\ChannelBundle\Model\ConfigInterface as ModelConfigInterface;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Bundle\SocialBundle\Factory\TwitterFactory;
-use Integrated\Bundle\ChannelBundle\Model\ConfigInterface as ModelConfigInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
-use RuntimeException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -34,10 +33,6 @@ class ExporterFactory implements ExportableInterface
      */
     private $urlResolver;
 
-    /**
-     * @param TwitterFactory $factory
-     * @param UrlResolver    $urlResolver
-     */
     public function __construct(TwitterFactory $factory, UrlResolver $urlResolver)
     {
         $this->factory = $factory;
@@ -60,7 +55,7 @@ class ExporterFactory implements ExportableInterface
         }
 
         if (!$options->has('token') || !$options->has('token_secret')) {
-            throw new RuntimeException('A access token and secret are required to create a twitter exporter');
+            throw new \RuntimeException('A access token and secret are required to create a twitter exporter');
         }
 
         return new Exporter(

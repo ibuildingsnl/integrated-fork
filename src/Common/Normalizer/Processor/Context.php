@@ -34,9 +34,7 @@ class Context implements NormalizerInterface
     private $nesting = null;
 
     /**
-     * @param ResolverInterface $resolver
-     * @param array             $options
-     * @param Context           $nesting
+     * @param Context $nesting
      */
     public function __construct(ResolverInterface $resolver, array $options, self $nesting = null)
     {

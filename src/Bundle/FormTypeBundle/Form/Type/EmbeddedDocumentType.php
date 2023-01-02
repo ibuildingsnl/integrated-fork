@@ -25,9 +25,6 @@ class EmbeddedDocumentType extends AbstractType
      */
     protected $metadataFactory;
 
-    /**
-     * @param MetadataFactory $metadataFactory
-     */
     public function __construct(MetadataFactory $metadataFactory)
     {
         $this->metadataFactory = $metadataFactory;

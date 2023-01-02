@@ -30,18 +30,11 @@ class CompanyJobType extends BaseType
      */
     private $contentTypeManager;
 
-    /**
-     * @param ContentTypeManager $contentTypeManager
-     */
     public function __construct(ContentTypeManager $contentTypeManager)
     {
         $this->contentTypeManager = $contentTypeManager;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('company', ContentChoiceType::class, [
@@ -67,9 +60,6 @@ class CompanyJobType extends BaseType
         }, $contentTypes);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', Job::class);

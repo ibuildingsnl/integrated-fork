@@ -21,7 +21,6 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Security\PermissionInterface;
-use stdClass;
 
 /**
  * @covers \Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension
@@ -129,7 +128,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
         /* @var ContainerInterface $container */
 
-        $this->getInstance()->build($container, new stdClass());
+        $this->getInstance()->build($container, new \stdClass());
     }
 
     public function testBuildNoContentType()

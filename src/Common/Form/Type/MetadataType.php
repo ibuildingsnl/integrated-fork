@@ -25,9 +25,6 @@ class MetadataType extends AbstractType
      */
     private $factory;
 
-    /**
-     * @param MetadataFactoryInterface $factory
-     */
     public function __construct(MetadataFactoryInterface $factory)
     {
         $this->factory = $factory;

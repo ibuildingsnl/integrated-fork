@@ -11,12 +11,10 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
-use Exception;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializer;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use stdClass;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -54,7 +52,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     {
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
         $request->channel = $this->getChannel('channel');
 
@@ -70,9 +68,9 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     {
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
-        $request->channel = new stdClass();
+        $request->channel = new \stdClass();
 
         $this->serializer->expects($this->once())
             ->method('serialize')
@@ -84,7 +82,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
     public function testDeserialize()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel('channel');
 
         $this->serializer->expects($this->once())
@@ -126,7 +124,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     {
         $this->serializer->expects($this->once())
             ->method('deserialize')
-            ->willThrowException(new Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
 
         self::assertNull($this->getInstance()->deserialize($this->getSerialized()));
     }
@@ -135,11 +133,11 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     {
         $this->serializer->expects($this->once())
             ->method('deserialize')
-            ->willReturn(new stdClass());
+            ->willReturn(new \stdClass());
 
         $this->manager->expects($this->once())
             ->method('find')
-            ->willReturn(new stdClass());
+            ->willReturn(new \stdClass());
 
         self::assertNull($this->getInstance()->deserialize($this->getSerialized()));
     }
@@ -168,8 +166,6 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $overwrite
-     *
      * @return string
      */
     public function getSerialized(array $overwrite = [])

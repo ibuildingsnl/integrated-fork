@@ -42,9 +42,7 @@ class RequestAwareChannelContext implements ChannelContextInterface
     private $attribute;
 
     /**
-     * @param ChannelManagerInterface $manager
-     * @param RequestStack            $stack
-     * @param string                  $attribute
+     * @param string $attribute
      */
     public function __construct(ChannelManagerInterface $manager, RequestStack $stack, $attribute = '_channel')
     {

@@ -19,8 +19,6 @@ use Integrated\Common\Storage\Reader\ReaderInterface;
 interface IdentifierInterface
 {
     /**
-     * @param ReaderInterface $reader
-     *
      * @return string
      */
     public function getIdentifier(ReaderInterface $reader);

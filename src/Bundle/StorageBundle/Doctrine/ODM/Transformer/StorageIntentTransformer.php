@@ -39,11 +39,6 @@ class StorageIntentTransformer
      */
     protected $metadata;
 
-    /**
-     * @param ManagerInterface         $manager
-     * @param DecisionInterface        $decision
-     * @param MetadataFactoryInterface $metadata
-     */
     public function __construct(ManagerInterface $manager, DecisionInterface $decision, MetadataFactoryInterface $metadata)
     {
         $this->manager = $manager;
@@ -51,9 +46,6 @@ class StorageIntentTransformer
         $this->metadata = $metadata;
     }
 
-    /**
-     * @param DoctrineDocument $document
-     */
     public function transform(DoctrineDocument $document)
     {
         $metadata = $this->metadata->getMetadata($document->getClassName());

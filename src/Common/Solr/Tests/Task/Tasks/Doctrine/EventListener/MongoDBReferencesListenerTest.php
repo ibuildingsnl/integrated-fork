@@ -18,7 +18,6 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBReferencesListener;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\MongoDBReferenceQueueTask;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -66,7 +65,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance()->postPersist($this->getEvent(new stdClass()));
+        $this->getInstance()->postPersist($this->getEvent(new \stdClass()));
     }
 
     public function testPostUpdate()
@@ -87,7 +86,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
         $this->queue->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance()->postUpdate($this->getEvent(new stdClass()));
+        $this->getInstance()->postUpdate($this->getEvent(new \stdClass()));
     }
 
     /**

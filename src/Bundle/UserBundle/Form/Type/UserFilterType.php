@@ -2,12 +2,12 @@
 
 namespace Integrated\Bundle\UserBundle\Form\Type;
 
+use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Integrated\Bundle\UserBundle\Provider\FilterQueryProvider;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserFilterType extends AbstractType
 {
@@ -16,9 +16,6 @@ class UserFilterType extends AbstractType
      */
     private $filterQueryProvider;
 
-    /**
-     * @param FilterQueryProvider $filterQueryProvider
-     */
     public function __construct(FilterQueryProvider $filterQueryProvider)
     {
         $this->filterQueryProvider = $filterQueryProvider;
@@ -48,9 +45,6 @@ class UserFilterType extends AbstractType
             ]);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('data');

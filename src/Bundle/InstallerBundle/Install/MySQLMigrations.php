@@ -27,9 +27,6 @@ class MySQLMigrations
 
     /**
      * Migrations constructor.
-     *
-     * @param EntityManager      $entityManager
-     * @param ContainerInterface $container
      */
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {

@@ -38,9 +38,6 @@ class GridItemSubscriber implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $document = $args->getDocument();
@@ -54,9 +51,6 @@ class GridItemSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $document = $args->getDocument();
@@ -75,9 +69,6 @@ class GridItemSubscriber implements EventSubscriber
     }
 
     /**
-     * @param DocumentManager $dm
-     * @param Page            $page
-     *
      * @return array|InlineTextBlock[]
      */
     protected function findInlineBlocks(DocumentManager $dm, Page $page)
@@ -86,8 +77,6 @@ class GridItemSubscriber implements EventSubscriber
     }
 
     /**
-     * @param Page $page
-     *
      * @return array
      */
     protected function getGridInlineBlocks(Page $page)
@@ -104,9 +93,6 @@ class GridItemSubscriber implements EventSubscriber
     }
 
     /**
-     * @param ItemsInterface $grid
-     * @param Page           $page
-     *
      * @return array
      */
     protected function getGridItemsInlineBlocks(ItemsInterface $grid, Page $page)

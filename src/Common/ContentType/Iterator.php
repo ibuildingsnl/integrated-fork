@@ -11,11 +11,9 @@
 
 namespace Integrated\Common\ContentType;
 
-use ArrayIterator;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class Iterator extends ArrayIterator implements IteratorInterface
+class Iterator extends \ArrayIterator implements IteratorInterface
 {
 }

@@ -13,7 +13,6 @@ namespace Integrated\Common\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use InvalidArgumentException;
 
 trait ConnectorTrait
 {
@@ -24,8 +23,6 @@ trait ConnectorTrait
 
     /**
      * Get the connectors of the document.
-     *
-     * @return array
      */
     public function getConnectors(): array
     {
@@ -34,10 +31,6 @@ trait ConnectorTrait
 
     /**
      * Get a connector based on the configIg.
-     *
-     * @param int $configId
-     *
-     * @return Connector
      */
     public function getConnector(int $configId): Connector
     {
@@ -47,13 +40,11 @@ trait ConnectorTrait
             }
         }
 
-        throw new InvalidArgumentException(sprintf('No connector found with configId %d', $configId));
+        throw new \InvalidArgumentException(sprintf('No connector found with configId %d', $configId));
     }
 
     /**
      * Set the connectors of the document.
-     *
-     * @param array $connectors
      *
      * @return $this
      */
@@ -67,8 +58,6 @@ trait ConnectorTrait
     /**
      * Add author to Connectors collection.
      *
-     * @param Connector $connector
-     *
      * @return $this
      */
     public function addConnector(Connector $connector)
@@ -80,11 +69,6 @@ trait ConnectorTrait
         return $this;
     }
 
-    /**
-     * @param int $configId
-     *
-     * @return bool
-     */
     public function hasConnector(int $configId): bool
     {
         return $this->connectors->exists(function ($key, Connector $element) use ($configId) {
@@ -93,8 +77,6 @@ trait ConnectorTrait
     }
 
     /**
-     * @param Connector $connector
-     *
      * @return bool true if this collection contained the specified element, false otherwise
      */
     public function removeConnector(Connector $connector): bool

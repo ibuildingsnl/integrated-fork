@@ -12,12 +12,11 @@
 namespace Integrated\Common\Channel\Connector\Config\Util;
 
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
-use IteratorIterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UniqueConfigIterator extends IteratorIterator
+class UniqueConfigIterator extends \IteratorIterator
 {
     /**
      * @var array

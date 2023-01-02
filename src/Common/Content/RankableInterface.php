@@ -13,13 +13,7 @@ namespace Integrated\Common\Content;
 
 interface RankableInterface
 {
-    /**
-     * @return string|null
-     */
     public function getRank(): ?string;
 
-    /**
-     * @param string|null $rank
-     */
     public function setRank(string $rank = null);
 }

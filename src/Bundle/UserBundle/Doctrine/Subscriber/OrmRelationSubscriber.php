@@ -13,8 +13,8 @@ namespace Integrated\Bundle\UserBundle\Doctrine\Subscriber;
 
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\UserBundle\Model\User;
 
 /**

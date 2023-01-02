@@ -26,9 +26,6 @@ class ContentChoicesTransformer implements DataTransformerInterface
      */
     protected $repo;
 
-    /**
-     * @param DocumentRepository $repo
-     */
     public function __construct(DocumentRepository $repo)
     {
         $this->repo = $repo;

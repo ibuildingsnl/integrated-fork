@@ -25,8 +25,6 @@ class DoctrineLocator implements ClassLocatorInterface
 
     /**
      * Constructor.
-     *
-     * @param MappingDriver $driver
      */
     public function __construct(MappingDriver $driver)
     {

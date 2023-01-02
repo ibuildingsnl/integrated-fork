@@ -33,8 +33,5 @@ interface DatabaseInterface
      */
     public function saveObject($object);
 
-    /**
-     * @param array $row
-     */
     public function saveRow(array $row);
 }

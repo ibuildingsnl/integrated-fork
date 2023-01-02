@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\SlugBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
@@ -20,11 +19,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
-use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
+use Integrated\Bundle\SlugBundle\Mapping\MetadataFactoryInterface;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
-use Metadata\MetadataFactoryInterface;
 use MongoDB\BSON\Regex;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -51,10 +50,6 @@ class SluggableSubscriber implements EventSubscriber
      */
     private $propertyAccessor;
 
-    /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param SluggerInterface         $slugger
-     */
     public function __construct(MetadataFactoryInterface $metadataFactory, SluggerInterface $slugger)
     {
         $this->metadataFactory = $metadataFactory;
@@ -75,35 +70,25 @@ class SluggableSubscriber implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function prePersist(LifecycleEventArgs $args)
     {
         // used for slug as id
         $this->handleEvent($args, 'prePersist');
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(LifecycleEventArgs $args)
     {
         // used for id in slug
         $this->handleEvent($args, 'postPersist');
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preUpdate(LifecycleEventArgs $args)
     {
         $this->handleEvent($args, 'preUpdate');
     }
 
     /**
-     * @param LifecycleEventArgs $args
-     * @param string             $event
+     * @param string $event
      */
     protected function handleEvent(LifecycleEventArgs $args, $event)
     {
@@ -115,14 +100,14 @@ class SluggableSubscriber implements EventSubscriber
             return;
         }
 
-        $classMetadata = $this->metadataFactory->getMetadataForClass($class);
+        $classMetadata = $this->metadataFactory->getMetadata($class);
         $classMetadataInfo = $om->getClassMetadata($class);
 
         $identifierFields = $classMetadataInfo->getIdentifierFieldNames();
 
-        foreach ($classMetadata->propertyMetadata as $propertyMetadata) {
-            if ($propertyMetadata instanceof PropertyMetadata && \count($propertyMetadata->slugFields)) {
-                $hasIdentifierFields = \count(array_intersect($identifierFields, $propertyMetadata->slugFields)) > 0;
+        foreach ($classMetadata->getProperties() as $propertyMetadata) {
+            if (\count($propertyMetadata->getFields())) {
+                $hasIdentifierFields = \count(array_intersect($identifierFields, $propertyMetadata->getFields())) > 0;
 
                 if ($event == 'prePersist' &&
                     $hasIdentifierFields ||
@@ -141,11 +126,11 @@ class SluggableSubscriber implements EventSubscriber
                     } else {
                         $changeset = $uow->getEntityChangeSet($object);
                     }
-                    if (\array_key_exists($propertyMetadata->name, $changeset)) {
+                    if (\array_key_exists($propertyMetadata->getName(), $changeset)) {
                         // generate custom slug
                         $slug = $this->slugger->slugify(
-                            $changeset[$propertyMetadata->name][1],
-                            $propertyMetadata->slugSeparator
+                            $changeset[$propertyMetadata->getName()][1],
+                            $propertyMetadata->getSeparator()
                         );
                     } elseif (null !== $propertyMetadata->getValue($object)) {
                         continue; // no changes
@@ -154,7 +139,7 @@ class SluggableSubscriber implements EventSubscriber
                     // generate custom slug
                     $slug = $this->slugger->slugify(
                         $propertyMetadata->getValue($object),
-                        $propertyMetadata->slugSeparator
+                        $propertyMetadata->getSeparator()
                     );
                 }
 
@@ -162,13 +147,13 @@ class SluggableSubscriber implements EventSubscriber
                     // generate slug from the sluggable fields
                     $slug = $this->generateSlugFromMetadata(
                         $object,
-                        $propertyMetadata->slugFields,
-                        $propertyMetadata->slugSeparator
+                        $propertyMetadata->getFields(),
+                        $propertyMetadata->getSeparator()
                     );
                 }
 
-                if ($propertyMetadata->slugLengthLimit) {
-                    $slug = substr($slug, 0, $propertyMetadata->slugLengthLimit);
+                if ($propertyMetadata->getLengthLimit()) {
+                    $slug = substr($slug, 0, $propertyMetadata->getLengthLimit());
                 }
 
                 $id = $event == 'preUpdate' && method_exists($object, 'getId') ? $object->getId() : null;
@@ -177,11 +162,11 @@ class SluggableSubscriber implements EventSubscriber
                 $slug = $this->generateUniqueSlug(
                     $om,
                     $object,
-                    $propertyMetadata->name,
+                    $propertyMetadata->getName(),
                     $slug,
-                    $propertyMetadata->slugSeparator,
+                    $propertyMetadata->getSeparator(),
                     $id,
-                    $propertyMetadata->slugFields
+                    $propertyMetadata->getFields()
                 );
 
                 $propertyMetadata->setValue($object, $slug);
@@ -192,7 +177,6 @@ class SluggableSubscriber implements EventSubscriber
 
     /**
      * @param object $object
-     * @param array  $fields
      * @param string $separator
      *
      * @return string

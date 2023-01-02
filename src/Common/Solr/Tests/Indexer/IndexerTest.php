@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
-use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Exception\ClientException;
@@ -505,18 +504,20 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$message1, $message2]);
 
         $exception = new RuntimeException();
-
-        $this->factory->expects($this->at(0))
-            ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)])
-            ->willThrowException($exception);
-
         $command = $this->getCommand();
 
-        $this->factory->expects($this->at(1))
+        $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload2)])
-            ->willReturn($command);
+            ->withConsecutive(
+                [$this->identicalTo($payload1)],
+                [$this->identicalTo($payload2)]
+            )
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->throwException($exception),
+                    $this->returnValue($command)
+                )
+            );
 
         $query = $this->getQuery();
         $query->expects($this->once())
@@ -734,7 +735,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->method('createUpdate')
             ->willReturn($query);
 
-        $exception = new Exception();
+        $exception = new \Exception();
 
         $this->client->expects($this->once())
             ->method('execute')

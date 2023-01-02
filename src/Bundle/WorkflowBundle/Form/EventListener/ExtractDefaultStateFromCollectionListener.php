@@ -36,8 +36,6 @@ class ExtractDefaultStateFromCollectionListener implements EventSubscriberInterf
 
     /**
      * Remove the default value of the Definition.
-     *
-     * @param FormEvent $event
      */
     public function onPreSubmit(FormEvent $event)
     {
@@ -50,8 +48,6 @@ class ExtractDefaultStateFromCollectionListener implements EventSubscriberInterf
 
     /**
      * Mark the default State as default.
-     *
-     * @param FormEvent $event
      */
     public function onPostSetData(FormEvent $event)
     {
@@ -76,8 +72,6 @@ class ExtractDefaultStateFromCollectionListener implements EventSubscriberInterf
 
     /**
      * Set the default State of a Definition.
-     *
-     * @param FormEvent $event
      */
     public function onSubmit(FormEvent $event)
     {

@@ -32,10 +32,6 @@ class FilterQueryProvider
      */
     protected $blockUsageProvider;
 
-    /**
-     * @param ManagerRegistry    $mr
-     * @param BlockUsageProvider $blockUsageProvider
-     */
     public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider)
     {
         $this->mr = $mr;
@@ -43,8 +39,7 @@ class FilterQueryProvider
     }
 
     /**
-     * @param array|null  $data
-     * @param object|null $groupUser
+     * @param array|null $data
      *
      * @return \Doctrine\ODM\MongoDB\Query\Builder
      *
@@ -84,8 +79,7 @@ class FilterQueryProvider
     }
 
     /**
-     * @param array|null  $data
-     * @param object|null $groupUser
+     * @param array|null $data
      *
      * @return array
      *

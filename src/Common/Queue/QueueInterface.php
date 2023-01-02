@@ -11,13 +11,10 @@
 
 namespace Integrated\Common\Queue;
 
-use Countable;
-use Serializable;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface QueueInterface extends Countable
+interface QueueInterface extends \Countable
 {
     /**
      * Lowest priority in the queue.
@@ -60,9 +57,9 @@ interface QueueInterface extends Countable
     /**
      * Push the payload to the queue.
      *
-     * @param string|Serializable $payload
-     * @param int                 $delay
-     * @param int                 $priority a priority number from -10 to and including 10
+     * @param string|\Serializable $payload
+     * @param int                  $delay
+     * @param int                  $priority a priority number from -10 to and including 10
      *
      * @return mixed
      */
@@ -77,9 +74,6 @@ interface QueueInterface extends Countable
      */
     public function pull($limit = 1);
 
-    /**
-     * @return int
-     */
     public function count(): int;
 
     /**

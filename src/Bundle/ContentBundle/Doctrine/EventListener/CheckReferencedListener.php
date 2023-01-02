@@ -37,8 +37,6 @@ class CheckReferencedListener implements EventSubscriber
     }
 
     /**
-     * @param LifecycleEventArgs $args
-     *
      * @throws AccessDeniedException
      */
     public function preRemove(LifecycleEventArgs $args)

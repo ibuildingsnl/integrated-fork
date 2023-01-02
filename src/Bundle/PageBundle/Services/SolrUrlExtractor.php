@@ -30,10 +30,6 @@ class SolrUrlExtractor
      */
     protected $router;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param RouterInterface         $router
-     */
     public function __construct(ChannelContextInterface $channelContext, RouterInterface $router)
     {
         $this->channelContext = $channelContext;

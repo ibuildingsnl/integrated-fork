@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Integrated\Common\Solr\Task\Worker;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,10 +33,6 @@ class WorkerCommand extends Command
      */
     private $worker;
 
-    /**
-     * @param Worker      $worker
-     * @param LockFactory $factory
-     */
     public function __construct(Worker $worker, LockFactory $factory)
     {
         parent::__construct();

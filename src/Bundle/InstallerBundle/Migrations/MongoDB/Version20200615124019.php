@@ -15,9 +15,6 @@ final class Version20200615124019 extends AbstractMigration
         return 'Indexes';
     }
 
-    /**
-     * @param Database $db
-     */
     public function up(Database $db)
     {
         $db->selectCollection('block')->createIndex(['class' => 1]);
@@ -33,9 +30,6 @@ final class Version20200615124019 extends AbstractMigration
         $db->selectCollection('content_history')->createIndex(['user.id' => 1]);
     }
 
-    /**
-     * @param Database $db
-     */
     public function down(Database $db)
     {
         $db->selectCollection('block')->dropIndexes(['class' => 1]);

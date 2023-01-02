@@ -40,8 +40,6 @@ interface ChannelableInterface
     /**
      * Add a channel.
      *
-     * @param ChannelInterface $channel
-     *
      * @return $this
      */
     public function addChannel(ChannelInterface $channel);
@@ -49,16 +47,12 @@ interface ChannelableInterface
     /**
      * Check if a channel is added.
      *
-     * @param ChannelInterface $channel
-     *
      * @return bool
      */
     public function hasChannel(ChannelInterface $channel);
 
     /**
      * Remove a channel.
-     *
-     * @param ChannelInterface $channel
      *
      * @return $this
      */

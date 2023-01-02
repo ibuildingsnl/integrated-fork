@@ -11,16 +11,16 @@
 
 namespace Integrated\Bundle\WebsiteBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -47,10 +47,6 @@ class WebsiteToolbarListener implements EventSubscriberInterface
      */
     protected $contentItem = null;
 
-    /**
-     * @param Environment     $twig
-     * @param EditableChecker $websiteEditableChecker
-     */
     public function __construct(Environment $twig, EditableChecker $websiteEditableChecker)
     {
         $this->twig = $twig;
@@ -65,9 +61,6 @@ class WebsiteToolbarListener implements EventSubscriberInterface
         return [KernelEvents::RESPONSE => ['onKernelResponse', -128]];
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -80,8 +73,6 @@ class WebsiteToolbarListener implements EventSubscriberInterface
     }
 
     /**
-     * @param Response $response
-     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -111,17 +102,11 @@ class WebsiteToolbarListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param string $message
-     */
     public function setToolbarMessage(string $message)
     {
         $this->toolbarMessage = $message;
     }
 
-    /**
-     * @param Content $content
-     */
     public function setContentItem(Content $content)
     {
         $this->contentItem = $content;

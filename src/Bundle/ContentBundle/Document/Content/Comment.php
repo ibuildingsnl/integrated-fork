@@ -11,43 +11,38 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Comment.
  *
  * @author Koen Prins <koen@e-active.nl>
- *
- * @Type\Document("Comment")
  */
+#[Type\Document('Comment')]
 class Comment extends Content
 {
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $title;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $name;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Symfony\Component\Form\Extension\Core\Type\EmailType")
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
     protected $email;
 
     /**
      * @var string
-     *
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
     protected $comment;
 
     /**

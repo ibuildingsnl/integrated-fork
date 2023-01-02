@@ -102,10 +102,6 @@ class ContentTypeHandler implements HandlerInterface
         $content->setContentType($contentType->getId());
     }
 
-    /**
-     * @param ContentType      $contentType
-     * @param ContentInterface $contentItem
-     */
     private function deleteFromSolr(ContentType $contentType, ContentInterface $contentItem)
     {
         $job = new Job('DELETE');

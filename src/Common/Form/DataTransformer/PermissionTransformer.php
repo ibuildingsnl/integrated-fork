@@ -30,9 +30,6 @@ class PermissionTransformer implements DataTransformerInterface
      */
     protected $permissionClass;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

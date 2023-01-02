@@ -24,9 +24,6 @@ class MetadataEvent extends Event
      */
     protected $metadata;
 
-    /**
-     * @param MetadataEditorInterface $metadata
-     */
     public function __construct(MetadataEditorInterface $metadata)
     {
         $this->metadata = $metadata;

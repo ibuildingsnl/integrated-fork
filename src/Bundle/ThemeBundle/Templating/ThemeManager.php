@@ -55,8 +55,6 @@ class ThemeManager
 
     /**
      * @param string $id
-     * @param array  $paths
-     * @param array  $fallback
      *
      * @return $this
      *

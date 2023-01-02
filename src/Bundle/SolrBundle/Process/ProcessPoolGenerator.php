@@ -37,10 +37,6 @@ class ProcessPoolGenerator
      */
     private $kernel;
 
-    /**
-     * @param InputInterface $input
-     * @param Kernel         $kernel
-     */
     public function __construct(InputInterface $input, Kernel $kernel)
     {
         $this->input = $input;
@@ -48,8 +44,7 @@ class ProcessPoolGenerator
     }
 
     /**
-     * @param ArgumentProcess $argumentProcess
-     * @param string          $workingDirectory
+     * @param string $workingDirectory
      *
      * @return ArrayCollection|Process[]
      *

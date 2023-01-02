@@ -61,7 +61,6 @@ class DomQuery extends DomQueryNodes
      * Get the value of an attribute for the first element in the set of matched elements
      * or set one or more attributes for every matched element.
      *
-     * @param string $name
      * @param string $val
      *
      * @return $this|string|null
@@ -85,7 +84,6 @@ class DomQuery extends DomQueryNodes
      * the named data store for the first element in the set of matched elements.
      *
      * @param string $key
-     * @param $val
      *
      * @return $this|string|object
      */
@@ -217,7 +215,6 @@ class DomQuery extends DomQueryNodes
      * Get the value of a computed style property for the first element in the set of matched elements
      * or set one or more CSS properties for every matched element.
      *
-     * @param string $name
      * @param string $val
      *
      * @return $this|string
@@ -379,7 +376,6 @@ class DomQuery extends DomQueryNodes
      * Get the value of a property for the first element in the set of matched elements
      * or set one or more properties for every matched element.
      *
-     * @param string $name
      * @param string $val
      *
      * @return $this|mixed|null
@@ -945,7 +941,6 @@ class DomQuery extends DomQueryNodes
      * Import nodes and insert or append them via callback function.
      *
      * @param string|self|array $content
-     * @param callable          $import_function
      *
      * @return void
      */

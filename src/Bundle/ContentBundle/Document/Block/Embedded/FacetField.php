@@ -11,27 +11,24 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Block\Embedded;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
- *
- * @Type\Document("FacetField")
  */
+#[Type\Document('FacetField')]
 class FacetField
 {
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $name;
 
     /**
      * @var string
-     *
-     * @Type\Field
      */
+    #[Type\Field]
     protected $field;
 
     /**

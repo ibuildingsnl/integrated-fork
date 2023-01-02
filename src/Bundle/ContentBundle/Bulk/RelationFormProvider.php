@@ -27,9 +27,6 @@ class RelationFormProvider implements ConfigProviderInterface
      */
     private $manager;
 
-    /**
-     * @param ManagerRegistry $manager
-     */
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;

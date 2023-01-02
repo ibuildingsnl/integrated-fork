@@ -37,8 +37,6 @@ interface ConfigRepositoryInterface
     /**
      * Finds the objects by a set of criteria.
      *
-     * @param array $criteria
-     *
      * @return ConfigInterface[]
      */
     public function findBy(array $criteria);

@@ -2,15 +2,15 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
-use Symfony\Component\HttpFoundation\Request;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class TaxonomyRelationManager.

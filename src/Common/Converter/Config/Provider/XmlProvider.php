@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Converter\Config\Provider;
 
-use Exception;
 use Integrated\Common\Converter\Config\TypeConfig;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Exception\RuntimeException;
@@ -30,8 +29,6 @@ class XmlProvider extends AbstractFileProvider
      * Constructor.
      *
      * The xml provider will parse all the xml files found by the finder.
-     *
-     * @param Finder $finder
      */
     public function __construct(Finder $finder)
     {
@@ -65,11 +62,9 @@ class XmlProvider extends AbstractFileProvider
     /**
      * Parse the content of the <class> tag.
      *
-     * @param SimpleXMLElement $element
-     *
      * @return TypeConfigInterface[]
      */
-    protected function parseTypes(SimpleXMLElement $element)
+    protected function parseTypes(\SimpleXMLElement $element)
     {
         $types = [];
 
@@ -89,11 +84,9 @@ class XmlProvider extends AbstractFileProvider
     /**
      * Parse the content of the <options> tag.
      *
-     * @param SimpleXMLElement $element
-     *
      * @return array
      */
-    protected function parseOptions(SimpleXMLElement $element)
+    protected function parseOptions(\SimpleXMLElement $element)
     {
         if (!$element->count()) {
             return []; // empty array if options contains no data
@@ -105,11 +98,9 @@ class XmlProvider extends AbstractFileProvider
     /**
      * Parse the content as a <array> tag.
      *
-     * @param SimpleXMLElement $element
-     *
      * @return array
      */
-    protected function parseArray(SimpleXMLElement $element)
+    protected function parseArray(\SimpleXMLElement $element)
     {
         $result = [];
 
@@ -129,10 +120,8 @@ class XmlProvider extends AbstractFileProvider
      *
      * Of the parsed tags only the <array> tag is allowed to have children. The nesting of the array
      * tags is unlimited.
-     *
-     * @param SimpleXMLElement $element
      */
-    protected function parsePrimitive(SimpleXMLElement $element)
+    protected function parsePrimitive(\SimpleXMLElement $element)
     {
         switch ($element->getName()) {
             case 'array':
@@ -163,9 +152,7 @@ class XmlProvider extends AbstractFileProvider
     /**
      * Load the file into a SimpleXMLElement.
      *
-     * @param SplFileInfo $file
-     *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      *
      * @trows RuntimeException if $file can not be read or parsed
      */
@@ -175,7 +162,7 @@ class XmlProvider extends AbstractFileProvider
 
         try {
             $content = $file->getContents();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new RuntimeException($e->getMessage(), 0, $e);
         }
 

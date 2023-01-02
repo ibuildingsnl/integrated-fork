@@ -43,7 +43,6 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
      * Test transform function.
      *
      * @param mixed $input
-     * @param array $output
      *
      * @dataProvider getTransformData
      */
@@ -66,8 +65,6 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test reverseTransform function with valid data.
-     *
-     * @param array $input
      *
      * @dataProvider getValidReverseTransformData
      */

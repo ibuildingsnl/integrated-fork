@@ -32,8 +32,7 @@ class BulkActionsMapperListener implements EventSubscriberInterface
     private $readonly;
 
     /**
-     * @param array $mappings
-     * @param bool  $readonly
+     * @param bool $readonly
      */
     public function __construct(array $mappings, $readonly)
     {
@@ -52,9 +51,6 @@ class BulkActionsMapperListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function distribute(FormEvent $event)
     {
         $data = $event->getData();
@@ -81,9 +77,6 @@ class BulkActionsMapperListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function collect(FormEvent $event)
     {
         if ($this->readonly) {

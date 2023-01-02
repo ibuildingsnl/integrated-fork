@@ -27,9 +27,6 @@ class ColorType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param AssetManager $manager
-     */
     public function __construct(AssetManager $manager)
     {
         $this->manager = $manager;

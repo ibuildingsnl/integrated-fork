@@ -66,9 +66,6 @@ class VideoProvider
      */
     private $sm;
 
-    /**
-     * @param Manager $sm
-     */
     public function __construct(Manager $sm)
     {
         $this->sm = $sm;

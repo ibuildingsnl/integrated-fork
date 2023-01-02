@@ -44,11 +44,6 @@ class ContentTypeManager
      */
     private $contentTypes;
 
-    /**
-     * @param ResolverInterface $resolver
-     * @param ObjectManager     $om
-     * @param $class
-     */
     public function __construct(ResolverInterface $resolver, ObjectManager $om, $class)
     {
         $this->resolver = $resolver;

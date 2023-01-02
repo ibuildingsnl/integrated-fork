@@ -28,9 +28,6 @@ class ImageChoiceType extends AbstractType
      */
     private $repository;
 
-    /**
-     * @param DocumentManager $manager
-     */
     public function __construct(DocumentManager $manager)
     {
         $this->repository = $manager->getRepository(Image::class);

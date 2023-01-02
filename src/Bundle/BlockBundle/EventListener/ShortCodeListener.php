@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -24,17 +24,11 @@ class ShortCodeListener
      */
     protected $blockManager;
 
-    /**
-     * @param BlockManager $blockManager
-     */
     public function __construct(BlockManager $blockManager)
     {
         $this->blockManager = $blockManager;
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
@@ -53,8 +47,6 @@ class ShortCodeListener
     }
 
     /**
-     * @param array $matches
-     *
      * @return string|null
      */
     public function replaceWithBlock(array $matches)

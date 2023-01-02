@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
-use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\Resolver\PriorityResolver;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -104,12 +103,12 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolvers[0]->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([$configs['config1'], $configs['config2'], $configs['config3']]));
+            ->willReturn(new \ArrayIterator([$configs['config1'], $configs['config2'], $configs['config3']]));
 
         $this->resolvers[1]->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([$this->getConfig('config2'), $this->getConfig('config3'), $configs['config4'], $configs['config5']]));
+            ->willReturn(new \ArrayIterator([$this->getConfig('config2'), $this->getConfig('config3'), $configs['config4'], $configs['config5']]));
 
         $iterator = $this->getInstance()->getConfigs($channel);
 

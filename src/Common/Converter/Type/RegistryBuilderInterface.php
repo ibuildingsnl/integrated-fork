@@ -19,16 +19,12 @@ interface RegistryBuilderInterface
     /**
      * Set the resolved type factory.
      *
-     * @param ResolvedTypeFactoryInterface $factory
-     *
      * @return RegistryBuilderInterface
      */
     public function setResolvedTypeFactory(ResolvedTypeFactoryInterface $factory);
 
     /**
      * Add the type to the builder.
-     *
-     * @param TypeInterface $type
      *
      * @return RegistryBuilderInterface
      */
@@ -45,8 +41,6 @@ interface RegistryBuilderInterface
 
     /**
      * Add the type extension to the builder.
-     *
-     * @param TypeExtensionInterface $extension
      */
     public function addTypeExtension(TypeExtensionInterface $extension);
 

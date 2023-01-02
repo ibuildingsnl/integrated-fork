@@ -43,11 +43,6 @@ class ConfigureMenuListener implements EventSubscriberInterface
      */
     private $filterQueryProvider;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface         $tokenStorage
-     * @param FilterQueryProvider           $filterQueryProvider
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
@@ -68,9 +63,6 @@ class ConfigureMenuListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ConfigureMenuEvent $event
-     */
     public function onMenuConfigure(ConfigureMenuEvent $event)
     {
         if (!$this->authorizationChecker->isGranted(self::ROLE_WEBSITE_MANAGER) &&

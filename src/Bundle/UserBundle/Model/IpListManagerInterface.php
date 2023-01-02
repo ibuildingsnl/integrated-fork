@@ -24,15 +24,11 @@ interface IpListManagerInterface extends ManagerInterface
 
     /**
      * Change or add the ip list to the manager.
-     *
-     * @param IpList $scope
      */
     public function persist(IpList $scope);
 
     /**
      * Remove the ip list from the manager.
-     *
-     * @param IpList $scope
      */
     public function remove(IpList $scope);
 
@@ -59,8 +55,6 @@ interface IpListManagerInterface extends ManagerInterface
 
     /**
      * Finds the ip lists by a set of criteria.
-     *
-     * @param array $criteria
      *
      * @return IpList[]
      */

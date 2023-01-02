@@ -11,14 +11,11 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
-use DateTime;
-use DateTimeZone;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\Job;
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -50,10 +47,6 @@ class IndexerQueueCommand extends Command
 
     /**
      * IndexerQueueCommand constructor.
-     *
-     * @param DocumentManager   $documentManager
-     * @param QueueInterface    $queue
-     * @param ResolverInterface $resolver
      */
     public function __construct(DocumentManager $documentManager, QueueInterface $queue, ResolverInterface $resolver)
     {
@@ -102,7 +95,7 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -127,7 +120,7 @@ The <info>%command.name%</info> command starts a index of the site.
         }
 
         if (!$input->getArgument('id') && !$input->getOption('full')) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'You need to give one or more content types or choose the --full or --delete option'
             );
         }
@@ -138,12 +131,9 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * validate the ids in de input.
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function executeValidation(InputInterface $input, OutputInterface $output)
     {
@@ -165,7 +155,7 @@ The <info>%command.name%</info> command starts a index of the site.
             $text = sprintf('The content types "%s" do not exists', implode(', ', $invalid));
 
             if ($input->getOption('no-interaction')) {
-                throw new InvalidArgumentException($text);
+                throw new \InvalidArgumentException($text);
             }
 
             // ask the user if he/she want to continue or not.
@@ -187,9 +177,6 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * queue a delete on the solr index.
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function executeDelete(InputInterface $input, OutputInterface $output)
@@ -202,9 +189,6 @@ The <info>%command.name%</info> command starts a index of the site.
 
     /**
      * queue the indexing of content in to solr.
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      *
      * @return int
      */
@@ -241,7 +225,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
             // get the current time as it will be required at the end for the solr clean up.
 
-            $date = new DateTime();
+            $date = new \DateTime();
 
             $this->doIndex($result, $progress);
             $this->doIndexCleanup($input->getArgument('id'), $date);
@@ -265,9 +249,6 @@ The <info>%command.name%</info> command starts a index of the site.
 
     /**
      * Add all the documents in the cursor to the solr queue.
-     *
-     * @param object      $cursor
-     * @param ProgressBar $progress
      */
     protected function doIndex(object $cursor, ProgressBar $progress)
     {
@@ -300,10 +281,9 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * delete all the types or everything if none is given.
      *
-     * @param array    $types
-     * @param DateTime $date
+     * @param \DateTime $date
      */
-    protected function doIndexCleanup(array $types, DateTime $date = null)
+    protected function doIndexCleanup(array $types, \DateTime $date = null)
     {
         $query = [];
 
@@ -315,7 +295,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
         if ($date) {
             $date = clone $date;
-            $date->setTimezone(new DateTimeZone('UTC'));
+            $date->setTimezone(new \DateTimeZone('UTC'));
 
             $query[] = '-_time_:['.$date->format('Y-m-d\TG:i:s\Z').' TO *]';
         }

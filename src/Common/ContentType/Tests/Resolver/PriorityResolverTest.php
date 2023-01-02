@@ -105,8 +105,6 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ContentTypeInterface $type
-     *
      * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getResolver(ContentTypeInterface $type)

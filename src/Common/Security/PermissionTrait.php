@@ -34,8 +34,6 @@ trait PermissionTrait
     }
 
     /**
-     * @param Collection $permissions
-     *
      * @return $this
      */
     public function setPermission(Collection $permissions)
@@ -46,8 +44,6 @@ trait PermissionTrait
     }
 
     /**
-     * @param Permission $permission
-     *
      * @return $this
      */
     public function addPermission(Permission $permission)
@@ -63,8 +59,6 @@ trait PermissionTrait
     }
 
     /**
-     * @param Permission $permission
-     *
      * @return $this
      */
     public function removePermission(Permission $permission)

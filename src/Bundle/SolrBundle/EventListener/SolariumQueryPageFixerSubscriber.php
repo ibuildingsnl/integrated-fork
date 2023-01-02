@@ -4,7 +4,6 @@ namespace Integrated\Bundle\SolrBundle\EventListener;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Knp\Component\Pager\Event\Subscriber\Paginate\SolariumQuerySubscriber as BaseSolariumQuerySubscriber;
-use Traversable;
 
 class SolariumQueryPageFixerSubscriber extends BaseSolariumQuerySubscriber
 {
@@ -12,7 +11,7 @@ class SolariumQueryPageFixerSubscriber extends BaseSolariumQuerySubscriber
     {
         parent::items($event);
 
-        if ($event->isPropagationStopped() && $event->items instanceof Traversable) {
+        if ($event->isPropagationStopped() && $event->items instanceof \Traversable) {
             $event->items = iterator_to_array($event->items);
         }
     }

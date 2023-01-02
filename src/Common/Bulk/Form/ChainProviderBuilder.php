@@ -21,9 +21,6 @@ class ChainProviderBuilder
      */
     private $providers = [];
 
-    /**
-     * @param ConfigProviderInterface $provider
-     */
     public function addProvider(ConfigProviderInterface $provider)
     {
         $this->providers[spl_object_hash($provider)] = $provider;

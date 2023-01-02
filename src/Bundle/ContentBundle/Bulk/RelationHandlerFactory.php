@@ -15,7 +15,6 @@ use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Relation\RelationInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -45,7 +44,7 @@ class RelationHandlerFactory implements HandlerFactoryInterface
         $this->resolver
             ->setRequired(['relation', 'references'])
             ->addAllowedTypes('relation', RelationInterface::class)
-            ->addAllowedTypes('references', [Traversable::class, 'array'])
+            ->addAllowedTypes('references', [\Traversable::class, 'array'])
             ->setAllowedValues('references', function ($content) {
                 foreach ($content as $item) {
                     if (!$item instanceof ContentInterface) {

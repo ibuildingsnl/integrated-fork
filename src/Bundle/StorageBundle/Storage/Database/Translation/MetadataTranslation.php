@@ -23,9 +23,6 @@ class MetadataTranslation
      */
     protected $metadata;
 
-    /**
-     * @param MetadataInterface $metadata
-     */
     public function __construct(MetadataInterface $metadata)
     {
         $this->metadata = $metadata;

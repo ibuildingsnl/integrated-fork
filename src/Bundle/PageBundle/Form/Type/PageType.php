@@ -42,10 +42,6 @@ class PageType extends AbstractType
      */
     private $themeResolver;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param ThemeResolver           $themeResolver
-     */
     public function __construct(ChannelContextInterface $channelContext, ThemeResolver $themeResolver)
     {
         $this->channelContext = $channelContext;

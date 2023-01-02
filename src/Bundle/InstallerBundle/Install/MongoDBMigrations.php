@@ -29,9 +29,6 @@ class MongoDBMigrations
 
     /**
      * Migrations constructor.
-     *
-     * @param DocumentManager    $documentManager
-     * @param ContainerInterface $container
      */
     public function __construct(DocumentManager $documentManager, ContainerInterface $container)
     {

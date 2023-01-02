@@ -87,15 +87,13 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testHasType()
     {
-        self::markTestSkipped('Todo: rewrite test case to be less mock-dependent');
-
-        $this->repository->expects($this->at(1))
+        $this->repository->expects($this->exactly(2))
             ->method('findOneBy')
-            ->willReturn($this->getType());
-
-        $this->repository->expects($this->at(2))
-            ->method('findOneBy')
-            ->willReturn(null);
+            ->withConsecutive(
+                [$this->equalTo(['id' => 'found'])],
+                [$this->equalTo(['id' => 'not found'])],
+            )
+            ->willReturnOnConsecutiveCalls($this->getType(), null);
 
         $resolver = $this->getInstance();
 

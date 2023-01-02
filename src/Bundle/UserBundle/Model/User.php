@@ -212,9 +212,6 @@ class User implements UserInterface
         return $this->createdAt;
     }
 
-    /**
-     * @param GroupInterface $group
-     */
     public function addGroup(GroupInterface $group)
     {
         if (!$this->groups->contains($group)) {
@@ -222,17 +219,12 @@ class User implements UserInterface
         }
     }
 
-    /**
-     * @param GroupInterface $group
-     */
     public function removeGroup(GroupInterface $group)
     {
         $this->groups->removeElement($group);
     }
 
     /**
-     * @param GroupInterface $group
-     *
      * @return bool
      */
     public function hasGroup(GroupInterface $group)
@@ -260,9 +252,6 @@ class User implements UserInterface
         }
     }
 
-    /**
-     * @param RoleInterface $role
-     */
     public function addRole(RoleInterface $role)
     {
         if (!$this->roles->contains($role)) {
@@ -270,17 +259,12 @@ class User implements UserInterface
         }
     }
 
-    /**
-     * @param RoleInterface $role
-     */
     public function removeRole(RoleInterface $role)
     {
         $this->roles->removeElement($role);
     }
 
     /**
-     * @param RoleInterface $role
-     *
      * @return bool
      */
     public function hasRole(RoleInterface $role)
@@ -325,6 +309,7 @@ class User implements UserInterface
     {
         $relation = $relation instanceof \Integrated\Bundle\ContentBundle\Document\Content\Relation\Relation ? $relation : null;
 
+        $this->email = $relation->getEmail();
         $this->relation = $relation ? $relation->getId() : null;
         $this->relation_instance = $relation;
     }
@@ -346,8 +331,6 @@ class User implements UserInterface
     }
 
     /**
-     * @param ScopeInterface $scope
-     *
      * @return $this
      */
     public function setScope(ScopeInterface $scope)

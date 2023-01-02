@@ -41,12 +41,6 @@ class ContentService
      */
     private $websiteToolbarListener;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param AuthorizationChecker    $authorizationChecker
-     * @param BlockManager            $blockManager
-     * @param WebsiteToolbarListener  $websiteToolbarListener
-     */
     public function __construct(ChannelContextInterface $channelContext, AuthorizationChecker $authorizationChecker, BlockManager $blockManager, WebsiteToolbarListener $websiteToolbarListener)
     {
         $this->channelContext = $channelContext;
@@ -55,9 +49,6 @@ class ContentService
         $this->websiteToolbarListener = $websiteToolbarListener;
     }
 
-    /**
-     * @param Content $content
-     */
     public function prepare(Content $content)
     {
         if (!$content->hasChannel($this->channelContext->getChannel())) {

@@ -30,8 +30,6 @@ class Connector
 
     /**
      * Get the configId of the document.
-     *
-     * @return int
      */
     public function getConfigId(): int
     {
@@ -40,8 +38,6 @@ class Connector
 
     /**
      * Set the configId of the document.
-     *
-     * @param int $configId
      *
      * @return $this
      */
@@ -54,8 +50,6 @@ class Connector
 
     /**
      * Get the configAdapter of the document.
-     *
-     * @return string
      */
     public function getConfigAdapter(): string
     {
@@ -64,8 +58,6 @@ class Connector
 
     /**
      * Set the configAdapter of the document.
-     *
-     * @param string $configAdapter
      *
      * @return $this
      */
@@ -78,8 +70,6 @@ class Connector
 
     /**
      * Get the externalId of the document.
-     *
-     * @return string
      */
     public function getExternalId(): string
     {
@@ -88,8 +78,6 @@ class Connector
 
     /**
      * Set the externalId of the document.
-     *
-     * @param string $externalId
      *
      * @return $this
      */

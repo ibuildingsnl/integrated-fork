@@ -11,8 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
 use Exception;
 use Integrated\Bundle\ChannelBundle\Event\FilterResponseConfigEvent;
 use Integrated\Bundle\ChannelBundle\Event\FormConfigEvent;
@@ -28,7 +26,9 @@ use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -54,11 +54,6 @@ class ConfigController extends AbstractController
 
     /**
      * ConfigController constructor.
-     *
-     * @param ConfigManagerInterface   $manager
-     * @param RegistryInterface        $registry
-     * @param EventDispatcherInterface $dispatcher
-     * @param ContainerInterface       $container
      */
     public function __construct(
         ConfigManagerInterface $manager,
@@ -73,8 +68,6 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -94,8 +87,7 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string  $adapter
+     * @param string $adapter
      *
      * @return Response
      */
@@ -107,7 +99,7 @@ class ConfigController extends AbstractController
 
         try {
             $adapter = $this->registry->getAdapter($adapter);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $this->createNotFoundException('Not Found', $e);
         }
 
@@ -159,8 +151,7 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return Response
      */
@@ -179,7 +170,7 @@ class ConfigController extends AbstractController
 
         try {
             $adapter = $this->registry->getAdapter($data->getAdapter());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $this->createNotFoundException('Not Found', $e);
         }
 
@@ -226,8 +217,6 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function externalReturn(Request $request)
@@ -244,8 +233,7 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return Response
      */
@@ -302,9 +290,6 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Config           $data
-     * @param AdapterInterface $adapter
-     *
      * @return FormInterface
      */
     protected function createNewForm(Config $data, AdapterInterface $adapter)
@@ -324,9 +309,6 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Config           $data
-     * @param AdapterInterface $adapter
-     *
      * @return FormInterface
      */
     protected function createEditForm(Config $data, AdapterInterface $adapter)
@@ -343,8 +325,6 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @param Config $data
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(Config $data)

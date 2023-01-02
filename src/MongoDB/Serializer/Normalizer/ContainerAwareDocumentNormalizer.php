@@ -29,8 +29,7 @@ class ContainerAwareDocumentNormalizer extends DocumentNormalizer
     protected $service;
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $service   the name of the document manager service to use
+     * @param string $service the name of the document manager service to use
      */
     public function __construct(ContainerInterface $container, $service)
     {
