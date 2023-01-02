@@ -128,8 +128,9 @@
         <div class="mb-2">Geselecteerde afbeelding:</div>
         <div id="selected_images" class="mb-4"></div>
 
-    {#    <input type="file" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]">#}
     {#    <input type="file" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]" style="position: absolute; left: -9999px; top: -9999px; z-index: -9999;">#}
+
+        <input type="text" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]" placeholder="123425edfewadfqew1243142r">
 
         <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid">
             <div class="media-preview">
@@ -147,6 +148,7 @@
             ]
             let response_from_iframe = []
             let modus = 'select_one'
+            let currently_selected_images = []
 
             function cloneImage(selectedImage) {
                 let clone = $("#selected_image").clone(true,true);
@@ -170,17 +172,42 @@
                 return selection.filter(item => item.content_type == 'image')
             }
 
+            function addImageToInputField(image_ids) {
+                const image_ids_as_json = JSON.stringify(image_ids)
+                if (modus == 'select_one') {
+                    $('#integrated_content_media_gallery_image_file').attr('value', image_ids_as_json)
+                } else if (modus == 'select_multiple') {
+                    console.log("appending")
+                    const currentVal = $('#integrated_content_media_gallery_image_file').attr('value')
+                    $('#integrated_content_media_gallery_image_file').attr('value', image_ids_as_json)
+                }
+            }
+
             window.addEventListener('message', function (e) {
                 response_from_iframe = filterImages(JSON.parse(e.data))
                 if (response_from_iframe.length > 0) {
-                    response_from_iframe.map(item => cloneImage(item))
+
+                    //fill currently_selected_images with the response and filter unique
+                    if (modus == 'select_multiple') {
+                        currently_selected_images = response_from_iframe.concat(currently_selected_images)
+                        currently_selected_images = currently_selected_images.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i)
+                    } else {
+                        currently_selected_images = response_from_iframe
+                    }
+
+                    //clear all the current displayed images
+                    $('#selected_images').empty()
+                    currently_selected_images.forEach((item) => {
+                        cloneImage(item)
+                    })
+
+
+                    addImageToInputField(currently_selected_images.map(item => item.id))
                     closeMediaGallery()
                  } else {
                     console.log("no image selected")
                 }
             });
-
-
 
             // todo when we implement select multiple images
             function removeImageFromList() {}
@@ -196,7 +223,6 @@
             }
 
             function showMediaGallery() {
-
                 $('#wrap').show()
                 $('#select_multimedia_button').hide()
             }

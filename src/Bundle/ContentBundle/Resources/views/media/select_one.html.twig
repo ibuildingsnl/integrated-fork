@@ -4,6 +4,7 @@
 {% block content %}
 {#    {{ dump(selected_modus|default('')) }}#}
 
+    {{ dump("select one") }}
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('select_one'),
     }  %}

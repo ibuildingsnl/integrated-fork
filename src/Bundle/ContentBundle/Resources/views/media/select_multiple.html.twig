@@ -9,6 +9,7 @@
 {% block content %}
 {#    {{ dump(selected_modus|default('media_gallery')) }}#}
 {#    <button onclick="send_message_to_parent()">send message to parent</button>#}
+    {{ dump("select multiple") }}
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('select_multiple'),
     }  %}
