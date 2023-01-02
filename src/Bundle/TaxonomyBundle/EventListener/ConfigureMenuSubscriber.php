@@ -39,10 +39,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
 
         $taxonomyType = $this->contentTypes->find('taxonomy');
 
-        if (
-            $taxonomyType &&
-            $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)
-        ) {
+        if ($taxonomyType && $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
             $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
             $menuAdmin->addChild('Taxonomies', ['route' => 'integrated_taxonomy_index']);
         }
