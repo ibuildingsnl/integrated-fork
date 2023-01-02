@@ -33,7 +33,7 @@ class ErrorEvent extends WorkerEvent
     /**
      * Event constructor.
      */
-    public function __construct(Worker $worker, QueueMessageInterface $message, \Exception $exception)
+    public function __construct(Worker $worker, QueueMessageInterface $message, Exception $exception)
     {
         parent::__construct($worker);
 

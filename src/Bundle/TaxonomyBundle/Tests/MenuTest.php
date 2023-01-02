@@ -157,6 +157,7 @@ final class MenuTest extends TestCase
         $permission = new Permission();
         $permission->setMask($type);
         $permission->setGroup($group);
+
         return $permission;
     }
 }

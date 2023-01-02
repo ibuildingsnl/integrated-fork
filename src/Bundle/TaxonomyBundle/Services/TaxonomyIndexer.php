@@ -32,8 +32,6 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
 
     /**
      * @param Taxonomy[][]  $byParent
-     * @param string|null   $key
-     * @param int           $depth
      * @param IndexedItem[] $sorted
      *
      * @return IndexedItem[]

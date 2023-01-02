@@ -9,8 +9,6 @@ interface Flusher
     /**
      * Saves the persisted changes to the data store.
      *
-     * @return void
-     *
      * @throws FlushingException when something goes wrong with saving the content
      */
     public function flush(): void;

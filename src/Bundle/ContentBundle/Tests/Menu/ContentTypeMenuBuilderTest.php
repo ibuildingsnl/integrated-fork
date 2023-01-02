@@ -276,11 +276,6 @@ class ContentTypeMenuBuilderTest extends TestCase
         return new Iterator([$contentType1, $contentType2, $contentType3]);
     }
 
-    /**
-     * @param bool $withFilter
-     *
-     * @return ContentTypeMenuBuilder
-     */
     protected function getInstance(bool $withFilter = false): ContentTypeMenuBuilder
     {
         $builder = new ContentTypeMenuBuilder(
