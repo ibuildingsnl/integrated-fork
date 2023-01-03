@@ -672,6 +672,8 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
+        dump($form->getViewData());
+
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,

@@ -49,6 +49,7 @@ class RelationType extends AbstractType
                         'Author' => 'author',
                         'Multimedia - Single' => 'mmsingle',
                         'Multimedia - Multi' => 'mmmulti',
+                        'Multimedia' => 'multimedia',
                         'File' => 'file',
                         'Slider' => 'slider',
                     ],
