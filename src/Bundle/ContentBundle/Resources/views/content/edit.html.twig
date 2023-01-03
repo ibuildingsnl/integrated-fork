@@ -138,7 +138,7 @@
                                 {% for relation in form.relations %}
                                     {% if relation.vars.attr['data-location'] == 'sidebar' %}
                                         <div class="aside-item-wrapper relations">
-                                            <div>header</div>
+                                            <div>header 2</div>
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
@@ -151,6 +151,8 @@
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
                                                     <div class="input-group relative flex items-stretch w-full">
+{#                                                        {% if data-relation =   %}#}
+                                                        {{ dump(relation) }}
                                                         <select
                                                             multiple
                                                             id="{{ relation.vars.name }}"

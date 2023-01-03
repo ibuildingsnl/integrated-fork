@@ -122,7 +122,7 @@
         <div id="select_multimedia_button" class="p-2 bg-blue-200 border border-black w-32 mb-4" onclick="showMediaGallery()">Selecteer een afbeelding</div>
 
         <div id="wrap" class="mb-4" style="display: none;">
-            <iframe id="frame" src="/admin/media/select_one" width="1500" height="500"></iframe>
+            <iframe id="frame" src="" width="1500" height="500"></iframe>
         </div>
 
         <div class="mb-2">Geselecteerde afbeelding:</div>
@@ -147,8 +147,10 @@
                 "select_one", "select_multiple"
             ]
             let response_from_iframe = []
-            let modus = 'select_one'
+            let modus = 'select_multiple'
             let currently_selected_images = []
+
+            document.querySelector('#frame').setAttribute('src', "/admin/media/"+modus)
 
             function cloneImage(selectedImage) {
                 let clone = $("#selected_image").clone(true,true);

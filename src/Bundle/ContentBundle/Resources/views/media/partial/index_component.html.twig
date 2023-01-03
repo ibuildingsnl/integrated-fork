@@ -4,7 +4,7 @@
     <div class="media-sidebar">
 
         {% if selected_modus != 'media_gallery' %}
-            <button class="p-2 bg-red-200" onclick="send_message_to_parent()">send message to parent</button>
+            <button class="p-4 text-xl text-bold mx-auto m-2 border border-black bg-green-200" onclick="send_message_to_parent()">Selecteer afbeelding</button>
         {% endif %}
 
         <aside>
@@ -344,7 +344,7 @@
             </div>
 
         </section>
-        {{ dump(paginator.items|json_encode(constant('JSON_OBJECT_AS_ARRAY') b-or constant('JSON_HEX_QUOT'))) }}
+{#        {{ dump(paginator.items|json_encode(constant('JSON_OBJECT_AS_ARRAY') b-or constant('JSON_HEX_QUOT'))) }}#}
     </div>
 </div>
 

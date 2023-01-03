@@ -9,7 +9,7 @@
 {% block content %}
     {{ dump(selected_modus|default('media_gallery')) }}
     {{ dump("index") }}
-    <button onclick="send_message_to_parent()">send message to parent</button>
+    <button onclick="send_message_to_parent()">Selecteer afbeelding</button>
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('media_gallery'),
     }  %}

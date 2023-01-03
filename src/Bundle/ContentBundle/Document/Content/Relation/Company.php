@@ -58,7 +58,7 @@ class Company extends Relation
         return $this->mediaGalleryImage;
     }
 
-    public function setMediaGalleryImage(StorageInterface $mediaGalleryImage = null): Company
+    public function setMediaGalleryImage(StorageInterface $mediaGalleryImage = null)
     {
         $this->mediaGalleryImage = $mediaGalleryImage;
 
@@ -67,6 +67,7 @@ class Company extends Relation
 
     /**
      * @var string
+     *
      * @Slug(fields={"custominput"})
      * @Type\Field
      */
@@ -77,7 +78,7 @@ class Company extends Relation
         return $this->custominput;
     }
 
-    public function setCustominput(string $custominput = null): string
+    public function setCustominput(string $custominput = null)
     {
         $this->custominput = $custominput;
 
