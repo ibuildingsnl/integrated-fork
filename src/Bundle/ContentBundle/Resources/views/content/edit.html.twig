@@ -143,25 +143,25 @@
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                                     <label
-                                                        class="aside-item-icon"
-                                                        for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                                            class="aside-item-icon"
+                                                            for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                                 </h3>
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
                                                     <div class="input-group relative flex items-stretch w-full">
-{#                                                        {% if data-relation =   %}#}
+                                                        {#                                                        {% if data-relation =   %} #}
                                                         {{ dump(relation) }}
                                                         <select
-                                                            multiple
-                                                            id="{{ relation.vars.name }}"
-                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                            data-types="{{ relation.vars.attr['data-types'] }}"
-                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                            class="relation-items form-control"
-                                                            style="display: none; width: 89%">
+                                                                multiple
+                                                                id="{{ relation.vars.name }}"
+                                                                data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                                data-types="{{ relation.vars.attr['data-types'] }}"
+                                                                data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                                data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                                class="relation-items form-control"
+                                                                style="display: none; width: 89%">
                                                         </select>
                                                         <span class="input-group-addon" data-add="1"></span>
                                                     </div>
@@ -208,20 +208,20 @@
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
+
                 {% block content_relations_editor %}
                     {% if form.offsetGet('relations').count() %}
                         <input type="hidden" id="default_references" value="{{ references }}">
                         {% for relation in form.relations %}
                             {% if relation.vars.attr['data-location'] != 'sidebar' %}
-
                                 {% if relation.vars.attr['data-relationtype'] != 'mmsingle' %}
                                     <div class="editor-item-wrapper relations">
                                         <div class="editor-item-header">
                                             <h3 class="editor-item-title">
                                                 <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                                 <label
-                                                    class="editor-item-icon"
-                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                                        class="editor-item-icon"
+                                                        for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                             </h3>
                                             <i class="iconoir-nav-arrow-up"></i>
                                         </div>
@@ -229,14 +229,14 @@
                                             <div class="editor-item-list-container relation">
                                                 <div class="input-group relative flex items-stretch w-full">
                                                     <select
-                                                        multiple
-                                                        id="{{ relation.vars.name }}"
-                                                        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                        data-types="{{ relation.vars.attr['data-types'] }}"
-                                                        data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                        data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                        class="relation-items form-control"
-                                                        style="display: none; width: 89%">
+                                                            multiple
+                                                            id="{{ relation.vars.name }}"
+                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                            data-types="{{ relation.vars.attr['data-types'] }}"
+                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                            class="relation-items form-control"
+                                                            style="display: none; width: 89%">
                                                     </select>
                                                     <span class="input-group-addon" data-add="1"></span>
                                                 </div>
@@ -244,150 +244,204 @@
                                         </div>
                                     </div>
                                 {% else %}
-                                    <div class="m-12">
-                                        {{ dump(relation.vars.attr) }}
-                                        {{ dump(relation.vars.attr['data-relation']) }}
-                                        <div id="select_multimedia_button_{{ relation.vars.attr['data-relation'] }}" class="p-2 bg-blue-200 border border-black w-32 mb-4" onclick="showMediaGallery()">Selecteer een afbeelding</div>
+                                    <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
+                                        <div
+                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                            data-types="{{ relation.vars.attr['data-types'] }}"
+                                            data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
+                                            data-relationid="{{ relation.vars.attr['data-relation'] }}"
+                                            class="select_multimedia_button p-2 bg-blue-200 border border-black w-32 mb-4">Selecteer
+                                        een afbeelding. Multiple = {{ relation.vars.attr['data-multiple'] ? 'select_multiple' : 'select_one' }}
+                                        </div>
 
-                                        <div id="wrap" class="mb-4" style="display: none;">
-                                            <iframe class="iframe" id="frame"
-                                                    data-relationid="{{ relation.vars.attr['data-relation'] }}"
-                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                    src="" width="1500" height="500">
+                                        <div class="wrap mb-4" style="display: none;">
+                                            <iframe class="iframe" src="" width="1500" height="500">
                                             </iframe>
                                         </div>
 
-                                        <div class="mb-2">Geselecteerde afbeelding:</div>
-                                        <div id="selected_images" class="mb-4"></div>
+                                        <div class="mb-2">Geselecteerde afbeelding{{ relation.vars.attr['data-multiple'] ? 'en' : '' }}:</div>
 
-                                        {#    <input type="file" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]" style="position: absolute; left: -9999px; top: -9999px; z-index: -9999;">#}
+                                        <div class="selected_images flex flex-wrap mb-4"></div>
 
-                                        <input type="text" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]" placeholder="123425edfewadfqew1243142r">
-
-                                        <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid">
-                                            <div class="media-preview">
-                                                <div class="thumbnail">
-                                                    <div class="centered">
-                                                        <img src="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-
+                                        <input type="text" class="w-full integrated_content_media_gallery_image_file"
+                                               name="integrated_content[media_gallery_image][file]"
+                                               placeholder="123425edfewadfqew1243142r">
 
                                     </div>
-                                {% endif %}
+                                {% endif %}`
                             {% endif %}
                         {% endfor %}
-                    {% endif %}
 
-                    <script>
-                        let possible_modi = [
-                            "select_one", "select_multiple"
-                        ]
-                        let response_from_iframe = []
-                        let modus = 'select_multiple'
-                        let currently_selected_images = []
+{#                        This element will be copied for every image#}
+                        <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid w-1/4">
+                            <div class="media-preview">
+                                <div class="thumbnail">
+                                    <div class="centered">
+                                        <img src="">
+                                    </div>
+                                    <div class="remove_link bg-red-200 p-2 border border-black">Remove me</div>
+                                </div>
+                            </div>
+                        </li>
 
-                        //setup frames
-                        document.querySelectorAll('#frame').forEach((item) => {
-                            let modus = item.dataset.multiple ? 'select_multiple' : 'select_one'
-                            item.setAttribute('id', "frame_" + item.dataset.relationid)
-                            item.setAttribute('src', "/admin/media/"+modus)
-                        })
+                        <script>
+                            let form_relations = {} //this holds all the form relation objects with an id
+                            let form_relation = {} //these will be placed in form_relations
+                            const mediagallery_link = "/admin/media/"
+                            let selected_relation = '' //after a user clicks on a form button, the clicked form element is selected
 
-                        function cloneImage(selectedImage) {
-                            let clone = $("#selected_image").clone(true,true);
-                            let clone_img = clone.find('img')
-                            clone.attr('id', selectedImage.id)
-                            clone_img.attr("src", selectedImage.thumbnail)
-                            clone.removeClass('hidden')
-                            handleClone(clone)
-                        }
+                            addEventListeners()
+                            populateFormRelations()
+                            generateSrcAttributeForIframes()
 
-                        function handleClone(clone) {
-                            if (modus == 'select_one') {
-                                $('#selected_images').empty()
-                                $('#selected_images').append(clone)
-                            } else if (modus == 'select_multiple') {
-                                $('#selected_images').append(clone)
-                            }
-                        }
-
-                        function filterImages(selection) {
-                            return selection.filter(item => item.content_type == 'image')
-                        }
-
-                        function addImageToInputField(image_ids) {
-                            const image_ids_as_json = JSON.stringify(image_ids)
-                            if (modus == 'select_one') {
-                                $('#integrated_content_media_gallery_image_file').attr('value', image_ids_as_json)
-                            } else if (modus == 'select_multiple') {
-                                console.log("appending")
-                                const currentVal = $('#integrated_content_media_gallery_image_file').attr('value')
-                                $('#integrated_content_media_gallery_image_file').attr('value', image_ids_as_json)
-                            }
-                        }
-
-                        window.addEventListener('message', function (e) {
-                            response_from_iframe = filterImages(JSON.parse(e.data))
-                            if (response_from_iframe.length > 0) {
-
-                                //fill currently_selected_images with the response and filter unique
-                                if (modus == 'select_multiple') {
-                                    currently_selected_images = response_from_iframe.concat(currently_selected_images)
-                                    currently_selected_images = currently_selected_images.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i)
-                                } else {
-                                    currently_selected_images = response_from_iframe
-                                }
-
-                                //clear all the current displayed images
-                                $('#selected_images').empty()
-                                currently_selected_images.forEach((item) => {
-                                    cloneImage(item)
+                            function populateFormRelations() {
+                                document.querySelectorAll('.mediagallery_selector').forEach((item) => {
+                                    const id = item.getAttribute('id')
+                                    form_relations[id] = {
+                                        modus: item.querySelector('.select_multimedia_button').dataset.multiple ? 'select_multiple' : 'select_one',
+                                        selected_images: [],
+                                        relationid: id,
+                                        types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
+                                        input_selector: '#' + id + ' input',
+                                        selected_images_selector: '#' + id + ' .selected_images',
+                                        wrap_selector: '#' + id + ' .wrap',
+                                        iframe_selector: '#' + id + ' iframe'
+                                    }
                                 })
-
-
-                                addImageToInputField(currently_selected_images.map(item => item.id))
-                                closeMediaGallery()
-                            } else {
-                                console.log("no image selected")
                             }
-                        });
 
-                        // todo when we implement select multiple images
-                        function removeImageFromList() {}
+                            function generateSrcAttributeForIframes() {
+                                Object.values(form_relations).forEach(form_relation => {
+                                    document.querySelector(form_relation.iframe_selector).setAttribute('src', mediagallery_link + form_relation.modus)
+                                });
+                            }
 
-                        function closeMediaGallery() {
-                            reloadMediaLibrary()
-                            $('#wrap').hide()
-                            $('#select_multimedia_button').show()
-                        }
+                            function addEventListeners() {
+                                document.querySelectorAll('.select_multimedia_button').forEach((item) => {
+                                    item.addEventListener('click', function (even) {
+                                        showMediaGallery(event, item)
+                                    }, false);
+                                })
+                            }
 
-                        function reloadMediaLibrary() {
-                            $( '#frame' ).attr( 'src', function ( i, val ) { return val; });
-                        }
+                            function removeImage(event) {
+                                const closest_image_id = event.target.closest('li').id
+                                const closest_media_gallery_selector = event.target.closest('.mediagallery_selector').id
+                                selected_relation = form_relations[closest_media_gallery_selector]
+                                selected_relation.selected_images = selected_relation.selected_images.filter(item => item.id !== closest_image_id)
+                                rebuildDOM()
+                            }
 
-                        function showMediaGallery() {
-                            $('#wrap').show()
-                            $('#select_multimedia_button').hide()
-                        }
-                    </script>
+                            function createClone(selectedImage) {
+                                let clone = $("#selected_image").clone(true, true);
+                                let clone_img = clone.find('img')
+                                let remove_link = clone.find('.remove_link')
+                                clone.attr('id', selectedImage.id)
+                                clone.removeClass('hidden')
+                                clone_img.attr("src", selectedImage.thumbnail)
+                                remove_link.attr("onclick", "removeImage(event)")
+                                remove_link.innerHTML = "New Heading";
+                                return clone
+                            }
 
-                    <style>
-                        #wrap { width: 2000px; height: 900px; padding: 0; overflow: hidden; }
-                        .iframe { width: 2000px; height: 900px; border: 1px solid black; }
-                        .iframe {
-                            -ms-zoom: 0.75;
-                            -moz-transform: scale(0.75);
-                            -moz-transform-origin: 0 0;
-                            -o-transform: scale(0.75);
-                            -o-transform-origin: 0 0;
-                            -webkit-transform: scale(0.75);
-                            -webkit-transform-origin: 0 0;
-                        }
-                    </style>
+                            function placeClone(clone) {
+                                if (selected_relation.modus == 'select_one') {
+                                    $(selected_relation.selected_images_selector).empty()
+                                    $(selected_relation.selected_images_selector).append(clone)
+                                } else if (selected_relation.modus == 'select_multiple') {
+                                    $(selected_relation.selected_images_selector).append(clone)
+                                }
+                            }
 
+                            function filterImages(selection) {
+                                return selection.filter(item => item.content_type == 'image')
+                            }
+
+                            function addImageIDsToInputField() {
+                                const image_ids_as_json = JSON.stringify(selected_relation.selected_images.map(item => item.id))
+                                $(selected_relation.input_selector).attr('value', image_ids_as_json)
+                            }
+
+                            function emptyShownImagesInDOM() {
+                                $(selected_relation.selected_images_selector).empty()
+                            }
+
+                            function selectImagesToShow(response_from_iframe) {
+                                if (selected_relation.modus == 'select_one') {
+                                    selected_relation.selected_images = response_from_iframe
+                                } else {
+                                    //concat AND filter for unique values:
+                                    selected_relation.selected_images = [...selected_relation.selected_images, ...response_from_iframe].filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i)
+                                }
+                            }
+
+                            function populateDOMWithImages() {
+                                selected_relation.selected_images.forEach((item) => {
+                                    const clone = createClone(item)
+                                    placeClone(clone)
+                                })
+                            }
+
+                            window.addEventListener('message', function (e) {
+                                const response_from_iframe = filterImages(JSON.parse(e.data))
+                                if (response_from_iframe.length > 0) {
+                                    selectImagesToShow(response_from_iframe)
+                                    rebuildDOM()
+                                    closeMediaGallery()
+                                } else {
+                                    console.log("no image selected")
+                                }
+                            });
+
+                            function rebuildDOM() {
+                                emptyShownImagesInDOM()
+                                populateDOMWithImages()
+                                addImageIDsToInputField()
+                            }
+
+                            function closeMediaGallery() {
+                                reloadMediaLibrary()
+                                $(selected_relation.wrap_selector).hide()
+                                $('.select_multimedia_button').show()
+                            }
+
+                            function reloadMediaLibrary() {
+                                $(selected_relation.iframe_selector).attr('src', function (i, val) {return val;});
+                            }
+
+                            function showMediaGallery(event, item) {
+                                selected_relation = form_relations[item.dataset.relationid]
+                                $(selected_relation.wrap_selector).show()
+                                $('.select_multimedia_button').hide()
+                            }
+                        </script>
+
+                        <style>
+                            .mediagallery_selector .wrap {
+                                width: 2000px;
+                                height: 900px;
+                                padding: 0;
+                                overflow: hidden;
+                            }
+
+                            .mediagallery_selector .iframe {
+                                width: 2000px;
+                                height: 900px;
+                                border: 1px solid black;
+                            }
+
+                            .mediagallery_selector .iframe {
+                                -ms-zoom: 0.75;
+                                -moz-transform: scale(0.75);
+                                -moz-transform-origin: 0 0;
+                                -o-transform: scale(0.75);
+                                -o-transform-origin: 0 0;
+                                -webkit-transform: scale(0.75);
+                                -webkit-transform-origin: 0 0;
+                            }
+                        </style>
+
+                    {% endif %}
                 {% endblock content_relations_editor %}
             </section>
         </div>
