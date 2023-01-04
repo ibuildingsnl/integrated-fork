@@ -140,16 +140,17 @@ class MediaController extends AbstractController
 
         return $this->render('@IntegratedContent/media/select_one.html.twig', [
             'selected_modus' => 'select_one',
-            ...$data
+            ...$data,
         ]);
     }
 
-    public function select_multiple(Request $request): Response {
+    public function select_multiple(Request $request): Response
+    {
         $data = $this->index_component($request);
 
         return $this->render('@IntegratedContent/media/select_multiple.html.twig', [
             'selected_modus' => 'select_multiple',
-            ...$data
+            ...$data,
         ]);
     }
 

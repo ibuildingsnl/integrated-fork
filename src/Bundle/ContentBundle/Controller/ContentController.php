@@ -528,13 +528,12 @@ class ContentController extends AbstractController
                 $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
                 return $this->redirectToRoute('integrated_content_content_index', ['id' => $content->getId(), 'remember' => 1]);
-            } else {
-                foreach ($form->getErrors() as $error) {
-                    dump($error->getMessage());
-                    dump($error);
-                }
-                dd("Fix these errors please.");
             }
+            foreach ($form->getErrors() as $error) {
+                dump($error->getMessage());
+                dump($error);
+            }
+            dd('Fix these errors please.');
         }
 
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
