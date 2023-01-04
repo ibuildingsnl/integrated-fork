@@ -37,33 +37,30 @@ class ContentBlock extends Block
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0, 'label' => 'Items per page']])]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0, 'label' => 'Max items'], ])]
     protected $maxItems;
 
     /**
      * @var int
-     *
-     * @Assert\NotBlank
-     * @Type\Field(
-     *     type="Symfony\Component\Form\Extension\Core\Type\ChoiceType",
-     *     options={
-     *         "choices"={
-     *             "1 Column"="1",
-     *             "2 Columns"="2",
-     *             "3 Columns"="3",
-     *             "4 Columns"="4",
-     *             "5 Columns"="5",
-     *          },
-     *     }
-     * )
      */
+    #[Assert\NotBlank]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            '1 Column' => 1,
+            '2 Columns' => 2,
+            '3 Columns' => 3,
+            '4 Columns' => 4,
+            '5 Columns' => 5,
+        ],
+    ]
+    )]
     protected $gridSize;
 
     /**
