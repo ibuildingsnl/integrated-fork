@@ -129,14 +129,14 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function select_one(Request $request): Response
+    public function selectOne(Request $request): Response
     {
 //        $request->query->set('contenttypes', 'image');
 //        if ($request->query->get('contenttypes')) {
 //
 //        }
 
-        $data = $this->index_component($request);
+        $data = $this->indexComponent($request);
 
         return $this->render('@IntegratedContent/media/select_one.html.twig', [
             'selected_modus' => 'select_one',
@@ -144,9 +144,9 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function select_multiple(Request $request): Response
+    public function selectMultiple(Request $request): Response
     {
-        $data = $this->index_component($request);
+        $data = $this->indexComponent($request);
 
         return $this->render('@IntegratedContent/media/select_multiple.html.twig', [
             'selected_modus' => 'select_multiple',
@@ -154,7 +154,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function index_component(Request $requestSource): array
+    public function indexComponent(Request $requestSource): array
     {
         $contentTypeSelectOptions = $this->getContentTypes();
 
