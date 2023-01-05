@@ -55,8 +55,16 @@ class LayoutLocator
 
                             /** @var \Symfony\Component\Finder\SplFileInfo $file */
                             foreach ($finder as $file) {
-                                $this->layouts[$type][] = $file->getRelativePathname();
-                                //TODO: Fetch template name from template file to display in the dropdown list
+                                $f = fopen($file, 'r');
+                                $line = fgets($f);
+                                fclose($f);
+
+                                if (str_starts_with($line, '{#')) {
+                                    preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line , $matchedLine );
+                                    $this->layouts[$type][$matchedLine[0]] = $file->getRelativePathname();
+                                } else {
+                                    $this->layouts[$type][$file->getRelativePathname()] = $file->getRelativePathname();
+                                }
                             }
                         }
                     }
