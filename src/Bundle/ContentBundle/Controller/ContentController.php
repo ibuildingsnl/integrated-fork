@@ -671,12 +671,22 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        dump($form->getViewData());
+        $form_relations = $form->getData()->getRelations()->toArray();
+        $form_relations_with_id_as_key = [];
+        foreach ($form_relations as $relation) {
+            $image_objects = $relation->getReferences()->toArray();
+            $image_objects_with_id_as_key = [];
+            foreach ($image_objects as $image_object) {
+                $image_objects_with_id_as_key[$image_object->getId()] = $image_object;
+            }
+            $form_relations_with_id_as_key[$relation->getRelationId()] = $image_objects_with_id_as_key;
+        }
 
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
+            'form_relations' => $form_relations_with_id_as_key,
             'content' => $content,
             'locking' => $locking,
             'showContentHistory' => true,

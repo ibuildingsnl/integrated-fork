@@ -110,13 +110,8 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
-//        dd( json_encode ( $this->createPaginator($items, $requestSource)->getItems() ) );
-//        dd( json_encode( $this->createPaginator($items, $requestSource)->get ) );
-
         return $this->render('@IntegratedContent/media/index.html.twig', [
             'paginator' => $this->createPaginator($items, $requestSource),
-//            'paginator_items2' => json_encode( $this->createPaginator($items, $requestSource)->getItems() ),
-//            'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
@@ -131,11 +126,6 @@ class MediaController extends AbstractController
 
     public function selectOne(Request $request): Response
     {
-//        $request->query->set('contenttypes', 'image');
-//        if ($request->query->get('contenttypes')) {
-//
-//        }
-
         $data = $this->indexComponent($request);
 
         return $this->render('@IntegratedContent/media/select_one.html.twig', [

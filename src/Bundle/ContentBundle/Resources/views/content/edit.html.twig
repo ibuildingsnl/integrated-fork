@@ -153,6 +153,8 @@
                                                     <div class="input-group relative flex items-stretch w-full">
                                                         {#                                                        {% if data-relation =   %} #}
                                                         {{ dump(relation) }}
+                                                        {{ dump(path('integrated_content_content_index', {'_format': 'json'}) ) }}
+                                                        {{ dump(path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) ) }}
                                                         <select
                                                                 multiple
                                                                 id="{{ relation.vars.name }}"
@@ -245,6 +247,7 @@
                                     </div>
                                 {% else %}
                                     <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
+
                                         <div
                                             data-multiple="{{ relation.vars.attr['data-multiple'] }}"
                                             data-types="{{ relation.vars.attr['data-types'] }}"
@@ -261,14 +264,36 @@
 
                                         <div class="mb-2">Geselecteerde afbeelding{{ relation.vars.attr['data-multiple'] ? 'en' : '' }}:</div>
 
-                                        <div class="selected_images flex flex-wrap mb-4"></div>
+                                        <div class="previously_selected_images hidden">
+                                            {% for media in form_relations[relation.vars.attr['data-relation']] %}
+                                                {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
+                                                <li id="{{ media.id }}"
+                                                    data-id="{{media.id}}"
+                                                    data-content_type="{{media.contentType}}"
+                                                    data-file="{{media.file}}"
+                                                    data-thumbnail="{{thumbnail}}"
+                                                    data-title="{{media.title}}">
+                                                </li>
+                                            {% endfor %}
+                                        </div>
 
-                                        <input type="text" class="w-full integrated_content_media_gallery_image_file"
-                                               name="integrated_content[media_gallery_image][file]"
-                                               placeholder="123425edfewadfqew1243142r">
+                                        <div class="selected_images flex flex-wrap mb-4">
 
+                                        </div>
+
+                                        {% if relation.vars.attr['data-multiple'] == 0 %}
+                                            <input hidden type="text" class="w-full integrated_content_media_gallery_image_file"
+                                                   name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
+                                                   value="de1a52106e38341eaaf20c937b28c66f">
+                                        {% endif %}
+
+                                        {% if relation.vars.attr['data-multiple'] == 1 %}
+                                            <input hidden type="text" class="w-full integrated_content_media_gallery_image_file"
+                                                   name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
+                                                   value="e07b878e87b330f28ec88cb5a3c6d96e,de1a52106e38341eaaf20c937b28c66f">
+                                        {% endif %}
                                     </div>
-                                {% endif %}`
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
 
@@ -293,6 +318,24 @@
                             addEventListeners()
                             populateFormRelations()
                             generateSrcAttributeForIframes()
+                            populateSelectedImages()
+
+                            document.addEventListener("DOMContentLoaded", function() {
+                                Object.values(form_relations).forEach(form_relation => {
+                                    selected_relation = form_relation
+                                    rebuildDOM()
+                                });
+                            })
+
+                            function populateSelectedImages() {
+                                document.querySelectorAll('.mediagallery_selector').forEach((relation) => {
+                                    const relationid = relation.getAttribute('id')
+                                    const given_images = relation.querySelectorAll('.previously_selected_images li')
+                                    given_images.forEach((given_image) => {
+                                        form_relations[relationid].selected_images.push({...given_image.dataset})
+                                    })
+                                })
+                            }
 
                             function populateFormRelations() {
                                 document.querySelectorAll('.mediagallery_selector').forEach((item) => {
@@ -358,8 +401,7 @@
                             }
 
                             function addImageIDsToInputField() {
-                                const image_ids_as_json = JSON.stringify(selected_relation.selected_images.map(item => item.id))
-                                $(selected_relation.input_selector).attr('value', image_ids_as_json)
+                                $(selected_relation.input_selector).attr('value', JSON.stringify(selected_relation.selected_images.map(item => item.id)).replace('[', '').replace(']', '').replaceAll('"', ''))
                             }
 
                             function emptyShownImagesInDOM() {
@@ -377,8 +419,7 @@
 
                             function populateDOMWithImages() {
                                 selected_relation.selected_images.forEach((item) => {
-                                    const clone = createClone(item)
-                                    placeClone(clone)
+                                    placeClone(createClone(item))
                                 })
                             }
 

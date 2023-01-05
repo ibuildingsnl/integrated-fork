@@ -216,7 +216,6 @@
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                         {% for media in paginator.items %}
-{#                            {{ dump(media) }}#}
                             {% if media.contentType == 'image' %}
                                 {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
 {#                                {{ dump(thumbnail) }}#}
