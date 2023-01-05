@@ -125,6 +125,7 @@ trait RelationHelper
      * @param string $message
      */
     abstract protected function write($message);
+
     /**
      * @return \Doctrine\ODM\MongoDB\DocumentManager
      */
