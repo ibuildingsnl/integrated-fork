@@ -247,7 +247,6 @@
                                     </div>
                                 {% else %}
                                     <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
-
                                         <div
                                             data-multiple="{{ relation.vars.attr['data-multiple'] }}"
                                             data-types="{{ relation.vars.attr['data-types'] }}"
@@ -265,16 +264,18 @@
                                         <div class="mb-2">Geselecteerde afbeelding{{ relation.vars.attr['data-multiple'] ? 'en' : '' }}:</div>
 
                                         <div class="previously_selected_images hidden">
-                                            {% for media in form_relations[relation.vars.attr['data-relation']] %}
-                                                {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
-                                                <li id="{{ media.id }}"
-                                                    data-id="{{media.id}}"
-                                                    data-content_type="{{media.contentType}}"
-                                                    data-file="{{media.file}}"
-                                                    data-thumbnail="{{thumbnail}}"
-                                                    data-title="{{media.title}}">
-                                                </li>
-                                            {% endfor %}
+                                            {% if form_relations|default(null) %}
+                                                {% for media in form_relations[relation.vars.attr['data-relation']] %}
+                                                    {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
+                                                    <li id="{{ media.id }}"
+                                                        data-id="{{media.id}}"
+                                                        data-content_type="{{media.contentType}}"
+                                                        data-file="{{media.file}}"
+                                                        data-thumbnail="{{thumbnail}}"
+                                                        data-title="{{media.title}}">
+                                                    </li>
+                                                {% endfor %}
+                                            {% endif %}
                                         </div>
 
                                         <div class="selected_images flex flex-wrap mb-4">
@@ -284,13 +285,13 @@
                                         {% if relation.vars.attr['data-multiple'] == 0 %}
                                             <input hidden type="text" class="w-full integrated_content_media_gallery_image_file"
                                                    name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
-                                                   value="de1a52106e38341eaaf20c937b28c66f">
+                                                   value="">
                                         {% endif %}
 
                                         {% if relation.vars.attr['data-multiple'] == 1 %}
                                             <input hidden type="text" class="w-full integrated_content_media_gallery_image_file"
                                                    name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
-                                                   value="e07b878e87b330f28ec88cb5a3c6d96e,de1a52106e38341eaaf20c937b28c66f">
+                                                   value="">
                                         {% endif %}
                                     </div>
                                 {% endif %}
@@ -310,10 +311,20 @@
                         </li>
 
                         <script>
+                            // TODO:
+                            // Add something to handle multiple contenttypes
+                            // Add an if statement to NOT show contenttypes filter in select_one and select_multi modes
+                            // Add handling of url multiple contenttypes
+                            // Add showing of all the possible icons, make this separate components !important
+                            // Make sure to handle other filethypes than image when clicking Selecteer afbeelding in select_one and select_multiple
+                            {#// Make use of {% trans %}#}
+                            // Build restrictions
+
                             let form_relations = {} //this holds all the form relation objects with an id
                             let form_relation = {} //these will be placed in form_relations
                             const mediagallery_link = "/admin/media/"
                             let selected_relation = '' //after a user clicks on a form button, the clicked form element is selected
+                            let contenttypes = 'video'
 
                             addEventListeners()
                             populateFormRelations()
@@ -348,14 +359,18 @@
                                         input_selector: '#' + id + ' input',
                                         selected_images_selector: '#' + id + ' .selected_images',
                                         wrap_selector: '#' + id + ' .wrap',
-                                        iframe_selector: '#' + id + ' iframe'
+                                        iframe_selector: '#' + id + ' iframe',
+                                        content_type: contenttypes,
+                                        content_type_url: contenttypes != '' ? '&contenttypes=' + contenttypes : ''
                                     }
                                 })
                             }
 
                             function generateSrcAttributeForIframes() {
                                 Object.values(form_relations).forEach(form_relation => {
-                                    document.querySelector(form_relation.iframe_selector).setAttribute('src', mediagallery_link + form_relation.modus)
+                                    const link = mediagallery_link + form_relation.modus + '?page=1' + form_relation.content_type_url
+                                    console.log(link)
+                                    document.querySelector(form_relation.iframe_selector).setAttribute('src', link)
                                 });
                             }
 
