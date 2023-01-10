@@ -21,9 +21,6 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
 {
     /**
      * Load the configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {

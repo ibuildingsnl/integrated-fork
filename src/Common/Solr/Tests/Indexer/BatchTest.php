@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
-use Countable;
 use Integrated\Common\Solr\Indexer\Batch;
 use Integrated\Common\Solr\Indexer\BatchOperation;
 
@@ -75,7 +74,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        self::assertInstanceOf(Countable::class, $instance);
+        self::assertInstanceOf(\Countable::class, $instance);
         self::assertEquals(0, $instance->count());
 
         $instance->add($this->getOperation());

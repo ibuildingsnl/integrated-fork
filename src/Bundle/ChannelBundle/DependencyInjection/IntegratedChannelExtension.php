@@ -58,9 +58,6 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
 
     /**
      * Process the adaptor config configuration.
-     *
-     * @param array            $config
-     * @param ContainerBuilder $container
      */
     protected function loadConfigs(array $config, ContainerBuilder $container)
     {

@@ -26,8 +26,6 @@ class IndexerEvent extends Event
 
     /**
      * Event constructor.
-     *
-     * @param IndexerInterface $indexer
      */
     public function __construct(IndexerInterface $indexer)
     {

@@ -25,17 +25,12 @@ class WebFormat
      */
     private $webFormat;
 
-    /**
-     * @param array $webFormat
-     */
     public function __construct(array $webFormat)
     {
         $this->webFormat = ExtensionHelper::caseTransformBoth(new ArrayCollection($webFormat));
     }
 
     /**
-     * @param StorageInterface $storage
-     *
      * @return bool
      */
     public function isWebFormat(StorageInterface $storage)

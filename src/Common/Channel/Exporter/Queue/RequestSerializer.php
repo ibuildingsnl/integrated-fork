@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Exporter\Queue;
 
-use Exception;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
@@ -34,9 +33,6 @@ class RequestSerializer implements RequestSerializerInterface
 
     /**
      * Constructor.
-     *
-     * @param SerializerInterface     $serializer
-     * @param ChannelManagerInterface $manager
      */
     public function __construct(SerializerInterface $serializer, ChannelManagerInterface $manager)
     {
@@ -92,7 +88,7 @@ class RequestSerializer implements RequestSerializerInterface
             $request->content = $this->getSerializer()->deserialize($data['content']['data'], $data['content']['type'], 'json');
             $request->state = (string) $data['state'];
             $request->channel = $this->getManager()->find($data['channel']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
 

@@ -13,10 +13,8 @@ namespace Integrated\Bundle\UserBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
-use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\ScopeFormType;
@@ -24,8 +22,10 @@ use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
@@ -55,8 +55,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -77,8 +75,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
     public function new(Request $request)
@@ -111,9 +107,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope   $scope
-     * @param Request $request
-     *
      * @return Response
      *
      * @throws NotFoundHttpException
@@ -147,9 +140,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope   $scope
-     * @param Request $request
-     *
      * @return Response
      */
     public function delete(Scope $scope, Request $request)
@@ -224,8 +214,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope $scope
-     *
      * @return FormInterface
      */
     protected function createEditForm(Scope $scope)
@@ -245,8 +233,6 @@ class ScopeController extends AbstractController
     }
 
     /**
-     * @param Scope $scope
-     *
      * @return FormInterface
      */
     protected function createDeleteForm(Scope $scope)

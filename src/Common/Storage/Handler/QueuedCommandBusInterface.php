@@ -18,8 +18,5 @@ use Integrated\Common\Storage\Command\CommandInterface;
  */
 interface QueuedCommandBusInterface
 {
-    /**
-     * @param CommandInterface $commandInterface
-     */
     public function add(CommandInterface $commandInterface);
 }

@@ -27,8 +27,6 @@ class DeleteAction implements BulkActionInterface
 
     /**
      * ContentTypeAction constructor.
-     *
-     * @param string $handler
      */
     public function __construct(string $handler)
     {
@@ -55,9 +53,6 @@ class DeleteAction implements BulkActionInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isRemoveReferences(): bool
     {
         return $this->removeReferences;

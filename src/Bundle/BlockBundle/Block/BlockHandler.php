@@ -39,8 +39,6 @@ class BlockHandler implements BlockHandlerInterface
     private $document;
 
     /**
-     * @param Environment $twig
-     *
      * @return $this
      */
     public function setTwig(Environment $twig)
@@ -81,8 +79,6 @@ class BlockHandler implements BlockHandlerInterface
     }
 
     /**
-     * @param ContentInterface $document
-     *
      * @return $this
      */
     public function setDocument(ContentInterface $document)
@@ -93,8 +89,6 @@ class BlockHandler implements BlockHandlerInterface
     }
 
     /**
-     * @param array $parameters
-     *
      * @return string|null
      */
     public function render(array $parameters = [])
@@ -124,8 +118,6 @@ class BlockHandler implements BlockHandlerInterface
 
     /**
      * Configures the options for this block handler.
-     *
-     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -135,8 +127,6 @@ class BlockHandler implements BlockHandlerInterface
     }
 
     /**
-     * @param BlockInterface $block
-     *
      * @return bool
      */
     private function isAllowed(BlockInterface $block)

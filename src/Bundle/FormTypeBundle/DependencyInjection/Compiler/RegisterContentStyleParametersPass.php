@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\FormTypeBundle\DependencyInjection\Compiler;
 
-use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DomCrawler\Crawler;
@@ -37,7 +36,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
         $this->parameters = [self::CONTENT_CSS => [], self::STYLE_FORMAT => []];
 
         foreach ($container->getParameter('kernel.bundles') as $name => $class) {
-            $this->addParameters(\dirname((new ReflectionClass($class))->getFileName()).'/Resources/config');
+            $this->addParameters(\dirname((new \ReflectionClass($class))->getFileName()).'/Resources/config');
         }
 
         if ($container->hasParameter('kernel.project_dir')) {

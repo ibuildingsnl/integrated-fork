@@ -69,16 +69,12 @@ interface ContentInterface
     public function getRelations();
 
     /**
-     * @param $relationId
-     *
      * @return RelationInterface|bool
      */
     public function getRelation($relationId);
 
     /**
      * Set the relations of the document.
-     *
-     * @param Collection $relations
      *
      * @return ContentInterface
      */
@@ -87,16 +83,12 @@ interface ContentInterface
     /**
      * Add relation to relations collection.
      *
-     * @param RelationInterface $relation
-     *
      * @return ContentInterface
      */
     public function addRelation(RelationInterface $relation);
 
     /**
      * Remove relation from relations collection.
-     *
-     * @param RelationInterface $relation
      *
      * @return ContentInterface
      */

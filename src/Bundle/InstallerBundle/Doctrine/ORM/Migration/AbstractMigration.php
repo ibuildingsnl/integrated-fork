@@ -13,9 +13,6 @@ abstract class AbstractMigration extends Migrations\AbstractMigration implements
      */
     protected $container;
 
-    /**
-     * @param ContainerInterface|null $container
-     */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;

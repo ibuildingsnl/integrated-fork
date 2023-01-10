@@ -32,10 +32,6 @@ class JobPostingController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param ThemeManager   $themeManager
-     */
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
@@ -43,9 +39,6 @@ class JobPostingController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param JobPosting      $jobPosting
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(ContentTypePage $page, JobPosting $jobPosting)

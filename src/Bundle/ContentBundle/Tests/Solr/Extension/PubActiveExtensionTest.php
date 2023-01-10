@@ -19,7 +19,6 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
-use stdClass;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\PubActiveExtension
@@ -71,7 +70,7 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
         $container->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance($this->getResolver())->build($container, new stdClass());
+        $this->getInstance($this->getResolver())->build($container, new \stdClass());
     }
 
     public function testGetName()
@@ -99,8 +98,6 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $published
-     *
      * @return Content|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContent(bool $published, string $contentType)
@@ -117,8 +114,6 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $name
-     *
      * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContentType(string $name)
@@ -129,9 +124,6 @@ class PubActiveExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string|null               $type
-     * @param ContentTypeInterface|null $contentType
-     *
      * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)

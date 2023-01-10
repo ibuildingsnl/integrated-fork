@@ -39,9 +39,6 @@ class WorkflowFormType extends AbstractType
 
     /**
      * WorkflowFormType constructor.
-     *
-     * @param UserManager           $userManager
-     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(UserManager $userManager, TokenStorageInterface $tokenStorage)
     {

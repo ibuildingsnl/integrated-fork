@@ -19,9 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 class SessionController extends AbstractController
 {
     /**
-     * @param string  $sessionId
-     * @param Request $request
-     *
      * @return RedirectResponse
      */
     public function enterSession(string $sessionId, Request $request)

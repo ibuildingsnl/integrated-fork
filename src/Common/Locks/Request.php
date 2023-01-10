@@ -31,9 +31,6 @@ class Request implements RequestInterface
      */
     protected $timeout = null;
 
-    /**
-     * @param ResourceInterface $resource
-     */
     public function __construct(ResourceInterface $resource)
     {
         $this->resource = $resource;

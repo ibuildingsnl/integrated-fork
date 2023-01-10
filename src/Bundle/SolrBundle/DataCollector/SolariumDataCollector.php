@@ -60,17 +60,11 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         $this->data['total_time'] = $time;
     }
 
-    /**
-     * @param PreExecuteRequest $event
-     */
     public function preExecuteRequest(PreExecuteRequest $event)
     {
         $this->startTime = microtime(true);
     }
 
-    /**
-     * @param PostExecuteRequest $event
-     */
     public function postExecuteRequest(PostExecuteRequest $event)
     {
         $this->data['queries'][] = [

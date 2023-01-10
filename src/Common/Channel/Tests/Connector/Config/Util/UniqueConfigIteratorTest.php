@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Util;
 
-use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Util\UniqueConfigIterator;
 use stdClass;
@@ -32,12 +31,12 @@ class UniqueConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testCurrent()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
             $this->getConfig('name3'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -78,11 +77,11 @@ class UniqueConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testKey()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -98,11 +97,11 @@ class UniqueConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testValid()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -126,11 +125,11 @@ class UniqueConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testRewind()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -166,7 +165,7 @@ class UniqueConfigIteratorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance(array $configs = [])
     {
-        return new UniqueConfigIterator(new ArrayIterator($configs));
+        return new UniqueConfigIterator(new \ArrayIterator($configs));
     }
 
     /**

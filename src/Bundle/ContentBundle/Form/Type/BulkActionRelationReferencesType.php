@@ -28,18 +28,11 @@ class BulkActionRelationReferencesType extends AbstractType
      */
     protected $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -47,9 +40,6 @@ class BulkActionRelationReferencesType extends AbstractType
             ->resetViewTransformers();
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

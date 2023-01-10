@@ -47,11 +47,6 @@ class MigrateCommand extends Command
      */
     private $metadata;
 
-    /**
-     * @param DatabaseInterface        $database
-     * @param ManagerInterface         $storage
-     * @param MetadataFactoryInterface $metadata
-     */
     public function __construct(DatabaseInterface $database, ManagerInterface $storage, MetadataFactoryInterface $metadata)
     {
         $this->database = $database;

@@ -16,19 +16,11 @@ namespace Integrated\Bundle\UserBundle\Model;
  */
 interface GroupableInterface
 {
-    /**
-     * @param GroupInterface $group
-     */
     public function addGroup(GroupInterface $group);
 
-    /**
-     * @param GroupInterface $group
-     */
     public function removeGroup(GroupInterface $group);
 
     /**
-     * @param GroupInterface $group
-     *
      * @return bool
      */
     public function hasGroup(GroupInterface $group);

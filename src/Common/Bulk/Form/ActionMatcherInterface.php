@@ -19,8 +19,6 @@ use Integrated\Common\Bulk\BulkActionInterface;
 interface ActionMatcherInterface
 {
     /**
-     * @param BulkActionInterface $action
-     *
      * @return bool
      */
     public function match(BulkActionInterface $action);

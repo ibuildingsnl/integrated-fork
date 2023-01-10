@@ -14,18 +14,18 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ChannelBundle\Form\Type\DeleteFormType;
-use Integrated\Common\ContentType\ContentTypeInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Form;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeFormType;
+use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
 use Integrated\Common\ContentType\Events;
 use Integrated\Common\Form\Mapping\MetadataFactory;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,11 +64,6 @@ class ContentTypeController extends AbstractController
 
     /**
      * ContentTypeController constructor.
-     *
-     * @param ContentTypeManager       $contentTypeManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param MetadataFactory          $metadataFactory
-     * @param DocumentManager          $documentManager
      */
     public function __construct(
         ContentTypeManager $contentTypeManager,
@@ -137,8 +132,6 @@ class ContentTypeController extends AbstractController
     /**
      * Creates a new ContentType document.
      *
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
     public function new(Request $request)
@@ -182,8 +175,7 @@ class ContentTypeController extends AbstractController
     /**
      * Edits an existing ContentType document.
      *
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return Response|RedirectResponse
      */
@@ -227,8 +219,7 @@ class ContentTypeController extends AbstractController
     /**
      * Deletes a ContentType document.
      *
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return RedirectResponse
      */
@@ -303,9 +294,6 @@ class ContentTypeController extends AbstractController
     /**
      * Creates a form to create a ContentType document.
      *
-     * @param ContentType       $type
-     * @param MetadataInterface $metadata
-     *
      * @return Form
      */
     protected function createNewForm(ContentType $type, MetadataInterface $metadata)
@@ -328,9 +316,6 @@ class ContentTypeController extends AbstractController
     /**
      * Creates a form to edit a ContentType document.
      *
-     * @param ContentType       $type
-     * @param MetadataInterface $metadata
-     *
      * @return Form
      */
     protected function createEditForm(ContentType $type, MetadataInterface $metadata)
@@ -352,8 +337,6 @@ class ContentTypeController extends AbstractController
 
     /**
      * Creates a form to delete a ContentType document.
-     *
-     * @param ContentType $type
      *
      * @return Form
      */

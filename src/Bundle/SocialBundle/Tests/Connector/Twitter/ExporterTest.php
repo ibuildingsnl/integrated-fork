@@ -91,9 +91,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $this->assertNotInstanceOf(ExporterResponse::class, $response);
     }
 
-    /**
-     * @return Exporter
-     */
     protected function getInstance(): Exporter
     {
         return new Exporter($this->twitter, $this->config, $this->urlResolver);

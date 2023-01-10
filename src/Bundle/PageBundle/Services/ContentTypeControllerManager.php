@@ -32,9 +32,6 @@ class ContentTypeControllerManager
     }
 
     /**
-     * @param $serviceId
-     * @param $attributes
-     *
      * @throws \Exception
      */
     public function addController($serviceId, $attributes)
@@ -67,8 +64,6 @@ class ContentTypeControllerManager
     }
 
     /**
-     * @param $className
-     *
      * @return string|null
      */
     public function getController($className)

@@ -77,8 +77,6 @@ class PageCopyPageType extends AbstractType
     }
 
     /**
-     * @param ItemsInterface $grid
-     *
      * @return array
      */
     private function getGridBlocks(ItemsInterface $grid)

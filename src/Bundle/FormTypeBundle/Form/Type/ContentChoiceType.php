@@ -46,10 +46,8 @@ class ContentChoiceType extends AbstractType
     protected $params;
 
     /**
-     * @param DocumentManager $dm
-     * @param string          $repositoryClass
-     * @param string          $route
-     * @param array|null      $params
+     * @param string $repositoryClass
+     * @param string $route
      */
     public function __construct(DocumentManager $dm, $repositoryClass, $route, array $params = null)
     {

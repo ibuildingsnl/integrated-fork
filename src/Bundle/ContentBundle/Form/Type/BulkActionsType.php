@@ -30,9 +30,6 @@ class BulkActionsType extends AbstractType
      */
     private $provider;
 
-    /**
-     * @param ConfigProviderInterface $provider
-     */
     public function __construct(ConfigProviderInterface $provider)
     {
         $this->provider = $provider;
@@ -82,9 +79,6 @@ class BulkActionsType extends AbstractType
         $this->updateReadonlyView($view);
     }
 
-    /**
-     * @param FormView $view
-     */
     private function updateReadonlyView(FormView $view)
     {
         foreach ($view->children as $child) {

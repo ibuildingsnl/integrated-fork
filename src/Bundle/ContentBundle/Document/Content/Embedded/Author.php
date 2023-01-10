@@ -67,8 +67,6 @@ class Author
     /**
      * Set the person of the document.
      *
-     * @param Person $person
-     *
      * @return $this
      */
     public function setPerson(Person $person)

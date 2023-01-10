@@ -42,8 +42,6 @@ class MongoDBResolver implements ResolverInterface
      * The DocumentRepository should be of a class that implements ContentTypeInterface
      * or else the ContentTypeResolver will throw a exception.
      *
-     * @param DocumentRepository $repository
-     *
      * @throws InvalidArgumentException if the document class does implement the correct interface
      */
     public function __construct(DocumentRepository $repository)

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\UserBundle\Security\Firewall;
 
+use Integrated\Bundle\UserBundle\Model\Scope;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -18,8 +20,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Firewall\AbstractListener;
-use Integrated\Bundle\UserBundle\Model\UserInterface;
-use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Component\Security\Http\Firewall\FirewallListenerInterface;
 
 class ScopeListener extends AbstractListener implements FirewallListenerInterface
@@ -35,8 +35,7 @@ class ScopeListener extends AbstractListener implements FirewallListenerInterfac
     private $providerKey;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param string                $providerKey
+     * @param string $providerKey
      */
     public function __construct(TokenStorageInterface $tokenStorage, $providerKey)
     {

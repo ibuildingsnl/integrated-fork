@@ -20,7 +20,6 @@ interface NormalizerInterface
      * Normalize the $object to a array.
      *
      * @param object $object
-     * @param array  $options
      *
      * @return array
      */

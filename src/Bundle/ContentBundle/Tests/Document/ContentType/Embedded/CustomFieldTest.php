@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType\Embedded;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -36,6 +37,6 @@ class CustomFieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field', $this->field);
+        $this->assertInstanceOf(Field::class, $this->field);
     }
 }

@@ -52,8 +52,6 @@ interface MetadataEditorInterface extends MetadataInterface
     public function newField($name);
 
     /**
-     * @param AttributeInterface $field
-     *
      * @return self
      */
     public function addField(AttributeInterface $field);
@@ -66,8 +64,6 @@ interface MetadataEditorInterface extends MetadataInterface
     public function newOption($name);
 
     /**
-     * @param AttributeInterface $option
-     *
      * @return self
      */
     public function addOption(AttributeInterface $option);

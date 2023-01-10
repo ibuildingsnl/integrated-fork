@@ -21,8 +21,6 @@ use Integrated\Bundle\ImageBundle\Model\StorageModel;
 class StorageModelFactory
 {
     /**
-     * @param \stdClass $json
-     *
      * @return StorageModel
      */
     public static function json(\stdClass $json)

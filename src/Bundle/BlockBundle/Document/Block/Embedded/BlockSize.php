@@ -57,8 +57,6 @@ class BlockSize
     }
 
     /**
-     * @param Block $block
-     *
      * @return $this
      */
     public function setBlock(Block $block)

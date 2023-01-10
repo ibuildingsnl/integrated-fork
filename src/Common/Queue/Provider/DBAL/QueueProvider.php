@@ -35,10 +35,6 @@ class QueueProvider implements QueueProviderInterface
      */
     protected $platform;
 
-    /**
-     * @param Connection $connection
-     * @param array      $options
-     */
     public function __construct(Connection $connection, array $options)
     {
         $this->connection = $connection;

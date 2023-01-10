@@ -32,9 +32,6 @@ class ImageMagickAdapter implements AdapterInterface
      */
     private $cache;
 
-    /**
-     * @param AppCache $cache
-     */
     public function __construct(AppCache $cache)
     {
         $this->cache = $cache;

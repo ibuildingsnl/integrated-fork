@@ -40,10 +40,6 @@ class ContentSubscriber implements ContentSubscriberInterface
      */
     private $manager;
 
-    /**
-     * @param ExtensionInterface $extension
-     * @param ContainerInterface $container
-     */
     public function __construct(ExtensionInterface $extension, ContainerInterface $container)
     {
         $this->extension = $extension;

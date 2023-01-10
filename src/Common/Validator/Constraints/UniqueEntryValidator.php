@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -45,7 +44,7 @@ class UniqueEntryValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\\UniqueEntry');
         }
 
-        if (!\is_array($entries) && !$entries instanceof Traversable) {
+        if (!\is_array($entries) && !$entries instanceof \Traversable) {
             throw new UnexpectedTypeException($entries, 'array or Traversable');
         }
 
@@ -121,8 +120,6 @@ class UniqueEntryValidator extends ConstraintValidator
      * Seams there is a bug, or if not its working really weird, that screws up
      * the validation path big time in a collection. So we use some reflection
      * magic to fix this.
-     *
-     * @param ConstraintViolationBuilderInterface $builder
      */
     private static function fixViolationPath(ConstraintViolationBuilderInterface $builder)
     {

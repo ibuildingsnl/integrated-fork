@@ -36,9 +36,7 @@ class ContentYoutubeListener
     protected $env;
 
     /**
-     * @param ThemeManager $themeManager
-     * @param Environment  $templating
-     * @param string       $env
+     * @param string $env
      */
     public function __construct(
         ThemeManager $themeManager,
@@ -51,8 +49,6 @@ class ContentYoutubeListener
     }
 
     /**
-     * @param ContentEvent $contentEvent
-     *
      * @throws \Exception
      */
     public function process(ContentEvent $contentEvent)
@@ -75,8 +71,6 @@ class ContentYoutubeListener
     }
 
     /**
-     * @param string $youtubeId
-     *
      * @return string|null
      *
      * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException

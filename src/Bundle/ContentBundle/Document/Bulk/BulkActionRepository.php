@@ -19,8 +19,6 @@ use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 class BulkActionRepository extends DocumentRepository
 {
     /**
-     * @param $id
-     *
      * @return BulkAction
      */
     public function findOneByIdAndNotExecuted($id)

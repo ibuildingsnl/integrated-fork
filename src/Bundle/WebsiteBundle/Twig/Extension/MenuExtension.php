@@ -70,12 +70,7 @@ class MenuExtension extends AbstractExtension
     protected $request;
 
     /**
-     * @param IntegratedMenuProvider $provider
-     * @param DatabaseMenuFactory    $factory
-     * @param Helper                 $helper
-     * @param RecursiveActiveMatcher $matcher
-     * @param RequestStack           $requestStack
-     * @param string                 $template
+     * @param string $template
      */
     public function __construct(
         IntegratedMenuProvider $provider,
@@ -120,7 +115,6 @@ class MenuExtension extends AbstractExtension
     /**
      * @param array  $context
      * @param string $name
-     * @param array  $options
      *
      * @return string
      */
@@ -163,8 +157,7 @@ class MenuExtension extends AbstractExtension
     }
 
     /**
-     * @param Menu  $menu
-     * @param array $options
+     * @param Menu $menu
      *
      * @return string
      */
@@ -182,9 +175,7 @@ class MenuExtension extends AbstractExtension
     }
 
     /**
-     * @param MenuItem $menu
-     * @param array    $options
-     * @param int      $depth
+     * @param int $depth
      */
     protected function prepareItems(MenuItem $menu, array $options = [], $depth = 1)
     {

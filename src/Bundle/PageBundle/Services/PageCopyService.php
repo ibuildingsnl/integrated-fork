@@ -32,10 +32,6 @@ class PageCopyService
      */
     private $routeCache;
 
-    /**
-     * @param DocumentManager $documentManager
-     * @param RouteCache      $routeCache
-     */
     public function __construct(DocumentManager $documentManager, RouteCache $routeCache)
     {
         $this->documentManager = $documentManager;
@@ -43,8 +39,6 @@ class PageCopyService
     }
 
     /**
-     * @param array $data
-     *
      * @throws MongoDBExceptionAlias
      * @throws MappingExceptionAlias
      */
@@ -95,9 +89,6 @@ class PageCopyService
     }
 
     /**
-     * @param ItemsInterface $grid
-     * @param array          $data
-     *
      * @throws \Exception
      */
     private function copyGridBlocks(ItemsInterface $grid, array $data)

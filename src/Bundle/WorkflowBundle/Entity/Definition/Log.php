@@ -57,8 +57,6 @@ class Log
     }
 
     /**
-     * @param Definition $workflow
-     *
      * @return $this;
      */
     public function setWorkflow(Definition $workflow)

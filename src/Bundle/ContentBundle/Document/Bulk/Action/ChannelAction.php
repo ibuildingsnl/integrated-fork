@@ -27,8 +27,6 @@ class ChannelAction implements BulkActionInterface
 
     /**
      * ChannelAction constructor.
-     *
-     * @param string $handler
      */
     public function __construct(string $handler)
     {
@@ -64,8 +62,6 @@ class ChannelAction implements BulkActionInterface
     }
 
     /**
-     * @param string $channel
-     *
      * @return $this
      */
     public function setChannel(string $channel)

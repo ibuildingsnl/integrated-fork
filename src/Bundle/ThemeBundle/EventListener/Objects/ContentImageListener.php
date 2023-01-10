@@ -49,11 +49,7 @@ class ContentImageListener
     protected $env;
 
     /**
-     * @param ThemeManager     $themeManager
-     * @param ObjectManager    $objectManager
-     * @param Environment      $templating
-     * @param SluggerInterface $slugger
-     * @param string           $env
+     * @param string $env
      */
     public function __construct(
         ThemeManager $themeManager,
@@ -70,8 +66,6 @@ class ContentImageListener
     }
 
     /**
-     * @param ContentEvent $contentEvent
-     *
      * @throws \Exception
      */
     public function replaceImages(ContentEvent $contentEvent)
@@ -113,8 +107,7 @@ class ContentImageListener
     }
 
     /**
-     * @param Content $file
-     * @param string  $class
+     * @param string $class
      *
      * @return string|null
      */

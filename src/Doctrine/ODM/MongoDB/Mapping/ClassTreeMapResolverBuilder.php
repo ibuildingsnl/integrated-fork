@@ -30,8 +30,6 @@ class ClassTreeMapResolverBuilder
 
     /**
      * Constructor.
-     *
-     * @param ClassLocatorInterface $locator
      */
     public function __construct(ClassLocatorInterface $locator)
     {

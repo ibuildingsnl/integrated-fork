@@ -34,7 +34,6 @@ class RelationRemoveHandler implements HandlerInterface
     /**
      * Constructor.
      *
-     * @param RelationInterface  $relation
      * @param ContentInterface[] $references
      */
     public function __construct(RelationInterface $relation, $references)

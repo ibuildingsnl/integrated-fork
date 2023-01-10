@@ -63,9 +63,6 @@ class Group implements GroupInterface
         return $this->name;
     }
 
-    /**
-     * @param RoleInterface $role
-     */
     public function addRole(RoleInterface $role)
     {
         if (!$this->roles->contains($role)) {

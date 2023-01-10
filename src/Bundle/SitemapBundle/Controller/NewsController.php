@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use DateTime;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
@@ -35,11 +34,6 @@ class NewsController extends AbstractController
      */
     private $context;
 
-    /**
-     * @param ManagerRegistry         $registry
-     * @param ChannelContextInterface $context
-     * @param ContainerInterface      $container
-     */
     public function __construct(
         ManagerRegistry $registry,
         ChannelContextInterface $context,
@@ -65,14 +59,14 @@ class NewsController extends AbstractController
             throw new NotFoundHttpException('No channel found');
         }
 
-        $now = new DateTime();
+        $now = new \DateTime();
 
         $queryBuilder = $this->registry->getManagerForClass(News::class)->createQueryBuilder(News::class);
         $documents = $queryBuilder
             ->select('contentType', 'slug', 'publishTime', 'title', 'relations')
             ->field('channels.$id')->equals($channel->getId())
             ->field('disabled')->equals(false)
-            ->field('publishTime.startDate')->gte(new DateTime('-2 days')) // Only the last 2 days for Google
+            ->field('publishTime.startDate')->gte(new \DateTime('-2 days')) // Only the last 2 days for Google
             ->field('publishTime.startDate')->lte($now)
             ->field('publishTime.endDate')->gte($now)
             ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))

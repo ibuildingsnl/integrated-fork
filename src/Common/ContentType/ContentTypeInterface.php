@@ -66,8 +66,6 @@ interface ContentTypeInterface
     /**
      * Check if a field exist in the content type.
      *
-     * @param $name
-     *
      * @return bool
      */
     public function hasField($name);

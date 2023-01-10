@@ -12,9 +12,9 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\Log;
 
 /**
@@ -27,9 +27,6 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
      */
     protected $manager;
 
-    /**
-     * @param ManagerRegistry $manager
-     */
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager;
@@ -47,8 +44,6 @@ class WorkflowLogInstanceInjectionListener implements EventSubscriber
 
     /**
      * Add the user instance or a proxy to this user instance to the Log entity.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function postLoad(LifecycleEventArgs $args)
     {

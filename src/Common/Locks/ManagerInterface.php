@@ -23,8 +23,7 @@ interface ManagerInterface
      * be used so 0 is no wait and will immediately fail if not lock can be
      * acquired right away.
      *
-     * @param RequestInterface $request
-     * @param int|null         $timeout null
+     * @param int|null $timeout null
      *
      * @return LockInterface
      */
@@ -68,16 +67,12 @@ interface ManagerInterface
      * The result should always contain zero to one result, can't lock the same
      * resource more then once, but its returned as a array for constancy reasons.
      *
-     * @param ResourceInterface $resource
-     *
      * @return LockInterface[]
      */
     public function findByResource(ResourceInterface $resource);
 
     /**
      * Finds all the locks by its owner.
-     *
-     * @param ResourceInterface $resource
      *
      * @return LockInterface[]
      */

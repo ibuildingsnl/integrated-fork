@@ -41,8 +41,6 @@ class RelationController extends AbstractController
     /**
      * Lists all the Relation documents.
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function index(Request $request)
@@ -63,8 +61,6 @@ class RelationController extends AbstractController
 
     /**
      * Finds and displays a Relation document.
-     *
-     * @param Relation $relation
      *
      * @return Response
      */
@@ -99,8 +95,6 @@ class RelationController extends AbstractController
     /**
      * Creates a new Relation document.
      *
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
     public function create(Request $request)
@@ -134,8 +128,6 @@ class RelationController extends AbstractController
     /**
      * Display a form to edit an existing Relation document.
      *
-     * @param Relation $relation
-     *
      * @return Response
      */
     public function edit(Relation $relation)
@@ -152,9 +144,6 @@ class RelationController extends AbstractController
 
     /**
      * Edits an existing Relation document.
-     *
-     * @param Request  $request
-     * @param Relation $relation
      *
      * @return Response|RedirectResponse
      */
@@ -185,9 +174,6 @@ class RelationController extends AbstractController
 
     /**
      * Deletes a Relation document.
-     *
-     * @param Request  $request
-     * @param Relation $relation
      *
      * @return RedirectResponse
      */
@@ -224,8 +210,6 @@ class RelationController extends AbstractController
     /**
      * Creates a form to create a Relation document.
      *
-     * @param Relation $relation
-     *
      * @return FormInterface
      */
     protected function createNewForm(Relation $relation)
@@ -247,8 +231,6 @@ class RelationController extends AbstractController
     /**
      * Creates a form to edit a ContentType document.
      *
-     * @param Relation $relation
-     *
      * @return FormInterface
      */
     protected function createEditForm(Relation $relation)
@@ -269,8 +251,6 @@ class RelationController extends AbstractController
 
     /**
      * Creates a form to delete a Relation document.
-     *
-     * @param Relation $relation
      *
      * @return FormInterface
      */

@@ -41,10 +41,6 @@ class ContentTypePageLoader extends Loader
      */
     protected $urlResolver;
 
-    /**
-     * @param DocumentManager $dm
-     * @param UrlResolver     $urlResolver
-     */
     public function __construct(DocumentManager $dm, UrlResolver $urlResolver)
     {
         $this->dm = $dm;

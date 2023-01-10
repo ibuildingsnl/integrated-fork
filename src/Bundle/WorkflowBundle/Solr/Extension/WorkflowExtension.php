@@ -44,10 +44,6 @@ class WorkflowExtension implements TypeExtensionInterface
 
     /**
      * Constructor.
-     *
-     * @param ResolverInterface $resolver
-     * @param ObjectRepository  $workflow
-     * @param ObjectRepository  $definition
      */
     public function __construct(ResolverInterface $resolver, ObjectRepository $workflow, ObjectRepository $definition)
     {
@@ -151,8 +147,6 @@ class WorkflowExtension implements TypeExtensionInterface
      *
      * If not workflow is connected to the content type or none can be found then null will
      * be returned.
-     *
-     * @param ContentInterface $content
      */
     protected function getState(ContentInterface $content)
     {
@@ -190,8 +184,6 @@ class WorkflowExtension implements TypeExtensionInterface
 
     /**
      * Get the workflow assignee for the content.
-     *
-     * @param ContentInterface $content
      */
     protected function getAssigned(ContentInterface $content)
     {

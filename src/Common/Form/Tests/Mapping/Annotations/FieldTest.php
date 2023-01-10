@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
+ * @deprecated
  */
 class FieldTest extends \PHPUnit\Framework\TestCase
 {

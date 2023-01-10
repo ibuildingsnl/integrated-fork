@@ -24,8 +24,7 @@ class PriorityResolverBuilder
     private $resolvers = [];
 
     /**
-     * @param ResolverInterface $resolver
-     * @param int               $priority
+     * @param int $priority
      *
      * @return $this
      */
