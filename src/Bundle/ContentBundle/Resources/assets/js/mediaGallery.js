@@ -124,7 +124,6 @@ async function disableBulkSelection() {
 }
 
 window.asideFolderSearch = function(elem) {
-    console.log("searching")
     let filter, ul, li, a, i, txtValue;
 
     filter = elem.value.toUpperCase();

@@ -23,7 +23,7 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 
 /**
- * Class MediaGalleryUploadFile
+ * Class MediaGalleryUploadFile.
  *
  * @author Wouter Koppers <wouter@twindigital.com>
  */

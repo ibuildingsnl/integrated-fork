@@ -62,6 +62,5 @@ function inititalizeUppy(uppyOptions) {
 
 $('.drag-drop-area').each(function() {
     let uppyOptions = $(this)[0].dataset
-    console.log(uppyOptions)
     let uppy = inititalizeUppy(uppyOptions)
 })
