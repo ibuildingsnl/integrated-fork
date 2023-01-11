@@ -210,14 +210,13 @@
             <section class="section-white section-radius p-4">
 
                 <div id="upload_container" class="hidden">
-{#                    'language': app.request.defaultLocale,#}
                     {% include '@IntegratedContent/media/upload.html.twig'
                         with {
-                        'language': 'nl',
+                        'language': app.request.defaultLocale,
                         'endpoint': path('integrated_content_media_upload_file'),
                         'height': '750px',
                         'imageEditorEnabled': true,
-                        'target': '#drag-drop-area',
+                        'target': '#upload_container .drag-drop-area',
                     } %}
                 </div>
 

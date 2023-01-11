@@ -41,7 +41,7 @@ function inititalizeUppy(uppyOptions) {
         inline: true,
         target: uppyOptions.target,
         width: '100%',
-        height: uppyOptions.height || '750px',
+        height: uppyOptions.height || default_height,
         proudlyDisplayPoweredByUppy: false,
         showProgressDetails: true,
     });
@@ -62,5 +62,6 @@ function inititalizeUppy(uppyOptions) {
 
 $('.drag-drop-area').each(function() {
     let uppyOptions = $(this)[0].dataset
+    console.log(uppyOptions)
     let uppy = inititalizeUppy(uppyOptions)
 })

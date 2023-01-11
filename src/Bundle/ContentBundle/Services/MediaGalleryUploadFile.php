@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -24,7 +23,7 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 
 /**
- * Class MediaGalleryUploadFile2.
+ * Class MediaGalleryUploadFile
  *
  * @author Wouter Koppers <wouter@twindigital.com>
  */
@@ -33,21 +32,16 @@ class MediaGalleryUploadFile
     /**
      * SearchContentReferenced constructor.
      *
-     * @param DocumentManager $dm
+     * @param DocumentManager $documentManager
      */
     public function __construct(
-        private DocumentManager $dm,
-        private AuthorizationCheckerInterface $authorizationChecker,
+        private DocumentManager $documentManager,
         private ManagerInterface $manager,
     ) {
     }
 
     public function handleUpload(Request $request)
     {
-//        $entityManager = $this->dm;
-
-//        dd($entityManager);
-
         // check filetype
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         // QUESTION: What do you guys think about using this as whitelist:
@@ -91,8 +85,8 @@ class MediaGalleryUploadFile
 
         $file->setFile($storage);
 
-        $this->dm->persist($file);
-        $this->dm->flush();
+        $this->documentManager->persist($file);
+        $this->documentManager->flush();
 
         return $file;
     }
