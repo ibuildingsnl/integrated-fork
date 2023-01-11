@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<converter-mapping>
+
+    <class name="Integrated\Bundle\NewsLetterBundle\Document\Newsletter">
+
+        <type name="integrated.fields">
+            <options>
+
+                <string key="title">title</string>
+                <string key="title_sort">title</string>
+
+            </options>
+        </type>
+
+    </class>
+
+</converter-mapping>

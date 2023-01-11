@@ -177,13 +177,13 @@
             <section class="editor">
                 {% block content_form %}
                     {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
-                    {% if form.title is defined %}
-                        {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
-                    {% elseif form.name is defined %}
-                        {{ form_row(form.name, {'state': title_state, 'style': title_style}) }}
-                    {% endif %}
-
                     {% if form.content is defined %}
+                        {% if form.title is defined %}
+                            {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
+                        {% elseif form.name is defined %}
+                            {{ form_row(form.name, {'state': title_state, 'style': title_style}) }}
+                        {% endif %}
+
                         {{ form_row(form.content, {'style':'editor','state':tinymce_state}) }}
                     {% elseif form.description is defined %}
                         {{ form_row(form.description, {'style':'editor','state':tinymce_state}) }}
