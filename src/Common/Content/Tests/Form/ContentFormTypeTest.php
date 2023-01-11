@@ -125,8 +125,8 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->exactly(2))
             ->method('add')
             ->withConsecutive(
-                [$this->equalTo('field1'), $this->equalTo('type1'), $this->equalTo(['override1', 'options' => '1'])],
-                [$this->equalTo('field3'), $this->equalTo('type3'), $this->equalTo(['override3', 'options' => '3'])]
+                [$this->equalTo('field1'), $this->equalTo('type1'), $this->equalTo(['override1', 'options' => '1', 'attr' => ['style' => null, 'location' => null]])],
+                [$this->equalTo('field3'), $this->equalTo('type3'), $this->equalTo(['override3', 'options' => '3', 'attr' => ['style' => null, 'location' => null]])]
             );
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);
@@ -347,7 +347,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getBuilder();
         $builder->expects($this->once())
             ->method('add')
-            ->with($this->equalTo('field1'), $this->equalTo('type2'), $this->equalTo(['options2']));
+            ->with($this->equalTo('field1'), $this->equalTo('type2'), $this->equalTo(['options2', 'attr' => ['style' => null, 'location' => null]]));
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);
     }
