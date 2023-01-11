@@ -11,8 +11,6 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping\Annotations;
 
-use BadMethodCallException;
-
 /**
  * @Annotation
  *
@@ -38,14 +36,14 @@ class Slug
     public $lengthLimit = 200;
 
     /**
-     * @throws BadMethodCallException
+     * @throws \BadMethodCallException
      */
     public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
-                throw new BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
             }
             $this->$method($value);
         }
@@ -67,33 +65,21 @@ class Slug
         $this->fields = $fields;
     }
 
-    /**
-     * @return string
-     */
     public function getSeparator(): string
     {
         return $this->separator;
     }
 
-    /**
-     * @param string $separator
-     */
     public function setSeparator(string $separator): void
     {
         $this->separator = $separator;
     }
 
-    /**
-     * @return int
-     */
     public function getLengthLimit(): int
     {
         return $this->lengthLimit;
     }
 
-    /**
-     * @param int $lengthLimit
-     */
     public function setLengthLimit(int $lengthLimit): void
     {
         $this->lengthLimit = $lengthLimit;

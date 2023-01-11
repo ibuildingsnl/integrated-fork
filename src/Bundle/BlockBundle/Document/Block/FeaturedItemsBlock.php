@@ -59,8 +59,6 @@ class FeaturedItemsBlock extends Block
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
     public function setItems(array $items = [])
@@ -71,8 +69,6 @@ class FeaturedItemsBlock extends Block
     }
 
     /**
-     * @param FeaturedItemsItem $item
-     *
      * @return $this
      */
     public function addItem(FeaturedItemsItem $item)
@@ -83,8 +79,6 @@ class FeaturedItemsBlock extends Block
     }
 
     /**
-     * @param FeaturedItemsItem $item
-     *
      * @return $this
      */
     public function removeItem(FeaturedItemsItem $item)

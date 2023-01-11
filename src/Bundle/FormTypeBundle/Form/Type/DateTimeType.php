@@ -32,10 +32,6 @@ class DateTimeType extends AbstractType
      */
     protected $javascriptManager;
 
-    /**
-     * @param AssetManager $styleSheetManager
-     * @param AssetManager $javascriptManager
-     */
     public function __construct(AssetManager $styleSheetManager, AssetManager $javascriptManager)
     {
         $this->styleSheetManager = $styleSheetManager;

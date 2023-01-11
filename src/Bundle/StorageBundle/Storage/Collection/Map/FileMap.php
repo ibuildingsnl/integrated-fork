@@ -22,8 +22,7 @@ use Integrated\Common\Storage\DecisionInterface;
 class FileMap
 {
     /**
-     * @param DecisionInterface $decision
-     * @param string            $filesystem
+     * @param string $filesystem
      *
      * @return \Closure
      */
@@ -40,8 +39,7 @@ class FileMap
     }
 
     /**
-     * @param MetadataFactoryInterface $metadata
-     * @param string                   $filesystem
+     * @param string $filesystem
      *
      * @return \Closure
      */

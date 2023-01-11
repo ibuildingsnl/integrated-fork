@@ -25,9 +25,6 @@ class BlockTransformer implements DataTransformerInterface
      */
     protected $repository;
 
-    /**
-     * @param DocumentRepository $repository
-     */
     public function __construct(DocumentRepository $repository)
     {
         $this->repository = $repository;

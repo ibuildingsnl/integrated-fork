@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use DateTime;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
@@ -41,12 +40,6 @@ class DefaultController extends AbstractController
      */
     private $contentTypeInformation;
 
-    /**
-     * @param ManagerRegistry         $registry
-     * @param ChannelContextInterface $context
-     * @param ContainerInterface      $container
-     * @param ContentTypeInformation  $contentTypeInformation
-     */
     public function __construct(
         ManagerRegistry $registry,
         ChannelContextInterface $context,
@@ -74,7 +67,7 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException('No channel found');
         }
 
-        $now = new DateTime();
+        $now = new \DateTime();
 
         $queryBuilder = $this->registry->getManagerForClass(Content::class)->createQueryBuilder(Content::class);
         $count = $queryBuilder
@@ -98,8 +91,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param $page
-     *
      * @return array
      *
      * @Template
@@ -120,7 +111,7 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $now = new DateTime();
+        $now = new \DateTime();
 
         $queryBuilder = $this->registry->getManagerForClass(Content::class)->createQueryBuilder(Content::class);
 

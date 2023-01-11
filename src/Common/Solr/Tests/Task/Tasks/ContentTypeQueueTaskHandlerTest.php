@@ -17,7 +17,6 @@ use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Task\Provider\ContentTypeProviderInterface;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTaskHandler;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -50,7 +49,7 @@ class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $content1 = $this->createMock(ContentInterface::class);
         $content2 = $this->createMock(ContentInterface::class);
-        $content3 = new stdClass();
+        $content3 = new \stdClass();
         $content4 = $this->createMock(ContentInterface::class);
 
         $this->provider->expects($this->once())
@@ -58,9 +57,9 @@ class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo('content-id'))
             ->willReturn([$content1, $content2, $content3, $content4]);
 
-        $job1 = new stdClass();
-        $job2 = new stdClass();
-        $job3 = new stdClass();
+        $job1 = new \stdClass();
+        $job2 = new \stdClass();
+        $job3 = new \stdClass();
 
         $this->factory->expects($this->exactly(3))
             ->method('create')

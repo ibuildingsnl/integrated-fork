@@ -34,8 +34,6 @@ class ExtractTransitionsFromDataListener implements EventSubscriberInterface
 
     /**
      * Add the transitions field to the form type.
-     *
-     * @param FormEvent $event
      */
     public function onPreSetData(FormEvent $event)
     {

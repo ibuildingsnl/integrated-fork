@@ -181,8 +181,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param array $domains
-     *
      * @return $this
      */
     public function setDomains(array $domains)
@@ -227,8 +225,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param $name
-     *
      * @return mixed|null
      */
     public function getOption($name)
@@ -280,8 +276,6 @@ class Channel implements ChannelInterface
     /**
      * Set the createdAt of the channel.
      *
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -330,17 +324,12 @@ class Channel implements ChannelInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isIpProtected(): bool
     {
         return (bool) $this->ipProtected;
     }
 
     /**
-     * @param bool $protected
-     *
      * @return $this
      */
     public function setIpProtected(bool $protected)
@@ -359,8 +348,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param Scope|null $scope
-     *
      * @return $this
      */
     public function setScope(Scope $scope = null)

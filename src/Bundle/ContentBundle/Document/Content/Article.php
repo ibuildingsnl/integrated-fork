@@ -88,7 +88,7 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['attr' => ['placeholder' => 'Your article starts here']])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
     protected $content;
 
     /**
@@ -193,8 +193,6 @@ class Article extends Content implements RankableInterface
     /**
      * Set the authors of the document.
      *
-     * @param Collection $authors
-     *
      * @return $this
      */
     public function setAuthors(Collection $authors)
@@ -206,8 +204,6 @@ class Article extends Content implements RankableInterface
 
     /**
      * Add author to authors collection.
-     *
-     * @param Embedded\Author $author
      *
      * @return $this
      */
@@ -221,8 +217,6 @@ class Article extends Content implements RankableInterface
     }
 
     /**
-     * @param Embedded\Author $author
-     *
      * @return bool true if this collection contained the specified element, false otherwise
      */
     public function removeAuthor(Embedded\Author $author)

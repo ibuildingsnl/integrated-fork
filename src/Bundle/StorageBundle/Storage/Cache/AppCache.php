@@ -43,11 +43,6 @@ class AppCache implements CacheInterface
      */
     private $requestStack;
 
-    /**
-     * @param string           $directory
-     * @param ManagerInterface $managerInterface
-     * @param RequestStack     $requestStack
-     */
     public function __construct(string $directory, ManagerInterface $managerInterface, RequestStack $requestStack)
     {
         $this->fileManager = $managerInterface;
@@ -104,8 +99,6 @@ class AppCache implements CacheInterface
     }
 
     /**
-     * @param StorageInterface $storage
-     *
      * @return bool|\SplFileObject
      */
     private function getLocalFile(StorageInterface $storage)

@@ -26,10 +26,6 @@ class StorageLocator extends FileLocator
      */
     private $cache;
 
-    /**
-     * @param KernelInterface $kernel
-     * @param CacheInterface  $cache
-     */
     public function __construct(KernelInterface $kernel, CacheInterface $cache)
     {
         $this->cache = $cache;

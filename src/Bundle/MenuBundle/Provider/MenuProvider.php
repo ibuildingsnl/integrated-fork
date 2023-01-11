@@ -37,10 +37,6 @@ class MenuProvider implements MenuProviderInterface
      */
     protected $menus = [];
 
-    /**
-     * @param FactoryInterface         $factory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(FactoryInterface $factory, EventDispatcherInterface $eventDispatcher)
     {
         $this->factory = $factory;

@@ -13,8 +13,6 @@ namespace Integrated\Bundle\SolrBundle\Solr\Type;
 
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -44,7 +42,7 @@ class CopyType implements TypeInterface
         foreach ($fields as $to => $from) {
             $this->remove($container, $to);
 
-            foreach (new RecursiveIteratorIterator(new RecursiveArrayIterator($from)) as $field) {
+            foreach (new \RecursiveIteratorIterator(new \RecursiveArrayIterator($from)) as $field) {
                 foreach ((array) $container->get($field) as $value) {
                     $this->append($container, $to, $value);
                 }
@@ -53,8 +51,7 @@ class CopyType implements TypeInterface
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
+     * @param string $field
      */
     protected function remove(ContainerInterface $container, $field)
     {
@@ -62,9 +59,8 @@ class CopyType implements TypeInterface
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
-     * @param string             $value
+     * @param string $field
+     * @param string $value
      */
     protected function append(ContainerInterface $container, $field, $value)
     {

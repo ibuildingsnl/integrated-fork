@@ -41,12 +41,6 @@ class BreadcrumbExtension extends AbstractExtension
      */
     protected $template;
 
-    /**
-     * @param BreadcrumbMenuProvider $provider
-     * @param Helper                 $helper
-     * @param BreadcrumbResolver     $breadcrumbResolver
-     * @param string                 $template
-     */
     public function __construct(
         BreadcrumbMenuProvider $provider,
         Helper $helper,
@@ -79,8 +73,6 @@ class BreadcrumbExtension extends AbstractExtension
     }
 
     /**
-     * @param array $options
-     *
      * @return string
      */
     public function renderBreadcrumb(array $options = [])

@@ -24,9 +24,7 @@ interface ResolvedTypeInterface
      * This build method will first execute the build method of the inner type and then the
      * build methods of all the extensions.
      *
-     * @param ContainerInterface $container
-     * @param object             $data
-     * @param array              $options
+     * @param object $data
      */
     public function build(ContainerInterface $container, $data, array $options = []);
 

@@ -27,17 +27,12 @@ class GridFactory
      */
     protected $blockRepository;
 
-    /**
-     * @param DocumentRepository $blockRepository
-     */
     public function __construct(DocumentRepository $blockRepository)
     {
         $this->blockRepository = $blockRepository;
     }
 
     /**
-     * @param array $array
-     *
      * @return \Integrated\Bundle\PageBundle\Document\Page\Grid\Grid|null
      */
     public function fromArray(array $array = [])
@@ -54,8 +49,6 @@ class GridFactory
     }
 
     /**
-     * @param array $array
-     *
      * @return array
      */
     protected function parseItems(array $array = [])

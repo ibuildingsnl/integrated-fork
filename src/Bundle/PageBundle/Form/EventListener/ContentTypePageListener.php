@@ -27,9 +27,6 @@ class ContentTypePageListener implements EventSubscriberInterface
      */
     protected $controllerManager;
 
-    /**
-     * @param ContentTypeControllerManager $controllerManager
-     */
     public function __construct(ContentTypeControllerManager $controllerManager)
     {
         $this->controllerManager = $controllerManager;
@@ -45,9 +42,6 @@ class ContentTypePageListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $contentTypePage = $event->getData();

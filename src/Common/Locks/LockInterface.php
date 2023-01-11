@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Locks;
 
-use DateTime;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -35,14 +33,14 @@ interface LockInterface
     /**
      * Get the created time.
      *
-     * @return Datetime
+     * @return \Datetime
      */
     public function getCreated();
 
     /**
      * Get the expire time.
      *
-     * @return Datetime
+     * @return \Datetime
      */
     public function getExpires();
 }

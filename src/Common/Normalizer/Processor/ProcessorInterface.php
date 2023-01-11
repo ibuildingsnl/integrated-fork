@@ -21,9 +21,7 @@ interface ProcessorInterface
     /**
      * Extract the data from the $object and add them to the $data container.
      *
-     * @param ContainerInterface $data
-     * @param object             $object
-     * @param Context            $context
+     * @param object $object
      */
     public function process(ContainerInterface $data, $object, Context $context);
 }

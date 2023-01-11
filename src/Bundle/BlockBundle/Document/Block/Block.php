@@ -98,9 +98,6 @@ abstract class Block implements BlockInterface
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id)
     {
         $this->id = $id;
@@ -155,8 +152,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -175,8 +170,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $updatedAt
-     *
      * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -299,8 +292,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param int $group
-     *
      * @return bool
      */
     public function hasGroup(int $group)

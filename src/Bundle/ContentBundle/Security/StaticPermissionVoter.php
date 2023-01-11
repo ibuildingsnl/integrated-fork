@@ -32,8 +32,7 @@ class StaticPermissionVoter implements VoterInterface
     private $decision;
 
     /**
-     * @param int   $decision
-     * @param array $permissions
+     * @param int $decision
      */
     public function __construct($decision = VoterInterface::ACCESS_GRANTED, array $permissions = [])
     {

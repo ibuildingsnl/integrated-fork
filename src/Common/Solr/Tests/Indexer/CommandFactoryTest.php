@@ -385,7 +385,6 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $action
-     * @param array  $options
      *
      * @return JobInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -420,8 +419,6 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $data
-     *
      * @return ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getContainer(array $data = [])

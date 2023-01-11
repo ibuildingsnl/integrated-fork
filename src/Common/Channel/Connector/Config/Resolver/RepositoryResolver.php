@@ -29,8 +29,6 @@ class RepositoryResolver implements ResolverInterface
 
     /**
      * Constructor.
-     *
-     * @param ConfigRepositoryInterface $repository
      */
     public function __construct(ConfigRepositoryInterface $repository)
     {

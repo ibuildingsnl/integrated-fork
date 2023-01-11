@@ -58,13 +58,6 @@ class AddCommand extends Command
      */
     private $metadata;
 
-    /**
-     * @param DatabaseInterface        $database
-     * @param FilesystemRegistry       $registry
-     * @param ManagerInterface         $storage
-     * @param DecisionInterface        $decision
-     * @param MetadataFactoryInterface $metadata
-     */
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry,

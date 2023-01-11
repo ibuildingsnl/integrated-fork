@@ -30,8 +30,6 @@ class Configurable
 
     /**
      * Configurable constructor.
-     *
-     * @param array $options
      */
     public function __construct(array $options = [])
     {
@@ -43,8 +41,6 @@ class Configurable
 
     /**
      * Replace the options with a new set op options.
-     *
-     * @param array $options
      */
     public function setOptions(array $options = [])
     {
@@ -63,9 +59,6 @@ class Configurable
 
     /**
      * Set the value for the given key.
-     *
-     * @param $key
-     * @param $value
      */
     public function setOption($key, $value)
     {
@@ -99,8 +92,6 @@ class Configurable
 
     /**
      * Configures the option resolver.
-     *
-     * @param OptionsResolver $resolver
      *
      * @codeCoverageIgnore
      */

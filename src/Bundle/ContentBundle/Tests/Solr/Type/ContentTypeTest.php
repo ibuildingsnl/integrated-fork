@@ -19,7 +19,6 @@ use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object2;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
-use stdClass;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Type\ContentType
@@ -98,7 +97,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
 
         /* @var ContainerInterface $container */
 
-        $this->getInstance()->build($container, new stdClass());
+        $this->getInstance()->build($container, new \stdClass());
     }
 
     public function testGetName()

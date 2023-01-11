@@ -14,7 +14,6 @@ namespace Integrated\Common\Bulk\Tests\Form;
 use Integrated\Common\Bulk\Form\ChainProvider;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 use Integrated\Common\Content\ContentInterface;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -50,11 +49,11 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $config = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->provider1->expects($this->once())

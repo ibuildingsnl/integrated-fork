@@ -42,9 +42,7 @@ class ChannelHandlerFactory implements HandlerFactoryInterface
     /**
      * Constructor.
      *
-     * @param string               $class
-     * @param DocumentManager      $documentManager
-     * @param AuthorizationChecker $authorizationChecker
+     * @param string $class
      */
     public function __construct($class, DocumentManager $documentManager, AuthorizationChecker $authorizationChecker)
     {

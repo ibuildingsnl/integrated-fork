@@ -26,9 +26,6 @@ class RoleToEntityTransformer implements DataTransformerInterface
      */
     private $manager;
 
-    /**
-     * @param RoleManagerInterface $manager
-     */
     public function __construct(RoleManagerInterface $manager)
     {
         $this->manager = $manager;

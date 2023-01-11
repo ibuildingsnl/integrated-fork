@@ -23,8 +23,5 @@ interface FileInterface
      */
     public function getFile();
 
-    /**
-     * @param StorageInterface $file
-     */
     public function setFile(StorageInterface $file);
 }

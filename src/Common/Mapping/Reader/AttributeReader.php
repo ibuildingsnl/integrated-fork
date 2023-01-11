@@ -2,17 +2,14 @@
 
 namespace Integrated\Common\Mapping\Reader;
 
-use ReflectionClass;
-use ReflectionProperty;
-
 final class AttributeReader
 {
-    public function getClassAttributes(ReflectionClass $class): array
+    public function getClassAttributes(\ReflectionClass $class): array
     {
         return $this->convertToAttributeInstances($class->getAttributes());
     }
 
-    public function getClassAttribute(ReflectionClass $class, string $attributeName): ?object
+    public function getClassAttribute(\ReflectionClass $class, string $attributeName): ?object
     {
         foreach ($this->getClassAttributes($class) as $attribute) {
             if ($attribute instanceof $attributeName) {
@@ -23,12 +20,12 @@ final class AttributeReader
         return null;
     }
 
-    public function getPropertyAttributes(ReflectionProperty $property): array
+    public function getPropertyAttributes(\ReflectionProperty $property): array
     {
         return $this->convertToAttributeInstances($property->getAttributes());
     }
 
-    public function getPropertyAttribute(ReflectionProperty $property, $attributeName): ?object
+    public function getPropertyAttribute(\ReflectionProperty $property, $attributeName): ?object
     {
         foreach ($this->getPropertyAttributes($property) as $attribute) {
             if ($attribute instanceof $attributeName) {

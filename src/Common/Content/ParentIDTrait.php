@@ -24,17 +24,11 @@ trait ParentIDTrait
     ])]
     protected $parent_id;
 
-    /**
-     * @return string|null
-     */
     public function getParentID(): ?string
     {
         return $this->parent_id;
     }
 
-    /**
-     * @param string|null $parent_id
-     */
     public function setParentID(string $parent_id = null): void
     {
         $this->parent_id = $parent_id;

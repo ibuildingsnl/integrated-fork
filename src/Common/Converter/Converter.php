@@ -40,9 +40,7 @@ class Converter implements ConverterInterface
     /**
      * Constructor.
      *
-     * @param RegistryInterface         $registry
-     * @param ConfigResolverInterface   $resolver
-     * @param ContainerFactoryInterface $factory  if no factory is given then a ContainerFactory is created
+     * @param ContainerFactoryInterface $factory if no factory is given then a ContainerFactory is created
      *
      * @see ContainerFactory
      */

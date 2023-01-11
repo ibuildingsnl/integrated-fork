@@ -27,9 +27,6 @@ class MetadataSubscriber implements MetadataSubscriberInterface
      */
     private $extension;
 
-    /**
-     * @param ExtensionInterface $extension
-     */
     public function __construct(ExtensionInterface $extension)
     {
         $this->extension = $extension;
@@ -53,9 +50,6 @@ class MetadataSubscriber implements MetadataSubscriberInterface
         return $this->extension;
     }
 
-    /**
-     * @param MetadataEvent $event
-     */
     public function process(MetadataEvent $event)
     {
         $metadata = $event->getMetadata();

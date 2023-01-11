@@ -48,9 +48,6 @@ class UserProfilePasswordListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         $inheritedPasswordOptions = $event->getForm()->get('password')->getConfig()->getOptions();
@@ -67,9 +64,6 @@ class UserProfilePasswordListener implements EventSubscriberInterface
         $event->getForm()->add('password', PasswordType::class, $inheritedPasswordOptions);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();

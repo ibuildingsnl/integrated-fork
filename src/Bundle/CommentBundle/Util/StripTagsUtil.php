@@ -23,7 +23,6 @@ class StripTagsUtil
     /**
      * Searches for integrated comment span tag and replaces it with $replacement.
      *
-     * @param $content
      * @param $replacement $2 commentId, $3 content
      *
      * @return string
@@ -38,7 +37,6 @@ class StripTagsUtil
     /**
      * Searches for comment tag and replaces it with $replacement.
      *
-     * @param $content
      * @param $replacement $2 commentId, $3 content
      *
      * @return string

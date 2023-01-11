@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Converter\Config;
 
-use Exception;
 use Integrated\Common\Converter\Exception\UnexpectedTypeException;
-use ReflectionClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -34,8 +32,6 @@ class ConfigResolver implements ConfigResolverInterface
 
     /**
      * Constructor.
-     *
-     * @param TypeProviderInterface $provider
      */
     public function __construct(TypeProviderInterface $provider)
     {
@@ -61,8 +57,8 @@ class ConfigResolver implements ConfigResolverInterface
         }
 
         try {
-            $reflection = new ReflectionClass($class);
-        } catch (Exception $e) {
+            $reflection = new \ReflectionClass($class);
+        } catch (\Exception $e) {
             return $this->setInstance($class, null);
         }
 
@@ -80,10 +76,8 @@ class ConfigResolver implements ConfigResolverInterface
      * The parents are resolved before the actual class. if a class does not have any type configs then
      * the config for the parent is returned instead. If the given class and its parent do not have any
      * associated type configs then null is returned.
-     *
-     * @param ReflectionClass $reflection
      */
-    protected function resolve(ReflectionClass $reflection)
+    protected function resolve(\ReflectionClass $reflection)
     {
         if ($this->hasInstance($reflection->name)) {
             return $this->getInstance($reflection->name);

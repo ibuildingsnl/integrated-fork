@@ -452,7 +452,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('setRequired')
             ->with('content_type')
-            ->will($this->returnValue($resolver))
+            ->willReturn($resolver)
         ;
 
         $resolver
@@ -531,7 +531,6 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      * @param string $type
-     * @param array  $options
      *
      * @return AttributeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -555,7 +554,6 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $name
-     * @param array  $options
      *
      * @return ContentTypeFieldInterface|\PHPUnit\Framework\MockObject\MockObject
      */

@@ -145,8 +145,6 @@ class SearchContentReferenced
     }
 
     /**
-     * @param $referenced
-     *
      * @return array
      */
     private function prepareReferenced($referenced)

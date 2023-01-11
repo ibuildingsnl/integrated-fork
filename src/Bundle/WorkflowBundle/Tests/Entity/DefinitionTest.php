@@ -49,8 +49,6 @@ class DefinitionTest extends \PHPUnit\Framework\TestCase
      * Test getDefault function.
      *
      * @depends testSetDefault
-     *
-     * @param Definition $instance
      */
     public function testGetDefault(Definition $instance)
     {

@@ -11,9 +11,8 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Exception;
 use Integrated\Common\Queue\QueueInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,10 +35,6 @@ class WorkerCommand extends Command
      */
     private $workingDirectory;
 
-    /**
-     * @param QueueInterface $queue
-     * @param string         $workingDirectory
-     */
     public function __construct(
         QueueInterface $queue,
         string $workingDirectory
@@ -109,7 +104,7 @@ The <info>%command.name%</info> .
 
                 $message->delete();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln('Aborting: '.$e->getMessage());
 
             return 1;
@@ -121,12 +116,10 @@ The <info>%command.name%</info> .
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @param string          $command
-     * @param string[]        $arguments
+     * @param string   $command
+     * @param string[] $arguments
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function executeCommand(InputInterface $input, OutputInterface $output, $command, array $arguments = [])
     {
@@ -146,7 +139,7 @@ The <info>%command.name%</info> .
         });
 
         if (!$process->isSuccessful()) {
-            throw new Exception($process->getErrorOutput());
+            throw new \Exception($process->getErrorOutput());
         }
     }
 }

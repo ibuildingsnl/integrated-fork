@@ -37,9 +37,6 @@ class IndexerErrorLogger implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ErrorEvent $event
-     */
     public function onError(ErrorEvent $event)
     {
         if (null === $this->logger) {

@@ -11,16 +11,11 @@
 
 namespace Integrated\Bundle\SolrBundle\Solr\Type;
 
-use AppendIterator;
-use ArrayIterator;
-use DateTime;
-use DateTimeZone;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -28,7 +23,7 @@ use Traversable;
 class FieldMapperType implements TypeInterface
 {
     /**
-     * @var DateTimeZone
+     * @var \DateTimeZone
      */
     private $timezone;
 
@@ -44,7 +39,7 @@ class FieldMapperType implements TypeInterface
      */
     public function __construct(PropertyAccessorInterface $accessor = null)
     {
-        $this->timezone = new DateTimeZone('UTC');
+        $this->timezone = new \DateTimeZone('UTC');
         $this->accessor = $accessor ?: PropertyAccess::createPropertyAccessor();
     }
 
@@ -71,8 +66,6 @@ class FieldMapperType implements TypeInterface
     }
 
     /**
-     * @param array $options
-     *
      * @return array
      */
     protected function groupFields(array $options = [])
@@ -98,8 +91,7 @@ class FieldMapperType implements TypeInterface
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
+     * @param string $field
      */
     protected function remove(ContainerInterface $container, $field)
     {
@@ -107,9 +99,8 @@ class FieldMapperType implements TypeInterface
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
-     * @param string             $value
+     * @param string $field
+     * @param string $value
      */
     protected function append(ContainerInterface $container, $field, $value)
     {
@@ -125,19 +116,18 @@ class FieldMapperType implements TypeInterface
 
     /**
      * @param object $data
-     * @param array  $paths
      *
-     * @return Traversable
+     * @return \Traversable
      */
     protected function read($data, array $paths)
     {
-        $result = new AppendIterator();
+        $result = new \AppendIterator();
 
         foreach ($paths as $path) {
             if (\is_array($path)) {
-                $result->append(new ArrayIterator($this->readArray($data, $path)));
+                $result->append(new \ArrayIterator($this->readArray($data, $path)));
             } else {
-                $result->append(new ArrayIterator([$this->readString($data, $path)]));
+                $result->append(new \ArrayIterator([$this->readString($data, $path)]));
             }
         }
 
@@ -146,7 +136,6 @@ class FieldMapperType implements TypeInterface
 
     /**
      * @param mixed  $data
-     * @param array  $paths
      * @param string $separator
      *
      * @return string[]
@@ -172,7 +161,7 @@ class FieldMapperType implements TypeInterface
                 try {
                     $array = $this->accessor->getValue($data, (string) $index);
 
-                    if (!\is_array($array) && !$array instanceof Traversable) {
+                    if (!\is_array($array) && !$array instanceof \Traversable) {
                         $array = [$array];
                     }
                 } catch (ExceptionInterface $e) {
@@ -239,7 +228,7 @@ class FieldMapperType implements TypeInterface
      */
     protected function convert($data)
     {
-        if ($data instanceof DateTime) {
+        if ($data instanceof \DateTime) {
             $data = clone $data; // don't change to original value
 
             return $data->setTimezone($this->timezone)->format('Y-m-d\TG:i:s\Z');
@@ -266,7 +255,6 @@ class FieldMapperType implements TypeInterface
      * For every array in the data all strings will be multiplied by the number of items in that
      * array to cover every possible string combination.
      *
-     * @param array  $data
      * @param string $separator
      *
      * @return string[]

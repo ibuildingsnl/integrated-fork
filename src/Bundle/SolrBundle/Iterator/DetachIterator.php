@@ -12,12 +12,11 @@
 namespace Integrated\Bundle\SolrBundle\Iterator;
 
 use Doctrine\Persistence\ObjectManager;
-use Iterator;
 
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
  */
-class DetachIterator implements Iterator
+class DetachIterator implements \Iterator
 {
     /**
      * @var ObjectManager
@@ -25,15 +24,11 @@ class DetachIterator implements Iterator
     private $manager;
 
     /**
-     * @var Iterator
+     * @var \Iterator
      */
     private $iterator;
 
-    /**
-     * @param Iterator      $iterator
-     * @param ObjectManager $manager
-     */
-    public function __construct(Iterator $iterator, ObjectManager $manager)
+    public function __construct(\Iterator $iterator, ObjectManager $manager)
     {
         $this->iterator = $iterator;
         $this->manager = $manager;

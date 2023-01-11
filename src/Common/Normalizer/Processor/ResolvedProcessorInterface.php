@@ -19,8 +19,7 @@ interface ResolvedProcessorInterface
     /**
      * Run the internal processors over the object to transform it into a array.
      *
-     * @param object  $object
-     * @param Context $context
+     * @param object $object
      *
      * @return array
      */

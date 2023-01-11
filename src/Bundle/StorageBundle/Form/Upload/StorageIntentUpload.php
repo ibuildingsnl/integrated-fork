@@ -34,10 +34,6 @@ class StorageIntentUpload extends File implements StorageInterface
      */
     protected $original;
 
-    /**
-     * @param StorageInterface|null $original
-     * @param UploadedFile          $uploadedFile
-     */
     public function __construct(StorageInterface $original = null, UploadedFile $uploadedFile)
     {
         $this->original = $original;

@@ -125,8 +125,6 @@ class File extends Content implements FileInterface
 
     /**
      * @param string $credits
-     *
-     * @return File
      */
     public function setCredits(?string $credits): self
     {

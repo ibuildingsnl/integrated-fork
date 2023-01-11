@@ -27,9 +27,6 @@ class CompanyProcessor implements ProcessorInterface
      */
     protected $generator;
 
-    /**
-     * @param UrlGenerator $generator
-     */
     public function __construct(UrlGenerator $generator)
     {
         $this->generator = $generator;

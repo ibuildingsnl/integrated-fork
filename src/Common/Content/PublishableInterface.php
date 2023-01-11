@@ -15,15 +15,11 @@ interface PublishableInterface
 {
     /**
      * Get the publish time of the document.
-     *
-     * @return PublishTimeInterface
      */
     public function getPublishTime(): PublishTimeInterface;
 
     /**
      * Set the publish time of the document.
-     *
-     * @param PublishTimeInterface $publishTime
      *
      * @return $this
      */
@@ -42,8 +38,6 @@ interface PublishableInterface
      * Get the published of the document.
      *
      * @param bool $checkPublishTime
-     *
-     * @return bool
      */
     public function isPublished($checkPublishTime = true): bool;
 }

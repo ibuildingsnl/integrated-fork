@@ -42,11 +42,9 @@ class Config implements ConfigInterface
     private $matcher;
 
     /**
-     * @param string                 $handler
-     * @param string                 $name
-     * @param string                 $type
-     * @param array                  $options
-     * @param ActionMatcherInterface $matcher
+     * @param string $handler
+     * @param string $name
+     * @param string $type
      */
     public function __construct($handler, $name, $type, array $options, ActionMatcherInterface $matcher)
     {

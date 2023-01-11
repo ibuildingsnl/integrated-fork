@@ -39,11 +39,6 @@ class ContentTypeChoice extends AbstractType
      */
     private $authorizationChecker;
 
-    /**
-     * @param ObjectRepository     $repository
-     * @param ContentTypeManager   $contentTypeManager
-     * @param AuthorizationChecker $authorizationChecker
-     */
     public function __construct(ObjectRepository $repository, ContentTypeManager $contentTypeManager, AuthorizationChecker $authorizationChecker)
     {
         $this->repository = $repository;
@@ -51,9 +46,6 @@ class ContentTypeChoice extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $choices = [];

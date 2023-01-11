@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
@@ -19,6 +18,7 @@ use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -80,8 +80,6 @@ class TwoFactorController extends AbstractController
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @return FormInterface
      */
     private function createDeleteForm(UserInterface $user)

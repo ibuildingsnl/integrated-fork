@@ -95,8 +95,6 @@ class SearchSelection
     }
 
     /**
-     * @param array $filters
-     *
      * @return SearchSelection
      */
     public function setFilters(array $filters = [])
@@ -115,8 +113,6 @@ class SearchSelection
     }
 
     /**
-     * @param array $internalParams
-     *
      * @return SearchSelection
      */
     public function setInternalParams(array $internalParams = [])

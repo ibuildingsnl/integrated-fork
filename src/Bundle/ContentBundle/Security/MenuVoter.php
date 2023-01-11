@@ -31,10 +31,6 @@ class MenuVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ResolverInterface $resolver
-     * @param array             $permissions
-     */
     public function __construct(ResolverInterface $resolver, array $permissions = [])
     {
         $this->resolver = $resolver;

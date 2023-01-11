@@ -45,10 +45,8 @@ class ContentTypePage extends AbstractPage
     protected $contentType;
 
     /**
-     * @param ContentType $contentType
-     * @param Channel     $channel
-     * @param string      $layout
-     * @param null        $path
+     * @param string $layout
+     * @param null   $path
      */
     public function __construct(ContentType $contentType, Channel $channel, $layout = 'default.html.twig', $path = null)
     {
@@ -73,8 +71,6 @@ class ContentTypePage extends AbstractPage
     }
 
     /**
-     * @param ContentType $contentType
-     *
      * @return $this
      */
     public function setContentType(ContentType $contentType)

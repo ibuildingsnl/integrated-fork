@@ -38,8 +38,7 @@ class ClassTreeMapResolver implements DiscriminatorMapResolverInterface
      *
      * The order of the class map roots is important, it will use the first match as class root.
      *
-     * @param ClassLocatorInterface $locator
-     * @param string[]              $roots
+     * @param string[] $roots
      */
     public function __construct(ClassLocatorInterface $locator, array $roots)
     {

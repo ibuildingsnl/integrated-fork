@@ -57,8 +57,6 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
 
     /**
      * Add the transitions field to children of the collection.
-     *
-     * @param FormEvent $event
      */
     public function onPrepare(FormEvent $event)
     {
@@ -101,8 +99,6 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
      * This will convert the transitions states to a list of numbers that represent the
      * index of the state in the collection. This will be done for all the children in
      * the collection.
-     *
-     * @param FormEvent $event
      */
     public function onSetData(FormEvent $event)
     {
@@ -159,8 +155,6 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
      *
      * This will convert the view data to a set of states to set as the transitions. This
      * will be done for all the children in the collection.
-     *
-     * @param FormEvent $event
      */
     public function onGetData(FormEvent $event)
     {
@@ -218,8 +212,6 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
      * The values of the choices are the same as the array keys from the data array and
      * the labels is the name field extracted from the data.
      *
-     * @param array $data
-     *
      * @return Model\State[]
      */
     protected function getChoices(array $data)
@@ -244,8 +236,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
     /**
      * Build a choice list based on the given choice but filter out the current state.
      *
-     * @param array $choices
-     * @param int   $current
+     * @param int $current
      *
      * @return Model\State[]
      */

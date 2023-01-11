@@ -16,8 +16,6 @@ use Integrated\Bundle\SlugBundle\Mapping\ClassMetadataInterface;
 use Integrated\Bundle\SlugBundle\Mapping\DriverInterface;
 use Integrated\Bundle\SlugBundle\Mapping\Metadata\PropertyMetadata;
 use Integrated\Common\Mapping\Reader\AttributeReader;
-use ReflectionClass;
-use ReflectionException;
 
 class AttributeDriver implements DriverInterface
 {
@@ -32,11 +30,11 @@ class AttributeDriver implements DriverInterface
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     public function loadMetadataForClass(string $class, ClassMetadataInterface $metadata): void
     {
-        $reflectionClass = new ReflectionClass($class);
+        $reflectionClass = new \ReflectionClass($class);
 
         foreach ($reflectionClass->getProperties() as $property) {
             /** @var Slug $slug */

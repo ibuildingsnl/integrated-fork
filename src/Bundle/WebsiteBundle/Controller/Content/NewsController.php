@@ -32,10 +32,6 @@ class NewsController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param ThemeManager   $themeManager
-     */
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
@@ -43,9 +39,6 @@ class NewsController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param News            $news
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(ContentTypePage $page, News $news)

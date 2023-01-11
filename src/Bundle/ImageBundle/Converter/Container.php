@@ -34,17 +34,13 @@ class Container
         $this->adapters = new ArrayCollection();
     }
 
-    /**
-     * @param AdapterInterface $converter
-     */
     public function add(AdapterInterface $converter)
     {
         $this->adapters->add($converter);
     }
 
     /**
-     * @param string           $outputFormat
-     * @param StorageInterface $image
+     * @param string $outputFormat
      *
      * @return AdapterInterface
      *

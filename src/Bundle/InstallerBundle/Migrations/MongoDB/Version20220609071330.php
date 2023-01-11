@@ -26,9 +26,6 @@ final class Version20220609071330 extends AbstractMigration
         );
     }
 
-    /**
-     * @param Database $db
-     */
     public function down(Database $db)
     {
         $db->selectCollection('content')->updateMany(

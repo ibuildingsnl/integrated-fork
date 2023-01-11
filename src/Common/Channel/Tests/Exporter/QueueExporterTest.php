@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
-use Exception;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
@@ -19,7 +18,6 @@ use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Channel\Exporter\QueueExporter;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -116,7 +114,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
         $request->channel = $this->getChannel();
 
@@ -148,7 +146,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
         $request->channel = $this->getChannel();
 
@@ -160,7 +158,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
         $this->exporter->expects($this->once())
             ->method('export')
             ->with($this->identicalTo($request->content), $this->equalTo(self::TEST_STATE), $this->identicalTo($request->channel))
-            ->willThrowException(new Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
 
         self::assertSame($message, $this->getInstance()->process($message));
     }
@@ -185,7 +183,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExport()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel();
 
         $this->exporter->expects($this->once())

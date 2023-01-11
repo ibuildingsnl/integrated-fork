@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Form\EventListener;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -19,6 +18,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -43,9 +43,7 @@ class SecurityLoginListener implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param Request             $request
-     * @param TranslatorInterface $translator
-     * @param string              $translationDomain
+     * @param string $translationDomain
      */
     public function __construct(Request $request, TranslatorInterface $translator, $translationDomain = null)
     {
@@ -55,9 +53,6 @@ class SecurityLoginListener implements EventSubscriberInterface
         $this->translationDomain = $translationDomain;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $request = $this->getRequest();

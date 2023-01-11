@@ -37,8 +37,7 @@ class MetadataFactory implements MetadataFactoryInterface
     private $target;
 
     /**
-     * @param ClassMetadataFactory $factory
-     * @param string               $target
+     * @param string $target
      */
     public function __construct(ClassMetadataFactory $factory, $target)
     {
@@ -47,8 +46,7 @@ class MetadataFactory implements MetadataFactoryInterface
     }
 
     /**
-     * @param DocumentManager $manager
-     * @param string          $target
+     * @param string $target
      *
      * @return MetadataFactory
      */

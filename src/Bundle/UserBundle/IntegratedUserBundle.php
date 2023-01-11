@@ -25,9 +25,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedUserBundle extends Bundle
 {
-    /**
-     * @param ContainerBuilder $container
-     */
     public function build(ContainerBuilder $container)
     {
         $mapping = [

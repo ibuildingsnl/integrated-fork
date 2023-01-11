@@ -39,8 +39,6 @@ class Row
     }
 
     /**
-     * @param array $columns
-     *
      * @return $this
      */
     public function setColumns(array $columns)
@@ -51,8 +49,6 @@ class Row
     }
 
     /**
-     * @param Column $column
-     *
      * @return $this
      */
     public function addColumn(Column $column)
@@ -63,8 +59,6 @@ class Row
     }
 
     /**
-     * @param Column $column
-     *
      * @return $this
      */
     public function removeColumn(Column $column)

@@ -47,9 +47,7 @@ class QueueSubscriber implements EventSubscriber, QueueAwareInterface, Serialize
     private $priority = 0;
 
     /**
-     * @param QueueInterface      $queue
-     * @param SerializerInterface $serializer
-     * @param int                 $priority
+     * @param int $priority
      */
     public function __construct(QueueInterface $queue, SerializerInterface $serializer, $priority = 0)
     {

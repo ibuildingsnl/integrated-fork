@@ -32,10 +32,6 @@ class TaxonomyController extends AbstractController
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param ThemeManager   $themeManager
-     */
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
@@ -43,9 +39,6 @@ class TaxonomyController extends AbstractController
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param Taxonomy        $taxonomy
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(ContentTypePage $page, Taxonomy $taxonomy)

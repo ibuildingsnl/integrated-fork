@@ -25,9 +25,6 @@ class ImageTransformer implements DataTransformerInterface
      */
     private $repository;
 
-    /**
-     * @param DocumentRepository $repository
-     */
     public function __construct(DocumentRepository $repository)
     {
         $this->repository = $repository;

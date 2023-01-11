@@ -13,7 +13,6 @@ namespace Integrated\Bundle\SolrBundle\Solr\Type;
 
 use Integrated\Common\Converter\ContainerInterface;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
-use Traversable;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
@@ -40,7 +39,6 @@ class JsonType extends FieldMapperType
 
     /**
      * @param mixed $data
-     * @param array $paths
      *
      * @return array
      */
@@ -55,7 +53,7 @@ class JsonType extends FieldMapperType
                 try {
                     $array = $this->accessor->getValue($data, $index);
 
-                    if (!\is_array($array) && !$array instanceof Traversable) {
+                    if (!\is_array($array) && !$array instanceof \Traversable) {
                         $array = [$array];
                     }
                 } catch (ExceptionInterface $e) {

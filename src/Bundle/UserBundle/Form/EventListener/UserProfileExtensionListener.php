@@ -26,9 +26,6 @@ class UserProfileExtensionListener implements EventSubscriberInterface
      */
     private $name;
 
-    /**
-     * @param $name
-     */
     public function __construct($name)
     {
         $this->name = $name;
@@ -45,9 +42,6 @@ class UserProfileExtensionListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         if (!$parent = $event->getForm()->getParent()) {
@@ -61,9 +55,6 @@ class UserProfileExtensionListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSubmit(FormEvent $event)
     {
         if (!$parent = $event->getForm()->getParent()) {

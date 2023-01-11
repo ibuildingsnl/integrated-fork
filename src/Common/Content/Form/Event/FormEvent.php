@@ -32,9 +32,6 @@ class FormEvent extends Event
 
     /**
      * Event constructor.
-     *
-     * @param ContentTypeInterface $contentType
-     * @param MetadataInterface    $metadata
      */
     public function __construct(ContentTypeInterface $contentType, MetadataInterface $metadata)
     {

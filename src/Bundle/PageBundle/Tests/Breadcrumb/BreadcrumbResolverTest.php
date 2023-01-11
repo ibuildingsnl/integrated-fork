@@ -86,17 +86,15 @@ class BreadcrumbResolverTest extends TestCase
         $this->channelContext->method('getChannel')->willReturn($channel);
 
         $pageRepository = $this->createMock(ObjectRepository::class);
-        $this->documentManager
-            ->expects($this->at(0))
-            ->method('getRepository')
-            ->with(Page::class)->willReturn($pageRepository);
-
         $contentRepository = $this->createMock(ObjectRepository::class);
         $this->documentManager
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('getRepository')
-            ->with(Content::class)
-            ->willReturn($contentRepository);
+            ->withConsecutive(
+                [$this->equalTo(Page::class)],
+                [$this->equalTo(Content::class)]
+            )
+            ->willReturnOnConsecutiveCalls($pageRepository, $contentRepository);
 
         $this->urlResolver
             ->expects($this->once())
@@ -115,39 +113,29 @@ class BreadcrumbResolverTest extends TestCase
         $article->getPublishTime()->setEndDate(new \DateTime('next week'));
 
         $pageRepository
-            ->expects($this->at(0))
+            ->expects($this->exactly(4))
             ->method('findOneBy')
-            ->with(['path' => '/', 'channel.$id' => 'my_channel'])
-            ->willReturn(null);
+            ->withConsecutive(
+                [$this->equalTo(['path' => '/', 'channel.$id' => 'my_channel'])],
+                [$this->equalTo(['path' => '/my', 'channel.$id' => 'my_channel'])],
+                [$this->equalTo(['path' => '/my/page', 'channel.$id' => 'my_channel'])],
+            )
+            ->willReturnOnConsecutiveCalls(null, null, $page, null);
 
         $contentRepository
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('findOneBy')
-            ->with(['slug' => 'my', 'channels.$id' => 'my_channel'])
-            ->willReturn($article);
-
-        $pageRepository
-            ->expects($this->at(1))
-            ->method('findOneBy')
-            ->with(['path' => '/my', 'channel.$id' => 'my_channel'])
-            ->willReturn(null);
-
-        $contentRepository
-            ->expects($this->at(1))
-            ->method('findOneBy')
-            ->with(['slug' => 'my-article', 'channels.$id' => 'my_channel'])
-            ->willReturn(null);
-
-        $pageRepository
-            ->expects($this->at(2))
-            ->method('findOneBy')
-            ->with(['path' => '/my/page', 'channel.$id' => 'my_channel'])
-            ->willReturn($page);
+            ->withConsecutive(
+                [$this->equalTo(['slug' => 'my', 'channels.$id' => 'my_channel'])],
+                [$this->equalTo(['slug' => 'my-article', 'channels.$id' => 'my_channel'])]
+            )
+            ->willReturnOnConsecutiveCalls($article, null);
 
         $expectedResult = [
             new BreadcrumbItem('My article', '/my'),
             new BreadcrumbItem('My page', '/my/page'),
         ];
+
         $this->assertEquals($expectedResult, $this->breadcrumbResolver->getBreadcrumb());
     }
 }

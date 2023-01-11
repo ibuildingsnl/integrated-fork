@@ -31,8 +31,7 @@ class ResolvedProcessor implements ResolvedProcessorInterface
     /**
      * The processors will be execute in the order added to the $processors array.
      *
-     * @param ProcessorInterface[]      $processors
-     * @param ContainerFactoryInterface $factory
+     * @param ProcessorInterface[] $processors
      */
     public function __construct(array $processors, ContainerFactoryInterface $factory)
     {

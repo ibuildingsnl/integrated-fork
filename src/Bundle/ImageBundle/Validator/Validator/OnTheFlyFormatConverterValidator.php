@@ -41,9 +41,8 @@ class OnTheFlyFormatConverterValidator extends ConstraintValidator
     private $convert;
 
     /**
-     * @param Container $container
-     * @param string    $convert
-     * @param array     $webFormats
+     * @param string $convert
+     * @param array  $webFormats
      */
     public function __construct(Container $container, $convert, $webFormats)
     {

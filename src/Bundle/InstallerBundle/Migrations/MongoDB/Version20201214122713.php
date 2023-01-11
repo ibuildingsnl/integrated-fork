@@ -27,9 +27,6 @@ final class Version20201214122713 extends AbstractMigration
         ]);
     }
 
-    /**
-     * @param Database $db
-     */
     public function down(Database $db)
     {
         $db->selectCollection('page')->dropIndexes([

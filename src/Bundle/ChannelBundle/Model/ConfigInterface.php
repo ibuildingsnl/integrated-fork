@@ -15,8 +15,5 @@ use Integrated\Common\Channel\Connector\Config\ConfigInterface as BaseConfigInte
 
 interface ConfigInterface extends BaseConfigInterface
 {
-    /**
-     * @return int
-     */
     public function getId(): int;
 }

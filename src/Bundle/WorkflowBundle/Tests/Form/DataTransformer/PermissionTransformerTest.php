@@ -197,8 +197,6 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
      * @return \PHPUnit\Framework\MockObject\MockObject|GroupInterface
      */
     protected function getGroup($id)
