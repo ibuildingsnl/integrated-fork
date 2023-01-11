@@ -16,22 +16,27 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 #[\Attribute()]
 class Field
 {
+    public const LOCATION_EDITOR = 'editor';
+    public const LOCATION_SIDEBAR = 'sidebar';
+
     /**
      * @var string
      */
-    protected $type = TextType::class;
+    private $type = TextType::class;
 
     /**
      * @var array
      */
-    protected $options = [];
+    private $options = [];
+
+    private string $location = self::LOCATION_EDITOR;
 
     /**
      * Constructor.
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($exactly = null, string $type = null, array $options = null, array $extra = [])
+    public function __construct($exactly = null, string $type = null, array $options = null, string $location = null, array $extra = [])
     {
         if (\is_array($exactly)) {
             $extra = array_merge($exactly, $extra);
@@ -42,6 +47,10 @@ class Field
         $extra['type'] = $type ?? $extra['type'] ?? $this->type;
         $extra['options'] = $options ?? $extra['options'] ?? $this->options;
 
+        $location = $location ?? $extra['location'] ?? $this->location;
+
+        $extra['location'] = self::LOCATION_SIDEBAR === $location ? self::LOCATION_SIDEBAR : self::LOCATION_EDITOR;
+
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
@@ -51,51 +60,33 @@ class Field
         }
     }
 
-    /**
-     * Get the type of the field.
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * Set the type of the field.
-     *
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
-
-        return $this;
     }
 
-    /**
-     * Get the options of the field.
-     *
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * Set the label of the field.
-     *
-     * @param array $options
-     *
-     * @return $this
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
+    }
 
-        return $this;
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): void
+    {
+        $this->location = $location;
     }
 }
