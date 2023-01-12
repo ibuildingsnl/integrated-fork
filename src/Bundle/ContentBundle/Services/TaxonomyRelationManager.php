@@ -30,18 +30,28 @@ class TaxonomyRelationManager
         $this->indexer = $indexer;
     }
 
+    public function manageRelationsWithParams(array $params): void
+    {
+        $request = new Request();
+
+        foreach ($params as $key => $value) {
+            $request->attributes->set($key, $value);
+        }
+
+        $this->manageRelations($request);
+    }
+
     public function manageRelations(Request $request): JsonResponse
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
-        if (true === $taxonomyRelation->isTargetSameAsOrigin()) {
+        if (false === $taxonomyRelation->isManagingRelationRequired()) {
             return new JsonResponse('Origin is same as target');
         }
 
         $taxonomy = $this->getTaxonomy($taxonomyRelation);
-
         $mediaItems = $this->getMediaItems($taxonomyRelation);
 
         foreach ($mediaItems as $mediaItem) {
@@ -64,7 +74,7 @@ class TaxonomyRelationManager
         return $this->dm->getRepository(Taxonomy::class)->find($taxonomyRelation->getCategoryIdTarget());
     }
 
-    private function getMediaItems(TaxonomyRelationModel $taxonomyRelation): array
+    public function getMediaItems(TaxonomyRelationModel $taxonomyRelation): array
     {
         return $this->dm->createQueryBuilder(File::class)
             ->field('id')->in($taxonomyRelation->getMediaId())
@@ -104,7 +114,6 @@ class TaxonomyRelationManager
     private function addRelationIfNotExists(mixed $mediaItem, Relation $relations, Taxonomy $taxonomy, array $relationIDs): void
     {
         if (false === \in_array($taxonomy->getID(), $relationIDs)) {
-            $messages[] = 'not in array';
             $relations->addReference($taxonomy);
             $mediaItem->addRelation($relations);
         }

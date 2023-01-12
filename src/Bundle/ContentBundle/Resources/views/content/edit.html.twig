@@ -246,6 +246,7 @@
                                         </div>
                                     </div>
                                 {% else %}
+                        {{ dump(relation) }}
                                     <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
                                         <div
                                             data-multiple="{{ relation.vars.attr['data-multiple'] }}"
@@ -299,7 +300,7 @@
                         {% endfor %}
 
 {#                        This element will be copied for every image#}
-                        <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid w-1/4">
+                        <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid ml-1 mb-1">
                             <div class="media-preview">
                                 <div class="thumbnail">
                                     <div class="centered">
@@ -312,7 +313,7 @@
 
                         <script>
                             // TODO:
-                            // Add something to handle multiple contenttypes
+                            // Add something to handle multiple contenttypes to date selection
                             // Add an if statement to NOT show contenttypes filter in select_one and select_multi modes
                             // Add handling of url multiple contenttypes
                             // Add showing of all the possible icons, make this separate components !important
@@ -324,7 +325,8 @@
                             let form_relation = {} //these will be placed in form_relations
                             const mediagallery_link = "/admin/media/"
                             let selected_relation = '' //after a user clicks on a form button, the clicked form element is selected
-                            let contenttypes = 'video'
+                            const contenttypes = 'image'
+                            const available_contenttypes = ['image', 'video']
 
                             addEventListeners()
                             populateFormRelations()
@@ -363,12 +365,17 @@
                                         content_type: contenttypes,
                                         content_type_url: contenttypes != '' ? '&contenttypes=' + contenttypes : ''
                                     }
+                                    form_relations[id].types_url = getTypesUrl(form_relations[id].types)
                                 })
+                            }
+
+                            function getTypesUrl(types) {
+                                return types.reduce((accumulator, currentValue) => accumulator + 'available_contenttypes[]=' + currentValue.type + '&', '');
                             }
 
                             function generateSrcAttributeForIframes() {
                                 Object.values(form_relations).forEach(form_relation => {
-                                    const link = mediagallery_link + form_relation.modus + '?page=1' + form_relation.content_type_url
+                                    const link = mediagallery_link + form_relation.modus + '?page=1&' + form_relation.types_url
                                     console.log(link)
                                     document.querySelector(form_relation.iframe_selector).setAttribute('src', link)
                                 });
@@ -404,6 +411,9 @@
 
                             function placeClone(clone) {
                                 if (selected_relation.modus == 'select_one') {
+                                    console.log("one")
+                                    console.log(selected_relation.selected_images_selector)
+                                    console.log(clone)
                                     $(selected_relation.selected_images_selector).empty()
                                     $(selected_relation.selected_images_selector).append(clone)
                                 } else if (selected_relation.modus == 'select_multiple') {
@@ -434,14 +444,19 @@
 
                             function populateDOMWithImages() {
                                 selected_relation.selected_images.forEach((item) => {
+                                    console.log("placing")
                                     placeClone(createClone(item))
                                 })
                             }
 
                             window.addEventListener('message', function (e) {
+                                console.log(e.data)
                                 const response_from_iframe = filterImages(JSON.parse(e.data))
+                                console.log(response_from_iframe)
                                 if (response_from_iframe.length > 0) {
+                                    console.log(selected_relation)
                                     selectImagesToShow(response_from_iframe)
+                                    console.log(selected_relation)
                                     rebuildDOM()
                                     closeMediaGallery()
                                 } else {

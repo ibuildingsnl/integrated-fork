@@ -200,12 +200,38 @@ class ContentProvider
             }
         }
 
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->addTag('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+        //If there is ONE contenttype selected, we only want to show files with this contenttype
+        //If there are more selected than 1, we are showing all the files (all the contenttypes)
+        //But, if available_contenttypes is filles, we only want to show those file.
+        //But, if available_contenttypes is filled, AND contenttypes is one, we wannt to select only the 1 contenttypes
+
+        //TODO: underneath 3 if statements can be improved
+        // if contenttype count === 1, then...
+        // else if available_contenttypes != ...
+        // else set contenttypes
+        // make sure normal usage of contenttypes keeps working
+        // actually, maybe this is cleaner because it separates
+
+        //we allways set contenttypes
+        if (\is_array($contentType) && \count($contentType)) {
+            $query
+                ->createFilterQuery('contenttypes')
+                ->addTag('contenttypes')
+                ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+        }
+
+        //if available_contenttypes, we want to restrict the selection to available_contenttypes
+        $available_contenttypes = $request->query->get('available_contenttypes');
+        if (\is_array($available_contenttypes) && \count($available_contenttypes)) {
+            $contentTypesQuery = $query->getFilterQuery('contenttypes');
+            $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $available_contenttypes))]);
+
+            //if $contentType === 0, all files should be shown,
+            //if $contentType > 1, all_files is enabled
+            //if $contentType === 1, then 1 item is selected by the user and we should go here
+            if (\count($contentType) === 1) {
+                $contentTypesQuery = $query->getFilterQuery('contenttypes');
+                $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }
 

@@ -1,7 +1,6 @@
 <?php
 
 /*
- *
  * This file is part of the Integrated package.
  *
  * (c) e-Active B.V. <integrated@e-active.nl>
@@ -13,11 +12,15 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Common\Storage\ManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +29,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /*
  * Goal for the user:
- *  - show files in a coherent manner
+ *  - show files in a coherent mannere
  *  - let the user filter / search for specific content
  *  - let the user be able to organise with categories and channels
  *
@@ -73,7 +76,9 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
-        protected AuthorizationCheckerInterface $authorizationChecker
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        private ManagerInterface $manager,
+        private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
 
@@ -93,10 +98,14 @@ class MediaController extends AbstractController
             $requestCopy->query->set('contenttypes', [$givenContentType]);
         } else {
             $requestSource->query->set('contenttypes', 'all_files');
+            $requestSource->query->set('all_contenttypes', true);
+            $requestCopy->query->set('all_contenttypes', true);
         }
 
-        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
+//        dd($requestCopy->query->get('available_contenttypes'));
 
+        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
+//        dd($requestCopy->query->get('all_contenttypes'));
         $menu = $this->mediaGalleryMenu->createMenu();
 
         $this->setYearMonthFilter($requestCopy);
@@ -190,6 +199,21 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ];
+    }
+
+    public function uploadFile(Request $request)
+    {
+        try {
+            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+
+            $request->attributes->set('media_id', $file->getId());
+
+            $this->taxonomyRelationManager->manageRelations($request);
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'This filetype is not allowed.']);
+        }
+
+        return new JsonResponse(['message' => 'file is uploaded.', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
@@ -295,10 +319,11 @@ class MediaController extends AbstractController
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
+                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
+                        $year = (int) $year + 1;
                     }
-                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
                     $fullDateFilter = $startDate.' TO '.$endDate;
 

@@ -10,6 +10,12 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="integrated_storage.manager" />
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="security.authorization_checker" />

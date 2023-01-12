@@ -125,7 +125,7 @@
             <iframe id="frame" src="" width="1500" height="500"></iframe>
         </div>
 
-        <div class="mb-2">Geselecteerde afbeelding:</div>
+        <div class="mb-2">Geselecteerde afbeelding FAKE:</div>
         <div id="selected_images" class="mb-4"></div>
 
     {#    <input type="file" id="integrated_content_media_gallery_image_file" name="integrated_content[media_gallery_image][file]" style="position: absolute; left: -9999px; top: -9999px; z-index: -9999;">#}
@@ -186,7 +186,9 @@
             }
 
             window.addEventListener('message', function (e) {
+                console.log("receiving a message")
                 response_from_iframe = filterImages(JSON.parse(e.data))
+                console.log(e)
                 if (response_from_iframe.length > 0) {
 
                     //fill currently_selected_images with the response and filter unique
@@ -207,7 +209,7 @@
                     addImageToInputField(currently_selected_images.map(item => item.id))
                     closeMediaGallery()
                  } else {
-                    console.log("no image selected")
+                    console.log("no image selected 11")
                 }
             });
 

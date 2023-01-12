@@ -5,9 +5,17 @@ return (new PhpCsFixer\Config())
         '@PSR2' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'line_ending' => false,
+        'no_useless_else' => true,
+        'no_useless_return' => true,
         'protected_to_private' => false,
         'yoda_style' => ['equal' => null, 'identical' => null, 'less_and_greater' => null],
+        'no_superfluous_phpdoc_tags' => false,
         'single_line_throw' => false,
+        'php_unit_mock_short_will_return' => false,
+        'ordered_imports' => false,
+        'global_namespace_import' => ['import_constants' => null, 'import_functions' => null, 'import_classes' => null],
     ])
     ->setRiskyAllowed(true)
     ->setFinder(

@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TaxonomyRelationModel
 {
-    private array $mediaId;
-    private string $categoryIdTarget;
-    private string $categoryIdOrigin;
+    private array $mediaId = [];
+    private string $categoryIdTarget = '';
+    private string $categoryIdOrigin = '';
 
     /**
      * @param Request $request
@@ -36,12 +36,21 @@ class TaxonomyRelationModel
 
     private function setup(Request $request): void
     {
+        // From the url (when dragging and dropping)
         $params = json_decode($request->getContent(), true);
+
+        // From form parameters (when using Uppy for example)
+        if (null === $params) {
+            $params = [
+                'category_id_target' => $request->get('category_id_target'),
+                'media_id' => [$request->get('media_id')],
+            ];
+        }
 
         if (\array_key_exists('media_id', $params)) {
             $this->setMediaId($params['media_id']);
         }
-        if (\array_key_exists('category_id_target', $params)) {
+        if (isset($params['category_id_target'])) {
             $this->setCategoryIdTarget($params['category_id_target']);
         }
         if (\array_key_exists('category_id_origin', $params)) {
@@ -49,7 +58,25 @@ class TaxonomyRelationModel
         }
     }
 
-    public function isTargetSameAsOrigin(): bool
+    private function isThereATarget(): bool
+    {
+        if ($this->getCategoryIdTarget() === '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isManagingRelationRequired(): bool
+    {
+        if ($this->isThereATarget() === true && $this->isTargetSameAsOrigin() === false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isTargetSameAsOrigin(): bool
     {
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }
