@@ -79,8 +79,8 @@
                         {% endblock %}
 
                         {% block content_meta %}
-                            {% for row in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
-                                {{ form_row(row) }}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                                {{ form_row(child) }}
                             {% endfor %}
                         {% endblock %}
 
@@ -128,10 +128,9 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
-                    {% for row in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                        {{ form_row(row) }}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                        {{ form_row(child) }}
                     {% endfor %}
-
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
