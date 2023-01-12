@@ -13,21 +13,21 @@ global.ImageEditor = ImageEditor
 import UppyDutch from '@uppy/locales/lib/nl_NL'
 global.UppyDutch = UppyDutch
 
-$('.button_enable_grid_view').bind( "click", function() {
+$('.button_enable_grid_view').bind("click", function () {
     enable_grid_view()
 });
 
-$('.button_enable_list_view').bind( "click", function() {
+$('.button_enable_list_view').bind("click", function () {
     enable_list_view()
 });
 
-$('.button_toggle_upload_view').bind( "click", function() {
+$('.button_toggle_upload_view').bind("click", function () {
     toggle_upload_view()
 });
 
-$('.input_aside_folder_search').change(function() {
+$('.input_aside_folder_search').change(function () {
     asideFolderSearch(this)
-}).keyup(function() {
+}).keyup(function () {
     asideFolderSearch(this)
 });
 
@@ -108,6 +108,10 @@ function getAdditionalInfo(media_id) {
     return $('#' + media_id)[0]
 }
 
+window.send_cancel_to_parent = function() {
+    window.parent.postMessage('cancel', '*');
+}
+
 window.send_message_to_parent = function() {
     const selection = bulkSelection.map((key) => {
         return getAdditionalInfo(key).dataset
@@ -142,24 +146,22 @@ function handleBulkItemClick(event) {
                 media_id = element.getAttribute('data-id')
 
                 bulkSelection.push(media_id)
-                $('#' + element.id).addClass('selected')
+                $('#' + media_id).addClass('selected')
             }
         } else {
             //SINGLE CLICK
             media_id = event.currentTarget.getAttribute('data-id')
-
             if (bulkSelection.includes(media_id)) {
                 bulkSelection = bulkSelection.filter(item => item !== media_id)
-                $('#' + event.currentTarget.id).removeClass('selected')
+                $('#' + media_id).removeClass('selected')
             } else {
                 bulkSelection.push(media_id)
-                $('#' + event.currentTarget.id).addClass('selected')
+                $('#' + media_id).addClass('selected')
             }
         }
-
     }
-    latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
 
+    latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
     draggingAmountOfItems = bulkSelection.length
 }
 
@@ -170,8 +172,7 @@ async function disableBulkSelection() {
     draggingAmountOfItems = 1
 }
 
-window.asideFolderSearch = function(elem) {
-    console.log("searching")
+window.asideFolderSearch = function (elem) {
     let filter, ul, li, a, i, txtValue;
 
     filter = elem.value.toUpperCase();
@@ -200,8 +201,6 @@ jQuery(document).mouseup(function(e) {
     }
 });
 
-
-//DRAG AND DROP FUNCTIONALITY
 $(function () {
     const $gallery = $("#gallery")
     const $media_items = $(".media_category");
@@ -209,20 +208,19 @@ $(function () {
     //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
     $('li.media-item', $gallery).draggable({
         helper: "clone",
-        cursorAt: { left: 10, top: 10 },
+        cursorAt: {left: 10, top: 10},
         start: function (ev, ui) {
         }
     });
 
     // Let the media items be droppable, accepting the gallery items
     $media_items.droppable({
-        activate: function(event, ui) {
-            $('.ui-draggable-dragging').
-            html('<div class="drag-media">' + draggingAmountOfItems +
+        activate: function (event, ui) {
+            $('.ui-draggable-dragging').html('<div class="drag-media">' + draggingAmountOfItems +
                 ' item(s)</div>');
         },
         accept: '#gallery > li.media-item',
-        cursorAt: { left: 5, top: 5 },
+        cursorAt: {left: 5, top: 5},
         classes: {
             'ui-droppable-active': 'ui-state-highlight',
         },
@@ -233,6 +231,8 @@ $(function () {
 
         }
     });
+
+    setup()
 
     function onlyUnique(value, index, self) {
         return self.indexOf(value) === index;
@@ -285,17 +285,17 @@ $(function () {
         }
     }
 
-    // REMOVE?
-    if (bulkSelectionEnabled) {
-        enableBulkSelection()
-    }
+    function setup() {
+        if (bulkSelectionEnabled) {
+            enableBulkSelection()
+        }
 
-    if (modi[selected_modus].showBulkSelectionButton == false) {
-        console.log("hide")
-        $('#bulkselection').hide()
-    }
+        if (modi[selected_modus].showBulkSelectionButton == false) {
+            $('#bulkselection').hide()
+        }
 
-    if (!showSelectButton) {
-        $('#confirm_selection').hide()
+        if (!showSelectButton) {
+            $('#confirm_selection').hide()
+        }
     }
 });

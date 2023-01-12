@@ -41,7 +41,7 @@ function inititalizeUppy(uppyOptions) {
         inline: true,
         target: uppyOptions.target,
         width: '100%',
-        height: uppyOptions.height || '750px',
+        height: uppyOptions.height || default_height,
         proudlyDisplayPoweredByUppy: false,
         showProgressDetails: true,
     });

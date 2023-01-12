@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -29,7 +28,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /*
  * Goal for the user:
- *  - show files in a coherent mannere
+ *  - show files in a coherent manner
  *  - let the user filter / search for specific content
  *  - let the user be able to organise with categories and channels
  *
@@ -102,10 +101,8 @@ class MediaController extends AbstractController
             $requestCopy->query->set('all_contenttypes', true);
         }
 
-//        dd($requestCopy->query->get('available_contenttypes'));
-
         $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
-//        dd($requestCopy->query->get('all_contenttypes'));
+
         $menu = $this->mediaGalleryMenu->createMenu();
 
         $this->setYearMonthFilter($requestCopy);
@@ -209,11 +206,13 @@ class MediaController extends AbstractController
             $request->attributes->set('media_id', $file->getId());
 
             $this->taxonomyRelationManager->manageRelations($request);
+
+            return new JsonResponse(['message' => 'file is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
-        return new JsonResponse(['message' => 'file is uploaded.', 'content' => json_encode($file)]);
+        return new JsonResponse(['message' => 'not sure.', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

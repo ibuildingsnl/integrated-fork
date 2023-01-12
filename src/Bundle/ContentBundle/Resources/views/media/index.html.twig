@@ -7,9 +7,6 @@
 {% set selected_modus = 'media_gallery' %}
 {% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
-    {{ dump(selected_modus|default('media_gallery')) }}
-    {{ dump("index") }}
-    <button onclick="send_message_to_parent()">Selecteer afbeelding</button>
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('media_gallery'),
     }  %}
@@ -20,12 +17,6 @@
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
-
-        // function send_message_to_parent() {
-        //     console.log("sending")
-        //     let message = bulkSelection
-        //     window.parent.postMessage(message, '*');
-        // }
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>

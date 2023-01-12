@@ -1,9 +1,9 @@
-<div class="drag-drop-area" id="drag-drop-area"
-     data-endpoint="{{ endpoint|default('/admin/media/upload_file') }}"
+<div class="drag-drop-area"
+     data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"
      data-language="{{ language|default('nl') }}"
-     data-height="{{ height|default('400px') }}"
+     data-height="{{ height|default('750px') }}"
      data-imageEditorEnabled="{{ imageEditorEnabled|default(true) }}"
-     data-target="{{ target|default('.drag-drop-areaa') }}">
+     data-target="{{ target|default('.drag-drop-area') }}">
 </div>
 
 <script src="{{ asset('bundles/integratedintegrated/upload_uppy.js') }}"></script>

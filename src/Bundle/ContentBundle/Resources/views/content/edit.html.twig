@@ -246,7 +246,7 @@
                                         </div>
                                     </div>
                                 {% else %}
-                        {{ dump(relation) }}
+{#                        {{ dump(relation) }}#}
                                     <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
                                         <div
                                             data-multiple="{{ relation.vars.attr['data-multiple'] }}"
@@ -312,20 +312,28 @@
                         </li>
 
                         <script>
-                            // TODO:
-                            // Add something to handle multiple contenttypes to date selection
-                            // Add an if statement to NOT show contenttypes filter in select_one and select_multi modes
-                            // Add handling of url multiple contenttypes
-                            // Add showing of all the possible icons, make this separate components !important
-                            // Make sure to handle other filethypes than image when clicking Selecteer afbeelding in select_one and select_multiple
-                            {#// Make use of {% trans %}#}
-                            // Build restrictions
+                            {# DONE:  #}
+                            {#Add something to handle multiple contenttypes to date selection#}
+                            //   - Added multiple selection in relation
+                            //   - Handling multiple in the url with available_contenttypes
+                            //   - handling this in the contentprovider
+                            //   - handling this in contentprovider for dates
+                            {#Add an if statement to NOT show contenttypes filter in select_one and select_multi modes#}
+                            //    - done
+                            {#Add handling of url multiple contenttypes#}
+                            //    - done
+                            {# TODO: #}
+                            {#Add showing of all the possible icons, make this separate components !important#}
+                            //    - later, after add-table-view is approved
+                            {#Make sure to handle other filethypes than image when clicking Selecteer afbeelding in select_one and select_multiple#}
+                            {#Make use of {% trans %}#}
+                            {# Build restrictions#}
 
                             let form_relations = {} //this holds all the form relation objects with an id
                             let form_relation = {} //these will be placed in form_relations
                             const mediagallery_link = "/admin/media/"
                             let selected_relation = '' //after a user clicks on a form button, the clicked form element is selected
-                            const contenttypes = 'image'
+                            // const contenttypes = 'image'
                             const available_contenttypes = ['image', 'video']
 
                             addEventListeners()
@@ -362,10 +370,9 @@
                                         selected_images_selector: '#' + id + ' .selected_images',
                                         wrap_selector: '#' + id + ' .wrap',
                                         iframe_selector: '#' + id + ' iframe',
-                                        content_type: contenttypes,
-                                        content_type_url: contenttypes != '' ? '&contenttypes=' + contenttypes : ''
                                     }
                                     form_relations[id].types_url = getTypesUrl(form_relations[id].types)
+                                    console.log(form_relations)
                                 })
                             }
 
@@ -422,7 +429,8 @@
                             }
 
                             function filterImages(selection) {
-                                return selection.filter(item => item.content_type == 'image')
+                                const allowed_types = selected_relation.types.map(item => item.type)
+                                return selection.filter(item => allowed_types.includes(item.content_type))
                             }
 
                             function addImageIDsToInputField() {
@@ -450,9 +458,12 @@
                             }
 
                             window.addEventListener('message', function (e) {
-                                console.log(e.data)
+                                if (e.data == 'cancel') {
+                                    closeMediaGallery()
+                                    return
+                                }
+
                                 const response_from_iframe = filterImages(JSON.parse(e.data))
-                                console.log(response_from_iframe)
                                 if (response_from_iframe.length > 0) {
                                     console.log(selected_relation)
                                     selectImagesToShow(response_from_iframe)

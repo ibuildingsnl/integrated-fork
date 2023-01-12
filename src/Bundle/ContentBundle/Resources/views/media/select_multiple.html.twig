@@ -20,12 +20,6 @@
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
-
-        function send_message_to_parent() {
-            console.log("multiple - send_message_to_parent")
-            let message = "hi from iframe"
-            window.parent.postMessage(message, '*');
-        }
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
