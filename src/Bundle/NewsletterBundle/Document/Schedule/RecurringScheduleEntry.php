@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\NewsletterBundle\Schedule;
+namespace Integrated\Bundle\NewsletterBundle\Document\Schedule;
 
 interface RecurringScheduleEntry
 {

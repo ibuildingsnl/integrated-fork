@@ -1,14 +1,17 @@
 <?php
 
-namespace Integrated\Bundle\NewsletterBundle\Schedule;
+namespace Integrated\Bundle\NewsletterBundle\Document\Schedule;
+
+use Doctrine\Common\Collections\ArrayCollection;
 
 class CombinedRecurringScheduleEntry implements RecurringScheduleEntry
 {
-    private readonly array $entries;
+    private iterable $entries;
+    private string $id;
 
     public function __construct(RecurringScheduleEntry ...$entries)
     {
-        $this->entries = $entries;
+        $this->entries = new ArrayCollection($entries);
     }
 
     public function firstAfter(\DateTimeInterface $dateTime): \DateTimeInterface
@@ -25,6 +28,6 @@ class CombinedRecurringScheduleEntry implements RecurringScheduleEntry
 
     public function toArray(): array
     {
-        return array_merge(...array_map(fn(RecurringScheduleEntry $entry) => $entry->toArray(), $this->entries));
+        return array_merge(...array_map(fn(RecurringScheduleEntry $entry) => $entry->toArray(), iterator_to_array($this->entries)));
     }
 }

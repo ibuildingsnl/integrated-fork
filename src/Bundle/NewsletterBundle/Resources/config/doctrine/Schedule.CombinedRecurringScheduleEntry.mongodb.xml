@@ -3,11 +3,10 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Integrated\Bundle\NewsletterBundle\Document\Newsletter">
-        <field field-name="title" type="string" />
-        <field field-name="testAddresses" type="hash" />
-        <embed-one field="schedule">
-            <discriminator-field name="type" />
+    <document name="Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry">
+        <id field-name="id" strategy="auto" />
+        <embed-many field="entries">
+            <discriminator-field name="subtype" />
             <discriminator-map>
                 <discriminator-mapping value="combined"
                                        class="Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry"
@@ -16,7 +15,7 @@
                                        class="Integrated\Bundle\NewsletterBundle\Document\Schedule\SingleRecurringScheduleEntry"
                 />
             </discriminator-map>
-        </embed-one>
+        </embed-many>
     </document>
 
 </doctrine-mongo-mapping>

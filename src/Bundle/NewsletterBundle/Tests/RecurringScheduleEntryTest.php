@@ -2,8 +2,8 @@
 
 namespace Integrated\Bundle\NewsletterBundle\Tests;
 
-use Integrated\Bundle\NewsletterBundle\Schedule\CombinedRecurringScheduleEntry;
-use Integrated\Bundle\NewsletterBundle\Schedule\ScheduleEntryFactory;
+use Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry;
+use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use PHPUnit\Framework\TestCase;
 
 class RecurringScheduleEntryTest extends TestCase

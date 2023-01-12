@@ -13,6 +13,6 @@ final class IntegratedNewsletterExtension extends Extension
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-
+        $loader->load('event_listeners.xml');
     }
 }

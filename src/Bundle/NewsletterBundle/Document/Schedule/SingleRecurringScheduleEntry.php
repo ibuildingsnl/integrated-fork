@@ -1,9 +1,10 @@
 <?php
 
-namespace Integrated\Bundle\NewsletterBundle\Schedule;
+namespace Integrated\Bundle\NewsletterBundle\Document\Schedule;
 
 class SingleRecurringScheduleEntry implements RecurringScheduleEntry
 {
+    private string $id;
     public function __construct(
         private readonly array $baseModifiers,
         private readonly string $nextModifier,
