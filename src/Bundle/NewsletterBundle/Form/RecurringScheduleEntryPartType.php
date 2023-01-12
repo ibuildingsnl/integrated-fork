@@ -45,16 +45,17 @@ class RecurringScheduleEntryPartType extends AbstractType
             'input' => 'array',
             'widget' => 'single_text',
         ]);
+        $builder->add('day', IntegerType::class, [
+            'empty_data' => 1,
+//            'label' => 'nth',
+            'attr' => [
+                'data-if-frequency' => 'monthly|quarterly|yearly',
+            ],
+        ]);
         $builder->add('weekday', ChoiceType::class, [
             'choices' => self::WEEKDAYS,
             'attr' => [
                 'data-if-frequency' => 'weekly|monthly',
-            ],
-        ]);
-        $builder->add('day', IntegerType::class, [
-            'empty_data' => 1,
-            'attr' => [
-                'data-if-frequency' => 'monthly|quarterly|yearly',
             ],
         ]);
         $builder->add('month', ChoiceType::class, [

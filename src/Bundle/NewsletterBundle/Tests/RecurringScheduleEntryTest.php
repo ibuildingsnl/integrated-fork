@@ -192,11 +192,29 @@ class RecurringScheduleEntryTest extends TestCase
 
     public function testScheduleTheSecondSaturdayOfTheMonthAtFour()
     {
-        $entry = $this->schedule->monthly(16, 00, 8, 'saturday');
+        $entry = $this->schedule->monthly(16, 00, 2, 'saturday');
 
         $nextOccurrence = $entry->firstAfter(new \DateTime('1-1-2023 18:00'));
 
         self::assertEquals(new \DateTime('14-1-2023 16:00'), $nextOccurrence);
+    }
+
+    public function testScheduleTheFourthSaturdayOfTheMonthAtSix()
+    {
+        $entry = $this->schedule->monthly(18, 00, 4, 'saturday');
+
+        $nextOccurrence = $entry->firstAfter(new \DateTime('1-1-2023 10:00'));
+
+        self::assertEquals(new \DateTime('28-1-2023 18:00'), $nextOccurrence);
+    }
+
+    public function testScheduleTheThirdSundayOfTheMonthAtMidnight()
+    {
+        $entry = $this->schedule->monthly(00, 00, 3, 'sunday');
+
+        $nextOccurrence = $entry->firstAfter(new \DateTime('1-1-2023 05:12'));
+
+        self::assertEquals(new \DateTime('15-1-2023 00:00'), $nextOccurrence);
     }
 
     public function testScheduleTheFifthOfTheMonthNow()
@@ -220,6 +238,21 @@ class RecurringScheduleEntryTest extends TestCase
             'hour' => 12,
             'minute' => 55,
             'day' => 12,
+        ]], $details);
+    }
+
+    public function testScheduleMonthlyWeekdayToArray()
+    {
+        $entry = $this->schedule->monthly(12, 55, 2, 'monday');
+
+        $details = $entry->toArray();
+
+        self::assertEquals([[
+            'frequency' => 'monthly',
+            'weekday' => 'monday',
+            'hour' => 12,
+            'minute' => 55,
+            'day' => 2,
         ]], $details);
     }
 

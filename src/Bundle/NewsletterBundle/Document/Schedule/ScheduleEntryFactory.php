@@ -49,7 +49,7 @@ class ScheduleEntryFactory
         return new SingleRecurringScheduleEntry(
             [
                 sprintf('midnight first %s of this month', $day),
-                sprintf('+ %d days + %d hours + %d minutes', $nthDay - 1, $hour, $minute),
+                sprintf('+ %d days + %d hours + %d minutes', ($day === 'day' ? $nthDay - 1 : ($nthDay - 1) * 7), $hour, $minute),
             ],
             'first day of next month',
             [[
