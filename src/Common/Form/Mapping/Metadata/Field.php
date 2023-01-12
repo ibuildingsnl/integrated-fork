@@ -33,7 +33,7 @@ class Field implements AttributeEditorInterface
     /**
      * @var string
      */
-    protected $location = 'editor';
+    protected $location;
 
     /**
      * @var string
