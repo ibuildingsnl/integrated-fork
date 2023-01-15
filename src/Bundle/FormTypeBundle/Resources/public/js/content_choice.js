@@ -3,7 +3,7 @@ $(function() {
 });
 
 function initContentChoice() {
-    $('.integrated_content_choice').select2({
+    $('select.integrated_content_choice').select2({
         ajax: {
             processResults: function (data) {
                 return {
