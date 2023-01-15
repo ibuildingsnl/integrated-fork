@@ -42,8 +42,10 @@ $('[data-prototype]').each(function(index, elm) {
             elm.find('div.panel-heading').click( function() {
                 if ($(this).parent().find('.panel-collapse').hasClass('in')) {
                     $(this).parent().find('.panel-collapse').removeClass('in');
+                    $(this).parent().removeClass('in')
                 } else {
                     $(this).parent().find('.panel-collapse').addClass('in');
+                    $(this).parent().addClass('in')
                 }
             })
         }

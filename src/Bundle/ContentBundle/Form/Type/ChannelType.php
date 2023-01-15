@@ -53,7 +53,8 @@ class ChannelType extends AbstractType
             'delete_button_text' => 'Delete domain',
             'sub_widget_col' => 5,
             'button_col' => 3,
-            'attr' => ['class' => 'channel-domains'],
+            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
+
         ]);
 
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
@@ -68,6 +69,7 @@ class ChannelType extends AbstractType
                             'required' => false,
                             'attr' => [
                                 'align_with_widget' => true,
+                                'style' => 'switcher',
                             ],
                         ]
                     )
@@ -79,6 +81,7 @@ class ChannelType extends AbstractType
                             'required' => false,
                             'attr' => [
                                 'align_with_widget' => true,
+                                'style' => 'switcher',
                             ],
                         ]
                     )

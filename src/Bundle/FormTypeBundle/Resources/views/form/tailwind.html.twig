@@ -92,30 +92,64 @@
             {% if style is defined %}
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
-            {% set prototype_html = '<div class="w-full relative">' ~ form_widget(prototype, prototype_vars) %}
-            {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="#" class="' ~ form.vars.delete_button_class ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+            {% if (form.vars.attr.show_headings is not defined or form.vars.attr.show_headings == 'true') %}
+                {% set panel_heading = 'true' %}
             {% endif %}
-            {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div></div>' %}
+
+            {% if (panel_heading is defined and panel_heading == 'true') %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+                {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
+                {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+            {% else %}
+                {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+            {% endif %}
+            {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
         <div {{ block('widget_container_attributes') }} class="collection-widget">
-            <ul class="integrated-collection list-unstyled">
+            <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
-                        <div class="row">
-                            <div class="w-full {{ form.vars.sub_widget_col }} relative">
-                                {{ form_widget(field) }}
-                                {{ form_errors(field) }}
-                                {% if form.vars.allow_delete %}
-                                    <a href="#" class="{{ form.vars.delete_button_class }}"
-                                       data-removefield="collection"
-                                       data-field="{{ field.vars.id }}">
-                                        <i class="iconoir-cancel"></i>
-                                    </a>
-                                {% endif %}
+                        <div class="panel panel-default">
+                            {% if (panel_heading is defined and panel_heading == 'true') %}
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse">
+                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.label|default(form.vars.default_title|default('Item')) }}</span>
+                                        </a>
+                                        {% if form.vars.allow_delete %}
+                                            <a href="javascript:;" class="remove"
+                                               title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                               data-removefield="collection" data-field="{{ field.vars.id }}">
+                                                <i class="iconoir-cancel"></i>
+                                            </a>
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                            {% endif %}
+                            <div id="{{ field.vars.id }}"
+                                 class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
+                                <div class="panel-body {{ form.vars.sub_widget_col }}">
+                                    {{ form_widget(field) }}
+                                    {{ form_errors(field) }}
+                                    {% if (panel_heading is not defined) %}
+                                        {% if form.vars.allow_delete %}
+                                            <a href="javascript:;" class="remove"
+                                               title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                               data-removefield="collection" data-field="{{ field.vars.id }}">
+                                                <i class="iconoir-cancel"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -310,7 +344,6 @@
                 {% else %}
                     <label
                         class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-
                     {{ block('checkbox_widget') }}
                     {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
                 {% endif %}

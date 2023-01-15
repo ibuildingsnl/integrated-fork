@@ -34,40 +34,71 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<div class="lg:w-11/12">' ~ form_widget(prototype, prototype_vars) %}
+            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('New status')) ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href class="remove" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
             {% endif %}
-            {% set prototype_html = prototype_html ~ '</div>' %}
+            {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
+            {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+            {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget">
-            <ul class="integrated-collection">
+        <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget collection-widget">
+            <ul class="bc-collection panel-group sortable-collection ui-sortable">
                 {% for field in form %}
-                    <li class="workflow-state">
-                        <div class="lg:w-11/12">
-                            {{ form_widget(field) }}
-                            {{ form_errors(field) }}
+                    <li class="ui-sortable-handle">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse">
+                                        <i class="iconoir-nav-arrow-down"></i>
+                                        <div class="workflow-status" style="background-color:{{field.vars.value.color}};">
+                                            <i class="iconoir-{{ field.vars.value.icon }}"></i>
+                                        </div>
+                                        <span>{{ field.vars.value.name|default(form.vars.default_title|default('New status')) }}</span>
+                                        <span class="transition">Transitions to:
+                                         {% for transition in field.vars.value.transitions %}
+                                             {% if loop.first %}
+                                                 {{ transition.name }}
+                                             {% else %}
+                                                 / {{ transition.name }}
+                                             {% endif %}
+                                         {% endfor %}
+                                        </span>
+                                    </a>
+                                    {% if form.vars.allow_delete %}
+                                        <a href="javascript:;" class="remove"
+                                           title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                           data-removefield="collection" data-field="{{ field.vars.id }}">
+                                            <i class="iconoir-cancel"></i>
+                                        </a>
+                                    {% endif %}
+                                </h4>
+                            </div>
+                            <div id="{{ field.vars.id }}"
+                                 class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
+                                <div class="panel-body">
+                                    {{ form_widget(field) }}
+                                    {{ form_errors(field) }}
+                                </div>
+                            </div>
                         </div>
-                        {% if form.vars.allow_delete %}
-                            <a href class="remove" data-removefield="collection" data-field="{{ field.vars.id }}">
-                                <i class="iconoir-cancel"></i>
-                            </a>
-                        {% endif %}
                     </li>
+
                 {% endfor %}
             </ul>
 
             {% if form.vars.allow_add %}
-                <div class="integrated-collection-button">
-                    <a href class="btn btn-green icon-left state_add_button" data-addfield="collection"
-                       data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">
-                        <i class="iconoir-plus"></i><span>Add Status</span></a>
-                </div>
+                <a href="javascript:;" class="btn" title="{{ form.vars.add_button_text|trans({}, translation_domain) }}"
+                   data-addfield="collection" data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">
+                    <span>{{ form.vars.add_button_text|trans({}, translation_domain) }}</span>
+                    <i class="iconoir-plus"></i>
+                </a>
             {% endif %}
-
         </div>
+
     {% endapply %}
 {% endblock workflow_definition_state_collection_widget %}

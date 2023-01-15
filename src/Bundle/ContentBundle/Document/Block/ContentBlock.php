@@ -72,7 +72,8 @@ class ContentBlock extends Block
     /**
      * @var array
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: ['allow_add' => true, 'allow_delete' => true, 'required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: ['allow_add' => true,
+        'add_button_text' => 'Add Facet field', 'allow_delete' => true, 'required' => false, 'attr' => ['show_headings' => 'false']])]
     protected $facetFields = [];
 
     /**
