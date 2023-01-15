@@ -11,10 +11,79 @@ body.tox-fullscreen {
     .tox-editor-header {
         top: 0 !important;
     }
+
     .tox-sidebar-wrap {
         padding-bottom: 0 !important;
     }
+
     .tox {
+        .tox-menubar {
+            justify-content: center;
+        }
+
+        .tox-menubar {
+            justify-content: center;
+        }
+
+        .tox-toolbar__primary {
+            justify-content: center;
+        }
+    }
+
+    nav.navbar {
+        z-index: 0;
+    }
+
+    .fancy_tinymce div.tox-edit-area {
+        top: 0 !important;
+        height: 100%;
+    }
+
+    .content-wrapper {
+        position: fixed;
+        top: 0;
+        padding: 0;
+    }
+}
+
+.hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    width: calc(100% - 250px);
+    @include media(max-xl) {
+        width: calc(100vw - 50px);
+    }
+    @include media(max-sm) {
+        width: 100%;
+    }
+}
+
+.show-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    width: calc(100% - 600px);
+    @include media(max-xl) {
+        width: calc(100% - 400px);
+    }
+}
+
+.fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    position: fixed;
+    width: calc(100% - 600px);
+    @include media(max-xl) {
+        width: calc(100vw - 400px);
+    }
+    @include media(max-lg) {
+        width: calc(100vw - 50px);
+    }
+    @include media(max-sm) {
+        width: 100%;
+    }
+}
+
+.fancy_tinymce {
+
+    .tox:not(.tox-tinymce-inline) .tox-editor-header {
+        padding: 0;
+    }
+
+    @include media(min-xl) {
         .tox-menubar {
             justify-content: center;
         }
@@ -25,26 +94,7 @@ body.tox-fullscreen {
             justify-content: center;
         }
     }
-    nav.navbar {
-        z-index: 0;
-    }
-    .fancy_tinymce div.tox-edit-area {
-        top: 0 !important;
-        height: 100%;
-    }
-    .content-wrapper {
-        position: fixed;
-        top: 0;
-        padding: 0;
-    }
-}
-.fancy_tinymce {
-    .tox-container-body {
-        //overflow: hidden;
-    }
-    .tox:not(.tox-tinymce-inline) .tox-editor-header {
-        padding: 0;
-    }
+
     .tox-tinymce {
         border: 0 !important;
         min-height: 500px;
@@ -65,9 +115,11 @@ body.tox-fullscreen {
             top: 96px;
             position: relative;
             padding: 0 25px !important;
+            margin-top: 82px;
             @include media(max-sm) {
                 padding: 0 25px !important;
             }
+
             iframe {
                 position: relative;
             }
@@ -81,7 +133,7 @@ body.tox-fullscreen {
             z-index: 9;
             padding-left: 23px;
             @include media(max-md) {
-                padding-left:10px;
+                padding-left: 10px;
             }
         }
 
@@ -104,7 +156,8 @@ body.tox-fullscreen {
         .tox-btn {
             background-color: #fff;
         }
-        .tox .tox-menubar+.tox-toolbar, .tox .tox-menubar+.tox-toolbar-overlord {
+
+        .tox .tox-menubar + .tox-toolbar, .tox .tox-menubar + .tox-toolbar-overlord {
             padding-left: 12px;
         }
     }

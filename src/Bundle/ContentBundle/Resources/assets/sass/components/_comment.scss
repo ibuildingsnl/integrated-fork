@@ -7,7 +7,7 @@
     background: #fff;
     border-radius: 8px;
     position: relative;
-    box-shadow: 0 0 15px 5px rgb(0 0 0 / 20%);
+    box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.2);
 	&:before, &:after {
 		position: absolute;
 		content: '';

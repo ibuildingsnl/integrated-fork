@@ -60,7 +60,7 @@
                 border-color: #ee0000;
             }
             input:checked ~ .background {
-                background-color: rgb(239 1 1 / 10%);
+                background-color: rgba(239, 1, 1, 0.1);
             }
         }
     }

@@ -196,7 +196,7 @@ body {
 }
 
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index, body.history_index, body.page_copy {
+body[class*="edit"], body[class*="new"], body[class*="show"], body[class*="delete"], body[class*="update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index, body.history_index, body.page_copy {
     .content-wrapper {
         padding: 50px 0 0;
     }
