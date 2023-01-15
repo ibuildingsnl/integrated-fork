@@ -60,8 +60,8 @@ $('.integrated_tinymce').each(function(key, elem){
             "styles | bold italic underline | bullist numlist | " +
             "link anchor integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
             "charmap pagebreak | pastetext searchreplace | code fullscreen",
-        toolbar_sticky: true,
-        toolbar_sticky_offset: 110,
+        toolbar_sticky: false,
+        toolbar_location: 'top',
         statusbar: true,
         statusbar_size: "small",
         fixed_toolbar_container: '.tox-editor-header',
