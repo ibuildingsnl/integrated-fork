@@ -275,10 +275,16 @@
             {% set class = 'w-full ' ~ widget_col %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
-            {% if style == 'horizontal' %}
-                <label class="{{ label_col }}"></label>
+            {% if style == 'horizontal' or style == 'switcher' %}
+                <label class="control-label {{ label_col }}">
+                    {% if label is defined and label|length > 1 %}
+                        {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                    {% else %}
+                        {{ name|humanize }}
+                    {% endif %}
+                </label>
             {% endif %}
-            <div class="w-full widget">
+            <div class="w-full widget {{ widget_col }}">
         {% elseif no_form_group is not defined or no_form_group == false %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
@@ -297,11 +303,17 @@
                 {% if label is empty %}
                     {% set label = name|humanize %}
                 {% endif %}
-                <label
-                    class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                {% if style == 'switcher' %}
+                    <label
+                        class="checkbox-switcher" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                    {{ block('checkbox_widget') }}
+                {% else %}
+                    <label
+                        class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
 
-                {{ block('checkbox_widget') }}
-                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                    {{ block('checkbox_widget') }}
+                    {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                {% endif %}
                 </label>
             {% else %}
                 {{ block('checkbox_widget') }}
@@ -311,6 +323,8 @@
 
         {% if inline is defined and inline %}
             {{ checkboxdata|raw }}
+        {% elseif style == 'switcher' %}
+            <div class="checkbox-switcher">{{ checkboxdata|raw }}</div>
         {% else %}
             <div class="checkbox">{{ checkboxdata|raw }}</div>
         {% endif %}
@@ -393,10 +407,17 @@
 
 {% block checkbox_widget %}
     {% apply spaceless %}
-        <input
-            type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-        <span class="checkmark"></span>
-        <div class="background"></div>
+        {% if style is defined and style == 'switcher' %}
+            <input class="switch-input"
+                   type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <span class="switch-label" data-on="Yes" data-off="No"></span>
+            <span class="switch-handle"></span>
+        {% else %}
+            <input
+                type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <span class="checkmark"></span>
+            <div class="background"></div>
+        {% endif %}
     {% endapply %}
 {% endblock checkbox_widget %}
 

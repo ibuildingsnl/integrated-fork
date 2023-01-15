@@ -67,7 +67,7 @@ class Product extends Content
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['label' => ' ', 'attr' => ['align_with_widget' => true, 'style' => 'switcher']])]
     protected $orderable;
 
     /**

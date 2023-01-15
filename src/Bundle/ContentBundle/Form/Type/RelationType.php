@@ -93,10 +93,11 @@ class RelationType extends AbstractType
                             'multiple',
                             CheckboxType::class,
                             [
-                                'label' => 'Allow multiselect',
+                                'label' => ' ',
                                 'required' => false,
                                 'attr' => [
                                     'align_with_widget' => true,
+                                    'style' => 'switcher',
                                 ],
                             ]
                         )
@@ -104,10 +105,11 @@ class RelationType extends AbstractType
                             'required',
                             CheckboxType::class,
                             [
-                                'label' => 'This relation is required',
+                                'label' => ' ',
                                 'required' => false,
                                 'attr' => [
                                     'align_with_widget' => true,
+                                    'style' => 'switcher',
                                 ],
                             ]
                         )

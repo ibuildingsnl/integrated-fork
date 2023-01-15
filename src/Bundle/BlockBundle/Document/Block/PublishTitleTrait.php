@@ -22,7 +22,7 @@ trait PublishTitleTrait
     protected $publishedTitle = '';
 
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
-        'required' => false, 'attr' => ['class' => 'use-title', 'align_with_widget' => true],
+        'required' => false, 'label' => ' ', 'attr' => ['class' => 'use-title', 'align_with_widget' => true, 'style' => 'switcher'],
     ])]
     protected $useTitle;
 

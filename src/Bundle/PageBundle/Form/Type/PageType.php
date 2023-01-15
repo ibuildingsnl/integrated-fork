@@ -82,10 +82,11 @@ class PageType extends AbstractType
         ]);
 
         $builder->add('disabled', CheckboxType::class, [
-            'label' => 'Disable this page',
+            'label' => ' ',
             'required' => false,
             'attr' => [
                 'align_with_widget' => true,
+                'style' => 'switcher',
             ],
         ]);
 
