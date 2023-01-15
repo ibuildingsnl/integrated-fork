@@ -129,57 +129,9 @@
                         {% endblock %}
 
                         {% block content_meta %}
-                            {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
-                            {% if form.channels is defined %}
-                                {{ form_row(form.channels, {'style': 'sidebar', 'icon':'network-alt', 'state': 'show search'}) }}
-                            {% endif %}
-
-                            {% if form.slug is defined %}
-                                {{ form_row(form.slug, {'style': 'sidebar', 'icon':'link'}) }}
-                            {% endif %}
-
-                            <!-- If description is available and Content is also, show it in the sidebar -->
-                            {% if form.content is defined %}
-                                {% if form.description is defined %}
-                                    {{ form_row(form.description, {'style': 'sidebar', 'icon':'message-text'}) }}
-                                {% endif %}
-                            {% endif %}
-
-                            {% if form.address is defined %}
-                                {{ form_row(form.address, {'style': 'sidebar', 'icon':'pin-alt'}) }}
-                            {% endif %}
-
-                            {% if form.copyrightRestrictions is defined %}
-                                {{ form_row(form.copyrightRestrictions, {'style': 'sidebar', 'icon':'copyright'}) }}
-                            {% endif %}
-
-                            {% if form.authors is defined %}
-                                {{ form_row(form.authors, {'style': 'sidebar', 'icon':'user', 'widget_col': '', 'label_col':''}) }}
-                            {% endif %}
-
-                            {% if form.source is defined %}
-                                {{ form_row(form.source, {'style': 'sidebar', 'icon':'megaphone'}) }}
-                            {% endif %}
-
-                            {% if form.sourceUrl is defined %}
-                                {{ form_row(form.sourceUrl, {'style': 'sidebar', 'icon':'open-new-window'}) }}
-                            {% endif %}
-
-                            {% if form.relations is defined %}
-                                {{ form_row(form.relations, {'style': 'sidebar', 'icon':'network-right'}) }}
-                            {% endif %}
-
-                            {% if form.logo is defined %}
-                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'media-image'}) }}
-                            {% endif %}
-
-                            {% if form.rank is defined %}
-                                {{ form_row(form.rank, {'style': 'sidebar', 'icon':'numbered-list-left'}) }}
-                            {% endif %}
-
-                            {% if form.disabled is defined %}
-                                {{ form_row(form.disabled, {'style': 'sidebar', 'icon':'do-not-enter'}) }}
-                            {% endif %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                                {{ form_row(child) }}
+                            {% endfor %}
                         {% endblock %}
 
                         {% block content_relations %}
@@ -226,32 +178,9 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
-                    {# //TODO: https://eactive.atlassian.net/browse/INTEGRATED-1781 #}
-                    {% if form.title is defined %}
-                        {{ form_row(form.title, {'state': title_state, 'style': title_style}) }}
-                    {% elseif form.name is defined %}
-                        {{ form_row(form.name, {'state': title_state, 'style': title_style}) }}
-                    {% endif %}
-
-                    {% if form.content is defined %}
-                        {{ form_row(form.content, {'style':'editor','state':tinymce_state}) }}
-                    {% elseif form.description is defined %}
-                        {{ form_row(form.description, {'style':'editor','state':tinymce_state}) }}
-                    {% elseif form.comment is defined %}
-                        {{ form_row(form.comment, {'style':'editor','state':tinymce_state}) }}
-                    {% endif %}
-
-                    {% if form.file is defined %}
-                        {{ form_row(form.file, {'style':'editor', 'state': 'show'}) }}
-                    {% endif %}
-
-                    {% if form.subtitle is defined %}
-                        {{ form_row(form.subtitle, {'style':'editor', 'state': 'show'}) }}
-                    {% endif %}
-
-                    {% if form.intro is defined %}
-                        {{ form_row(form.intro, {'style':'editor', 'state': 'show'}) }}
-                    {% endif %}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                        {{ form_row(child) }}
+                    {% endfor %}
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}

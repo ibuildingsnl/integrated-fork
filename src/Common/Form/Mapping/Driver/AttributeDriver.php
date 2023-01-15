@@ -64,7 +64,8 @@ class AttributeDriver implements DriverInterface
 
             $metadataField = $metadata->newField($prop->getName())
                 ->setType($field->getType())
-                ->setOptions($field->getOptions());
+                ->setOptions($field->getOptions())
+                ->setLocation($field->getLocation());
 
             $metadata->addField($metadataField);
         }
