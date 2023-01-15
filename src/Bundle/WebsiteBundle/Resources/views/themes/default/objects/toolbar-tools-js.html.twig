@@ -8,12 +8,13 @@
                         return true;
                     }
                     document.getElementById(e.target.dataset.integratedDropdown).classList.toggle('integrated-website-toolbar-show');
+
                 })
             );
 
             document.querySelectorAll('body').forEach(item =>
                 item.addEventListener('click', function(e) {
-                    if (!e.target.classList.contains('integrated-modal-close')) {
+                    if (!e.target.classList.contains('iconoir-cancel')) {
                         return true;
                     }
                     hideModal();
@@ -28,6 +29,7 @@
         }
 
         var showModal = function(title, content) {
+            console.log('showModal')
             let element = document.createElement('div');
 
             element.classList.add('integrated-modal');
@@ -36,7 +38,7 @@
                 '    <div class="integrated-modal-content">\n' +
                 '        <div class="integrated-modal-header">\n' +
                 '            <span class="integrated-modal-header-title">' + title + '</span>\n' +
-                '            <a class="integrated-modal-close">×</a>\n' +
+                '            <a class="integrated-modal-close"><i class="iconoir-cancel"></i></a>\n' +
                 '        </div>\n' +
                 '        <div class="integrated-modal-body">\n' + content + '</div>\n' +
                 '    </div>\n' +
@@ -48,7 +50,7 @@
 
         var hideModal = function() {
             let element = document.querySelector('.integrated-modal');
-
+            console.log('hideModal')
             element.parentNode.removeChild(element);
         };
 

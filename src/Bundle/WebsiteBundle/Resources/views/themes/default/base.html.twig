@@ -12,17 +12,18 @@
     {% endblock %}
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
     {% block stylesheets %}
         {{ integrated_stylesheets() }}
     {% endblock %}
 </head>
-<body>
+<body class="integrated-block-page-builder">
 
 <div class="container">
-    <br />
     {{ integrated_menu('main', { 'depth': 2 }) }}
-    <br />
     {% block content %}
         {{ integrated_grid('main') }}
     {% endblock %}

@@ -1,46 +1,54 @@
 {% apply spaceless %}
-{% set edit = app.request.attributes.get('integrated_block_edit') %}
+    {% set edit = app.request.attributes.get('integrated_block_edit') %}
 
 
-{% if level is not defined %}
-    {% set level = 0 %}
-{% endif %}
+    {% if level is not defined %}
+        {% set level = 0 %}
+    {% endif %}
 
-{% set level = level + 1 %}
+    {% set level = level + 1 %}
 
-{% if edit and grid.id is defined %}
-    <div class="integrated-website-grid integrated-website-droppable" data-id="{{ grid.id }}">
-{% endif %}
+    {% if edit and grid.id is defined %}
+        <div class="integrated-website-grid integrated-website-droppable" data-id="{{ grid.id }}">
+    {% endif %}
 
-{% if grid.items is defined %}
-    {% for item in grid.items %}
-        {% if item.block %}
-            {% if edit|default %}<div class="integrated-website-sortable" data-block-type="block" data-id="{{ item.block.id }}">{% endif %}
+    {% if grid.items is defined %}
+        {% for item in grid.items %}
+            {% if item.block %}
+                {% if edit|default %}<div class="integrated-website-sortable" data-block-type="block" data-id="{{ item.block.id }}">{% endif %}
                 {% if item.attributes|length %}
                     <div{% for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
-                        {{ integrated_block(item.block, {'gridLevel': level}) }}
+                    {{ integrated_block(item.block, {'gridLevel': level}) }}
                     </div>
                 {% else %}
                     {{ integrated_block(item.block, {'gridLevel': level}) }}
                 {% endif %}
-            {% if edit|default %}</div>{% endif %}
-        {% endif %}
+                {% if edit|default %}</div>{% endif %}
+            {% endif %}
 
-        {% if item.row %}
-            <div class="row{% if edit|default %} integrated-website-sortable" data-block-type="row{% endif %}"
+            {% if item.row %}
+                <div class="{% if edit|default %} integrated-website-sortable" data-block-type="row{% endif %}"
                 {%- for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
                 {% for column in item.row.columns %}
-                    <div class="col-sm-{{ column.size }}{% if edit|default %} integrated-website-col integrated-website-droppable"
-                         data-block-type="column" data-size="{{ column.size }}{% endif %}">
-                        {{ include(integrated_active_theme('page/grid.html.twig'), { 'grid': column }) }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endif %}
+                    {% set gridSize = column.size %}
 
-{% if edit and grid.id is defined %}
-    </div>
-{% endif %}
+                        {% if gridSize is same as 12 %}
+                            {% set gridClass = 'w-full' %}
+                        {% else %}
+                            {% set gridClass = 'w-full md:w-' ~ gridSize|trans ~ '/12' %}
+                        {% endif %}
+                        <div
+                            class="{{ gridClass }}{% if edit|default %} integrated-website-col integrated-website-droppable"
+                            data-block-type="column" data-size="{{ column.size }}{% endif %}">
+                            {{ include(integrated_active_theme('page/grid.html.twig'), { 'grid': column }) }}
+                        </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if edit and grid.id is defined %}
+        </div>
+    {% endif %}
 {% endapply %}
