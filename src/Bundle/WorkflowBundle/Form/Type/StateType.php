@@ -48,10 +48,11 @@ class StateType extends AbstractType
             'publishable',
             Type\CheckboxType::class,
             [
-                'label' => 'Publish when this status is selected',
+                'label' => 'Publish',
                 'required' => false,
                 'attr' => [
                     'align_with_widget' => true,
+                    'style' => 'switcher',
                 ],
             ]
         );
@@ -60,12 +61,13 @@ class StateType extends AbstractType
             'default',
             Type\CheckboxType::class,
             [
-                'label' => 'This is the default Status',
+                'label' => 'Default',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
                     'class' => 'state_default_input_field',
                     'align_with_widget' => true,
+                    'style' => 'switcher',
                 ],
             ]
         );
@@ -119,7 +121,7 @@ class StateType extends AbstractType
             $builder->add('transitions', Type\ChoiceType::class, [
                 'required' => false,
                 'mapped' => false,
-
+                'label' => 'Transitions to',
                 'choices' => [],
 
                 'multiple' => true,

@@ -44,7 +44,7 @@ class FieldsType extends AbstractType
             'custom',
             TailwindCollectionType::class,
             [
-                'label' => false,
+                'label' => 'Custom Fields', //TODO: Do we want this?
                 'entry_type' => Fields\CustomType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
