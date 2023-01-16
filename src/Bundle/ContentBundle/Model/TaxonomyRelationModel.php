@@ -51,15 +51,9 @@ class TaxonomyRelationModel
             $this->setMediaId($params['media_id']);
         }
 
-//        dd($params);
-
-        if (\array_key_exists('category_id_target', $params) && $params['category_id_target'] !== null) {
+        if ($params['category_id_target'] ?? false) {
             $this->setCategoryIdTarget($params['category_id_target']);
         }
-
-//        if ('category_id_target', $params)) {
-//            $this->setCategoryIdTarget($params['category_id_target']);
-//        }
 
         if (\array_key_exists('category_id_origin', $params)) {
             $this->setCategoryIdOrigin($params['category_id_origin']);
