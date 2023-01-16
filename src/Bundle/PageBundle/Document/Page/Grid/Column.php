@@ -64,8 +64,6 @@ class Column implements ItemsInterface
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
     public function setItems(array $items = [])
@@ -76,8 +74,6 @@ class Column implements ItemsInterface
     }
 
     /**
-     * @param Item $item
-     *
      * @return $this
      */
     public function addItem(Item $item)
@@ -88,8 +84,6 @@ class Column implements ItemsInterface
     }
 
     /**
-     * @param Item $item
-     *
      * @return $this
      */
     public function removeItem(Item $item)

@@ -30,8 +30,6 @@ class MongoDBContentTypeListener implements EventSubscriber
 
     /**
      * constructor.
-     *
-     * @param QueueInterface $queue
      */
     public function __construct(QueueInterface $queue)
     {
@@ -48,9 +46,6 @@ class MongoDBContentTypeListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postUpdate(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();

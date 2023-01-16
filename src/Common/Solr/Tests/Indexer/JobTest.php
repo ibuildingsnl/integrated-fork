@@ -118,8 +118,7 @@ class JobTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param null  $action
-     * @param array $options
+     * @param null $action
      *
      * @return Job
      */

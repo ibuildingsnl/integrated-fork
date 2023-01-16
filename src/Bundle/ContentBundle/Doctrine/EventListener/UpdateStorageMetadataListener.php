@@ -29,9 +29,6 @@ class UpdateStorageMetadataListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $dm = $args->getDocumentManager();

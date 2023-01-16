@@ -38,10 +38,6 @@ class ContentTypeQueueTaskHandler
 
     /**
      * Constructor.
-     *
-     * @param ContentTypeProviderInterface $provider
-     * @param QueueInterface               $queue
-     * @param JobFactory                   $factory
      */
     public function __construct(ContentTypeProviderInterface $provider, QueueInterface $queue, JobFactory $factory)
     {
@@ -52,8 +48,6 @@ class ContentTypeQueueTaskHandler
 
     /**
      * Queue all the content for the given content type.
-     *
-     * @param ContentTypeQueueTask $task
      */
     public function __invoke(ContentTypeQueueTask $task)
     {

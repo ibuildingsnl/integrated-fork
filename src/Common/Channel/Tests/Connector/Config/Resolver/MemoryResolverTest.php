@@ -97,7 +97,6 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param ConfigInterface[] $configs
-     * @param array             $channels
      *
      * @return MemoryResolver
      */

@@ -15,7 +15,6 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Serializer\JsonLDNormalizer;
 use Integrated\Common\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormalizerInterface;
-use stdClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -89,7 +88,7 @@ class JsonLDNormalizerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($normalizer->supportsNormalization($object, 'json-ld'));
         self::assertFalse($normalizer->supportsNormalization($object, 'json'));
 
-        $object = new stdClass();
+        $object = new \stdClass();
 
         self::assertFalse($normalizer->supportsNormalization($object, 'json-ld'));
         self::assertFalse($normalizer->supportsNormalization($object, 'json'));

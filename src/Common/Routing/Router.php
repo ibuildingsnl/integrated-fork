@@ -40,9 +40,7 @@ class Router implements RouterInterface, RequestMatcherInterface, WarmableInterf
     protected $context;
 
     /**
-     * @param RouterInterface       $router
-     * @param UrlGeneratorInterface $generator
-     * @param RequestContext        $context
+     * @param RequestContext $context
      */
     public function __construct(
         RouterInterface $router,

@@ -27,9 +27,6 @@ trait ContentTypeHelper
      * @param string $id
      * @param string $name
      * @param string $class
-     * @param array  $requiredFields
-     * @param array  $optionalFields
-     * @param array  $options
      *
      * @return ContentType
      */
@@ -65,10 +62,6 @@ trait ContentTypeHelper
     }
 
     /**
-     * @param ContentType $contentType
-     * @param array       $requiredFields
-     * @param array       $optionalFields
-     *
      * @return ContentType
      */
     protected function setContentTypeFields(
@@ -83,8 +76,6 @@ trait ContentTypeHelper
 
     /**
      * @param string $contentTypeId
-     * @param array  $requiredFields
-     * @param array  $optionalFields
      *
      * @return ContentType
      */
@@ -154,7 +145,6 @@ trait ContentTypeHelper
 
     /**
      * @param string $contentTypeId
-     * @param array  $removeFields
      *
      * @return ContentType
      */

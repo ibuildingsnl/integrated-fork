@@ -45,9 +45,6 @@ class AuthenticatorErrorListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $session = $this->context->getSession();
@@ -61,9 +58,6 @@ class AuthenticatorErrorListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSubmit(FormEvent $event)
     {
         $session = $this->context->getSession();

@@ -26,8 +26,6 @@ class PageCopyPagesType extends AbstractType
 
     /**
      * PageCopyType constructor.
-     *
-     * @param DocumentManager $documentManager
      */
     public function __construct(DocumentManager $documentManager)
     {

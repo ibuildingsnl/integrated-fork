@@ -30,10 +30,6 @@ class ThemeResolver
      */
     private $themeManager;
 
-    /**
-     * @param ResolverInterface $resolver
-     * @param ThemeManager      $themeManager
-     */
     public function __construct(ResolverInterface $resolver, ThemeManager $themeManager)
     {
         $this->resolver = $resolver;
@@ -41,8 +37,6 @@ class ThemeResolver
     }
 
     /**
-     * @param ChannelInterface $channel
-     *
      * @return string
      */
     public function getTheme(ChannelInterface $channel)

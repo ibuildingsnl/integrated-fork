@@ -34,10 +34,6 @@ class ListCommand extends Command
      */
     protected $resolverStorage;
 
-    /**
-     * @param FilesystemRegistry $registry
-     * @param Resolver           $resolverStorage
-     */
     public function __construct(FilesystemRegistry $registry, Resolver $resolverStorage)
     {
         $this->registry = $registry;

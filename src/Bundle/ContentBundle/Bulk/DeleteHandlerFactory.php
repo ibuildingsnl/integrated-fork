@@ -35,9 +35,6 @@ class DeleteHandlerFactory implements HandlerFactoryInterface
 
     /**
      * Constructor.
-     *
-     * @param DocumentManager         $documentManager
-     * @param SearchContentReferenced $searchContentReferenced
      */
     public function __construct(DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced)
     {

@@ -12,7 +12,6 @@
 namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
@@ -47,11 +46,6 @@ class Exporter implements ExporterInterface
      */
     private $cache = [];
 
-    /**
-     * @param RegistryInterface $registry
-     * @param ResolverInterface $resolver
-     * @param DocumentManager   $dm
-     */
     public function __construct(RegistryInterface $registry, ResolverInterface $resolver, DocumentManager $dm)
     {
         $this->registry = $registry;
@@ -81,15 +75,14 @@ class Exporter implements ExporterInterface
                 if ($response instanceof ExporterResponse) {
                     $this->save($content, $response);
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // @todo probably should log this somewhere
             }
         }
     }
 
     /**
-     * @param ChannelInterface $channel
-     * @param ?\DateTime       $publicationDate
+     * @param ?\DateTime $publicationDate
      *
      * @return ConnectorExporterInterface[]
      */
@@ -110,7 +103,7 @@ class Exporter implements ExporterInterface
                     if ($adaptor instanceof ExportableInterface) {
                         $exporters[] = $adaptor->getExporter($config);
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // @todo probably should log this somewhere
                 }
             }
@@ -122,8 +115,7 @@ class Exporter implements ExporterInterface
     }
 
     /**
-     * @param object           $content
-     * @param ExporterResponse $response
+     * @param object $content
      */
     protected function save($content, ExporterResponse $response)
     {

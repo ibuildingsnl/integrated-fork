@@ -14,7 +14,6 @@ namespace Integrated\Bundle\SolrBundle\Tests\Solr\Type;
 use Integrated\Bundle\SolrBundle\Solr\Type\CopyType;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
-use stdClass;
 
 /**
  * @covers \Integrated\Bundle\SolrBundle\Solr\Type\CopyType
@@ -39,8 +38,8 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         $container->add('field2', 'value2');
         $container->add('field2', 'value3');
 
-        $this->getInstance()->build($container, new stdClass(), $options);
-        $this->getInstance()->build($container, new stdClass(), $options);
+        $this->getInstance()->build($container, new \stdClass(), $options);
+        $this->getInstance()->build($container, new \stdClass(), $options);
 
         self::assertEquals($expected, $container->toArray());
     }
@@ -98,7 +97,7 @@ class CopyTypeTest extends \PHPUnit\Framework\TestCase
         $container->add('field2', 'value2');
         $container->add('field2', 'value3');
 
-        $this->getInstance()->build($container, new stdClass(), $options);
+        $this->getInstance()->build($container, new \stdClass(), $options);
 
         self::assertEquals($expected, $container->toArray());
     }

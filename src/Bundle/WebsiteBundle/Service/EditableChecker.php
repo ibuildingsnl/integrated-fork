@@ -38,11 +38,6 @@ class EditableChecker
      */
     protected $request;
 
-    /**
-     * @param AuthorizationChecker  $authorizationChecker
-     * @param TokenStorageInterface $tokenStorage
-     * @param RequestStack          $requestStack
-     */
     public function __construct(
         AuthorizationChecker $authorizationChecker,
         TokenStorageInterface $tokenStorage,

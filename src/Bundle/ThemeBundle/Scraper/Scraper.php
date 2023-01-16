@@ -41,11 +41,6 @@ class Scraper
 
     /**
      * Scraper constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param DocumentManager        $documentManager
-     * @param FilesystemLoader       $loader
-     * @param ScraperPageLoader      $scraperPageLoader
      */
     public function __construct(EntityManagerInterface $entityManager, DocumentManager $documentManager, FilesystemLoader $loader, ScraperPageLoader $scraperPageLoader)
     {
@@ -56,8 +51,6 @@ class Scraper
     }
 
     /**
-     * @param ScraperEntity $scraper
-     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function prepare(ScraperEntity $scraper): void
@@ -104,9 +97,6 @@ class Scraper
         $this->scraperPageLoader->pageListCacheWarmup(true);
     }
 
-    /**
-     * @param ScraperEntity|null $scraper
-     */
     public function run(ScraperEntity $scraper = null): void
     {
         if ($scraper === null) {
@@ -169,8 +159,6 @@ class Scraper
     /**
      * @param string $html
      * @param string $url
-     *
-     * @return string
      */
     protected function replaceUrls($html, $url): string
     {

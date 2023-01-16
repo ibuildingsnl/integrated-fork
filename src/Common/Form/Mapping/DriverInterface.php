@@ -21,13 +21,12 @@ interface DriverInterface
      *
      * @return string[]
      */
-    public function getAllClassNames();
+    public function getAllClassNames(): array;
 
     /**
      * Load the metadata for the given class and store them in the metadata class.
-     *
-     * @param $class
-     * @param MetadataEditorInterface $metadata
      */
-    public function loadMetadataForClass($class, MetadataEditorInterface $metadata);
+    public function loadMetadataForClass(MetadataEditorInterface $metadata): void;
+
+    public function isSupported(string $class): bool;
 }

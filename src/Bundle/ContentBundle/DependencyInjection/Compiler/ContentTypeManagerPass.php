@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use ReflectionClass;
 
 class ContentTypeManagerPass implements CompilerPassInterface
 {
@@ -29,7 +28,7 @@ class ContentTypeManagerPass implements CompilerPassInterface
         }
 
         foreach ($container->getParameter('kernel.bundles') as $bundle) {
-            $reflection = new ReflectionClass($bundle);
+            $reflection = new \ReflectionClass($bundle);
 
             if (is_file($file = \dirname($reflection->getFilename()).'/Resources/config/integrated/content_types.xml')) {
                 $container->getDefinition(self::SERVICE_ID)->addMethodCall('registerFile', [$file]);

@@ -29,8 +29,7 @@ abstract class ManagerValidator extends ConstraintValidator
     private $accessor = null;
 
     /**
-     * @param object     $object
-     * @param Constraint $constraint
+     * @param object $object
      *
      * @throws UnexpectedTypeException
      * @throws ConstraintDefinitionException

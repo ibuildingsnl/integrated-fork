@@ -31,9 +31,6 @@ class FileEventSubscriber implements EventSubscriberInterface
      */
     protected $appCache;
 
-    /**
-     * @param AppCache $manager
-     */
     public function __construct(AppCache $manager)
     {
         $this->appCache = $manager;
@@ -49,9 +46,6 @@ class FileEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function submit(FormEvent $event)
     {
         // This (if any) is the new file

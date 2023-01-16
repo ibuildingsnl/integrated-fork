@@ -34,10 +34,6 @@ class CleanCommand extends Command
      */
     protected $registry;
 
-    /**
-     * @param DatabaseInterface  $database
-     * @param FilesystemRegistry $registry
-     */
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry

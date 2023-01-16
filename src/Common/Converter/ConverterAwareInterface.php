@@ -18,8 +18,6 @@ interface ConverterAwareInterface
 {
     /**
      * Set the converter object.
-     *
-     * @param ConverterInterface $converter
      */
     public function setConverter(ConverterInterface $converter);
 }

@@ -35,7 +35,6 @@ class Request implements RequestInterface
     protected $timeout = null;
 
     /**
-     * @param ResourceInterface $resource
      * @param ResourceInterface $owner
      * @param null              $timeout
      */

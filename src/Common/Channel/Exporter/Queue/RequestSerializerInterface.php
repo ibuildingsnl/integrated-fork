@@ -17,8 +17,6 @@ namespace Integrated\Common\Channel\Exporter\Queue;
 interface RequestSerializerInterface
 {
     /**
-     * @param Request $data
-     *
      * @return string
      */
     public function serialize(Request $data);

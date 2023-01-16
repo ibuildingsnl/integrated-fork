@@ -25,9 +25,6 @@ class SluggerExtension extends AbstractExtension
      */
     private $slugger;
 
-    /**
-     * @param SluggerInterface $slugger
-     */
     public function __construct(SluggerInterface $slugger)
     {
         $this->slugger = $slugger;

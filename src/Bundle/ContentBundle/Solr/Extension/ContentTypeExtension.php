@@ -26,9 +26,6 @@ class ContentTypeExtension implements TypeExtensionInterface
      */
     private $resolver;
 
-    /**
-     * @param ResolverInterface $resolver
-     */
     public function __construct(ResolverInterface $resolver)
     {
         $this->resolver = $resolver;

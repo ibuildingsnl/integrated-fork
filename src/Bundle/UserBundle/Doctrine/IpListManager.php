@@ -30,8 +30,7 @@ class IpListManager implements IpListManagerInterface
     private $repository;
 
     /**
-     * @param ObjectManager $om
-     * @param string        $class
+     * @param string $class
      */
     public function __construct(ObjectManager $om, $class)
     {

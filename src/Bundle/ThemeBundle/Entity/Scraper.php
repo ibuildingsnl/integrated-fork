@@ -73,41 +73,26 @@ class Scraper
         $this->blocks = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTime $createdAt
-     */
     public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     */
     public function setName(?string $name): void
     {
         $this->name = $name;
@@ -121,9 +106,6 @@ class Scraper
         return $this->channelId;
     }
 
-    /**
-     * @param string $channelId
-     */
     public function setChannelId(string $channelId): void
     {
         $this->channelId = $channelId;
@@ -137,65 +119,41 @@ class Scraper
         return $this->templateName;
     }
 
-    /**
-     * @param string $templateName
-     */
     public function setTemplateName(string $templateName): void
     {
         $this->templateName = $templateName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    /**
-     * @param string|null $url
-     */
     public function setUrl(?string $url): void
     {
         $this->url = $url;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTemplate(): ?string
     {
         return $this->template;
     }
 
-    /**
-     * @param string|null $template
-     */
     public function setTemplate(?string $template): void
     {
         $this->template = $template;
     }
 
-    /**
-     * @return int
-     */
     public function getLastModified(): int
     {
         return $this->lastModified;
     }
 
-    /**
-     * @param int $lastModified
-     */
     public function setLastModified(int $lastModified): void
     {
         $this->lastModified = $lastModified;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastError(): ?string
     {
         return $this->lastError;
@@ -225,9 +183,6 @@ class Scraper
         $this->blocks = new ArrayCollection($blocks);
     }
 
-    /**
-     * @param Block $block
-     */
     public function addBlock(Block $block): void
     {
         if (!$this->blocks->contains($block)) {
@@ -235,19 +190,11 @@ class Scraper
         }
     }
 
-    /**
-     * @param Block $block
-     *
-     * @return bool
-     */
     public function hasBlock(Block $block): bool
     {
         return $this->blocks->contains($block);
     }
 
-    /**
-     * @param Block $block
-     */
     public function removeBlock(Block $block): void
     {
         $this->blocks->removeElement($block);

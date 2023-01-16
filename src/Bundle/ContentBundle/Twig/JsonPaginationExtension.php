@@ -26,9 +26,6 @@ class JsonPaginationExtension extends AbstractExtension
      */
     protected $generator;
 
-    /**
-     * @param UrlGeneratorInterface $generator
-     */
     public function __construct(UrlGeneratorInterface $generator)
     {
         $this->generator = $generator;
@@ -45,8 +42,6 @@ class JsonPaginationExtension extends AbstractExtension
     }
 
     /**
-     * @param SlidingPagination $pagination
-     *
      * @return array
      */
     public function paginate(SlidingPagination $pagination)

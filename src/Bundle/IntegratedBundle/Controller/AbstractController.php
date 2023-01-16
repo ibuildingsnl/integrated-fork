@@ -19,6 +19,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AbstractController extends BaseAbstractController
 {
+    public function getDoctrine(): ManagerRegistry
+    {
+        if (!$this->container->has('doctrine')) {
+            throw new \LogicException('The DoctrineBundle is not registered in your application. Try running "composer require symfony/orm-pack".');
+        }
+
+        return $this->container->get('doctrine');
+    }
+
     public function getDoctrineODM(): ManagerRegistry
     {
         return $this->container->get('doctrine_mongodb');
@@ -42,6 +51,7 @@ class AbstractController extends BaseAbstractController
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
+            'doctrine' => ManagerRegistry::class,
             'doctrine_mongodb' => ManagerRegistry::class,
             'knp_paginator' => PaginatorInterface::class,
             'solarium.client' => Client::class,

@@ -25,15 +25,11 @@ interface ConfigManagerInterface extends ConfigRepositoryInterface
 
     /**
      * Change or add the user to the manager.
-     *
-     * @param ConfigInterface $object
      */
     public function persist(ConfigInterface $object);
 
     /**
      * Remove the user from the manager.
-     *
-     * @param ConfigInterface $object
      */
     public function remove(ConfigInterface $object);
 

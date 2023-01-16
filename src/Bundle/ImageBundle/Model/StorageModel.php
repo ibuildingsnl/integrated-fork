@@ -44,10 +44,8 @@ class StorageModel implements StorageInterface, \ArrayAccess
     private $metadata;
 
     /**
-     * @param string            $identifier
-     * @param string            $pathname
-     * @param ArrayCollection   $filesystems
-     * @param MetadataInterface $metadata
+     * @param string $identifier
+     * @param string $pathname
      */
     public function __construct($identifier, $pathname, ArrayCollection $filesystems, MetadataInterface $metadata)
     {

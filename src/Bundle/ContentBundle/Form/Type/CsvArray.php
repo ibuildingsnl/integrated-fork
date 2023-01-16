@@ -23,10 +23,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class CsvArray extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(new Transformer());

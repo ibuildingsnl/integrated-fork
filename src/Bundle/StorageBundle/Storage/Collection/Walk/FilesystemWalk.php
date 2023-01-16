@@ -33,9 +33,7 @@ class FilesystemWalk
     public const REMOVE = 'remove';
 
     /**
-     * @param ManagerInterface         $storage
-     * @param MetadataFactoryInterface $metadata
-     * @param string                   $filesystem
+     * @param string $filesystem
      *
      * @return \Closure
      */
@@ -68,9 +66,7 @@ class FilesystemWalk
     }
 
     /**
-     * @param ManagerInterface         $storage
-     * @param MetadataFactoryInterface $metadata
-     * @param string                   $filesystem
+     * @param string $filesystem
      *
      * @return \Closure
      */

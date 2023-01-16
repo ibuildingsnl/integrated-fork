@@ -21,6 +21,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Form\Mapping\AttributeEditorInterface;
 use Integrated\Common\Form\Mapping\AttributeInterface;
+use Integrated\Common\Form\Mapping\Attributes\Field;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -98,7 +99,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn([
                 $this->getAttribute('field1', 'type1', ['options1', 'options' => '1']),
                 $this->getAttribute('field2', 'type2', ['options2', 'options' => '2']),
-                $this->getAttribute('field3', 'type3', ['options3', 'options' => '3']),
+                $this->getAttribute('field3', 'type3', ['options3', 'options' => '3'], Field::LOCATION_SIDEBAR),
             ]);
 
         $this->type->expects($this->exactly(3))
@@ -125,8 +126,16 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->exactly(2))
             ->method('add')
             ->withConsecutive(
-                [$this->equalTo('field1'), $this->equalTo('type1'), $this->equalTo(['override1', 'options' => '1'])],
-                [$this->equalTo('field3'), $this->equalTo('type3'), $this->equalTo(['override3', 'options' => '3'])]
+                [
+                    $this->equalTo('field1'),
+                    $this->equalTo('type1'),
+                    $this->equalTo(['override1', 'options' => '1', 'attr' => ['style' => Field::LOCATION_EDITOR, 'location' => Field::LOCATION_EDITOR]]),
+                ],
+                [
+                    $this->equalTo('field3'),
+                    $this->equalTo('type3'),
+                    $this->equalTo(['override3', 'options' => '3', 'attr' => ['style' => Field::LOCATION_SIDEBAR, 'location' => Field::LOCATION_SIDEBAR]]),
+                ]
             );
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);
@@ -334,7 +343,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->metadata->expects($this->once())
             ->method('getFields')
-            ->willReturn([$this->getAttribute('field1', 'type1', ['options1'])]);
+            ->willReturn([$this->getAttribute('field1', 'type1', ['options1'], Field::LOCATION_SIDEBAR)]);
 
         $this->type->expects($this->once())
             ->method('hasField')
@@ -347,7 +356,9 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getBuilder();
         $builder->expects($this->once())
             ->method('add')
-            ->with($this->equalTo('field1'), $this->equalTo('type2'), $this->equalTo(['options2']));
+            ->with($this->equalTo('field1'), $this->equalTo('type2'), $this->equalTo(['options2', 'attr' => [
+                'style' => Field::LOCATION_SIDEBAR, 'location' => Field::LOCATION_SIDEBAR,
+            ]]));
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);
     }
@@ -452,7 +463,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('setRequired')
             ->with('content_type')
-            ->will($this->returnValue($resolver))
+            ->willReturn($resolver)
         ;
 
         $resolver
@@ -531,11 +542,10 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      * @param string $type
-     * @param array  $options
      *
      * @return AttributeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function getAttribute($name, $type, array $options = [])
+    protected function getAttribute($name, $type, array $options = [], $location = Field::LOCATION_EDITOR)
     {
         $mock = $this->createMock('Integrated\\Common\\Form\\Mapping\\AttributeInterface');
         $mock->expects($this->atLeastOnce())
@@ -550,12 +560,15 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
             ->method('getOptions')
             ->willReturn($options);
 
+        $mock->expects($this->any())
+            ->method('getLocation')
+            ->willReturn($location);
+
         return $mock;
     }
 
     /**
      * @param string $name
-     * @param array  $options
      *
      * @return ContentTypeFieldInterface|\PHPUnit\Framework\MockObject\MockObject
      */

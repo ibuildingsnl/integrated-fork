@@ -22,7 +22,6 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -51,8 +50,6 @@ class ContentFormType extends AbstractType
     protected $dispatcher = null;
 
     /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param ResolverInterface        $resolver
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
@@ -101,15 +98,12 @@ class ContentFormType extends AbstractType
                 ), Events::PRE_BUILD_FIELD);
             }
 
-//            $builder->create('sidebar', FormType::class, ['inherit_data' => true]);
-//            $builder->create('editor', FormType::class, ['inherit_data' => true]);
-
             if ($type->hasField($field->getName())) {
                 $config = new Field($field->getName());
 
                 $config->setType($field->getType());
                 $config->setOptions($type->getField($field->getName())->getOptions() + $field->getOptions());
-                $config->setLocation($field->getLocation())->setIcon($field->getIcon())->setState($field->getState());
+                $config->setLocation($field->getLocation());
 
                 // Allow events to change the supplied field options or even remove it from the form
                 if ($dispatcher->hasListeners(Events::BUILD_FIELD)) {
@@ -120,8 +114,11 @@ class ContentFormType extends AbstractType
                         $config = null;
                     }
                 }
+
                 if ($config) {
-                    $builder->add($config->getName(), $config->getType(), $config->getOptions());
+                    $builder->add($config->getName(), $config->getType(), $config->getOptions() + [
+                        'attr' => ['style' => $config->getLocation(), 'location' => $config->getLocation()],
+                    ]);
                 }
             }
 

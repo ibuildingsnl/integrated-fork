@@ -134,8 +134,6 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Finder $finder
-     *
      * @return XmlProvider
      */
     protected function getInstance(Finder $finder)
@@ -145,8 +143,6 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Return a Finder which will return a predefined iterator.
-     *
-     * @param array $files
      *
      * @return Finder|\PHPUnit_Framework_MockObject_MockObject
      */

@@ -14,7 +14,6 @@ namespace Integrated\Common\Bulk;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistry;
 use Integrated\Common\Bulk\Exception\UnexpectedTypeException;
 use Integrated\Common\Content\ContentInterface;
-use Traversable;
 
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
@@ -26,9 +25,6 @@ class BulkHandler implements BulkHandlerInterface
      */
     private $registry;
 
-    /**
-     * @param HandlerFactoryRegistry $registry
-     */
     public function __construct(HandlerFactoryRegistry $registry)
     {
         $this->registry = $registry;
@@ -39,11 +35,11 @@ class BulkHandler implements BulkHandlerInterface
      */
     public function execute($content, $actions)
     {
-        if (!\is_array($content) && !$content instanceof Traversable) {
+        if (!\is_array($content) && !$content instanceof \Traversable) {
             throw new UnexpectedTypeException($content, 'array or Traversable');
         }
 
-        if (!\is_array($actions) && !$actions instanceof Traversable) {
+        if (!\is_array($actions) && !$actions instanceof \Traversable) {
             throw new UnexpectedTypeException($actions, 'array or Traversable');
         }
 

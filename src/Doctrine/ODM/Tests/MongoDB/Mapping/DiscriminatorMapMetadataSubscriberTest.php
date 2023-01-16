@@ -11,9 +11,9 @@
 
 namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping;
 
-use Doctrine\Persistence\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Doctrine\Persistence\Event\LoadClassMetadataEventArgs;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\DiscriminatorMapMetadataSubscriber;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\DiscriminatorMapResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;

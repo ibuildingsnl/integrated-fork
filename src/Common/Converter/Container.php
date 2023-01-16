@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Converter;
 
-use ArrayIterator;
 use Integrated\Common\Converter\Exception\UnexpectedTypeException;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -124,8 +122,8 @@ class Container implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 }

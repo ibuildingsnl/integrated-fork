@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\LockingBundle\Controller;
 
-use Integrated\Common\Locks\Resource;
 use Integrated\Common\Locks;
+use Integrated\Common\Locks\Resource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,8 +33,6 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function refresh(Request $request)

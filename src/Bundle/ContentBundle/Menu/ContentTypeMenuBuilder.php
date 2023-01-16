@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\ContentBundle\Menu;
 
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
-use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\ContentType\IteratorInterface;
+use Integrated\Common\Security\PermissionInterface;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -41,11 +41,6 @@ class ContentTypeMenuBuilder
      */
     protected $authorizationChecker;
 
-    /**
-     * @param FactoryInterface              $factory
-     * @param ContentTypeManager            $contentTypeManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         FactoryInterface $factory,
         ContentTypeManager $contentTypeManager,
@@ -92,8 +87,6 @@ class ContentTypeMenuBuilder
     }
 
     /**
-     * @param IteratorInterface $result
-     *
      * @return array
      */
     protected function group(IteratorInterface $result)
@@ -121,8 +114,6 @@ class ContentTypeMenuBuilder
     }
 
     /**
-     * @param \ReflectionClass $reflectionClass
-     *
      * @return bool|\ReflectionClass
      */
     protected function getParentClass(\ReflectionClass $reflectionClass)

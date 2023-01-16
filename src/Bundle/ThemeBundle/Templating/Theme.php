@@ -31,11 +31,6 @@ class Theme
      */
     protected $fallback = [];
 
-    /**
-     * @param $id
-     * @param array $paths
-     * @param array $fallback
-     */
     public function __construct($id, array $paths, array $fallback = [])
     {
         $this->setId($id);
@@ -72,8 +67,6 @@ class Theme
     }
 
     /**
-     * @param array $paths
-     *
      * @return $this
      */
     public function setPaths(array $paths)
@@ -106,8 +99,6 @@ class Theme
     }
 
     /**
-     * @param array $fallback
-     *
      * @return $this
      */
     public function setFallback(array $fallback)

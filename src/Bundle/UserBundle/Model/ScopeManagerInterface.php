@@ -25,15 +25,11 @@ interface ScopeManagerInterface extends ManagerInterface
 
     /**
      * Change or add the group to the manager.
-     *
-     * @param ScopeInterface $scope
      */
     public function persist(ScopeInterface $scope);
 
     /**
      * Remove the group from the manager.
-     *
-     * @param ScopeInterface $scope
      */
     public function remove(ScopeInterface $scope);
 
@@ -60,8 +56,6 @@ interface ScopeManagerInterface extends ManagerInterface
 
     /**
      * Finds the groups by a set of criteria.
-     *
-     * @param array $criteria
      *
      * @return GroupInterface[]
      */

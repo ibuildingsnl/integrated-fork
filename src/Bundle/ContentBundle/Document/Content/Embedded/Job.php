@@ -96,8 +96,6 @@ class Job
     /**
      * Set the company of the document.
      *
-     * @param Company $company
-     *
      * @return $this
      */
     public function setCompany(Company $company)

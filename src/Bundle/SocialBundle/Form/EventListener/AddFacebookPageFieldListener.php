@@ -16,9 +16,6 @@ class AddFacebookPageFieldListener implements EventSubscriberInterface
      */
     private $facebook;
 
-    /**
-     * @param Facebook $facebook
-     */
     public function __construct(Facebook $facebook)
     {
         $this->facebook = $facebook;
@@ -34,9 +31,6 @@ class AddFacebookPageFieldListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         $form = $event->getForm();

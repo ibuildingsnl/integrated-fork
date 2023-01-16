@@ -30,8 +30,6 @@ class ScopeFormType extends AbstractType
 
     /**
      * ScopeFormType constructor.
-     *
-     * @param ScopeManagerInterface $manager
      */
     public function __construct(ScopeManagerInterface $manager)
     {

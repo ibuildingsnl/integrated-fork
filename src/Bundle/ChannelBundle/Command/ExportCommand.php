@@ -11,9 +11,8 @@
 
 namespace Integrated\Bundle\ChannelBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Exception;
 use Integrated\Common\Channel\Exporter\QueueExporter;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,8 +41,6 @@ class ExportCommand extends Command
 
     /**
      * Constructor.
-     *
-     * @param QueueExporter $exporter
      */
     public function __construct(
         QueueExporter $exporter,
@@ -96,16 +93,13 @@ class ExportCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     private function runInternal(InputInterface $input, OutputInterface $output)
     {
         try {
             $this->exporter->execute();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln('Aborting: '.$e->getMessage());
 
             return 1;
@@ -115,9 +109,6 @@ class ExportCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     private function runExternal(InputInterface $input, OutputInterface $output)

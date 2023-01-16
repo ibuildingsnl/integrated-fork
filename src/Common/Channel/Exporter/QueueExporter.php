@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
-use Exception;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Queue\QueueInterface;
@@ -37,11 +36,6 @@ class QueueExporter implements ExporterInterface
      */
     private $exporter;
 
-    /**
-     * @param QueueInterface             $queue
-     * @param RequestSerializerInterface $serializer
-     * @param ExporterInterface          $exporter
-     */
     public function __construct(
         QueueInterface $queue,
         RequestSerializerInterface $serializer,
@@ -87,8 +81,6 @@ class QueueExporter implements ExporterInterface
     }
 
     /**
-     * @param QueueMessageInterface $message
-     *
      * @return QueueMessageInterface
      */
     public function process(QueueMessageInterface $message)
@@ -101,7 +93,7 @@ class QueueExporter implements ExporterInterface
 
         try {
             $this->export($request->content, $request->state, $request->channel);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // @todo probably should log this somewhere
         }
 

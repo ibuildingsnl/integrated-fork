@@ -29,9 +29,6 @@ class WorkflowStateListener implements EventSubscriberInterface
      */
     private $workflow;
 
-    /**
-     * @param Definition $workflow
-     */
     public function __construct(Definition $workflow)
     {
         $this->workflow = $workflow;
@@ -51,8 +48,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Validate the state.
-     *
-     * @param FormEvent $event
      */
     public function onPrepareData(FormEvent $event)
     {
@@ -61,8 +56,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Add extra field based on the state.
-     *
-     * @param FormEvent $event
      */
     public function onPrepareForm(FormEvent $event)
     {
@@ -112,8 +105,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Force the placeholder to be selected.
-     *
-     * @param FormEvent $event
      */
     public function onPostData(FormEvent $event)
     {
@@ -134,8 +125,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Set the state.
-     *
-     * @param FormEvent $event
      */
     public function onSubmit(FormEvent $event)
     {
@@ -146,8 +135,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Get the current state from the data.
-     *
-     * @param FormEvent $event
      */
     protected function getState(FormEvent $event)
     {
@@ -165,8 +152,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Get the next state from the form.
-     *
-     * @param FormEvent $event
      */
     protected function getData(FormEvent $event)
     {
@@ -187,8 +172,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
     /**
      * Get a array of the transitions for the given state.
-     *
-     * @param State $state
      *
      * @return array
      */

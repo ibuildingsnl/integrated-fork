@@ -72,8 +72,6 @@ class FormBlockEvent extends Event
     }
 
     /**
-     * @param BlockInterface|null $block
-     *
      * @return $this
      */
     public function setBlock(?BlockInterface $block)

@@ -57,14 +57,8 @@ interface UserInterface extends LegacyPasswordAuthenticatedUserInterface, Symfon
      */
     public function isEnabled(): bool;
 
-    /**
-     * @param RoleInterface $role
-     */
     public function addRole(RoleInterface $role);
 
-    /**
-     * @param ScopeInterface $scope
-     */
     public function setScope(ScopeInterface $scope);
 
     /**

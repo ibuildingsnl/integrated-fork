@@ -19,8 +19,6 @@ use Symfony\Component\Form\FormInterface;
 class FormUtil
 {
     /**
-     * @param FormInterface $form
-     *
      * @return FormInterface
      */
     public static function getRootForm(FormInterface $form)

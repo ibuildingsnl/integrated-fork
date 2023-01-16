@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Normalizer\Processor;
 
-use Exception;
 use Integrated\Common\Normalizer\Exception\UnexpectedTypeException;
-use ReflectionClass;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -37,10 +35,6 @@ class ProcessorResolver implements ResolverInterface
      */
     private $resolved = [];
 
-    /**
-     * @param RegistryInterface                 $registry
-     * @param ResolvedProcessorFactoryInterface $factory
-     */
     public function __construct(RegistryInterface $registry, ResolvedProcessorFactoryInterface $factory)
     {
         $this->registry = $registry;
@@ -68,8 +62,8 @@ class ProcessorResolver implements ResolverInterface
         }
 
         try {
-            $processors = $this->resolve(new ReflectionClass($object));
-        } catch (Exception $e) {
+            $processors = $this->resolve(new \ReflectionClass($object));
+        } catch (\Exception $e) {
             $processors = [];
         }
 
@@ -77,11 +71,9 @@ class ProcessorResolver implements ResolverInterface
     }
 
     /**
-     * @param ReflectionClass $reflection
-     *
      * @return array
      */
-    protected function resolve(ReflectionClass $reflection)
+    protected function resolve(\ReflectionClass $reflection)
     {
         $processors = [];
 
@@ -101,8 +93,7 @@ class ProcessorResolver implements ResolverInterface
     /**
      * Add a new resolved processor to the to the cache.
      *
-     * @param string                     $class
-     * @param ResolvedProcessorInterface $processor
+     * @param string $class
      *
      * @return ResolvedProcessorInterface
      */

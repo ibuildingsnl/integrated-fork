@@ -12,30 +12,25 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * ContainerBlock document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Container block")
  */
+#[Type\Document('Container block')]
 class ContainerBlock extends Block
 {
     /**
      * @var ArrayCollection
-     *
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType",
-     *      options={
-     *          "entry_type"="Integrated\Bundle\BlockBundle\Form\Type\BlockSizeType",
-     *          "default_title"="New block",
-     *          "allow_add"=true,
-     *          "allow_delete"=true
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'entry_type' => 'Integrated\Bundle\BlockBundle\Form\Type\BlockSizeType',
+        'default_title' => 'New block',
+        'allow_add' => true,
+        'allow_delete' => true,
+    ])]
     protected $items;
 
     public function __construct()
@@ -54,8 +49,6 @@ class ContainerBlock extends Block
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
     public function setItems(array $items)

@@ -22,27 +22,21 @@ class ContentTypePage extends AbstractPage
 {
     /**
      * @var string
-     *
-     * @Assert\NotBlank
-     * @Assert\Regex(
-     *     pattern="/{slug}/",
-     *     message="Url must contain {slug}"
-     * )
      */
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/{slug}/', message: 'Url must contain {slug}')]
     protected $path;
 
     /**
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $controllerService;
 
     /**
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $controllerAction;
 
     /**
@@ -51,10 +45,8 @@ class ContentTypePage extends AbstractPage
     protected $contentType;
 
     /**
-     * @param ContentType $contentType
-     * @param Channel     $channel
-     * @param string      $layout
-     * @param null        $path
+     * @param string $layout
+     * @param null   $path
      */
     public function __construct(ContentType $contentType, Channel $channel, $layout = 'default.html.twig', $path = null)
     {
@@ -79,8 +71,6 @@ class ContentTypePage extends AbstractPage
     }
 
     /**
-     * @param ContentType $contentType
-     *
      * @return $this
      */
     public function setContentType(ContentType $contentType)

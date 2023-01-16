@@ -31,10 +31,6 @@ class StorageOriginal extends File implements StorageInterface
      */
     private $original;
 
-    /**
-     * @param \SplFileInfo     $file
-     * @param StorageInterface $original
-     */
     public function __construct(\SplFileInfo $file, StorageInterface $original)
     {
         $this->file = $file;

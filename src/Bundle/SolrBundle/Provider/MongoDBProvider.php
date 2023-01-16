@@ -27,8 +27,6 @@ class MongoDBProvider implements ContentProviderInterface, ContentTypeProviderIn
 
     /**
      * Constructor.
-     *
-     * @param DocumentRepository $repository
      */
     public function __construct(DocumentRepository $repository)
     {

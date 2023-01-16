@@ -54,8 +54,7 @@ class MenuItem extends KnpMenuItem
     protected $maxItems;
 
     /**
-     * @param string              $name
-     * @param DatabaseMenuFactory $factory
+     * @param string $name
      */
     public function __construct($name, DatabaseMenuFactory $factory)
     {
@@ -82,9 +81,6 @@ class MenuItem extends KnpMenuItem
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getTypeLink(): int
     {
         if ($this->typeLink === null) {
@@ -94,11 +90,6 @@ class MenuItem extends KnpMenuItem
         return $this->typeLink;
     }
 
-    /**
-     * @param int $typeLink
-     *
-     * @return MenuItem
-     */
     public function setTypeLink(int $typeLink): self
     {
         $this->typeLink = $typeLink;
@@ -115,8 +106,6 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @param SearchSelection|null $searchSelection
-     *
      * @return $this
      */
     public function setSearchSelection(?SearchSelection $searchSelection = null): self
@@ -147,8 +136,6 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * @param FactoryInterface $factory
-     *
      * @return $this
      */
     public function setFactory(FactoryInterface $factory): ItemInterface
@@ -217,9 +204,6 @@ class MenuItem extends KnpMenuItem
         return $this->children;
     }
 
-    /**
-     * @return \Knp\Menu\ItemInterface
-     */
     public function getFirstChild(): ItemInterface
     {
         $children = $this->getChildren();
@@ -227,9 +211,6 @@ class MenuItem extends KnpMenuItem
         return reset($children);
     }
 
-    /**
-     * @return \Knp\Menu\ItemInterface
-     */
     public function getLastChild(): ItemInterface
     {
         $children = $this->getChildren();

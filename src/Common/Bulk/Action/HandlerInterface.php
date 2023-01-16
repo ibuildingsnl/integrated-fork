@@ -18,8 +18,5 @@ use Integrated\Common\Content\ContentInterface;
  */
 interface HandlerInterface
 {
-    /**
-     * @param ContentInterface $content
-     */
     public function execute(ContentInterface $content);
 }

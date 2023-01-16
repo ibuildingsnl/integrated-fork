@@ -31,9 +31,6 @@ class ContentTypeChannelCollectionType extends AbstractType
      */
     private $channels = null;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

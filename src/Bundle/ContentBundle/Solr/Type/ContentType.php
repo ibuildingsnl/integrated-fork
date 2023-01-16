@@ -26,9 +26,6 @@ class ContentType implements TypeInterface
      */
     private $manager;
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function __construct(ObjectManager $manager)
     {
         $this->manager = $manager;

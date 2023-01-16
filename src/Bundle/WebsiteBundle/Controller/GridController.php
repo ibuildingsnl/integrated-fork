@@ -41,8 +41,6 @@ class GridController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function save(Request $request)

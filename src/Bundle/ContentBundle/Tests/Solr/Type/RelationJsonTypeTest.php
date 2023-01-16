@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
-use Integrated\Bundle\ContentBundle\Solr\Type\RelationJsonType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Solr\Type\RelationJsonType;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 
@@ -29,9 +29,7 @@ class RelationJsonTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider buildProvider
      *
-     * @param Content $content
-     * @param array   $options
-     * @param string  $expected
+     * @param string $expected
      */
     public function testBuild(Content $content, array $options, $expected)
     {

@@ -28,9 +28,6 @@ class QueueFactory implements QueueFactoryInterface
      */
     private $registry = [];
 
-    /**
-     * @param $provider
-     */
     public function __construct($provider)
     {
         $this->provider = $provider;

@@ -6,18 +6,26 @@
 
     <services>
 
+        <service id="integrated_slug.metadata.driver.registry" class="Integrated\Bundle\SlugBundle\Mapping\Driver\DriverRegistry" />
+
         <service id="integrated_slug.slugger" class="Integrated\Bundle\SlugBundle\Slugger\Slugger" />
 
-        <service id="integrated_slug.metadata.annotation_driver" class="Integrated\Bundle\SlugBundle\Mapping\Driver\AnnotationDriver" public="false">
-            <argument type="service" id="annotation_reader" />
+        <service id="Integrated\Bundle\SlugBundle\Mapping\Driver\AnnotationDriver">
+            <argument type="service" id="annotations.reader" />
+
+            <tag name="integrated_slug.mapping.driver" />
         </service>
 
-        <service id="integrated_slug.metadata_factory" class="Metadata\MetadataFactory" public="false">
-            <argument type="service" id="integrated_slug.metadata.annotation_driver" />
+        <service id="Integrated\Bundle\SlugBundle\Mapping\Driver\AttributeDriver">
+            <tag name="integrated_slug.mapping.driver" />
+        </service>
+
+        <service id="Integrated\Bundle\SlugBundle\Mapping\MetadataFactory">
+            <argument type="service" id="integrated_slug.metadata.driver.registry" />
         </service>
 
         <service id="integrated_slug.event_listener.sluggable_subscriber.slugger" class="Integrated\Bundle\SlugBundle\EventListener\SluggableSubscriber">
-            <argument type="service" id="integrated_slug.metadata_factory" />
+            <argument type="service" id="Integrated\Bundle\SlugBundle\Mapping\MetadataFactory" />
             <argument type="service" id="integrated_slug.slugger" />
 
             <tag name="doctrine_mongodb.odm.event_subscriber" />

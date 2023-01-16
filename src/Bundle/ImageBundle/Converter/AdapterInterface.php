@@ -22,8 +22,7 @@ interface AdapterInterface
     /**
      * Convert a image in another format.
      *
-     * @param string           $outputFormat
-     * @param StorageInterface $image
+     * @param string $outputFormat
      *
      * @return \SplFileInfo
      */

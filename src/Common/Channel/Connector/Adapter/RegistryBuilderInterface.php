@@ -19,8 +19,6 @@ use Integrated\Common\Channel\Connector\AdapterInterface;
 interface RegistryBuilderInterface
 {
     /**
-     * @param AdapterInterface $adapter
-     *
      * @return RegistryBuilderInterface
      */
     public function addAdapter(AdapterInterface $adapter);
