@@ -40,21 +40,33 @@ class TaxonomyRelationModel
         $params = json_decode($request->getContent(), true);
 
         // From form parameters (when using Uppy for example)
-        $params = $params + [
-            'category_id_target' => $request->get('category_id_target'),
-            'media_id' => [$request->get('media_id')],
-        ];
+        if (null === $params) {
+            $params = [
+                'category_id_target' => $request->get('category_id_target'),
+                'media_id' => [$request->get('media_id')],
+            ];
+        }
 
         if (\array_key_exists('media_id', $params)) {
             $this->setMediaId($params['media_id']);
         }
+
+//        dd($params);
+
+        if (\array_key_exists('category_id_target', $params) && $params['category_id_target'] !== null) {
+            $this->setCategoryIdTarget($params['category_id_target']);
+        }
+
+//        if ('category_id_target', $params)) {
+//            $this->setCategoryIdTarget($params['category_id_target']);
+//        }
 
         if (\array_key_exists('category_id_origin', $params)) {
             $this->setCategoryIdOrigin($params['category_id_origin']);
         }
     }
 
-    private function isThereATarget(): bool
+    private function hasTarget(): bool
     {
         if ($this->getCategoryIdTarget() === '') {
             return false;
@@ -63,12 +75,12 @@ class TaxonomyRelationModel
         return true;
     }
 
-    public function isManagingRelationRequired(): bool
+    public function isManagableRelation(): bool
     {
-        return $this->isThereATarget() && !$this->isTargetSameAsOrigin();
+        return $this->hasTarget() && !$this->targetEqualsOrigin();
     }
 
-    private function isTargetSameAsOrigin(): bool
+    private function targetEqualsOrigin(): bool
     {
         return $this->getCategoryIdTarget() === $this->getCategoryIdOrigin();
     }

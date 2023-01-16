@@ -47,7 +47,7 @@ class TaxonomyRelationManager
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
-        if (false === $taxonomyRelation->isManagingRelationRequired()) {
+        if (false === $taxonomyRelation->isManagableRelation()) {
             return new JsonResponse('Origin is same as target');
         }
 
