@@ -11,16 +11,16 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Video;
-use Symfony\Component\HttpFoundation\Request;
-use Integrated\Common\Storage\ManagerInterface;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
+use Integrated\Common\Storage\ManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class MediaGalleryUploadFile.
@@ -31,8 +31,6 @@ class MediaGalleryUploadFile
 {
     /**
      * SearchContentReferenced constructor.
-     *
-     * @param DocumentManager $documentManager
      */
     public function __construct(
         private DocumentManager $documentManager,
