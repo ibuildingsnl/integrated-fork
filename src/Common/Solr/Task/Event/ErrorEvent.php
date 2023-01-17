@@ -54,7 +54,7 @@ class ErrorEvent extends WorkerEvent
     /**
      * Get the exception instance for this event.
      *
-     * @return \Exception
+     * @return Exception
      */
     public function getException()
     {
