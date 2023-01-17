@@ -15,10 +15,10 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
-use Integrated\Common\Storage\ManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +75,6 @@ class MediaController extends AbstractController
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
-        private ManagerInterface $manager,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
