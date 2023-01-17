@@ -81,52 +81,12 @@ class MediaController extends AbstractController
     ) {
     }
 
-    // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource): Response
     {
-        $contentTypeSelectOptions = $this->getContentTypes();
-
-        $requestCopy = clone $requestSource;
-
-        // Todo: Update this code when the contentprovides is updated
-        $givenContentType = $requestCopy->get('contenttypes');
-        if (\is_array($givenContentType) && \count($givenContentType) > 0) {
-            $givenContentType = $givenContentType[0];
-        }
-        if ($givenContentType !== 'all_files' && $givenContentType !== null) {
-            $requestCopy->query->set('contenttypes', [$givenContentType]);
-        } else {
-            $requestSource->query->set('contenttypes', 'all_files');
-            $requestSource->query->set('all_contenttypes', true);
-            $requestCopy->query->set('all_contenttypes', true);
-        }
-
-        $requestCopy = $this->setAndGetMediaType($requestCopy, $contentTypeSelectOptions);
-
-        $menu = $this->mediaGalleryMenu->createMenu();
-
-        $this->setYearMonthFilter($requestCopy);
-
-        $items = $this->provider->getContentFromSolr($requestCopy, 2000);
-
-        $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
-
-        $contentTypeFilterOptions = $this->getContentTypeFilterOptions($requestSource);
-
-        $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
-        $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
+        $data = $this->indexComponent($requestSource);
 
         return $this->render('@IntegratedContent/media/index.html.twig', [
-            'paginator' => $this->createPaginator($items, $requestSource),
-            'contentTypeSelectOptions' => $contentTypeSelectOptions,
-            'contentTypeFilterOptions' => $contentTypeFilterOptions,
-            'dateFilterOptions' => $dateFilterOptions,
-            'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
-            'menu' => $menu,
-            'not_shown_filetypes' => array_map(
-                fn ($item) => strtolower($item),
-                $this::NOT_SHOWN_FILETYPES
-            ),
+            ...$data,
         ]);
     }
 
@@ -183,9 +143,7 @@ class MediaController extends AbstractController
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
         return [
-            'selected_modus' => 'select_one',
             'paginator' => $this->createPaginator($items, $requestSource),
-            'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
@@ -207,12 +165,12 @@ class MediaController extends AbstractController
 
             $this->taxonomyRelationManager->manageRelations($request);
 
-            return new JsonResponse(['message' => 'file is uploaded?', 'content' => json_encode($file)]);
+            return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
-        return new JsonResponse(['message' => 'not sure.', 'content' => json_encode($file)]);
+        return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
@@ -304,17 +262,7 @@ class MediaController extends AbstractController
         } elseif ('all_dates' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         } else {
-            if ($this::DATE_FILTER_ON == '+1DAY') {
-                if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
-                    list($year, $month, $day) = explode('-', $yearMonthFilter);
-                    $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
-                    $endDate = "$year-{$month}-{$day}T23:59:59Z";
-                    $fullDateFilter = $startDate.' TO '.$endDate;
-                    $request->query->set('year_month_day_filter', $fullDateFilter);
-                }
-
-                return $yearMonthFilter;
-            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
+            if ($this::DATE_FILTER_ON == '+1MONTH') {
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
@@ -346,9 +294,7 @@ class MediaController extends AbstractController
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
             $label = '';
-            if ($this::DATE_FILTER_ON == '+1DAY') {
-                $label = substr($yearMonth, 0, 10);
-            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
+            if ($this::DATE_FILTER_ON == '+1MONTH') {
                 $label = substr($yearMonth, 0, 7);
             }
 
