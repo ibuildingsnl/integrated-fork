@@ -1,18 +1,14 @@
-{#{% extends '@IntegratedContent/base.html.twig' %}#}
-
 {% extends selected_modus == 'media_gallery'
-? '@IntegratedContent/base.html.twig'
-: '@IntegratedContent/empty.html.twig' %}
+    ? '@IntegratedContent/base.html.twig'
+    : '@IntegratedContent/empty.html.twig' %}
 
 {% set selected_modus = 'select_multiple' %}
 {% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
-{#    {{ dump(selected_modus|default('media_gallery')) }}#}
-{#    <button onclick="send_message_to_parent()">send message to parent</button>#}
-{#    {{ dump("select multiple") }}#}
+
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('select_multiple'),
-    }  %}
+    } %}
 
 {% endblock %}
 

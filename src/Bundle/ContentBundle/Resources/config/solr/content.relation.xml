@@ -104,7 +104,6 @@
 
         <type name="integrated.fields">
             <options>
-
                 <array>
                     <string key="name">url</string>
                     <array>
@@ -113,13 +112,6 @@
                         <string>@slug</string>
                     </array>
                 </array>
-                <string key="custominput">custominput</string>
-            </options>
-        </type>
-
-        <type name="integrated.storage">
-            <options>
-                <string key="mediaGalleryImage">mediaGalleryImage</string>
             </options>
         </type>
 

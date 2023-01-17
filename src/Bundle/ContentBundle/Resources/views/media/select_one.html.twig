@@ -2,12 +2,10 @@
 {% set selected_modus = 'select_one' %}
 {% block title %} {% trans %}Select an image{% endtrans %}{% endblock title %}
 {% block content %}
-{#    {{ dump(selected_modus|default('')) }}#}
 
-{#    {{ dump("select one") }}#}
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('select_one'),
-    }  %}
+    } %}
 
 {% endblock %}
 
@@ -15,13 +13,6 @@
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const selected_modus = '{{ selected_modus|default('select_one') }}'
-
-
-
-        // function send_message_to_parent() {
-        //     let message = "hi from iframe"
-        //     window.parent.postMessage(message, '*');
-        // }
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>

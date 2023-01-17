@@ -1,18 +1,3 @@
-import Uppy from '@uppy/core'
-global.Uppy = Uppy
-
-import Dashboard from '@uppy/dashboard'
-global.Dashboard = Dashboard
-
-import XHRUpload from '@uppy/xhr-upload'
-global.XHRUpload = XHRUpload
-
-import ImageEditor from '@uppy/image-editor'
-global.ImageEditor = ImageEditor
-
-import UppyDutch from '@uppy/locales/lib/nl_NL'
-global.UppyDutch = UppyDutch
-
 $('.button_enable_grid_view').bind("click", function () {
     enable_grid_view()
 });
@@ -30,8 +15,6 @@ $('.input_aside_folder_search').change(function () {
 }).keyup(function () {
     asideFolderSearch(this)
 });
-
-console.log("selected modus: " + selected_modus)
 
 const modi = {
     'select_one': {
@@ -98,7 +81,6 @@ $("#bulkselection").on("click", async function () {
 async function enableBulkSelection() {
     $('.bulkselectionbutton').removeClass('bulkselected')
     $('.media-container').addClass('mode-select')
-
     $(".media-item").on("click", function (event) {
         handleBulkItemClick(event);
     });
@@ -126,7 +108,6 @@ function handleBulkItemClick(event) {
         if (bulkSelection.length > 0) {
             $('#' + bulkSelection[0]).removeClass('selected')
         }
-        localStorage.setItem("age", 38)
         bulkSelection = [event.currentTarget.getAttribute('data-id')]
         $('#' + element_id).addClass('selected')
     } else {
@@ -232,8 +213,6 @@ $(function () {
         }
     });
 
-    setup()
-
     function onlyUnique(value, index, self) {
         return self.indexOf(value) === index;
     }
@@ -252,12 +231,12 @@ $(function () {
         $('#' + category_id).addClass("flash");
     }
 
-    function get_current_category_id() {
+    function getCurrentCategoryID() {
         return new URL(location.href).searchParams.get("media_taxonomy_id") || "";
     }
 
     function sendAjaxRequest(category_id, media_id) {
-        if (get_current_category_id() === category_id) {
+        if (getCurrentCategoryID() === category_id) {
             return
         }
 
@@ -265,7 +244,7 @@ $(function () {
             csrf: document.querySelector('#media_category_csrf').value,
             category_id_target: category_id,
             media_id: media_id,
-            category_id_origin: get_current_category_id(),
+            category_id_origin: getCurrentCategoryID(),
         })
 
         postData(path, jsonContent)
@@ -298,4 +277,6 @@ $(function () {
             $('#confirm_selection').hide()
         }
     }
+
+    setup()
 });

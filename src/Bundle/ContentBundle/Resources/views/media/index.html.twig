@@ -1,5 +1,3 @@
-{#{% extends '@IntegratedContent/base.html.twig' %}#}
-
 {% extends selected_modus == 'media_gallery'
     ? '@IntegratedContent/base.html.twig'
     : '@IntegratedContent/empty.html.twig' %}
@@ -7,9 +5,10 @@
 {% set selected_modus = 'media_gallery' %}
 {% block title %} {% trans %}Media Library{% endtrans %}{% endblock title %}
 {% block content %}
+
     {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
         selected_modus: selected_modus|default('media_gallery'),
-    }  %}
+    } %}
 
 {% endblock %}
 

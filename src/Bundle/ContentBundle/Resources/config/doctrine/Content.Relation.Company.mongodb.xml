@@ -9,13 +9,6 @@
         <field field-name="website" type="string" />
 
         <embed-one
-            field="mediaGalleryImage"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
-        />
-
-        <field field-name="custominput" type="string" />
-
-        <embed-one
             field="logo"
             target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
         />
