@@ -72,7 +72,7 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear, $contentTypeSelectOptions): array
+    public function getFilterOptionsFromSolr(Request $request, $dateFilterGap, $contentTypeSelectOptions): array
     {
         $query = $this->client->createSelect();
 
@@ -111,13 +111,12 @@ class ContentProvider
         }
 
         // Filter on dates
-        // TODO with some more data, update this to MONTH
         $facetSet = $query->getFacetSet();
         $facet = $facetSet->createFacetRange('pub_created');
         $facet->setField('pub_created');
         $facet->setStart('2022-01-01T00:00:00Z'); // TODO Can we fill this dynamically with Lowest?
-        $facet->setGap($filterOnDayOrYear);
-        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z'); // Is there a prettier way?
+        $facet->setGap($dateFilterGap);
+        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z');
 
         $resultSet = $this->client->select($query);
 
@@ -197,19 +196,6 @@ class ContentProvider
             }
         }
 
-        // If there is ONE contenttype selected, we only want to show files with this contenttype
-        // If there are more selected than 1, we are showing all the files (all the contenttypes)
-        // But, if available_contenttypes is filles, we only want to show those file.
-        // But, if available_contenttypes is filled, AND contenttypes is one, we wannt to select only the 1 contenttypes
-
-        // TODO: underneath 3 if statements can be improved
-        // if contenttype count === 1, then...
-        // else if available_contenttypes != ...
-        // else set contenttypes
-        // make sure normal usage of contenttypes keeps working
-        // actually, maybe this is cleaner because it separates
-
-        // we always set contenttypes
         $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
         $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
 
@@ -369,6 +355,9 @@ class ContentProvider
         return $fq;
     }
 
+    // If there is ONE contenttype selected, we only want to show files with this contenttype
+    // Else ,if available_contenttypes is filled, we only want to show those file.
+    // Else, we are showing all the contenttypes
     private function setContentTypes(array|null $contentType, \Solarium\QueryType\Select\Query\FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
     {
         if (\is_array($contentType) && \count($contentType) === 1) {
