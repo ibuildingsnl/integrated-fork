@@ -26,14 +26,14 @@ class ErrorEvent extends WorkerEvent
     protected $message;
 
     /**
-     * @var \Exception
+     * @var Exception
      */
     private $exception;
 
     /**
      * Event constructor.
      */
-    public function __construct(Worker $worker, QueueMessageInterface $message, \Exception $exception)
+    public function __construct(Worker $worker, QueueMessageInterface $message, Exception $exception)
     {
         parent::__construct($worker);
 
@@ -54,7 +54,7 @@ class ErrorEvent extends WorkerEvent
     /**
      * Get the exception instance for this event.
      *
-     * @return \Exception
+     * @return Exception
      */
     public function getException()
     {

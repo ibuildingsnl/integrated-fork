@@ -197,19 +197,19 @@ class ContentProvider
             }
         }
 
-        //If there is ONE contenttype selected, we only want to show files with this contenttype
-        //If there are more selected than 1, we are showing all the files (all the contenttypes)
-        //But, if available_contenttypes is filles, we only want to show those file.
-        //But, if available_contenttypes is filled, AND contenttypes is one, we wannt to select only the 1 contenttypes
+        // If there is ONE contenttype selected, we only want to show files with this contenttype
+        // If there are more selected than 1, we are showing all the files (all the contenttypes)
+        // But, if available_contenttypes is filles, we only want to show those file.
+        // But, if available_contenttypes is filled, AND contenttypes is one, we wannt to select only the 1 contenttypes
 
-        //TODO: underneath 3 if statements can be improved
+        // TODO: underneath 3 if statements can be improved
         // if contenttype count === 1, then...
         // else if available_contenttypes != ...
         // else set contenttypes
         // make sure normal usage of contenttypes keeps working
         // actually, maybe this is cleaner because it separates
 
-        //we always set contenttypes
+        // we always set contenttypes
         $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
         $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
 
