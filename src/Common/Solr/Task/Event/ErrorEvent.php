@@ -26,7 +26,7 @@ class ErrorEvent extends WorkerEvent
     protected $message;
 
     /**
-     * @var \Exception
+     * @var Exception
      */
     private $exception;
 

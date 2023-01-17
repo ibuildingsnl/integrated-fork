@@ -28,7 +28,7 @@ class ProgressIteratorUtil
     public const FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%';
 
     /**
-     * @var \Iterator
+     * @var Iterator
      */
     private $iterator;
 
