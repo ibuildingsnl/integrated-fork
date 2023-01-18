@@ -64,28 +64,71 @@
 {% block integrated_editor_row %}
     {% apply spaceless %}
         {% set state = state|default(tailwind_get_state()) %}
-        <div class="form-group w-full flex flex-wrap {% if state is not empty %}{{ state }}{% endif %} widget">
-            <div class="w-full">
-                <div id="{{ id }}_container">
-                <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
-                          data-content_css="{{ content_styles.content_css|merge([asset('/bundles/integratedformtype/css/tinymce.content.css')])|join(',') }}"
-                          data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
-                          data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
-                          data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                          data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
-                          data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
-                          placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
-                          data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
-                    {% if value is not empty %}
-                        {{ value }}
-                    {% endif %}
-                </textarea>
-                    <!-- TODO: After TINYMCE6 implementation, make use of the dynamic placeholder -->
-                </div>
+        {% set label_col = label_col|default(tailwind_get_label_col()) %}
+        {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
+        {% endif %}
+        {% if attr.style is defined and attr.style is not empty %}
+            {% set style = attr.style %}
+        {% endif %}
 
+        {% if state != 'fancy_tinymce' %}
+            {% set styles = '/bundles/integratedformtype/css/tinymce.content.css' %}
+        {% else %}
+            {% set styles = '/bundles/integratedformtype/css/tinymce-fancy.content.css' %}
+        {% endif %}
+
+        {% if style == 'editor' %}
+            <div class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                <div class="editor-item-header">
+                    <h3 class="editor-item-title">
+                            <span class="editor-item-icon">
+                                {{ form_label(form) }}
+                            </span>
+                    </h3>
+                    <i class="iconoir-nav-arrow-up"></i>
+                </div>
+                <div class="editor-item-list">
+                    <div class="editor-item-list-container">
+        {% else %}
+            <div class="form-group w-full flex flex-wrap {% if state is not empty %}{{ state }}{% endif %} widget">
+                {% if state != 'fancy_tinymce' %}
+                    {% if label is empty and label is not same as (false) %}
+                        {% set label = name|humanize %}
+                    {% endif %}
+                    {% set class = 'tinymce-inline w-full ' ~ widget_col ~ ' widget' %}
+                    <label class="control-label {{ label_col }}">{{ label }}</label>
+                {% else %}
+                    {% set class = 'w-full' %}
+                {% endif %}
+                <div class="{{ class }}">
+        {% endif %}
+                <div id="{{ id }}_container">
+                    <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
+                              data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
+                              data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
+                              data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
+                              data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                              data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
+                              data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
+                              placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
+                              data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
+                        {% if value is not empty %}
+                            {{ value }}
+                        {% endif %}
+                    </textarea>
+                </div>
                 {{ block('form_errors') }}
+        {% if style == 'editor' %}
+                    </div>
+                </div>
             </div>
-        </div>
+        {% else %}
+                </div>
+            </div>
+        {% endif %}
     {% endapply %}
 {% endblock %}
 
@@ -164,7 +207,8 @@
             </ul>
 
             {% if form.vars.allow_add %}
-                <a href="javascript:;" class="btn" title="{{ form.vars.add_button_text|trans({}, translation_domain) }}"
+                <a href="javascript:;" class="btn"
+                   title="{{ form.vars.add_button_text|trans({}, translation_domain) }}"
                    data-addfield="collection" data-collection="{{ form.vars.id }}"
                    data-prototype-name="{{ prototype_name }}">
                     <span>{{ form.vars.add_button_text|trans({}, translation_domain) }}</span>
@@ -181,44 +225,74 @@
 
 {% block integrated_collection_widget %}
     {% apply spaceless %}
+        {% set delete_button_text = form.vars.delete_button_text %}
+        {% set add_button_text = form.vars.add_button_text %}
+        {% if translation_domain is not same as (false) %}
+            {% set delete_button_text = delete_button_text|trans({}, translation_domain) %}
+            {% set add_button_text = add_button_text|trans({}, translation_domain) %}
+        {% endif %}
         {% if prototype is defined %}
             {% set prototype_vars = {} %}
             {% if style is defined %}
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
-            {% set prototype_html = '<div class="w-full ' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) %}
-            {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="#" class="remove" data-removefield="collection" data-field="__id__" title="Remove"><i class="iconoir-cancel"></i></a>' %}
+            {% if (form.vars.attr.show_headings is not defined or form.vars.attr.show_headings == 'true') %}
+                {% set panel_heading = 'true' %}
             {% endif %}
-            {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div></div>' %}
+
+            {% if (panel_heading is defined and panel_heading == 'true') %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+                {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
+                {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+            {% else %}
+                {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+            {% endif %}
+            {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
         <div {{ block('widget_container_attributes') }} class="collection-widget">
-            <ul class="integrated-collection list-unstyled">
+            <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
                         <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse">
-                                        <i class="iconoir-line-space"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
-                                    </a>
-                                    {% if form.vars.allow_delete %}
-                                        <a href="javascript:;" class="remove"
-                                           title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
-                                           data-removefield="collection" data-field="{{ field.vars.id }}">
-                                            <i class="iconoir-cancel"></i>
+                            {% if (panel_heading is defined and panel_heading == 'true') %}
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse">
+                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.name|default(form.vars.default_title|default('Item')) }}</span>
                                         </a>
-                                    {% endif %}
-                                </h4>
-                            </div>
+                                        {% if form.vars.allow_delete %}
+                                            <a href="javascript:;" class="remove"
+                                               title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                               data-removefield="collection" data-field="{{ field.vars.id }}">
+                                                <i class="iconoir-cancel"></i>
+                                            </a>
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                            {% endif %}
                             <div id="{{ field.vars.id }}"
                                  class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
                                 <div class="panel-body {{ form.vars.sub_widget_col }}">
                                     {{ form_widget(field) }}
                                     {{ form_errors(field) }}
+                                    {% if (panel_heading is not defined) %}
+                                        {% if form.vars.allow_delete %}
+                                            <a href="javascript:;" class="remove"
+                                               title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                               data-removefield="collection" data-field="{{ field.vars.id }}">
+                                                <i class="iconoir-cancel"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -226,8 +300,9 @@
                 {% endfor %}
             </ul>
             {% if form.vars.allow_add %}
-                <a href="#" class="btn btn-green" data-addfield="collection" data-collection="{{ form.vars.id }}"
-                   data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
+                <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection"
+                   data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
             {% endif %}
         </div>
     {% endapply %}
@@ -266,7 +341,8 @@
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% if data %}
-                <option value="{{ data }}" selected="selected">{% trans %}Keep current position{% endtrans %}</option>
+                <option value="{{ data }}"
+                        selected="selected">{% trans %}Keep current position{% endtrans %}</option>
             {% endif %}
         </select>
     {% endapply %}
@@ -321,6 +397,9 @@
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
         {% endif %}
+        {% if attr.icon is defined and attr.icon is not empty %}
+            {% set icon = attr.icon %}
+        {% endif %}
         {% if attr.widget_col is defined and attr.widget_col is not empty %}
             {% set widget_col = attr.widget_col %}
             {% if label is same as (false) and label_col is defined %}
@@ -333,11 +412,10 @@
         {% if attr.state is defined and attr.state is not empty %}
             {% set state = attr.state %}
         {% endif %}
-
         {% if style == 'horizontal' %}
             <div
                 class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
-                {% if show_label is not same as ('false')  %}
+                {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
                 <div class="w-full {{ widget_col }} widget">
@@ -387,7 +465,7 @@
             </div>
         {% else %}
             <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %}">
-                {% if show_label is not same as ('false')  %}
+                {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
                 {{ block('form_input_group') }}
