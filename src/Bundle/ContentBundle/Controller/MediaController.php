@@ -15,10 +15,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -72,7 +74,8 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
-        protected AuthorizationCheckerInterface $authorizationChecker
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
 
@@ -122,6 +125,21 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ]);
+    }
+
+    public function uploadFile(Request $request)
+    {
+        try {
+            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+
+            $request->attributes->set('media_id', $file->getId());
+
+            $this->taxonomyRelationManager->manageRelations($request);
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'This filetype is not allowed.']);
+        }
+
+        return new JsonResponse(['message' => 'file is uploaded.', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
@@ -229,6 +247,7 @@ class MediaController extends AbstractController
                     $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
+                        $year = (int) $year + 1;
                     }
                     $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";

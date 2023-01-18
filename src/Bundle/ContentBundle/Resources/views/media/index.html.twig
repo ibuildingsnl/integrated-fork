@@ -9,19 +9,16 @@
                 <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-item-wrapper">
-                        <div class="p-4">
-                            <div class="text-black p-4">
-                                <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                    <i class="fa-regular fa-folder"></i><span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
-                                </a>
-                            </div>
+                        <div class="aside-folder-header">
+                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                <i class="iconoir-folder"></i>
+                                <span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                            </a>
                         </div>
                         <div class="aside-item-list-container">
                             <div class="aside-item-search">
-                                <i class="fa fa-search"></i>
-                                <input type="text" class="list-search"
-                                       onchange="asideFolderSearch(this)"
-                                       onkeyup="asideFolderSearch(this)"
+                                <i class="iconoir-search"></i>
+                                <input type="text" class="input_aside_folder_search list-search"
                                        placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
                             </div>
 
@@ -36,8 +33,8 @@
                                 {% for key, menu_item in menu %}
                                     <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
                                         {% if selectedMediaTaxonomy.current == menu_item.title %}
-                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                        {% else %}
+                                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
+                                            {% else %}
                                             <a href="{{ path(app.request.attributes.get('_route'),
                                                 app.request.query.all|
                                                 merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
@@ -48,60 +45,62 @@
                                                role="menuitem"
                                                class="media_category"
                                                id="{{ menu_item.ID }}">
-                                        {% endif %}
-                                                <i class="fa fa-folder"></i>
+                                                {% endif %}
+                                                <i class="iconoir-folder"></i>
                                                 <span>{{ menu_item.title|trans|capitalize }}</span>
                                             </a>
-                                        {% if menu_item.children %}
-                                            <ul class="child-menu">
-                                                {% for key_1, menu_item_1 in menu_item.children %}
-                                                    <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
-                                                        {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_1.ID }}">
-                                                        {% else %}
-                                                            <a href="{{ path(app.request.attributes.get('_route'),
-                                                                app.request.query.all|
-                                                                merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
-                                                                merge({'media_taxonomy_id':menu_item_1.ID})|
-                                                                merge({'page':1})
-                                                            ) }}"
-                                                               tabindex="-1"
-                                                               role="menuitem"
-                                                               class="media_category"
+                                            {% if menu_item.children %}
+                                                <ul class="child-menu">
+                                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                                        <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
+                                                            {% if selectedMediaTaxonomy.current == menu_item_1.title %}
+                                                            <a tabindex="-1" role="menuitem" class="media_category"
                                                                id="{{ menu_item_1.ID }}">
-                                                        {% endif %}
-                                                                <i class="fa fa-folder"></i>
-                                                                <span>{{ menu_item_1.title|trans|capitalize }}</span>
-                                                            </a>
-                                                        {% if menu_item_1.children %}
-                                                            <ul class="child-menu">
-                                                                {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                                    <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
-                                                                        {% if selectedMediaTaxonomy.current == menu_item_2.title %}
-                                                                            <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item_2.ID }}">
-                                                                        {% else %}
-                                                                            <a href="{{ path(app.request.attributes.get('_route'),
-                                                                                app.request.query.all|
-                                                                                merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title }) |
-                                                                                merge({'media_taxonomy_id':menu_item_2.ID})|
-                                                                                merge({'page':1})
-                                                                            ) }}"
-                                                                               tabindex="-1"
-                                                                               role="menuitem"
-                                                                               class="media_category"
-                                                                               id="{{ menu_item_2.ID }}">
-                                                                        {% endif %}
-                                                                                <i class="fa fa-folder"></i>
-                                                                                <span>{{ menu_item_2.title|trans|capitalize }}</span>
-                                                                            </a>
-                                                                    </li>
-                                                                {% endfor %}
-                                                            </ul>
-                                                        {% endif %}
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
+                                                                {% else %}
+                                                                <a href="{{ path(app.request.attributes.get('_route'),
+                                                                    app.request.query.all|
+                                                                    merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
+                                                                    merge({'media_taxonomy_id':menu_item_1.ID})|
+                                                                    merge({'page':1})
+                                                                ) }}"
+                                                                   tabindex="-1"
+                                                                   role="menuitem"
+                                                                   class="media_category"
+                                                                   id="{{ menu_item_1.ID }}">
+                                                                    {% endif %}
+                                                                    <i class="iconoir-folder"></i>
+                                                                    <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
+                                                                {% if menu_item_1.children %}
+                                                                    <ul class="child-menu">
+                                                                        {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                                            <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
+                                                                                {% if selectedMediaTaxonomy.current == menu_item_2.title %}
+                                                                                <a tabindex="-1" role="menuitem"
+                                                                                   class="media_category"
+                                                                                   id="{{ menu_item_2.ID }}">
+                                                                                    {% else %}
+                                                                                    <a href="{{ path(app.request.attributes.get('_route'),
+                                                                                        app.request.query.all|
+                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title })|
+                                                                                        merge({'media_taxonomy_id':menu_item_2.ID})|
+                                                                                        merge({'page':1})
+                                                                                    ) }}"
+                                                                                       tabindex="-1"
+                                                                                       role="menuitem"
+                                                                                       class="media_category"
+                                                                                       id="{{ menu_item_2.ID }}">
+                                                                                        {% endif %}
+                                                                                        <i class="iconoir-folder"></i>
+                                                                                        <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                                    </a>
+                                                                            </li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                {% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -117,7 +116,7 @@
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
                             <span>{% trans %}New{% endtrans %}</span>
-                            <i class="fa fa-plus"></i>
+                            <i class="iconoir-plus"></i>
                         </a>
                         <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                             {% for type_key, type in contentTypeSelectOptions %}
@@ -134,18 +133,19 @@
                 </ul>
                 <div class="options flex justify-between">
                     <div class="left flex">
-                        <button class="switcher active mr-2"><i class="fa-regular fa-rectangle-list"></i></button>
-                        <button class="switcher mr-2"><i class="fa-solid fa-table-cells-large"></i></button>
-
+                        <button class="button_enable_grid_view toggle_view grid active switcher mr-2"><i
+                                    class="iconoir-view-grid"></i></button>
+                        <button class="button_enable_list_view toggle_view list switcher mr-2"><i
+                                    class="iconoir-list"></i></button>
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
                                    class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
-                                    <i class="fa fa-angle-down"></i>
-                                </a>
+                                    <i class="iconoir-nav-arrow-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
+
                                         <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
                                             {% endif %}role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
@@ -162,13 +162,11 @@
                                 </ul>
                             </li>
                         </ul>
-
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
                                    class="btn btn-select space-between"><span>{{ dateFilterOptions.options[dateFilterOptions.current].label|trans }}</span>
-                                    <i class="fa fa-angle-down"></i>
-                                </a>
+                                    <i class="iconoir-nav-arrow-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
                                     {% for year_month_key, year_month in dateFilterOptions.options %}
@@ -189,24 +187,42 @@
                                 </ul>
                             </li>
                         </ul>
-                        <button class="btn btn-action"
+                        <button class="btn btn-action mr-2"
                                 id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                         </button>
+
+                        <button class="button_toggle_upload_view btn btn-action">
+                            <i class="iconoir-add-media-image"></i>
+                        </button>
+
                     </div>
                     <form action="" class="media-search-form" method="get">
                         <div class="form-group relative" style="width: 250px">
                             <input type="text" name="q" class="form-control"
                                    value="{{ app.request.query.get('q')|trim }}"
                                    placeholder="{% trans %}Zoeken{% endtrans %}...">
-                            <button type="submit"><i class="fa fa-search"></i></button>
+                            <button type="submit"><i class="iconoir-search"></i></button>
                         </div>
                     </form>
                 </div>
             </div>
+
             <section class="section-white section-radius p-4">
+
+                <div id="upload_container" class="hidden">
+                    {% include '@IntegratedContent/media/upload.html.twig'
+                        with {
+                        'language': app.request.defaultLocale,
+                        'endpoint': path('integrated_content_media_upload_file'),
+                        'height': '750px',
+                        'imageEditorEnabled': true,
+                        'target': '#upload_container .drag-drop-area',
+                    } %}
+                </div>
+
                 {# When you work on bulk select, use the class "mode-select" on media container when you activate bulk select #}
                 <div class="media-container">
-                    <div class="media-wrapper">
+                    <div class="media-wrapper grid_view">
                         {% if paginator.items|length == 0 %}
                             <div>
                                 {% trans %} No results with this selection. {% endtrans %}
@@ -214,6 +230,7 @@
                         {% endif %}
                         <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
                             {% for media in paginator.items %}
+
                                 {% if media.contentType == 'image' %}
                                     {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
                                     {#                                    {% set thumbnail = integrated_image(media.file) %} #}
@@ -226,129 +243,98 @@
                                     {# TODO How to handle custom ContentTypes that can be anything? #}
                                     {# We could check pathname / identifier, but that is not so elegant# #}
                                 {% endif %}
-                                {% set gallery = 'grid' %}
-                                {% if gallery is same as('grid') %}
-                                    <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
-                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                            <div class="media-preview">
-                                                <div class="thumbnail">
-                                                    <div class="centered">
-                                                        <img src="{{ thumbnail }}"
-                                                             alt="{{ media.title }}">
-                                                    </div>
-                                                </div>
-                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                                    <div class="filetype">
-                                                        {{ media.file|split('.')|last | lower }}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </a>
 
-                                        <button id="bulkselection_{{ media.id }}" type="button"
-                                                class="bulkselectionbutton check" tabindex="-1">
-                                            <span class="media-modal-icon">
-                                                <i class="fa fa-check"></i>
-                                            </span>
-                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                        </button>
-                                    </li>
-                                {% else %}
-                                    <li class="media-item ui-widget-content ui-corner-tr list {{ media.contentType }}"
-                                        id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
-                                        <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
-                                            <div class="media-preview">
-                                                <div class="thumbnail">
-                                                    <div class="centered">
-                                                        <img src="{{ thumbnail }}"
-                                                             alt="{{ media.title }}">
-                                                    </div>
+                                <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
+                                    id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                    <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
+                                        <div class="media-preview">
+                                            <div class="thumbnail">
+                                                <div class="centered">
+                                                    <img src="{{ thumbnail }}" alt="{{ media.title }}">
                                                 </div>
-                                                {% if media.file | split('.')|last | lower not in not_shown_filetypes %}
-                                                    <div class="filetype">
-                                                        {{ media.file|split('.')|last | lower }}
-                                                    </div>
-                                                {% endif %}
                                             </div>
-                                        </a>
-                                        <div class="details flex">
-                                            <div class="w-full md:w-1/2">
-                                                <div class="detail-wrap title">
-                                                    <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
-                                                    <h3>{{ media.title }}</h3>
+                                            {% if media.file|split('.')|last|lower not in not_shown_filetypes %}
+                                                <div class="filetype">
+                                                    {{ media.file|split('.')|last|lower }}
                                                 </div>
-                                                {% if media.description %}
-                                                    <div class="detail-wrap description">
-                                                        <span
-                                                            class="detail-label">{% trans %}Description{% endtrans %}:</span>
-                                                        <p>{{ media.description }}</p>
-                                                    </div>
-                                                {% endif %}
-                                                {% if media.credits %}
-                                                    <div class="detail-wrap credits">
-                                                        <span
-                                                            class="detail-label">{% trans %}Credits{% endtrans %}:</span>
-                                                        <p>{{ media.credits }}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="w-full md:w-1/2">
-                                                {% if media.createdAt is defined %}
-                                                    <div class="detail-wrap created-at flex justify-end">
-                                                        <span
-                                                            class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
-                                                        <p>{{ media.createdAt|format_date('long') }}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
+                                            {% endif %}
                                         </div>
+                                    </a>
+                                    <div class="details flex">
+                                        <div class="w-full md:w-1/2">
+                                            <div class="detail-wrap title">
+                                                <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
+                                                <h3>{{ media.title }}</h3>
+                                            </div>
+                                            {% if media.description %}
+                                                <div class="detail-wrap description">
+                                                    <span class="detail-label">{% trans %}Description{% endtrans %}:</span>
+                                                    <p>{{ media.description }}</p>
+                                                </div>
+                                            {% endif %}
+                                            {% if media.credits %}
+                                                <div class="detail-wrap credits">
+                                                    <span class="detail-label">{% trans %}Credits{% endtrans %}:</span>
+                                                    <p>{{ media.credits }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="w-full md:w-1/2">
+                                            {% if media.createdAt is defined %}
+                                                <div class="detail-wrap created-at flex justify-end">
+                                                    <span class="detail-label">{% trans %}Publish date{% endtrans %}:</span>
+                                                    <p>{{ media.createdAt|format_date('long') }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
 
-                                        <button id="bulkselection_{{ media.id }}" type="button"
-                                                class="bulkselectionbutton check" tabindex="-1">
+                                    <button id="bulkselection_{{ media.id }}" type="button"
+                                            class="bulkselectionbutton check" tabindex="-1">
                                             <span class="media-modal-icon">
-                                                <i class="fa fa-check"></i>
+                                                <i class="iconoir-check"></i>
                                             </span>
-                                            <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
-                                        </button>
-                                    </li>
-                                {% endif %}
+                                        <span class="screen-reader-text">{% trans %} Deselect {% endtrans %}</span>
+                                    </button>
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
-                </div>
 
-                <div>
-                    {% if paginator.getCustomParameter('amountOfPages') > 1 %}
-                        {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
-                            {% if i == paginator.currentPageNumber %}
-                                <a class="text-red-500 bg-red-200 p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}
-                                </a>
-                            {% else %}
-                                <a class="p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}
-                                </a>
-                            {% endif %}
-                        {% endfor %}
+                    <div class="mt-2">
+                        {% if paginator.getCustomParameter('amountOfPages') > 1 %}
+                            {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
+                                {% if i == paginator.currentPageNumber %}
+                                    <a class="text-red-500 bg-red-200 p-2"
+                                       href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                       tabindex="-1" role="menuitem">{{ i }}</a>
+                                {% else %}
+                                    <a class="p-2"
+                                       href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
+                                       tabindex="-1" role="menuitem">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
 
-                        <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
-                        <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
-                    {% endif %}
+                            <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
+                            <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
+                        {% endif %}
+                    </div>
                 </div>
 
             </section>
         </div>
     </div>
 
-<script>
-    const path = '{{ path('integrated_content_media_manage_relations') }}'
-</script>
+    <script>
+        const path = '{{ path('integrated_content_media_manage_relations') }}';
+    </script>
 {% endblock %}
 
 {% block webpack_js %}
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
 {% endblock %}
