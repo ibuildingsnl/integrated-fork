@@ -45,7 +45,7 @@
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget collection-widget">
+        <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget sortable-collection-widget">
             <ul class="bc-collection panel-group sortable-collection ui-sortable">
                 {% for field in form %}
                     <li class="ui-sortable-handle">
@@ -54,19 +54,22 @@
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse">
                                         <i class="iconoir-nav-arrow-down"></i>
-                                        <div class="workflow-status" style="background-color:{{field.vars.value.color}};">
+                                        <div class="workflow-status"
+                                             style="background-color:{{ field.vars.value.color }};">
                                             <i class="iconoir-{{ field.vars.value.icon }}"></i>
                                         </div>
-                                        <span>{{ field.vars.value.name|default(form.vars.default_title|default('New status')) }}</span>
-                                        <span class="transition">Transitions to:
-                                         {% for transition in field.vars.value.transitions %}
-                                             {% if loop.first %}
-                                                 {{ transition.name }}
-                                             {% else %}
-                                                 / {{ transition.name }}
-                                             {% endif %}
-                                         {% endfor %}
+                                        <span class="state-name">{{ field.vars.value.name|default(form.vars.default_title|default('New status')) }}</span>
+                                        {% if field.vars.value.transitions|length > 0 %}
+                                            <span class="transition">Transitions to:
+                                                {% for transition in field.vars.value.transitions %}
+                                                    {% if loop.first %}
+                                                        {{ transition.name }}
+                                                    {% else %}
+                                                        / {{ transition.name }}
+                                                    {% endif %}
+                                                {% endfor %}
                                         </span>
+                                        {% endif %}
                                     </a>
                                     {% if form.vars.allow_delete %}
                                         <a href="javascript:;" class="remove"
@@ -99,6 +102,11 @@
                 </a>
             {% endif %}
         </div>
-
+        {% integrated_javascripts mode='append'
+            'bundles/integratedintegrated/content_sortable.js' %}
+        {% endintegrated_javascripts %}
+        {% integrated_javascripts mode='prepend'
+            'bundles/integratedformtype/js/content_choice.js' %}
+        {% endintegrated_javascripts %}
     {% endapply %}
 {% endblock workflow_definition_state_collection_widget %}

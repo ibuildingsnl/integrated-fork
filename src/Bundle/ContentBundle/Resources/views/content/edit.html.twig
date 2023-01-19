@@ -2,24 +2,11 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-    {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class or 'Person' in type.class %}
-        {# https://eactive.atlassian.net/browse/INTEGRATED-1783 #}
-        {% set title_state = 'title_tinymce' %}
-        {% set title_style = '' %}
-        {% set tinymce_state = 'fancy_tinymce' %}
-        {% set form_class = 'content-edit-form' %}
-    {% else %}
-        {% set title_state = '' %}
-        {% set title_style = 'inline' %}
-        {% set tinymce_state = 'show' %}
-        {% set form_class = 'edit-form' %}
-    {% endif %}
-
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
-    <div class="flex flex-wrap {{ form_class }}">
+    <div class="flex flex-wrap content-edit-form">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal'}) }}
         {% endblock %}
@@ -93,14 +80,6 @@
                                                    href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
                                                     <i class="iconoir-trash"></i>
                                                 </a>
-                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
-                                                <div class="status planned">
-                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
-                                                </div>
-                                                <a class="delete"
-                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                    <i class="iconoir-trash"></i>
-                                                </a>
                                             {% else %}
                                                 <div class="status draft">
                                                     <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
@@ -112,6 +91,14 @@
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2">
+                                        {% if form.disabled is defined %}
+                                            {{ form_row(form.disabled, {style: 'switcher'}) }}
+                                        {% endif %}
+                                        {% if form.orderable is defined %}
+                                            {{ form_row(form.orderable, {style: 'switcher'}) }}
                                         {% endif %}
                                     </div>
                                 </div>

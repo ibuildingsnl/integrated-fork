@@ -28,6 +28,9 @@
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
+        {% endif %}
 
         {% if simple_col is defined and simple_col %}
             <div class="w-full {{ simple_col }}">
@@ -219,6 +222,9 @@
 {% block choice_widget_expanded %}
     {% apply spaceless %}
         {% set state = state|default(tailwind_get_state()) %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
+        {% endif %}
         {% if 'search' in state %}
             <div class="aside-item-search">
                 <i class="iconoir-search"></i>
@@ -229,7 +235,7 @@
         <ul {{ block('widget_container_attributes') }}>
             {% for child in form %}
                 {% if multiple %}
-                    <li>
+                    <li class="inline-block mr-2">
                         {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
                     </li>
                 {% else %}
@@ -989,9 +995,6 @@
             {% endif %}
             {% if attr.simple_col is defined %}
                 {% set childAttr = childAttr|merge({ 'simple_col': attr.simple_col }) %}
-            {% endif %}
-            {% if attr.style is defined %}
-                {% set childAttr = childAttr|merge({ 'style': attr.style }) %}
             {% endif %}
             {% if attr.state is defined %}
                 {% set childAttr = childAttr|merge({ 'state': attr.state }) %}
