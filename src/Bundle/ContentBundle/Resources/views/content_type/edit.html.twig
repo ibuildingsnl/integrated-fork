@@ -18,21 +18,10 @@
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         {% block content_meta %}
-                            {% if form.permissions is defined %}
-                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.options_publication is defined %}
-                                {{ form_row(form.options_publication, {'style': 'sidebar', 'icon':'link', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.options_workflow is defined %}
-                                {{ form_row(form.options_workflow, {'style': 'sidebar', 'icon':'stackoverflow', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.options is defined %}
-                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                            {% endif %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                                {{ form_row(child) }}
+                            {% endfor %}
                         {% endblock %}
-
-
                     {% endblock %}
                     <div class="aside-item-wrapper show">
                         <div class="aside-item-header">
@@ -57,9 +46,9 @@
             </div>
             <section class="editor">
                 {% block content_form %}
-                    {% if form.name is defined %}
-                        {{ form_row(form.name, {'style': 'inline'}) }}
-                    {% endif %}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                        {{ form_row(child) }}
+                    {% endfor %}
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}

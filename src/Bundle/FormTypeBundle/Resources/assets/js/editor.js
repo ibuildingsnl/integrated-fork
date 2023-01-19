@@ -52,7 +52,6 @@ $('.integrated_tinymce').each(function(key, elem){
             //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
         },
         add_unload_trigger: false,
-        placeholder: "Your article starts here",
         schema: "html5",
         menubar: true,
         branding: false,

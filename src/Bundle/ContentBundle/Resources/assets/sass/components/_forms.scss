@@ -8,6 +8,7 @@
     box-shadow: none;
     border-color: $border-color;
     -webkit-appearance: none;
+    max-width: 750px;
     @include custom-placeholder($color: $input-color-placeholder, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 
     &:focus {

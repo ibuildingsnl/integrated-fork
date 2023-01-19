@@ -14,11 +14,10 @@ body {
 }
 
 .content-wrapper {
-    //padding-bottom: 120px;
     position: relative;
     overflow: hidden;
     width: calc(100vw - 250px);
-    //padding: 2rem;
+    height: 100%;
     background-color: $bg-gray;
     @include media(max-xl) {
         width: calc(100vw - 50px);
@@ -131,14 +130,12 @@ body {
             }
             .editor {
                 div.form-group {
-                    //border: 1px solid #dee3e9;
-                    //padding: 1rem;
-                    //border-radius: 8px;
-                    //margin-top: 2rem;
+                    border-top: 1px solid #dee3e9;
+                    padding-top: 2rem;
+                    margin-top: 2rem;
                     .subheader {
                         position: absolute;
                         top: -11px;
-                        left: 11px;
 
                         strong {
                             background-color: #dee3e9;

@@ -146,6 +146,10 @@
         .aside-item-list-container {
             position: relative;
             ul {
+                > li {
+                    display: block;
+                    margin: 0;
+                }
                 padding: 0.5rem 1.5rem;
                 max-height: 180px;
                 overflow-y: auto;
@@ -159,6 +163,10 @@
                     padding: 10px 10px 0;
                     margin-bottom: 0;
                 }
+            }
+
+            a.primary-channel-selector {
+                margin-left: 5px;
             }
 
             .checkbox {
