@@ -15,13 +15,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
-use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
+use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Common\Storage\ManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -76,7 +75,6 @@ class MediaController extends AbstractController
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
-        private ManagerInterface $manager,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
@@ -266,11 +264,11 @@ class MediaController extends AbstractController
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
-                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
                         $year = (int) $year + 1;
                     }
+                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
                     $fullDateFilter = $startDate.' TO '.$endDate;
 
