@@ -1,2 +1,14854 @@
-/*! For license information please see mediagallery.js.LICENSE.txt */
-(()=>{var e={5158:e=>{e.exports=function(e){if("number"!=typeof e||isNaN(e))throw new TypeError("Expected a number, got "+typeof e);const t=e<0,i=["B","KB","MB","GB","TB","PB","EB","ZB","YB"];if(t&&(e=-e),e<1)return(t?"-":"")+e+" B";const n=Math.min(Math.floor(Math.log(e)/Math.log(1024)),i.length-1);e=Number(e/Math.pow(1024,n));const s=i[n];return e>=10||e%1==0?`${(t?"-":"")+e.toFixed(0)} ${s}`:`${(t?"-":"")+e.toFixed(1)} ${s}`}},1737:e=>{e.exports=function(e){if("number"!=typeof e||isNaN(e))throw new TypeError("Expected a number, got "+typeof e);var t=e<0,i=["B","KB","MB","GB","TB","PB","EB","ZB","YB"];if(t&&(e=-e),e<1)return(t?"-":"")+e+" B";var n=Math.min(Math.floor(Math.log(e)/Math.log(1024)),i.length-1);e=Number(e/Math.pow(1024,n));var s=i[n];return e>=10||e%1==0?(t?"-":"")+e.toFixed(0)+" "+s:(t?"-":"")+e.toFixed(1)+" "+s}},4184:(e,t)=>{var i;!function(){"use strict";var n={}.hasOwnProperty;function s(){for(var e=[],t=0;t<arguments.length;t++){var i=arguments[t];if(i){var r=typeof i;if("string"===r||"number"===r)e.push(i);else if(Array.isArray(i)){if(i.length){var o=s.apply(null,i);o&&e.push(o)}}else if("object"===r){if(i.toString!==Object.prototype.toString&&!i.toString.toString().includes("[native code]")){e.push(i.toString());continue}for(var a in i)n.call(i,a)&&i[a]&&e.push(a)}}}return e.join(" ")}e.exports?(s.default=s,e.exports=s):void 0===(i=function(){return s}.apply(t,[]))||(e.exports=i)}()},3129:function(e){e.exports=function(){"use strict";function e(t){return e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},e(t)}function t(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){for(var i=0;i<t.length;i++){var n=t[i];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}function n(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),e}function s(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}function r(e,t){var i=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),i.push.apply(i,n)}return i}function o(e){for(var t=1;t<arguments.length;t++){var i=null!=arguments[t]?arguments[t]:{};t%2?r(Object(i),!0).forEach((function(t){s(e,t,i[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(i)):r(Object(i)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(i,t))}))}return e}function a(e){return l(e)||u(e)||h(e)||c()}function l(e){if(Array.isArray(e))return p(e)}function u(e){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(e))return Array.from(e)}function h(e,t){if(e){if("string"==typeof e)return p(e,t);var i=Object.prototype.toString.call(e).slice(8,-1);return"Object"===i&&e.constructor&&(i=e.constructor.name),"Map"===i||"Set"===i?Array.from(e):"Arguments"===i||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(i)?p(e,t):void 0}}function p(e,t){(null==t||t>e.length)&&(t=e.length);for(var i=0,n=new Array(t);i<t;i++)n[i]=e[i];return n}function c(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var d="undefined"!=typeof window&&void 0!==window.document,f=d?window:{},m=!(!d||!f.document.documentElement)&&"ontouchstart"in f.document.documentElement,g=!!d&&"PointerEvent"in f,v="cropper",y="all",b="crop",w="move",x="zoom",C="e",_="w",S="s",T="n",k="ne",P="nw",E="se",F="sw",O="".concat(v,"-crop"),A="".concat(v,"-disabled"),D="".concat(v,"-hidden"),N="".concat(v,"-hide"),M="".concat(v,"-invisible"),I="".concat(v,"-modal"),U="".concat(v,"-move"),L="".concat(v,"Action"),R="".concat(v,"Preview"),B="crop",j="move",z="none",H="crop",q="cropend",$="cropmove",W="cropstart",V="dblclick",X=m?"touchstart":"mousedown",Y=m?"touchmove":"mousemove",G=m?"touchend touchcancel":"mouseup",K=g?"pointerdown":X,Q=g?"pointermove":Y,J=g?"pointerup pointercancel":G,Z="ready",ee="resize",te="wheel",ie="zoom",ne="image/jpeg",se=/^e|w|s|n|se|sw|ne|nw|all|crop|move|zoom$/,re=/^data:/,oe=/^data:image\/jpeg;base64,/,ae=/^img|canvas$/i,le={viewMode:0,dragMode:B,initialAspectRatio:NaN,aspectRatio:NaN,data:null,preview:"",responsive:!0,restore:!0,checkCrossOrigin:!0,checkOrientation:!0,modal:!0,guides:!0,center:!0,highlight:!0,background:!0,autoCrop:!0,autoCropArea:.8,movable:!0,rotatable:!0,scalable:!0,zoomable:!0,zoomOnTouch:!0,zoomOnWheel:!0,wheelZoomRatio:.1,cropBoxMovable:!0,cropBoxResizable:!0,toggleDragModeOnDblclick:!0,minCanvasWidth:0,minCanvasHeight:0,minCropBoxWidth:0,minCropBoxHeight:0,minContainerWidth:200,minContainerHeight:100,ready:null,cropstart:null,cropmove:null,cropend:null,crop:null,zoom:null},ue='<div class="cropper-container" touch-action="none"><div class="cropper-wrap-box"><div class="cropper-canvas"></div></div><div class="cropper-drag-box"></div><div class="cropper-crop-box"><span class="cropper-view-box"></span><span class="cropper-dashed dashed-h"></span><span class="cropper-dashed dashed-v"></span><span class="cropper-center"></span><span class="cropper-face"></span><span class="cropper-line line-e" data-cropper-action="e"></span><span class="cropper-line line-n" data-cropper-action="n"></span><span class="cropper-line line-w" data-cropper-action="w"></span><span class="cropper-line line-s" data-cropper-action="s"></span><span class="cropper-point point-e" data-cropper-action="e"></span><span class="cropper-point point-n" data-cropper-action="n"></span><span class="cropper-point point-w" data-cropper-action="w"></span><span class="cropper-point point-s" data-cropper-action="s"></span><span class="cropper-point point-ne" data-cropper-action="ne"></span><span class="cropper-point point-nw" data-cropper-action="nw"></span><span class="cropper-point point-sw" data-cropper-action="sw"></span><span class="cropper-point point-se" data-cropper-action="se"></span></div></div>',he=Number.isNaN||f.isNaN;function pe(e){return"number"==typeof e&&!he(e)}var ce=function(e){return e>0&&e<1/0};function de(e){return void 0===e}function fe(t){return"object"===e(t)&&null!==t}var me=Object.prototype.hasOwnProperty;function ge(e){if(!fe(e))return!1;try{var t=e.constructor,i=t.prototype;return t&&i&&me.call(i,"isPrototypeOf")}catch(e){return!1}}function ve(e){return"function"==typeof e}var ye=Array.prototype.slice;function be(e){return Array.from?Array.from(e):ye.call(e)}function we(e,t){return e&&ve(t)&&(Array.isArray(e)||pe(e.length)?be(e).forEach((function(i,n){t.call(e,i,n,e)})):fe(e)&&Object.keys(e).forEach((function(i){t.call(e,e[i],i,e)}))),e}var xe=Object.assign||function(e){for(var t=arguments.length,i=new Array(t>1?t-1:0),n=1;n<t;n++)i[n-1]=arguments[n];return fe(e)&&i.length>0&&i.forEach((function(t){fe(t)&&Object.keys(t).forEach((function(i){e[i]=t[i]}))})),e},Ce=/\.\d*(?:0|9){12}\d*$/;function _e(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:1e11;return Ce.test(e)?Math.round(e*t)/t:e}var Se=/^width|height|left|top|marginLeft|marginTop$/;function Te(e,t){var i=e.style;we(t,(function(e,t){Se.test(t)&&pe(e)&&(e="".concat(e,"px")),i[t]=e}))}function ke(e,t){return e.classList?e.classList.contains(t):e.className.indexOf(t)>-1}function Pe(e,t){if(t)if(pe(e.length))we(e,(function(e){Pe(e,t)}));else if(e.classList)e.classList.add(t);else{var i=e.className.trim();i?i.indexOf(t)<0&&(e.className="".concat(i," ").concat(t)):e.className=t}}function Ee(e,t){t&&(pe(e.length)?we(e,(function(e){Ee(e,t)})):e.classList?e.classList.remove(t):e.className.indexOf(t)>=0&&(e.className=e.className.replace(t,"")))}function Fe(e,t,i){t&&(pe(e.length)?we(e,(function(e){Fe(e,t,i)})):i?Pe(e,t):Ee(e,t))}var Oe=/([a-z\d])([A-Z])/g;function Ae(e){return e.replace(Oe,"$1-$2").toLowerCase()}function De(e,t){return fe(e[t])?e[t]:e.dataset?e.dataset[t]:e.getAttribute("data-".concat(Ae(t)))}function Ne(e,t,i){fe(i)?e[t]=i:e.dataset?e.dataset[t]=i:e.setAttribute("data-".concat(Ae(t)),i)}function Me(e,t){if(fe(e[t]))try{delete e[t]}catch(i){e[t]=void 0}else if(e.dataset)try{delete e.dataset[t]}catch(i){e.dataset[t]=void 0}else e.removeAttribute("data-".concat(Ae(t)))}var Ie=/\s\s*/,Ue=function(){var e=!1;if(d){var t=!1,i=function(){},n=Object.defineProperty({},"once",{get:function(){return e=!0,t},set:function(e){t=e}});f.addEventListener("test",i,n),f.removeEventListener("test",i,n)}return e}();function Le(e,t,i){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:{},s=i;t.trim().split(Ie).forEach((function(t){if(!Ue){var r=e.listeners;r&&r[t]&&r[t][i]&&(s=r[t][i],delete r[t][i],0===Object.keys(r[t]).length&&delete r[t],0===Object.keys(r).length&&delete e.listeners)}e.removeEventListener(t,s,n)}))}function Re(e,t,i){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:{},s=i;t.trim().split(Ie).forEach((function(t){if(n.once&&!Ue){var r=e.listeners,o=void 0===r?{}:r;s=function(){delete o[t][i],e.removeEventListener(t,s,n);for(var r=arguments.length,a=new Array(r),l=0;l<r;l++)a[l]=arguments[l];i.apply(e,a)},o[t]||(o[t]={}),o[t][i]&&e.removeEventListener(t,o[t][i],n),o[t][i]=s,e.listeners=o}e.addEventListener(t,s,n)}))}function Be(e,t,i){var n;return ve(Event)&&ve(CustomEvent)?n=new CustomEvent(t,{detail:i,bubbles:!0,cancelable:!0}):(n=document.createEvent("CustomEvent")).initCustomEvent(t,!0,!0,i),e.dispatchEvent(n)}function je(e){var t=e.getBoundingClientRect();return{left:t.left+(window.pageXOffset-document.documentElement.clientLeft),top:t.top+(window.pageYOffset-document.documentElement.clientTop)}}var ze=f.location,He=/^(\w+:)\/\/([^:/?#]*):?(\d*)/i;function qe(e){var t=e.match(He);return null!==t&&(t[1]!==ze.protocol||t[2]!==ze.hostname||t[3]!==ze.port)}function $e(e){var t="timestamp=".concat((new Date).getTime());return e+(-1===e.indexOf("?")?"?":"&")+t}function We(e){var t=e.rotate,i=e.scaleX,n=e.scaleY,s=e.translateX,r=e.translateY,o=[];pe(s)&&0!==s&&o.push("translateX(".concat(s,"px)")),pe(r)&&0!==r&&o.push("translateY(".concat(r,"px)")),pe(t)&&0!==t&&o.push("rotate(".concat(t,"deg)")),pe(i)&&1!==i&&o.push("scaleX(".concat(i,")")),pe(n)&&1!==n&&o.push("scaleY(".concat(n,")"));var a=o.length?o.join(" "):"none";return{WebkitTransform:a,msTransform:a,transform:a}}function Ve(e){var t=o({},e),i=[];return we(e,(function(e,n){delete t[n],we(t,(function(t){var n=Math.abs(e.startX-t.startX),s=Math.abs(e.startY-t.startY),r=Math.abs(e.endX-t.endX),o=Math.abs(e.endY-t.endY),a=Math.sqrt(n*n+s*s),l=(Math.sqrt(r*r+o*o)-a)/a;i.push(l)}))})),i.sort((function(e,t){return Math.abs(e)<Math.abs(t)})),i[0]}function Xe(e,t){var i=e.pageX,n=e.pageY,s={endX:i,endY:n};return t?s:o({startX:i,startY:n},s)}function Ye(e){var t=0,i=0,n=0;return we(e,(function(e){var s=e.startX,r=e.startY;t+=s,i+=r,n+=1})),{pageX:t/=n,pageY:i/=n}}function Ge(e){var t=e.aspectRatio,i=e.height,n=e.width,s=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"contain",r=ce(n),o=ce(i);if(r&&o){var a=i*t;"contain"===s&&a>n||"cover"===s&&a<n?i=n/t:n=i*t}else r?i=n/t:o&&(n=i*t);return{width:n,height:i}}function Ke(e){var t=e.width,i=e.height,n=e.degree;if(90==(n=Math.abs(n)%180))return{width:i,height:t};var s=n%90*Math.PI/180,r=Math.sin(s),o=Math.cos(s),a=t*o+i*r,l=t*r+i*o;return n>90?{width:l,height:a}:{width:a,height:l}}function Qe(e,t,i,n){var s=t.aspectRatio,r=t.naturalWidth,o=t.naturalHeight,l=t.rotate,u=void 0===l?0:l,h=t.scaleX,p=void 0===h?1:h,c=t.scaleY,d=void 0===c?1:c,f=i.aspectRatio,m=i.naturalWidth,g=i.naturalHeight,v=n.fillColor,y=void 0===v?"transparent":v,b=n.imageSmoothingEnabled,w=void 0===b||b,x=n.imageSmoothingQuality,C=void 0===x?"low":x,_=n.maxWidth,S=void 0===_?1/0:_,T=n.maxHeight,k=void 0===T?1/0:T,P=n.minWidth,E=void 0===P?0:P,F=n.minHeight,O=void 0===F?0:F,A=document.createElement("canvas"),D=A.getContext("2d"),N=Ge({aspectRatio:f,width:S,height:k}),M=Ge({aspectRatio:f,width:E,height:O},"cover"),I=Math.min(N.width,Math.max(M.width,m)),U=Math.min(N.height,Math.max(M.height,g)),L=Ge({aspectRatio:s,width:S,height:k}),R=Ge({aspectRatio:s,width:E,height:O},"cover"),B=Math.min(L.width,Math.max(R.width,r)),j=Math.min(L.height,Math.max(R.height,o)),z=[-B/2,-j/2,B,j];return A.width=_e(I),A.height=_e(U),D.fillStyle=y,D.fillRect(0,0,I,U),D.save(),D.translate(I/2,U/2),D.rotate(u*Math.PI/180),D.scale(p,d),D.imageSmoothingEnabled=w,D.imageSmoothingQuality=C,D.drawImage.apply(D,[e].concat(a(z.map((function(e){return Math.floor(_e(e))}))))),D.restore(),A}var Je=String.fromCharCode;function Ze(e,t,i){var n="";i+=t;for(var s=t;s<i;s+=1)n+=Je(e.getUint8(s));return n}var et=/^data:.*,/;function tt(e){var t=e.replace(et,""),i=atob(t),n=new ArrayBuffer(i.length),s=new Uint8Array(n);return we(s,(function(e,t){s[t]=i.charCodeAt(t)})),n}function it(e,t){for(var i=[],n=8192,s=new Uint8Array(e);s.length>0;)i.push(Je.apply(null,be(s.subarray(0,n)))),s=s.subarray(n);return"data:".concat(t,";base64,").concat(btoa(i.join("")))}function nt(e){var t,i=new DataView(e);try{var n,s,r;if(255===i.getUint8(0)&&216===i.getUint8(1))for(var o=i.byteLength,a=2;a+1<o;){if(255===i.getUint8(a)&&225===i.getUint8(a+1)){s=a;break}a+=1}if(s){var l=s+10;if("Exif"===Ze(i,s+4,4)){var u=i.getUint16(l);if(((n=18761===u)||19789===u)&&42===i.getUint16(l+2,n)){var h=i.getUint32(l+4,n);h>=8&&(r=l+h)}}}if(r){var p,c,d=i.getUint16(r,n);for(c=0;c<d;c+=1)if(p=r+12*c+2,274===i.getUint16(p,n)){p+=8,t=i.getUint16(p,n),i.setUint16(p,1,n);break}}}catch(e){t=1}return t}function st(e){var t=0,i=1,n=1;switch(e){case 2:i=-1;break;case 3:t=-180;break;case 4:n=-1;break;case 5:t=90,n=-1;break;case 6:t=90;break;case 7:t=90,i=-1;break;case 8:t=-90}return{rotate:t,scaleX:i,scaleY:n}}var rt={render:function(){this.initContainer(),this.initCanvas(),this.initCropBox(),this.renderCanvas(),this.cropped&&this.renderCropBox()},initContainer:function(){var e=this.element,t=this.options,i=this.container,n=this.cropper;Pe(n,D),Ee(e,D);var s={width:Math.max(i.offsetWidth,Number(t.minContainerWidth)||200),height:Math.max(i.offsetHeight,Number(t.minContainerHeight)||100)};this.containerData=s,Te(n,{width:s.width,height:s.height}),Pe(e,D),Ee(n,D)},initCanvas:function(){var e=this.containerData,t=this.imageData,i=this.options.viewMode,n=Math.abs(t.rotate)%180==90,s=n?t.naturalHeight:t.naturalWidth,r=n?t.naturalWidth:t.naturalHeight,o=s/r,a=e.width,l=e.height;e.height*o>e.width?3===i?a=e.height*o:l=e.width/o:3===i?l=e.width/o:a=e.height*o;var u={aspectRatio:o,naturalWidth:s,naturalHeight:r,width:a,height:l};u.left=(e.width-a)/2,u.top=(e.height-l)/2,u.oldLeft=u.left,u.oldTop=u.top,this.canvasData=u,this.limited=1===i||2===i,this.limitCanvas(!0,!0),this.initialImageData=xe({},t),this.initialCanvasData=xe({},u)},limitCanvas:function(e,t){var i=this.options,n=this.containerData,s=this.canvasData,r=this.cropBoxData,o=i.viewMode,a=s.aspectRatio,l=this.cropped&&r;if(e){var u=Number(i.minCanvasWidth)||0,h=Number(i.minCanvasHeight)||0;o>1?(u=Math.max(u,n.width),h=Math.max(h,n.height),3===o&&(h*a>u?u=h*a:h=u/a)):o>0&&(u?u=Math.max(u,l?r.width:0):h?h=Math.max(h,l?r.height:0):l&&(u=r.width,(h=r.height)*a>u?u=h*a:h=u/a));var p=Ge({aspectRatio:a,width:u,height:h});u=p.width,h=p.height,s.minWidth=u,s.minHeight=h,s.maxWidth=1/0,s.maxHeight=1/0}if(t)if(o>(l?0:1)){var c=n.width-s.width,d=n.height-s.height;s.minLeft=Math.min(0,c),s.minTop=Math.min(0,d),s.maxLeft=Math.max(0,c),s.maxTop=Math.max(0,d),l&&this.limited&&(s.minLeft=Math.min(r.left,r.left+(r.width-s.width)),s.minTop=Math.min(r.top,r.top+(r.height-s.height)),s.maxLeft=r.left,s.maxTop=r.top,2===o&&(s.width>=n.width&&(s.minLeft=Math.min(0,c),s.maxLeft=Math.max(0,c)),s.height>=n.height&&(s.minTop=Math.min(0,d),s.maxTop=Math.max(0,d))))}else s.minLeft=-s.width,s.minTop=-s.height,s.maxLeft=n.width,s.maxTop=n.height},renderCanvas:function(e,t){var i=this.canvasData,n=this.imageData;if(t){var s=Ke({width:n.naturalWidth*Math.abs(n.scaleX||1),height:n.naturalHeight*Math.abs(n.scaleY||1),degree:n.rotate||0}),r=s.width,o=s.height,a=i.width*(r/i.naturalWidth),l=i.height*(o/i.naturalHeight);i.left-=(a-i.width)/2,i.top-=(l-i.height)/2,i.width=a,i.height=l,i.aspectRatio=r/o,i.naturalWidth=r,i.naturalHeight=o,this.limitCanvas(!0,!1)}(i.width>i.maxWidth||i.width<i.minWidth)&&(i.left=i.oldLeft),(i.height>i.maxHeight||i.height<i.minHeight)&&(i.top=i.oldTop),i.width=Math.min(Math.max(i.width,i.minWidth),i.maxWidth),i.height=Math.min(Math.max(i.height,i.minHeight),i.maxHeight),this.limitCanvas(!1,!0),i.left=Math.min(Math.max(i.left,i.minLeft),i.maxLeft),i.top=Math.min(Math.max(i.top,i.minTop),i.maxTop),i.oldLeft=i.left,i.oldTop=i.top,Te(this.canvas,xe({width:i.width,height:i.height},We({translateX:i.left,translateY:i.top}))),this.renderImage(e),this.cropped&&this.limited&&this.limitCropBox(!0,!0)},renderImage:function(e){var t=this.canvasData,i=this.imageData,n=i.naturalWidth*(t.width/t.naturalWidth),s=i.naturalHeight*(t.height/t.naturalHeight);xe(i,{width:n,height:s,left:(t.width-n)/2,top:(t.height-s)/2}),Te(this.image,xe({width:i.width,height:i.height},We(xe({translateX:i.left,translateY:i.top},i)))),e&&this.output()},initCropBox:function(){var e=this.options,t=this.canvasData,i=e.aspectRatio||e.initialAspectRatio,n=Number(e.autoCropArea)||.8,s={width:t.width,height:t.height};i&&(t.height*i>t.width?s.height=s.width/i:s.width=s.height*i),this.cropBoxData=s,this.limitCropBox(!0,!0),s.width=Math.min(Math.max(s.width,s.minWidth),s.maxWidth),s.height=Math.min(Math.max(s.height,s.minHeight),s.maxHeight),s.width=Math.max(s.minWidth,s.width*n),s.height=Math.max(s.minHeight,s.height*n),s.left=t.left+(t.width-s.width)/2,s.top=t.top+(t.height-s.height)/2,s.oldLeft=s.left,s.oldTop=s.top,this.initialCropBoxData=xe({},s)},limitCropBox:function(e,t){var i=this.options,n=this.containerData,s=this.canvasData,r=this.cropBoxData,o=this.limited,a=i.aspectRatio;if(e){var l=Number(i.minCropBoxWidth)||0,u=Number(i.minCropBoxHeight)||0,h=o?Math.min(n.width,s.width,s.width+s.left,n.width-s.left):n.width,p=o?Math.min(n.height,s.height,s.height+s.top,n.height-s.top):n.height;l=Math.min(l,n.width),u=Math.min(u,n.height),a&&(l&&u?u*a>l?u=l/a:l=u*a:l?u=l/a:u&&(l=u*a),p*a>h?p=h/a:h=p*a),r.minWidth=Math.min(l,h),r.minHeight=Math.min(u,p),r.maxWidth=h,r.maxHeight=p}t&&(o?(r.minLeft=Math.max(0,s.left),r.minTop=Math.max(0,s.top),r.maxLeft=Math.min(n.width,s.left+s.width)-r.width,r.maxTop=Math.min(n.height,s.top+s.height)-r.height):(r.minLeft=0,r.minTop=0,r.maxLeft=n.width-r.width,r.maxTop=n.height-r.height))},renderCropBox:function(){var e=this.options,t=this.containerData,i=this.cropBoxData;(i.width>i.maxWidth||i.width<i.minWidth)&&(i.left=i.oldLeft),(i.height>i.maxHeight||i.height<i.minHeight)&&(i.top=i.oldTop),i.width=Math.min(Math.max(i.width,i.minWidth),i.maxWidth),i.height=Math.min(Math.max(i.height,i.minHeight),i.maxHeight),this.limitCropBox(!1,!0),i.left=Math.min(Math.max(i.left,i.minLeft),i.maxLeft),i.top=Math.min(Math.max(i.top,i.minTop),i.maxTop),i.oldLeft=i.left,i.oldTop=i.top,e.movable&&e.cropBoxMovable&&Ne(this.face,L,i.width>=t.width&&i.height>=t.height?w:y),Te(this.cropBox,xe({width:i.width,height:i.height},We({translateX:i.left,translateY:i.top}))),this.cropped&&this.limited&&this.limitCanvas(!0,!0),this.disabled||this.output()},output:function(){this.preview(),Be(this.element,H,this.getData())}},ot={initPreview:function(){var e=this.element,t=this.crossOrigin,i=this.options.preview,n=t?this.crossOriginUrl:this.url,s=e.alt||"The image to preview",r=document.createElement("img");if(t&&(r.crossOrigin=t),r.src=n,r.alt=s,this.viewBox.appendChild(r),this.viewBoxImage=r,i){var o=i;"string"==typeof i?o=e.ownerDocument.querySelectorAll(i):i.querySelector&&(o=[i]),this.previews=o,we(o,(function(e){var i=document.createElement("img");Ne(e,R,{width:e.offsetWidth,height:e.offsetHeight,html:e.innerHTML}),t&&(i.crossOrigin=t),i.src=n,i.alt=s,i.style.cssText='display:block;width:100%;height:auto;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;image-orientation:0deg!important;"',e.innerHTML="",e.appendChild(i)}))}},resetPreview:function(){we(this.previews,(function(e){var t=De(e,R);Te(e,{width:t.width,height:t.height}),e.innerHTML=t.html,Me(e,R)}))},preview:function(){var e=this.imageData,t=this.canvasData,i=this.cropBoxData,n=i.width,s=i.height,r=e.width,o=e.height,a=i.left-t.left-e.left,l=i.top-t.top-e.top;this.cropped&&!this.disabled&&(Te(this.viewBoxImage,xe({width:r,height:o},We(xe({translateX:-a,translateY:-l},e)))),we(this.previews,(function(t){var i=De(t,R),u=i.width,h=i.height,p=u,c=h,d=1;n&&(c=s*(d=u/n)),s&&c>h&&(p=n*(d=h/s),c=h),Te(t,{width:p,height:c}),Te(t.getElementsByTagName("img")[0],xe({width:r*d,height:o*d},We(xe({translateX:-a*d,translateY:-l*d},e))))})))}},at={bind:function(){var e=this.element,t=this.options,i=this.cropper;ve(t.cropstart)&&Re(e,W,t.cropstart),ve(t.cropmove)&&Re(e,$,t.cropmove),ve(t.cropend)&&Re(e,q,t.cropend),ve(t.crop)&&Re(e,H,t.crop),ve(t.zoom)&&Re(e,ie,t.zoom),Re(i,K,this.onCropStart=this.cropStart.bind(this)),t.zoomable&&t.zoomOnWheel&&Re(i,te,this.onWheel=this.wheel.bind(this),{passive:!1,capture:!0}),t.toggleDragModeOnDblclick&&Re(i,V,this.onDblclick=this.dblclick.bind(this)),Re(e.ownerDocument,Q,this.onCropMove=this.cropMove.bind(this)),Re(e.ownerDocument,J,this.onCropEnd=this.cropEnd.bind(this)),t.responsive&&Re(window,ee,this.onResize=this.resize.bind(this))},unbind:function(){var e=this.element,t=this.options,i=this.cropper;ve(t.cropstart)&&Le(e,W,t.cropstart),ve(t.cropmove)&&Le(e,$,t.cropmove),ve(t.cropend)&&Le(e,q,t.cropend),ve(t.crop)&&Le(e,H,t.crop),ve(t.zoom)&&Le(e,ie,t.zoom),Le(i,K,this.onCropStart),t.zoomable&&t.zoomOnWheel&&Le(i,te,this.onWheel,{passive:!1,capture:!0}),t.toggleDragModeOnDblclick&&Le(i,V,this.onDblclick),Le(e.ownerDocument,Q,this.onCropMove),Le(e.ownerDocument,J,this.onCropEnd),t.responsive&&Le(window,ee,this.onResize)}},lt={resize:function(){if(!this.disabled){var e,t,i=this.options,n=this.container,s=this.containerData,r=n.offsetWidth/s.width;1===r&&n.offsetHeight===s.height||(i.restore&&(e=this.getCanvasData(),t=this.getCropBoxData()),this.render(),i.restore&&(this.setCanvasData(we(e,(function(t,i){e[i]=t*r}))),this.setCropBoxData(we(t,(function(e,i){t[i]=e*r})))))}},dblclick:function(){this.disabled||this.options.dragMode===z||this.setDragMode(ke(this.dragBox,O)?j:B)},wheel:function(e){var t=this,i=Number(this.options.wheelZoomRatio)||.1,n=1;this.disabled||(e.preventDefault(),this.wheeling||(this.wheeling=!0,setTimeout((function(){t.wheeling=!1}),50),e.deltaY?n=e.deltaY>0?1:-1:e.wheelDelta?n=-e.wheelDelta/120:e.detail&&(n=e.detail>0?1:-1),this.zoom(-n*i,e)))},cropStart:function(e){var t=e.buttons,i=e.button;if(!(this.disabled||("mousedown"===e.type||"pointerdown"===e.type&&"mouse"===e.pointerType)&&(pe(t)&&1!==t||pe(i)&&0!==i||e.ctrlKey))){var n,s=this.options,r=this.pointers;e.changedTouches?we(e.changedTouches,(function(e){r[e.identifier]=Xe(e)})):r[e.pointerId||0]=Xe(e),n=Object.keys(r).length>1&&s.zoomable&&s.zoomOnTouch?x:De(e.target,L),se.test(n)&&!1!==Be(this.element,W,{originalEvent:e,action:n})&&(e.preventDefault(),this.action=n,this.cropping=!1,n===b&&(this.cropping=!0,Pe(this.dragBox,I)))}},cropMove:function(e){var t=this.action;if(!this.disabled&&t){var i=this.pointers;e.preventDefault(),!1!==Be(this.element,$,{originalEvent:e,action:t})&&(e.changedTouches?we(e.changedTouches,(function(e){xe(i[e.identifier]||{},Xe(e,!0))})):xe(i[e.pointerId||0]||{},Xe(e,!0)),this.change(e))}},cropEnd:function(e){if(!this.disabled){var t=this.action,i=this.pointers;e.changedTouches?we(e.changedTouches,(function(e){delete i[e.identifier]})):delete i[e.pointerId||0],t&&(e.preventDefault(),Object.keys(i).length||(this.action=""),this.cropping&&(this.cropping=!1,Fe(this.dragBox,I,this.cropped&&this.options.modal)),Be(this.element,q,{originalEvent:e,action:t}))}}},ut={change:function(e){var t,i=this.options,n=this.canvasData,s=this.containerData,r=this.cropBoxData,o=this.pointers,a=this.action,l=i.aspectRatio,u=r.left,h=r.top,p=r.width,c=r.height,d=u+p,f=h+c,m=0,g=0,v=s.width,O=s.height,A=!0;!l&&e.shiftKey&&(l=p&&c?p/c:1),this.limited&&(m=r.minLeft,g=r.minTop,v=m+Math.min(s.width,n.width,n.left+n.width),O=g+Math.min(s.height,n.height,n.top+n.height));var N=o[Object.keys(o)[0]],M={x:N.endX-N.startX,y:N.endY-N.startY},I=function(e){switch(e){case C:d+M.x>v&&(M.x=v-d);break;case _:u+M.x<m&&(M.x=m-u);break;case T:h+M.y<g&&(M.y=g-h);break;case S:f+M.y>O&&(M.y=O-f)}};switch(a){case y:u+=M.x,h+=M.y;break;case C:if(M.x>=0&&(d>=v||l&&(h<=g||f>=O))){A=!1;break}I(C),(p+=M.x)<0&&(a=_,u-=p=-p),l&&(c=p/l,h+=(r.height-c)/2);break;case T:if(M.y<=0&&(h<=g||l&&(u<=m||d>=v))){A=!1;break}I(T),c-=M.y,h+=M.y,c<0&&(a=S,h-=c=-c),l&&(p=c*l,u+=(r.width-p)/2);break;case _:if(M.x<=0&&(u<=m||l&&(h<=g||f>=O))){A=!1;break}I(_),p-=M.x,u+=M.x,p<0&&(a=C,u-=p=-p),l&&(c=p/l,h+=(r.height-c)/2);break;case S:if(M.y>=0&&(f>=O||l&&(u<=m||d>=v))){A=!1;break}I(S),(c+=M.y)<0&&(a=T,h-=c=-c),l&&(p=c*l,u+=(r.width-p)/2);break;case k:if(l){if(M.y<=0&&(h<=g||d>=v)){A=!1;break}I(T),c-=M.y,h+=M.y,p=c*l}else I(T),I(C),M.x>=0?d<v?p+=M.x:M.y<=0&&h<=g&&(A=!1):p+=M.x,M.y<=0?h>g&&(c-=M.y,h+=M.y):(c-=M.y,h+=M.y);p<0&&c<0?(a=F,h-=c=-c,u-=p=-p):p<0?(a=P,u-=p=-p):c<0&&(a=E,h-=c=-c);break;case P:if(l){if(M.y<=0&&(h<=g||u<=m)){A=!1;break}I(T),c-=M.y,h+=M.y,p=c*l,u+=r.width-p}else I(T),I(_),M.x<=0?u>m?(p-=M.x,u+=M.x):M.y<=0&&h<=g&&(A=!1):(p-=M.x,u+=M.x),M.y<=0?h>g&&(c-=M.y,h+=M.y):(c-=M.y,h+=M.y);p<0&&c<0?(a=E,h-=c=-c,u-=p=-p):p<0?(a=k,u-=p=-p):c<0&&(a=F,h-=c=-c);break;case F:if(l){if(M.x<=0&&(u<=m||f>=O)){A=!1;break}I(_),p-=M.x,u+=M.x,c=p/l}else I(S),I(_),M.x<=0?u>m?(p-=M.x,u+=M.x):M.y>=0&&f>=O&&(A=!1):(p-=M.x,u+=M.x),M.y>=0?f<O&&(c+=M.y):c+=M.y;p<0&&c<0?(a=k,h-=c=-c,u-=p=-p):p<0?(a=E,u-=p=-p):c<0&&(a=P,h-=c=-c);break;case E:if(l){if(M.x>=0&&(d>=v||f>=O)){A=!1;break}I(C),c=(p+=M.x)/l}else I(S),I(C),M.x>=0?d<v?p+=M.x:M.y>=0&&f>=O&&(A=!1):p+=M.x,M.y>=0?f<O&&(c+=M.y):c+=M.y;p<0&&c<0?(a=P,h-=c=-c,u-=p=-p):p<0?(a=F,u-=p=-p):c<0&&(a=k,h-=c=-c);break;case w:this.move(M.x,M.y),A=!1;break;case x:this.zoom(Ve(o),e),A=!1;break;case b:if(!M.x||!M.y){A=!1;break}t=je(this.cropper),u=N.startX-t.left,h=N.startY-t.top,p=r.minWidth,c=r.minHeight,M.x>0?a=M.y>0?E:k:M.x<0&&(u-=p,a=M.y>0?F:P),M.y<0&&(h-=c),this.cropped||(Ee(this.cropBox,D),this.cropped=!0,this.limited&&this.limitCropBox(!0,!0))}A&&(r.width=p,r.height=c,r.left=u,r.top=h,this.action=a,this.renderCropBox()),we(o,(function(e){e.startX=e.endX,e.startY=e.endY}))}},ht={crop:function(){return!this.ready||this.cropped||this.disabled||(this.cropped=!0,this.limitCropBox(!0,!0),this.options.modal&&Pe(this.dragBox,I),Ee(this.cropBox,D),this.setCropBoxData(this.initialCropBoxData)),this},reset:function(){return this.ready&&!this.disabled&&(this.imageData=xe({},this.initialImageData),this.canvasData=xe({},this.initialCanvasData),this.cropBoxData=xe({},this.initialCropBoxData),this.renderCanvas(),this.cropped&&this.renderCropBox()),this},clear:function(){return this.cropped&&!this.disabled&&(xe(this.cropBoxData,{left:0,top:0,width:0,height:0}),this.cropped=!1,this.renderCropBox(),this.limitCanvas(!0,!0),this.renderCanvas(),Ee(this.dragBox,I),Pe(this.cropBox,D)),this},replace:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];return!this.disabled&&e&&(this.isImg&&(this.element.src=e),t?(this.url=e,this.image.src=e,this.ready&&(this.viewBoxImage.src=e,we(this.previews,(function(t){t.getElementsByTagName("img")[0].src=e})))):(this.isImg&&(this.replaced=!0),this.options.data=null,this.uncreate(),this.load(e))),this},enable:function(){return this.ready&&this.disabled&&(this.disabled=!1,Ee(this.cropper,A)),this},disable:function(){return this.ready&&!this.disabled&&(this.disabled=!0,Pe(this.cropper,A)),this},destroy:function(){var e=this.element;return e[v]?(e[v]=void 0,this.isImg&&this.replaced&&(e.src=this.originalUrl),this.uncreate(),this):this},move:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:e,i=this.canvasData,n=i.left,s=i.top;return this.moveTo(de(e)?e:n+Number(e),de(t)?t:s+Number(t))},moveTo:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:e,i=this.canvasData,n=!1;return e=Number(e),t=Number(t),this.ready&&!this.disabled&&this.options.movable&&(pe(e)&&(i.left=e,n=!0),pe(t)&&(i.top=t,n=!0),n&&this.renderCanvas(!0)),this},zoom:function(e,t){var i=this.canvasData;return e=(e=Number(e))<0?1/(1-e):1+e,this.zoomTo(i.width*e/i.naturalWidth,null,t)},zoomTo:function(e,t,i){var n=this.options,s=this.canvasData,r=s.width,o=s.height,a=s.naturalWidth,l=s.naturalHeight;if((e=Number(e))>=0&&this.ready&&!this.disabled&&n.zoomable){var u=a*e,h=l*e;if(!1===Be(this.element,ie,{ratio:e,oldRatio:r/a,originalEvent:i}))return this;if(i){var p=this.pointers,c=je(this.cropper),d=p&&Object.keys(p).length?Ye(p):{pageX:i.pageX,pageY:i.pageY};s.left-=(u-r)*((d.pageX-c.left-s.left)/r),s.top-=(h-o)*((d.pageY-c.top-s.top)/o)}else ge(t)&&pe(t.x)&&pe(t.y)?(s.left-=(u-r)*((t.x-s.left)/r),s.top-=(h-o)*((t.y-s.top)/o)):(s.left-=(u-r)/2,s.top-=(h-o)/2);s.width=u,s.height=h,this.renderCanvas(!0)}return this},rotate:function(e){return this.rotateTo((this.imageData.rotate||0)+Number(e))},rotateTo:function(e){return pe(e=Number(e))&&this.ready&&!this.disabled&&this.options.rotatable&&(this.imageData.rotate=e%360,this.renderCanvas(!0,!0)),this},scaleX:function(e){var t=this.imageData.scaleY;return this.scale(e,pe(t)?t:1)},scaleY:function(e){var t=this.imageData.scaleX;return this.scale(pe(t)?t:1,e)},scale:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:e,i=this.imageData,n=!1;return e=Number(e),t=Number(t),this.ready&&!this.disabled&&this.options.scalable&&(pe(e)&&(i.scaleX=e,n=!0),pe(t)&&(i.scaleY=t,n=!0),n&&this.renderCanvas(!0,!0)),this},getData:function(){var e,t=arguments.length>0&&void 0!==arguments[0]&&arguments[0],i=this.options,n=this.imageData,s=this.canvasData,r=this.cropBoxData;if(this.ready&&this.cropped){e={x:r.left-s.left,y:r.top-s.top,width:r.width,height:r.height};var o=n.width/n.naturalWidth;if(we(e,(function(t,i){e[i]=t/o})),t){var a=Math.round(e.y+e.height),l=Math.round(e.x+e.width);e.x=Math.round(e.x),e.y=Math.round(e.y),e.width=l-e.x,e.height=a-e.y}}else e={x:0,y:0,width:0,height:0};return i.rotatable&&(e.rotate=n.rotate||0),i.scalable&&(e.scaleX=n.scaleX||1,e.scaleY=n.scaleY||1),e},setData:function(e){var t=this.options,i=this.imageData,n=this.canvasData,s={};if(this.ready&&!this.disabled&&ge(e)){var r=!1;t.rotatable&&pe(e.rotate)&&e.rotate!==i.rotate&&(i.rotate=e.rotate,r=!0),t.scalable&&(pe(e.scaleX)&&e.scaleX!==i.scaleX&&(i.scaleX=e.scaleX,r=!0),pe(e.scaleY)&&e.scaleY!==i.scaleY&&(i.scaleY=e.scaleY,r=!0)),r&&this.renderCanvas(!0,!0);var o=i.width/i.naturalWidth;pe(e.x)&&(s.left=e.x*o+n.left),pe(e.y)&&(s.top=e.y*o+n.top),pe(e.width)&&(s.width=e.width*o),pe(e.height)&&(s.height=e.height*o),this.setCropBoxData(s)}return this},getContainerData:function(){return this.ready?xe({},this.containerData):{}},getImageData:function(){return this.sized?xe({},this.imageData):{}},getCanvasData:function(){var e=this.canvasData,t={};return this.ready&&we(["left","top","width","height","naturalWidth","naturalHeight"],(function(i){t[i]=e[i]})),t},setCanvasData:function(e){var t=this.canvasData,i=t.aspectRatio;return this.ready&&!this.disabled&&ge(e)&&(pe(e.left)&&(t.left=e.left),pe(e.top)&&(t.top=e.top),pe(e.width)?(t.width=e.width,t.height=e.width/i):pe(e.height)&&(t.height=e.height,t.width=e.height*i),this.renderCanvas(!0)),this},getCropBoxData:function(){var e,t=this.cropBoxData;return this.ready&&this.cropped&&(e={left:t.left,top:t.top,width:t.width,height:t.height}),e||{}},setCropBoxData:function(e){var t,i,n=this.cropBoxData,s=this.options.aspectRatio;return this.ready&&this.cropped&&!this.disabled&&ge(e)&&(pe(e.left)&&(n.left=e.left),pe(e.top)&&(n.top=e.top),pe(e.width)&&e.width!==n.width&&(t=!0,n.width=e.width),pe(e.height)&&e.height!==n.height&&(i=!0,n.height=e.height),s&&(t?n.height=n.width/s:i&&(n.width=n.height*s)),this.renderCropBox()),this},getCroppedCanvas:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};if(!this.ready||!window.HTMLCanvasElement)return null;var t=this.canvasData,i=Qe(this.image,this.imageData,t,e);if(!this.cropped)return i;var n=this.getData(),s=n.x,r=n.y,o=n.width,l=n.height,u=i.width/Math.floor(t.naturalWidth);1!==u&&(s*=u,r*=u,o*=u,l*=u);var h=o/l,p=Ge({aspectRatio:h,width:e.maxWidth||1/0,height:e.maxHeight||1/0}),c=Ge({aspectRatio:h,width:e.minWidth||0,height:e.minHeight||0},"cover"),d=Ge({aspectRatio:h,width:e.width||(1!==u?i.width:o),height:e.height||(1!==u?i.height:l)}),f=d.width,m=d.height;f=Math.min(p.width,Math.max(c.width,f)),m=Math.min(p.height,Math.max(c.height,m));var g=document.createElement("canvas"),v=g.getContext("2d");g.width=_e(f),g.height=_e(m),v.fillStyle=e.fillColor||"transparent",v.fillRect(0,0,f,m);var y=e.imageSmoothingEnabled,b=void 0===y||y,w=e.imageSmoothingQuality;v.imageSmoothingEnabled=b,w&&(v.imageSmoothingQuality=w);var x,C,_,S,T,k,P=i.width,E=i.height,F=s,O=r;F<=-o||F>P?(F=0,x=0,_=0,T=0):F<=0?(_=-F,F=0,T=x=Math.min(P,o+F)):F<=P&&(_=0,T=x=Math.min(o,P-F)),x<=0||O<=-l||O>E?(O=0,C=0,S=0,k=0):O<=0?(S=-O,O=0,k=C=Math.min(E,l+O)):O<=E&&(S=0,k=C=Math.min(l,E-O));var A=[F,O,x,C];if(T>0&&k>0){var D=f/o;A.push(_*D,S*D,T*D,k*D)}return v.drawImage.apply(v,[i].concat(a(A.map((function(e){return Math.floor(_e(e))}))))),g},setAspectRatio:function(e){var t=this.options;return this.disabled||de(e)||(t.aspectRatio=Math.max(0,e)||NaN,this.ready&&(this.initCropBox(),this.cropped&&this.renderCropBox())),this},setDragMode:function(e){var t=this.options,i=this.dragBox,n=this.face;if(this.ready&&!this.disabled){var s=e===B,r=t.movable&&e===j;e=s||r?e:z,t.dragMode=e,Ne(i,L,e),Fe(i,O,s),Fe(i,U,r),t.cropBoxMovable||(Ne(n,L,e),Fe(n,O,s),Fe(n,U,r))}return this}},pt=f.Cropper,ct=function(){function e(i){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if(t(this,e),!i||!ae.test(i.tagName))throw new Error("The first argument is required and must be an <img> or <canvas> element.");this.element=i,this.options=xe({},le,ge(n)&&n),this.cropped=!1,this.disabled=!1,this.pointers={},this.ready=!1,this.reloading=!1,this.replaced=!1,this.sized=!1,this.sizing=!1,this.init()}return n(e,[{key:"init",value:function(){var e,t=this.element,i=t.tagName.toLowerCase();if(!t[v]){if(t[v]=this,"img"===i){if(this.isImg=!0,e=t.getAttribute("src")||"",this.originalUrl=e,!e)return;e=t.src}else"canvas"===i&&window.HTMLCanvasElement&&(e=t.toDataURL());this.load(e)}}},{key:"load",value:function(e){var t=this;if(e){this.url=e,this.imageData={};var i=this.element,n=this.options;if(n.rotatable||n.scalable||(n.checkOrientation=!1),n.checkOrientation&&window.ArrayBuffer)if(re.test(e))oe.test(e)?this.read(tt(e)):this.clone();else{var s=new XMLHttpRequest,r=this.clone.bind(this);this.reloading=!0,this.xhr=s,s.onabort=r,s.onerror=r,s.ontimeout=r,s.onprogress=function(){s.getResponseHeader("content-type")!==ne&&s.abort()},s.onload=function(){t.read(s.response)},s.onloadend=function(){t.reloading=!1,t.xhr=null},n.checkCrossOrigin&&qe(e)&&i.crossOrigin&&(e=$e(e)),s.open("GET",e),s.responseType="arraybuffer",s.withCredentials="use-credentials"===i.crossOrigin,s.send()}else this.clone()}}},{key:"read",value:function(e){var t=this.options,i=this.imageData,n=nt(e),s=0,r=1,o=1;if(n>1){this.url=it(e,ne);var a=st(n);s=a.rotate,r=a.scaleX,o=a.scaleY}t.rotatable&&(i.rotate=s),t.scalable&&(i.scaleX=r,i.scaleY=o),this.clone()}},{key:"clone",value:function(){var e=this.element,t=this.url,i=e.crossOrigin,n=t;this.options.checkCrossOrigin&&qe(t)&&(i||(i="anonymous"),n=$e(t)),this.crossOrigin=i,this.crossOriginUrl=n;var s=document.createElement("img");i&&(s.crossOrigin=i),s.src=n||t,s.alt=e.alt||"The image to crop",this.image=s,s.onload=this.start.bind(this),s.onerror=this.stop.bind(this),Pe(s,N),e.parentNode.insertBefore(s,e.nextSibling)}},{key:"start",value:function(){var e=this,t=this.image;t.onload=null,t.onerror=null,this.sizing=!0;var i=f.navigator&&/(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(f.navigator.userAgent),n=function(t,i){xe(e.imageData,{naturalWidth:t,naturalHeight:i,aspectRatio:t/i}),e.sizing=!1,e.sized=!0,e.build()};if(!t.naturalWidth||i){var s=document.createElement("img"),r=document.body||document.documentElement;this.sizingImage=s,s.onload=function(){n(s.width,s.height),i||r.removeChild(s)},s.src=t.src,i||(s.style.cssText="left:0;max-height:none!important;max-width:none!important;min-height:0!important;min-width:0!important;opacity:0;position:absolute;top:0;z-index:-1;",r.appendChild(s))}else n(t.naturalWidth,t.naturalHeight)}},{key:"stop",value:function(){var e=this.image;e.onload=null,e.onerror=null,e.parentNode.removeChild(e),this.image=null}},{key:"build",value:function(){if(this.sized&&!this.ready){var e=this.element,t=this.options,i=this.image,n=e.parentNode,s=document.createElement("div");s.innerHTML=ue;var r=s.querySelector(".".concat(v,"-container")),o=r.querySelector(".".concat(v,"-canvas")),a=r.querySelector(".".concat(v,"-drag-box")),l=r.querySelector(".".concat(v,"-crop-box")),u=l.querySelector(".".concat(v,"-face"));this.container=n,this.cropper=r,this.canvas=o,this.dragBox=a,this.cropBox=l,this.viewBox=r.querySelector(".".concat(v,"-view-box")),this.face=u,o.appendChild(i),Pe(e,D),n.insertBefore(r,e.nextSibling),this.isImg||Ee(i,N),this.initPreview(),this.bind(),t.initialAspectRatio=Math.max(0,t.initialAspectRatio)||NaN,t.aspectRatio=Math.max(0,t.aspectRatio)||NaN,t.viewMode=Math.max(0,Math.min(3,Math.round(t.viewMode)))||0,Pe(l,D),t.guides||Pe(l.getElementsByClassName("".concat(v,"-dashed")),D),t.center||Pe(l.getElementsByClassName("".concat(v,"-center")),D),t.background&&Pe(r,"".concat(v,"-bg")),t.highlight||Pe(u,M),t.cropBoxMovable&&(Pe(u,U),Ne(u,L,y)),t.cropBoxResizable||(Pe(l.getElementsByClassName("".concat(v,"-line")),D),Pe(l.getElementsByClassName("".concat(v,"-point")),D)),this.render(),this.ready=!0,this.setDragMode(t.dragMode),t.autoCrop&&this.crop(),this.setData(t.data),ve(t.ready)&&Re(e,Z,t.ready,{once:!0}),Be(e,Z)}}},{key:"unbuild",value:function(){this.ready&&(this.ready=!1,this.unbind(),this.resetPreview(),this.cropper.parentNode.removeChild(this.cropper),Ee(this.element,D))}},{key:"uncreate",value:function(){this.ready?(this.unbuild(),this.ready=!1,this.cropped=!1):this.sizing?(this.sizingImage.onload=null,this.sizing=!1,this.sized=!1):this.reloading?(this.xhr.onabort=null,this.xhr.abort()):this.image&&this.stop()}}],[{key:"noConflict",value:function(){return window.Cropper=pt,e}},{key:"setDefaults",value:function(e){xe(le,ge(e)&&e)}}]),e}();return xe(ct.prototype,rt,ot,at,lt,ut,ht),ct}()},81:e=>{e.exports=function(e,t){if(e===t)return!0;for(var i in e)if(!(i in t))return!1;for(var i in t)if(e[i]!==t[i])return!1;return!0}},6912:(e,t,i)=>{var n,s;!function(){"use strict";void 0===(s="function"==typeof(n=["jquery","./data","./disable-selection","./focusable","./form","./ie","./keycode","./labels","./jquery-patch.js","./plugin","./safe-active-element","./safe-blur","./scroll-parent","./tabbable","./unique-id","./version"])?n.call(t,i,t,e):n)||(e.exports=s)}()},6400:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],void 0===(r="function"==typeof(n=function(e){return e.extend(e.expr.pseudos,{data:e.expr.createPseudo?e.expr.createPseudo((function(t){return function(i){return!!e.data(i,t)}})):function(t,i,n){return!!e.data(t,n[3])}})})?n.apply(t,s):n)||(e.exports=r)}()},1870:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],void 0===(r="function"==typeof(n=function(e){return e.ui.ie=!!/msie [\w.]+/.exec(navigator.userAgent.toLowerCase())})?n.apply(t,s):n)||(e.exports=r)}()},1624:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],n=function(e){return e.ui.plugin={add:function(t,i,n){var s,r=e.ui[t].prototype;for(s in n)r.plugins[s]=r.plugins[s]||[],r.plugins[s].push([i,n[s]])},call:function(e,t,i,n){var s,r=e.plugins[t];if(r&&(n||e.element[0].parentNode&&11!==e.element[0].parentNode.nodeType))for(s=0;s<r.length;s++)e.options[r[s][0]]&&r[s][1].apply(e.element,i)}}},void 0===(r="function"==typeof n?n.apply(t,s):n)||(e.exports=r)}()},6575:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],void 0===(r="function"==typeof(n=function(e){return e.ui.safeActiveElement=function(e){var t;try{t=e.activeElement}catch(i){t=e.body}return t||(t=e.body),t.nodeName||(t=e.body),t}})?n.apply(t,s):n)||(e.exports=r)}()},192:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],void 0===(r="function"==typeof(n=function(e){return e.ui.safeBlur=function(t){t&&"body"!==t.nodeName.toLowerCase()&&e(t).trigger("blur")}})?n.apply(t,s):n)||(e.exports=r)}()},464:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],void 0===(r="function"==typeof(n=function(e){return e.fn.scrollParent=function(t){var i=this.css("position"),n="absolute"===i,s=t?/(auto|scroll|hidden)/:/(auto|scroll)/,r=this.parents().filter((function(){var t=e(this);return(!n||"static"!==t.css("position"))&&s.test(t.css("overflow")+t.css("overflow-y")+t.css("overflow-x"))})).eq(0);return"fixed"!==i&&r.length?r:e(this[0].ownerDocument||document)}})?n.apply(t,s):n)||(e.exports=r)}()},5592:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755)],void 0===(r="function"==typeof(n=function(e){return e.ui=e.ui||{},e.ui.version="1.13.2"})?n.apply(t,s):n)||(e.exports=r)}()},6891:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(5592)],n=function(e){var t=0,i=Array.prototype.hasOwnProperty,n=Array.prototype.slice;return e.cleanData=function(t){return function(i){var n,s,r;for(r=0;null!=(s=i[r]);r++)(n=e._data(s,"events"))&&n.remove&&e(s).triggerHandler("remove");t(i)}}(e.cleanData),e.widget=function(t,i,n){var s,r,o,a={},l=t.split(".")[0],u=l+"-"+(t=t.split(".")[1]);return n||(n=i,i=e.Widget),Array.isArray(n)&&(n=e.extend.apply(null,[{}].concat(n))),e.expr.pseudos[u.toLowerCase()]=function(t){return!!e.data(t,u)},e[l]=e[l]||{},s=e[l][t],r=e[l][t]=function(e,t){if(!this||!this._createWidget)return new r(e,t);arguments.length&&this._createWidget(e,t)},e.extend(r,s,{version:n.version,_proto:e.extend({},n),_childConstructors:[]}),(o=new i).options=e.widget.extend({},o.options),e.each(n,(function(e,t){a[e]="function"==typeof t?function(){function n(){return i.prototype[e].apply(this,arguments)}function s(t){return i.prototype[e].apply(this,t)}return function(){var e,i=this._super,r=this._superApply;return this._super=n,this._superApply=s,e=t.apply(this,arguments),this._super=i,this._superApply=r,e}}():t})),r.prototype=e.widget.extend(o,{widgetEventPrefix:s&&o.widgetEventPrefix||t},a,{constructor:r,namespace:l,widgetName:t,widgetFullName:u}),s?(e.each(s._childConstructors,(function(t,i){var n=i.prototype;e.widget(n.namespace+"."+n.widgetName,r,i._proto)})),delete s._childConstructors):i._childConstructors.push(r),e.widget.bridge(t,r),r},e.widget.extend=function(t){for(var s,r,o=n.call(arguments,1),a=0,l=o.length;a<l;a++)for(s in o[a])r=o[a][s],i.call(o[a],s)&&void 0!==r&&(e.isPlainObject(r)?t[s]=e.isPlainObject(t[s])?e.widget.extend({},t[s],r):e.widget.extend({},r):t[s]=r);return t},e.widget.bridge=function(t,i){var s=i.prototype.widgetFullName||t;e.fn[t]=function(r){var o="string"==typeof r,a=n.call(arguments,1),l=this;return o?this.length||"instance"!==r?this.each((function(){var i,n=e.data(this,s);return"instance"===r?(l=n,!1):n?"function"!=typeof n[r]||"_"===r.charAt(0)?e.error("no such method '"+r+"' for "+t+" widget instance"):(i=n[r].apply(n,a))!==n&&void 0!==i?(l=i&&i.jquery?l.pushStack(i.get()):i,!1):void 0:e.error("cannot call methods on "+t+" prior to initialization; attempted to call method '"+r+"'")})):l=void 0:(a.length&&(r=e.widget.extend.apply(null,[r].concat(a))),this.each((function(){var t=e.data(this,s);t?(t.option(r||{}),t._init&&t._init()):e.data(this,s,new i(r,this))}))),l}},e.Widget=function(){},e.Widget._childConstructors=[],e.Widget.prototype={widgetName:"widget",widgetEventPrefix:"",defaultElement:"<div>",options:{classes:{},disabled:!1,create:null},_createWidget:function(i,n){n=e(n||this.defaultElement||this)[0],this.element=e(n),this.uuid=t++,this.eventNamespace="."+this.widgetName+this.uuid,this.bindings=e(),this.hoverable=e(),this.focusable=e(),this.classesElementLookup={},n!==this&&(e.data(n,this.widgetFullName,this),this._on(!0,this.element,{remove:function(e){e.target===n&&this.destroy()}}),this.document=e(n.style?n.ownerDocument:n.document||n),this.window=e(this.document[0].defaultView||this.document[0].parentWindow)),this.options=e.widget.extend({},this.options,this._getCreateOptions(),i),this._create(),this.options.disabled&&this._setOptionDisabled(this.options.disabled),this._trigger("create",null,this._getCreateEventData()),this._init()},_getCreateOptions:function(){return{}},_getCreateEventData:e.noop,_create:e.noop,_init:e.noop,destroy:function(){var t=this;this._destroy(),e.each(this.classesElementLookup,(function(e,i){t._removeClass(i,e)})),this.element.off(this.eventNamespace).removeData(this.widgetFullName),this.widget().off(this.eventNamespace).removeAttr("aria-disabled"),this.bindings.off(this.eventNamespace)},_destroy:e.noop,widget:function(){return this.element},option:function(t,i){var n,s,r,o=t;if(0===arguments.length)return e.widget.extend({},this.options);if("string"==typeof t)if(o={},n=t.split("."),t=n.shift(),n.length){for(s=o[t]=e.widget.extend({},this.options[t]),r=0;r<n.length-1;r++)s[n[r]]=s[n[r]]||{},s=s[n[r]];if(t=n.pop(),1===arguments.length)return void 0===s[t]?null:s[t];s[t]=i}else{if(1===arguments.length)return void 0===this.options[t]?null:this.options[t];o[t]=i}return this._setOptions(o),this},_setOptions:function(e){var t;for(t in e)this._setOption(t,e[t]);return this},_setOption:function(e,t){return"classes"===e&&this._setOptionClasses(t),this.options[e]=t,"disabled"===e&&this._setOptionDisabled(t),this},_setOptionClasses:function(t){var i,n,s;for(i in t)s=this.classesElementLookup[i],t[i]!==this.options.classes[i]&&s&&s.length&&(n=e(s.get()),this._removeClass(s,i),n.addClass(this._classes({element:n,keys:i,classes:t,add:!0})))},_setOptionDisabled:function(e){this._toggleClass(this.widget(),this.widgetFullName+"-disabled",null,!!e),e&&(this._removeClass(this.hoverable,null,"ui-state-hover"),this._removeClass(this.focusable,null,"ui-state-focus"))},enable:function(){return this._setOptions({disabled:!1})},disable:function(){return this._setOptions({disabled:!0})},_classes:function(t){var i=[],n=this;function s(){var i=[];t.element.each((function(t,s){e.map(n.classesElementLookup,(function(e){return e})).some((function(e){return e.is(s)}))||i.push(s)})),n._on(e(i),{remove:"_untrackClassesElement"})}function r(r,o){var a,l;for(l=0;l<r.length;l++)a=n.classesElementLookup[r[l]]||e(),t.add?(s(),a=e(e.uniqueSort(a.get().concat(t.element.get())))):a=e(a.not(t.element).get()),n.classesElementLookup[r[l]]=a,i.push(r[l]),o&&t.classes[r[l]]&&i.push(t.classes[r[l]])}return(t=e.extend({element:this.element,classes:this.options.classes||{}},t)).keys&&r(t.keys.match(/\S+/g)||[],!0),t.extra&&r(t.extra.match(/\S+/g)||[]),i.join(" ")},_untrackClassesElement:function(t){var i=this;e.each(i.classesElementLookup,(function(n,s){-1!==e.inArray(t.target,s)&&(i.classesElementLookup[n]=e(s.not(t.target).get()))})),this._off(e(t.target))},_removeClass:function(e,t,i){return this._toggleClass(e,t,i,!1)},_addClass:function(e,t,i){return this._toggleClass(e,t,i,!0)},_toggleClass:function(e,t,i,n){n="boolean"==typeof n?n:i;var s="string"==typeof e||null===e,r={extra:s?t:i,keys:s?e:t,element:s?this.element:e,add:n};return r.element.toggleClass(this._classes(r),n),this},_on:function(t,i,n){var s,r=this;"boolean"!=typeof t&&(n=i,i=t,t=!1),n?(i=s=e(i),this.bindings=this.bindings.add(i)):(n=i,i=this.element,s=this.widget()),e.each(n,(function(n,o){function a(){if(t||!0!==r.options.disabled&&!e(this).hasClass("ui-state-disabled"))return("string"==typeof o?r[o]:o).apply(r,arguments)}"string"!=typeof o&&(a.guid=o.guid=o.guid||a.guid||e.guid++);var l=n.match(/^([\w:-]*)\s*(.*)$/),u=l[1]+r.eventNamespace,h=l[2];h?s.on(u,h,a):i.on(u,a)}))},_off:function(t,i){i=(i||"").split(" ").join(this.eventNamespace+" ")+this.eventNamespace,t.off(i),this.bindings=e(this.bindings.not(t).get()),this.focusable=e(this.focusable.not(t).get()),this.hoverable=e(this.hoverable.not(t).get())},_delay:function(e,t){function i(){return("string"==typeof e?n[e]:e).apply(n,arguments)}var n=this;return setTimeout(i,t||0)},_hoverable:function(t){this.hoverable=this.hoverable.add(t),this._on(t,{mouseenter:function(t){this._addClass(e(t.currentTarget),null,"ui-state-hover")},mouseleave:function(t){this._removeClass(e(t.currentTarget),null,"ui-state-hover")}})},_focusable:function(t){this.focusable=this.focusable.add(t),this._on(t,{focusin:function(t){this._addClass(e(t.currentTarget),null,"ui-state-focus")},focusout:function(t){this._removeClass(e(t.currentTarget),null,"ui-state-focus")}})},_trigger:function(t,i,n){var s,r,o=this.options[t];if(n=n||{},(i=e.Event(i)).type=(t===this.widgetEventPrefix?t:this.widgetEventPrefix+t).toLowerCase(),i.target=this.element[0],r=i.originalEvent)for(s in r)s in i||(i[s]=r[s]);return this.element.trigger(i,n),!("function"==typeof o&&!1===o.apply(this.element[0],[i].concat(n))||i.isDefaultPrevented())}},e.each({show:"fadeIn",hide:"fadeOut"},(function(t,i){e.Widget.prototype["_"+t]=function(n,s,r){var o;"string"==typeof s&&(s={effect:s});var a=s?!0===s||"number"==typeof s?i:s.effect||i:t;"number"==typeof(s=s||{})?s={duration:s}:!0===s&&(s={}),o=!e.isEmptyObject(s),s.complete=r,s.delay&&n.delay(s.delay),o&&e.effects&&e.effects.effect[a]?n[t](s):a!==t&&n[a]?n[a](s.duration,s.easing,r):n.queue((function(i){e(this)[t](),r&&r.call(n[0]),i()}))}})),e.widget},void 0===(r="function"==typeof n?n.apply(t,s):n)||(e.exports=r)}()},7285:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(6177),i(6400),i(1624),i(6575),i(192),i(464),i(5592),i(6891)],void 0===(r="function"==typeof(n=function(e){return e.widget("ui.draggable",e.ui.mouse,{version:"1.13.2",widgetEventPrefix:"drag",options:{addClasses:!0,appendTo:"parent",axis:!1,connectToSortable:!1,containment:!1,cursor:"auto",cursorAt:!1,grid:!1,handle:!1,helper:"original",iframeFix:!1,opacity:!1,refreshPositions:!1,revert:!1,revertDuration:500,scope:"default",scroll:!0,scrollSensitivity:20,scrollSpeed:20,snap:!1,snapMode:"both",snapTolerance:20,stack:!1,zIndex:!1,drag:null,start:null,stop:null},_create:function(){"original"===this.options.helper&&this._setPositionRelative(),this.options.addClasses&&this._addClass("ui-draggable"),this._setHandleClassName(),this._mouseInit()},_setOption:function(e,t){this._super(e,t),"handle"===e&&(this._removeHandleClassName(),this._setHandleClassName())},_destroy:function(){(this.helper||this.element).is(".ui-draggable-dragging")?this.destroyOnClear=!0:(this._removeHandleClassName(),this._mouseDestroy())},_mouseCapture:function(t){var i=this.options;return!(this.helper||i.disabled||e(t.target).closest(".ui-resizable-handle").length>0)&&(this.handle=this._getHandle(t),!!this.handle&&(this._blurActiveElement(t),this._blockFrames(!0===i.iframeFix?"iframe":i.iframeFix),!0))},_blockFrames:function(t){this.iframeBlocks=this.document.find(t).map((function(){var t=e(this);return e("<div>").css("position","absolute").appendTo(t.parent()).outerWidth(t.outerWidth()).outerHeight(t.outerHeight()).offset(t.offset())[0]}))},_unblockFrames:function(){this.iframeBlocks&&(this.iframeBlocks.remove(),delete this.iframeBlocks)},_blurActiveElement:function(t){var i=e.ui.safeActiveElement(this.document[0]);e(t.target).closest(i).length||e.ui.safeBlur(i)},_mouseStart:function(t){var i=this.options;return this.helper=this._createHelper(t),this._addClass(this.helper,"ui-draggable-dragging"),this._cacheHelperProportions(),e.ui.ddmanager&&(e.ui.ddmanager.current=this),this._cacheMargins(),this.cssPosition=this.helper.css("position"),this.scrollParent=this.helper.scrollParent(!0),this.offsetParent=this.helper.offsetParent(),this.hasFixedAncestor=this.helper.parents().filter((function(){return"fixed"===e(this).css("position")})).length>0,this.positionAbs=this.element.offset(),this._refreshOffsets(t),this.originalPosition=this.position=this._generatePosition(t,!1),this.originalPageX=t.pageX,this.originalPageY=t.pageY,i.cursorAt&&this._adjustOffsetFromHelper(i.cursorAt),this._setContainment(),!1===this._trigger("start",t)?(this._clear(),!1):(this._cacheHelperProportions(),e.ui.ddmanager&&!i.dropBehaviour&&e.ui.ddmanager.prepareOffsets(this,t),this._mouseDrag(t,!0),e.ui.ddmanager&&e.ui.ddmanager.dragStart(this,t),!0)},_refreshOffsets:function(e){this.offset={top:this.positionAbs.top-this.margins.top,left:this.positionAbs.left-this.margins.left,scroll:!1,parent:this._getParentOffset(),relative:this._getRelativeOffset()},this.offset.click={left:e.pageX-this.offset.left,top:e.pageY-this.offset.top}},_mouseDrag:function(t,i){if(this.hasFixedAncestor&&(this.offset.parent=this._getParentOffset()),this.position=this._generatePosition(t,!0),this.positionAbs=this._convertPositionTo("absolute"),!i){var n=this._uiHash();if(!1===this._trigger("drag",t,n))return this._mouseUp(new e.Event("mouseup",t)),!1;this.position=n.position}return this.helper[0].style.left=this.position.left+"px",this.helper[0].style.top=this.position.top+"px",e.ui.ddmanager&&e.ui.ddmanager.drag(this,t),!1},_mouseStop:function(t){var i=this,n=!1;return e.ui.ddmanager&&!this.options.dropBehaviour&&(n=e.ui.ddmanager.drop(this,t)),this.dropped&&(n=this.dropped,this.dropped=!1),"invalid"===this.options.revert&&!n||"valid"===this.options.revert&&n||!0===this.options.revert||"function"==typeof this.options.revert&&this.options.revert.call(this.element,n)?e(this.helper).animate(this.originalPosition,parseInt(this.options.revertDuration,10),(function(){!1!==i._trigger("stop",t)&&i._clear()})):!1!==this._trigger("stop",t)&&this._clear(),!1},_mouseUp:function(t){return this._unblockFrames(),e.ui.ddmanager&&e.ui.ddmanager.dragStop(this,t),this.handleElement.is(t.target)&&this.element.trigger("focus"),e.ui.mouse.prototype._mouseUp.call(this,t)},cancel:function(){return this.helper.is(".ui-draggable-dragging")?this._mouseUp(new e.Event("mouseup",{target:this.element[0]})):this._clear(),this},_getHandle:function(t){return!this.options.handle||!!e(t.target).closest(this.element.find(this.options.handle)).length},_setHandleClassName:function(){this.handleElement=this.options.handle?this.element.find(this.options.handle):this.element,this._addClass(this.handleElement,"ui-draggable-handle")},_removeHandleClassName:function(){this._removeClass(this.handleElement,"ui-draggable-handle")},_createHelper:function(t){var i=this.options,n="function"==typeof i.helper,s=n?e(i.helper.apply(this.element[0],[t])):"clone"===i.helper?this.element.clone().removeAttr("id"):this.element;return s.parents("body").length||s.appendTo("parent"===i.appendTo?this.element[0].parentNode:i.appendTo),n&&s[0]===this.element[0]&&this._setPositionRelative(),s[0]===this.element[0]||/(fixed|absolute)/.test(s.css("position"))||s.css("position","absolute"),s},_setPositionRelative:function(){/^(?:r|a|f)/.test(this.element.css("position"))||(this.element[0].style.position="relative")},_adjustOffsetFromHelper:function(e){"string"==typeof e&&(e=e.split(" ")),Array.isArray(e)&&(e={left:+e[0],top:+e[1]||0}),"left"in e&&(this.offset.click.left=e.left+this.margins.left),"right"in e&&(this.offset.click.left=this.helperProportions.width-e.right+this.margins.left),"top"in e&&(this.offset.click.top=e.top+this.margins.top),"bottom"in e&&(this.offset.click.top=this.helperProportions.height-e.bottom+this.margins.top)},_isRootNode:function(e){return/(html|body)/i.test(e.tagName)||e===this.document[0]},_getParentOffset:function(){var t=this.offsetParent.offset(),i=this.document[0];return"absolute"===this.cssPosition&&this.scrollParent[0]!==i&&e.contains(this.scrollParent[0],this.offsetParent[0])&&(t.left+=this.scrollParent.scrollLeft(),t.top+=this.scrollParent.scrollTop()),this._isRootNode(this.offsetParent[0])&&(t={top:0,left:0}),{top:t.top+(parseInt(this.offsetParent.css("borderTopWidth"),10)||0),left:t.left+(parseInt(this.offsetParent.css("borderLeftWidth"),10)||0)}},_getRelativeOffset:function(){if("relative"!==this.cssPosition)return{top:0,left:0};var e=this.element.position(),t=this._isRootNode(this.scrollParent[0]);return{top:e.top-(parseInt(this.helper.css("top"),10)||0)+(t?0:this.scrollParent.scrollTop()),left:e.left-(parseInt(this.helper.css("left"),10)||0)+(t?0:this.scrollParent.scrollLeft())}},_cacheMargins:function(){this.margins={left:parseInt(this.element.css("marginLeft"),10)||0,top:parseInt(this.element.css("marginTop"),10)||0,right:parseInt(this.element.css("marginRight"),10)||0,bottom:parseInt(this.element.css("marginBottom"),10)||0}},_cacheHelperProportions:function(){this.helperProportions={width:this.helper.outerWidth(),height:this.helper.outerHeight()}},_setContainment:function(){var t,i,n,s=this.options,r=this.document[0];this.relativeContainer=null,s.containment?"window"!==s.containment?"document"!==s.containment?s.containment.constructor!==Array?("parent"===s.containment&&(s.containment=this.helper[0].parentNode),(n=(i=e(s.containment))[0])&&(t=/(scroll|auto)/.test(i.css("overflow")),this.containment=[(parseInt(i.css("borderLeftWidth"),10)||0)+(parseInt(i.css("paddingLeft"),10)||0),(parseInt(i.css("borderTopWidth"),10)||0)+(parseInt(i.css("paddingTop"),10)||0),(t?Math.max(n.scrollWidth,n.offsetWidth):n.offsetWidth)-(parseInt(i.css("borderRightWidth"),10)||0)-(parseInt(i.css("paddingRight"),10)||0)-this.helperProportions.width-this.margins.left-this.margins.right,(t?Math.max(n.scrollHeight,n.offsetHeight):n.offsetHeight)-(parseInt(i.css("borderBottomWidth"),10)||0)-(parseInt(i.css("paddingBottom"),10)||0)-this.helperProportions.height-this.margins.top-this.margins.bottom],this.relativeContainer=i)):this.containment=s.containment:this.containment=[0,0,e(r).width()-this.helperProportions.width-this.margins.left,(e(r).height()||r.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top]:this.containment=[e(window).scrollLeft()-this.offset.relative.left-this.offset.parent.left,e(window).scrollTop()-this.offset.relative.top-this.offset.parent.top,e(window).scrollLeft()+e(window).width()-this.helperProportions.width-this.margins.left,e(window).scrollTop()+(e(window).height()||r.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top]:this.containment=null},_convertPositionTo:function(e,t){t||(t=this.position);var i="absolute"===e?1:-1,n=this._isRootNode(this.scrollParent[0]);return{top:t.top+this.offset.relative.top*i+this.offset.parent.top*i-("fixed"===this.cssPosition?-this.offset.scroll.top:n?0:this.offset.scroll.top)*i,left:t.left+this.offset.relative.left*i+this.offset.parent.left*i-("fixed"===this.cssPosition?-this.offset.scroll.left:n?0:this.offset.scroll.left)*i}},_generatePosition:function(e,t){var i,n,s,r,o=this.options,a=this._isRootNode(this.scrollParent[0]),l=e.pageX,u=e.pageY;return a&&this.offset.scroll||(this.offset.scroll={top:this.scrollParent.scrollTop(),left:this.scrollParent.scrollLeft()}),t&&(this.containment&&(this.relativeContainer?(n=this.relativeContainer.offset(),i=[this.containment[0]+n.left,this.containment[1]+n.top,this.containment[2]+n.left,this.containment[3]+n.top]):i=this.containment,e.pageX-this.offset.click.left<i[0]&&(l=i[0]+this.offset.click.left),e.pageY-this.offset.click.top<i[1]&&(u=i[1]+this.offset.click.top),e.pageX-this.offset.click.left>i[2]&&(l=i[2]+this.offset.click.left),e.pageY-this.offset.click.top>i[3]&&(u=i[3]+this.offset.click.top)),o.grid&&(s=o.grid[1]?this.originalPageY+Math.round((u-this.originalPageY)/o.grid[1])*o.grid[1]:this.originalPageY,u=i?s-this.offset.click.top>=i[1]||s-this.offset.click.top>i[3]?s:s-this.offset.click.top>=i[1]?s-o.grid[1]:s+o.grid[1]:s,r=o.grid[0]?this.originalPageX+Math.round((l-this.originalPageX)/o.grid[0])*o.grid[0]:this.originalPageX,l=i?r-this.offset.click.left>=i[0]||r-this.offset.click.left>i[2]?r:r-this.offset.click.left>=i[0]?r-o.grid[0]:r+o.grid[0]:r),"y"===o.axis&&(l=this.originalPageX),"x"===o.axis&&(u=this.originalPageY)),{top:u-this.offset.click.top-this.offset.relative.top-this.offset.parent.top+("fixed"===this.cssPosition?-this.offset.scroll.top:a?0:this.offset.scroll.top),left:l-this.offset.click.left-this.offset.relative.left-this.offset.parent.left+("fixed"===this.cssPosition?-this.offset.scroll.left:a?0:this.offset.scroll.left)}},_clear:function(){this._removeClass(this.helper,"ui-draggable-dragging"),this.helper[0]===this.element[0]||this.cancelHelperRemoval||this.helper.remove(),this.helper=null,this.cancelHelperRemoval=!1,this.destroyOnClear&&this.destroy()},_trigger:function(t,i,n){return n=n||this._uiHash(),e.ui.plugin.call(this,t,[i,n,this],!0),/^(drag|start|stop)/.test(t)&&(this.positionAbs=this._convertPositionTo("absolute"),n.offset=this.positionAbs),e.Widget.prototype._trigger.call(this,t,i,n)},plugins:{},_uiHash:function(){return{helper:this.helper,position:this.position,originalPosition:this.originalPosition,offset:this.positionAbs}}}),e.ui.plugin.add("draggable","connectToSortable",{start:function(t,i,n){var s=e.extend({},i,{item:n.element});n.sortables=[],e(n.options.connectToSortable).each((function(){var i=e(this).sortable("instance");i&&!i.options.disabled&&(n.sortables.push(i),i.refreshPositions(),i._trigger("activate",t,s))}))},stop:function(t,i,n){var s=e.extend({},i,{item:n.element});n.cancelHelperRemoval=!1,e.each(n.sortables,(function(){var e=this;e.isOver?(e.isOver=0,n.cancelHelperRemoval=!0,e.cancelHelperRemoval=!1,e._storedCSS={position:e.placeholder.css("position"),top:e.placeholder.css("top"),left:e.placeholder.css("left")},e._mouseStop(t),e.options.helper=e.options._helper):(e.cancelHelperRemoval=!0,e._trigger("deactivate",t,s))}))},drag:function(t,i,n){e.each(n.sortables,(function(){var s=!1,r=this;r.positionAbs=n.positionAbs,r.helperProportions=n.helperProportions,r.offset.click=n.offset.click,r._intersectsWith(r.containerCache)&&(s=!0,e.each(n.sortables,(function(){return this.positionAbs=n.positionAbs,this.helperProportions=n.helperProportions,this.offset.click=n.offset.click,this!==r&&this._intersectsWith(this.containerCache)&&e.contains(r.element[0],this.element[0])&&(s=!1),s}))),s?(r.isOver||(r.isOver=1,n._parent=i.helper.parent(),r.currentItem=i.helper.appendTo(r.element).data("ui-sortable-item",!0),r.options._helper=r.options.helper,r.options.helper=function(){return i.helper[0]},t.target=r.currentItem[0],r._mouseCapture(t,!0),r._mouseStart(t,!0,!0),r.offset.click.top=n.offset.click.top,r.offset.click.left=n.offset.click.left,r.offset.parent.left-=n.offset.parent.left-r.offset.parent.left,r.offset.parent.top-=n.offset.parent.top-r.offset.parent.top,n._trigger("toSortable",t),n.dropped=r.element,e.each(n.sortables,(function(){this.refreshPositions()})),n.currentItem=n.element,r.fromOutside=n),r.currentItem&&(r._mouseDrag(t),i.position=r.position)):r.isOver&&(r.isOver=0,r.cancelHelperRemoval=!0,r.options._revert=r.options.revert,r.options.revert=!1,r._trigger("out",t,r._uiHash(r)),r._mouseStop(t,!0),r.options.revert=r.options._revert,r.options.helper=r.options._helper,r.placeholder&&r.placeholder.remove(),i.helper.appendTo(n._parent),n._refreshOffsets(t),i.position=n._generatePosition(t,!0),n._trigger("fromSortable",t),n.dropped=!1,e.each(n.sortables,(function(){this.refreshPositions()})))}))}}),e.ui.plugin.add("draggable","cursor",{start:function(t,i,n){var s=e("body"),r=n.options;s.css("cursor")&&(r._cursor=s.css("cursor")),s.css("cursor",r.cursor)},stop:function(t,i,n){var s=n.options;s._cursor&&e("body").css("cursor",s._cursor)}}),e.ui.plugin.add("draggable","opacity",{start:function(t,i,n){var s=e(i.helper),r=n.options;s.css("opacity")&&(r._opacity=s.css("opacity")),s.css("opacity",r.opacity)},stop:function(t,i,n){var s=n.options;s._opacity&&e(i.helper).css("opacity",s._opacity)}}),e.ui.plugin.add("draggable","scroll",{start:function(e,t,i){i.scrollParentNotHidden||(i.scrollParentNotHidden=i.helper.scrollParent(!1)),i.scrollParentNotHidden[0]!==i.document[0]&&"HTML"!==i.scrollParentNotHidden[0].tagName&&(i.overflowOffset=i.scrollParentNotHidden.offset())},drag:function(t,i,n){var s=n.options,r=!1,o=n.scrollParentNotHidden[0],a=n.document[0];o!==a&&"HTML"!==o.tagName?(s.axis&&"x"===s.axis||(n.overflowOffset.top+o.offsetHeight-t.pageY<s.scrollSensitivity?o.scrollTop=r=o.scrollTop+s.scrollSpeed:t.pageY-n.overflowOffset.top<s.scrollSensitivity&&(o.scrollTop=r=o.scrollTop-s.scrollSpeed)),s.axis&&"y"===s.axis||(n.overflowOffset.left+o.offsetWidth-t.pageX<s.scrollSensitivity?o.scrollLeft=r=o.scrollLeft+s.scrollSpeed:t.pageX-n.overflowOffset.left<s.scrollSensitivity&&(o.scrollLeft=r=o.scrollLeft-s.scrollSpeed))):(s.axis&&"x"===s.axis||(t.pageY-e(a).scrollTop()<s.scrollSensitivity?r=e(a).scrollTop(e(a).scrollTop()-s.scrollSpeed):e(window).height()-(t.pageY-e(a).scrollTop())<s.scrollSensitivity&&(r=e(a).scrollTop(e(a).scrollTop()+s.scrollSpeed))),s.axis&&"y"===s.axis||(t.pageX-e(a).scrollLeft()<s.scrollSensitivity?r=e(a).scrollLeft(e(a).scrollLeft()-s.scrollSpeed):e(window).width()-(t.pageX-e(a).scrollLeft())<s.scrollSensitivity&&(r=e(a).scrollLeft(e(a).scrollLeft()+s.scrollSpeed)))),!1!==r&&e.ui.ddmanager&&!s.dropBehaviour&&e.ui.ddmanager.prepareOffsets(n,t)}}),e.ui.plugin.add("draggable","snap",{start:function(t,i,n){var s=n.options;n.snapElements=[],e(s.snap.constructor!==String?s.snap.items||":data(ui-draggable)":s.snap).each((function(){var t=e(this),i=t.offset();this!==n.element[0]&&n.snapElements.push({item:this,width:t.outerWidth(),height:t.outerHeight(),top:i.top,left:i.left})}))},drag:function(t,i,n){var s,r,o,a,l,u,h,p,c,d,f=n.options,m=f.snapTolerance,g=i.offset.left,v=g+n.helperProportions.width,y=i.offset.top,b=y+n.helperProportions.height;for(c=n.snapElements.length-1;c>=0;c--)u=(l=n.snapElements[c].left-n.margins.left)+n.snapElements[c].width,p=(h=n.snapElements[c].top-n.margins.top)+n.snapElements[c].height,v<l-m||g>u+m||b<h-m||y>p+m||!e.contains(n.snapElements[c].item.ownerDocument,n.snapElements[c].item)?(n.snapElements[c].snapping&&n.options.snap.release&&n.options.snap.release.call(n.element,t,e.extend(n._uiHash(),{snapItem:n.snapElements[c].item})),n.snapElements[c].snapping=!1):("inner"!==f.snapMode&&(s=Math.abs(h-b)<=m,r=Math.abs(p-y)<=m,o=Math.abs(l-v)<=m,a=Math.abs(u-g)<=m,s&&(i.position.top=n._convertPositionTo("relative",{top:h-n.helperProportions.height,left:0}).top),r&&(i.position.top=n._convertPositionTo("relative",{top:p,left:0}).top),o&&(i.position.left=n._convertPositionTo("relative",{top:0,left:l-n.helperProportions.width}).left),a&&(i.position.left=n._convertPositionTo("relative",{top:0,left:u}).left)),d=s||r||o||a,"outer"!==f.snapMode&&(s=Math.abs(h-y)<=m,r=Math.abs(p-b)<=m,o=Math.abs(l-g)<=m,a=Math.abs(u-v)<=m,s&&(i.position.top=n._convertPositionTo("relative",{top:h,left:0}).top),r&&(i.position.top=n._convertPositionTo("relative",{top:p-n.helperProportions.height,left:0}).top),o&&(i.position.left=n._convertPositionTo("relative",{top:0,left:l}).left),a&&(i.position.left=n._convertPositionTo("relative",{top:0,left:u-n.helperProportions.width}).left)),!n.snapElements[c].snapping&&(s||r||o||a||d)&&n.options.snap.snap&&n.options.snap.snap.call(n.element,t,e.extend(n._uiHash(),{snapItem:n.snapElements[c].item})),n.snapElements[c].snapping=s||r||o||a||d)}}),e.ui.plugin.add("draggable","stack",{start:function(t,i,n){var s,r=n.options,o=e.makeArray(e(r.stack)).sort((function(t,i){return(parseInt(e(t).css("zIndex"),10)||0)-(parseInt(e(i).css("zIndex"),10)||0)}));o.length&&(s=parseInt(e(o[0]).css("zIndex"),10)||0,e(o).each((function(t){e(this).css("zIndex",s+t)})),this.css("zIndex",s+o.length))}}),e.ui.plugin.add("draggable","zIndex",{start:function(t,i,n){var s=e(i.helper),r=n.options;s.css("zIndex")&&(r._zIndex=s.css("zIndex")),s.css("zIndex",r.zIndex)},stop:function(t,i,n){var s=n.options;s._zIndex&&e(i.helper).css("zIndex",s._zIndex)}}),e.ui.draggable})?n.apply(t,s):n)||(e.exports=r)}()},6709:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(7285),i(6177),i(5592),i(6891)],n=function(e){e.widget("ui.droppable",{version:"1.13.2",widgetEventPrefix:"drop",options:{accept:"*",addClasses:!0,greedy:!1,scope:"default",tolerance:"intersect",activate:null,deactivate:null,drop:null,out:null,over:null},_create:function(){var e,t=this.options,i=t.accept;this.isover=!1,this.isout=!0,this.accept="function"==typeof i?i:function(e){return e.is(i)},this.proportions=function(){if(!arguments.length)return e||(e={width:this.element[0].offsetWidth,height:this.element[0].offsetHeight});e=arguments[0]},this._addToManager(t.scope),t.addClasses&&this._addClass("ui-droppable")},_addToManager:function(t){e.ui.ddmanager.droppables[t]=e.ui.ddmanager.droppables[t]||[],e.ui.ddmanager.droppables[t].push(this)},_splice:function(e){for(var t=0;t<e.length;t++)e[t]===this&&e.splice(t,1)},_destroy:function(){var t=e.ui.ddmanager.droppables[this.options.scope];this._splice(t)},_setOption:function(t,i){if("accept"===t)this.accept="function"==typeof i?i:function(e){return e.is(i)};else if("scope"===t){var n=e.ui.ddmanager.droppables[this.options.scope];this._splice(n),this._addToManager(i)}this._super(t,i)},_activate:function(t){var i=e.ui.ddmanager.current;this._addActiveClass(),i&&this._trigger("activate",t,this.ui(i))},_deactivate:function(t){var i=e.ui.ddmanager.current;this._removeActiveClass(),i&&this._trigger("deactivate",t,this.ui(i))},_over:function(t){var i=e.ui.ddmanager.current;i&&(i.currentItem||i.element)[0]!==this.element[0]&&this.accept.call(this.element[0],i.currentItem||i.element)&&(this._addHoverClass(),this._trigger("over",t,this.ui(i)))},_out:function(t){var i=e.ui.ddmanager.current;i&&(i.currentItem||i.element)[0]!==this.element[0]&&this.accept.call(this.element[0],i.currentItem||i.element)&&(this._removeHoverClass(),this._trigger("out",t,this.ui(i)))},_drop:function(t,i){var n=i||e.ui.ddmanager.current,s=!1;return!(!n||(n.currentItem||n.element)[0]===this.element[0])&&(this.element.find(":data(ui-droppable)").not(".ui-draggable-dragging").each((function(){var i=e(this).droppable("instance");if(i.options.greedy&&!i.options.disabled&&i.options.scope===n.options.scope&&i.accept.call(i.element[0],n.currentItem||n.element)&&e.ui.intersect(n,e.extend(i,{offset:i.element.offset()}),i.options.tolerance,t))return s=!0,!1})),!s&&(!!this.accept.call(this.element[0],n.currentItem||n.element)&&(this._removeActiveClass(),this._removeHoverClass(),this._trigger("drop",t,this.ui(n)),this.element)))},ui:function(e){return{draggable:e.currentItem||e.element,helper:e.helper,position:e.position,offset:e.positionAbs}},_addHoverClass:function(){this._addClass("ui-droppable-hover")},_removeHoverClass:function(){this._removeClass("ui-droppable-hover")},_addActiveClass:function(){this._addClass("ui-droppable-active")},_removeActiveClass:function(){this._removeClass("ui-droppable-active")}}),e.ui.intersect=function(){function e(e,t,i){return e>=t&&e<t+i}return function(t,i,n,s){if(!i.offset)return!1;var r=(t.positionAbs||t.position.absolute).left+t.margins.left,o=(t.positionAbs||t.position.absolute).top+t.margins.top,a=r+t.helperProportions.width,l=o+t.helperProportions.height,u=i.offset.left,h=i.offset.top,p=u+i.proportions().width,c=h+i.proportions().height;switch(n){case"fit":return u<=r&&a<=p&&h<=o&&l<=c;case"intersect":return u<r+t.helperProportions.width/2&&a-t.helperProportions.width/2<p&&h<o+t.helperProportions.height/2&&l-t.helperProportions.height/2<c;case"pointer":return e(s.pageY,h,i.proportions().height)&&e(s.pageX,u,i.proportions().width);case"touch":return(o>=h&&o<=c||l>=h&&l<=c||o<h&&l>c)&&(r>=u&&r<=p||a>=u&&a<=p||r<u&&a>p);default:return!1}}}(),e.ui.ddmanager={current:null,droppables:{default:[]},prepareOffsets:function(t,i){var n,s,r=e.ui.ddmanager.droppables[t.options.scope]||[],o=i?i.type:null,a=(t.currentItem||t.element).find(":data(ui-droppable)").addBack();e:for(n=0;n<r.length;n++)if(!(r[n].options.disabled||t&&!r[n].accept.call(r[n].element[0],t.currentItem||t.element))){for(s=0;s<a.length;s++)if(a[s]===r[n].element[0]){r[n].proportions().height=0;continue e}r[n].visible="none"!==r[n].element.css("display"),r[n].visible&&("mousedown"===o&&r[n]._activate.call(r[n],i),r[n].offset=r[n].element.offset(),r[n].proportions({width:r[n].element[0].offsetWidth,height:r[n].element[0].offsetHeight}))}},drop:function(t,i){var n=!1;return e.each((e.ui.ddmanager.droppables[t.options.scope]||[]).slice(),(function(){this.options&&(!this.options.disabled&&this.visible&&e.ui.intersect(t,this,this.options.tolerance,i)&&(n=this._drop.call(this,i)||n),!this.options.disabled&&this.visible&&this.accept.call(this.element[0],t.currentItem||t.element)&&(this.isout=!0,this.isover=!1,this._deactivate.call(this,i)))})),n},dragStart:function(t,i){t.element.parentsUntil("body").on("scroll.droppable",(function(){t.options.refreshPositions||e.ui.ddmanager.prepareOffsets(t,i)}))},drag:function(t,i){t.options.refreshPositions&&e.ui.ddmanager.prepareOffsets(t,i),e.each(e.ui.ddmanager.droppables[t.options.scope]||[],(function(){if(!this.options.disabled&&!this.greedyChild&&this.visible){var n,s,r,o=e.ui.intersect(t,this,this.options.tolerance,i),a=!o&&this.isover?"isout":o&&!this.isover?"isover":null;a&&(this.options.greedy&&(s=this.options.scope,(r=this.element.parents(":data(ui-droppable)").filter((function(){return e(this).droppable("instance").options.scope===s}))).length&&((n=e(r[0]).droppable("instance")).greedyChild="isover"===a)),n&&"isover"===a&&(n.isover=!1,n.isout=!0,n._out.call(n,i)),this[a]=!0,this["isout"===a?"isover":"isout"]=!1,this["isover"===a?"_over":"_out"].call(this,i),n&&"isout"===a&&(n.isout=!1,n.isover=!0,n._over.call(n,i)))}}))},dragStop:function(t,i){t.element.parentsUntil("body").off("scroll.droppable"),t.options.refreshPositions||e.ui.ddmanager.prepareOffsets(t,i)}},!1!==e.uiBackCompat&&e.widget("ui.droppable",e.ui.droppable,{options:{hoverClass:!1,activeClass:!1},_addActiveClass:function(){this._super(),this.options.activeClass&&this.element.addClass(this.options.activeClass)},_removeActiveClass:function(){this._super(),this.options.activeClass&&this.element.removeClass(this.options.activeClass)},_addHoverClass:function(){this._super(),this.options.hoverClass&&this.element.addClass(this.options.hoverClass)},_removeHoverClass:function(){this._super(),this.options.hoverClass&&this.element.removeClass(this.options.hoverClass)}});return e.ui.droppable},void 0===(r="function"==typeof n?n.apply(t,s):n)||(e.exports=r)}()},6177:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(1870),i(5592),i(6891)],void 0===(r="function"==typeof(n=function(e){var t=!1;return e(document).on("mouseup",(function(){t=!1})),e.widget("ui.mouse",{version:"1.13.2",options:{cancel:"input, textarea, button, select, option",distance:1,delay:0},_mouseInit:function(){var t=this;this.element.on("mousedown."+this.widgetName,(function(e){return t._mouseDown(e)})).on("click."+this.widgetName,(function(i){if(!0===e.data(i.target,t.widgetName+".preventClickEvent"))return e.removeData(i.target,t.widgetName+".preventClickEvent"),i.stopImmediatePropagation(),!1})),this.started=!1},_mouseDestroy:function(){this.element.off("."+this.widgetName),this._mouseMoveDelegate&&this.document.off("mousemove."+this.widgetName,this._mouseMoveDelegate).off("mouseup."+this.widgetName,this._mouseUpDelegate)},_mouseDown:function(i){if(!t){this._mouseMoved=!1,this._mouseStarted&&this._mouseUp(i),this._mouseDownEvent=i;var n=this,s=1===i.which,r=!("string"!=typeof this.options.cancel||!i.target.nodeName)&&e(i.target).closest(this.options.cancel).length;return!(s&&!r&&this._mouseCapture(i))||(this.mouseDelayMet=!this.options.delay,this.mouseDelayMet||(this._mouseDelayTimer=setTimeout((function(){n.mouseDelayMet=!0}),this.options.delay)),this._mouseDistanceMet(i)&&this._mouseDelayMet(i)&&(this._mouseStarted=!1!==this._mouseStart(i),!this._mouseStarted)?(i.preventDefault(),!0):(!0===e.data(i.target,this.widgetName+".preventClickEvent")&&e.removeData(i.target,this.widgetName+".preventClickEvent"),this._mouseMoveDelegate=function(e){return n._mouseMove(e)},this._mouseUpDelegate=function(e){return n._mouseUp(e)},this.document.on("mousemove."+this.widgetName,this._mouseMoveDelegate).on("mouseup."+this.widgetName,this._mouseUpDelegate),i.preventDefault(),t=!0,!0))}},_mouseMove:function(t){if(this._mouseMoved){if(e.ui.ie&&(!document.documentMode||document.documentMode<9)&&!t.button)return this._mouseUp(t);if(!t.which)if(t.originalEvent.altKey||t.originalEvent.ctrlKey||t.originalEvent.metaKey||t.originalEvent.shiftKey)this.ignoreMissingWhich=!0;else if(!this.ignoreMissingWhich)return this._mouseUp(t)}return(t.which||t.button)&&(this._mouseMoved=!0),this._mouseStarted?(this._mouseDrag(t),t.preventDefault()):(this._mouseDistanceMet(t)&&this._mouseDelayMet(t)&&(this._mouseStarted=!1!==this._mouseStart(this._mouseDownEvent,t),this._mouseStarted?this._mouseDrag(t):this._mouseUp(t)),!this._mouseStarted)},_mouseUp:function(i){this.document.off("mousemove."+this.widgetName,this._mouseMoveDelegate).off("mouseup."+this.widgetName,this._mouseUpDelegate),this._mouseStarted&&(this._mouseStarted=!1,i.target===this._mouseDownEvent.target&&e.data(i.target,this.widgetName+".preventClickEvent",!0),this._mouseStop(i)),this._mouseDelayTimer&&(clearTimeout(this._mouseDelayTimer),delete this._mouseDelayTimer),this.ignoreMissingWhich=!1,t=!1,i.preventDefault()},_mouseDistanceMet:function(e){return Math.max(Math.abs(this._mouseDownEvent.pageX-e.pageX),Math.abs(this._mouseDownEvent.pageY-e.pageY))>=this.options.distance},_mouseDelayMet:function(){return this.mouseDelayMet},_mouseStart:function(){},_mouseDrag:function(){},_mouseStop:function(){},_mouseCapture:function(){return!0}})})?n.apply(t,s):n)||(e.exports=r)}()},4855:(e,t,i)=>{var n,s,r;!function(o){"use strict";s=[i(9755),i(6177),i(5592),i(6891)],void 0===(r="function"==typeof(n=function(e){return e.widget("ui.selectable",e.ui.mouse,{version:"1.13.2",options:{appendTo:"body",autoRefresh:!0,distance:0,filter:"*",tolerance:"touch",selected:null,selecting:null,start:null,stop:null,unselected:null,unselecting:null},_create:function(){var t=this;this._addClass("ui-selectable"),this.dragged=!1,this.refresh=function(){t.elementPos=e(t.element[0]).offset(),t.selectees=e(t.options.filter,t.element[0]),t._addClass(t.selectees,"ui-selectee"),t.selectees.each((function(){var i=e(this),n=i.offset(),s={left:n.left-t.elementPos.left,top:n.top-t.elementPos.top};e.data(this,"selectable-item",{element:this,$element:i,left:s.left,top:s.top,right:s.left+i.outerWidth(),bottom:s.top+i.outerHeight(),startselected:!1,selected:i.hasClass("ui-selected"),selecting:i.hasClass("ui-selecting"),unselecting:i.hasClass("ui-unselecting")})}))},this.refresh(),this._mouseInit(),this.helper=e("<div>"),this._addClass(this.helper,"ui-selectable-helper")},_destroy:function(){this.selectees.removeData("selectable-item"),this._mouseDestroy()},_mouseStart:function(t){var i=this,n=this.options;this.opos=[t.pageX,t.pageY],this.elementPos=e(this.element[0]).offset(),this.options.disabled||(this.selectees=e(n.filter,this.element[0]),this._trigger("start",t),e(n.appendTo).append(this.helper),this.helper.css({left:t.pageX,top:t.pageY,width:0,height:0}),n.autoRefresh&&this.refresh(),this.selectees.filter(".ui-selected").each((function(){var n=e.data(this,"selectable-item");n.startselected=!0,t.metaKey||t.ctrlKey||(i._removeClass(n.$element,"ui-selected"),n.selected=!1,i._addClass(n.$element,"ui-unselecting"),n.unselecting=!0,i._trigger("unselecting",t,{unselecting:n.element}))})),e(t.target).parents().addBack().each((function(){var n,s=e.data(this,"selectable-item");if(s)return n=!t.metaKey&&!t.ctrlKey||!s.$element.hasClass("ui-selected"),i._removeClass(s.$element,n?"ui-unselecting":"ui-selected")._addClass(s.$element,n?"ui-selecting":"ui-unselecting"),s.unselecting=!n,s.selecting=n,s.selected=n,n?i._trigger("selecting",t,{selecting:s.element}):i._trigger("unselecting",t,{unselecting:s.element}),!1})))},_mouseDrag:function(t){if(this.dragged=!0,!this.options.disabled){var i,n=this,s=this.options,r=this.opos[0],o=this.opos[1],a=t.pageX,l=t.pageY;return r>a&&(i=a,a=r,r=i),o>l&&(i=l,l=o,o=i),this.helper.css({left:r,top:o,width:a-r,height:l-o}),this.selectees.each((function(){var i=e.data(this,"selectable-item"),u=!1,h={};i&&i.element!==n.element[0]&&(h.left=i.left+n.elementPos.left,h.right=i.right+n.elementPos.left,h.top=i.top+n.elementPos.top,h.bottom=i.bottom+n.elementPos.top,"touch"===s.tolerance?u=!(h.left>a||h.right<r||h.top>l||h.bottom<o):"fit"===s.tolerance&&(u=h.left>r&&h.right<a&&h.top>o&&h.bottom<l),u?(i.selected&&(n._removeClass(i.$element,"ui-selected"),i.selected=!1),i.unselecting&&(n._removeClass(i.$element,"ui-unselecting"),i.unselecting=!1),i.selecting||(n._addClass(i.$element,"ui-selecting"),i.selecting=!0,n._trigger("selecting",t,{selecting:i.element}))):(i.selecting&&((t.metaKey||t.ctrlKey)&&i.startselected?(n._removeClass(i.$element,"ui-selecting"),i.selecting=!1,n._addClass(i.$element,"ui-selected"),i.selected=!0):(n._removeClass(i.$element,"ui-selecting"),i.selecting=!1,i.startselected&&(n._addClass(i.$element,"ui-unselecting"),i.unselecting=!0),n._trigger("unselecting",t,{unselecting:i.element}))),i.selected&&(t.metaKey||t.ctrlKey||i.startselected||(n._removeClass(i.$element,"ui-selected"),i.selected=!1,n._addClass(i.$element,"ui-unselecting"),i.unselecting=!0,n._trigger("unselecting",t,{unselecting:i.element})))))})),!1}},_mouseStop:function(t){var i=this;return this.dragged=!1,e(".ui-unselecting",this.element[0]).each((function(){var n=e.data(this,"selectable-item");i._removeClass(n.$element,"ui-unselecting"),n.unselecting=!1,n.startselected=!1,i._trigger("unselected",t,{unselected:n.element})})),e(".ui-selecting",this.element[0]).each((function(){var n=e.data(this,"selectable-item");i._removeClass(n.$element,"ui-selecting")._addClass(n.$element,"ui-selected"),n.selecting=!1,n.selected=!0,n.startselected=!0,i._trigger("selected",t,{selected:n.element})})),this._trigger("stop",t),this.helper.remove(),!1}})})?n.apply(t,s):n)||(e.exports=r)}()},9755:function(e,t){var i;!function(t,i){"use strict";"object"==typeof e.exports?e.exports=t.document?i(t,!0):function(e){if(!e.document)throw new Error("jQuery requires a window with a document");return i(e)}:i(t)}("undefined"!=typeof window?window:this,(function(n,s){"use strict";var r=[],o=Object.getPrototypeOf,a=r.slice,l=r.flat?function(e){return r.flat.call(e)}:function(e){return r.concat.apply([],e)},u=r.push,h=r.indexOf,p={},c=p.toString,d=p.hasOwnProperty,f=d.toString,m=f.call(Object),g={},v=function(e){return"function"==typeof e&&"number"!=typeof e.nodeType&&"function"!=typeof e.item},y=function(e){return null!=e&&e===e.window},b=n.document,w={type:!0,src:!0,nonce:!0,noModule:!0};function x(e,t,i){var n,s,r=(i=i||b).createElement("script");if(r.text=e,t)for(n in w)(s=t[n]||t.getAttribute&&t.getAttribute(n))&&r.setAttribute(n,s);i.head.appendChild(r).parentNode.removeChild(r)}function C(e){return null==e?e+"":"object"==typeof e||"function"==typeof e?p[c.call(e)]||"object":typeof e}var _="3.6.1",S=function(e,t){return new S.fn.init(e,t)};function T(e){var t=!!e&&"length"in e&&e.length,i=C(e);return!v(e)&&!y(e)&&("array"===i||0===t||"number"==typeof t&&t>0&&t-1 in e)}S.fn=S.prototype={jquery:_,constructor:S,length:0,toArray:function(){return a.call(this)},get:function(e){return null==e?a.call(this):e<0?this[e+this.length]:this[e]},pushStack:function(e){var t=S.merge(this.constructor(),e);return t.prevObject=this,t},each:function(e){return S.each(this,e)},map:function(e){return this.pushStack(S.map(this,(function(t,i){return e.call(t,i,t)})))},slice:function(){return this.pushStack(a.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},even:function(){return this.pushStack(S.grep(this,(function(e,t){return(t+1)%2})))},odd:function(){return this.pushStack(S.grep(this,(function(e,t){return t%2})))},eq:function(e){var t=this.length,i=+e+(e<0?t:0);return this.pushStack(i>=0&&i<t?[this[i]]:[])},end:function(){return this.prevObject||this.constructor()},push:u,sort:r.sort,splice:r.splice},S.extend=S.fn.extend=function(){var e,t,i,n,s,r,o=arguments[0]||{},a=1,l=arguments.length,u=!1;for("boolean"==typeof o&&(u=o,o=arguments[a]||{},a++),"object"==typeof o||v(o)||(o={}),a===l&&(o=this,a--);a<l;a++)if(null!=(e=arguments[a]))for(t in e)n=e[t],"__proto__"!==t&&o!==n&&(u&&n&&(S.isPlainObject(n)||(s=Array.isArray(n)))?(i=o[t],r=s&&!Array.isArray(i)?[]:s||S.isPlainObject(i)?i:{},s=!1,o[t]=S.extend(u,r,n)):void 0!==n&&(o[t]=n));return o},S.extend({expando:"jQuery"+(_+Math.random()).replace(/\D/g,""),isReady:!0,error:function(e){throw new Error(e)},noop:function(){},isPlainObject:function(e){var t,i;return!(!e||"[object Object]"!==c.call(e))&&(!(t=o(e))||"function"==typeof(i=d.call(t,"constructor")&&t.constructor)&&f.call(i)===m)},isEmptyObject:function(e){var t;for(t in e)return!1;return!0},globalEval:function(e,t,i){x(e,{nonce:t&&t.nonce},i)},each:function(e,t){var i,n=0;if(T(e))for(i=e.length;n<i&&!1!==t.call(e[n],n,e[n]);n++);else for(n in e)if(!1===t.call(e[n],n,e[n]))break;return e},makeArray:function(e,t){var i=t||[];return null!=e&&(T(Object(e))?S.merge(i,"string"==typeof e?[e]:e):u.call(i,e)),i},inArray:function(e,t,i){return null==t?-1:h.call(t,e,i)},merge:function(e,t){for(var i=+t.length,n=0,s=e.length;n<i;n++)e[s++]=t[n];return e.length=s,e},grep:function(e,t,i){for(var n=[],s=0,r=e.length,o=!i;s<r;s++)!t(e[s],s)!==o&&n.push(e[s]);return n},map:function(e,t,i){var n,s,r=0,o=[];if(T(e))for(n=e.length;r<n;r++)null!=(s=t(e[r],r,i))&&o.push(s);else for(r in e)null!=(s=t(e[r],r,i))&&o.push(s);return l(o)},guid:1,support:g}),"function"==typeof Symbol&&(S.fn[Symbol.iterator]=r[Symbol.iterator]),S.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "),(function(e,t){p["[object "+t+"]"]=t.toLowerCase()}));var k=function(e){var t,i,n,s,r,o,a,l,u,h,p,c,d,f,m,g,v,y,b,w="sizzle"+1*new Date,x=e.document,C=0,_=0,S=le(),T=le(),k=le(),P=le(),E=function(e,t){return e===t&&(p=!0),0},F={}.hasOwnProperty,O=[],A=O.pop,D=O.push,N=O.push,M=O.slice,I=function(e,t){for(var i=0,n=e.length;i<n;i++)if(e[i]===t)return i;return-1},U="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",L="[\\x20\\t\\r\\n\\f]",R="(?:\\\\[\\da-fA-F]{1,6}[\\x20\\t\\r\\n\\f]?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+",B="\\[[\\x20\\t\\r\\n\\f]*("+R+")(?:"+L+"*([*^$|!~]?=)"+L+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+R+"))|)"+L+"*\\]",j=":("+R+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+B+")*)|.*)\\)|)",z=new RegExp(L+"+","g"),H=new RegExp("^[\\x20\\t\\r\\n\\f]+|((?:^|[^\\\\])(?:\\\\.)*)[\\x20\\t\\r\\n\\f]+$","g"),q=new RegExp("^[\\x20\\t\\r\\n\\f]*,[\\x20\\t\\r\\n\\f]*"),$=new RegExp("^[\\x20\\t\\r\\n\\f]*([>+~]|[\\x20\\t\\r\\n\\f])[\\x20\\t\\r\\n\\f]*"),W=new RegExp(L+"|>"),V=new RegExp(j),X=new RegExp("^"+R+"$"),Y={ID:new RegExp("^#("+R+")"),CLASS:new RegExp("^\\.("+R+")"),TAG:new RegExp("^("+R+"|[*])"),ATTR:new RegExp("^"+B),PSEUDO:new RegExp("^"+j),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\([\\x20\\t\\r\\n\\f]*(even|odd|(([+-]|)(\\d*)n|)[\\x20\\t\\r\\n\\f]*(?:([+-]|)[\\x20\\t\\r\\n\\f]*(\\d+)|))[\\x20\\t\\r\\n\\f]*\\)|)","i"),bool:new RegExp("^(?:"+U+")$","i"),needsContext:new RegExp("^[\\x20\\t\\r\\n\\f]*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\([\\x20\\t\\r\\n\\f]*((?:-\\d)?\\d*)[\\x20\\t\\r\\n\\f]*\\)|)(?=[^-]|$)","i")},G=/HTML$/i,K=/^(?:input|select|textarea|button)$/i,Q=/^h\d$/i,J=/^[^{]+\{\s*\[native \w/,Z=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,ee=/[+~]/,te=new RegExp("\\\\[\\da-fA-F]{1,6}[\\x20\\t\\r\\n\\f]?|\\\\([^\\r\\n\\f])","g"),ie=function(e,t){var i="0x"+e.slice(1)-65536;return t||(i<0?String.fromCharCode(i+65536):String.fromCharCode(i>>10|55296,1023&i|56320))},ne=/([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,se=function(e,t){return t?"\0"===e?"�":e.slice(0,-1)+"\\"+e.charCodeAt(e.length-1).toString(16)+" ":"\\"+e},re=function(){c()},oe=we((function(e){return!0===e.disabled&&"fieldset"===e.nodeName.toLowerCase()}),{dir:"parentNode",next:"legend"});try{N.apply(O=M.call(x.childNodes),x.childNodes),O[x.childNodes.length].nodeType}catch(e){N={apply:O.length?function(e,t){D.apply(e,M.call(t))}:function(e,t){for(var i=e.length,n=0;e[i++]=t[n++];);e.length=i-1}}}function ae(e,t,n,s){var r,a,u,h,p,f,v,y=t&&t.ownerDocument,x=t?t.nodeType:9;if(n=n||[],"string"!=typeof e||!e||1!==x&&9!==x&&11!==x)return n;if(!s&&(c(t),t=t||d,m)){if(11!==x&&(p=Z.exec(e)))if(r=p[1]){if(9===x){if(!(u=t.getElementById(r)))return n;if(u.id===r)return n.push(u),n}else if(y&&(u=y.getElementById(r))&&b(t,u)&&u.id===r)return n.push(u),n}else{if(p[2])return N.apply(n,t.getElementsByTagName(e)),n;if((r=p[3])&&i.getElementsByClassName&&t.getElementsByClassName)return N.apply(n,t.getElementsByClassName(r)),n}if(i.qsa&&!P[e+" "]&&(!g||!g.test(e))&&(1!==x||"object"!==t.nodeName.toLowerCase())){if(v=e,y=t,1===x&&(W.test(e)||$.test(e))){for((y=ee.test(e)&&ve(t.parentNode)||t)===t&&i.scope||((h=t.getAttribute("id"))?h=h.replace(ne,se):t.setAttribute("id",h=w)),a=(f=o(e)).length;a--;)f[a]=(h?"#"+h:":scope")+" "+be(f[a]);v=f.join(",")}try{return N.apply(n,y.querySelectorAll(v)),n}catch(t){P(e,!0)}finally{h===w&&t.removeAttribute("id")}}}return l(e.replace(H,"$1"),t,n,s)}function le(){var e=[];return function t(i,s){return e.push(i+" ")>n.cacheLength&&delete t[e.shift()],t[i+" "]=s}}function ue(e){return e[w]=!0,e}function he(e){var t=d.createElement("fieldset");try{return!!e(t)}catch(e){return!1}finally{t.parentNode&&t.parentNode.removeChild(t),t=null}}function pe(e,t){for(var i=e.split("|"),s=i.length;s--;)n.attrHandle[i[s]]=t}function ce(e,t){var i=t&&e,n=i&&1===e.nodeType&&1===t.nodeType&&e.sourceIndex-t.sourceIndex;if(n)return n;if(i)for(;i=i.nextSibling;)if(i===t)return-1;return e?1:-1}function de(e){return function(t){return"input"===t.nodeName.toLowerCase()&&t.type===e}}function fe(e){return function(t){var i=t.nodeName.toLowerCase();return("input"===i||"button"===i)&&t.type===e}}function me(e){return function(t){return"form"in t?t.parentNode&&!1===t.disabled?"label"in t?"label"in t.parentNode?t.parentNode.disabled===e:t.disabled===e:t.isDisabled===e||t.isDisabled!==!e&&oe(t)===e:t.disabled===e:"label"in t&&t.disabled===e}}function ge(e){return ue((function(t){return t=+t,ue((function(i,n){for(var s,r=e([],i.length,t),o=r.length;o--;)i[s=r[o]]&&(i[s]=!(n[s]=i[s]))}))}))}function ve(e){return e&&void 0!==e.getElementsByTagName&&e}for(t in i=ae.support={},r=ae.isXML=function(e){var t=e&&e.namespaceURI,i=e&&(e.ownerDocument||e).documentElement;return!G.test(t||i&&i.nodeName||"HTML")},c=ae.setDocument=function(e){var t,s,o=e?e.ownerDocument||e:x;return o!=d&&9===o.nodeType&&o.documentElement?(f=(d=o).documentElement,m=!r(d),x!=d&&(s=d.defaultView)&&s.top!==s&&(s.addEventListener?s.addEventListener("unload",re,!1):s.attachEvent&&s.attachEvent("onunload",re)),i.scope=he((function(e){return f.appendChild(e).appendChild(d.createElement("div")),void 0!==e.querySelectorAll&&!e.querySelectorAll(":scope fieldset div").length})),i.attributes=he((function(e){return e.className="i",!e.getAttribute("className")})),i.getElementsByTagName=he((function(e){return e.appendChild(d.createComment("")),!e.getElementsByTagName("*").length})),i.getElementsByClassName=J.test(d.getElementsByClassName),i.getById=he((function(e){return f.appendChild(e).id=w,!d.getElementsByName||!d.getElementsByName(w).length})),i.getById?(n.filter.ID=function(e){var t=e.replace(te,ie);return function(e){return e.getAttribute("id")===t}},n.find.ID=function(e,t){if(void 0!==t.getElementById&&m){var i=t.getElementById(e);return i?[i]:[]}}):(n.filter.ID=function(e){var t=e.replace(te,ie);return function(e){var i=void 0!==e.getAttributeNode&&e.getAttributeNode("id");return i&&i.value===t}},n.find.ID=function(e,t){if(void 0!==t.getElementById&&m){var i,n,s,r=t.getElementById(e);if(r){if((i=r.getAttributeNode("id"))&&i.value===e)return[r];for(s=t.getElementsByName(e),n=0;r=s[n++];)if((i=r.getAttributeNode("id"))&&i.value===e)return[r]}return[]}}),n.find.TAG=i.getElementsByTagName?function(e,t){return void 0!==t.getElementsByTagName?t.getElementsByTagName(e):i.qsa?t.querySelectorAll(e):void 0}:function(e,t){var i,n=[],s=0,r=t.getElementsByTagName(e);if("*"===e){for(;i=r[s++];)1===i.nodeType&&n.push(i);return n}return r},n.find.CLASS=i.getElementsByClassName&&function(e,t){if(void 0!==t.getElementsByClassName&&m)return t.getElementsByClassName(e)},v=[],g=[],(i.qsa=J.test(d.querySelectorAll))&&(he((function(e){var t;f.appendChild(e).innerHTML="<a id='"+w+"'></a><select id='"+w+"-\r\\' msallowcapture=''><option selected=''></option></select>",e.querySelectorAll("[msallowcapture^='']").length&&g.push("[*^$]=[\\x20\\t\\r\\n\\f]*(?:''|\"\")"),e.querySelectorAll("[selected]").length||g.push("\\[[\\x20\\t\\r\\n\\f]*(?:value|"+U+")"),e.querySelectorAll("[id~="+w+"-]").length||g.push("~="),(t=d.createElement("input")).setAttribute("name",""),e.appendChild(t),e.querySelectorAll("[name='']").length||g.push("\\[[\\x20\\t\\r\\n\\f]*name[\\x20\\t\\r\\n\\f]*=[\\x20\\t\\r\\n\\f]*(?:''|\"\")"),e.querySelectorAll(":checked").length||g.push(":checked"),e.querySelectorAll("a#"+w+"+*").length||g.push(".#.+[+~]"),e.querySelectorAll("\\\f"),g.push("[\\r\\n\\f]")})),he((function(e){e.innerHTML="<a href='' disabled='disabled'></a><select disabled='disabled'><option/></select>";var t=d.createElement("input");t.setAttribute("type","hidden"),e.appendChild(t).setAttribute("name","D"),e.querySelectorAll("[name=d]").length&&g.push("name[\\x20\\t\\r\\n\\f]*[*^$|!~]?="),2!==e.querySelectorAll(":enabled").length&&g.push(":enabled",":disabled"),f.appendChild(e).disabled=!0,2!==e.querySelectorAll(":disabled").length&&g.push(":enabled",":disabled"),e.querySelectorAll("*,:x"),g.push(",.*:")}))),(i.matchesSelector=J.test(y=f.matches||f.webkitMatchesSelector||f.mozMatchesSelector||f.oMatchesSelector||f.msMatchesSelector))&&he((function(e){i.disconnectedMatch=y.call(e,"*"),y.call(e,"[s!='']:x"),v.push("!=",j)})),g=g.length&&new RegExp(g.join("|")),v=v.length&&new RegExp(v.join("|")),t=J.test(f.compareDocumentPosition),b=t||J.test(f.contains)?function(e,t){var i=9===e.nodeType?e.documentElement:e,n=t&&t.parentNode;return e===n||!(!n||1!==n.nodeType||!(i.contains?i.contains(n):e.compareDocumentPosition&&16&e.compareDocumentPosition(n)))}:function(e,t){if(t)for(;t=t.parentNode;)if(t===e)return!0;return!1},E=t?function(e,t){if(e===t)return p=!0,0;var n=!e.compareDocumentPosition-!t.compareDocumentPosition;return n||(1&(n=(e.ownerDocument||e)==(t.ownerDocument||t)?e.compareDocumentPosition(t):1)||!i.sortDetached&&t.compareDocumentPosition(e)===n?e==d||e.ownerDocument==x&&b(x,e)?-1:t==d||t.ownerDocument==x&&b(x,t)?1:h?I(h,e)-I(h,t):0:4&n?-1:1)}:function(e,t){if(e===t)return p=!0,0;var i,n=0,s=e.parentNode,r=t.parentNode,o=[e],a=[t];if(!s||!r)return e==d?-1:t==d?1:s?-1:r?1:h?I(h,e)-I(h,t):0;if(s===r)return ce(e,t);for(i=e;i=i.parentNode;)o.unshift(i);for(i=t;i=i.parentNode;)a.unshift(i);for(;o[n]===a[n];)n++;return n?ce(o[n],a[n]):o[n]==x?-1:a[n]==x?1:0},d):d},ae.matches=function(e,t){return ae(e,null,null,t)},ae.matchesSelector=function(e,t){if(c(e),i.matchesSelector&&m&&!P[t+" "]&&(!v||!v.test(t))&&(!g||!g.test(t)))try{var n=y.call(e,t);if(n||i.disconnectedMatch||e.document&&11!==e.document.nodeType)return n}catch(e){P(t,!0)}return ae(t,d,null,[e]).length>0},ae.contains=function(e,t){return(e.ownerDocument||e)!=d&&c(e),b(e,t)},ae.attr=function(e,t){(e.ownerDocument||e)!=d&&c(e);var s=n.attrHandle[t.toLowerCase()],r=s&&F.call(n.attrHandle,t.toLowerCase())?s(e,t,!m):void 0;return void 0!==r?r:i.attributes||!m?e.getAttribute(t):(r=e.getAttributeNode(t))&&r.specified?r.value:null},ae.escape=function(e){return(e+"").replace(ne,se)},ae.error=function(e){throw new Error("Syntax error, unrecognized expression: "+e)},ae.uniqueSort=function(e){var t,n=[],s=0,r=0;if(p=!i.detectDuplicates,h=!i.sortStable&&e.slice(0),e.sort(E),p){for(;t=e[r++];)t===e[r]&&(s=n.push(r));for(;s--;)e.splice(n[s],1)}return h=null,e},s=ae.getText=function(e){var t,i="",n=0,r=e.nodeType;if(r){if(1===r||9===r||11===r){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)i+=s(e)}else if(3===r||4===r)return e.nodeValue}else for(;t=e[n++];)i+=s(t);return i},n=ae.selectors={cacheLength:50,createPseudo:ue,match:Y,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(e){return e[1]=e[1].replace(te,ie),e[3]=(e[3]||e[4]||e[5]||"").replace(te,ie),"~="===e[2]&&(e[3]=" "+e[3]+" "),e.slice(0,4)},CHILD:function(e){return e[1]=e[1].toLowerCase(),"nth"===e[1].slice(0,3)?(e[3]||ae.error(e[0]),e[4]=+(e[4]?e[5]+(e[6]||1):2*("even"===e[3]||"odd"===e[3])),e[5]=+(e[7]+e[8]||"odd"===e[3])):e[3]&&ae.error(e[0]),e},PSEUDO:function(e){var t,i=!e[6]&&e[2];return Y.CHILD.test(e[0])?null:(e[3]?e[2]=e[4]||e[5]||"":i&&V.test(i)&&(t=o(i,!0))&&(t=i.indexOf(")",i.length-t)-i.length)&&(e[0]=e[0].slice(0,t),e[2]=i.slice(0,t)),e.slice(0,3))}},filter:{TAG:function(e){var t=e.replace(te,ie).toLowerCase();return"*"===e?function(){return!0}:function(e){return e.nodeName&&e.nodeName.toLowerCase()===t}},CLASS:function(e){var t=S[e+" "];return t||(t=new RegExp("(^|[\\x20\\t\\r\\n\\f])"+e+"("+L+"|$)"))&&S(e,(function(e){return t.test("string"==typeof e.className&&e.className||void 0!==e.getAttribute&&e.getAttribute("class")||"")}))},ATTR:function(e,t,i){return function(n){var s=ae.attr(n,e);return null==s?"!="===t:!t||(s+="","="===t?s===i:"!="===t?s!==i:"^="===t?i&&0===s.indexOf(i):"*="===t?i&&s.indexOf(i)>-1:"$="===t?i&&s.slice(-i.length)===i:"~="===t?(" "+s.replace(z," ")+" ").indexOf(i)>-1:"|="===t&&(s===i||s.slice(0,i.length+1)===i+"-"))}},CHILD:function(e,t,i,n,s){var r="nth"!==e.slice(0,3),o="last"!==e.slice(-4),a="of-type"===t;return 1===n&&0===s?function(e){return!!e.parentNode}:function(t,i,l){var u,h,p,c,d,f,m=r!==o?"nextSibling":"previousSibling",g=t.parentNode,v=a&&t.nodeName.toLowerCase(),y=!l&&!a,b=!1;if(g){if(r){for(;m;){for(c=t;c=c[m];)if(a?c.nodeName.toLowerCase()===v:1===c.nodeType)return!1;f=m="only"===e&&!f&&"nextSibling"}return!0}if(f=[o?g.firstChild:g.lastChild],o&&y){for(b=(d=(u=(h=(p=(c=g)[w]||(c[w]={}))[c.uniqueID]||(p[c.uniqueID]={}))[e]||[])[0]===C&&u[1])&&u[2],c=d&&g.childNodes[d];c=++d&&c&&c[m]||(b=d=0)||f.pop();)if(1===c.nodeType&&++b&&c===t){h[e]=[C,d,b];break}}else if(y&&(b=d=(u=(h=(p=(c=t)[w]||(c[w]={}))[c.uniqueID]||(p[c.uniqueID]={}))[e]||[])[0]===C&&u[1]),!1===b)for(;(c=++d&&c&&c[m]||(b=d=0)||f.pop())&&((a?c.nodeName.toLowerCase()!==v:1!==c.nodeType)||!++b||(y&&((h=(p=c[w]||(c[w]={}))[c.uniqueID]||(p[c.uniqueID]={}))[e]=[C,b]),c!==t)););return(b-=s)===n||b%n==0&&b/n>=0}}},PSEUDO:function(e,t){var i,s=n.pseudos[e]||n.setFilters[e.toLowerCase()]||ae.error("unsupported pseudo: "+e);return s[w]?s(t):s.length>1?(i=[e,e,"",t],n.setFilters.hasOwnProperty(e.toLowerCase())?ue((function(e,i){for(var n,r=s(e,t),o=r.length;o--;)e[n=I(e,r[o])]=!(i[n]=r[o])})):function(e){return s(e,0,i)}):s}},pseudos:{not:ue((function(e){var t=[],i=[],n=a(e.replace(H,"$1"));return n[w]?ue((function(e,t,i,s){for(var r,o=n(e,null,s,[]),a=e.length;a--;)(r=o[a])&&(e[a]=!(t[a]=r))})):function(e,s,r){return t[0]=e,n(t,null,r,i),t[0]=null,!i.pop()}})),has:ue((function(e){return function(t){return ae(e,t).length>0}})),contains:ue((function(e){return e=e.replace(te,ie),function(t){return(t.textContent||s(t)).indexOf(e)>-1}})),lang:ue((function(e){return X.test(e||"")||ae.error("unsupported lang: "+e),e=e.replace(te,ie).toLowerCase(),function(t){var i;do{if(i=m?t.lang:t.getAttribute("xml:lang")||t.getAttribute("lang"))return(i=i.toLowerCase())===e||0===i.indexOf(e+"-")}while((t=t.parentNode)&&1===t.nodeType);return!1}})),target:function(t){var i=e.location&&e.location.hash;return i&&i.slice(1)===t.id},root:function(e){return e===f},focus:function(e){return e===d.activeElement&&(!d.hasFocus||d.hasFocus())&&!!(e.type||e.href||~e.tabIndex)},enabled:me(!1),disabled:me(!0),checked:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&!!e.checked||"option"===t&&!!e.selected},selected:function(e){return e.parentNode&&e.parentNode.selectedIndex,!0===e.selected},empty:function(e){for(e=e.firstChild;e;e=e.nextSibling)if(e.nodeType<6)return!1;return!0},parent:function(e){return!n.pseudos.empty(e)},header:function(e){return Q.test(e.nodeName)},input:function(e){return K.test(e.nodeName)},button:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&"button"===e.type||"button"===t},text:function(e){var t;return"input"===e.nodeName.toLowerCase()&&"text"===e.type&&(null==(t=e.getAttribute("type"))||"text"===t.toLowerCase())},first:ge((function(){return[0]})),last:ge((function(e,t){return[t-1]})),eq:ge((function(e,t,i){return[i<0?i+t:i]})),even:ge((function(e,t){for(var i=0;i<t;i+=2)e.push(i);return e})),odd:ge((function(e,t){for(var i=1;i<t;i+=2)e.push(i);return e})),lt:ge((function(e,t,i){for(var n=i<0?i+t:i>t?t:i;--n>=0;)e.push(n);return e})),gt:ge((function(e,t,i){for(var n=i<0?i+t:i;++n<t;)e.push(n);return e}))}},n.pseudos.nth=n.pseudos.eq,{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})n.pseudos[t]=de(t);for(t in{submit:!0,reset:!0})n.pseudos[t]=fe(t);function ye(){}function be(e){for(var t=0,i=e.length,n="";t<i;t++)n+=e[t].value;return n}function we(e,t,i){var n=t.dir,s=t.next,r=s||n,o=i&&"parentNode"===r,a=_++;return t.first?function(t,i,s){for(;t=t[n];)if(1===t.nodeType||o)return e(t,i,s);return!1}:function(t,i,l){var u,h,p,c=[C,a];if(l){for(;t=t[n];)if((1===t.nodeType||o)&&e(t,i,l))return!0}else for(;t=t[n];)if(1===t.nodeType||o)if(h=(p=t[w]||(t[w]={}))[t.uniqueID]||(p[t.uniqueID]={}),s&&s===t.nodeName.toLowerCase())t=t[n]||t;else{if((u=h[r])&&u[0]===C&&u[1]===a)return c[2]=u[2];if(h[r]=c,c[2]=e(t,i,l))return!0}return!1}}function xe(e){return e.length>1?function(t,i,n){for(var s=e.length;s--;)if(!e[s](t,i,n))return!1;return!0}:e[0]}function Ce(e,t,i,n,s){for(var r,o=[],a=0,l=e.length,u=null!=t;a<l;a++)(r=e[a])&&(i&&!i(r,n,s)||(o.push(r),u&&t.push(a)));return o}function _e(e,t,i,n,s,r){return n&&!n[w]&&(n=_e(n)),s&&!s[w]&&(s=_e(s,r)),ue((function(r,o,a,l){var u,h,p,c=[],d=[],f=o.length,m=r||function(e,t,i){for(var n=0,s=t.length;n<s;n++)ae(e,t[n],i);return i}(t||"*",a.nodeType?[a]:a,[]),g=!e||!r&&t?m:Ce(m,c,e,a,l),v=i?s||(r?e:f||n)?[]:o:g;if(i&&i(g,v,a,l),n)for(u=Ce(v,d),n(u,[],a,l),h=u.length;h--;)(p=u[h])&&(v[d[h]]=!(g[d[h]]=p));if(r){if(s||e){if(s){for(u=[],h=v.length;h--;)(p=v[h])&&u.push(g[h]=p);s(null,v=[],u,l)}for(h=v.length;h--;)(p=v[h])&&(u=s?I(r,p):c[h])>-1&&(r[u]=!(o[u]=p))}}else v=Ce(v===o?v.splice(f,v.length):v),s?s(null,o,v,l):N.apply(o,v)}))}function Se(e){for(var t,i,s,r=e.length,o=n.relative[e[0].type],a=o||n.relative[" "],l=o?1:0,h=we((function(e){return e===t}),a,!0),p=we((function(e){return I(t,e)>-1}),a,!0),c=[function(e,i,n){var s=!o&&(n||i!==u)||((t=i).nodeType?h(e,i,n):p(e,i,n));return t=null,s}];l<r;l++)if(i=n.relative[e[l].type])c=[we(xe(c),i)];else{if((i=n.filter[e[l].type].apply(null,e[l].matches))[w]){for(s=++l;s<r&&!n.relative[e[s].type];s++);return _e(l>1&&xe(c),l>1&&be(e.slice(0,l-1).concat({value:" "===e[l-2].type?"*":""})).replace(H,"$1"),i,l<s&&Se(e.slice(l,s)),s<r&&Se(e=e.slice(s)),s<r&&be(e))}c.push(i)}return xe(c)}return ye.prototype=n.filters=n.pseudos,n.setFilters=new ye,o=ae.tokenize=function(e,t){var i,s,r,o,a,l,u,h=T[e+" "];if(h)return t?0:h.slice(0);for(a=e,l=[],u=n.preFilter;a;){for(o in i&&!(s=q.exec(a))||(s&&(a=a.slice(s[0].length)||a),l.push(r=[])),i=!1,(s=$.exec(a))&&(i=s.shift(),r.push({value:i,type:s[0].replace(H," ")}),a=a.slice(i.length)),n.filter)!(s=Y[o].exec(a))||u[o]&&!(s=u[o](s))||(i=s.shift(),r.push({value:i,type:o,matches:s}),a=a.slice(i.length));if(!i)break}return t?a.length:a?ae.error(e):T(e,l).slice(0)},a=ae.compile=function(e,t){var i,s=[],r=[],a=k[e+" "];if(!a){for(t||(t=o(e)),i=t.length;i--;)(a=Se(t[i]))[w]?s.push(a):r.push(a);a=k(e,function(e,t){var i=t.length>0,s=e.length>0,r=function(r,o,a,l,h){var p,f,g,v=0,y="0",b=r&&[],w=[],x=u,_=r||s&&n.find.TAG("*",h),S=C+=null==x?1:Math.random()||.1,T=_.length;for(h&&(u=o==d||o||h);y!==T&&null!=(p=_[y]);y++){if(s&&p){for(f=0,o||p.ownerDocument==d||(c(p),a=!m);g=e[f++];)if(g(p,o||d,a)){l.push(p);break}h&&(C=S)}i&&((p=!g&&p)&&v--,r&&b.push(p))}if(v+=y,i&&y!==v){for(f=0;g=t[f++];)g(b,w,o,a);if(r){if(v>0)for(;y--;)b[y]||w[y]||(w[y]=A.call(l));w=Ce(w)}N.apply(l,w),h&&!r&&w.length>0&&v+t.length>1&&ae.uniqueSort(l)}return h&&(C=S,u=x),b};return i?ue(r):r}(r,s)),a.selector=e}return a},l=ae.select=function(e,t,i,s){var r,l,u,h,p,c="function"==typeof e&&e,d=!s&&o(e=c.selector||e);if(i=i||[],1===d.length){if((l=d[0]=d[0].slice(0)).length>2&&"ID"===(u=l[0]).type&&9===t.nodeType&&m&&n.relative[l[1].type]){if(!(t=(n.find.ID(u.matches[0].replace(te,ie),t)||[])[0]))return i;c&&(t=t.parentNode),e=e.slice(l.shift().value.length)}for(r=Y.needsContext.test(e)?0:l.length;r--&&(u=l[r],!n.relative[h=u.type]);)if((p=n.find[h])&&(s=p(u.matches[0].replace(te,ie),ee.test(l[0].type)&&ve(t.parentNode)||t))){if(l.splice(r,1),!(e=s.length&&be(l)))return N.apply(i,s),i;break}}return(c||a(e,d))(s,t,!m,i,!t||ee.test(e)&&ve(t.parentNode)||t),i},i.sortStable=w.split("").sort(E).join("")===w,i.detectDuplicates=!!p,c(),i.sortDetached=he((function(e){return 1&e.compareDocumentPosition(d.createElement("fieldset"))})),he((function(e){return e.innerHTML="<a href='#'></a>","#"===e.firstChild.getAttribute("href")}))||pe("type|href|height|width",(function(e,t,i){if(!i)return e.getAttribute(t,"type"===t.toLowerCase()?1:2)})),i.attributes&&he((function(e){return e.innerHTML="<input/>",e.firstChild.setAttribute("value",""),""===e.firstChild.getAttribute("value")}))||pe("value",(function(e,t,i){if(!i&&"input"===e.nodeName.toLowerCase())return e.defaultValue})),he((function(e){return null==e.getAttribute("disabled")}))||pe(U,(function(e,t,i){var n;if(!i)return!0===e[t]?t.toLowerCase():(n=e.getAttributeNode(t))&&n.specified?n.value:null})),ae}(n);S.find=k,S.expr=k.selectors,S.expr[":"]=S.expr.pseudos,S.uniqueSort=S.unique=k.uniqueSort,S.text=k.getText,S.isXMLDoc=k.isXML,S.contains=k.contains,S.escapeSelector=k.escape;var P=function(e,t,i){for(var n=[],s=void 0!==i;(e=e[t])&&9!==e.nodeType;)if(1===e.nodeType){if(s&&S(e).is(i))break;n.push(e)}return n},E=function(e,t){for(var i=[];e;e=e.nextSibling)1===e.nodeType&&e!==t&&i.push(e);return i},F=S.expr.match.needsContext;function O(e,t){return e.nodeName&&e.nodeName.toLowerCase()===t.toLowerCase()}var A=/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;function D(e,t,i){return v(t)?S.grep(e,(function(e,n){return!!t.call(e,n,e)!==i})):t.nodeType?S.grep(e,(function(e){return e===t!==i})):"string"!=typeof t?S.grep(e,(function(e){return h.call(t,e)>-1!==i})):S.filter(t,e,i)}S.filter=function(e,t,i){var n=t[0];return i&&(e=":not("+e+")"),1===t.length&&1===n.nodeType?S.find.matchesSelector(n,e)?[n]:[]:S.find.matches(e,S.grep(t,(function(e){return 1===e.nodeType})))},S.fn.extend({find:function(e){var t,i,n=this.length,s=this;if("string"!=typeof e)return this.pushStack(S(e).filter((function(){for(t=0;t<n;t++)if(S.contains(s[t],this))return!0})));for(i=this.pushStack([]),t=0;t<n;t++)S.find(e,s[t],i);return n>1?S.uniqueSort(i):i},filter:function(e){return this.pushStack(D(this,e||[],!1))},not:function(e){return this.pushStack(D(this,e||[],!0))},is:function(e){return!!D(this,"string"==typeof e&&F.test(e)?S(e):e||[],!1).length}});var N,M=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/;(S.fn.init=function(e,t,i){var n,s;if(!e)return this;if(i=i||N,"string"==typeof e){if(!(n="<"===e[0]&&">"===e[e.length-1]&&e.length>=3?[null,e,null]:M.exec(e))||!n[1]&&t)return!t||t.jquery?(t||i).find(e):this.constructor(t).find(e);if(n[1]){if(t=t instanceof S?t[0]:t,S.merge(this,S.parseHTML(n[1],t&&t.nodeType?t.ownerDocument||t:b,!0)),A.test(n[1])&&S.isPlainObject(t))for(n in t)v(this[n])?this[n](t[n]):this.attr(n,t[n]);return this}return(s=b.getElementById(n[2]))&&(this[0]=s,this.length=1),this}return e.nodeType?(this[0]=e,this.length=1,this):v(e)?void 0!==i.ready?i.ready(e):e(S):S.makeArray(e,this)}).prototype=S.fn,N=S(b);var I=/^(?:parents|prev(?:Until|All))/,U={children:!0,contents:!0,next:!0,prev:!0};function L(e,t){for(;(e=e[t])&&1!==e.nodeType;);return e}S.fn.extend({has:function(e){var t=S(e,this),i=t.length;return this.filter((function(){for(var e=0;e<i;e++)if(S.contains(this,t[e]))return!0}))},closest:function(e,t){var i,n=0,s=this.length,r=[],o="string"!=typeof e&&S(e);if(!F.test(e))for(;n<s;n++)for(i=this[n];i&&i!==t;i=i.parentNode)if(i.nodeType<11&&(o?o.index(i)>-1:1===i.nodeType&&S.find.matchesSelector(i,e))){r.push(i);break}return this.pushStack(r.length>1?S.uniqueSort(r):r)},index:function(e){return e?"string"==typeof e?h.call(S(e),this[0]):h.call(this,e.jquery?e[0]:e):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(e,t){return this.pushStack(S.uniqueSort(S.merge(this.get(),S(e,t))))},addBack:function(e){return this.add(null==e?this.prevObject:this.prevObject.filter(e))}}),S.each({parent:function(e){var t=e.parentNode;return t&&11!==t.nodeType?t:null},parents:function(e){return P(e,"parentNode")},parentsUntil:function(e,t,i){return P(e,"parentNode",i)},next:function(e){return L(e,"nextSibling")},prev:function(e){return L(e,"previousSibling")},nextAll:function(e){return P(e,"nextSibling")},prevAll:function(e){return P(e,"previousSibling")},nextUntil:function(e,t,i){return P(e,"nextSibling",i)},prevUntil:function(e,t,i){return P(e,"previousSibling",i)},siblings:function(e){return E((e.parentNode||{}).firstChild,e)},children:function(e){return E(e.firstChild)},contents:function(e){return null!=e.contentDocument&&o(e.contentDocument)?e.contentDocument:(O(e,"template")&&(e=e.content||e),S.merge([],e.childNodes))}},(function(e,t){S.fn[e]=function(i,n){var s=S.map(this,t,i);return"Until"!==e.slice(-5)&&(n=i),n&&"string"==typeof n&&(s=S.filter(n,s)),this.length>1&&(U[e]||S.uniqueSort(s),I.test(e)&&s.reverse()),this.pushStack(s)}}));var R=/[^\x20\t\r\n\f]+/g;function B(e){return e}function j(e){throw e}function z(e,t,i,n){var s;try{e&&v(s=e.promise)?s.call(e).done(t).fail(i):e&&v(s=e.then)?s.call(e,t,i):t.apply(void 0,[e].slice(n))}catch(e){i.apply(void 0,[e])}}S.Callbacks=function(e){e="string"==typeof e?function(e){var t={};return S.each(e.match(R)||[],(function(e,i){t[i]=!0})),t}(e):S.extend({},e);var t,i,n,s,r=[],o=[],a=-1,l=function(){for(s=s||e.once,n=t=!0;o.length;a=-1)for(i=o.shift();++a<r.length;)!1===r[a].apply(i[0],i[1])&&e.stopOnFalse&&(a=r.length,i=!1);e.memory||(i=!1),t=!1,s&&(r=i?[]:"")},u={add:function(){return r&&(i&&!t&&(a=r.length-1,o.push(i)),function t(i){S.each(i,(function(i,n){v(n)?e.unique&&u.has(n)||r.push(n):n&&n.length&&"string"!==C(n)&&t(n)}))}(arguments),i&&!t&&l()),this},remove:function(){return S.each(arguments,(function(e,t){for(var i;(i=S.inArray(t,r,i))>-1;)r.splice(i,1),i<=a&&a--})),this},has:function(e){return e?S.inArray(e,r)>-1:r.length>0},empty:function(){return r&&(r=[]),this},disable:function(){return s=o=[],r=i="",this},disabled:function(){return!r},lock:function(){return s=o=[],i||t||(r=i=""),this},locked:function(){return!!s},fireWith:function(e,i){return s||(i=[e,(i=i||[]).slice?i.slice():i],o.push(i),t||l()),this},fire:function(){return u.fireWith(this,arguments),this},fired:function(){return!!n}};return u},S.extend({Deferred:function(e){var t=[["notify","progress",S.Callbacks("memory"),S.Callbacks("memory"),2],["resolve","done",S.Callbacks("once memory"),S.Callbacks("once memory"),0,"resolved"],["reject","fail",S.Callbacks("once memory"),S.Callbacks("once memory"),1,"rejected"]],i="pending",s={state:function(){return i},always:function(){return r.done(arguments).fail(arguments),this},catch:function(e){return s.then(null,e)},pipe:function(){var e=arguments;return S.Deferred((function(i){S.each(t,(function(t,n){var s=v(e[n[4]])&&e[n[4]];r[n[1]]((function(){var e=s&&s.apply(this,arguments);e&&v(e.promise)?e.promise().progress(i.notify).done(i.resolve).fail(i.reject):i[n[0]+"With"](this,s?[e]:arguments)}))})),e=null})).promise()},then:function(e,i,s){var r=0;function o(e,t,i,s){return function(){var a=this,l=arguments,u=function(){var n,u;if(!(e<r)){if((n=i.apply(a,l))===t.promise())throw new TypeError("Thenable self-resolution");u=n&&("object"==typeof n||"function"==typeof n)&&n.then,v(u)?s?u.call(n,o(r,t,B,s),o(r,t,j,s)):(r++,u.call(n,o(r,t,B,s),o(r,t,j,s),o(r,t,B,t.notifyWith))):(i!==B&&(a=void 0,l=[n]),(s||t.resolveWith)(a,l))}},h=s?u:function(){try{u()}catch(n){S.Deferred.exceptionHook&&S.Deferred.exceptionHook(n,h.stackTrace),e+1>=r&&(i!==j&&(a=void 0,l=[n]),t.rejectWith(a,l))}};e?h():(S.Deferred.getStackHook&&(h.stackTrace=S.Deferred.getStackHook()),n.setTimeout(h))}}return S.Deferred((function(n){t[0][3].add(o(0,n,v(s)?s:B,n.notifyWith)),t[1][3].add(o(0,n,v(e)?e:B)),t[2][3].add(o(0,n,v(i)?i:j))})).promise()},promise:function(e){return null!=e?S.extend(e,s):s}},r={};return S.each(t,(function(e,n){var o=n[2],a=n[5];s[n[1]]=o.add,a&&o.add((function(){i=a}),t[3-e][2].disable,t[3-e][3].disable,t[0][2].lock,t[0][3].lock),o.add(n[3].fire),r[n[0]]=function(){return r[n[0]+"With"](this===r?void 0:this,arguments),this},r[n[0]+"With"]=o.fireWith})),s.promise(r),e&&e.call(r,r),r},when:function(e){var t=arguments.length,i=t,n=Array(i),s=a.call(arguments),r=S.Deferred(),o=function(e){return function(i){n[e]=this,s[e]=arguments.length>1?a.call(arguments):i,--t||r.resolveWith(n,s)}};if(t<=1&&(z(e,r.done(o(i)).resolve,r.reject,!t),"pending"===r.state()||v(s[i]&&s[i].then)))return r.then();for(;i--;)z(s[i],o(i),r.reject);return r.promise()}});var H=/^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;S.Deferred.exceptionHook=function(e,t){n.console&&n.console.warn&&e&&H.test(e.name)&&n.console.warn("jQuery.Deferred exception: "+e.message,e.stack,t)},S.readyException=function(e){n.setTimeout((function(){throw e}))};var q=S.Deferred();function $(){b.removeEventListener("DOMContentLoaded",$),n.removeEventListener("load",$),S.ready()}S.fn.ready=function(e){return q.then(e).catch((function(e){S.readyException(e)})),this},S.extend({isReady:!1,readyWait:1,ready:function(e){(!0===e?--S.readyWait:S.isReady)||(S.isReady=!0,!0!==e&&--S.readyWait>0||q.resolveWith(b,[S]))}}),S.ready.then=q.then,"complete"===b.readyState||"loading"!==b.readyState&&!b.documentElement.doScroll?n.setTimeout(S.ready):(b.addEventListener("DOMContentLoaded",$),n.addEventListener("load",$));var W=function(e,t,i,n,s,r,o){var a=0,l=e.length,u=null==i;if("object"===C(i))for(a in s=!0,i)W(e,t,a,i[a],!0,r,o);else if(void 0!==n&&(s=!0,v(n)||(o=!0),u&&(o?(t.call(e,n),t=null):(u=t,t=function(e,t,i){return u.call(S(e),i)})),t))for(;a<l;a++)t(e[a],i,o?n:n.call(e[a],a,t(e[a],i)));return s?e:u?t.call(e):l?t(e[0],i):r},V=/^-ms-/,X=/-([a-z])/g;function Y(e,t){return t.toUpperCase()}function G(e){return e.replace(V,"ms-").replace(X,Y)}var K=function(e){return 1===e.nodeType||9===e.nodeType||!+e.nodeType};function Q(){this.expando=S.expando+Q.uid++}Q.uid=1,Q.prototype={cache:function(e){var t=e[this.expando];return t||(t={},K(e)&&(e.nodeType?e[this.expando]=t:Object.defineProperty(e,this.expando,{value:t,configurable:!0}))),t},set:function(e,t,i){var n,s=this.cache(e);if("string"==typeof t)s[G(t)]=i;else for(n in t)s[G(n)]=t[n];return s},get:function(e,t){return void 0===t?this.cache(e):e[this.expando]&&e[this.expando][G(t)]},access:function(e,t,i){return void 0===t||t&&"string"==typeof t&&void 0===i?this.get(e,t):(this.set(e,t,i),void 0!==i?i:t)},remove:function(e,t){var i,n=e[this.expando];if(void 0!==n){if(void 0!==t){i=(t=Array.isArray(t)?t.map(G):(t=G(t))in n?[t]:t.match(R)||[]).length;for(;i--;)delete n[t[i]]}(void 0===t||S.isEmptyObject(n))&&(e.nodeType?e[this.expando]=void 0:delete e[this.expando])}},hasData:function(e){var t=e[this.expando];return void 0!==t&&!S.isEmptyObject(t)}};var J=new Q,Z=new Q,ee=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,te=/[A-Z]/g;function ie(e,t,i){var n;if(void 0===i&&1===e.nodeType)if(n="data-"+t.replace(te,"-$&").toLowerCase(),"string"==typeof(i=e.getAttribute(n))){try{i=function(e){return"true"===e||"false"!==e&&("null"===e?null:e===+e+""?+e:ee.test(e)?JSON.parse(e):e)}(i)}catch(e){}Z.set(e,t,i)}else i=void 0;return i}S.extend({hasData:function(e){return Z.hasData(e)||J.hasData(e)},data:function(e,t,i){return Z.access(e,t,i)},removeData:function(e,t){Z.remove(e,t)},_data:function(e,t,i){return J.access(e,t,i)},_removeData:function(e,t){J.remove(e,t)}}),S.fn.extend({data:function(e,t){var i,n,s,r=this[0],o=r&&r.attributes;if(void 0===e){if(this.length&&(s=Z.get(r),1===r.nodeType&&!J.get(r,"hasDataAttrs"))){for(i=o.length;i--;)o[i]&&0===(n=o[i].name).indexOf("data-")&&(n=G(n.slice(5)),ie(r,n,s[n]));J.set(r,"hasDataAttrs",!0)}return s}return"object"==typeof e?this.each((function(){Z.set(this,e)})):W(this,(function(t){var i;if(r&&void 0===t)return void 0!==(i=Z.get(r,e))||void 0!==(i=ie(r,e))?i:void 0;this.each((function(){Z.set(this,e,t)}))}),null,t,arguments.length>1,null,!0)},removeData:function(e){return this.each((function(){Z.remove(this,e)}))}}),S.extend({queue:function(e,t,i){var n;if(e)return t=(t||"fx")+"queue",n=J.get(e,t),i&&(!n||Array.isArray(i)?n=J.access(e,t,S.makeArray(i)):n.push(i)),n||[]},dequeue:function(e,t){t=t||"fx";var i=S.queue(e,t),n=i.length,s=i.shift(),r=S._queueHooks(e,t);"inprogress"===s&&(s=i.shift(),n--),s&&("fx"===t&&i.unshift("inprogress"),delete r.stop,s.call(e,(function(){S.dequeue(e,t)}),r)),!n&&r&&r.empty.fire()},_queueHooks:function(e,t){var i=t+"queueHooks";return J.get(e,i)||J.access(e,i,{empty:S.Callbacks("once memory").add((function(){J.remove(e,[t+"queue",i])}))})}}),S.fn.extend({queue:function(e,t){var i=2;return"string"!=typeof e&&(t=e,e="fx",i--),arguments.length<i?S.queue(this[0],e):void 0===t?this:this.each((function(){var i=S.queue(this,e,t);S._queueHooks(this,e),"fx"===e&&"inprogress"!==i[0]&&S.dequeue(this,e)}))},dequeue:function(e){return this.each((function(){S.dequeue(this,e)}))},clearQueue:function(e){return this.queue(e||"fx",[])},promise:function(e,t){var i,n=1,s=S.Deferred(),r=this,o=this.length,a=function(){--n||s.resolveWith(r,[r])};for("string"!=typeof e&&(t=e,e=void 0),e=e||"fx";o--;)(i=J.get(r[o],e+"queueHooks"))&&i.empty&&(n++,i.empty.add(a));return a(),s.promise(t)}});var ne=/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,se=new RegExp("^(?:([+-])=|)("+ne+")([a-z%]*)$","i"),re=["Top","Right","Bottom","Left"],oe=b.documentElement,ae=function(e){return S.contains(e.ownerDocument,e)},le={composed:!0};oe.getRootNode&&(ae=function(e){return S.contains(e.ownerDocument,e)||e.getRootNode(le)===e.ownerDocument});var ue=function(e,t){return"none"===(e=t||e).style.display||""===e.style.display&&ae(e)&&"none"===S.css(e,"display")};function he(e,t,i,n){var s,r,o=20,a=n?function(){return n.cur()}:function(){return S.css(e,t,"")},l=a(),u=i&&i[3]||(S.cssNumber[t]?"":"px"),h=e.nodeType&&(S.cssNumber[t]||"px"!==u&&+l)&&se.exec(S.css(e,t));if(h&&h[3]!==u){for(l/=2,u=u||h[3],h=+l||1;o--;)S.style(e,t,h+u),(1-r)*(1-(r=a()/l||.5))<=0&&(o=0),h/=r;h*=2,S.style(e,t,h+u),i=i||[]}return i&&(h=+h||+l||0,s=i[1]?h+(i[1]+1)*i[2]:+i[2],n&&(n.unit=u,n.start=h,n.end=s)),s}var pe={};function ce(e){var t,i=e.ownerDocument,n=e.nodeName,s=pe[n];return s||(t=i.body.appendChild(i.createElement(n)),s=S.css(t,"display"),t.parentNode.removeChild(t),"none"===s&&(s="block"),pe[n]=s,s)}function de(e,t){for(var i,n,s=[],r=0,o=e.length;r<o;r++)(n=e[r]).style&&(i=n.style.display,t?("none"===i&&(s[r]=J.get(n,"display")||null,s[r]||(n.style.display="")),""===n.style.display&&ue(n)&&(s[r]=ce(n))):"none"!==i&&(s[r]="none",J.set(n,"display",i)));for(r=0;r<o;r++)null!=s[r]&&(e[r].style.display=s[r]);return e}S.fn.extend({show:function(){return de(this,!0)},hide:function(){return de(this)},toggle:function(e){return"boolean"==typeof e?e?this.show():this.hide():this.each((function(){ue(this)?S(this).show():S(this).hide()}))}});var fe,me,ge=/^(?:checkbox|radio)$/i,ve=/<([a-z][^\/\0>\x20\t\r\n\f]*)/i,ye=/^$|^module$|\/(?:java|ecma)script/i;fe=b.createDocumentFragment().appendChild(b.createElement("div")),(me=b.createElement("input")).setAttribute("type","radio"),me.setAttribute("checked","checked"),me.setAttribute("name","t"),fe.appendChild(me),g.checkClone=fe.cloneNode(!0).cloneNode(!0).lastChild.checked,fe.innerHTML="<textarea>x</textarea>",g.noCloneChecked=!!fe.cloneNode(!0).lastChild.defaultValue,fe.innerHTML="<option></option>",g.option=!!fe.lastChild;var be={thead:[1,"<table>","</table>"],col:[2,"<table><colgroup>","</colgroup></table>"],tr:[2,"<table><tbody>","</tbody></table>"],td:[3,"<table><tbody><tr>","</tr></tbody></table>"],_default:[0,"",""]};function we(e,t){var i;return i=void 0!==e.getElementsByTagName?e.getElementsByTagName(t||"*"):void 0!==e.querySelectorAll?e.querySelectorAll(t||"*"):[],void 0===t||t&&O(e,t)?S.merge([e],i):i}function xe(e,t){for(var i=0,n=e.length;i<n;i++)J.set(e[i],"globalEval",!t||J.get(t[i],"globalEval"))}be.tbody=be.tfoot=be.colgroup=be.caption=be.thead,be.th=be.td,g.option||(be.optgroup=be.option=[1,"<select multiple='multiple'>","</select>"]);var Ce=/<|&#?\w+;/;function _e(e,t,i,n,s){for(var r,o,a,l,u,h,p=t.createDocumentFragment(),c=[],d=0,f=e.length;d<f;d++)if((r=e[d])||0===r)if("object"===C(r))S.merge(c,r.nodeType?[r]:r);else if(Ce.test(r)){for(o=o||p.appendChild(t.createElement("div")),a=(ve.exec(r)||["",""])[1].toLowerCase(),l=be[a]||be._default,o.innerHTML=l[1]+S.htmlPrefilter(r)+l[2],h=l[0];h--;)o=o.lastChild;S.merge(c,o.childNodes),(o=p.firstChild).textContent=""}else c.push(t.createTextNode(r));for(p.textContent="",d=0;r=c[d++];)if(n&&S.inArray(r,n)>-1)s&&s.push(r);else if(u=ae(r),o=we(p.appendChild(r),"script"),u&&xe(o),i)for(h=0;r=o[h++];)ye.test(r.type||"")&&i.push(r);return p}var Se=/^([^.]*)(?:\.(.+)|)/;function Te(){return!0}function ke(){return!1}function Pe(e,t){return e===function(){try{return b.activeElement}catch(e){}}()==("focus"===t)}function Ee(e,t,i,n,s,r){var o,a;if("object"==typeof t){for(a in"string"!=typeof i&&(n=n||i,i=void 0),t)Ee(e,a,i,n,t[a],r);return e}if(null==n&&null==s?(s=i,n=i=void 0):null==s&&("string"==typeof i?(s=n,n=void 0):(s=n,n=i,i=void 0)),!1===s)s=ke;else if(!s)return e;return 1===r&&(o=s,s=function(e){return S().off(e),o.apply(this,arguments)},s.guid=o.guid||(o.guid=S.guid++)),e.each((function(){S.event.add(this,t,s,n,i)}))}function Fe(e,t,i){i?(J.set(e,t,!1),S.event.add(e,t,{namespace:!1,handler:function(e){var n,s,r=J.get(this,t);if(1&e.isTrigger&&this[t]){if(r.length)(S.event.special[t]||{}).delegateType&&e.stopPropagation();else if(r=a.call(arguments),J.set(this,t,r),n=i(this,t),this[t](),r!==(s=J.get(this,t))||n?J.set(this,t,!1):s={},r!==s)return e.stopImmediatePropagation(),e.preventDefault(),s&&s.value}else r.length&&(J.set(this,t,{value:S.event.trigger(S.extend(r[0],S.Event.prototype),r.slice(1),this)}),e.stopImmediatePropagation())}})):void 0===J.get(e,t)&&S.event.add(e,t,Te)}S.event={global:{},add:function(e,t,i,n,s){var r,o,a,l,u,h,p,c,d,f,m,g=J.get(e);if(K(e))for(i.handler&&(i=(r=i).handler,s=r.selector),s&&S.find.matchesSelector(oe,s),i.guid||(i.guid=S.guid++),(l=g.events)||(l=g.events=Object.create(null)),(o=g.handle)||(o=g.handle=function(t){return void 0!==S&&S.event.triggered!==t.type?S.event.dispatch.apply(e,arguments):void 0}),u=(t=(t||"").match(R)||[""]).length;u--;)d=m=(a=Se.exec(t[u])||[])[1],f=(a[2]||"").split(".").sort(),d&&(p=S.event.special[d]||{},d=(s?p.delegateType:p.bindType)||d,p=S.event.special[d]||{},h=S.extend({type:d,origType:m,data:n,handler:i,guid:i.guid,selector:s,needsContext:s&&S.expr.match.needsContext.test(s),namespace:f.join(".")},r),(c=l[d])||((c=l[d]=[]).delegateCount=0,p.setup&&!1!==p.setup.call(e,n,f,o)||e.addEventListener&&e.addEventListener(d,o)),p.add&&(p.add.call(e,h),h.handler.guid||(h.handler.guid=i.guid)),s?c.splice(c.delegateCount++,0,h):c.push(h),S.event.global[d]=!0)},remove:function(e,t,i,n,s){var r,o,a,l,u,h,p,c,d,f,m,g=J.hasData(e)&&J.get(e);if(g&&(l=g.events)){for(u=(t=(t||"").match(R)||[""]).length;u--;)if(d=m=(a=Se.exec(t[u])||[])[1],f=(a[2]||"").split(".").sort(),d){for(p=S.event.special[d]||{},c=l[d=(n?p.delegateType:p.bindType)||d]||[],a=a[2]&&new RegExp("(^|\\.)"+f.join("\\.(?:.*\\.|)")+"(\\.|$)"),o=r=c.length;r--;)h=c[r],!s&&m!==h.origType||i&&i.guid!==h.guid||a&&!a.test(h.namespace)||n&&n!==h.selector&&("**"!==n||!h.selector)||(c.splice(r,1),h.selector&&c.delegateCount--,p.remove&&p.remove.call(e,h));o&&!c.length&&(p.teardown&&!1!==p.teardown.call(e,f,g.handle)||S.removeEvent(e,d,g.handle),delete l[d])}else for(d in l)S.event.remove(e,d+t[u],i,n,!0);S.isEmptyObject(l)&&J.remove(e,"handle events")}},dispatch:function(e){var t,i,n,s,r,o,a=new Array(arguments.length),l=S.event.fix(e),u=(J.get(this,"events")||Object.create(null))[l.type]||[],h=S.event.special[l.type]||{};for(a[0]=l,t=1;t<arguments.length;t++)a[t]=arguments[t];if(l.delegateTarget=this,!h.preDispatch||!1!==h.preDispatch.call(this,l)){for(o=S.event.handlers.call(this,l,u),t=0;(s=o[t++])&&!l.isPropagationStopped();)for(l.currentTarget=s.elem,i=0;(r=s.handlers[i++])&&!l.isImmediatePropagationStopped();)l.rnamespace&&!1!==r.namespace&&!l.rnamespace.test(r.namespace)||(l.handleObj=r,l.data=r.data,void 0!==(n=((S.event.special[r.origType]||{}).handle||r.handler).apply(s.elem,a))&&!1===(l.result=n)&&(l.preventDefault(),l.stopPropagation()));return h.postDispatch&&h.postDispatch.call(this,l),l.result}},handlers:function(e,t){var i,n,s,r,o,a=[],l=t.delegateCount,u=e.target;if(l&&u.nodeType&&!("click"===e.type&&e.button>=1))for(;u!==this;u=u.parentNode||this)if(1===u.nodeType&&("click"!==e.type||!0!==u.disabled)){for(r=[],o={},i=0;i<l;i++)void 0===o[s=(n=t[i]).selector+" "]&&(o[s]=n.needsContext?S(s,this).index(u)>-1:S.find(s,this,null,[u]).length),o[s]&&r.push(n);r.length&&a.push({elem:u,handlers:r})}return u=this,l<t.length&&a.push({elem:u,handlers:t.slice(l)}),a},addProp:function(e,t){Object.defineProperty(S.Event.prototype,e,{enumerable:!0,configurable:!0,get:v(t)?function(){if(this.originalEvent)return t(this.originalEvent)}:function(){if(this.originalEvent)return this.originalEvent[e]},set:function(t){Object.defineProperty(this,e,{enumerable:!0,configurable:!0,writable:!0,value:t})}})},fix:function(e){return e[S.expando]?e:new S.Event(e)},special:{load:{noBubble:!0},click:{setup:function(e){var t=this||e;return ge.test(t.type)&&t.click&&O(t,"input")&&Fe(t,"click",Te),!1},trigger:function(e){var t=this||e;return ge.test(t.type)&&t.click&&O(t,"input")&&Fe(t,"click"),!0},_default:function(e){var t=e.target;return ge.test(t.type)&&t.click&&O(t,"input")&&J.get(t,"click")||O(t,"a")}},beforeunload:{postDispatch:function(e){void 0!==e.result&&e.originalEvent&&(e.originalEvent.returnValue=e.result)}}}},S.removeEvent=function(e,t,i){e.removeEventListener&&e.removeEventListener(t,i)},S.Event=function(e,t){if(!(this instanceof S.Event))return new S.Event(e,t);e&&e.type?(this.originalEvent=e,this.type=e.type,this.isDefaultPrevented=e.defaultPrevented||void 0===e.defaultPrevented&&!1===e.returnValue?Te:ke,this.target=e.target&&3===e.target.nodeType?e.target.parentNode:e.target,this.currentTarget=e.currentTarget,this.relatedTarget=e.relatedTarget):this.type=e,t&&S.extend(this,t),this.timeStamp=e&&e.timeStamp||Date.now(),this[S.expando]=!0},S.Event.prototype={constructor:S.Event,isDefaultPrevented:ke,isPropagationStopped:ke,isImmediatePropagationStopped:ke,isSimulated:!1,preventDefault:function(){var e=this.originalEvent;this.isDefaultPrevented=Te,e&&!this.isSimulated&&e.preventDefault()},stopPropagation:function(){var e=this.originalEvent;this.isPropagationStopped=Te,e&&!this.isSimulated&&e.stopPropagation()},stopImmediatePropagation:function(){var e=this.originalEvent;this.isImmediatePropagationStopped=Te,e&&!this.isSimulated&&e.stopImmediatePropagation(),this.stopPropagation()}},S.each({altKey:!0,bubbles:!0,cancelable:!0,changedTouches:!0,ctrlKey:!0,detail:!0,eventPhase:!0,metaKey:!0,pageX:!0,pageY:!0,shiftKey:!0,view:!0,char:!0,code:!0,charCode:!0,key:!0,keyCode:!0,button:!0,buttons:!0,clientX:!0,clientY:!0,offsetX:!0,offsetY:!0,pointerId:!0,pointerType:!0,screenX:!0,screenY:!0,targetTouches:!0,toElement:!0,touches:!0,which:!0},S.event.addProp),S.each({focus:"focusin",blur:"focusout"},(function(e,t){S.event.special[e]={setup:function(){return Fe(this,e,Pe),!1},trigger:function(){return Fe(this,e),!0},_default:function(t){return J.get(t.target,e)},delegateType:t}})),S.each({mouseenter:"mouseover",mouseleave:"mouseout",pointerenter:"pointerover",pointerleave:"pointerout"},(function(e,t){S.event.special[e]={delegateType:t,bindType:t,handle:function(e){var i,n=this,s=e.relatedTarget,r=e.handleObj;return s&&(s===n||S.contains(n,s))||(e.type=r.origType,i=r.handler.apply(this,arguments),e.type=t),i}}})),S.fn.extend({on:function(e,t,i,n){return Ee(this,e,t,i,n)},one:function(e,t,i,n){return Ee(this,e,t,i,n,1)},off:function(e,t,i){var n,s;if(e&&e.preventDefault&&e.handleObj)return n=e.handleObj,S(e.delegateTarget).off(n.namespace?n.origType+"."+n.namespace:n.origType,n.selector,n.handler),this;if("object"==typeof e){for(s in e)this.off(s,t,e[s]);return this}return!1!==t&&"function"!=typeof t||(i=t,t=void 0),!1===i&&(i=ke),this.each((function(){S.event.remove(this,e,i,t)}))}});var Oe=/<script|<style|<link/i,Ae=/checked\s*(?:[^=]|=\s*.checked.)/i,De=/^\s*<!\[CDATA\[|\]\]>\s*$/g;function Ne(e,t){return O(e,"table")&&O(11!==t.nodeType?t:t.firstChild,"tr")&&S(e).children("tbody")[0]||e}function Me(e){return e.type=(null!==e.getAttribute("type"))+"/"+e.type,e}function Ie(e){return"true/"===(e.type||"").slice(0,5)?e.type=e.type.slice(5):e.removeAttribute("type"),e}function Ue(e,t){var i,n,s,r,o,a;if(1===t.nodeType){if(J.hasData(e)&&(a=J.get(e).events))for(s in J.remove(t,"handle events"),a)for(i=0,n=a[s].length;i<n;i++)S.event.add(t,s,a[s][i]);Z.hasData(e)&&(r=Z.access(e),o=S.extend({},r),Z.set(t,o))}}function Le(e,t){var i=t.nodeName.toLowerCase();"input"===i&&ge.test(e.type)?t.checked=e.checked:"input"!==i&&"textarea"!==i||(t.defaultValue=e.defaultValue)}function Re(e,t,i,n){t=l(t);var s,r,o,a,u,h,p=0,c=e.length,d=c-1,f=t[0],m=v(f);if(m||c>1&&"string"==typeof f&&!g.checkClone&&Ae.test(f))return e.each((function(s){var r=e.eq(s);m&&(t[0]=f.call(this,s,r.html())),Re(r,t,i,n)}));if(c&&(r=(s=_e(t,e[0].ownerDocument,!1,e,n)).firstChild,1===s.childNodes.length&&(s=r),r||n)){for(a=(o=S.map(we(s,"script"),Me)).length;p<c;p++)u=s,p!==d&&(u=S.clone(u,!0,!0),a&&S.merge(o,we(u,"script"))),i.call(e[p],u,p);if(a)for(h=o[o.length-1].ownerDocument,S.map(o,Ie),p=0;p<a;p++)u=o[p],ye.test(u.type||"")&&!J.access(u,"globalEval")&&S.contains(h,u)&&(u.src&&"module"!==(u.type||"").toLowerCase()?S._evalUrl&&!u.noModule&&S._evalUrl(u.src,{nonce:u.nonce||u.getAttribute("nonce")},h):x(u.textContent.replace(De,""),u,h))}return e}function Be(e,t,i){for(var n,s=t?S.filter(t,e):e,r=0;null!=(n=s[r]);r++)i||1!==n.nodeType||S.cleanData(we(n)),n.parentNode&&(i&&ae(n)&&xe(we(n,"script")),n.parentNode.removeChild(n));return e}S.extend({htmlPrefilter:function(e){return e},clone:function(e,t,i){var n,s,r,o,a=e.cloneNode(!0),l=ae(e);if(!(g.noCloneChecked||1!==e.nodeType&&11!==e.nodeType||S.isXMLDoc(e)))for(o=we(a),n=0,s=(r=we(e)).length;n<s;n++)Le(r[n],o[n]);if(t)if(i)for(r=r||we(e),o=o||we(a),n=0,s=r.length;n<s;n++)Ue(r[n],o[n]);else Ue(e,a);return(o=we(a,"script")).length>0&&xe(o,!l&&we(e,"script")),a},cleanData:function(e){for(var t,i,n,s=S.event.special,r=0;void 0!==(i=e[r]);r++)if(K(i)){if(t=i[J.expando]){if(t.events)for(n in t.events)s[n]?S.event.remove(i,n):S.removeEvent(i,n,t.handle);i[J.expando]=void 0}i[Z.expando]&&(i[Z.expando]=void 0)}}}),S.fn.extend({detach:function(e){return Be(this,e,!0)},remove:function(e){return Be(this,e)},text:function(e){return W(this,(function(e){return void 0===e?S.text(this):this.empty().each((function(){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||(this.textContent=e)}))}),null,e,arguments.length)},append:function(){return Re(this,arguments,(function(e){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||Ne(this,e).appendChild(e)}))},prepend:function(){return Re(this,arguments,(function(e){if(1===this.nodeType||11===this.nodeType||9===this.nodeType){var t=Ne(this,e);t.insertBefore(e,t.firstChild)}}))},before:function(){return Re(this,arguments,(function(e){this.parentNode&&this.parentNode.insertBefore(e,this)}))},after:function(){return Re(this,arguments,(function(e){this.parentNode&&this.parentNode.insertBefore(e,this.nextSibling)}))},empty:function(){for(var e,t=0;null!=(e=this[t]);t++)1===e.nodeType&&(S.cleanData(we(e,!1)),e.textContent="");return this},clone:function(e,t){return e=null!=e&&e,t=null==t?e:t,this.map((function(){return S.clone(this,e,t)}))},html:function(e){return W(this,(function(e){var t=this[0]||{},i=0,n=this.length;if(void 0===e&&1===t.nodeType)return t.innerHTML;if("string"==typeof e&&!Oe.test(e)&&!be[(ve.exec(e)||["",""])[1].toLowerCase()]){e=S.htmlPrefilter(e);try{for(;i<n;i++)1===(t=this[i]||{}).nodeType&&(S.cleanData(we(t,!1)),t.innerHTML=e);t=0}catch(e){}}t&&this.empty().append(e)}),null,e,arguments.length)},replaceWith:function(){var e=[];return Re(this,arguments,(function(t){var i=this.parentNode;S.inArray(this,e)<0&&(S.cleanData(we(this)),i&&i.replaceChild(t,this))}),e)}}),S.each({appendTo:"append",prependTo:"prepend",insertBefore:"before",insertAfter:"after",replaceAll:"replaceWith"},(function(e,t){S.fn[e]=function(e){for(var i,n=[],s=S(e),r=s.length-1,o=0;o<=r;o++)i=o===r?this:this.clone(!0),S(s[o])[t](i),u.apply(n,i.get());return this.pushStack(n)}}));var je=new RegExp("^("+ne+")(?!px)[a-z%]+$","i"),ze=/^--/,He=function(e){var t=e.ownerDocument.defaultView;return t&&t.opener||(t=n),t.getComputedStyle(e)},qe=function(e,t,i){var n,s,r={};for(s in t)r[s]=e.style[s],e.style[s]=t[s];for(s in n=i.call(e),t)e.style[s]=r[s];return n},$e=new RegExp(re.join("|"),"i"),We=new RegExp("^[\\x20\\t\\r\\n\\f]+|((?:^|[^\\\\])(?:\\\\.)*)[\\x20\\t\\r\\n\\f]+$","g");function Ve(e,t,i){var n,s,r,o,a=ze.test(t),l=e.style;return(i=i||He(e))&&(o=i.getPropertyValue(t)||i[t],a&&(o=o.replace(We,"$1")),""!==o||ae(e)||(o=S.style(e,t)),!g.pixelBoxStyles()&&je.test(o)&&$e.test(t)&&(n=l.width,s=l.minWidth,r=l.maxWidth,l.minWidth=l.maxWidth=l.width=o,o=i.width,l.width=n,l.minWidth=s,l.maxWidth=r)),void 0!==o?o+"":o}function Xe(e,t){return{get:function(){if(!e())return(this.get=t).apply(this,arguments);delete this.get}}}!function(){function e(){if(h){u.style.cssText="position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0",h.style.cssText="position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%",oe.appendChild(u).appendChild(h);var e=n.getComputedStyle(h);i="1%"!==e.top,l=12===t(e.marginLeft),h.style.right="60%",o=36===t(e.right),s=36===t(e.width),h.style.position="absolute",r=12===t(h.offsetWidth/3),oe.removeChild(u),h=null}}function t(e){return Math.round(parseFloat(e))}var i,s,r,o,a,l,u=b.createElement("div"),h=b.createElement("div");h.style&&(h.style.backgroundClip="content-box",h.cloneNode(!0).style.backgroundClip="",g.clearCloneStyle="content-box"===h.style.backgroundClip,S.extend(g,{boxSizingReliable:function(){return e(),s},pixelBoxStyles:function(){return e(),o},pixelPosition:function(){return e(),i},reliableMarginLeft:function(){return e(),l},scrollboxSize:function(){return e(),r},reliableTrDimensions:function(){var e,t,i,s;return null==a&&(e=b.createElement("table"),t=b.createElement("tr"),i=b.createElement("div"),e.style.cssText="position:absolute;left:-11111px;border-collapse:separate",t.style.cssText="border:1px solid",t.style.height="1px",i.style.height="9px",i.style.display="block",oe.appendChild(e).appendChild(t).appendChild(i),s=n.getComputedStyle(t),a=parseInt(s.height,10)+parseInt(s.borderTopWidth,10)+parseInt(s.borderBottomWidth,10)===t.offsetHeight,oe.removeChild(e)),a}}))}();var Ye=["Webkit","Moz","ms"],Ge=b.createElement("div").style,Ke={};function Qe(e){var t=S.cssProps[e]||Ke[e];return t||(e in Ge?e:Ke[e]=function(e){for(var t=e[0].toUpperCase()+e.slice(1),i=Ye.length;i--;)if((e=Ye[i]+t)in Ge)return e}(e)||e)}var Je=/^(none|table(?!-c[ea]).+)/,Ze={position:"absolute",visibility:"hidden",display:"block"},et={letterSpacing:"0",fontWeight:"400"};function tt(e,t,i){var n=se.exec(t);return n?Math.max(0,n[2]-(i||0))+(n[3]||"px"):t}function it(e,t,i,n,s,r){var o="width"===t?1:0,a=0,l=0;if(i===(n?"border":"content"))return 0;for(;o<4;o+=2)"margin"===i&&(l+=S.css(e,i+re[o],!0,s)),n?("content"===i&&(l-=S.css(e,"padding"+re[o],!0,s)),"margin"!==i&&(l-=S.css(e,"border"+re[o]+"Width",!0,s))):(l+=S.css(e,"padding"+re[o],!0,s),"padding"!==i?l+=S.css(e,"border"+re[o]+"Width",!0,s):a+=S.css(e,"border"+re[o]+"Width",!0,s));return!n&&r>=0&&(l+=Math.max(0,Math.ceil(e["offset"+t[0].toUpperCase()+t.slice(1)]-r-l-a-.5))||0),l}function nt(e,t,i){var n=He(e),s=(!g.boxSizingReliable()||i)&&"border-box"===S.css(e,"boxSizing",!1,n),r=s,o=Ve(e,t,n),a="offset"+t[0].toUpperCase()+t.slice(1);if(je.test(o)){if(!i)return o;o="auto"}return(!g.boxSizingReliable()&&s||!g.reliableTrDimensions()&&O(e,"tr")||"auto"===o||!parseFloat(o)&&"inline"===S.css(e,"display",!1,n))&&e.getClientRects().length&&(s="border-box"===S.css(e,"boxSizing",!1,n),(r=a in e)&&(o=e[a])),(o=parseFloat(o)||0)+it(e,t,i||(s?"border":"content"),r,n,o)+"px"}function st(e,t,i,n,s){return new st.prototype.init(e,t,i,n,s)}S.extend({cssHooks:{opacity:{get:function(e,t){if(t){var i=Ve(e,"opacity");return""===i?"1":i}}}},cssNumber:{animationIterationCount:!0,columnCount:!0,fillOpacity:!0,flexGrow:!0,flexShrink:!0,fontWeight:!0,gridArea:!0,gridColumn:!0,gridColumnEnd:!0,gridColumnStart:!0,gridRow:!0,gridRowEnd:!0,gridRowStart:!0,lineHeight:!0,opacity:!0,order:!0,orphans:!0,widows:!0,zIndex:!0,zoom:!0},cssProps:{},style:function(e,t,i,n){if(e&&3!==e.nodeType&&8!==e.nodeType&&e.style){var s,r,o,a=G(t),l=ze.test(t),u=e.style;if(l||(t=Qe(a)),o=S.cssHooks[t]||S.cssHooks[a],void 0===i)return o&&"get"in o&&void 0!==(s=o.get(e,!1,n))?s:u[t];"string"===(r=typeof i)&&(s=se.exec(i))&&s[1]&&(i=he(e,t,s),r="number"),null!=i&&i==i&&("number"!==r||l||(i+=s&&s[3]||(S.cssNumber[a]?"":"px")),g.clearCloneStyle||""!==i||0!==t.indexOf("background")||(u[t]="inherit"),o&&"set"in o&&void 0===(i=o.set(e,i,n))||(l?u.setProperty(t,i):u[t]=i))}},css:function(e,t,i,n){var s,r,o,a=G(t);return ze.test(t)||(t=Qe(a)),(o=S.cssHooks[t]||S.cssHooks[a])&&"get"in o&&(s=o.get(e,!0,i)),void 0===s&&(s=Ve(e,t,n)),"normal"===s&&t in et&&(s=et[t]),""===i||i?(r=parseFloat(s),!0===i||isFinite(r)?r||0:s):s}}),S.each(["height","width"],(function(e,t){S.cssHooks[t]={get:function(e,i,n){if(i)return!Je.test(S.css(e,"display"))||e.getClientRects().length&&e.getBoundingClientRect().width?nt(e,t,n):qe(e,Ze,(function(){return nt(e,t,n)}))},set:function(e,i,n){var s,r=He(e),o=!g.scrollboxSize()&&"absolute"===r.position,a=(o||n)&&"border-box"===S.css(e,"boxSizing",!1,r),l=n?it(e,t,n,a,r):0;return a&&o&&(l-=Math.ceil(e["offset"+t[0].toUpperCase()+t.slice(1)]-parseFloat(r[t])-it(e,t,"border",!1,r)-.5)),l&&(s=se.exec(i))&&"px"!==(s[3]||"px")&&(e.style[t]=i,i=S.css(e,t)),tt(0,i,l)}}})),S.cssHooks.marginLeft=Xe(g.reliableMarginLeft,(function(e,t){if(t)return(parseFloat(Ve(e,"marginLeft"))||e.getBoundingClientRect().left-qe(e,{marginLeft:0},(function(){return e.getBoundingClientRect().left})))+"px"})),S.each({margin:"",padding:"",border:"Width"},(function(e,t){S.cssHooks[e+t]={expand:function(i){for(var n=0,s={},r="string"==typeof i?i.split(" "):[i];n<4;n++)s[e+re[n]+t]=r[n]||r[n-2]||r[0];return s}},"margin"!==e&&(S.cssHooks[e+t].set=tt)})),S.fn.extend({css:function(e,t){return W(this,(function(e,t,i){var n,s,r={},o=0;if(Array.isArray(t)){for(n=He(e),s=t.length;o<s;o++)r[t[o]]=S.css(e,t[o],!1,n);return r}return void 0!==i?S.style(e,t,i):S.css(e,t)}),e,t,arguments.length>1)}}),S.Tween=st,st.prototype={constructor:st,init:function(e,t,i,n,s,r){this.elem=e,this.prop=i,this.easing=s||S.easing._default,this.options=t,this.start=this.now=this.cur(),this.end=n,this.unit=r||(S.cssNumber[i]?"":"px")},cur:function(){var e=st.propHooks[this.prop];return e&&e.get?e.get(this):st.propHooks._default.get(this)},run:function(e){var t,i=st.propHooks[this.prop];return this.options.duration?this.pos=t=S.easing[this.easing](e,this.options.duration*e,0,1,this.options.duration):this.pos=t=e,this.now=(this.end-this.start)*t+this.start,this.options.step&&this.options.step.call(this.elem,this.now,this),i&&i.set?i.set(this):st.propHooks._default.set(this),this}},st.prototype.init.prototype=st.prototype,st.propHooks={_default:{get:function(e){var t;return 1!==e.elem.nodeType||null!=e.elem[e.prop]&&null==e.elem.style[e.prop]?e.elem[e.prop]:(t=S.css(e.elem,e.prop,""))&&"auto"!==t?t:0},set:function(e){S.fx.step[e.prop]?S.fx.step[e.prop](e):1!==e.elem.nodeType||!S.cssHooks[e.prop]&&null==e.elem.style[Qe(e.prop)]?e.elem[e.prop]=e.now:S.style(e.elem,e.prop,e.now+e.unit)}}},st.propHooks.scrollTop=st.propHooks.scrollLeft={set:function(e){e.elem.nodeType&&e.elem.parentNode&&(e.elem[e.prop]=e.now)}},S.easing={linear:function(e){return e},swing:function(e){return.5-Math.cos(e*Math.PI)/2},_default:"swing"},S.fx=st.prototype.init,S.fx.step={};var rt,ot,at=/^(?:toggle|show|hide)$/,lt=/queueHooks$/;function ut(){ot&&(!1===b.hidden&&n.requestAnimationFrame?n.requestAnimationFrame(ut):n.setTimeout(ut,S.fx.interval),S.fx.tick())}function ht(){return n.setTimeout((function(){rt=void 0})),rt=Date.now()}function pt(e,t){var i,n=0,s={height:e};for(t=t?1:0;n<4;n+=2-t)s["margin"+(i=re[n])]=s["padding"+i]=e;return t&&(s.opacity=s.width=e),s}function ct(e,t,i){for(var n,s=(dt.tweeners[t]||[]).concat(dt.tweeners["*"]),r=0,o=s.length;r<o;r++)if(n=s[r].call(i,t,e))return n}function dt(e,t,i){var n,s,r=0,o=dt.prefilters.length,a=S.Deferred().always((function(){delete l.elem})),l=function(){if(s)return!1;for(var t=rt||ht(),i=Math.max(0,u.startTime+u.duration-t),n=1-(i/u.duration||0),r=0,o=u.tweens.length;r<o;r++)u.tweens[r].run(n);return a.notifyWith(e,[u,n,i]),n<1&&o?i:(o||a.notifyWith(e,[u,1,0]),a.resolveWith(e,[u]),!1)},u=a.promise({elem:e,props:S.extend({},t),opts:S.extend(!0,{specialEasing:{},easing:S.easing._default},i),originalProperties:t,originalOptions:i,startTime:rt||ht(),duration:i.duration,tweens:[],createTween:function(t,i){var n=S.Tween(e,u.opts,t,i,u.opts.specialEasing[t]||u.opts.easing);return u.tweens.push(n),n},stop:function(t){var i=0,n=t?u.tweens.length:0;if(s)return this;for(s=!0;i<n;i++)u.tweens[i].run(1);return t?(a.notifyWith(e,[u,1,0]),a.resolveWith(e,[u,t])):a.rejectWith(e,[u,t]),this}}),h=u.props;for(!function(e,t){var i,n,s,r,o;for(i in e)if(s=t[n=G(i)],r=e[i],Array.isArray(r)&&(s=r[1],r=e[i]=r[0]),i!==n&&(e[n]=r,delete e[i]),(o=S.cssHooks[n])&&"expand"in o)for(i in r=o.expand(r),delete e[n],r)i in e||(e[i]=r[i],t[i]=s);else t[n]=s}(h,u.opts.specialEasing);r<o;r++)if(n=dt.prefilters[r].call(u,e,h,u.opts))return v(n.stop)&&(S._queueHooks(u.elem,u.opts.queue).stop=n.stop.bind(n)),n;return S.map(h,ct,u),v(u.opts.start)&&u.opts.start.call(e,u),u.progress(u.opts.progress).done(u.opts.done,u.opts.complete).fail(u.opts.fail).always(u.opts.always),S.fx.timer(S.extend(l,{elem:e,anim:u,queue:u.opts.queue})),u}S.Animation=S.extend(dt,{tweeners:{"*":[function(e,t){var i=this.createTween(e,t);return he(i.elem,e,se.exec(t),i),i}]},tweener:function(e,t){v(e)?(t=e,e=["*"]):e=e.match(R);for(var i,n=0,s=e.length;n<s;n++)i=e[n],dt.tweeners[i]=dt.tweeners[i]||[],dt.tweeners[i].unshift(t)},prefilters:[function(e,t,i){var n,s,r,o,a,l,u,h,p="width"in t||"height"in t,c=this,d={},f=e.style,m=e.nodeType&&ue(e),g=J.get(e,"fxshow");for(n in i.queue||(null==(o=S._queueHooks(e,"fx")).unqueued&&(o.unqueued=0,a=o.empty.fire,o.empty.fire=function(){o.unqueued||a()}),o.unqueued++,c.always((function(){c.always((function(){o.unqueued--,S.queue(e,"fx").length||o.empty.fire()}))}))),t)if(s=t[n],at.test(s)){if(delete t[n],r=r||"toggle"===s,s===(m?"hide":"show")){if("show"!==s||!g||void 0===g[n])continue;m=!0}d[n]=g&&g[n]||S.style(e,n)}if((l=!S.isEmptyObject(t))||!S.isEmptyObject(d))for(n in p&&1===e.nodeType&&(i.overflow=[f.overflow,f.overflowX,f.overflowY],null==(u=g&&g.display)&&(u=J.get(e,"display")),"none"===(h=S.css(e,"display"))&&(u?h=u:(de([e],!0),u=e.style.display||u,h=S.css(e,"display"),de([e]))),("inline"===h||"inline-block"===h&&null!=u)&&"none"===S.css(e,"float")&&(l||(c.done((function(){f.display=u})),null==u&&(h=f.display,u="none"===h?"":h)),f.display="inline-block")),i.overflow&&(f.overflow="hidden",c.always((function(){f.overflow=i.overflow[0],f.overflowX=i.overflow[1],f.overflowY=i.overflow[2]}))),l=!1,d)l||(g?"hidden"in g&&(m=g.hidden):g=J.access(e,"fxshow",{display:u}),r&&(g.hidden=!m),m&&de([e],!0),c.done((function(){for(n in m||de([e]),J.remove(e,"fxshow"),d)S.style(e,n,d[n])}))),l=ct(m?g[n]:0,n,c),n in g||(g[n]=l.start,m&&(l.end=l.start,l.start=0))}],prefilter:function(e,t){t?dt.prefilters.unshift(e):dt.prefilters.push(e)}}),S.speed=function(e,t,i){var n=e&&"object"==typeof e?S.extend({},e):{complete:i||!i&&t||v(e)&&e,duration:e,easing:i&&t||t&&!v(t)&&t};return S.fx.off?n.duration=0:"number"!=typeof n.duration&&(n.duration in S.fx.speeds?n.duration=S.fx.speeds[n.duration]:n.duration=S.fx.speeds._default),null!=n.queue&&!0!==n.queue||(n.queue="fx"),n.old=n.complete,n.complete=function(){v(n.old)&&n.old.call(this),n.queue&&S.dequeue(this,n.queue)},n},S.fn.extend({fadeTo:function(e,t,i,n){return this.filter(ue).css("opacity",0).show().end().animate({opacity:t},e,i,n)},animate:function(e,t,i,n){var s=S.isEmptyObject(e),r=S.speed(t,i,n),o=function(){var t=dt(this,S.extend({},e),r);(s||J.get(this,"finish"))&&t.stop(!0)};return o.finish=o,s||!1===r.queue?this.each(o):this.queue(r.queue,o)},stop:function(e,t,i){var n=function(e){var t=e.stop;delete e.stop,t(i)};return"string"!=typeof e&&(i=t,t=e,e=void 0),t&&this.queue(e||"fx",[]),this.each((function(){var t=!0,s=null!=e&&e+"queueHooks",r=S.timers,o=J.get(this);if(s)o[s]&&o[s].stop&&n(o[s]);else for(s in o)o[s]&&o[s].stop&&lt.test(s)&&n(o[s]);for(s=r.length;s--;)r[s].elem!==this||null!=e&&r[s].queue!==e||(r[s].anim.stop(i),t=!1,r.splice(s,1));!t&&i||S.dequeue(this,e)}))},finish:function(e){return!1!==e&&(e=e||"fx"),this.each((function(){var t,i=J.get(this),n=i[e+"queue"],s=i[e+"queueHooks"],r=S.timers,o=n?n.length:0;for(i.finish=!0,S.queue(this,e,[]),s&&s.stop&&s.stop.call(this,!0),t=r.length;t--;)r[t].elem===this&&r[t].queue===e&&(r[t].anim.stop(!0),r.splice(t,1));for(t=0;t<o;t++)n[t]&&n[t].finish&&n[t].finish.call(this);delete i.finish}))}}),S.each(["toggle","show","hide"],(function(e,t){var i=S.fn[t];S.fn[t]=function(e,n,s){return null==e||"boolean"==typeof e?i.apply(this,arguments):this.animate(pt(t,!0),e,n,s)}})),S.each({slideDown:pt("show"),slideUp:pt("hide"),slideToggle:pt("toggle"),fadeIn:{opacity:"show"},fadeOut:{opacity:"hide"},fadeToggle:{opacity:"toggle"}},(function(e,t){S.fn[e]=function(e,i,n){return this.animate(t,e,i,n)}})),S.timers=[],S.fx.tick=function(){var e,t=0,i=S.timers;for(rt=Date.now();t<i.length;t++)(e=i[t])()||i[t]!==e||i.splice(t--,1);i.length||S.fx.stop(),rt=void 0},S.fx.timer=function(e){S.timers.push(e),S.fx.start()},S.fx.interval=13,S.fx.start=function(){ot||(ot=!0,ut())},S.fx.stop=function(){ot=null},S.fx.speeds={slow:600,fast:200,_default:400},S.fn.delay=function(e,t){return e=S.fx&&S.fx.speeds[e]||e,t=t||"fx",this.queue(t,(function(t,i){var s=n.setTimeout(t,e);i.stop=function(){n.clearTimeout(s)}}))},function(){var e=b.createElement("input"),t=b.createElement("select").appendChild(b.createElement("option"));e.type="checkbox",g.checkOn=""!==e.value,g.optSelected=t.selected,(e=b.createElement("input")).value="t",e.type="radio",g.radioValue="t"===e.value}();var ft,mt=S.expr.attrHandle;S.fn.extend({attr:function(e,t){return W(this,S.attr,e,t,arguments.length>1)},removeAttr:function(e){return this.each((function(){S.removeAttr(this,e)}))}}),S.extend({attr:function(e,t,i){var n,s,r=e.nodeType;if(3!==r&&8!==r&&2!==r)return void 0===e.getAttribute?S.prop(e,t,i):(1===r&&S.isXMLDoc(e)||(s=S.attrHooks[t.toLowerCase()]||(S.expr.match.bool.test(t)?ft:void 0)),void 0!==i?null===i?void S.removeAttr(e,t):s&&"set"in s&&void 0!==(n=s.set(e,i,t))?n:(e.setAttribute(t,i+""),i):s&&"get"in s&&null!==(n=s.get(e,t))?n:null==(n=S.find.attr(e,t))?void 0:n)},attrHooks:{type:{set:function(e,t){if(!g.radioValue&&"radio"===t&&O(e,"input")){var i=e.value;return e.setAttribute("type",t),i&&(e.value=i),t}}}},removeAttr:function(e,t){var i,n=0,s=t&&t.match(R);if(s&&1===e.nodeType)for(;i=s[n++];)e.removeAttribute(i)}}),ft={set:function(e,t,i){return!1===t?S.removeAttr(e,i):e.setAttribute(i,i),i}},S.each(S.expr.match.bool.source.match(/\w+/g),(function(e,t){var i=mt[t]||S.find.attr;mt[t]=function(e,t,n){var s,r,o=t.toLowerCase();return n||(r=mt[o],mt[o]=s,s=null!=i(e,t,n)?o:null,mt[o]=r),s}}));var gt=/^(?:input|select|textarea|button)$/i,vt=/^(?:a|area)$/i;function yt(e){return(e.match(R)||[]).join(" ")}function bt(e){return e.getAttribute&&e.getAttribute("class")||""}function wt(e){return Array.isArray(e)?e:"string"==typeof e&&e.match(R)||[]}S.fn.extend({prop:function(e,t){return W(this,S.prop,e,t,arguments.length>1)},removeProp:function(e){return this.each((function(){delete this[S.propFix[e]||e]}))}}),S.extend({prop:function(e,t,i){var n,s,r=e.nodeType;if(3!==r&&8!==r&&2!==r)return 1===r&&S.isXMLDoc(e)||(t=S.propFix[t]||t,s=S.propHooks[t]),void 0!==i?s&&"set"in s&&void 0!==(n=s.set(e,i,t))?n:e[t]=i:s&&"get"in s&&null!==(n=s.get(e,t))?n:e[t]},propHooks:{tabIndex:{get:function(e){var t=S.find.attr(e,"tabindex");return t?parseInt(t,10):gt.test(e.nodeName)||vt.test(e.nodeName)&&e.href?0:-1}}},propFix:{for:"htmlFor",class:"className"}}),g.optSelected||(S.propHooks.selected={get:function(e){var t=e.parentNode;return t&&t.parentNode&&t.parentNode.selectedIndex,null},set:function(e){var t=e.parentNode;t&&(t.selectedIndex,t.parentNode&&t.parentNode.selectedIndex)}}),S.each(["tabIndex","readOnly","maxLength","cellSpacing","cellPadding","rowSpan","colSpan","useMap","frameBorder","contentEditable"],(function(){S.propFix[this.toLowerCase()]=this})),S.fn.extend({addClass:function(e){var t,i,n,s,r,o;return v(e)?this.each((function(t){S(this).addClass(e.call(this,t,bt(this)))})):(t=wt(e)).length?this.each((function(){if(n=bt(this),i=1===this.nodeType&&" "+yt(n)+" "){for(r=0;r<t.length;r++)s=t[r],i.indexOf(" "+s+" ")<0&&(i+=s+" ");o=yt(i),n!==o&&this.setAttribute("class",o)}})):this},removeClass:function(e){var t,i,n,s,r,o;return v(e)?this.each((function(t){S(this).removeClass(e.call(this,t,bt(this)))})):arguments.length?(t=wt(e)).length?this.each((function(){if(n=bt(this),i=1===this.nodeType&&" "+yt(n)+" "){for(r=0;r<t.length;r++)for(s=t[r];i.indexOf(" "+s+" ")>-1;)i=i.replace(" "+s+" "," ");o=yt(i),n!==o&&this.setAttribute("class",o)}})):this:this.attr("class","")},toggleClass:function(e,t){var i,n,s,r,o=typeof e,a="string"===o||Array.isArray(e);return v(e)?this.each((function(i){S(this).toggleClass(e.call(this,i,bt(this),t),t)})):"boolean"==typeof t&&a?t?this.addClass(e):this.removeClass(e):(i=wt(e),this.each((function(){if(a)for(r=S(this),s=0;s<i.length;s++)n=i[s],r.hasClass(n)?r.removeClass(n):r.addClass(n);else void 0!==e&&"boolean"!==o||((n=bt(this))&&J.set(this,"__className__",n),this.setAttribute&&this.setAttribute("class",n||!1===e?"":J.get(this,"__className__")||""))})))},hasClass:function(e){var t,i,n=0;for(t=" "+e+" ";i=this[n++];)if(1===i.nodeType&&(" "+yt(bt(i))+" ").indexOf(t)>-1)return!0;return!1}});var xt=/\r/g;S.fn.extend({val:function(e){var t,i,n,s=this[0];return arguments.length?(n=v(e),this.each((function(i){var s;1===this.nodeType&&(null==(s=n?e.call(this,i,S(this).val()):e)?s="":"number"==typeof s?s+="":Array.isArray(s)&&(s=S.map(s,(function(e){return null==e?"":e+""}))),(t=S.valHooks[this.type]||S.valHooks[this.nodeName.toLowerCase()])&&"set"in t&&void 0!==t.set(this,s,"value")||(this.value=s))}))):s?(t=S.valHooks[s.type]||S.valHooks[s.nodeName.toLowerCase()])&&"get"in t&&void 0!==(i=t.get(s,"value"))?i:"string"==typeof(i=s.value)?i.replace(xt,""):null==i?"":i:void 0}}),S.extend({valHooks:{option:{get:function(e){var t=S.find.attr(e,"value");return null!=t?t:yt(S.text(e))}},select:{get:function(e){var t,i,n,s=e.options,r=e.selectedIndex,o="select-one"===e.type,a=o?null:[],l=o?r+1:s.length;for(n=r<0?l:o?r:0;n<l;n++)if(((i=s[n]).selected||n===r)&&!i.disabled&&(!i.parentNode.disabled||!O(i.parentNode,"optgroup"))){if(t=S(i).val(),o)return t;a.push(t)}return a},set:function(e,t){for(var i,n,s=e.options,r=S.makeArray(t),o=s.length;o--;)((n=s[o]).selected=S.inArray(S.valHooks.option.get(n),r)>-1)&&(i=!0);return i||(e.selectedIndex=-1),r}}}}),S.each(["radio","checkbox"],(function(){S.valHooks[this]={set:function(e,t){if(Array.isArray(t))return e.checked=S.inArray(S(e).val(),t)>-1}},g.checkOn||(S.valHooks[this].get=function(e){return null===e.getAttribute("value")?"on":e.value})})),g.focusin="onfocusin"in n;var Ct=/^(?:focusinfocus|focusoutblur)$/,_t=function(e){e.stopPropagation()};S.extend(S.event,{trigger:function(e,t,i,s){var r,o,a,l,u,h,p,c,f=[i||b],m=d.call(e,"type")?e.type:e,g=d.call(e,"namespace")?e.namespace.split("."):[];if(o=c=a=i=i||b,3!==i.nodeType&&8!==i.nodeType&&!Ct.test(m+S.event.triggered)&&(m.indexOf(".")>-1&&(g=m.split("."),m=g.shift(),g.sort()),u=m.indexOf(":")<0&&"on"+m,(e=e[S.expando]?e:new S.Event(m,"object"==typeof e&&e)).isTrigger=s?2:3,e.namespace=g.join("."),e.rnamespace=e.namespace?new RegExp("(^|\\.)"+g.join("\\.(?:.*\\.|)")+"(\\.|$)"):null,e.result=void 0,e.target||(e.target=i),t=null==t?[e]:S.makeArray(t,[e]),p=S.event.special[m]||{},s||!p.trigger||!1!==p.trigger.apply(i,t))){if(!s&&!p.noBubble&&!y(i)){for(l=p.delegateType||m,Ct.test(l+m)||(o=o.parentNode);o;o=o.parentNode)f.push(o),a=o;a===(i.ownerDocument||b)&&f.push(a.defaultView||a.parentWindow||n)}for(r=0;(o=f[r++])&&!e.isPropagationStopped();)c=o,e.type=r>1?l:p.bindType||m,(h=(J.get(o,"events")||Object.create(null))[e.type]&&J.get(o,"handle"))&&h.apply(o,t),(h=u&&o[u])&&h.apply&&K(o)&&(e.result=h.apply(o,t),!1===e.result&&e.preventDefault());return e.type=m,s||e.isDefaultPrevented()||p._default&&!1!==p._default.apply(f.pop(),t)||!K(i)||u&&v(i[m])&&!y(i)&&((a=i[u])&&(i[u]=null),S.event.triggered=m,e.isPropagationStopped()&&c.addEventListener(m,_t),i[m](),e.isPropagationStopped()&&c.removeEventListener(m,_t),S.event.triggered=void 0,a&&(i[u]=a)),e.result}},simulate:function(e,t,i){var n=S.extend(new S.Event,i,{type:e,isSimulated:!0});S.event.trigger(n,null,t)}}),S.fn.extend({trigger:function(e,t){return this.each((function(){S.event.trigger(e,t,this)}))},triggerHandler:function(e,t){var i=this[0];if(i)return S.event.trigger(e,t,i,!0)}}),g.focusin||S.each({focus:"focusin",blur:"focusout"},(function(e,t){var i=function(e){S.event.simulate(t,e.target,S.event.fix(e))};S.event.special[t]={setup:function(){var n=this.ownerDocument||this.document||this,s=J.access(n,t);s||n.addEventListener(e,i,!0),J.access(n,t,(s||0)+1)},teardown:function(){var n=this.ownerDocument||this.document||this,s=J.access(n,t)-1;s?J.access(n,t,s):(n.removeEventListener(e,i,!0),J.remove(n,t))}}}));var St=n.location,Tt={guid:Date.now()},kt=/\?/;S.parseXML=function(e){var t,i;if(!e||"string"!=typeof e)return null;try{t=(new n.DOMParser).parseFromString(e,"text/xml")}catch(e){}return i=t&&t.getElementsByTagName("parsererror")[0],t&&!i||S.error("Invalid XML: "+(i?S.map(i.childNodes,(function(e){return e.textContent})).join("\n"):e)),t};var Pt=/\[\]$/,Et=/\r?\n/g,Ft=/^(?:submit|button|image|reset|file)$/i,Ot=/^(?:input|select|textarea|keygen)/i;function At(e,t,i,n){var s;if(Array.isArray(t))S.each(t,(function(t,s){i||Pt.test(e)?n(e,s):At(e+"["+("object"==typeof s&&null!=s?t:"")+"]",s,i,n)}));else if(i||"object"!==C(t))n(e,t);else for(s in t)At(e+"["+s+"]",t[s],i,n)}S.param=function(e,t){var i,n=[],s=function(e,t){var i=v(t)?t():t;n[n.length]=encodeURIComponent(e)+"="+encodeURIComponent(null==i?"":i)};if(null==e)return"";if(Array.isArray(e)||e.jquery&&!S.isPlainObject(e))S.each(e,(function(){s(this.name,this.value)}));else for(i in e)At(i,e[i],t,s);return n.join("&")},S.fn.extend({serialize:function(){return S.param(this.serializeArray())},serializeArray:function(){return this.map((function(){var e=S.prop(this,"elements");return e?S.makeArray(e):this})).filter((function(){var e=this.type;return this.name&&!S(this).is(":disabled")&&Ot.test(this.nodeName)&&!Ft.test(e)&&(this.checked||!ge.test(e))})).map((function(e,t){var i=S(this).val();return null==i?null:Array.isArray(i)?S.map(i,(function(e){return{name:t.name,value:e.replace(Et,"\r\n")}})):{name:t.name,value:i.replace(Et,"\r\n")}})).get()}});var Dt=/%20/g,Nt=/#.*$/,Mt=/([?&])_=[^&]*/,It=/^(.*?):[ \t]*([^\r\n]*)$/gm,Ut=/^(?:GET|HEAD)$/,Lt=/^\/\//,Rt={},Bt={},jt="*/".concat("*"),zt=b.createElement("a");function Ht(e){return function(t,i){"string"!=typeof t&&(i=t,t="*");var n,s=0,r=t.toLowerCase().match(R)||[];if(v(i))for(;n=r[s++];)"+"===n[0]?(n=n.slice(1)||"*",(e[n]=e[n]||[]).unshift(i)):(e[n]=e[n]||[]).push(i)}}function qt(e,t,i,n){var s={},r=e===Bt;function o(a){var l;return s[a]=!0,S.each(e[a]||[],(function(e,a){var u=a(t,i,n);return"string"!=typeof u||r||s[u]?r?!(l=u):void 0:(t.dataTypes.unshift(u),o(u),!1)})),l}return o(t.dataTypes[0])||!s["*"]&&o("*")}function $t(e,t){var i,n,s=S.ajaxSettings.flatOptions||{};for(i in t)void 0!==t[i]&&((s[i]?e:n||(n={}))[i]=t[i]);return n&&S.extend(!0,e,n),e}zt.href=St.href,S.extend({active:0,lastModified:{},etag:{},ajaxSettings:{url:St.href,type:"GET",isLocal:/^(?:about|app|app-storage|.+-extension|file|res|widget):$/.test(St.protocol),global:!0,processData:!0,async:!0,contentType:"application/x-www-form-urlencoded; charset=UTF-8",accepts:{"*":jt,text:"text/plain",html:"text/html",xml:"application/xml, text/xml",json:"application/json, text/javascript"},contents:{xml:/\bxml\b/,html:/\bhtml/,json:/\bjson\b/},responseFields:{xml:"responseXML",text:"responseText",json:"responseJSON"},converters:{"* text":String,"text html":!0,"text json":JSON.parse,"text xml":S.parseXML},flatOptions:{url:!0,context:!0}},ajaxSetup:function(e,t){return t?$t($t(e,S.ajaxSettings),t):$t(S.ajaxSettings,e)},ajaxPrefilter:Ht(Rt),ajaxTransport:Ht(Bt),ajax:function(e,t){"object"==typeof e&&(t=e,e=void 0),t=t||{};var i,s,r,o,a,l,u,h,p,c,d=S.ajaxSetup({},t),f=d.context||d,m=d.context&&(f.nodeType||f.jquery)?S(f):S.event,g=S.Deferred(),v=S.Callbacks("once memory"),y=d.statusCode||{},w={},x={},C="canceled",_={readyState:0,getResponseHeader:function(e){var t;if(u){if(!o)for(o={};t=It.exec(r);)o[t[1].toLowerCase()+" "]=(o[t[1].toLowerCase()+" "]||[]).concat(t[2]);t=o[e.toLowerCase()+" "]}return null==t?null:t.join(", ")},getAllResponseHeaders:function(){return u?r:null},setRequestHeader:function(e,t){return null==u&&(e=x[e.toLowerCase()]=x[e.toLowerCase()]||e,w[e]=t),this},overrideMimeType:function(e){return null==u&&(d.mimeType=e),this},statusCode:function(e){var t;if(e)if(u)_.always(e[_.status]);else for(t in e)y[t]=[y[t],e[t]];return this},abort:function(e){var t=e||C;return i&&i.abort(t),T(0,t),this}};if(g.promise(_),d.url=((e||d.url||St.href)+"").replace(Lt,St.protocol+"//"),d.type=t.method||t.type||d.method||d.type,d.dataTypes=(d.dataType||"*").toLowerCase().match(R)||[""],null==d.crossDomain){l=b.createElement("a");try{l.href=d.url,l.href=l.href,d.crossDomain=zt.protocol+"//"+zt.host!=l.protocol+"//"+l.host}catch(e){d.crossDomain=!0}}if(d.data&&d.processData&&"string"!=typeof d.data&&(d.data=S.param(d.data,d.traditional)),qt(Rt,d,t,_),u)return _;for(p in(h=S.event&&d.global)&&0==S.active++&&S.event.trigger("ajaxStart"),d.type=d.type.toUpperCase(),d.hasContent=!Ut.test(d.type),s=d.url.replace(Nt,""),d.hasContent?d.data&&d.processData&&0===(d.contentType||"").indexOf("application/x-www-form-urlencoded")&&(d.data=d.data.replace(Dt,"+")):(c=d.url.slice(s.length),d.data&&(d.processData||"string"==typeof d.data)&&(s+=(kt.test(s)?"&":"?")+d.data,delete d.data),!1===d.cache&&(s=s.replace(Mt,"$1"),c=(kt.test(s)?"&":"?")+"_="+Tt.guid+++c),d.url=s+c),d.ifModified&&(S.lastModified[s]&&_.setRequestHeader("If-Modified-Since",S.lastModified[s]),S.etag[s]&&_.setRequestHeader("If-None-Match",S.etag[s])),(d.data&&d.hasContent&&!1!==d.contentType||t.contentType)&&_.setRequestHeader("Content-Type",d.contentType),_.setRequestHeader("Accept",d.dataTypes[0]&&d.accepts[d.dataTypes[0]]?d.accepts[d.dataTypes[0]]+("*"!==d.dataTypes[0]?", "+jt+"; q=0.01":""):d.accepts["*"]),d.headers)_.setRequestHeader(p,d.headers[p]);if(d.beforeSend&&(!1===d.beforeSend.call(f,_,d)||u))return _.abort();if(C="abort",v.add(d.complete),_.done(d.success),_.fail(d.error),i=qt(Bt,d,t,_)){if(_.readyState=1,h&&m.trigger("ajaxSend",[_,d]),u)return _;d.async&&d.timeout>0&&(a=n.setTimeout((function(){_.abort("timeout")}),d.timeout));try{u=!1,i.send(w,T)}catch(e){if(u)throw e;T(-1,e)}}else T(-1,"No Transport");function T(e,t,o,l){var p,c,b,w,x,C=t;u||(u=!0,a&&n.clearTimeout(a),i=void 0,r=l||"",_.readyState=e>0?4:0,p=e>=200&&e<300||304===e,o&&(w=function(e,t,i){for(var n,s,r,o,a=e.contents,l=e.dataTypes;"*"===l[0];)l.shift(),void 0===n&&(n=e.mimeType||t.getResponseHeader("Content-Type"));if(n)for(s in a)if(a[s]&&a[s].test(n)){l.unshift(s);break}if(l[0]in i)r=l[0];else{for(s in i){if(!l[0]||e.converters[s+" "+l[0]]){r=s;break}o||(o=s)}r=r||o}if(r)return r!==l[0]&&l.unshift(r),i[r]}(d,_,o)),!p&&S.inArray("script",d.dataTypes)>-1&&S.inArray("json",d.dataTypes)<0&&(d.converters["text script"]=function(){}),w=function(e,t,i,n){var s,r,o,a,l,u={},h=e.dataTypes.slice();if(h[1])for(o in e.converters)u[o.toLowerCase()]=e.converters[o];for(r=h.shift();r;)if(e.responseFields[r]&&(i[e.responseFields[r]]=t),!l&&n&&e.dataFilter&&(t=e.dataFilter(t,e.dataType)),l=r,r=h.shift())if("*"===r)r=l;else if("*"!==l&&l!==r){if(!(o=u[l+" "+r]||u["* "+r]))for(s in u)if((a=s.split(" "))[1]===r&&(o=u[l+" "+a[0]]||u["* "+a[0]])){!0===o?o=u[s]:!0!==u[s]&&(r=a[0],h.unshift(a[1]));break}if(!0!==o)if(o&&e.throws)t=o(t);else try{t=o(t)}catch(e){return{state:"parsererror",error:o?e:"No conversion from "+l+" to "+r}}}return{state:"success",data:t}}(d,w,_,p),p?(d.ifModified&&((x=_.getResponseHeader("Last-Modified"))&&(S.lastModified[s]=x),(x=_.getResponseHeader("etag"))&&(S.etag[s]=x)),204===e||"HEAD"===d.type?C="nocontent":304===e?C="notmodified":(C=w.state,c=w.data,p=!(b=w.error))):(b=C,!e&&C||(C="error",e<0&&(e=0))),_.status=e,_.statusText=(t||C)+"",p?g.resolveWith(f,[c,C,_]):g.rejectWith(f,[_,C,b]),_.statusCode(y),y=void 0,h&&m.trigger(p?"ajaxSuccess":"ajaxError",[_,d,p?c:b]),v.fireWith(f,[_,C]),h&&(m.trigger("ajaxComplete",[_,d]),--S.active||S.event.trigger("ajaxStop")))}return _},getJSON:function(e,t,i){return S.get(e,t,i,"json")},getScript:function(e,t){return S.get(e,void 0,t,"script")}}),S.each(["get","post"],(function(e,t){S[t]=function(e,i,n,s){return v(i)&&(s=s||n,n=i,i=void 0),S.ajax(S.extend({url:e,type:t,dataType:s,data:i,success:n},S.isPlainObject(e)&&e))}})),S.ajaxPrefilter((function(e){var t;for(t in e.headers)"content-type"===t.toLowerCase()&&(e.contentType=e.headers[t]||"")})),S._evalUrl=function(e,t,i){return S.ajax({url:e,type:"GET",dataType:"script",cache:!0,async:!1,global:!1,converters:{"text script":function(){}},dataFilter:function(e){S.globalEval(e,t,i)}})},S.fn.extend({wrapAll:function(e){var t;return this[0]&&(v(e)&&(e=e.call(this[0])),t=S(e,this[0].ownerDocument).eq(0).clone(!0),this[0].parentNode&&t.insertBefore(this[0]),t.map((function(){for(var e=this;e.firstElementChild;)e=e.firstElementChild;return e})).append(this)),this},wrapInner:function(e){return v(e)?this.each((function(t){S(this).wrapInner(e.call(this,t))})):this.each((function(){var t=S(this),i=t.contents();i.length?i.wrapAll(e):t.append(e)}))},wrap:function(e){var t=v(e);return this.each((function(i){S(this).wrapAll(t?e.call(this,i):e)}))},unwrap:function(e){return this.parent(e).not("body").each((function(){S(this).replaceWith(this.childNodes)})),this}}),S.expr.pseudos.hidden=function(e){return!S.expr.pseudos.visible(e)},S.expr.pseudos.visible=function(e){return!!(e.offsetWidth||e.offsetHeight||e.getClientRects().length)},S.ajaxSettings.xhr=function(){try{return new n.XMLHttpRequest}catch(e){}};var Wt={0:200,1223:204},Vt=S.ajaxSettings.xhr();g.cors=!!Vt&&"withCredentials"in Vt,g.ajax=Vt=!!Vt,S.ajaxTransport((function(e){var t,i;if(g.cors||Vt&&!e.crossDomain)return{send:function(s,r){var o,a=e.xhr();if(a.open(e.type,e.url,e.async,e.username,e.password),e.xhrFields)for(o in e.xhrFields)a[o]=e.xhrFields[o];for(o in e.mimeType&&a.overrideMimeType&&a.overrideMimeType(e.mimeType),e.crossDomain||s["X-Requested-With"]||(s["X-Requested-With"]="XMLHttpRequest"),s)a.setRequestHeader(o,s[o]);t=function(e){return function(){t&&(t=i=a.onload=a.onerror=a.onabort=a.ontimeout=a.onreadystatechange=null,"abort"===e?a.abort():"error"===e?"number"!=typeof a.status?r(0,"error"):r(a.status,a.statusText):r(Wt[a.status]||a.status,a.statusText,"text"!==(a.responseType||"text")||"string"!=typeof a.responseText?{binary:a.response}:{text:a.responseText},a.getAllResponseHeaders()))}},a.onload=t(),i=a.onerror=a.ontimeout=t("error"),void 0!==a.onabort?a.onabort=i:a.onreadystatechange=function(){4===a.readyState&&n.setTimeout((function(){t&&i()}))},t=t("abort");try{a.send(e.hasContent&&e.data||null)}catch(e){if(t)throw e}},abort:function(){t&&t()}}})),S.ajaxPrefilter((function(e){e.crossDomain&&(e.contents.script=!1)})),S.ajaxSetup({accepts:{script:"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"},contents:{script:/\b(?:java|ecma)script\b/},converters:{"text script":function(e){return S.globalEval(e),e}}}),S.ajaxPrefilter("script",(function(e){void 0===e.cache&&(e.cache=!1),e.crossDomain&&(e.type="GET")})),S.ajaxTransport("script",(function(e){var t,i;if(e.crossDomain||e.scriptAttrs)return{send:function(n,s){t=S("<script>").attr(e.scriptAttrs||{}).prop({charset:e.scriptCharset,src:e.url}).on("load error",i=function(e){t.remove(),i=null,e&&s("error"===e.type?404:200,e.type)}),b.head.appendChild(t[0])},abort:function(){i&&i()}}}));var Xt,Yt=[],Gt=/(=)\?(?=&|$)|\?\?/;S.ajaxSetup({jsonp:"callback",jsonpCallback:function(){var e=Yt.pop()||S.expando+"_"+Tt.guid++;return this[e]=!0,e}}),S.ajaxPrefilter("json jsonp",(function(e,t,i){var s,r,o,a=!1!==e.jsonp&&(Gt.test(e.url)?"url":"string"==typeof e.data&&0===(e.contentType||"").indexOf("application/x-www-form-urlencoded")&&Gt.test(e.data)&&"data");if(a||"jsonp"===e.dataTypes[0])return s=e.jsonpCallback=v(e.jsonpCallback)?e.jsonpCallback():e.jsonpCallback,a?e[a]=e[a].replace(Gt,"$1"+s):!1!==e.jsonp&&(e.url+=(kt.test(e.url)?"&":"?")+e.jsonp+"="+s),e.converters["script json"]=function(){return o||S.error(s+" was not called"),o[0]},e.dataTypes[0]="json",r=n[s],n[s]=function(){o=arguments},i.always((function(){void 0===r?S(n).removeProp(s):n[s]=r,e[s]&&(e.jsonpCallback=t.jsonpCallback,Yt.push(s)),o&&v(r)&&r(o[0]),o=r=void 0})),"script"})),g.createHTMLDocument=((Xt=b.implementation.createHTMLDocument("").body).innerHTML="<form></form><form></form>",2===Xt.childNodes.length),S.parseHTML=function(e,t,i){return"string"!=typeof e?[]:("boolean"==typeof t&&(i=t,t=!1),t||(g.createHTMLDocument?((n=(t=b.implementation.createHTMLDocument("")).createElement("base")).href=b.location.href,t.head.appendChild(n)):t=b),r=!i&&[],(s=A.exec(e))?[t.createElement(s[1])]:(s=_e([e],t,r),r&&r.length&&S(r).remove(),S.merge([],s.childNodes)));var n,s,r},S.fn.load=function(e,t,i){var n,s,r,o=this,a=e.indexOf(" ");return a>-1&&(n=yt(e.slice(a)),e=e.slice(0,a)),v(t)?(i=t,t=void 0):t&&"object"==typeof t&&(s="POST"),o.length>0&&S.ajax({url:e,type:s||"GET",dataType:"html",data:t}).done((function(e){r=arguments,o.html(n?S("<div>").append(S.parseHTML(e)).find(n):e)})).always(i&&function(e,t){o.each((function(){i.apply(this,r||[e.responseText,t,e])}))}),this},S.expr.pseudos.animated=function(e){return S.grep(S.timers,(function(t){return e===t.elem})).length},S.offset={setOffset:function(e,t,i){var n,s,r,o,a,l,u=S.css(e,"position"),h=S(e),p={};"static"===u&&(e.style.position="relative"),a=h.offset(),r=S.css(e,"top"),l=S.css(e,"left"),("absolute"===u||"fixed"===u)&&(r+l).indexOf("auto")>-1?(o=(n=h.position()).top,s=n.left):(o=parseFloat(r)||0,s=parseFloat(l)||0),v(t)&&(t=t.call(e,i,S.extend({},a))),null!=t.top&&(p.top=t.top-a.top+o),null!=t.left&&(p.left=t.left-a.left+s),"using"in t?t.using.call(e,p):h.css(p)}},S.fn.extend({offset:function(e){if(arguments.length)return void 0===e?this:this.each((function(t){S.offset.setOffset(this,e,t)}));var t,i,n=this[0];return n?n.getClientRects().length?(t=n.getBoundingClientRect(),i=n.ownerDocument.defaultView,{top:t.top+i.pageYOffset,left:t.left+i.pageXOffset}):{top:0,left:0}:void 0},position:function(){if(this[0]){var e,t,i,n=this[0],s={top:0,left:0};if("fixed"===S.css(n,"position"))t=n.getBoundingClientRect();else{for(t=this.offset(),i=n.ownerDocument,e=n.offsetParent||i.documentElement;e&&(e===i.body||e===i.documentElement)&&"static"===S.css(e,"position");)e=e.parentNode;e&&e!==n&&1===e.nodeType&&((s=S(e).offset()).top+=S.css(e,"borderTopWidth",!0),s.left+=S.css(e,"borderLeftWidth",!0))}return{top:t.top-s.top-S.css(n,"marginTop",!0),left:t.left-s.left-S.css(n,"marginLeft",!0)}}},offsetParent:function(){return this.map((function(){for(var e=this.offsetParent;e&&"static"===S.css(e,"position");)e=e.offsetParent;return e||oe}))}}),S.each({scrollLeft:"pageXOffset",scrollTop:"pageYOffset"},(function(e,t){var i="pageYOffset"===t;S.fn[e]=function(n){return W(this,(function(e,n,s){var r;if(y(e)?r=e:9===e.nodeType&&(r=e.defaultView),void 0===s)return r?r[t]:e[n];r?r.scrollTo(i?r.pageXOffset:s,i?s:r.pageYOffset):e[n]=s}),e,n,arguments.length)}})),S.each(["top","left"],(function(e,t){S.cssHooks[t]=Xe(g.pixelPosition,(function(e,i){if(i)return i=Ve(e,t),je.test(i)?S(e).position()[t]+"px":i}))})),S.each({Height:"height",Width:"width"},(function(e,t){S.each({padding:"inner"+e,content:t,"":"outer"+e},(function(i,n){S.fn[n]=function(s,r){var o=arguments.length&&(i||"boolean"!=typeof s),a=i||(!0===s||!0===r?"margin":"border");return W(this,(function(t,i,s){var r;return y(t)?0===n.indexOf("outer")?t["inner"+e]:t.document.documentElement["client"+e]:9===t.nodeType?(r=t.documentElement,Math.max(t.body["scroll"+e],r["scroll"+e],t.body["offset"+e],r["offset"+e],r["client"+e])):void 0===s?S.css(t,i,a):S.style(t,i,s,a)}),t,o?s:void 0,o)}}))})),S.each(["ajaxStart","ajaxStop","ajaxComplete","ajaxError","ajaxSuccess","ajaxSend"],(function(e,t){S.fn[t]=function(e){return this.on(t,e)}})),S.fn.extend({bind:function(e,t,i){return this.on(e,null,t,i)},unbind:function(e,t){return this.off(e,null,t)},delegate:function(e,t,i,n){return this.on(t,e,i,n)},undelegate:function(e,t,i){return 1===arguments.length?this.off(e,"**"):this.off(t,e||"**",i)},hover:function(e,t){return this.mouseenter(e).mouseleave(t||e)}}),S.each("blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "),(function(e,t){S.fn[t]=function(e,i){return arguments.length>0?this.on(t,null,e,i):this.trigger(t)}}));var Kt=/^[\s\uFEFF\xA0]+|([^\s\uFEFF\xA0])[\s\uFEFF\xA0]+$/g;S.proxy=function(e,t){var i,n,s;if("string"==typeof t&&(i=e[t],t=e,e=i),v(e))return n=a.call(arguments,2),s=function(){return e.apply(t||this,n.concat(a.call(arguments)))},s.guid=e.guid=e.guid||S.guid++,s},S.holdReady=function(e){e?S.readyWait++:S.ready(!0)},S.isArray=Array.isArray,S.parseJSON=JSON.parse,S.nodeName=O,S.isFunction=v,S.isWindow=y,S.camelCase=G,S.type=C,S.now=Date.now,S.isNumeric=function(e){var t=S.type(e);return("number"===t||"string"===t)&&!isNaN(e-parseFloat(e))},S.trim=function(e){return null==e?"":(e+"").replace(Kt,"$1")},void 0===(i=function(){return S}.apply(t,[]))||(e.exports=i);var Qt=n.jQuery,Jt=n.$;return S.noConflict=function(e){return n.$===S&&(n.$=Jt),e&&n.jQuery===S&&(n.jQuery=Qt),S},void 0===s&&(n.jQuery=n.$=S),S}))},1296:(e,t,i)=>{var n=/^\s+|\s+$/g,s=/^[-+]0x[0-9a-f]+$/i,r=/^0b[01]+$/i,o=/^0o[0-7]+$/i,a=parseInt,l="object"==typeof i.g&&i.g&&i.g.Object===Object&&i.g,u="object"==typeof self&&self&&self.Object===Object&&self,h=l||u||Function("return this")(),p=Object.prototype.toString,c=Math.max,d=Math.min,f=function(){return h.Date.now()};function m(e){var t=typeof e;return!!e&&("object"==t||"function"==t)}function g(e){if("number"==typeof e)return e;if(function(e){return"symbol"==typeof e||function(e){return!!e&&"object"==typeof e}(e)&&"[object Symbol]"==p.call(e)}(e))return NaN;if(m(e)){var t="function"==typeof e.valueOf?e.valueOf():e;e=m(t)?t+"":t}if("string"!=typeof e)return 0===e?e:+e;e=e.replace(n,"");var i=r.test(e);return i||o.test(e)?a(e.slice(2),i?2:8):s.test(e)?NaN:+e}e.exports=function(e,t,i){var n,s,r,o,a,l,u=0,h=!1,p=!1,v=!0;if("function"!=typeof e)throw new TypeError("Expected a function");function y(t){var i=n,r=s;return n=s=void 0,u=t,o=e.apply(r,i)}function b(e){return u=e,a=setTimeout(x,t),h?y(e):o}function w(e){var i=e-l;return void 0===l||i>=t||i<0||p&&e-u>=r}function x(){var e=f();if(w(e))return C(e);a=setTimeout(x,function(e){var i=t-(e-l);return p?d(i,r-(e-u)):i}(e))}function C(e){return a=void 0,v&&n?y(e):(n=s=void 0,o)}function _(){var e=f(),i=w(e);if(n=arguments,s=this,l=e,i){if(void 0===a)return b(l);if(p)return a=setTimeout(x,t),y(l)}return void 0===a&&(a=setTimeout(x,t)),o}return t=g(t)||0,m(i)&&(h=!!i.leading,r=(p="maxWait"in i)?c(g(i.maxWait)||0,t):r,v="trailing"in i?!!i.trailing:v),_.cancel=function(){void 0!==a&&clearTimeout(a),u=0,n=l=s=a=void 0},_.flush=function(){return void 0===a?o:C(f())},_}},3096:(e,t,i)=>{var n="Expected a function",s=/^\s+|\s+$/g,r=/^[-+]0x[0-9a-f]+$/i,o=/^0b[01]+$/i,a=/^0o[0-7]+$/i,l=parseInt,u="object"==typeof i.g&&i.g&&i.g.Object===Object&&i.g,h="object"==typeof self&&self&&self.Object===Object&&self,p=u||h||Function("return this")(),c=Object.prototype.toString,d=Math.max,f=Math.min,m=function(){return p.Date.now()};function g(e,t,i){var s,r,o,a,l,u,h=0,p=!1,c=!1,g=!0;if("function"!=typeof e)throw new TypeError(n);function b(t){var i=s,n=r;return s=r=void 0,h=t,a=e.apply(n,i)}function w(e){return h=e,l=setTimeout(C,t),p?b(e):a}function x(e){var i=e-u;return void 0===u||i>=t||i<0||c&&e-h>=o}function C(){var e=m();if(x(e))return _(e);l=setTimeout(C,function(e){var i=t-(e-u);return c?f(i,o-(e-h)):i}(e))}function _(e){return l=void 0,g&&s?b(e):(s=r=void 0,a)}function S(){var e=m(),i=x(e);if(s=arguments,r=this,u=e,i){if(void 0===l)return w(u);if(c)return l=setTimeout(C,t),b(u)}return void 0===l&&(l=setTimeout(C,t)),a}return t=y(t)||0,v(i)&&(p=!!i.leading,o=(c="maxWait"in i)?d(y(i.maxWait)||0,t):o,g="trailing"in i?!!i.trailing:g),S.cancel=function(){void 0!==l&&clearTimeout(l),h=0,s=u=r=l=void 0},S.flush=function(){return void 0===l?a:_(m())},S}function v(e){var t=typeof e;return!!e&&("object"==t||"function"==t)}function y(e){if("number"==typeof e)return e;if(function(e){return"symbol"==typeof e||function(e){return!!e&&"object"==typeof e}(e)&&"[object Symbol]"==c.call(e)}(e))return NaN;if(v(e)){var t="function"==typeof e.valueOf?e.valueOf():e;e=v(t)?t+"":t}if("string"!=typeof e)return 0===e?e:+e;e=e.replace(s,"");var i=o.test(e);return i||a.test(e)?l(e.slice(2),i?2:8):r.test(e)?NaN:+e}e.exports=function(e,t,i){var s=!0,r=!0;if("function"!=typeof e)throw new TypeError(n);return v(i)&&(s="leading"in i?!!i.leading:s,r="trailing"in i?!!i.trailing:r),g(e,t,{leading:s,maxWait:t,trailing:r})}},4193:(e,t,i)=>{var n=i(1196),s=/[\/\+\.]/;e.exports=function(e,t){function i(t){var i=n(t,e,s);return i&&i.length>=2}return t?i(t.split(";")[0]):i}},4800:e=>{e.exports=function(){var e={},t=e._fns={};return e.emit=function(e,i,n,s,r,o,a){var l=function(e){var i=t[e]?t[e]:[],n=e.indexOf(":"),s=-1===n?[e]:[e.substring(0,n),e.substring(n+1)],r=Object.keys(t),o=0,a=r.length;for(;o<a;o++){var l=r[o];if("*"===l&&(i=i.concat(t[l])),2===s.length&&s[0]===l){i=i.concat(t[l]);break}}return i}(e);l.length&&function(e,t,i){var n=0,s=t.length;for(;n<s&&t[n];n++)t[n].event=e,t[n].apply(t[n],i)}(e,l,[i,n,s,r,o,a])},e.on=function(e,i){t[e]||(t[e]=[]),t[e].push(i)},e.once=function(t,i){this.on(t,(function n(){i.apply(this,arguments),e.off(t,n)}))},e.off=function(e,t){var i=[];if(e&&t)for(var n=this._fns[e],s=0,r=n?n.length:0;s<r;s++)n[s]!==t&&i.push(n[s]);i.length?this._fns[e]=i:delete this._fns[e]},e}},1196:e=>{"use strict";function t(e,t){this.text=e=e||"",this.hasWild=~e.indexOf("*"),this.separator=t,this.parts=e.split(t)}t.prototype.match=function(e){var t,i,n=!0,s=this.parts,r=s.length;if("string"==typeof e||e instanceof String)if(this.hasWild||this.text==e){for(i=(e||"").split(this.separator),t=0;n&&t<r;t++)"*"!==s[t]&&(n=t<i.length&&s[t]===i[t]);n=n&&i}else n=!1;else if("function"==typeof e.splice)for(n=[],t=e.length;t--;)this.match(e[t])&&(n[n.length]=e[t]);else if("object"==typeof e)for(var o in n={},e)this.match(o)&&(n[o]=e[o]);return n},e.exports=function(e,i,n){var s=new t(e,n||/[\/\.]/);return void 0!==i?s.match(i):s}}},t={};function i(n){var s=t[n];if(void 0!==s)return s.exports;var r=t[n]={exports:{}};return e[n].call(r.exports,r,r.exports,i),r.exports}i.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return i.d(t,{a:t}),t},i.d=(e,t)=>{for(var n in t)i.o(t,n)&&!i.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},i.g=function(){if("object"==typeof globalThis)return globalThis;try{return this||new Function("return this")()}catch(e){if("object"==typeof window)return window}}(),i.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),i.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},(()=>{"use strict";i(9755),i(6912),i(4855),i(6709),i(7285)})(),(()=>{"use strict";var e={};function t(e,t){return Object.prototype.hasOwnProperty.call(e,t)}function n(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}i.r(e),i.d(e,{getItem:()=>Gs,removeItem:()=>Ks,setItem:()=>Ys});var s=0;function r(e){return"__private_"+s+++"_"+e}function o(e,t,i){const n=[];return e.forEach((e=>"string"!=typeof e?n.push(e):t[Symbol.split](e).forEach(((e,t,s)=>{""!==e&&n.push(e),t<s.length-1&&n.push(i)})))),n}function a(e,t){const i=/\$/g;let n=[e];if(null==t)return n;for(const e of Object.keys(t))if("_"!==e){let s=t[e];"string"==typeof s&&(s=i[Symbol.replace](s,"$$$$")),n=o(n,new RegExp(`%\\{${e}\\}`,"g"),s)}return n}var l=r("apply");class u{constructor(e){Object.defineProperty(this,l,{value:h}),this.locale={strings:{},pluralize:e=>1===e?0:1},Array.isArray(e)?e.forEach(n(this,l)[l],this):n(this,l)[l](e)}translate(e,t){return this.translateArray(e,t).join("")}translateArray(e,i){if(!t(this.locale.strings,e))throw new Error(`missing string: ${e}`);const n=this.locale.strings[e];if("object"==typeof n){if(i&&void 0!==i.smart_count){return a(n[this.locale.pluralize(i.smart_count)],i)}throw new Error("Attempted to use a string with plural forms, but no value was given for %{smart_count}")}return a(n,i)}}function h(e){if(null==e||!e.strings)return;const t=this.locale;this.locale={...t,strings:{...t.strings,...e.strings}},this.locale.pluralize=e.pluralize||t.pluralize}var p=i(4800);let c=(e=21)=>{let t="",i=e;for(;i--;)t+="useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict"[64*Math.random()|0];return t};var d=i(3096);function f(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var m=0;function g(e){return"__private_"+m+++"_"+e}var v=g("callbacks"),y=g("publish");class b{constructor(){Object.defineProperty(this,y,{value:w}),Object.defineProperty(this,v,{writable:!0,value:new Set}),this.state={}}getState(){return this.state}setState(e){const t={...this.state},i={...this.state,...e};this.state=i,f(this,y)[y](t,i,e)}subscribe(e){return f(this,v)[v].add(e),()=>{f(this,v)[v].delete(e)}}}function w(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];f(this,v)[v].forEach((e=>{e(...t)}))}b.VERSION="3.0.2";const x=b;function C(e){const t=e.lastIndexOf(".");return-1===t||t===e.length-1?{name:e,extension:void 0}:{name:e.slice(0,t),extension:e.slice(t+1)}}const _={md:"text/markdown",markdown:"text/markdown",mp4:"video/mp4",mp3:"audio/mp3",svg:"image/svg+xml",jpg:"image/jpeg",png:"image/png",webp:"image/webp",gif:"image/gif",heic:"image/heic",heif:"image/heif",yaml:"text/yaml",yml:"text/yaml",csv:"text/csv",tsv:"text/tab-separated-values",tab:"text/tab-separated-values",avi:"video/x-msvideo",mks:"video/x-matroska",mkv:"video/x-matroska",mov:"video/quicktime",dicom:"application/dicom",doc:"application/msword",docm:"application/vnd.ms-word.document.macroenabled.12",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",dot:"application/msword",dotm:"application/vnd.ms-word.template.macroenabled.12",dotx:"application/vnd.openxmlformats-officedocument.wordprocessingml.template",xla:"application/vnd.ms-excel",xlam:"application/vnd.ms-excel.addin.macroenabled.12",xlc:"application/vnd.ms-excel",xlf:"application/x-xliff+xml",xlm:"application/vnd.ms-excel",xls:"application/vnd.ms-excel",xlsb:"application/vnd.ms-excel.sheet.binary.macroenabled.12",xlsm:"application/vnd.ms-excel.sheet.macroenabled.12",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",xlt:"application/vnd.ms-excel",xltm:"application/vnd.ms-excel.template.macroenabled.12",xltx:"application/vnd.openxmlformats-officedocument.spreadsheetml.template",xlw:"application/vnd.ms-excel",txt:"text/plain",text:"text/plain",conf:"text/plain",log:"text/plain",pdf:"application/pdf",zip:"application/zip","7z":"application/x-7z-compressed",rar:"application/x-rar-compressed",tar:"application/x-tar",gz:"application/gzip",dmg:"application/x-apple-diskimage"};function S(e){let t="";return e.replace(/[^A-Z0-9]/gi,(e=>(t+=`-${function(e){return e.charCodeAt(0).toString(32)}(e)}`,"/")))+t}function T(e){if(null==e&&"undefined"!=typeof navigator&&(e=navigator.userAgent),!e)return!0;const t=/Edge\/(\d+\.\d+)/.exec(e);if(!t)return!0;const i=t[1];let[n,s]=i.split(".");return n=parseInt(n,10),s=parseInt(s,10),n<15||15===n&&s<15063||(n>18||18===n&&s>=18218)}function k(e){return e<10?`0${e}`:e.toString()}function P(){const e=new Date;return`${k(e.getHours())}:${k(e.getMinutes())}:${k(e.getSeconds())}`}const E={debug:()=>{},warn:()=>{},error:function(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];return console.error(`[Uppy] [${P()}]`,...t)}},F={debug:function(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];return console.debug(`[Uppy] [${P()}]`,...t)},warn:function(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];return console.warn(`[Uppy] [${P()}]`,...t)},error:function(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];return console.error(`[Uppy] [${P()}]`,...t)}};var O=i(5158),A=i(4193);const D={maxFileSize:null,minFileSize:null,maxTotalFileSize:null,maxNumberOfFiles:null,minNumberOfFiles:null,allowedFileTypes:null,requiredMetaFields:[]};class N extends Error{constructor(){super(...arguments),this.isRestriction=!0}}class M{constructor(e,t){this.i18n=t,this.getOpts=()=>{const t=e();if(null!=t.restrictions.allowedFileTypes&&!Array.isArray(t.restrictions.allowedFileTypes))throw new TypeError("`restrictions.allowedFileTypes` must be an array");return t}}validate(e,t){const{maxFileSize:i,minFileSize:n,maxTotalFileSize:s,maxNumberOfFiles:r,allowedFileTypes:o}=this.getOpts().restrictions;if(r){const e=t.filter((e=>!e.isGhost));if(e.length+1>r)throw new N(`${this.i18n("youCanOnlyUploadX",{smart_count:r})}`)}if(o){if(!o.some((t=>t.includes("/")?!!e.type&&A(e.type.replace(/;.*?$/,""),t):!("."!==t[0]||!e.extension)&&e.extension.toLowerCase()===t.slice(1).toLowerCase()))){const e=o.join(", ");throw new N(this.i18n("youCanOnlyUploadFileTypes",{types:e}))}}if(s&&null!=e.size){const i=t.reduce(((e,t)=>e+t.size),e.size);if(i>s)throw new N(this.i18n("exceedsSize",{size:O(s),file:e.name}))}if(i&&null!=e.size&&e.size>i)throw new N(this.i18n("exceedsSize",{size:O(i),file:e.name}));if(n&&null!=e.size&&e.size<n)throw new N(this.i18n("inferiorSize",{size:O(n)}))}validateMinNumberOfFiles(e){const{minNumberOfFiles:t}=this.getOpts().restrictions;if(Object.keys(e).length<t)throw new N(this.i18n("youHaveToAtLeastSelectX",{smart_count:t}))}getMissingRequiredMetaFields(e){const t=new N(this.i18n("missingRequiredMetaFieldOnFile",{fileName:e.name})),{requiredMetaFields:i}=this.getOpts().restrictions,n=[];for(const t of i)Object.hasOwn(e.meta,t)&&""!==e.meta[t]||n.push(t);return{missingFields:n,error:t}}}const I={strings:{addBulkFilesFailed:{0:"Failed to add %{smart_count} file due to an internal error",1:"Failed to add %{smart_count} files due to internal errors"},youCanOnlyUploadX:{0:"You can only upload %{smart_count} file",1:"You can only upload %{smart_count} files"},youHaveToAtLeastSelectX:{0:"You have to select at least %{smart_count} file",1:"You have to select at least %{smart_count} files"},exceedsSize:"%{file} exceeds maximum allowed size of %{size}",missingRequiredMetaField:"Missing required meta fields",missingRequiredMetaFieldOnFile:"Missing required meta fields in %{fileName}",inferiorSize:"This file is smaller than the allowed size of %{size}",youCanOnlyUploadFileTypes:"You can only upload: %{types}",noMoreFilesAllowed:"Cannot add more files",noDuplicates:"Cannot add the duplicate file '%{fileName}', it already exists",companionError:"Connection with Companion failed",authAborted:"Authentication aborted",companionUnauthorizeHint:"To unauthorize to your %{provider} account, please go to %{url}",failedToUpload:"Failed to upload %{file}",noInternetConnection:"No Internet connection",connectedToInternet:"Connected to the Internet",noFilesFound:"You have no files or folders here",selectX:{0:"Select %{smart_count}",1:"Select %{smart_count}"},allFilesFromFolderNamed:"All files from folder %{name}",openFolderNamed:"Open folder %{name}",cancel:"Cancel",logOut:"Log out",filter:"Filter",resetFilter:"Reset filter",loading:"Loading...",authenticateWithTitle:"Please authenticate with %{pluginName} to select files",authenticateWith:"Connect to %{pluginName}",signInWithGoogle:"Sign in with Google",searchImages:"Search for images",enterTextToSearch:"Enter text to search for images",search:"Search",emptyFolderAdded:"No files were added from empty folder",folderAlreadyAdded:'The folder "%{folder}" was already added',folderAdded:{0:"Added %{smart_count} file from %{folder}",1:"Added %{smart_count} files from %{folder}"}}};let U,L;function R(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var B=0;function j(e){return"__private_"+B+++"_"+e}var z=j("plugins"),H=j("restricter"),q=j("storeUnsubscribe"),$=j("emitter"),W=j("preProcessors"),V=j("uploaders"),X=j("postProcessors"),Y=j("informAndEmit"),G=j("checkRequiredMetaFieldsOnFile"),K=j("checkRequiredMetaFields"),Q=j("assertNewUploadAllowed"),J=j("checkAndCreateFileStateObject"),Z=j("startIfAutoProceed"),ee=j("addListeners"),te=j("updateOnlineStatus"),ie=j("createUpload"),ne=j("getUpload"),se=j("removeUpload"),re=j("runUpload");U=Symbol.for("uppy test: getPlugins"),L=Symbol.for("uppy test: createUpload");class oe{constructor(e){Object.defineProperty(this,re,{value:ve}),Object.defineProperty(this,se,{value:ge}),Object.defineProperty(this,ne,{value:me}),Object.defineProperty(this,ie,{value:fe}),Object.defineProperty(this,ee,{value:de}),Object.defineProperty(this,Z,{value:ce}),Object.defineProperty(this,J,{value:pe}),Object.defineProperty(this,Q,{value:he}),Object.defineProperty(this,K,{value:ue}),Object.defineProperty(this,G,{value:le}),Object.defineProperty(this,Y,{value:ae}),Object.defineProperty(this,z,{writable:!0,value:Object.create(null)}),Object.defineProperty(this,H,{writable:!0,value:void 0}),Object.defineProperty(this,q,{writable:!0,value:void 0}),Object.defineProperty(this,$,{writable:!0,value:p()}),Object.defineProperty(this,W,{writable:!0,value:new Set}),Object.defineProperty(this,V,{writable:!0,value:new Set}),Object.defineProperty(this,X,{writable:!0,value:new Set}),Object.defineProperty(this,te,{writable:!0,value:this.updateOnlineStatus.bind(this)}),this.defaultLocale=I;const t={id:"uppy",autoProceed:!1,allowMultipleUploadBatches:!0,debug:!1,restrictions:D,meta:{},onBeforeFileAdded:e=>e,onBeforeUpload:e=>e,store:new x,logger:E,infoTimeout:5e3};this.opts={...t,...e,restrictions:{...t.restrictions,...e&&e.restrictions}},e&&e.logger&&e.debug?this.log("You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.","warning"):e&&e.debug&&(this.opts.logger=F),this.log(`Using Core v${this.constructor.VERSION}`),this.i18nInit(),this.calculateProgress=d(this.calculateProgress.bind(this),500,{leading:!0,trailing:!0}),this.store=this.opts.store,this.setState({plugins:{},files:{},currentUploads:{},allowNewUpload:!0,capabilities:{uploadProgress:T(),individualCancellation:!0,resumableUploads:!1},totalProgress:0,meta:{...this.opts.meta},info:[],recoveredState:null}),R(this,H)[H]=new M((()=>this.opts),this.i18n),R(this,q)[q]=this.store.subscribe(((e,t,i)=>{this.emit("state-update",e,t,i),this.updateAll(t)})),this.opts.debug&&"undefined"!=typeof window&&(window[this.opts.id]=this),R(this,ee)[ee]()}emit(e){for(var t=arguments.length,i=new Array(t>1?t-1:0),n=1;n<t;n++)i[n-1]=arguments[n];R(this,$)[$].emit(e,...i)}on(e,t){return R(this,$)[$].on(e,t),this}once(e,t){return R(this,$)[$].once(e,t),this}off(e,t){return R(this,$)[$].off(e,t),this}updateAll(e){this.iteratePlugins((t=>{t.update(e)}))}setState(e){this.store.setState(e)}getState(){return this.store.getState()}setFileState(e,t){if(!this.getState().files[e])throw new Error(`Can’t set state for ${e} (the file could have been removed)`);this.setState({files:{...this.getState().files,[e]:{...this.getState().files[e],...t}}})}i18nInit(){const e=new u([this.defaultLocale,this.opts.locale]);this.i18n=e.translate.bind(e),this.i18nArray=e.translateArray.bind(e),this.locale=e.locale}setOptions(e){this.opts={...this.opts,...e,restrictions:{...this.opts.restrictions,...e&&e.restrictions}},e.meta&&this.setMeta(e.meta),this.i18nInit(),e.locale&&this.iteratePlugins((e=>{e.setOptions()})),this.setState()}resetProgress(){const e={percentage:0,bytesUploaded:0,uploadComplete:!1,uploadStarted:null},t={...this.getState().files},i={};Object.keys(t).forEach((n=>{const s={...t[n]};s.progress={...s.progress,...e},i[n]=s})),this.setState({files:i,totalProgress:0}),this.emit("reset-progress")}addPreProcessor(e){R(this,W)[W].add(e)}removePreProcessor(e){return R(this,W)[W].delete(e)}addPostProcessor(e){R(this,X)[X].add(e)}removePostProcessor(e){return R(this,X)[X].delete(e)}addUploader(e){R(this,V)[V].add(e)}removeUploader(e){return R(this,V)[V].delete(e)}setMeta(e){const t={...this.getState().meta,...e},i={...this.getState().files};Object.keys(i).forEach((t=>{i[t]={...i[t],meta:{...i[t].meta,...e}}})),this.log("Adding metadata:"),this.log(e),this.setState({meta:t,files:i})}setFileMeta(e,t){const i={...this.getState().files};if(!i[e])return void this.log("Was trying to set metadata for a file that has been removed: ",e);const n={...i[e].meta,...t};i[e]={...i[e],meta:n},this.setState({files:i})}getFile(e){return this.getState().files[e]}getFiles(){const{files:e}=this.getState();return Object.values(e)}getObjectOfFilesPerState(){const{files:e,totalProgress:t,error:i}=this.getState(),n=Object.values(e),s=n.filter((e=>{let{progress:t}=e;return!t.uploadComplete&&t.uploadStarted})),r=n.filter((e=>!e.progress.uploadStarted)),o=n.filter((e=>e.progress.uploadStarted||e.progress.preprocess||e.progress.postprocess)),a=n.filter((e=>e.progress.uploadStarted)),l=n.filter((e=>e.isPaused)),u=n.filter((e=>e.progress.uploadComplete)),h=n.filter((e=>e.error)),p=s.filter((e=>!e.isPaused)),c=n.filter((e=>e.progress.preprocess||e.progress.postprocess));return{newFiles:r,startedFiles:o,uploadStartedFiles:a,pausedFiles:l,completeFiles:u,erroredFiles:h,inProgressFiles:s,inProgressNotPausedFiles:p,processingFiles:c,isUploadStarted:a.length>0,isAllComplete:100===t&&u.length===n.length&&0===c.length,isAllErrored:!!i&&h.length===n.length,isAllPaused:0!==s.length&&l.length===s.length,isUploadInProgress:s.length>0,isSomeGhost:n.some((e=>e.isGhost))}}validateRestrictions(e,t){void 0===t&&(t=this.getFiles());try{R(this,H)[H].validate(e,t)}catch(e){return e}return null}checkIfFileAlreadyExists(e){const{files:t}=this.getState();return!(!t[e]||t[e].isGhost)}addFile(e){R(this,Q)[Q](e);const{files:t}=this.getState();let i=R(this,J)[J](t,e);return t[i.id]&&t[i.id].isGhost&&(i={...t[i.id],data:e.data,isGhost:!1},this.log(`Replaced the blob in the restored ghost file: ${i.name}, ${i.id}`)),this.setState({files:{...t,[i.id]:i}}),this.emit("file-added",i),this.emit("files-added",[i]),this.log(`Added file: ${i.name}, ${i.id}, mime type: ${i.type}`),R(this,Z)[Z](),i.id}addFiles(e){R(this,Q)[Q]();const t={...this.getState().files},i=[],n=[];for(let s=0;s<e.length;s++)try{let n=R(this,J)[J](t,e[s]);t[n.id]&&t[n.id].isGhost&&(n={...t[n.id],data:e[s].data,isGhost:!1},this.log(`Replaced blob in a ghost file: ${n.name}, ${n.id}`)),t[n.id]=n,i.push(n)}catch(e){e.isRestriction||n.push(e)}if(this.setState({files:t}),i.forEach((e=>{this.emit("file-added",e)})),this.emit("files-added",i),i.length>5?this.log(`Added batch of ${i.length} files`):Object.keys(i).forEach((e=>{this.log(`Added file: ${i[e].name}\n id: ${i[e].id}\n type: ${i[e].type}`)})),i.length>0&&R(this,Z)[Z](),n.length>0){let e="Multiple errors occurred while adding files:\n";if(n.forEach((t=>{e+=`\n * ${t.message}`})),this.info({message:this.i18n("addBulkFilesFailed",{smart_count:n.length}),details:e},"error",this.opts.infoTimeout),"function"==typeof AggregateError)throw new AggregateError(n,e);{const t=new Error(e);throw t.errors=n,t}}}removeFiles(e,t){const{files:i,currentUploads:n}=this.getState(),s={...i},r={...n},o=Object.create(null);function a(e){return void 0===o[e]}e.forEach((e=>{i[e]&&(o[e]=i[e],delete s[e])})),Object.keys(r).forEach((e=>{const t=n[e].fileIDs.filter(a);if(0===t.length)return void delete r[e];const{capabilities:i}=this.getState();if(t.length!==n[e].fileIDs.length&&!i.individualCancellation)throw new Error("individualCancellation is disabled");r[e]={...n[e],fileIDs:t}}));const l={currentUploads:r,files:s};0===Object.keys(s).length&&(l.allowNewUpload=!0,l.error=null,l.recoveredState=null),this.setState(l),this.calculateTotalProgress();const u=Object.keys(o);u.forEach((e=>{this.emit("file-removed",o[e],t)})),u.length>5?this.log(`Removed ${u.length} files`):this.log(`Removed files: ${u.join(", ")}`)}removeFile(e,t){void 0===t&&(t=null),this.removeFiles([e],t)}pauseResume(e){if(!this.getState().capabilities.resumableUploads||this.getFile(e).uploadComplete)return;const t=!(this.getFile(e).isPaused||!1);return this.setFileState(e,{isPaused:t}),this.emit("upload-pause",e,t),t}pauseAll(){const e={...this.getState().files};Object.keys(e).filter((t=>!e[t].progress.uploadComplete&&e[t].progress.uploadStarted)).forEach((t=>{const i={...e[t],isPaused:!0};e[t]=i})),this.setState({files:e}),this.emit("pause-all")}resumeAll(){const e={...this.getState().files};Object.keys(e).filter((t=>!e[t].progress.uploadComplete&&e[t].progress.uploadStarted)).forEach((t=>{const i={...e[t],isPaused:!1,error:null};e[t]=i})),this.setState({files:e}),this.emit("resume-all")}retryAll(){const e={...this.getState().files},t=Object.keys(e).filter((t=>e[t].error));if(t.forEach((t=>{const i={...e[t],isPaused:!1,error:null};e[t]=i})),this.setState({files:e,error:null}),this.emit("retry-all",t),0===t.length)return Promise.resolve({successful:[],failed:[]});const i=R(this,ie)[ie](t,{forceAllowNewUpload:!0});return R(this,re)[re](i)}cancelAll(e){let{reason:t="user"}=void 0===e?{}:e;if(this.emit("cancel-all",{reason:t}),"user"===t){const{files:e}=this.getState(),t=Object.keys(e);t.length&&this.removeFiles(t,"cancel-all"),this.setState({totalProgress:0,error:null,recoveredState:null})}}retryUpload(e){this.setFileState(e,{error:null,isPaused:!1}),this.emit("upload-retry",e);const t=R(this,ie)[ie]([e],{forceAllowNewUpload:!0});return R(this,re)[re](t)}logout(){this.iteratePlugins((e=>{e.provider&&e.provider.logout&&e.provider.logout()}))}calculateProgress(e,t){if(null==e||!this.getFile(e.id))return void this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`);const i=Number.isFinite(t.bytesTotal)&&t.bytesTotal>0;this.setFileState(e.id,{progress:{...this.getFile(e.id).progress,bytesUploaded:t.bytesUploaded,bytesTotal:t.bytesTotal,percentage:i?Math.round(t.bytesUploaded/t.bytesTotal*100):0}}),this.calculateTotalProgress()}calculateTotalProgress(){const e=this.getFiles().filter((e=>e.progress.uploadStarted||e.progress.preprocess||e.progress.postprocess));if(0===e.length)return this.emit("progress",0),void this.setState({totalProgress:0});const t=e.filter((e=>null!=e.progress.bytesTotal)),i=e.filter((e=>null==e.progress.bytesTotal));if(0===t.length){const t=100*e.length,n=i.reduce(((e,t)=>e+t.progress.percentage),0),s=Math.round(n/t*100);return void this.setState({totalProgress:s})}let n=t.reduce(((e,t)=>e+t.progress.bytesTotal),0);const s=n/t.length;n+=s*i.length;let r=0;t.forEach((e=>{r+=e.progress.bytesUploaded})),i.forEach((e=>{r+=s*(e.progress.percentage||0)/100}));let o=0===n?0:Math.round(r/n*100);o>100&&(o=100),this.setState({totalProgress:o}),this.emit("progress",o)}updateOnlineStatus(){void 0===window.navigator.onLine||window.navigator.onLine?(this.emit("is-online"),this.wasOffline&&(this.emit("back-online"),this.info(this.i18n("connectedToInternet"),"success",3e3),this.wasOffline=!1)):(this.emit("is-offline"),this.info(this.i18n("noInternetConnection"),"error",0),this.wasOffline=!0)}getID(){return this.opts.id}use(e,t){if("function"!=typeof e){throw new TypeError(`Expected a plugin class, but got ${null===e?"null":typeof e}. Please verify that the plugin was imported and spelled correctly.`)}const i=new e(this,t),n=i.id;if(!n)throw new Error("Your plugin must have an id");if(!i.type)throw new Error("Your plugin must have a type");const s=this.getPlugin(n);if(s){const e=`Already found a plugin named '${s.id}'. Tried to use: '${n}'.\nUppy plugins must have unique \`id\` options. See https://uppy.io/docs/plugins/#id.`;throw new Error(e)}return e.VERSION&&this.log(`Using ${n} v${e.VERSION}`),i.type in R(this,z)[z]?R(this,z)[z][i.type].push(i):R(this,z)[z][i.type]=[i],i.install(),this}getPlugin(e){for(const t of Object.values(R(this,z)[z])){const i=t.find((t=>t.id===e));if(null!=i)return i}}[U](e){return R(this,z)[z][e]}iteratePlugins(e){Object.values(R(this,z)[z]).flat(1).forEach(e)}removePlugin(e){this.log(`Removing plugin ${e.id}`),this.emit("plugin-remove",e),e.uninstall&&e.uninstall();const t=R(this,z)[z][e.type],i=t.findIndex((t=>t.id===e.id));-1!==i&&t.splice(i,1);const n={plugins:{...this.getState().plugins,[e.id]:void 0}};this.setState(n)}close(e){let{reason:t}=void 0===e?{}:e;this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`),this.cancelAll({reason:t}),R(this,q)[q](),this.iteratePlugins((e=>{this.removePlugin(e)})),"undefined"!=typeof window&&window.removeEventListener&&(window.removeEventListener("online",R(this,te)[te]),window.removeEventListener("offline",R(this,te)[te]))}hideInfo(){const{info:e}=this.getState();this.setState({info:e.slice(1)}),this.emit("info-hidden")}info(e,t,i){void 0===t&&(t="info"),void 0===i&&(i=3e3);const n="object"==typeof e;this.setState({info:[...this.getState().info,{type:t,message:n?e.message:e,details:n?e.details:null}]}),setTimeout((()=>this.hideInfo()),i),this.emit("info-visible")}log(e,t){const{logger:i}=this.opts;switch(t){case"error":i.error(e);break;case"warning":i.warn(e);break;default:i.debug(e)}}restore(e){return this.log(`Core: attempting to restore upload "${e}"`),this.getState().currentUploads[e]?R(this,re)[re](e):(R(this,se)[se](e),Promise.reject(new Error("Nonexistent upload")))}[L](){return R(this,ie)[ie](...arguments)}addResultData(e,t){if(!R(this,ne)[ne](e))return void this.log(`Not setting result for an upload that has been removed: ${e}`);const{currentUploads:i}=this.getState(),n={...i[e],result:{...i[e].result,...t}};this.setState({currentUploads:{...i,[e]:n}})}upload(){var e;null!=(e=R(this,z)[z].uploader)&&e.length||this.log("No uploader type plugins are used","warning");let{files:t}=this.getState();const i=this.opts.onBeforeUpload(t);return!1===i?Promise.reject(new Error("Not starting the upload because onBeforeUpload returned false")):(i&&"object"==typeof i&&(t=i,this.setState({files:t})),Promise.resolve().then((()=>R(this,H)[H].validateMinNumberOfFiles(t))).catch((e=>{throw R(this,Y)[Y](e),e})).then((()=>{if(!R(this,K)[K](t))throw new N(this.i18n("missingRequiredMetaField"))})).catch((e=>{throw e})).then((()=>{const{currentUploads:e}=this.getState(),i=Object.values(e).flatMap((e=>e.fileIDs)),n=[];Object.keys(t).forEach((e=>{const t=this.getFile(e);t.progress.uploadStarted||-1!==i.indexOf(e)||n.push(t.id)}));const s=R(this,ie)[ie](n);return R(this,re)[re](s)})).catch((e=>{throw this.emit("error",e),this.log(e,"error"),e})))}}function ae(e,t){const{message:i,details:n=""}=e;e.isRestriction?this.emit("restriction-failed",t,e):this.emit("error",e),this.info({message:i,details:n},"error",this.opts.infoTimeout),this.log(`${i} ${n}`.trim(),"error")}function le(e){const{missingFields:t,error:i}=R(this,H)[H].getMissingRequiredMetaFields(e);return!(t.length>0)||(this.setFileState(e.id,{missingRequiredMetaFields:t}),this.log(i.message),this.emit("restriction-failed",e,i),!1)}function ue(e){let t=!0;for(const i of Object.values(e))R(this,G)[G](i)||(t=!1);return t}function he(e){const{allowNewUpload:t}=this.getState();if(!1===t){const t=new N(this.i18n("noMoreFilesAllowed"));throw R(this,Y)[Y](t,e),t}}function pe(e,t){t instanceof File&&(t={name:t.name,type:t.type,size:t.size,data:t});const i=function(e){var t;if(e.type)return e.type;const i=e.name?null==(t=C(e.name).extension)?void 0:t.toLowerCase():null;return i&&i in _?_[i]:"application/octet-stream"}(t),n=function(e,t){return t.name?t.name:"image"===e.split("/")[0]?`${e.split("/")[0]}.${e.split("/")[1]}`:"noname"}(i,t),s=C(n).extension,r=Boolean(t.isRemote),o=function(e){let t="uppy";return"string"==typeof e.name&&(t+=`-${S(e.name.toLowerCase())}`),void 0!==e.type&&(t+=`-${e.type}`),e.meta&&"string"==typeof e.meta.relativePath&&(t+=`-${S(e.meta.relativePath.toLowerCase())}`),void 0!==e.data.size&&(t+=`-${e.data.size}`),void 0!==e.data.lastModified&&(t+=`-${e.data.lastModified}`),t}({...t,type:i});if(this.checkIfFileAlreadyExists(o)){const e=new N(this.i18n("noDuplicates",{fileName:n}));throw R(this,Y)[Y](e,t),e}const a=t.meta||{};a.name=n,a.type=i;const l=Number.isFinite(t.data.size)?t.data.size:null;let u={source:t.source||"",id:o,name:n,extension:s||"",meta:{...this.getState().meta,...a},type:i,data:t.data,progress:{percentage:0,bytesUploaded:0,bytesTotal:l,uploadComplete:!1,uploadStarted:null},size:l,isRemote:r,remote:t.remote||"",preview:t.preview};const h=this.opts.onBeforeFileAdded(u,e);if(!1===h){const e=new N("Cannot add the file because onBeforeFileAdded returned false.");throw this.emit("restriction-failed",t,e),e}"object"==typeof h&&null!==h&&(u=h);try{const t=Object.keys(e).map((t=>e[t]));R(this,H)[H].validate(u,t)}catch(e){throw R(this,Y)[Y](e,u),e}return u}function ce(){this.opts.autoProceed&&!this.scheduledAutoProceed&&(this.scheduledAutoProceed=setTimeout((()=>{this.scheduledAutoProceed=null,this.upload().catch((e=>{e.isRestriction||this.log(e.stack||e.message||e)}))}),4))}function de(){const e=(e,t,i)=>{let n=e.message||"Unknown error";e.details&&(n+=` ${e.details}`),this.setState({error:n}),null!=t&&t.id in this.getState().files&&this.setFileState(t.id,{error:n,response:i})};this.on("error",e),this.on("upload-error",((t,i,n)=>{if(e(i,t,n),"object"==typeof i&&i.message){const e=new Error(i.message);e.details=i.message,i.details&&(e.details+=` ${i.details}`),e.message=this.i18n("failedToUpload",{file:null==t?void 0:t.name}),R(this,Y)[Y](e)}else R(this,Y)[Y](i)})),this.on("upload",(()=>{this.setState({error:null})})),this.on("upload-started",(e=>{null!=e&&this.getFile(e.id)?this.setFileState(e.id,{progress:{uploadStarted:Date.now(),uploadComplete:!1,percentage:0,bytesUploaded:0,bytesTotal:e.size}}):this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`)})),this.on("upload-progress",this.calculateProgress),this.on("upload-success",((e,t)=>{if(null==e||!this.getFile(e.id))return void this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`);const i=this.getFile(e.id).progress;this.setFileState(e.id,{progress:{...i,postprocess:R(this,X)[X].size>0?{mode:"indeterminate"}:null,uploadComplete:!0,percentage:100,bytesUploaded:i.bytesTotal},response:t,uploadURL:t.uploadURL,isPaused:!1}),null==e.size&&this.setFileState(e.id,{size:t.bytesUploaded||i.bytesTotal}),this.calculateTotalProgress()})),this.on("preprocess-progress",((e,t)=>{null!=e&&this.getFile(e.id)?this.setFileState(e.id,{progress:{...this.getFile(e.id).progress,preprocess:t}}):this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`)})),this.on("preprocess-complete",(e=>{if(null==e||!this.getFile(e.id))return void this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`);const t={...this.getState().files};t[e.id]={...t[e.id],progress:{...t[e.id].progress}},delete t[e.id].progress.preprocess,this.setState({files:t})})),this.on("postprocess-progress",((e,t)=>{null!=e&&this.getFile(e.id)?this.setFileState(e.id,{progress:{...this.getState().files[e.id].progress,postprocess:t}}):this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`)})),this.on("postprocess-complete",(e=>{if(null==e||!this.getFile(e.id))return void this.log(`Not setting progress for a file that has been removed: ${null==e?void 0:e.id}`);const t={...this.getState().files};t[e.id]={...t[e.id],progress:{...t[e.id].progress}},delete t[e.id].progress.postprocess,this.setState({files:t})})),this.on("restored",(()=>{this.calculateTotalProgress()})),this.on("dashboard:file-edit-complete",(e=>{e&&R(this,G)[G](e)})),"undefined"!=typeof window&&window.addEventListener&&(window.addEventListener("online",R(this,te)[te]),window.addEventListener("offline",R(this,te)[te]),setTimeout(R(this,te)[te],3e3))}function fe(e,t){void 0===t&&(t={});const{forceAllowNewUpload:i=!1}=t,{allowNewUpload:n,currentUploads:s}=this.getState();if(!n&&!i)throw new Error("Cannot create a new upload: already uploading.");const r=c();return this.emit("upload",{id:r,fileIDs:e}),this.setState({allowNewUpload:!1!==this.opts.allowMultipleUploadBatches&&!1!==this.opts.allowMultipleUploads,currentUploads:{...s,[r]:{fileIDs:e,step:0,result:{}}}}),r}function me(e){const{currentUploads:t}=this.getState();return t[e]}function ge(e){const t={...this.getState().currentUploads};delete t[e],this.setState({currentUploads:t})}async function ve(e){let{currentUploads:t}=this.getState(),i=t[e];const n=i.step||0,s=[...R(this,W)[W],...R(this,V)[V],...R(this,X)[X]];try{for(let r=n;r<s.length&&i;r++){const n=s[r],o={...i,step:r};this.setState({currentUploads:{...t,[e]:o}}),await n(o.fileIDs,e),t=this.getState().currentUploads,i=t[e]}}catch(t){throw R(this,se)[se](e),t}if(i){i.fileIDs.forEach((e=>{const t=this.getFile(e);t&&t.progress.postprocess&&this.emit("postprocess-complete",t)}));const n=i.fileIDs.map((e=>this.getFile(e))),s=n.filter((e=>!e.error)),r=n.filter((e=>e.error));await this.addResultData(e,{successful:s,failed:r,uploadID:e}),t=this.getState().currentUploads,i=t[e]}let r;return i&&(r=i.result,this.emit("complete",r),R(this,se)[se](e)),null==r&&this.log(`Not setting result for an upload that has been removed: ${e}`),r}oe.VERSION="3.0.4";const ye=oe;var be,we,xe,Ce,_e,Se={},Te=[],ke=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function Pe(e,t){for(var i in t)e[i]=t[i];return e}function Ee(e){var t=e.parentNode;t&&t.removeChild(e)}function Fe(e,t,i){var n,s,r,o={};for(r in t)"key"==r?n=t[r]:"ref"==r?s=t[r]:o[r]=t[r];if(arguments.length>2&&(o.children=arguments.length>3?be.call(arguments,2):i),"function"==typeof e&&null!=e.defaultProps)for(r in e.defaultProps)void 0===o[r]&&(o[r]=e.defaultProps[r]);return Oe(e,o,n,s,null)}function Oe(e,t,i,n,s){var r={type:e,props:t,key:i,ref:n,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==s?++xe:s};return null==s&&null!=we.vnode&&we.vnode(r),r}function Ae(e){return e.children}function De(e,t){this.props=e,this.context=t}function Ne(e,t){if(null==t)return e.__?Ne(e.__,e.__.__k.indexOf(e)+1):null;for(var i;t<e.__k.length;t++)if(null!=(i=e.__k[t])&&null!=i.__e)return i.__e;return"function"==typeof e.type?Ne(e):null}function Me(e){var t,i;if(null!=(e=e.__)&&null!=e.__c){for(e.__e=e.__c.base=null,t=0;t<e.__k.length;t++)if(null!=(i=e.__k[t])&&null!=i.__e){e.__e=e.__c.base=i.__e;break}return Me(e)}}function Ie(e){(!e.__d&&(e.__d=!0)&&Ce.push(e)&&!Ue.__r++||_e!==we.debounceRendering)&&((_e=we.debounceRendering)||setTimeout)(Ue)}function Ue(){for(var e;Ue.__r=Ce.length;)e=Ce.sort((function(e,t){return e.__v.__b-t.__v.__b})),Ce=[],e.some((function(e){var t,i,n,s,r,o;e.__d&&(r=(s=(t=e).__v).__e,(o=t.__P)&&(i=[],(n=Pe({},s)).__v=s.__v+1,We(o,s,n,t.__n,void 0!==o.ownerSVGElement,null!=s.__h?[r]:null,i,null==r?Ne(s):r,s.__h),Ve(i,s),s.__e!=r&&Me(s)))}))}function Le(e,t,i,n,s,r,o,a,l,u){var h,p,c,d,f,m,g,v=n&&n.__k||Te,y=v.length;for(i.__k=[],h=0;h<t.length;h++)if(null!=(d=i.__k[h]=null==(d=t[h])||"boolean"==typeof d?null:"string"==typeof d||"number"==typeof d||"bigint"==typeof d?Oe(null,d,null,null,d):Array.isArray(d)?Oe(Ae,{children:d},null,null,null):d.__b>0?Oe(d.type,d.props,d.key,d.ref?d.ref:null,d.__v):d)){if(d.__=i,d.__b=i.__b+1,null===(c=v[h])||c&&d.key==c.key&&d.type===c.type)v[h]=void 0;else for(p=0;p<y;p++){if((c=v[p])&&d.key==c.key&&d.type===c.type){v[p]=void 0;break}c=null}We(e,d,c=c||Se,s,r,o,a,l,u),f=d.__e,(p=d.ref)&&c.ref!=p&&(g||(g=[]),c.ref&&g.push(c.ref,null,d),g.push(p,d.__c||f,d)),null!=f?(null==m&&(m=f),"function"==typeof d.type&&d.__k===c.__k?d.__d=l=Re(d,l,e):l=je(e,d,c,v,f,l),"function"==typeof i.type&&(i.__d=l)):l&&c.__e==l&&l.parentNode!=e&&(l=Ne(c))}for(i.__e=m,h=y;h--;)null!=v[h]&&Ge(v[h],v[h]);if(g)for(h=0;h<g.length;h++)Ye(g[h],g[++h],g[++h])}function Re(e,t,i){for(var n,s=e.__k,r=0;s&&r<s.length;r++)(n=s[r])&&(n.__=e,t="function"==typeof n.type?Re(n,t,i):je(i,n,n,s,n.__e,t));return t}function Be(e,t){return t=t||[],null==e||"boolean"==typeof e||(Array.isArray(e)?e.some((function(e){Be(e,t)})):t.push(e)),t}function je(e,t,i,n,s,r){var o,a,l;if(void 0!==t.__d)o=t.__d,t.__d=void 0;else if(null==i||s!=r||null==s.parentNode)e:if(null==r||r.parentNode!==e)e.appendChild(s),o=null;else{for(a=r,l=0;(a=a.nextSibling)&&l<n.length;l+=1)if(a==s)break e;e.insertBefore(s,r),o=r}return void 0!==o?o:s.nextSibling}function ze(e,t,i){"-"===t[0]?e.setProperty(t,i):e[t]=null==i?"":"number"!=typeof i||ke.test(t)?i:i+"px"}function He(e,t,i,n,s){var r;e:if("style"===t)if("string"==typeof i)e.style.cssText=i;else{if("string"==typeof n&&(e.style.cssText=n=""),n)for(t in n)i&&t in i||ze(e.style,t,"");if(i)for(t in i)n&&i[t]===n[t]||ze(e.style,t,i[t])}else if("o"===t[0]&&"n"===t[1])r=t!==(t=t.replace(/Capture$/,"")),t=t.toLowerCase()in e?t.toLowerCase().slice(2):t.slice(2),e.l||(e.l={}),e.l[t+r]=i,i?n||e.addEventListener(t,r?$e:qe,r):e.removeEventListener(t,r?$e:qe,r);else if("dangerouslySetInnerHTML"!==t){if(s)t=t.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("href"!==t&&"list"!==t&&"form"!==t&&"tabIndex"!==t&&"download"!==t&&t in e)try{e[t]=null==i?"":i;break e}catch(e){}"function"==typeof i||(null==i||!1===i&&-1==t.indexOf("-")?e.removeAttribute(t):e.setAttribute(t,i))}}function qe(e){this.l[e.type+!1](we.event?we.event(e):e)}function $e(e){this.l[e.type+!0](we.event?we.event(e):e)}function We(e,t,i,n,s,r,o,a,l){var u,h,p,c,d,f,m,g,v,y,b,w,x,C,_,S=t.type;if(void 0!==t.constructor)return null;null!=i.__h&&(l=i.__h,a=t.__e=i.__e,t.__h=null,r=[a]),(u=we.__b)&&u(t);try{e:if("function"==typeof S){if(g=t.props,v=(u=S.contextType)&&n[u.__c],y=u?v?v.props.value:u.__:n,i.__c?m=(h=t.__c=i.__c).__=h.__E:("prototype"in S&&S.prototype.render?t.__c=h=new S(g,y):(t.__c=h=new De(g,y),h.constructor=S,h.render=Ke),v&&v.sub(h),h.props=g,h.state||(h.state={}),h.context=y,h.__n=n,p=h.__d=!0,h.__h=[],h._sb=[]),null==h.__s&&(h.__s=h.state),null!=S.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=Pe({},h.__s)),Pe(h.__s,S.getDerivedStateFromProps(g,h.__s))),c=h.props,d=h.state,p)null==S.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(null==S.getDerivedStateFromProps&&g!==c&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(g,y),!h.__e&&null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(g,h.__s,y)||t.__v===i.__v){for(h.props=g,h.state=h.__s,t.__v!==i.__v&&(h.__d=!1),h.__v=t,t.__e=i.__e,t.__k=i.__k,t.__k.forEach((function(e){e&&(e.__=t)})),b=0;b<h._sb.length;b++)h.__h.push(h._sb[b]);h._sb=[],h.__h.length&&o.push(h);break e}null!=h.componentWillUpdate&&h.componentWillUpdate(g,h.__s,y),null!=h.componentDidUpdate&&h.__h.push((function(){h.componentDidUpdate(c,d,f)}))}if(h.context=y,h.props=g,h.__v=t,h.__P=e,w=we.__r,x=0,"prototype"in S&&S.prototype.render){for(h.state=h.__s,h.__d=!1,w&&w(t),u=h.render(h.props,h.state,h.context),C=0;C<h._sb.length;C++)h.__h.push(h._sb[C]);h._sb=[]}else do{h.__d=!1,w&&w(t),u=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++x<25);h.state=h.__s,null!=h.getChildContext&&(n=Pe(Pe({},n),h.getChildContext())),p||null==h.getSnapshotBeforeUpdate||(f=h.getSnapshotBeforeUpdate(c,d)),_=null!=u&&u.type===Ae&&null==u.key?u.props.children:u,Le(e,Array.isArray(_)?_:[_],t,i,n,s,r,o,a,l),h.base=t.__e,t.__h=null,h.__h.length&&o.push(h),m&&(h.__E=h.__=null),h.__e=!1}else null==r&&t.__v===i.__v?(t.__k=i.__k,t.__e=i.__e):t.__e=Xe(i.__e,t,i,n,s,r,o,l);(u=we.diffed)&&u(t)}catch(e){t.__v=null,(l||null!=r)&&(t.__e=a,t.__h=!!l,r[r.indexOf(a)]=null),we.__e(e,t,i)}}function Ve(e,t){we.__c&&we.__c(t,e),e.some((function(t){try{e=t.__h,t.__h=[],e.some((function(e){e.call(t)}))}catch(e){we.__e(e,t.__v)}}))}function Xe(e,t,i,n,s,r,o,a){var l,u,h,p=i.props,c=t.props,d=t.type,f=0;if("svg"===d&&(s=!0),null!=r)for(;f<r.length;f++)if((l=r[f])&&"setAttribute"in l==!!d&&(d?l.localName===d:3===l.nodeType)){e=l,r[f]=null;break}if(null==e){if(null===d)return document.createTextNode(c);e=s?document.createElementNS("http://www.w3.org/2000/svg",d):document.createElement(d,c.is&&c),r=null,a=!1}if(null===d)p===c||a&&e.data===c||(e.data=c);else{if(r=r&&be.call(e.childNodes),u=(p=i.props||Se).dangerouslySetInnerHTML,h=c.dangerouslySetInnerHTML,!a){if(null!=r)for(p={},f=0;f<e.attributes.length;f++)p[e.attributes[f].name]=e.attributes[f].value;(h||u)&&(h&&(u&&h.__html==u.__html||h.__html===e.innerHTML)||(e.innerHTML=h&&h.__html||""))}if(function(e,t,i,n,s){var r;for(r in i)"children"===r||"key"===r||r in t||He(e,r,null,i[r],n);for(r in t)s&&"function"!=typeof t[r]||"children"===r||"key"===r||"value"===r||"checked"===r||i[r]===t[r]||He(e,r,t[r],i[r],n)}(e,c,p,s,a),h)t.__k=[];else if(f=t.props.children,Le(e,Array.isArray(f)?f:[f],t,i,n,s&&"foreignObject"!==d,r,o,r?r[0]:i.__k&&Ne(i,0),a),null!=r)for(f=r.length;f--;)null!=r[f]&&Ee(r[f]);a||("value"in c&&void 0!==(f=c.value)&&(f!==e.value||"progress"===d&&!f||"option"===d&&f!==p.value)&&He(e,"value",f,p.value,!1),"checked"in c&&void 0!==(f=c.checked)&&f!==e.checked&&He(e,"checked",f,p.checked,!1))}return e}function Ye(e,t,i){try{"function"==typeof e?e(t):e.current=t}catch(e){we.__e(e,i)}}function Ge(e,t,i){var n,s;if(we.unmount&&we.unmount(e),(n=e.ref)&&(n.current&&n.current!==e.__e||Ye(n,null,t)),null!=(n=e.__c)){if(n.componentWillUnmount)try{n.componentWillUnmount()}catch(e){we.__e(e,t)}n.base=n.__P=null,e.__c=void 0}if(n=e.__k)for(s=0;s<n.length;s++)n[s]&&Ge(n[s],t,i||"function"!=typeof e.type);i||null==e.__e||Ee(e.__e),e.__=e.__e=e.__d=void 0}function Ke(e,t,i){return this.constructor(e,i)}function Qe(e,t,i){var n,s,r;we.__&&we.__(e,t),s=(n="function"==typeof i)?null:i&&i.__k||t.__k,r=[],We(t,e=(!n&&i||t).__k=Fe(Ae,null,[e]),s||Se,Se,void 0!==t.ownerSVGElement,!n&&i?[i]:s?null:t.firstChild?be.call(t.childNodes):null,r,!n&&i?i:s?s.__e:t.firstChild,n),Ve(r,e)}function Je(e,t,i){var n,s,r,o=Pe({},e.props);for(r in t)"key"==r?n=t[r]:"ref"==r?s=t[r]:o[r]=t[r];return arguments.length>2&&(o.children=arguments.length>3?be.call(arguments,2):i),Oe(e.type,o,n||e.key,s||e.ref,null)}function Ze(e){return(null==e?void 0:e.nodeType)===Node.ELEMENT_NODE}be=Te.slice,we={__e:function(e,t,i,n){for(var s,r,o;t=t.__;)if((s=t.__c)&&!s.__)try{if((r=s.constructor)&&null!=r.getDerivedStateFromError&&(s.setState(r.getDerivedStateFromError(e)),o=s.__d),null!=s.componentDidCatch&&(s.componentDidCatch(e,n||{}),o=s.__d),o)return s.__E=s}catch(t){e=t}throw e}},xe=0,De.prototype.setState=function(e,t){var i;i=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=Pe({},this.state),"function"==typeof e&&(e=e(Pe({},i),this.props)),e&&Pe(i,e),null!=e&&this.__v&&(t&&this._sb.push(t),Ie(this))},De.prototype.forceUpdate=function(e){this.__v&&(this.__e=!0,e&&this.__h.push(e),Ie(this))},De.prototype.render=Ae,Ce=[],Ue.__r=0;const et=function(e){for(var t;e&&!e.dir;)e=e.parentNode;return null==(t=e)?void 0:t.dir};class tt{constructor(e,t){void 0===t&&(t={}),this.uppy=e,this.opts=t}getPluginState(){const{plugins:e}=this.uppy.getState();return e[this.id]||{}}setPluginState(e){const{plugins:t}=this.uppy.getState();this.uppy.setState({plugins:{...t,[this.id]:{...t[this.id],...e}}})}setOptions(e){this.opts={...this.opts,...e},this.setPluginState(),this.i18nInit()}i18nInit(){const e=new u([this.defaultLocale,this.uppy.locale,this.opts.locale]);this.i18n=e.translate.bind(e),this.i18nArray=e.translateArray.bind(e),this.setPluginState()}addTarget(){throw new Error("Extend the addTarget method to add your plugin to another plugin's target")}install(){}uninstall(){}render(){throw new Error("Extend the render method to add your plugin to a DOM element")}update(){}afterUpdate(){}}function it(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var nt=0;function st(e){return"__private_"+nt+++"_"+e}var rt=st("updateUI");class ot extends tt{constructor(){super(...arguments),Object.defineProperty(this,rt,{writable:!0,value:void 0})}getTargetPlugin(e){let t;if("object"==typeof e&&e instanceof ot)t=e;else if("function"==typeof e){const i=e;this.uppy.iteratePlugins((e=>{e instanceof i&&(t=e)}))}return t}mount(e,t){const i=t.id,n=(s=e,void 0===r&&(r=document),"string"==typeof s?r.querySelector(s):Ze(s)?s:null);var s,r;if(n){this.isTargetDOMEl=!0;const t=document.createElement("div");return t.classList.add("uppy-Root"),it(this,rt)[rt]=function(e){let t=null,i=null;return function(){for(var n=arguments.length,s=new Array(n),r=0;r<n;r++)s[r]=arguments[r];return i=s,t||(t=Promise.resolve().then((()=>(t=null,e(...i))))),t}}((e=>{this.uppy.getPlugin(this.id)&&(Qe(this.render(e),t),this.afterUpdate())})),this.uppy.log(`Installing ${i} to a DOM element '${e}'`),this.opts.replaceTargetContent&&(n.innerHTML=""),Qe(this.render(this.uppy.getState()),t),this.el=t,n.appendChild(t),t.dir=this.opts.direction||et(t)||"ltr",this.onMount(),this.el}const o=this.getTargetPlugin(e);if(o)return this.uppy.log(`Installing ${i} to ${o.id}`),this.parent=o,this.el=o.addTarget(t),this.onMount(),this.el;this.uppy.log(`Not installing ${i}`);let a=`Invalid target option given to ${i}.`;throw a+="function"==typeof e?" The given target is not a Plugin class. Please check that you're not specifying a React Component instead of a plugin. If you are using @uppy/* packages directly, make sure you have only 1 version of @uppy/core installed: run `npm ls @uppy/core` on the command line and verify that all the versions match and are deduped correctly.":"If you meant to target an HTML element, please make sure that the element exists. Check that the <script> tag initializing Uppy is right before the closing </body> tag at the end of the page. (see https://github.com/transloadit/uppy/issues/1042)\n\nIf you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.",new Error(a)}update(e){var t,i;null!=this.el&&(null==(t=(i=it(this,rt))[rt])||t.call(i,e))}unmount(){var e;this.isTargetDOMEl&&(null==(e=this.el)||e.remove());this.onUnmount()}onMount(){}onUnmount(){}}const at=ot;const lt={STATE_ERROR:"error",STATE_WAITING:"waiting",STATE_PREPROCESSING:"preprocessing",STATE_UPLOADING:"uploading",STATE_POSTPROCESSING:"postprocessing",STATE_COMPLETE:"complete"};var ut=i(4184);function ht(e){const t=[];let i,n;for(const{progress:s}of Object.values(e)){const{preprocess:e,postprocess:r}=s;null==n&&(e||r)&&({mode:i,message:n}=e||r),"determinate"===(null==e?void 0:e.mode)&&t.push(e.value),"determinate"===(null==r?void 0:r.mode)&&t.push(r.value)}return{mode:i,message:n,value:t.reduce(((e,i)=>e+i/t.length),0)}}function pt(e){const t=(i=e,{hours:Math.floor(i/3600)%24,minutes:Math.floor(i/60)%60,seconds:Math.floor(i%60)});var i;return`${0===t.hours?"":`${t.hours}h`}${0===t.minutes?"":`${0===t.hours?t.minutes:` ${t.minutes.toString(10).padStart(2,"0")}`}m`}${0!==t.hours?"":`${0===t.minutes?t.seconds:` ${t.seconds.toString(10).padStart(2,"0")}`}s`}`}function ct(e){const{newFiles:t,isUploadStarted:i,recoveredState:n,i18n:s,uploadState:r,isSomeGhost:o,startUpload:a}=e,l=ut("uppy-u-reset","uppy-c-btn","uppy-StatusBar-actionBtn","uppy-StatusBar-actionBtn--upload",{"uppy-c-btn-primary":r===lt.STATE_WAITING},{"uppy-StatusBar-actionBtn--disabled":o}),u=s(t&&i&&!n?"uploadXNewFiles":"uploadXFiles",{smart_count:t});return Fe("button",{type:"button",className:l,"aria-label":s("uploadXFiles",{smart_count:t}),onClick:a,disabled:o,"data-uppy-super-focusable":!0},u)}function dt(e){const{i18n:t,uppy:i}=e;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry","aria-label":t("retryUpload"),onClick:()=>i.retryAll(),"data-uppy-super-focusable":!0},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"8",height:"10",viewBox:"0 0 8 10"},Fe("path",{d:"M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z"})),t("retry"))}function ft(e){const{i18n:t,uppy:i}=e;return Fe("button",{type:"button",className:"uppy-u-reset uppy-StatusBar-actionCircleBtn",title:t("cancel"),"aria-label":t("cancel"),onClick:()=>i.cancelAll(),"data-cy":"cancel","data-uppy-super-focusable":!0},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"16",height:"16",viewBox:"0 0 16 16"},Fe("g",{fill:"none",fillRule:"evenodd"},Fe("circle",{fill:"#888",cx:"8",cy:"8",r:"8"}),Fe("path",{fill:"#FFF",d:"M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z"}))))}function mt(e){const{isAllPaused:t,i18n:i,isAllComplete:n,resumableUploads:s,uppy:r}=e,o=i(t?"resume":"pause");return Fe("button",{title:o,"aria-label":o,className:"uppy-u-reset uppy-StatusBar-actionCircleBtn",type:"button",onClick:function(){return n?null:s?t?r.resumeAll():r.pauseAll():r.cancelAll()},"data-uppy-super-focusable":!0},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"16",height:"16",viewBox:"0 0 16 16"},Fe("g",{fill:"none",fillRule:"evenodd"},Fe("circle",{fill:"#888",cx:"8",cy:"8",r:"8"}),Fe("path",{fill:"#FFF",d:t?"M6 4.25L11.5 8 6 11.75z":"M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z"}))))}function gt(e){const{i18n:t,doneButtonHandler:i}=e;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done",onClick:i,"data-uppy-super-focusable":!0},t("done"))}function vt(){return Fe("svg",{className:"uppy-StatusBar-spinner","aria-hidden":"true",focusable:"false",width:"14",height:"14"},Fe("path",{d:"M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0",fillRule:"evenodd"}))}function yt(e){const{progress:t}=e,{value:i,mode:n,message:s}=t,r=Math.round(100*i);return Fe("div",{className:"uppy-StatusBar-content"},Fe(vt,null),"determinate"===n?`${r}% · `:"",s)}function bt(e){const{i18n:t,complete:i,numUploads:n}=e;return Fe("div",{className:"uppy-StatusBar-statusSecondary"},t("filesUploadedOfTotal",{complete:i,smart_count:n}))}function wt(e){const{i18n:t,newFiles:i,startUpload:n}=e,s=ut("uppy-u-reset","uppy-c-btn","uppy-StatusBar-actionBtn","uppy-StatusBar-actionBtn--uploadNewlyAdded");return Fe("div",{className:"uppy-StatusBar-statusSecondary"},Fe("div",{className:"uppy-StatusBar-statusSecondaryHint"},t("xMoreFilesAdded",{smart_count:i})),Fe("button",{type:"button",className:s,"aria-label":t("uploadXFiles",{smart_count:i}),onClick:n},t("upload")))}const xt=d((function(e){const{numUploads:t,complete:i,totalUploadedSize:n,totalSize:s,totalETA:r,i18n:o}=e,a=t>1;return Fe("div",{className:"uppy-StatusBar-statusSecondary"},a&&o("filesUploadedOfTotal",{complete:i,smart_count:t}),Fe("span",{className:"uppy-StatusBar-additionalInfo"},a&&" · ",o("dataUploadedOfTotal",{complete:O(n),total:O(s)})," · ",o("xTimeLeft",{time:pt(r)})))}),500,{leading:!0,trailing:!0});function Ct(e){const{i18n:t,supportsUploadProgress:i,totalProgress:n,showProgressDetails:s,isUploadStarted:r,isAllComplete:o,isAllPaused:a,newFiles:l,numUploads:u,complete:h,totalUploadedSize:p,totalSize:c,totalETA:d,startUpload:f}=e,m=l&&r;if(!r||o)return null;const g=t(a?"paused":"uploading");return Fe("div",{className:"uppy-StatusBar-content","aria-label":g,title:g},a?null:Fe(vt,null),Fe("div",{className:"uppy-StatusBar-status"},Fe("div",{className:"uppy-StatusBar-statusPrimary"},i?`${g}: ${n}%`:g),a||m||!s?null:i?Fe(xt,{numUploads:u,complete:h,totalUploadedSize:p,totalSize:c,totalETA:d,i18n:t}):Fe(bt,{i18n:t,complete:h,numUploads:u}),m?Fe(wt,{i18n:t,newFiles:l,startUpload:f}):null))}function _t(e){const{i18n:t}=e;return Fe("div",{className:"uppy-StatusBar-content",role:"status",title:t("complete")},Fe("div",{className:"uppy-StatusBar-status"},Fe("div",{className:"uppy-StatusBar-statusPrimary"},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-StatusBar-statusIndicator uppy-c-icon",width:"15",height:"11",viewBox:"0 0 15 11"},Fe("path",{d:"M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z"})),t("complete"))))}function St(e){const{error:t,i18n:i,complete:n,numUploads:s}=e;return Fe("div",{className:"uppy-StatusBar-content",title:i("uploadFailed")},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-StatusBar-statusIndicator uppy-c-icon",width:"11",height:"11",viewBox:"0 0 11 11"},Fe("path",{d:"M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z"})),Fe("div",{className:"uppy-StatusBar-status"},Fe("div",{className:"uppy-StatusBar-statusPrimary"},i("uploadFailed"),Fe("button",{className:"uppy-u-reset uppy-StatusBar-details","aria-label":i("showErrorDetails"),"data-microtip-position":"top-right","data-microtip-size":"medium",onClick:function(){const e=`${i("uploadFailed")} \n\n ${t}`;alert(e)},type:"button"},"?")),Fe(bt,{i18n:i,complete:n,numUploads:s})))}const{STATE_ERROR:Tt,STATE_WAITING:kt,STATE_PREPROCESSING:Pt,STATE_UPLOADING:Et,STATE_POSTPROCESSING:Ft,STATE_COMPLETE:Ot}=lt;const At={strings:{uploading:"Uploading",complete:"Complete",uploadFailed:"Upload failed",paused:"Paused",retry:"Retry",cancel:"Cancel",pause:"Pause",resume:"Resume",done:"Done",filesUploadedOfTotal:{0:"%{complete} of %{smart_count} file uploaded",1:"%{complete} of %{smart_count} files uploaded"},dataUploadedOfTotal:"%{complete} of %{total}",xTimeLeft:"%{time} left",uploadXFiles:{0:"Upload %{smart_count} file",1:"Upload %{smart_count} files"},uploadXNewFiles:{0:"Upload +%{smart_count} file",1:"Upload +%{smart_count} files"},upload:"Upload",retryUpload:"Retry upload",xMoreFilesAdded:{0:"%{smart_count} more file added",1:"%{smart_count} more files added"},showErrorDetails:"Show error details"}};function Dt(e){let t=0;return e.forEach((e=>{t+=function(e){if(!e.bytesUploaded)return 0;const t=Date.now()-e.uploadStarted;return e.bytesUploaded/(t/1e3)}(e.progress)})),t}function Nt(e,t,i,n){if(e&&!t)return lt.STATE_ERROR;if(t)return lt.STATE_COMPLETE;if(i)return lt.STATE_WAITING;let s=lt.STATE_WAITING;const r=Object.keys(n);for(let e=0;e<r.length;e++){const{progress:t}=n[r[e]];if(t.uploadStarted&&!t.uploadComplete)return lt.STATE_UPLOADING;t.preprocess&&s!==lt.STATE_UPLOADING&&(s=lt.STATE_PREPROCESSING),t.postprocess&&s!==lt.STATE_UPLOADING&&s!==lt.STATE_PREPROCESSING&&(s=lt.STATE_POSTPROCESSING)}return s}class Mt extends at{constructor(e,t){super(e,t),this.startUpload=()=>{const{recoveredState:e}=this.uppy.getState();if(!e)return this.uppy.upload().catch((()=>{}));this.uppy.emit("restore-confirmed")},this.id=this.opts.id||"StatusBar",this.title="StatusBar",this.type="progressindicator",this.defaultLocale=At;this.opts={target:"body",hideUploadButton:!1,hideRetryButton:!1,hidePauseResumeButton:!1,hideCancelButton:!1,showProgressDetails:!1,hideAfterFinish:!0,doneButtonHandler:null,...t},this.i18nInit(),this.render=this.render.bind(this),this.install=this.install.bind(this)}render(e){const{capabilities:t,files:i,allowNewUpload:n,totalProgress:s,error:r,recoveredState:o}=e,{newFiles:a,startedFiles:l,completeFiles:u,inProgressNotPausedFiles:h,isUploadStarted:p,isAllComplete:c,isAllErrored:d,isAllPaused:f,isUploadInProgress:m,isSomeGhost:g}=this.uppy.getObjectOfFilesPerState(),v=o?Object.values(i):a,y=function(e){const t=Dt(e);if(0===t)return 0;const i=e.reduce(((e,t)=>{return e+((i=t.progress).bytesTotal-i.bytesUploaded);var i}),0);return Math.round(i/t*10)/10}(h),b=!!t.resumableUploads,w=!1!==t.uploadProgress;let x=0,C=0;return l.forEach((e=>{x+=e.progress.bytesTotal||0,C+=e.progress.bytesUploaded||0})),function(e){const{newFiles:t,allowNewUpload:i,isUploadInProgress:n,isAllPaused:s,resumableUploads:r,error:o,hideUploadButton:a,hidePauseResumeButton:l,hideCancelButton:u,hideRetryButton:h,recoveredState:p,uploadState:c,totalProgress:d,files:f,supportsUploadProgress:m,hideAfterFinish:g,isSomeGhost:v,doneButtonHandler:y,isUploadStarted:b,i18n:w,startUpload:x,uppy:C,isAllComplete:_,showProgressDetails:S,numUploads:T,complete:k,totalSize:P,totalETA:E,totalUploadedSize:F}=e,O=function(){switch(c){case Ft:case Pt:{const e=ht(f);return"determinate"===e.mode?100*e.value:d}case Tt:return null;case Et:return m?d:null;default:return d}}(),A=function(){if(p)return!1;switch(c){case kt:return a||0===t;case Ot:return g;default:return!1}}(),D=null!=O?O:100,N=!o&&t&&!n&&!s&&i&&!a,M=!u&&c!==kt&&c!==Ot,I=r&&!l&&c===Et,U=o&&!_&&!h,L=y&&c===Ot,R=ut("uppy-StatusBar-progress",{"is-indeterminate":function(){switch(c){case Ft:case Pt:{const{mode:e}=ht(f);return"indeterminate"===e}case Et:return!m;default:return!1}}()});return Fe("div",{className:ut("uppy-StatusBar",`is-${c}`,{"has-ghosts":v}),"aria-hidden":A},Fe("div",{className:R,style:{width:`${D}%`},role:"progressbar","aria-label":`${D}%`,"aria-valuetext":`${D}%`,"aria-valuemin":"0","aria-valuemax":"100","aria-valuenow":O}),(()=>{switch(c){case Pt:case Ft:return Fe(yt,{progress:ht(f)});case Ot:return Fe(_t,{i18n:w});case Tt:return Fe(St,{error:o,i18n:w,numUploads:T,complete:k});case Et:return Fe(Ct,{i18n:w,supportsUploadProgress:m,totalProgress:d,showProgressDetails:S,isUploadStarted:b,isAllComplete:_,isAllPaused:s,newFiles:t,numUploads:T,complete:k,totalUploadedSize:F,totalSize:P,totalETA:E,startUpload:x});default:return null}})(),Fe("div",{className:"uppy-StatusBar-actions"},p||N?Fe(ct,{newFiles:t,isUploadStarted:b,recoveredState:p,i18n:w,isSomeGhost:v,startUpload:x,uploadState:c}):null,U?Fe(dt,{i18n:w,uppy:C}):null,I?Fe(mt,{isAllPaused:s,i18n:w,isAllComplete:_,resumableUploads:r,uppy:C}):null,M?Fe(ft,{i18n:w,uppy:C}):null,L?Fe(gt,{i18n:w,doneButtonHandler:y}):null))}({error:r,uploadState:Nt(r,c,o,e.files||{}),allowNewUpload:n,totalProgress:s,totalSize:x,totalUploadedSize:C,isAllComplete:!1,isAllPaused:f,isAllErrored:d,isUploadStarted:p,isUploadInProgress:m,isSomeGhost:g,recoveredState:o,complete:u.length,newFiles:v.length,numUploads:l.length,totalETA:y,files:i,i18n:this.i18n,uppy:this.uppy,startUpload:this.startUpload,doneButtonHandler:this.opts.doneButtonHandler,resumableUploads:b,supportsUploadProgress:w,showProgressDetails:this.opts.showProgressDetails,hideUploadButton:this.opts.hideUploadButton,hideRetryButton:this.opts.hideRetryButton,hidePauseResumeButton:this.opts.hidePauseResumeButton,hideCancelButton:this.opts.hideCancelButton,hideAfterFinish:this.opts.hideAfterFinish,isTargetDOMEl:this.isTargetDOMEl})}onMount(){const e=this.el;et(e)||(e.dir="ltr")}install(){const{target:e}=this.opts;e&&this.mount(e,this)}uninstall(){this.unmount()}}Mt.VERSION="3.0.1";class It extends De{constructor(){super(...arguments),this.ref={current:null}}componentWillEnter(e){this.ref.current.style.opacity="1",this.ref.current.style.transform="none",setTimeout(e,300)}componentWillLeave(e){this.ref.current.style.opacity="0",this.ref.current.style.transform="translateY(350%)",setTimeout(e,300)}render(){const{children:e}=this.props;return Fe("div",{className:"uppy-Informer-animated",ref:this.ref},e)}}function Ut(e){const t={};for(let r=0;r<e.length;r++)if(null!=e[r]){t[(i=e[r],n=r.toString(36),s=void 0,null!=(s=null==i?void 0:i.key)?s:n)]=e[r]}var i,n,s;return t}function Lt(e,t){e=e||{},t=t||{};const i=i=>t.hasOwnProperty(i)?t[i]:e[i],n={};let s=[];for(const i in e)t.hasOwnProperty(i)?s.length&&(n[i]=s,s=[]):s.push(i);const r={};for(const e in t){if(n.hasOwnProperty(e))for(let t=0;t<n[e].length;t++){const s=n[e][t];r[n[e][t]]=i(s)}r[e]=i(e)}for(let e=0;e<s.length;e++)r[s[e]]=i(s[e]);return r}class Rt extends De{constructor(e,t){super(e,t),this.refs={},this.state={children:Ut(Be(Be(this.props.children))||[])},this.performAppear=this.performAppear.bind(this),this.performEnter=this.performEnter.bind(this),this.performLeave=this.performLeave.bind(this)}componentWillMount(){this.currentlyTransitioningKeys={},this.keysToAbortLeave=[],this.keysToEnter=[],this.keysToLeave=[]}componentDidMount(){const e=this.state.children;for(const t in e)e[t]&&this.performAppear(t)}componentWillReceiveProps(e){const t=Ut(Be(e.children)||[]),i=this.state.children;let n;for(n in this.setState((e=>({children:Lt(e.children,t)}))),t)if(t.hasOwnProperty(n)){const e=i&&i.hasOwnProperty(n);t[n]&&e&&this.currentlyTransitioningKeys[n]?(this.keysToEnter.push(n),this.keysToAbortLeave.push(n)):!t[n]||e||this.currentlyTransitioningKeys[n]||this.keysToEnter.push(n)}for(n in i)if(i.hasOwnProperty(n)){const e=t&&t.hasOwnProperty(n);!i[n]||e||this.currentlyTransitioningKeys[n]||this.keysToLeave.push(n)}}componentDidUpdate(){const{keysToEnter:e}=this;this.keysToEnter=[],e.forEach(this.performEnter);const{keysToLeave:t}=this;this.keysToLeave=[],t.forEach(this.performLeave)}_finishAbort(e){const t=this.keysToAbortLeave.indexOf(e);-1!==t&&this.keysToAbortLeave.splice(t,1)}performAppear(e){this.currentlyTransitioningKeys[e]=!0;const t=this.refs[e];t.componentWillAppear?t.componentWillAppear(this._handleDoneAppearing.bind(this,e)):this._handleDoneAppearing(e)}_handleDoneAppearing(e){const t=this.refs[e];t.componentDidAppear&&t.componentDidAppear(),delete this.currentlyTransitioningKeys[e],this._finishAbort(e);const i=Ut(Be(this.props.children)||[]);i&&i.hasOwnProperty(e)||this.performLeave(e)}performEnter(e){this.currentlyTransitioningKeys[e]=!0;const t=this.refs[e];t.componentWillEnter?t.componentWillEnter(this._handleDoneEntering.bind(this,e)):this._handleDoneEntering(e)}_handleDoneEntering(e){const t=this.refs[e];t.componentDidEnter&&t.componentDidEnter(),delete this.currentlyTransitioningKeys[e],this._finishAbort(e);const i=Ut(Be(this.props.children)||[]);i&&i.hasOwnProperty(e)||this.performLeave(e)}performLeave(e){if(-1!==this.keysToAbortLeave.indexOf(e))return;this.currentlyTransitioningKeys[e]=!0;const t=this.refs[e];t.componentWillLeave?t.componentWillLeave(this._handleDoneLeaving.bind(this,e)):this._handleDoneLeaving(e)}_handleDoneLeaving(e){if(-1!==this.keysToAbortLeave.indexOf(e))return;const t=this.refs[e];t.componentDidLeave&&t.componentDidLeave(),delete this.currentlyTransitioningKeys[e];const i=Ut(Be(this.props.children)||[]);if(i&&i.hasOwnProperty(e))this.performEnter(e);else{const t=(n={},s=this.state.children,Object.assign(n,s));delete t[e],this.setState({children:t})}var n,s}render(e,t){let{childFactory:i,transitionLeave:n,transitionName:s,transitionAppear:r,transitionEnter:o,transitionLeaveTimeout:a,transitionEnterTimeout:l,transitionAppearTimeout:u,component:h,...p}=e,{children:c}=t;const d=Object.entries(c).map((e=>{let[t,n]=e;if(!n)return;const s=function(e,t){const i=e._ptgLinkedRefs||(e._ptgLinkedRefs={});return i[t]||(i[t]=i=>{e.refs[t]=i})}(this,t);return Je(i(n),{ref:s,key:t})})).filter(Boolean);return Fe(h,p,d)}}Rt.defaultProps={component:"span",childFactory:e=>e};const Bt=Rt;class jt extends at{constructor(e,t){super(e,t),this.render=e=>Fe("div",{className:"uppy uppy-Informer"},Fe(Bt,null,e.info.map((e=>Fe(It,{key:e.message},Fe("p",{role:"alert"},e.message," ",e.details&&Fe("span",{"aria-label":e.details,"data-microtip-position":"top-left","data-microtip-size":"medium",role:"tooltip",onClick:()=>alert(`${e.message} \n\n ${e.details}`)},"?"))))))),this.type="progressindicator",this.id=this.opts.id||"Informer",this.title="Informer";this.opts={...t}}install(){const{target:e}=this.opts;e&&this.mount(e,this)}}jt.VERSION="3.0.1";const zt=/^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/;function Ht(e){return e.startsWith("blob:")}function qt(e){return!!e&&/^[^/]+\/(jpe?g|gif|png|svg|svg\+xml|bmp|webp|avif)$/.test(e)}function $t(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}var Wt="undefined"!=typeof self?self:global;const Vt="undefined"!=typeof navigator,Xt=Vt&&"undefined"==typeof HTMLImageElement,Yt=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),Gt=Wt.Buffer,Kt=!!Gt,Qt=e=>void 0!==e;function Jt(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(Qt).length)}function Zt(e){let t=new Error(e);throw delete t.stack,t}function ei(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const ti=e=>String.fromCharCode.apply(null,e),ii="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class ni{static from(e,t){return e instanceof this&&e.le===t?e:new ni(e,void 0,void 0,t)}constructor(e,t=0,i,n){if("boolean"==typeof n&&(this.le=n),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===i&&(i=e.byteLength-t);let n=new DataView(e,t,i);this._swapDataView(n)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof ni){void 0===i&&(i=e.byteLength-t),(t+=e.byteOffset)+i>e.byteOffset+e.byteLength&&Zt("Creating view outside of available memory in ArrayBuffer");let n=new DataView(e.buffer,t,i);this._swapDataView(n)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else Zt("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,i=ni){return e instanceof DataView||e instanceof ni?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||Zt("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new i(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new ni(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){return i=this.getUint8Array(e,t),ii?ii.decode(i):Kt?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(ti(i)));var i}getLatin1String(e=0,t=this.byteLength){let i=this.getUint8Array(e,t);return ti(i)}getUnicodeString(e=0,t=this.byteLength){const i=[];for(let n=0;n<t&&e+n<this.byteLength;n+=2)i.push(this.getUint16(e+n));return ti(i)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,i){switch(t){case 1:return this.getUint8(e,i);case 2:return this.getUint16(e,i);case 4:return this.getUint32(e,i);case 8:return this.getUint64&&this.getUint64(e,i)}}getUint(e,t,i){switch(t){case 8:return this.getUint8(e,i);case 16:return this.getUint16(e,i);case 32:return this.getUint32(e,i);case 64:return this.getUint64&&this.getUint64(e,i)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function si(e,t){Zt(`${e} '${t}' was not loaded, try using full build of exifr.`)}class ri extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||si(this.kind,e),t&&(e in t||function(e,t){Zt(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||si(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var oi=new ri("file parser"),ai=new ri("segment parser"),li=new ri("file reader");let ui=Wt.fetch;function hi(e,t){return(i=e).startsWith("data:")||i.length>1e4?ci(e,t,"base64"):Yt&&e.includes("://")?pi(e,t,"url",di):Yt?ci(e,t,"fs"):Vt?pi(e,t,"url",di):void Zt("Invalid input argument");var i}async function pi(e,t,i,n){return li.has(i)?ci(e,t,i):n?async function(e,t){let i=await t(e);return new ni(i)}(e,n):void Zt(`Parser ${i} is not loaded`)}async function ci(e,t,i){let n=new(li.get(i))(e,t);return await n.read(),n}const di=e=>ui(e).then((e=>e.arrayBuffer())),fi=e=>new Promise(((t,i)=>{let n=new FileReader;n.onloadend=()=>t(n.result||new ArrayBuffer),n.onerror=i,n.readAsArrayBuffer(e)}));class mi extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function gi(e,t,i){let n=new mi;for(let[e,t]of i)n.set(e,t);if(Array.isArray(t))for(let i of t)e.set(i,n);else e.set(t,n);return n}function vi(e,t,i){let n,s=e.get(t);for(n of i)s.set(n[0],n[1])}const yi=new Map,bi=new Map,wi=new Map,xi=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],Ci=["jfif","xmp","icc","iptc","ihdr"],_i=["tiff",...Ci],Si=["ifd0","ifd1","exif","gps","interop"],Ti=[..._i,...Si],ki=["makerNote","userComment"],Pi=["translateKeys","translateValues","reviveValues","multiSegment"],Ei=[...Pi,"sanitize","mergeOutput","silentErrors"];class Fi{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class Oi extends Fi{get needed(){return this.enabled||this.deps.size>0}constructor(e,t,i,n){if(super(),$t(this,"enabled",!1),$t(this,"skip",new Set),$t(this,"pick",new Set),$t(this,"deps",new Set),$t(this,"translateKeys",!1),$t(this,"translateValues",!1),$t(this,"reviveValues",!1),this.key=e,this.enabled=t,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=Si.includes(e),this.canBeFiltered&&(this.dict=yi.get(e)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:Zt(`Invalid options argument: ${i}`)}applyInheritables(e){let t,i;for(t of Pi)i=e[t],void 0!==i&&(this[t]=i)}translateTagSet(e,t){if(this.dict){let i,n,{tagKeys:s,tagValues:r}=this.dict;for(i of e)"string"==typeof i?(n=r.indexOf(i),-1===n&&(n=s.indexOf(Number(i))),-1!==n&&t.add(Number(s[n]))):t.add(i)}else for(let i of e)t.add(i)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,Ui(this.pick,this.deps)):this.enabled&&this.pick.size>0&&Ui(this.pick,this.deps)}}var Ai={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},Di=new Map;class Ni extends Fi{static useCached(e){let t=Di.get(e);return void 0!==t||(t=new this(e),Di.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):Zt(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=Vt?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of xi)this[e]=Ai[e];for(e of Ei)this[e]=Ai[e];for(e of ki)this[e]=Ai[e];for(e of Ti)this[e]=new Oi(e,Ai[e],void 0,this)}setupFromTrue(){let e;for(e of xi)this[e]=Ai[e];for(e of Ei)this[e]=Ai[e];for(e of ki)this[e]=!0;for(e of Ti)this[e]=new Oi(e,!0,void 0,this)}setupFromArray(e){let t;for(t of xi)this[t]=Ai[t];for(t of Ei)this[t]=Ai[t];for(t of ki)this[t]=Ai[t];for(t of Ti)this[t]=new Oi(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,Si)}setupFromObject(e){let t;for(t of(Si.ifd0=Si.ifd0||Si.image,Si.ifd1=Si.ifd1||Si.thumbnail,Object.assign(this,e),xi))this[t]=Ii(e[t],Ai[t]);for(t of Ei)this[t]=Ii(e[t],Ai[t]);for(t of ki)this[t]=Ii(e[t],Ai[t]);for(t of _i)this[t]=new Oi(t,Ai[t],e[t],this);for(t of Si)this[t]=new Oi(t,Ai[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,Si,Ti),!0===e.tiff?this.batchEnableWithBool(Si,!0):!1===e.tiff?this.batchEnableWithUserValue(Si,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,Si):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,Si)}batchEnableWithBool(e,t){for(let i of e)this[i].enabled=t}batchEnableWithUserValue(e,t){for(let i of e){let e=t[i];this[i].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,i,n=i){if(e&&e.length){for(let e of n)this[e].enabled=!1;let t=Mi(e,i);for(let[e,i]of t)Ui(this[e].pick,i),this[e].enabled=!0}else if(t&&t.length){let e=Mi(t,i);for(let[t,i]of e)Ui(this[t].skip,i)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:i,iptc:n,icc:s}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),i.enabled||e.skip.add(700),n.enabled||e.skip.add(33723),s.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:i,interop:n}=this;n.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),i.needed&&e.deps.add(34853),this.tiff.enabled=Si.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of Si)this[e].finalizeFilters()}get onlyTiff(){return!Ci.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of _i)this[e].enabled&&!ai.has(e)&&si("segment parser",e)}}function Mi(e,t){let i,n,s,r,o=[];for(s of t){for(r of(i=yi.get(s),n=[],i))(e.includes(r[0])||e.includes(r[1]))&&n.push(r[0]);n.length&&o.push([s,n])}return o}function Ii(e,t){return void 0!==e?e:void 0!==t?t:void 0}function Ui(e,t){for(let i of t)e.add(i)}$t(Ni,"default",Ai);class Li{constructor(e){$t(this,"parsers",{}),$t(this,"output",{}),$t(this,"errors",[]),$t(this,"pushToErrors",(e=>this.errors.push(e))),this.options=Ni.useCached(e)}async read(e){this.file=await function(e,t){return"string"==typeof e?hi(e,t):Vt&&!Xt&&e instanceof HTMLImageElement?hi(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new ni(e):Vt&&e instanceof Blob?pi(e,t,"blob",fi):void Zt("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[i,n]of oi)if(n.canHandle(e,t))return this.fileParser=new n(this.options,this.file,this.parsers),e[i]=!0;this.file.close&&this.file.close(),Zt("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),Jt(i=e)?void 0:i;var i}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let i=await t.parse();t.assignToOutput(e,i)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,i=ai.get("tiff",e);var n;if(t.tiff?n={start:0,type:"tiff"}:t.jpeg&&(n=await this.fileParser.getOrFindSegment("tiff")),void 0===n)return;let s=await this.fileParser.ensureSegmentChunk(n),r=this.parsers.tiff=new i(s,e,t),o=await r.extractThumbnail();return t.close&&t.close(),o}}async function Ri(e,t){let i=new Li(t);return await i.read(e),i.parse()}var Bi=Object.freeze({__proto__:null,parse:Ri,Exifr:Li,fileParsers:oi,segmentParsers:ai,fileReaders:li,tagKeys:yi,tagValues:bi,tagRevivers:wi,createDictionary:gi,extendDictionary:vi,fetchUrlAsArrayBuffer:di,readBlobAsArrayBuffer:fi,chunkedProps:xi,otherSegments:Ci,segments:_i,tiffBlocks:Si,segmentsAndBlocks:Ti,tiffExtractables:ki,inheritables:Pi,allFormatters:Ei,Options:Ni});class ji{static findPosition(e,t){let i=e.getUint16(t+2)+2,n="function"==typeof this.headerLength?this.headerLength(e,t,i):this.headerLength,s=t+n,r=i-n;return{offset:t,length:i,headerLength:n,start:s,size:r,end:s+r}}static parse(e,t={}){return new this(e,new Ni({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof ni?e:new ni(e)}constructor(e,t={},i){$t(this,"errors",[]),$t(this,"raw",new Map),$t(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(e),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=t,this.localOptions=t[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let i=wi.get(t),n=bi.get(t),s=yi.get(t),r=this.options[t],o=r.reviveValues&&!!i,a=r.translateValues&&!!n,l=r.translateKeys&&!!s,u={};for(let[t,r]of e)o&&i.has(t)?r=i.get(t)(r):a&&n.has(t)&&(r=this.translateValue(r,n.get(t))),l&&s.has(t)&&(t=s.get(t)||t),u[t]=r;return u}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,i){if(this.globalOptions.mergeOutput)return Object.assign(e,i);e[t]?Object.assign(e[t],i):e[t]=i}}function zi(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Hi(e){return e>=224&&e<=239}function qi(e,t,i){for(let[n,s]of ai)if(s.canHandle(e,t,i))return n}$t(ji,"headerLength",4),$t(ji,"type",void 0),$t(ji,"multiSegment",!1),$t(ji,"canHandle",(()=>!1));class $i extends class{constructor(e,t,i){$t(this,"errors",[]),$t(this,"ensureSegmentChunk",(async e=>{let t=e.start,i=e.size||65536;if(this.file.chunked)if(this.file.available(t,i))e.chunk=this.file.subarray(t,i);else try{e.chunk=await this.file.readChunk(t,i)}catch(t){Zt(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+i?e.chunk=this.file.subarray(t,i):void 0===e.size?e.chunk=this.file.subarray(t):Zt("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(e),this.options=e,this.file=t,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let i=new(ai.get(e))(t,this.options,this.file);return this.parsers[e]=i}createParsers(e){for(let t of e){let{type:e,chunk:i}=t,n=this.options[e];if(n&&n.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,i)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...e){super(...e),$t(this,"appSegments",[]),$t(this,"jpegSegments",[]),$t(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(ai.keyList())):(e=void 0===e?ai.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&ai.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:i,findAll:n,wanted:s,remaining:r}=this;if(!n&&this.file.chunked&&(n=Array.from(s).some((e=>{let t=ai.get(e),i=this.options[e];return t.multiSegment&&i.multiSegment})),n&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,i.byteLength),!this.options.onlyTiff&&i.chunked){let t=!1;for(;r.size>0&&!t&&(i.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:n}=i,s=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>n&&!s?!await i.readNextChunk(e):!await i.readNextChunk(n),void 0===(e=this.findAppSegmentsInRange(e,i.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let i,n,s,r,o,a,{file:l,findAll:u,wanted:h,remaining:p,options:c}=this;for(;e<t;e++)if(255===l.getUint8(e))if(i=l.getUint8(e+1),Hi(i)){if(n=l.getUint16(e+2),s=qi(l,e,n),s&&h.has(s)&&(r=ai.get(s),o=r.findPosition(l,e),a=c[s],o.type=s,this.appSegments.push(o),!u&&(r.multiSegment&&a.multiSegment?(this.unfinishedMultiSegment=o.chunkNumber<o.chunkCount,this.unfinishedMultiSegment||p.delete(s)):p.delete(s),0===p.size)))break;c.recordUnknownSegments&&(o=ji.findPosition(l,e),o.marker=i,this.unknownSegments.push(o)),e+=n+1}else if(zi(i)){if(n=l.getUint16(e+2),218===i&&!1!==c.stopAfterSos)return;c.recordJpegSegments&&this.jpegSegments.push({offset:e,length:n,marker:i}),e+=n+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let i,n,s,r=new Map;for(let t=0;t<e.length;t++)i=e[t],n=i.type,r.has(n)?s=r.get(n):r.set(n,s=[]),s.push(i);return Array.from(r)}(this.appSegments);this.mergedAppSegments=e.map((([e,t])=>{let i=ai.get(e,this.options);return i.handleMultiSegments?{type:e,chunk:i.handleMultiSegments(t)}:t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}$t($i,"type","jpeg"),oi.set("jpeg",$i);const Wi=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class Vi extends ji{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,i=new Map){let{pick:n,skip:s}=this.options[t];n=new Set(n);let r=n.size>0,o=0===s.size,a=this.chunk.getUint16(e);e+=2;for(let l=0;l<a;l++){let a=this.chunk.getUint16(e);if(r){if(n.has(a)&&(i.set(a,this.parseTag(e,a,t)),n.delete(a),0===n.size))break}else!o&&s.has(a)||i.set(a,this.parseTag(e,a,t));e+=12}return i}parseTag(e,t,i){let{chunk:n}=this,s=n.getUint16(e+2),r=n.getUint32(e+4),o=Wi[s];if(o*r<=4?e+=8:e=n.getUint32(e+8),(s<1||s>13)&&Zt(`Invalid TIFF value type. block: ${i.toUpperCase()}, tag: ${t.toString(16)}, type: ${s}, offset ${e}`),e>n.byteLength&&Zt(`Invalid TIFF value offset. block: ${i.toUpperCase()}, tag: ${t.toString(16)}, type: ${s}, offset ${e} is outside of chunk size ${n.byteLength}`),1===s)return n.getUint8Array(e,r);if(2===s)return""===(a=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(a=n.getString(e,r)).trim())?void 0:a;var a;if(7===s)return n.getUint8Array(e,r);if(1===r)return this.parseTagValue(s,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:case 10:default:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 11:return Float32Array;case 12:return Float64Array}}(s))(r),i=o;for(let n=0;n<r;n++)t[n]=this.parseTagValue(s,e),e+=i;return t}}parseTagValue(e,t){let{chunk:i}=this;switch(e){case 1:return i.getUint8(t);case 3:return i.getUint16(t);case 4:case 13:return i.getUint32(t);case 5:return i.getUint32(t)/i.getUint32(t+4);case 6:return i.getInt8(t);case 8:return i.getInt16(t);case 9:return i.getInt32(t);case 10:return i.getInt32(t)/i.getInt32(t+4);case 11:return i.getFloat(t);case 12:return i.getDouble(t);default:Zt(`Invalid tiff type ${e}`)}}}class Xi extends Vi{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let i=new Map;return this[t]=i,this.parseTags(e,t,i),i}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&Zt("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&Zt(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,ei(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,ei(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let i=e.get(t);i&&1===i.length&&e.set(t,i[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",Yi(...e.get(2),e.get(1))),e.set("longitude",Yi(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,i,n={};for(t of Si)if(e=this[t],!Jt(e))if(i=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(n,i)}else n[t]=i;return this.makerNote&&(n.makerNote=this.makerNote),this.userComment&&(n.userComment=this.userComment),n}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[i,n]of Object.entries(t))this.assignObjectToOutput(e,i,n)}}function Yi(e,t,i,n){var s=e+t/60+i/3600;return"S"!==n&&"W"!==n||(s*=-1),s}$t(Xi,"type","tiff"),$t(Xi,"headerLength",10),ai.set("tiff",Xi);Object.freeze({__proto__:null,default:Bi,Exifr:Li,fileParsers:oi,segmentParsers:ai,fileReaders:li,tagKeys:yi,tagValues:bi,tagRevivers:wi,createDictionary:gi,extendDictionary:vi,fetchUrlAsArrayBuffer:di,readBlobAsArrayBuffer:fi,chunkedProps:xi,otherSegments:Ci,segments:_i,tiffBlocks:Si,segmentsAndBlocks:Ti,tiffExtractables:ki,inheritables:Pi,allFormatters:Ei,Options:Ni,parse:Ri});const Gi={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1};Object.assign({},Gi,{firstChunkSize:4e4,gps:[1,2,3,4]});Object.assign({},Gi,{tiff:!1,ifd1:!0,mergeOutput:!1});const Ki=Object.assign({},Gi,{firstChunkSize:4e4,ifd0:[274]});const Qi=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let Ji=!0,Zi=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,i]=t,n=Number(e)+.1*Number(i);Ji=n<13.4,Zi=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);Ji=Zi=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);Ji=Zi=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);Ji=Zi=Number(t)<77}}async function en(e){let t=await async function(e){let t=new Li(Ki);await t.read(e);let i=await t.parse();if(i&&i.ifd0)return i.ifd0[274]}(e);return Object.assign({canvas:Ji,css:Zi},Qi[t])}class tn extends ni{constructor(...e){super(...e),$t(this,"ranges",new nn),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,i){if(0===e&&0===this.byteLength&&i){let e=new DataView(i.buffer||i,i.byteOffset,i.byteLength);this._swapDataView(e)}else{let i=e+t;if(i>this.byteLength){let{dataView:e}=this._extend(i);this._swapDataView(e)}}}_extend(e){let t;t=Kt?Gt.allocUnsafe(e):new Uint8Array(e);let i=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:i}}subarray(e,t,i=!1){return t=t||this._lengthToEnd(e),i&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,i=!1){i&&this._tryExtend(t,e.byteLength,e);let n=super.set(e,t);return this.ranges.add(t,n.byteLength),n}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class nn{constructor(){$t(this,"list",[])}get length(){return this.list.length}add(e,t,i=0){let n=e+t,s=this.list.filter((t=>sn(e,t.offset,n)||sn(e,t.end,n)));if(s.length>0){e=Math.min(e,...s.map((e=>e.offset))),n=Math.max(n,...s.map((e=>e.end))),t=n-e;let i=s.shift();i.offset=e,i.length=t,i.end=n,this.list=this.list.filter((e=>!s.includes(e)))}else this.list.push({offset:e,length:t,end:n})}available(e,t){let i=e+t;return this.list.some((t=>t.offset<=e&&i<=t.end))}}function sn(e,t,i){return e<=t&&t<=i}class rn extends tn{constructor(e,t){super(0),$t(this,"chunksRead",0),this.input=e,this.options=t}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,i=await this.readChunk(e,t);return!!i&&i.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}li.set("blob",class extends rn{async readWhole(){this.chunked=!1;let e=await fi(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let i=t?e+t:void 0,n=this.input.slice(e,i),s=await fi(n);return this.set(s,e,!0)}});const on={strings:{generatingThumbnails:"Generating thumbnails..."}};function an(e,t,i){try{e.getContext("2d").getImageData(0,0,1,1)}catch(e){if(18===e.code)return Promise.reject(new Error("cannot read image, probably an svg with external resources"))}return e.toBlob?new Promise((n=>{e.toBlob(n,t,i)})).then((e=>{if(null===e)throw new Error("cannot read image, probably an svg with external resources");return e})):Promise.resolve().then((()=>function(e,t,i){var n,s;const r=zt.exec(e),o=null!=(n=null!=(s=t.mimeType)?s:null==r?void 0:r[1])?n:"plain/text";let a;if(null!=r[2]){const e=atob(decodeURIComponent(r[3])),t=new Uint8Array(e.length);for(let i=0;i<e.length;i++)t[i]=e.charCodeAt(i);a=[t]}else a=[decodeURIComponent(r[3])];return i?new File(a,t.name||"",{type:o}):new Blob(a,{type:o})}(e.toDataURL(t,i),{}))).then((e=>{if(null===e)throw new Error("could not extract blob, probably an old browser");return e}))}class ln extends at{constructor(e,t){super(e,t),this.onFileAdded=e=>{!e.preview&&e.data&&qt(e.type)&&!e.isRemote&&this.addToQueue(e.id)},this.onCancelRequest=e=>{const t=this.queue.indexOf(e.id);-1!==t&&this.queue.splice(t,1)},this.onFileRemoved=e=>{const t=this.queue.indexOf(e.id);-1!==t&&this.queue.splice(t,1),e.preview&&Ht(e.preview)&&URL.revokeObjectURL(e.preview)},this.onRestored=()=>{this.uppy.getFiles().filter((e=>e.isRestored)).forEach((e=>{e.preview&&!Ht(e.preview)||this.addToQueue(e.id)}))},this.onAllFilesRemoved=()=>{this.queue=[]},this.waitUntilAllProcessed=e=>{e.forEach((e=>{const t=this.uppy.getFile(e);this.uppy.emit("preprocess-progress",t,{mode:"indeterminate",message:this.i18n("generatingThumbnails")})}));const t=()=>{e.forEach((e=>{const t=this.uppy.getFile(e);this.uppy.emit("preprocess-complete",t)}))};return new Promise((e=>{this.queueProcessing?this.uppy.once("thumbnail:all-generated",(()=>{t(),e()})):(t(),e())}))},this.type="modifier",this.id=this.opts.id||"ThumbnailGenerator",this.title="Thumbnail Generator",this.queue=[],this.queueProcessing=!1,this.defaultThumbnailDimension=200,this.thumbnailType=this.opts.thumbnailType||"image/jpeg",this.defaultLocale=on;if(this.opts={thumbnailWidth:null,thumbnailHeight:null,waitForThumbnailsBeforeUpload:!1,lazy:!1,...t},this.i18nInit(),this.opts.lazy&&this.opts.waitForThumbnailsBeforeUpload)throw new Error("ThumbnailGenerator: The `lazy` and `waitForThumbnailsBeforeUpload` options are mutually exclusive. Please ensure at most one of them is set to `true`.")}createThumbnail(e,t,i){const n=URL.createObjectURL(e.data),s=new Promise(((e,t)=>{const i=new Image;i.src=n,i.addEventListener("load",(()=>{URL.revokeObjectURL(n),e(i)})),i.addEventListener("error",(e=>{URL.revokeObjectURL(n),t(e.error||new Error("Could not create thumbnail"))}))})),r=en(e.data).catch((()=>1));return Promise.all([s,r]).then((e=>{let[n,s]=e;const r=this.getProportionalDimensions(n,t,i,s.deg),o=function(e,t){let i=e.width,n=e.height;90!==t.deg&&270!==t.deg||(i=e.height,n=e.width);const s=document.createElement("canvas");s.width=i,s.height=n;const r=s.getContext("2d");return r.translate(i/2,n/2),t.canvas&&(r.rotate(t.rad),r.scale(t.scaleX,t.scaleY)),r.drawImage(e,-e.width/2,-e.height/2,e.width,e.height),s}(n,s);return an(this.resizeImage(o,r.width,r.height),this.thumbnailType,80)})).then((e=>URL.createObjectURL(e)))}getProportionalDimensions(e,t,i,n){let s=e.width/e.height;return 90!==n&&270!==n||(s=e.height/e.width),null!=t?{width:t,height:Math.round(t/s)}:null!=i?{width:Math.round(i*s),height:i}:{width:this.defaultThumbnailDimension,height:Math.round(this.defaultThumbnailDimension/s)}}resizeImage(e,t,i){let n=function(e){const t=e.width/e.height,i=5e6,n=4096;let s=Math.floor(Math.sqrt(i*t)),r=Math.floor(i/Math.sqrt(i*t));if(s>n&&(s=n,r=Math.round(s/t)),r>n&&(r=n,s=Math.round(t*r)),e.width>s){const t=document.createElement("canvas");return t.width=s,t.height=r,t.getContext("2d").drawImage(e,0,0,s,r),t}return e}(e),s=Math.ceil(Math.log2(n.width/t));s<1&&(s=1);let r=t*2**(s-1),o=i*2**(s-1);for(;s--;){const e=document.createElement("canvas");e.width=r,e.height=o,e.getContext("2d").drawImage(n,0,0,r,o),n=e,r=Math.round(r/2),o=Math.round(o/2)}return n}setPreviewURL(e,t){this.uppy.setFileState(e,{preview:t})}addToQueue(e){this.queue.push(e),!1===this.queueProcessing&&this.processQueue()}processQueue(){if(this.queueProcessing=!0,this.queue.length>0){const e=this.uppy.getFile(this.queue.shift());return e?this.requestThumbnail(e).catch((()=>{})).then((()=>this.processQueue())):(this.uppy.log("[ThumbnailGenerator] file was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug","error"),Promise.resolve())}return this.queueProcessing=!1,this.uppy.log("[ThumbnailGenerator] Emptied thumbnail queue"),this.uppy.emit("thumbnail:all-generated"),Promise.resolve()}requestThumbnail(e){return qt(e.type)&&!e.isRemote?this.createThumbnail(e,this.opts.thumbnailWidth,this.opts.thumbnailHeight).then((t=>{this.setPreviewURL(e.id,t),this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${e.id}`),this.uppy.emit("thumbnail:generated",this.uppy.getFile(e.id),t)})).catch((t=>{this.uppy.log(`[ThumbnailGenerator] Failed thumbnail for ${e.id}:`,"warning"),this.uppy.log(t,"warning"),this.uppy.emit("thumbnail:error",this.uppy.getFile(e.id),t)})):Promise.resolve()}install(){this.uppy.on("file-removed",this.onFileRemoved),this.uppy.on("cancel-all",this.onAllFilesRemoved),this.opts.lazy?(this.uppy.on("thumbnail:request",this.onFileAdded),this.uppy.on("thumbnail:cancel",this.onCancelRequest)):(this.uppy.on("file-added",this.onFileAdded),this.uppy.on("restored",this.onRestored)),this.opts.waitForThumbnailsBeforeUpload&&this.uppy.addPreProcessor(this.waitUntilAllProcessed)}uninstall(){this.uppy.off("file-removed",this.onFileRemoved),this.uppy.off("cancel-all",this.onAllFilesRemoved),this.opts.lazy?(this.uppy.off("thumbnail:request",this.onFileAdded),this.uppy.off("thumbnail:cancel",this.onCancelRequest)):(this.uppy.off("file-added",this.onFileAdded),this.uppy.off("restored",this.onRestored)),this.opts.waitForThumbnailsBeforeUpload&&this.uppy.removePreProcessor(this.waitUntilAllProcessed)}}function un(e){if("string"==typeof e){const t=document.querySelectorAll(e);return 0===t.length?null:Array.from(t)}return"object"==typeof e&&Ze(e)?[e]:null}ln.VERSION="3.0.2";const hn=Array.from;function pn(e,t,i,n){let{onSuccess:s}=n;e.readEntries((n=>{const r=[...t,...n];n.length?queueMicrotask((()=>{pn(e,r,i,{onSuccess:s})})):s(r)}),(e=>{i(e),s(t)}))}function cn(e,t){return null==e?e:{kind:e.isFile?"file":e.isDirectory?"directory":void 0,name:e.name,getFile:()=>new Promise(((t,i)=>e.file(t,i))),async*values(){const i=e.createReader(),n=await new Promise((e=>{pn(i,[],t,{onSuccess:i=>e(i.map((e=>cn(e,t))))})}));yield*n}}}async function*dn(e,t){if("file"===e.kind){const i=await e.getFile();null!==i&&(i.relativePath=t?`${t}/${e.name}`:null,yield i)}else if("directory"===e.kind)for await(const i of e.values())yield*dn(i,`${t}/${e.name}`)}async function fn(e,t){let{logDropError:i=(()=>{})}=void 0===t?{}:t;try{const t=[];for await(const n of async function*(e,t){const i=await Promise.all(Array.from(e.items,(async e=>{var i;return{lastResortFile:e.getAsFile(),entry:null!=(i=await(null==e.getAsFileSystemHandle?void 0:e.getAsFileSystemHandle()))?i:cn(e.webkitGetAsEntry(),t)}})));for(const{lastResortFile:e,entry:n}of i)if(null!=n)try{yield*dn(n,"")}catch(i){e?yield e:t(i)}}(e,i))t.push(n);return t}catch{return function(e){const t=hn(e.files);return Promise.resolve(t)}(e)}}var mn=Number.isNaN||function(e){return"number"==typeof e&&e!=e};function gn(e,t){if(e.length!==t.length)return!1;for(var i=0;i<e.length;i++)if(n=e[i],s=t[i],!(n===s||mn(n)&&mn(s)))return!1;var n,s;return!0}function vn(e,t){void 0===t&&(t=gn);var i=null;function n(){for(var n=[],s=0;s<arguments.length;s++)n[s]=arguments[s];if(i&&i.lastThis===this&&t(n,i.lastArgs))return i.lastResult;var r=e.apply(this,n);return i={lastResult:r,lastArgs:n,lastThis:this},r}return n.clear=function(){i=null},n}const yn=['a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])','area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',"input:not([disabled]):not([inert]):not([aria-hidden])","select:not([disabled]):not([inert]):not([aria-hidden])","textarea:not([disabled]):not([inert]):not([aria-hidden])","button:not([disabled]):not([inert]):not([aria-hidden])",'iframe:not([tabindex^="-"]):not([inert]):not([aria-hidden])','object:not([tabindex^="-"]):not([inert]):not([aria-hidden])','embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])','[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])','[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])'];function bn(e,t){if(t){const i=e.querySelector(`[data-uppy-paneltype="${t}"]`);if(i)return i}return e}function wn(e,t){const i=t[0];i&&(i.focus(),e.preventDefault())}function xn(e,t,i){const n=bn(i,t),s=hn(n.querySelectorAll(yn)),r=s.indexOf(document.activeElement);!function(e){return e.contains(document.activeElement)}(n)?wn(e,s):e.shiftKey&&0===r?function(e,t){const i=t[t.length-1];i&&(i.focus(),e.preventDefault())}(e,s):e.shiftKey||r!==s.length-1||wn(e,s)}var Cn=i(1296);function _n(){const e=document.body;return"draggable"in e&&"ondragstart"in e&&"ondrop"in e&&("FormData"in window&&"FileReader"in window)}var Sn=i(81);function Tn(e){const t={color:"#838999",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("g",{fill:"#A7AFB7",fillRule:"nonzero"},Fe("path",{d:"M5.5 22a.5.5 0 0 1-.5-.5v-18a.5.5 0 0 1 .5-.5h10.719a.5.5 0 0 1 .367.16l3.281 3.556a.5.5 0 0 1 .133.339V21.5a.5.5 0 0 1-.5.5h-14zm.5-1h13V7.25L16 4H6v17z"}),Fe("path",{d:"M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z"})))};if(!e)return t;const i=e.split("/")[0],n=e.split("/")[1];if("text"===i)return{color:"#5a5e69",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("path",{d:"M4.5 7h13a.5.5 0 1 1 0 1h-13a.5.5 0 0 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z",fill:"#5A5E69",fillRule:"nonzero"}))};if("image"===i)return{color:"#686de0",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("g",{fill:"#686DE0",fillRule:"evenodd"},Fe("path",{d:"M5 7v10h15V7H5zm0-1h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z",fillRule:"nonzero"}),Fe("path",{d:"M6.35 17.172l4.994-5.026a.5.5 0 0 1 .707 0l2.16 2.16 3.505-3.505a.5.5 0 0 1 .707 0l2.336 2.31-.707.72-1.983-1.97-3.505 3.505a.5.5 0 0 1-.707 0l-2.16-2.159-3.938 3.939-1.409.026z",fillRule:"nonzero"}),Fe("circle",{cx:"7.5",cy:"9.5",r:"1.5"})))};if("audio"===i)return{color:"#068dbb",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("path",{d:"M9.5 18.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V7.25a.5.5 0 0 1 .379-.485l9-2.25A.5.5 0 0 1 18.5 5v11.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V8.67l-8 2v7.97zm8-11v-2l-8 2v2l8-2zM7 19.64c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1zm9-2c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1z",fill:"#049BCF",fillRule:"nonzero"}))};if("video"===i)return{color:"#19af67",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("path",{d:"M16 11.834l4.486-2.691A1 1 0 0 1 22 10v6a1 1 0 0 1-1.514.857L16 14.167V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.834zM15 9H5v8h10V9zm1 4l5 3v-6l-5 3z",fill:"#19AF67",fillRule:"nonzero"}))};if("application"===i&&"pdf"===n)return{color:"#e25149",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("path",{d:"M9.766 8.295c-.691-1.843-.539-3.401.747-3.726 1.643-.414 2.505.938 2.39 3.299-.039.79-.194 1.662-.537 3.148.324.49.66.967 1.055 1.51.17.231.382.488.629.757 1.866-.128 3.653.114 4.918.655 1.487.635 2.192 1.685 1.614 2.84-.566 1.133-1.839 1.084-3.416.249-1.141-.604-2.457-1.634-3.51-2.707a13.467 13.467 0 0 0-2.238.426c-1.392 4.051-4.534 6.453-5.707 4.572-.986-1.58 1.38-4.206 4.914-5.375.097-.322.185-.656.264-1.001.08-.353.306-1.31.407-1.737-.678-1.059-1.2-2.031-1.53-2.91zm2.098 4.87c-.033.144-.068.287-.104.427l.033-.01-.012.038a14.065 14.065 0 0 1 1.02-.197l-.032-.033.052-.004a7.902 7.902 0 0 1-.208-.271c-.197-.27-.38-.526-.555-.775l-.006.028-.002-.003c-.076.323-.148.632-.186.8zm5.77 2.978c1.143.605 1.832.632 2.054.187.26-.519-.087-1.034-1.113-1.473-.911-.39-2.175-.608-3.55-.608.845.766 1.787 1.459 2.609 1.894zM6.559 18.789c.14.223.693.16 1.425-.413.827-.648 1.61-1.747 2.208-3.206-2.563 1.064-4.102 2.867-3.633 3.62zm5.345-10.97c.088-1.793-.351-2.48-1.146-2.28-.473.119-.564 1.05-.056 2.405.213.566.52 1.188.908 1.859.18-.858.268-1.453.294-1.984z",fill:"#E2514A",fillRule:"nonzero"}))};return"application"===i&&-1!==["zip","x-7z-compressed","x-rar-compressed","x-tar","x-gzip","x-apple-diskimage"].indexOf(n)?{color:"#00C469",icon:Fe("svg",{"aria-hidden":"true",focusable:"false",width:"25",height:"25",viewBox:"0 0 25 25"},Fe("path",{d:"M10.45 2.05h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V2.55a.5.5 0 0 1 .5-.5zm2.05 1.024h1.05a.5.5 0 0 1 .5.5V3.6a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5v-.001zM10.45 0h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V.5a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 3.074h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 1.024h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm-2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-1.656 3.074l-.82 5.946c.52.302 1.174.458 1.976.458.803 0 1.455-.156 1.975-.458l-.82-5.946h-2.311zm0-1.025h2.312c.512 0 .946.378 1.015.885l.82 5.946c.056.412-.142.817-.501 1.026-.686.398-1.515.597-2.49.597-.974 0-1.804-.199-2.49-.597a1.025 1.025 0 0 1-.5-1.026l.819-5.946c.07-.507.503-.885 1.015-.885zm.545 6.6a.5.5 0 0 1-.397-.561l.143-.999a.5.5 0 0 1 .495-.429h.74a.5.5 0 0 1 .495.43l.143.998a.5.5 0 0 1-.397.561c-.404.08-.819.08-1.222 0z",fill:"#00C469",fillRule:"nonzero"}))}:t}function kn(e){const{file:t}=e;if(t.preview)return Fe("img",{className:"uppy-Dashboard-Item-previewImg",alt:t.name,src:t.preview});const{color:i,icon:n}=Tn(t.type);return Fe("div",{className:"uppy-Dashboard-Item-previewIconWrap"},Fe("span",{className:"uppy-Dashboard-Item-previewIcon",style:{color:i}},n),Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-Dashboard-Item-previewIconBg",width:"58",height:"76",viewBox:"0 0 58 76"},Fe("rect",{fill:"#FFF",width:"58",height:"76",rx:"3",fillRule:"evenodd"})))}function Pn(e){const{file:t,toggleFileCard:i,i18n:n,metaFields:s}=e,{missingRequiredMetaFields:r}=t;if(null==r||!r.length)return null;const o=r.map((e=>((e,t)=>{const i=t.filter((t=>t.id===e));return i[0].name})(e,s))).join(", ");return Fe("div",{className:"uppy-Dashboard-Item-errorMessage"},n("missingRequiredMetaFields",{smart_count:r.length,fields:o})," ",Fe("button",{type:"button",class:"uppy-u-reset uppy-Dashboard-Item-errorMessageBtn",onClick:()=>i(!0,t.id)},n("editFile")))}function En(e){return Fe("div",{className:"uppy-Dashboard-Item-previewInnerWrap",style:{backgroundColor:Tn(e.file.type).color}},e.showLinkToFileUploadResult&&e.file.uploadURL&&Fe("a",{className:"uppy-Dashboard-Item-previewLink",href:e.file.uploadURL,rel:"noreferrer noopener",target:"_blank","aria-label":e.file.meta.name},Fe("span",{hidden:!0},e.file.meta.name)),Fe(kn,{file:e.file}),Fe(Pn,{file:e.file,i18n:e.i18n,toggleFileCard:e.toggleFileCard,metaFields:e.metaFields}))}function Fn(e){return e.isUploaded?e.i18n("uploadComplete"):e.error?e.i18n("retryUpload"):e.resumableUploads?e.file.isPaused?e.i18n("resumeUpload"):e.i18n("pauseUpload"):e.individualCancellation?e.i18n("cancelUpload"):""}function On(e){return Fe("div",{className:"uppy-Dashboard-Item-progress"},Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator",type:"button","aria-label":Fn(e),title:Fn(e),onClick:()=>function(e){e.isUploaded||(!e.error||e.hideRetryButton?e.resumableUploads&&!e.hidePauseResumeButton?e.uppy.pauseResume(e.file.id):e.individualCancellation&&!e.hideCancelButton&&e.uppy.removeFile(e.file.id):e.uppy.retryUpload(e.file.id))}(e)},e.children))}function An(e){let{children:t}=e;return Fe("svg",{"aria-hidden":"true",focusable:"false",width:"70",height:"70",viewBox:"0 0 36 36",className:"uppy-c-icon uppy-Dashboard-Item-progressIcon--circle"},t)}function Dn(e){let{progress:t}=e;const i=2*Math.PI*15;return Fe("g",null,Fe("circle",{className:"uppy-Dashboard-Item-progressIcon--bg",r:"15",cx:"18",cy:"18","stroke-width":"2",fill:"none"}),Fe("circle",{className:"uppy-Dashboard-Item-progressIcon--progress",r:"15",cx:"18",cy:"18",transform:"rotate(-90, 18, 18)",fill:"none","stroke-width":"2","stroke-dasharray":i,"stroke-dashoffset":i-i/100*t}))}function Nn(e){return e.file.progress.uploadStarted?e.isUploaded?Fe("div",{className:"uppy-Dashboard-Item-progress"},Fe("div",{className:"uppy-Dashboard-Item-progressIndicator"},Fe(An,null,Fe("circle",{r:"15",cx:"18",cy:"18",fill:"#1bb240"}),Fe("polygon",{className:"uppy-Dashboard-Item-progressIcon--check",transform:"translate(2, 3)",points:"14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"})))):e.recoveredState?void 0:e.error&&!e.hideRetryButton?Fe(On,e,Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon uppy-Dashboard-Item-progressIcon--retry",width:"28",height:"31",viewBox:"0 0 16 19"},Fe("path",{d:"M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"}),Fe("path",{d:"M7.9 3H10v2H7.9z"}),Fe("path",{d:"M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"}),Fe("path",{d:"M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"}))):e.resumableUploads&&!e.hidePauseResumeButton?Fe(On,e,Fe(An,null,Fe(Dn,{progress:e.file.progress.percentage}),e.file.isPaused?Fe("polygon",{className:"uppy-Dashboard-Item-progressIcon--play",transform:"translate(3, 3)",points:"12 20 12 10 20 15"}):Fe("g",{className:"uppy-Dashboard-Item-progressIcon--pause",transform:"translate(14.5, 13)"},Fe("rect",{x:"0",y:"0",width:"2",height:"10",rx:"0"}),Fe("rect",{x:"5",y:"0",width:"2",height:"10",rx:"0"})))):e.resumableUploads||!e.individualCancellation||e.hideCancelButton?Fe("div",{className:"uppy-Dashboard-Item-progress"},Fe("div",{className:"uppy-Dashboard-Item-progressIndicator"},Fe(An,null,Fe(Dn,{progress:e.file.progress.percentage})))):Fe(On,e,Fe(An,null,Fe(Dn,{progress:e.file.progress.percentage}),Fe("polygon",{className:"cancel",transform:"translate(2, 2)",points:"19.8856516 11.0625 16 14.9481516 12.1019737 11.0625 11.0625 12.1143484 14.9481516 16 11.0625 19.8980263 12.1019737 20.9375 16 17.0518484 19.8856516 20.9375 20.9375 19.8980263 17.0518484 16 20.9375 12"}))):null}var Mn=i(1737);const In="...";function Un(e,t){if(0===t)return"";if(e.length<=t)return e;if(t<=In.length+1)return`${e.slice(0,t-1)}…`;const i=t-In.length,n=Math.ceil(i/2),s=Math.floor(i/2);return e.slice(0,n)+In+e.slice(-s)}const Ln=e=>{let{file:t,onClick:i}=e;return t.error?Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-Dashboard-Item-errorDetails","aria-label":t.error,"data-microtip-position":"bottom","data-microtip-size":"medium",onClick:i,type:"button"},"?"):null};function Rn(e){const{file:t}=e;return Fe("div",{className:"uppy-Dashboard-Item-fileInfo","data-uppy-file-source":t.source},Fe("div",{className:"uppy-Dashboard-Item-fileName"},(e=>{const{author:t,name:i}=e.file.meta;return Fe("div",{className:"uppy-Dashboard-Item-name",title:i},Un(i,e.singleFile?200:e.containerWidth<=352?35:e.containerWidth<=576?60:t?20:30))})(e),Fe(Ln,{file:e.file,onClick:()=>alert(e.file.error)})),Fe("div",{className:"uppy-Dashboard-Item-status"},(e=>{const{author:t}=e.file.meta,{providerName:i}=e.file.remote;return t?Fe("div",{className:"uppy-Dashboard-Item-author"},Fe("a",{href:`${t.url}?utm_source=Companion&utm_medium=referral`,target:"_blank",rel:"noopener noreferrer"},Un(t.name,13)),i?Fe(Ae,null," · ",i," · "):null):null})(e),(e=>e.file.size&&Fe("div",{className:"uppy-Dashboard-Item-statusSize"},Mn(e.file.size)))(e),(e=>e.file.isGhost&&Fe("span",null," • ",Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect",type:"button",onClick:e.toggleAddFilesPanel},e.i18n("reSelect"))))(e)),Fe(Pn,{file:e.file,i18n:e.i18n,toggleFileCard:e.toggleFileCard,metaFields:e.metaFields}))}function Bn(e){let{file:t,uploadInProgressOrComplete:i,metaFields:n,canEditFile:s,i18n:r,onClick:o}=e;return!i&&n&&n.length>0||!i&&s(t)?Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",type:"button","aria-label":r("editFileWithFilename",{file:t.meta.name}),title:r("editFileWithFilename",{file:t.meta.name}),onClick:()=>o()},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"14",height:"14",viewBox:"0 0 14 14"},Fe("g",{fillRule:"evenodd"},Fe("path",{d:"M1.5 10.793h2.793A1 1 0 0 0 5 10.5L11.5 4a1 1 0 0 0 0-1.414L9.707.793a1 1 0 0 0-1.414 0l-6.5 6.5A1 1 0 0 0 1.5 8v2.793zm1-1V8L9 1.5l1.793 1.793-6.5 6.5H2.5z",fillRule:"nonzero"}),Fe("rect",{x:"1",y:"12.293",width:"11",height:"1",rx:".5"}),Fe("path",{fillRule:"nonzero",d:"M6.793 2.5L9.5 5.207l.707-.707L7.5 1.793z"})))):null}function jn(e){let{i18n:t,onClick:i,file:n}=e;return Fe("button",{className:"uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove",type:"button","aria-label":t("removeFile",{file:n.meta.name}),title:t("removeFile",{file:n.meta.name}),onClick:()=>i()},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"18",height:"18",viewBox:"0 0 18 18"},Fe("path",{d:"M9 0C4.034 0 0 4.034 0 9s4.034 9 9 9 9-4.034 9-9-4.034-9-9-9z"}),Fe("path",{fill:"#FFF",d:"M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z"})))}const zn=(e,t)=>{var i,n;(i=t.file.uploadURL,n=t.i18n("copyLinkToClipboardFallback"),void 0===n&&(n="Copy the URL below"),new Promise((e=>{const t=document.createElement("textarea");t.setAttribute("style",{position:"fixed",top:0,left:0,width:"2em",height:"2em",padding:0,border:"none",outline:"none",boxShadow:"none",background:"transparent"}),t.value=i,document.body.appendChild(t),t.select();const s=()=>{document.body.removeChild(t),window.prompt(n,i),e()};try{return document.execCommand("copy")?(document.body.removeChild(t),e()):s()}catch(e){return document.body.removeChild(t),s()}}))).then((()=>{t.uppy.log("Link copied to clipboard."),t.uppy.info(t.i18n("copyLinkToClipboardSuccess"),"info",3e3)})).catch(t.uppy.log).then((()=>e.target.focus({preventScroll:!0})))};function Hn(e){const{i18n:t}=e;return Fe("button",{className:"uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink",type:"button","aria-label":t("copyLink"),title:t("copyLink"),onClick:t=>zn(t,e)},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"14",height:"14",viewBox:"0 0 14 12"},Fe("path",{d:"M7.94 7.703a2.613 2.613 0 0 1-.626 2.681l-.852.851a2.597 2.597 0 0 1-1.849.766A2.616 2.616 0 0 1 2.764 7.54l.852-.852a2.596 2.596 0 0 1 2.69-.625L5.267 7.099a1.44 1.44 0 0 0-.833.407l-.852.851a1.458 1.458 0 0 0 1.03 2.486c.39 0 .755-.152 1.03-.426l.852-.852c.231-.231.363-.522.406-.824l1.04-1.038zm4.295-5.937A2.596 2.596 0 0 0 10.387 1c-.698 0-1.355.272-1.849.766l-.852.851a2.614 2.614 0 0 0-.624 2.688l1.036-1.036c.041-.304.173-.6.407-.833l.852-.852c.275-.275.64-.426 1.03-.426a1.458 1.458 0 0 1 1.03 2.486l-.852.851a1.442 1.442 0 0 1-.824.406l-1.04 1.04a2.596 2.596 0 0 0 2.683-.628l.851-.85a2.616 2.616 0 0 0 0-3.697zm-6.88 6.883a.577.577 0 0 0 .82 0l3.474-3.474a.579.579 0 1 0-.819-.82L5.355 7.83a.579.579 0 0 0 0 .819z"})))}function qn(e){const{uppy:t,file:i,uploadInProgressOrComplete:n,canEditFile:s,metaFields:r,showLinkToFileUploadResult:o,showRemoveButton:a,i18n:l,toggleFileCard:u,openFileEditor:h}=e;return Fe("div",{className:"uppy-Dashboard-Item-actionWrapper"},Fe(Bn,{i18n:l,file:i,uploadInProgressOrComplete:n,canEditFile:s,metaFields:r,onClick:()=>{r&&r.length>0?u(!0,i.id):h(i)}}),o&&i.uploadURL?Fe(Hn,{file:i,uppy:t,i18n:l}):null,a?Fe(jn,{i18n:l,file:i,uppy:t,onClick:()=>e.uppy.removeFile(i.id,"removed-by-user")}):null)}class $n extends De{componentDidMount(){const{file:e}=this.props;e.preview||this.props.handleRequestThumbnail(e)}shouldComponentUpdate(e){return!Sn(this.props,e)}componentDidUpdate(){const{file:e}=this.props;e.preview||this.props.handleRequestThumbnail(e)}componentWillUnmount(){const{file:e}=this.props;e.preview||this.props.handleCancelThumbnail(e)}render(){const{file:e}=this.props,t=e.progress.preprocess||e.progress.postprocess,i=e.progress.uploadComplete&&!t&&!e.error,n=e.progress.uploadStarted||t,s=e.progress.uploadStarted&&!e.progress.uploadComplete||t,r=e.error||!1,{isGhost:o}=e;let a=(this.props.individualCancellation||!s)&&!i;i&&this.props.showRemoveButtonAfterComplete&&(a=!0);return Fe("div",{className:ut({"uppy-Dashboard-Item":!0,"is-inprogress":s&&!this.props.recoveredState,"is-processing":t,"is-complete":i,"is-error":!!r,"is-resumable":this.props.resumableUploads,"is-noIndividualCancellation":!this.props.individualCancellation,"is-ghost":o}),id:`uppy_${e.id}`,role:this.props.role},Fe("div",{className:"uppy-Dashboard-Item-preview"},Fe(En,{file:e,showLinkToFileUploadResult:this.props.showLinkToFileUploadResult,i18n:this.props.i18n,toggleFileCard:this.props.toggleFileCard,metaFields:this.props.metaFields}),Fe(Nn,{uppy:this.props.uppy,file:e,error:r,isUploaded:i,hideRetryButton:this.props.hideRetryButton,hideCancelButton:this.props.hideCancelButton,hidePauseResumeButton:this.props.hidePauseResumeButton,recoveredState:this.props.recoveredState,showRemoveButtonAfterComplete:this.props.showRemoveButtonAfterComplete,resumableUploads:this.props.resumableUploads,individualCancellation:this.props.individualCancellation,i18n:this.props.i18n})),Fe("div",{className:"uppy-Dashboard-Item-fileInfoAndButtons"},Fe(Rn,{file:e,id:this.props.id,acquirers:this.props.acquirers,containerWidth:this.props.containerWidth,i18n:this.props.i18n,toggleAddFilesPanel:this.props.toggleAddFilesPanel,toggleFileCard:this.props.toggleFileCard,metaFields:this.props.metaFields,singleFile:this.props.singleFile}),Fe(qn,{file:e,metaFields:this.props.metaFields,showLinkToFileUploadResult:this.props.showLinkToFileUploadResult,showRemoveButton:a,canEditFile:this.props.canEditFile,uploadInProgressOrComplete:n,toggleFileCard:this.props.toggleFileCard,openFileEditor:this.props.openFileEditor,uppy:this.props.uppy,i18n:this.props.i18n})))}}function Wn(){return Wn=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var i=arguments[t];for(var n in i)Object.prototype.hasOwnProperty.call(i,n)&&(e[n]=i[n])}return e},Wn.apply(this,arguments)}const Vn={position:"relative",width:"100%",minHeight:"100%"},Xn={position:"absolute",top:0,left:0,width:"100%",overflow:"visible"};const Yn=class extends De{constructor(e){super(e),this.handleScroll=()=>{this.setState({offset:this.base.scrollTop})},this.handleResize=()=>{this.resize()},this.focusElement=null,this.state={offset:0,height:0}}componentDidMount(){this.resize(),window.addEventListener("resize",this.handleResize)}componentWillUpdate(){this.base.contains(document.activeElement)&&(this.focusElement=document.activeElement)}componentDidUpdate(){this.focusElement&&this.focusElement.parentNode&&document.activeElement!==this.focusElement&&this.focusElement.focus(),this.focusElement=null,this.resize()}componentWillUnmount(){window.removeEventListener("resize",this.handleResize)}resize(){const{height:e}=this.state;e!==this.base.offsetHeight&&this.setState({height:this.base.offsetHeight})}render(e){let{data:t,rowHeight:i,renderRow:n,overscanCount:s=10,...r}=e;const{offset:o,height:a}=this.state;let l=Math.floor(o/i),u=Math.floor(a/i);s&&(l=Math.max(0,l-l%s),u+=s);const h=l+u+4,p=t.slice(l,h),c={...Vn,height:t.length*i},d={...Xn,top:l*i};return Fe("div",Wn({onScroll:this.handleScroll},r),Fe("div",{role:"presentation",style:c},Fe("div",{role:"presentation",style:d},p.map(n))))}};function Gn(){return Gn=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var i=arguments[t];for(var n in i)Object.prototype.hasOwnProperty.call(i,n)&&(e[n]=i[n])}return e},Gn.apply(this,arguments)}const Kn=e=>{const t=1===e.itemsPerRow?71:200,i={id:e.id,error:e.error,i18n:e.i18n,uppy:e.uppy,acquirers:e.acquirers,resumableUploads:e.resumableUploads,individualCancellation:e.individualCancellation,hideRetryButton:e.hideRetryButton,hidePauseResumeButton:e.hidePauseResumeButton,hideCancelButton:e.hideCancelButton,showLinkToFileUploadResult:e.showLinkToFileUploadResult,showRemoveButtonAfterComplete:e.showRemoveButtonAfterComplete,isWide:e.isWide,metaFields:e.metaFields,recoveredState:e.recoveredState,singleFile:e.singleFile,toggleFileCard:e.toggleFileCard,handleRequestThumbnail:e.handleRequestThumbnail,handleCancelThumbnail:e.handleCancelThumbnail},n=Object.keys(e.files);e.recoveredState&&n.sort(((t,i)=>e.files[i].isGhost-e.files[t].isGhost));const s=function(e,t){const i=[];let n=[];return e.forEach((e=>{n.length<t?n.push(e):(i.push(n),n=[e])})),n.length&&i.push(n),i}(n,e.itemsPerRow),r=t=>Fe("div",{class:"uppy-Dashboard-filesInner",role:"presentation",key:t[0]},t.map((t=>Fe($n,Gn({key:t,uppy:e.uppy},i,{role:"listitem",openFileEditor:e.openFileEditor,canEditFile:e.canEditFile,toggleAddFilesPanel:e.toggleAddFilesPanel,file:e.files[t]})))));return e.singleFile?Fe("div",{class:"uppy-Dashboard-files"},r(s[0])):Fe(Yn,{class:"uppy-Dashboard-files",role:"list",data:s,renderRow:r,rowHeight:t})};let Qn;Qn=Symbol.for("uppy test: disable unused locale key warning");const Jn=class extends De{constructor(){super(...arguments),this.triggerFileInputClick=()=>{this.fileInput.click()},this.triggerFolderInputClick=()=>{this.folderInput.click()},this.triggerVideoCameraInputClick=()=>{this.mobileVideoFileInput.click()},this.triggerPhotoCameraInputClick=()=>{this.mobilePhotoFileInput.click()},this.onFileInputChange=e=>{this.props.handleInputChange(e),e.target.value=null},this.renderHiddenInput=(e,t)=>Fe("input",{className:"uppy-Dashboard-input",hidden:!0,"aria-hidden":"true",tabIndex:-1,webkitdirectory:e,type:"file",name:"files[]",multiple:1!==this.props.maxNumberOfFiles,onChange:this.onFileInputChange,accept:this.props.allowedFileTypes,ref:t}),this.renderHiddenCameraInput=(e,t,i)=>{const n={photo:"image/*",video:"video/*"}[e];return Fe("input",{className:"uppy-Dashboard-input",hidden:!0,"aria-hidden":"true",tabIndex:-1,type:"file",name:`camera-${e}`,onChange:this.onFileInputChange,capture:t,accept:n,ref:i})},this.renderMyDeviceAcquirer=()=>Fe("div",{className:"uppy-DashboardTab",role:"presentation","data-uppy-acquirer-id":"MyDevice"},Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",role:"tab",tabIndex:0,"data-uppy-super-focusable":!0,onClick:this.triggerFileInputClick},Fe("svg",{"aria-hidden":"true",focusable:"false",width:"32",height:"32",viewBox:"0 0 32 32"},Fe("g",{fill:"none",fillRule:"evenodd"},Fe("rect",{className:"uppy-ProviderIconBg",width:"32",height:"32",rx:"16",fill:"#2275D7"}),Fe("path",{d:"M21.973 21.152H9.863l-1.108-5.087h14.464l-1.246 5.087zM9.935 11.37h3.958l.886 1.444a.673.673 0 0 0 .585.316h6.506v1.37H9.935v-3.13zm14.898 3.44a.793.793 0 0 0-.616-.31h-.978v-2.126c0-.379-.275-.613-.653-.613H15.75l-.886-1.445a.673.673 0 0 0-.585-.316H9.232c-.378 0-.667.209-.667.587V14.5h-.782a.793.793 0 0 0-.61.303.795.795 0 0 0-.155.663l1.45 6.633c.078.36.396.618.764.618h13.354c.36 0 .674-.246.76-.595l1.631-6.636a.795.795 0 0 0-.144-.675z",fill:"#FFF"}))),Fe("div",{className:"uppy-DashboardTab-name"},this.props.i18n("myDevice")))),this.renderPhotoCamera=()=>Fe("div",{className:"uppy-DashboardTab",role:"presentation","data-uppy-acquirer-id":"MobilePhotoCamera"},Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",role:"tab",tabIndex:0,"data-uppy-super-focusable":!0,onClick:this.triggerPhotoCameraInputClick},Fe("svg",{"aria-hidden":"true",focusable:"false",width:"32",height:"32",viewBox:"0 0 32 32"},Fe("g",{fill:"none",fillRule:"evenodd"},Fe("rect",{className:"uppy-ProviderIconBg",fill:"#03BFEF",width:"32",height:"32",rx:"16"}),Fe("path",{d:"M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z",fill:"#FFF",fillRule:"nonzero"}))),Fe("div",{className:"uppy-DashboardTab-name"},this.props.i18n("takePictureBtn")))),this.renderVideoCamera=()=>Fe("div",{className:"uppy-DashboardTab",role:"presentation","data-uppy-acquirer-id":"MobileVideoCamera"},Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",role:"tab",tabIndex:0,"data-uppy-super-focusable":!0,onClick:this.triggerVideoCameraInputClick},Fe("svg",{"aria-hidden":"true",width:"32",height:"32",viewBox:"0 0 32 32"},Fe("rect",{fill:"#1abc9c",width:"32",height:"32",rx:"16"}),Fe("path",{fill:"#FFF",fillRule:"nonzero",d:"m21.254 14.277 2.941-2.588c.797-.313 1.243.818 1.09 1.554-.01 2.094.02 4.189-.017 6.282-.126.915-1.145 1.08-1.58.34l-2.434-2.142c-.192.287-.504 1.305-.738.468-.104-1.293-.028-2.596-.05-3.894.047-.312.381.823.426 1.069.063-.384.206-.744.362-1.09zm-12.939-3.73c3.858.013 7.717-.025 11.574.02.912.129 1.492 1.237 1.351 2.217-.019 2.412.04 4.83-.03 7.239-.17 1.025-1.166 1.59-2.029 1.429-3.705-.012-7.41.025-11.114-.019-.913-.129-1.492-1.237-1.352-2.217.018-2.404-.036-4.813.029-7.214.136-.82.83-1.473 1.571-1.454z "})),Fe("div",{className:"uppy-DashboardTab-name"},this.props.i18n("recordVideoBtn")))),this.renderBrowseButton=(e,t)=>Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-Dashboard-browse",onClick:t,"data-uppy-super-focusable":0===this.props.acquirers.length},e),this.renderDropPasteBrowseTagline=()=>{const e=this.props.acquirers.length,t=this.renderBrowseButton(this.props.i18n("browseFiles"),this.triggerFileInputClick),i=this.renderBrowseButton(this.props.i18n("browseFolders"),this.triggerFolderInputClick),n=this.props.fileManagerSelectionType,s=n.charAt(0).toUpperCase()+n.slice(1);return Fe("div",{class:"uppy-Dashboard-AddFiles-title"},this.props.disableLocalFiles?this.props.i18n("importFiles"):e>0?this.props.i18nArray(`dropPasteImport${s}`,{browseFiles:t,browseFolders:i,browse:t}):this.props.i18nArray(`dropPaste${s}`,{browseFiles:t,browseFolders:i,browse:t}))},this.renderAcquirer=e=>Fe("div",{className:"uppy-DashboardTab",role:"presentation","data-uppy-acquirer-id":e.id},Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",role:"tab",tabIndex:0,"data-cy":e.id,"aria-controls":`uppy-DashboardContent-panel--${e.id}`,"aria-selected":this.props.activePickerPanel.id===e.id,"data-uppy-super-focusable":!0,onClick:()=>this.props.showPanel(e.id)},e.icon(),Fe("div",{className:"uppy-DashboardTab-name"},e.name))),this.renderAcquirers=e=>{const t=[...e],i=t.splice(e.length-2,e.length);return Fe(Ae,null,t.map((e=>this.renderAcquirer(e))),Fe("span",{role:"presentation",style:{"white-space":"nowrap"}},i.map((e=>this.renderAcquirer(e)))))},this.renderSourcesList=(e,t)=>{const{showNativePhotoCameraButton:i,showNativeVideoCameraButton:n}=this.props;return Fe("div",{className:"uppy-Dashboard-AddFiles-list",role:"tablist"},!t&&this.renderMyDeviceAcquirer(),!t&&i&&this.renderPhotoCamera(),!t&&n&&this.renderVideoCamera(),e.length>0&&this.renderAcquirers(e))}}[Qn](){this.props.i18nArray("dropPasteBoth"),this.props.i18nArray("dropPasteFiles"),this.props.i18nArray("dropPasteFolders"),this.props.i18nArray("dropPasteImportBoth"),this.props.i18nArray("dropPasteImportFiles"),this.props.i18nArray("dropPasteImportFolders")}renderPoweredByUppy(){const{i18nArray:e}=this.props,t=Fe("span",null,Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon uppy-Dashboard-poweredByIcon",width:"11",height:"11",viewBox:"0 0 11 11"},Fe("path",{d:"M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z",fillRule:"evenodd"})),Fe("span",{className:"uppy-Dashboard-poweredByUppy"},"Uppy"));return Fe("a",{tabIndex:"-1",href:"https://uppy.io",rel:"noreferrer noopener",target:"_blank",className:"uppy-Dashboard-poweredBy"},e("poweredBy",{uppy:t}))}render(){const{showNativePhotoCameraButton:e,showNativeVideoCameraButton:t,nativeCameraFacingMode:i}=this.props;return Fe("div",{className:"uppy-Dashboard-AddFiles"},this.renderHiddenInput(!1,(e=>{this.fileInput=e})),this.renderHiddenInput(!0,(e=>{this.folderInput=e})),e&&this.renderHiddenCameraInput("photo",i,(e=>{this.mobilePhotoFileInput=e})),t&&this.renderHiddenCameraInput("video",i,(e=>{this.mobileVideoFileInput=e})),this.renderDropPasteBrowseTagline(),this.renderSourcesList(this.props.acquirers,this.props.disableLocalFiles),Fe("div",{className:"uppy-Dashboard-AddFiles-info"},this.props.note&&Fe("div",{className:"uppy-Dashboard-note"},this.props.note),this.props.proudlyDisplayPoweredByUppy&&this.renderPoweredByUppy(this.props)))}},Zn=e=>Fe("div",{className:ut("uppy-Dashboard-AddFilesPanel",e.className),"data-uppy-panelType":"AddFiles","aria-hidden":e.showAddFilesPanel},Fe("div",{className:"uppy-DashboardContent-bar"},Fe("div",{className:"uppy-DashboardContent-title",role:"heading","aria-level":"1"},e.i18n("addingMoreFiles")),Fe("button",{className:"uppy-DashboardContent-back",type:"button",onClick:()=>e.toggleAddFilesPanel(!1)},e.i18n("back"))),Fe(Jn,e));const es=function(e){const{tagName:t}=e.target;"INPUT"!==t&&"TEXTAREA"!==t?(e.preventDefault(),e.stopPropagation()):e.stopPropagation()};const ts=function(e){let{activePickerPanel:t,className:i,hideAllPanels:n,i18n:s,state:r,uppy:o}=e;return Fe("div",{className:ut("uppy-DashboardContent-panel",i),role:"tabpanel","data-uppy-panelType":"PickerPanel",id:`uppy-DashboardContent-panel--${t.id}`,onDragOver:es,onDragLeave:es,onDrop:es,onPaste:es},Fe("div",{className:"uppy-DashboardContent-bar"},Fe("div",{className:"uppy-DashboardContent-title",role:"heading","aria-level":"1"},s("importFrom",{name:t.name})),Fe("button",{className:"uppy-DashboardContent-back",type:"button",onClick:n},s("cancel"))),Fe("div",{className:"uppy-DashboardContent-panelBody"},o.getPlugin(t.id).render(r)))};const is=function(e){const t=e.files[e.fileCardFor];return Fe("div",{className:ut("uppy-DashboardContent-panel",e.className),role:"tabpanel","data-uppy-panelType":"FileEditor",id:"uppy-DashboardContent-panel--editor"},Fe("div",{className:"uppy-DashboardContent-bar"},Fe("div",{className:"uppy-DashboardContent-title",role:"heading","aria-level":"1"},e.i18nArray("editing",{file:Fe("span",{className:"uppy-DashboardContent-titleFile"},t.meta?t.meta.name:t.name)})),Fe("button",{className:"uppy-DashboardContent-back",type:"button",onClick:e.hideAllPanels},e.i18n("cancel")),Fe("button",{className:"uppy-DashboardContent-save",type:"button",onClick:e.saveFileEditor},e.i18n("save"))),Fe("div",{className:"uppy-DashboardContent-panelBody"},e.editors.map((t=>e.uppy.getPlugin(t.id).render(e.state)))))},ns="error",ss="waiting",rs="preprocessing",os="uploading",as="postprocessing",ls="complete",us="paused";function hs(e){let{files:t,i18n:i,isAllComplete:n,isAllErrored:s,isAllPaused:r,inProgressNotPausedFiles:o,newFiles:a,processingFiles:l}=e;const u=function(e,t,i,n){if(void 0===n&&(n={}),e)return ns;if(t)return ls;if(i)return us;let s=ss;const r=Object.keys(n);for(let e=0;e<r.length;e++){const{progress:t}=n[r[e]];if(t.uploadStarted&&!t.uploadComplete)return os;t.preprocess&&s!==os&&(s=rs),t.postprocess&&s!==os&&s!==rs&&(s=as)}return s}(s,n,r,t);switch(u){case"uploading":return i("uploadingXFiles",{smart_count:o.length});case"preprocessing":case"postprocessing":return i("processingXFiles",{smart_count:l.length});case"paused":return i("uploadPaused");case"waiting":return i("xFilesSelected",{smart_count:a.length});case"complete":return i("uploadComplete")}}const ps=function(e){const{i18n:t,isAllComplete:i,hideCancelButton:n,maxNumberOfFiles:s,toggleAddFilesPanel:r,uppy:o}=e;let{allowNewUpload:a}=e;return a&&s&&(a=e.totalFileCount<e.maxNumberOfFiles),Fe("div",{className:"uppy-DashboardContent-bar"},i||n?Fe("div",null):Fe("button",{className:"uppy-DashboardContent-back",type:"button",onClick:()=>o.cancelAll()},t("cancel")),Fe("div",{className:"uppy-DashboardContent-title",role:"heading","aria-level":"1"},Fe(hs,e)),a?Fe("button",{className:"uppy-DashboardContent-addMore",type:"button","aria-label":t("addMoreFiles"),title:t("addMoreFiles"),onClick:()=>r(!0)},Fe("svg",{"aria-hidden":"true",focusable:"false",className:"uppy-c-icon",width:"15",height:"15",viewBox:"0 0 15 15"},Fe("path",{d:"M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z"})),Fe("span",{className:"uppy-DashboardContent-addMoreCaption"},t("addMore"))):Fe("div",null))};const cs=class extends De{constructor(e){super(e),this.form=document.createElement("form"),this.updateMeta=(e,t)=>{this.setState((i=>{let{formState:n}=i;return{formState:{...n,[t]:e}}}))},this.handleSave=e=>{e.preventDefault();const t=this.props.fileCardFor;this.props.saveFileCard(this.state.formState,t)},this.handleCancel=()=>{const e=this.props.files[this.props.fileCardFor];this.props.uppy.emit("file-editor:cancel",e),this.props.toggleFileCard(!1)},this.saveOnEnter=e=>{if(13===e.keyCode){e.stopPropagation(),e.preventDefault();const t=this.props.files[this.props.fileCardFor];this.props.saveFileCard(this.state.formState,t.id)}},this.renderMetaFields=()=>{const e=this.getMetaFields()||[],t={text:"uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"};return e.map((e=>{const i=`uppy-Dashboard-FileCard-input-${e.id}`,n=this.props.requiredMetaFields.includes(e.id);return Fe("fieldset",{key:e.id,className:"uppy-Dashboard-FileCard-fieldset"},Fe("label",{className:"uppy-Dashboard-FileCard-label",htmlFor:i},e.name),void 0!==e.render?e.render({value:this.state.formState[e.id],onChange:t=>this.updateMeta(t,e.id),fieldCSSClasses:t,required:n,form:this.form.id},Fe):Fe("input",{className:t.text,id:i,form:this.form.id,type:e.type||"text",required:n,value:this.state.formState[e.id],placeholder:e.placeholder,onKeyUp:"form"in HTMLInputElement.prototype?void 0:this.saveOnEnter,onKeyDown:"form"in HTMLInputElement.prototype?void 0:this.saveOnEnter,onKeyPress:"form"in HTMLInputElement.prototype?void 0:this.saveOnEnter,onInput:t=>this.updateMeta(t.target.value,e.id),"data-uppy-super-focusable":!0}))}))};const t=this.props.files[this.props.fileCardFor],i=this.getMetaFields()||[],n={};i.forEach((e=>{n[e.id]=t.meta[e.id]||""})),this.state={formState:n},this.form.id=c()}componentWillMount(){this.form.addEventListener("submit",this.handleSave),document.body.appendChild(this.form)}componentWillUnmount(){this.form.removeEventListener("submit",this.handleSave),document.body.removeChild(this.form)}getMetaFields(){return"function"==typeof this.props.metaFields?this.props.metaFields(this.props.files[this.props.fileCardFor]):this.props.metaFields}render(){const e=this.props.files[this.props.fileCardFor],t=this.props.canEditFile(e);return Fe("div",{className:ut("uppy-Dashboard-FileCard",this.props.className),"data-uppy-panelType":"FileCard",onDragOver:es,onDragLeave:es,onDrop:es,onPaste:es},Fe("div",{className:"uppy-DashboardContent-bar"},Fe("div",{className:"uppy-DashboardContent-title",role:"heading","aria-level":"1"},this.props.i18nArray("editing",{file:Fe("span",{className:"uppy-DashboardContent-titleFile"},e.meta?e.meta.name:e.name)})),Fe("button",{className:"uppy-DashboardContent-back",type:"button",form:this.form.id,title:this.props.i18n("finishEditingFile"),onClick:this.handleCancel},this.props.i18n("cancel"))),Fe("div",{className:"uppy-Dashboard-FileCard-inner"},Fe("div",{className:"uppy-Dashboard-FileCard-preview",style:{backgroundColor:Tn(e.type).color}},Fe(kn,{file:e}),t&&Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",onClick:t=>{this.handleSave(t),this.props.openFileEditor(e)},form:this.form.id},this.props.i18n("editFile"))),Fe("div",{className:"uppy-Dashboard-FileCard-info"},this.renderMetaFields()),Fe("div",{className:"uppy-Dashboard-FileCard-actions"},Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn",type:"form"in HTMLButtonElement.prototype?"submit":"button",onClick:"form"in HTMLButtonElement.prototype?void 0:this.handleSave,form:this.form.id},this.props.i18n("saveChanges")),Fe("button",{className:"uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",type:"button",onClick:this.handleCancel,form:this.form.id},this.props.i18n("cancel")))))}},ds="uppy-transition-slideDownUp";const fs=class extends De{constructor(e){super(e),this.state={cachedChildren:null,className:""}}componentWillUpdate(e){const{cachedChildren:t}=this.state,i=Be(e.children)[0];if(t===i)return null;const n={cachedChildren:i};i&&!t&&(n.className=`${ds}-enter`,cancelAnimationFrame(this.animationFrame),clearTimeout(this.leaveTimeout),this.leaveTimeout=void 0,this.animationFrame=requestAnimationFrame((()=>{this.setState({className:`${ds}-enter ${ds}-enter-active`}),this.enterTimeout=setTimeout((()=>{this.setState({className:""})}),250)}))),t&&!i&&void 0===this.leaveTimeout&&(n.cachedChildren=t,n.className=`${ds}-leave`,cancelAnimationFrame(this.animationFrame),clearTimeout(this.enterTimeout),this.enterTimeout=void 0,this.animationFrame=requestAnimationFrame((()=>{this.setState({className:`${ds}-leave ${ds}-leave-active`}),this.leaveTimeout=setTimeout((()=>{this.setState({cachedChildren:null,className:""})}),250)}))),this.setState(n)}render(){const{cachedChildren:e,className:t}=this.state;return e?Je(e,{className:ut(t,e.props.className)}):null}};function ms(){return ms=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var i=arguments[t];for(var n in i)Object.prototype.hasOwnProperty.call(i,n)&&(e[n]=i[n])}return e},ms.apply(this,arguments)}const gs={strings:{closeModal:"Close Modal",addMoreFiles:"Add more files",addingMoreFiles:"Adding more files",importFrom:"Import from %{name}",dashboardWindowTitle:"Uppy Dashboard Window (Press escape to close)",dashboardTitle:"Uppy Dashboard",copyLinkToClipboardSuccess:"Link copied to clipboard.",copyLinkToClipboardFallback:"Copy the URL below",copyLink:"Copy link",back:"Back",removeFile:"Remove file",editFile:"Edit file",editing:"Editing %{file}",finishEditingFile:"Finish editing file",saveChanges:"Save changes",myDevice:"My Device",dropHint:"Drop your files here",uploadComplete:"Upload complete",uploadPaused:"Upload paused",resumeUpload:"Resume upload",pauseUpload:"Pause upload",retryUpload:"Retry upload",cancelUpload:"Cancel upload",xFilesSelected:{0:"%{smart_count} file selected",1:"%{smart_count} files selected"},uploadingXFiles:{0:"Uploading %{smart_count} file",1:"Uploading %{smart_count} files"},processingXFiles:{0:"Processing %{smart_count} file",1:"Processing %{smart_count} files"},poweredBy:"Powered by %{uppy}",addMore:"Add more",editFileWithFilename:"Edit file %{file}",save:"Save",cancel:"Cancel",dropPasteFiles:"Drop files here or %{browseFiles}",dropPasteFolders:"Drop files here or %{browseFolders}",dropPasteBoth:"Drop files here, %{browseFiles} or %{browseFolders}",dropPasteImportFiles:"Drop files here, %{browseFiles} or import from:",dropPasteImportFolders:"Drop files here, %{browseFolders} or import from:",dropPasteImportBoth:"Drop files here, %{browseFiles}, %{browseFolders} or import from:",importFiles:"Import files from:",browseFiles:"browse files",browseFolders:"browse folders",recoveredXFiles:{0:"We could not fully recover 1 file. Please re-select it and resume the upload.",1:"We could not fully recover %{smart_count} files. Please re-select them and resume the upload."},recoveredAllFiles:"We restored all files. You can now resume the upload.",sessionRestored:"Session restored",reSelect:"Re-select",missingRequiredMetaFields:{0:"Missing required meta field: %{fields}.",1:"Missing required meta fields: %{fields}."},takePictureBtn:"Take Picture",recordVideoBtn:"Record Video"}};function vs(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var ys=0;function bs(e){return"__private_"+ys+++"_"+e}const ws=vn.default||vn;function xs(){const e={};return e.promise=new Promise(((t,i)=>{e.resolve=t,e.reject=i})),e}function Cs(){return Fe("svg",{"aria-hidden":"true",focusable:"false",width:"30",height:"30",viewBox:"0 0 30 30"},Fe("path",{d:"M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z"}))}var _s=bs("generateLargeThumbnailIfSingleFile"),Ss=bs("openFileEditorWhenFilesAdded"),Ts=bs("attachRenderFunctionToTarget"),ks=bs("isTargetSupported"),Ps=bs("getAcquirers"),Es=bs("getProgressIndicators"),Fs=bs("getEditors");class Os extends at{constructor(e,t){var i;super(e,t),i=this,this.removeTarget=e=>{const t=this.getPluginState().targets.filter((t=>t.id!==e.id));this.setPluginState({targets:t})},this.addTarget=e=>{const t=e.id||e.constructor.name,i=e.title||t,n=e.type;if("acquirer"!==n&&"progressindicator"!==n&&"editor"!==n){const e="Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor";return void this.uppy.log(e,"error")}const s={id:t,name:i,type:n},r=this.getPluginState().targets.slice();return r.push(s),this.setPluginState({targets:r}),this.el},this.hideAllPanels=()=>{const e=this.getPluginState(),t={activePickerPanel:!1,showAddFilesPanel:!1,activeOverlayType:null,fileCardFor:null,showFileEditor:!1};e.activePickerPanel===t.activePickerPanel&&e.showAddFilesPanel===t.showAddFilesPanel&&e.showFileEditor===t.showFileEditor&&e.activeOverlayType===t.activeOverlayType||this.setPluginState(t)},this.showPanel=e=>{const{targets:t}=this.getPluginState(),i=t.filter((t=>"acquirer"===t.type&&t.id===e))[0];this.setPluginState({activePickerPanel:i,activeOverlayType:"PickerPanel"}),this.uppy.emit("dashboard:show-panel",e)},this.canEditFile=e=>{const{targets:t}=this.getPluginState();return vs(this,Fs)[Fs](t).some((t=>this.uppy.getPlugin(t.id).canEditFile(e)))},this.openFileEditor=e=>{const{targets:t}=this.getPluginState(),i=vs(this,Fs)[Fs](t);this.setPluginState({showFileEditor:!0,fileCardFor:e.id||null,activeOverlayType:"FileEditor"}),i.forEach((t=>{this.uppy.getPlugin(t.id).selectFile(e)}))},this.saveFileEditor=()=>{const{targets:e}=this.getPluginState();vs(this,Fs)[Fs](e).forEach((e=>{this.uppy.getPlugin(e.id).save()})),this.hideAllPanels()},this.openModal=()=>{const{promise:e,resolve:t}=xs();if(this.savedScrollPosition=window.pageYOffset,this.savedActiveElement=document.activeElement,this.opts.disablePageScrollWhenModalOpen&&document.body.classList.add("uppy-Dashboard-isFixed"),this.opts.animateOpenClose&&this.getPluginState().isClosing){const e=()=>{this.setPluginState({isHidden:!1}),this.el.removeEventListener("animationend",e,!1),t()};this.el.addEventListener("animationend",e,!1)}else this.setPluginState({isHidden:!1}),t();return this.opts.browserBackButtonClose&&this.updateBrowserHistory(),document.addEventListener("keydown",this.handleKeyDownInModal),this.uppy.emit("dashboard:modal-open"),e},this.closeModal=function(e){void 0===e&&(e={});const{manualClose:t=!0}=e,{isHidden:n,isClosing:s}=i.getPluginState();if(n||s)return;const{promise:r,resolve:o}=xs();if(i.opts.disablePageScrollWhenModalOpen&&document.body.classList.remove("uppy-Dashboard-isFixed"),i.opts.animateOpenClose){i.setPluginState({isClosing:!0});const e=()=>{i.setPluginState({isHidden:!0,isClosing:!1}),i.superFocus.cancel(),i.savedActiveElement.focus(),i.el.removeEventListener("animationend",e,!1),o()};i.el.addEventListener("animationend",e,!1)}else i.setPluginState({isHidden:!0}),i.superFocus.cancel(),i.savedActiveElement.focus(),o();var a;(document.removeEventListener("keydown",i.handleKeyDownInModal),t)&&(i.opts.browserBackButtonClose&&null!=(a=history.state)&&a[i.modalName]&&history.back());return i.uppy.emit("dashboard:modal-closed"),r},this.isModalOpen=()=>!this.getPluginState().isHidden||!1,this.requestCloseModal=()=>this.opts.onRequestCloseModal?this.opts.onRequestCloseModal():this.closeModal(),this.setDarkModeCapability=e=>{const{capabilities:t}=this.uppy.getState();this.uppy.setState({capabilities:{...t,darkMode:e}})},this.handleSystemDarkModeChange=e=>{const t=e.matches;this.uppy.log("[Dashboard] Dark mode is "+(t?"on":"off")),this.setDarkModeCapability(t)},this.toggleFileCard=(e,t)=>{const i=this.uppy.getFile(t);e?this.uppy.emit("dashboard:file-edit-start",i):this.uppy.emit("dashboard:file-edit-complete",i),this.setPluginState({fileCardFor:e?t:null,activeOverlayType:e?"FileCard":null})},this.toggleAddFilesPanel=e=>{this.setPluginState({showAddFilesPanel:e,activeOverlayType:e?"AddFiles":null})},this.addFiles=e=>{const t=e.map((e=>({source:this.id,name:e.name,type:e.type,data:e,meta:{relativePath:e.relativePath||e.webkitRelativePath||null}})));try{this.uppy.addFiles(t)}catch(e){this.uppy.log(e)}},this.startListeningToResize=()=>{this.resizeObserver=new ResizeObserver((e=>{const t=e[0],{width:i,height:n}=t.contentRect;this.uppy.log(`[Dashboard] resized: ${i} / ${n}`,"debug"),this.setPluginState({containerWidth:i,containerHeight:n,areInsidesReadyToBeVisible:!0})})),this.resizeObserver.observe(this.el.querySelector(".uppy-Dashboard-inner")),this.makeDashboardInsidesVisibleAnywayTimeout=setTimeout((()=>{const e=this.getPluginState(),t=!this.opts.inline&&e.isHidden;e.areInsidesReadyToBeVisible||t||(this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout","debug"),this.setPluginState({areInsidesReadyToBeVisible:!0}))}),1e3)},this.stopListeningToResize=()=>{this.resizeObserver.disconnect(),clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)},this.recordIfFocusedOnUppyRecently=e=>{this.el.contains(e.target)?this.ifFocusedOnUppyRecently=!0:(this.ifFocusedOnUppyRecently=!1,this.superFocus.cancel())},this.disableAllFocusableElements=e=>{const t=hn(this.el.querySelectorAll(yn));e?t.forEach((e=>{const t=e.getAttribute("tabindex");t&&(e.dataset.inertTabindex=t),e.setAttribute("tabindex","-1")})):t.forEach((e=>{"inertTabindex"in e.dataset?e.setAttribute("tabindex",e.dataset.inertTabindex):e.removeAttribute("tabindex")})),this.dashboardIsDisabled=e},this.updateBrowserHistory=()=>{var e;null!=(e=history.state)&&e[this.modalName]||history.pushState({...history.state,[this.modalName]:!0},""),window.addEventListener("popstate",this.handlePopState,!1)},this.handlePopState=e=>{var t;!this.isModalOpen()||e.state&&e.state[this.modalName]||this.closeModal({manualClose:!1}),!this.isModalOpen()&&null!=(t=e.state)&&t[this.modalName]&&history.back()},this.handleKeyDownInModal=e=>{27===e.keyCode&&this.requestCloseModal(e),9===e.keyCode&&xn(e,this.getPluginState().activeOverlayType,this.el)},this.handleClickOutside=()=>{this.opts.closeModalOnClickOutside&&this.requestCloseModal()},this.handlePaste=e=>{this.uppy.iteratePlugins((t=>{"acquirer"===t.type&&(null==t.handleRootPaste||t.handleRootPaste(e))}));const t=hn(e.clipboardData.files);t.length>0&&(this.uppy.log("[Dashboard] Files pasted"),this.addFiles(t))},this.handleInputChange=e=>{e.preventDefault();const t=hn(e.target.files);t.length>0&&(this.uppy.log("[Dashboard] Files selected through input"),this.addFiles(t))},this.handleDragOver=e=>{var t,i;e.preventDefault(),e.stopPropagation();const n=(()=>{let t=!0;return this.uppy.iteratePlugins((i=>{null!=i.canHandleRootDrop&&i.canHandleRootDrop(e)&&(t=!0)})),t})(),s=(()=>{const{types:t}=e.dataTransfer;return t.some((e=>"Files"===e))})();if(!n&&!s||this.opts.disabled||this.opts.disableLocalFiles&&(s||!n)||!this.uppy.getState().allowNewUpload)return e.dataTransfer.dropEffect="none",void clearTimeout(this.removeDragOverClassTimeout);e.dataTransfer.dropEffect="copy",clearTimeout(this.removeDragOverClassTimeout),this.setPluginState({isDraggingOver:!0}),null==(t=(i=this.opts).onDragOver)||t.call(i,e)},this.handleDragLeave=e=>{var t,i;e.preventDefault(),e.stopPropagation(),clearTimeout(this.removeDragOverClassTimeout),this.removeDragOverClassTimeout=setTimeout((()=>{this.setPluginState({isDraggingOver:!1})}),50),null==(t=(i=this.opts).onDragLeave)||t.call(i,e)},this.handleDrop=async e=>{var t,i;e.preventDefault(),e.stopPropagation(),clearTimeout(this.removeDragOverClassTimeout),this.setPluginState({isDraggingOver:!1}),this.uppy.iteratePlugins((t=>{"acquirer"===t.type&&(null==t.handleRootDrop||t.handleRootDrop(e))}));let n=!1;const s=await fn(e.dataTransfer,{logDropError:e=>{this.uppy.log(e,"error"),n||(this.uppy.info(e.message,"error"),n=!0)}});s.length>0&&(this.uppy.log("[Dashboard] Files dropped"),this.addFiles(s)),null==(t=(i=this.opts).onDrop)||t.call(i,e)},this.handleRequestThumbnail=e=>{this.opts.waitForThumbnailsBeforeUpload||this.uppy.emit("thumbnail:request",e)},this.handleCancelThumbnail=e=>{this.opts.waitForThumbnailsBeforeUpload||this.uppy.emit("thumbnail:cancel",e)},this.handleKeyDownInInline=e=>{9===e.keyCode&&function(e,t,i){null===t||xn(e,t,i)}(e,this.getPluginState().activeOverlayType,this.el)},this.handlePasteOnBody=e=>{this.el.contains(document.activeElement)&&this.handlePaste(e)},this.handleComplete=e=>{let{failed:t}=e;this.opts.closeAfterFinish&&0===t.length&&this.requestCloseModal()},this.handleCancelRestore=()=>{this.uppy.emit("restore-canceled")},Object.defineProperty(this,_s,{writable:!0,value:()=>{if(this.opts.disableThumbnailGenerator)return;const e=this.uppy.getFiles();if(1===e.length){const t=this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);null==t||t.setOptions({thumbnailWidth:600});const i={...e[0],preview:void 0};t.requestThumbnail(i).then((()=>{null==t||t.setOptions({thumbnailWidth:this.opts.thumbnailWidth})}))}}}),Object.defineProperty(this,Ss,{writable:!0,value:e=>{const t=e[0];this.canEditFile(t)&&this.openFileEditor(t)}}),this.initEvents=()=>{if(this.opts.trigger&&!this.opts.inline){const e=un(this.opts.trigger);e?e.forEach((e=>e.addEventListener("click",this.openModal))):this.uppy.log("Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself","warning")}this.startListeningToResize(),document.addEventListener("paste",this.handlePasteOnBody),this.uppy.on("plugin-remove",this.removeTarget),this.uppy.on("file-added",this.hideAllPanels),this.uppy.on("dashboard:modal-closed",this.hideAllPanels),this.uppy.on("file-editor:complete",this.hideAllPanels),this.uppy.on("complete",this.handleComplete),this.uppy.on("files-added",vs(this,_s)[_s]),this.uppy.on("file-removed",vs(this,_s)[_s]),document.addEventListener("focus",this.recordIfFocusedOnUppyRecently,!0),document.addEventListener("click",this.recordIfFocusedOnUppyRecently,!0),this.opts.inline&&this.el.addEventListener("keydown",this.handleKeyDownInInline),this.opts.autoOpenFileEditor&&this.uppy.on("files-added",vs(this,Ss)[Ss])},this.removeEvents=()=>{const e=un(this.opts.trigger);!this.opts.inline&&e&&e.forEach((e=>e.removeEventListener("click",this.openModal))),this.stopListeningToResize(),document.removeEventListener("paste",this.handlePasteOnBody),window.removeEventListener("popstate",this.handlePopState,!1),this.uppy.off("plugin-remove",this.removeTarget),this.uppy.off("file-added",this.hideAllPanels),this.uppy.off("dashboard:modal-closed",this.hideAllPanels),this.uppy.off("file-editor:complete",this.hideAllPanels),this.uppy.off("complete",this.handleComplete),this.uppy.off("files-added",vs(this,_s)[_s]),this.uppy.off("file-removed",vs(this,_s)[_s]),document.removeEventListener("focus",this.recordIfFocusedOnUppyRecently),document.removeEventListener("click",this.recordIfFocusedOnUppyRecently),this.opts.inline&&this.el.removeEventListener("keydown",this.handleKeyDownInInline),this.opts.autoOpenFileEditor&&this.uppy.off("files-added",vs(this,Ss)[Ss])},this.superFocusOnEachUpdate=()=>{const e=this.el.contains(document.activeElement),t=document.activeElement===document.body||null===document.activeElement,i=0===this.uppy.getState().info.length,n=!this.opts.inline;i&&(n||e||t&&this.ifFocusedOnUppyRecently)?this.superFocus(this.el,this.getPluginState().activeOverlayType):this.superFocus.cancel()},this.afterUpdate=()=>{!this.opts.disabled||this.dashboardIsDisabled?(!this.opts.disabled&&this.dashboardIsDisabled&&this.disableAllFocusableElements(!1),this.superFocusOnEachUpdate()):this.disableAllFocusableElements(!0)},this.saveFileCard=(e,t)=>{this.uppy.setFileMeta(t,e),this.toggleFileCard(!1,t)},Object.defineProperty(this,Ts,{writable:!0,value:e=>{const t=this.uppy.getPlugin(e.id);return{...e,icon:t.icon||this.opts.defaultPickerIcon,render:t.render}}}),Object.defineProperty(this,ks,{writable:!0,value:e=>{const t=this.uppy.getPlugin(e.id);return"function"!=typeof t.isSupported||t.isSupported()}}),Object.defineProperty(this,Ps,{writable:!0,value:ws((e=>e.filter((e=>"acquirer"===e.type&&vs(this,ks)[ks](e))).map(vs(this,Ts)[Ts])))}),Object.defineProperty(this,Es,{writable:!0,value:ws((e=>e.filter((e=>"progressindicator"===e.type)).map(vs(this,Ts)[Ts])))}),Object.defineProperty(this,Fs,{writable:!0,value:ws((e=>e.filter((e=>"editor"===e.type)).map(vs(this,Ts)[Ts])))}),this.render=e=>{const t=this.getPluginState(),{files:i,capabilities:n,allowNewUpload:s}=e,{newFiles:r,uploadStartedFiles:o,completeFiles:a,erroredFiles:l,inProgressFiles:u,inProgressNotPausedFiles:h,processingFiles:p,isUploadStarted:c,isAllComplete:d,isAllErrored:f,isAllPaused:m}=this.uppy.getObjectOfFilesPerState(),g=vs(this,Ps)[Ps](t.targets),v=vs(this,Es)[Es](t.targets),y=vs(this,Fs)[Fs](t.targets);let b;return b="auto"===this.opts.theme?n.darkMode?"dark":"light":this.opts.theme,["files","folders","both"].indexOf(this.opts.fileManagerSelectionType)<0&&(this.opts.fileManagerSelectionType="files",console.warn(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)),function(e){const t=0===e.totalFileCount,i=1===e.totalFileCount,n=e.containerWidth>576,s=ut({"uppy-Dashboard":!0,"uppy-Dashboard--isDisabled":e.disabled,"uppy-Dashboard--animateOpenClose":e.animateOpenClose,"uppy-Dashboard--isClosing":e.isClosing,"uppy-Dashboard--isDraggingOver":e.isDraggingOver,"uppy-Dashboard--modal":!e.inline,"uppy-size--md":e.containerWidth>576,"uppy-size--lg":e.containerWidth>700,"uppy-size--xl":e.containerWidth>900,"uppy-size--height-md":e.containerHeight>400,"uppy-Dashboard--isAddFilesPanelVisible":e.showAddFilesPanel,"uppy-Dashboard--isInnerWrapVisible":e.areInsidesReadyToBeVisible,"uppy-Dashboard--singleFile":i});let r=1;e.containerWidth>900?r=5:e.containerWidth>700?r=4:e.containerWidth>576&&(r=3);const o=e.showSelectedFiles&&!t,a=e.recoveredState?Object.keys(e.recoveredState.files).length:null,l=e.files?Object.keys(e.files).filter((t=>e.files[t].isGhost)).length:null;return Fe("div",{className:s,"data-uppy-theme":e.theme,"data-uppy-num-acquirers":e.acquirers.length,"data-uppy-drag-drop-supported":!e.disableLocalFiles&&_n(),"aria-hidden":e.inline?"false":e.isHidden,"aria-disabled":e.disabled,"aria-label":e.inline?e.i18n("dashboardTitle"):e.i18n("dashboardWindowTitle"),onPaste:e.handlePaste,onDragOver:e.handleDragOver,onDragLeave:e.handleDragLeave,onDrop:e.handleDrop},Fe("div",{"aria-hidden":"true",className:"uppy-Dashboard-overlay",tabIndex:-1,onClick:e.handleClickOutside}),Fe("div",{className:"uppy-Dashboard-inner","aria-modal":!e.inline&&"true",role:!e.inline&&"dialog",style:{width:e.inline&&e.width?e.width:"",height:e.inline&&e.height?e.height:""}},e.inline?null:Fe("button",{className:"uppy-u-reset uppy-Dashboard-close",type:"button","aria-label":e.i18n("closeModal"),title:e.i18n("closeModal"),onClick:e.closeModal},Fe("span",{"aria-hidden":"true"},"×")),Fe("div",{className:"uppy-Dashboard-innerWrap"},Fe("div",{className:"uppy-Dashboard-dropFilesHereHint"},e.i18n("dropHint")),o&&Fe(ps,e),a&&Fe("div",{className:"uppy-Dashboard-serviceMsg"},Fe("svg",{className:"uppy-Dashboard-serviceMsg-icon","aria-hidden":"true",focusable:"false",width:"21",height:"16",viewBox:"0 0 24 19"},Fe("g",{transform:"translate(0 -1)",fill:"none",fillRule:"evenodd"},Fe("path",{d:"M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z",fill:"#FFD300"}),Fe("path",{fill:"#000",d:"M11 6h2l-.3 8h-1.4z"}),Fe("circle",{fill:"#000",cx:"12",cy:"17",r:"1"}))),Fe("strong",{className:"uppy-Dashboard-serviceMsg-title"},e.i18n("sessionRestored")),Fe("div",{className:"uppy-Dashboard-serviceMsg-text"},l>0?e.i18n("recoveredXFiles",{smart_count:l}):e.i18n("recoveredAllFiles"))),o?Fe(Kn,ms({},e,{singleFile:i,itemsPerRow:r})):Fe(Jn,ms({},e,{isSizeMD:n})),Fe(fs,null,e.showAddFilesPanel?Fe(Zn,ms({key:"AddFiles"},e,{isSizeMD:n})):null),Fe(fs,null,e.fileCardFor?Fe(cs,ms({key:"FileCard"},e)):null),Fe(fs,null,e.activePickerPanel?Fe(ts,ms({key:"Picker"},e)):null),Fe(fs,null,e.showFileEditor?Fe(is,ms({key:"Editor"},e)):null),Fe("div",{className:"uppy-Dashboard-progressindicators"},e.progressindicators.map((t=>e.uppy.getPlugin(t.id).render(e.state)))))))}({state:e,isHidden:t.isHidden,files:i,newFiles:r,uploadStartedFiles:o,completeFiles:a,erroredFiles:l,inProgressFiles:u,inProgressNotPausedFiles:h,processingFiles:p,isUploadStarted:c,isAllComplete:d,isAllErrored:f,isAllPaused:m,totalFileCount:Object.keys(i).length,totalProgress:e.totalProgress,allowNewUpload:s,acquirers:g,theme:b,disabled:this.opts.disabled,disableLocalFiles:this.opts.disableLocalFiles,direction:this.opts.direction,activePickerPanel:t.activePickerPanel,showFileEditor:t.showFileEditor,saveFileEditor:this.saveFileEditor,disableAllFocusableElements:this.disableAllFocusableElements,animateOpenClose:this.opts.animateOpenClose,isClosing:t.isClosing,progressindicators:v,editors:y,autoProceed:this.uppy.opts.autoProceed,id:this.id,closeModal:this.requestCloseModal,handleClickOutside:this.handleClickOutside,handleInputChange:this.handleInputChange,handlePaste:this.handlePaste,inline:this.opts.inline,showPanel:this.showPanel,hideAllPanels:this.hideAllPanels,i18n:this.i18n,i18nArray:this.i18nArray,uppy:this.uppy,note:this.opts.note,recoveredState:e.recoveredState,metaFields:t.metaFields,resumableUploads:n.resumableUploads||!1,individualCancellation:n.individualCancellation,isMobileDevice:n.isMobileDevice,fileCardFor:t.fileCardFor,toggleFileCard:this.toggleFileCard,toggleAddFilesPanel:this.toggleAddFilesPanel,showAddFilesPanel:t.showAddFilesPanel,saveFileCard:this.saveFileCard,openFileEditor:this.openFileEditor,canEditFile:this.canEditFile,width:this.opts.width,height:this.opts.height,showLinkToFileUploadResult:this.opts.showLinkToFileUploadResult,fileManagerSelectionType:this.opts.fileManagerSelectionType,proudlyDisplayPoweredByUppy:this.opts.proudlyDisplayPoweredByUppy,hideCancelButton:this.opts.hideCancelButton,hideRetryButton:this.opts.hideRetryButton,hidePauseResumeButton:this.opts.hidePauseResumeButton,showRemoveButtonAfterComplete:this.opts.showRemoveButtonAfterComplete,containerWidth:t.containerWidth,containerHeight:t.containerHeight,areInsidesReadyToBeVisible:t.areInsidesReadyToBeVisible,isTargetDOMEl:this.isTargetDOMEl,parentElement:this.el,allowedFileTypes:this.uppy.opts.restrictions.allowedFileTypes,maxNumberOfFiles:this.uppy.opts.restrictions.maxNumberOfFiles,requiredMetaFields:this.uppy.opts.restrictions.requiredMetaFields,showSelectedFiles:this.opts.showSelectedFiles,showNativePhotoCameraButton:this.opts.showNativePhotoCameraButton,showNativeVideoCameraButton:this.opts.showNativeVideoCameraButton,nativeCameraFacingMode:this.opts.nativeCameraFacingMode,handleCancelRestore:this.handleCancelRestore,handleRequestThumbnail:this.handleRequestThumbnail,handleCancelThumbnail:this.handleCancelThumbnail,isDraggingOver:t.isDraggingOver,handleDragOver:this.handleDragOver,handleDragLeave:this.handleDragLeave,handleDrop:this.handleDrop})},this.discoverProviderPlugins=()=>{this.uppy.iteratePlugins((e=>{e&&!e.target&&e.opts&&e.opts.target===this.constructor&&this.addTarget(e)}))},this.install=()=>{this.setPluginState({isHidden:!0,fileCardFor:null,activeOverlayType:null,showAddFilesPanel:!1,activePickerPanel:!1,showFileEditor:!1,metaFields:this.opts.metaFields,targets:[],areInsidesReadyToBeVisible:!1,isDraggingOver:!1});const{inline:e,closeAfterFinish:t}=this.opts;if(e&&t)throw new Error("[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.");const{allowMultipleUploads:i,allowMultipleUploadBatches:n}=this.uppy.opts;(i||n)&&t&&this.uppy.log("[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true","warning");const{target:s}=this.opts;s&&this.mount(s,this);(this.opts.plugins||[]).forEach((e=>{const t=this.uppy.getPlugin(e);t&&t.mount(this,t)})),this.opts.disableStatusBar||this.uppy.use(Mt,{id:`${this.id}:StatusBar`,target:this,hideUploadButton:this.opts.hideUploadButton,hideRetryButton:this.opts.hideRetryButton,hidePauseResumeButton:this.opts.hidePauseResumeButton,hideCancelButton:this.opts.hideCancelButton,showProgressDetails:this.opts.showProgressDetails,hideAfterFinish:this.opts.hideProgressAfterFinish,locale:this.opts.locale,doneButtonHandler:this.opts.doneButtonHandler}),this.opts.disableInformer||this.uppy.use(jt,{id:`${this.id}:Informer`,target:this}),this.opts.disableThumbnailGenerator||this.uppy.use(ln,{id:`${this.id}:ThumbnailGenerator`,thumbnailWidth:this.opts.thumbnailWidth,thumbnailHeight:this.opts.thumbnailHeight,thumbnailType:this.opts.thumbnailType,waitForThumbnailsBeforeUpload:this.opts.waitForThumbnailsBeforeUpload,lazy:!this.opts.waitForThumbnailsBeforeUpload}),this.darkModeMediaQuery="undefined"!=typeof window&&window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;const r=!!this.darkModeMediaQuery&&this.darkModeMediaQuery.matches;this.uppy.log("[Dashboard] Dark mode is "+(r?"on":"off")),this.setDarkModeCapability(r),"auto"===this.opts.theme&&this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange),this.discoverProviderPlugins(),this.initEvents()},this.uninstall=()=>{if(!this.opts.disableInformer){const e=this.uppy.getPlugin(`${this.id}:Informer`);e&&this.uppy.removePlugin(e)}if(!this.opts.disableStatusBar){const e=this.uppy.getPlugin(`${this.id}:StatusBar`);e&&this.uppy.removePlugin(e)}if(!this.opts.disableThumbnailGenerator){const e=this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);e&&this.uppy.removePlugin(e)}(this.opts.plugins||[]).forEach((e=>{const t=this.uppy.getPlugin(e);t&&t.unmount()})),"auto"===this.opts.theme&&this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange),this.unmount(),this.removeEvents()},this.id=this.opts.id||"Dashboard",this.title="Dashboard",this.type="orchestrator",this.modalName=`uppy-Dashboard-${c()}`,this.defaultLocale=gs;const n={target:"body",metaFields:[],trigger:null,inline:!1,width:750,height:550,thumbnailWidth:280,thumbnailType:"image/jpeg",waitForThumbnailsBeforeUpload:!1,defaultPickerIcon:Cs,showLinkToFileUploadResult:!1,showProgressDetails:!1,hideUploadButton:!1,hideCancelButton:!1,hideRetryButton:!1,hidePauseResumeButton:!1,hideProgressAfterFinish:!1,doneButtonHandler:()=>{this.uppy.cancelAll(),this.requestCloseModal()},note:null,closeModalOnClickOutside:!1,closeAfterFinish:!1,disableStatusBar:!1,disableInformer:!1,disableThumbnailGenerator:!1,disablePageScrollWhenModalOpen:!0,animateOpenClose:!0,fileManagerSelectionType:"files",proudlyDisplayPoweredByUppy:!0,onRequestCloseModal:()=>this.closeModal(),showSelectedFiles:!0,showRemoveButtonAfterComplete:!1,browserBackButtonClose:!1,showNativePhotoCameraButton:!1,showNativeVideoCameraButton:!1,theme:"light",autoOpenFileEditor:!1,disabled:!1,disableLocalFiles:!1};this.opts={...n,...t},this.i18nInit(),this.superFocus=function(){let e=!1;return Cn(((t,i)=>{const n=bn(t,i),s=n.contains(document.activeElement);if(s&&e)return;const r=n.querySelector("[data-uppy-super-focusable]");if(!s||r)if(r)r.focus({preventScroll:!0}),e=!0;else{const t=n.querySelector(yn);null==t||t.focus({preventScroll:!0}),e=!1}}),260)}(),this.ifFocusedOnUppyRecently=!1,this.makeDashboardInsidesVisibleAnywayTimeout=null,this.removeDragOverClassTimeout=null}}Os.VERSION="3.2.0";class As extends Error{constructor(e,t){void 0===t&&(t=null),super("This looks like a network error, the endpoint might be blocked by an internet provider or a firewall."),this.cause=e,this.isNetworkError=!0,this.request=t}}const Ds=As;class Ns extends Error{constructor(e,i){void 0===i&&(i={}),super(e),this.cause=i.cause,this.cause&&t(this.cause,"isNetworkError")&&(this.isNetworkError=this.cause.isNetworkError)}}const Ms=Ns;class Is extends Error{constructor(){super("Authorization required"),this.name="AuthError",this.isAuthError=!0}}const Us=Is;let Ls;function Rs(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var Bs=0;function js(e){return"__private_"+Bs+++"_"+e}const zs=new Map;var Hs=js("companionHeaders"),qs=js("getUrl"),$s=js("request");Ls=Symbol.for("uppy test: getCompanionHeaders");class Ws{constructor(e,t){Object.defineProperty(this,$s,{value:Xs}),Object.defineProperty(this,qs,{value:Vs}),Object.defineProperty(this,Hs,{writable:!0,value:void 0}),this.uppy=e,this.opts=t,this.onReceiveResponse=this.onReceiveResponse.bind(this),Rs(this,Hs)[Hs]=null==t?void 0:t.companionHeaders}setCompanionHeaders(e){Rs(this,Hs)[Hs]=e}[Ls](){return Rs(this,Hs)[Hs]}get hostname(){const{companion:e}=this.uppy.getState(),t=this.opts.companionUrl;return(e&&e[t]?e[t]:t).replace(/\/$/,"")}async headers(){return{...{Accept:"application/json","Content-Type":"application/json","Uppy-Versions":`@uppy/companion-client=${Ws.VERSION}`},...Rs(this,Hs)[Hs]}}onReceiveResponse(e){let{headers:t}=e;const i=this.uppy.getState().companion||{},n=this.opts.companionUrl;t.has("i-am")&&t.get("i-am")!==i[n]&&this.uppy.setState({companion:{...i,[n]:t.get("i-am")}})}async preflight(e){const t=zs.get(this.hostname);if(null!=t)return t;const i=["accept","content-type","uppy-auth-token"],n=(async()=>{try{const t=(await fetch(Rs(this,qs)[qs](e),{method:"OPTIONS"})).headers.get("access-control-allow-headers");if(null==t||"*"===t)return zs.set(this.hostname,i),i;this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${t}`);const n=t.split(",").map((e=>e.trim().toLowerCase()));return zs.set(this.hostname,n),n}catch(e){return this.uppy.log(`[CompanionClient] unable to make preflight request ${e}`,"warning"),zs.delete(this.hostname),i}})();return zs.set(this.hostname,n),n}async preflightAndHeaders(e){const[t,i]=await Promise.all([this.preflight(e),this.headers()]);return Object.fromEntries(Object.entries(i).filter((e=>{let[i]=e;return!!t.includes(i.toLowerCase())||(this.uppy.log(`[CompanionClient] excluding disallowed header ${i}`),!1)})))}async get(e,t){return void 0===t&&(t=void 0),"boolean"==typeof t&&(t={skipPostResponse:t}),Rs(this,$s)[$s]({...t,path:e})}async post(e,t,i){return void 0===i&&(i=void 0),"boolean"==typeof i&&(i={skipPostResponse:i}),Rs(this,$s)[$s]({...i,path:e,method:"POST",data:t})}async delete(e,t,i){return void 0===t&&(t=void 0),"boolean"==typeof i&&(i={skipPostResponse:i}),Rs(this,$s)[$s]({...i,path:e,method:"DELETE",data:t})}}function Vs(e){return/^(https?:|)\/\//.test(e)?e:`${this.hostname}/${e}`}async function Xs(e){let{path:t,method:i="GET",data:n,skipPostResponse:s,signal:r}=e;try{const e=await this.preflightAndHeaders(t),o=await function(){return fetch(...arguments).catch((e=>{throw"AbortError"===e.name?e:new Ds(e)}))}(Rs(this,qs)[qs](t),{method:i,signal:r,headers:e,credentials:this.opts.companionCookiesRule||"same-origin",body:n?JSON.stringify(n):null});return s||this.onReceiveResponse(o),async function(e){if(401===e.status)throw new Us;const t=e.json();if(e.ok)return t;let i=`Failed request with status: ${e.status}. ${e.statusText}`;try{const e=await t;i=e.message?`${i} message: ${e.message}`:i,i=e.requestId?`${i} request-Id: ${e.requestId}`:i}catch{}throw new Error(i)}(o)}catch(e){if(null!=e&&e.isAuthError)throw e;throw new Ms(`Could not ${i} ${Rs(this,qs)[qs](t)}`,{cause:e})}}function Ys(e,t){return new Promise((i=>{localStorage.setItem(e,t),i()}))}function Gs(e){return Promise.resolve(localStorage.getItem(e))}function Ks(e){return new Promise((t=>{localStorage.removeItem(e),t()}))}Ws.VERSION="3.1.1";class Qs extends Ws{constructor(e,t){super(e,t),this.provider=t.provider,this.id=this.provider,this.name=this.opts.name||(e=>e.split("-").map((e=>e.charAt(0).toUpperCase()+e.slice(1))).join(" "))(this.id),this.pluginId=this.opts.pluginId,this.tokenKey=`companion-${this.pluginId}-auth-token`,this.companionKeysParams=this.opts.companionKeysParams,this.preAuthToken=null}async headers(){const[e,t]=await Promise.all([super.headers(),this.getAuthToken()]),i={};return t&&(i["uppy-auth-token"]=t),this.companionKeysParams&&(i["uppy-credentials-params"]=btoa(JSON.stringify({params:this.companionKeysParams}))),{...e,...i}}onReceiveResponse(e){super.onReceiveResponse(e);const t=this.uppy.getPlugin(this.pluginId),i=t.getPluginState().authenticated?401!==e.status:e.status<400;return t.setPluginState({authenticated:i}),e}setAuthToken(e){return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey,e)}getAuthToken(){return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)}async ensurePreAuth(){if(this.companionKeysParams&&!this.preAuthToken&&(await this.fetchPreAuthToken(),!this.preAuthToken))throw new Error("Could not load authentication data required for third-party login. Please try again later.")}authUrl(e){void 0===e&&(e={});const t=new URLSearchParams(e);return this.preAuthToken&&t.set("uppyPreAuthToken",this.preAuthToken),`${this.hostname}/${this.id}/connect?${t}`}fileUrl(e){return`${this.hostname}/${this.id}/get/${e}`}async fetchPreAuthToken(){if(this.companionKeysParams)try{const e=await this.post(`${this.id}/preauth/`,{params:this.companionKeysParams});this.preAuthToken=e.token}catch(e){this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${e}`,"warning")}}list(e){return this.get(`${this.id}/list/${e||""}`)}logout(){return this.get(`${this.id}/logout`).then((e=>Promise.all([e,this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)]))).then((e=>{let[t]=e;return t}))}static initPlugin(t,i,n){if(t.type="acquirer",t.files=[],n&&(t.opts={...n,...i}),i.serverUrl||i.serverPattern)throw new Error("`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in the 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for the Instagram plugin) and use the updated options.`");if(i.companionAllowedHosts){const e=i.companionAllowedHosts;if(!("string"==typeof e||Array.isArray(e)||e instanceof RegExp))throw new TypeError(`${t.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`);t.opts.companionAllowedHosts=e}else/^(?!https?:\/\/).*$/i.test(i.companionUrl)?t.opts.companionAllowedHosts=`https://${i.companionUrl.replace(/^\/\//,"")}`:t.opts.companionAllowedHosts=new URL(i.companionUrl).origin;t.storage=t.opts.storage||e}}let Js,Zs;function er(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var tr=0;function ir(e){return"__private_"+tr+++"_"+e}var nr=ir("queued"),sr=ir("emitter"),rr=ir("isOpen"),or=ir("socket"),ar=ir("handleMessage");Js=Symbol.for("uppy test: getSocket"),Zs=Symbol.for("uppy test: getQueued");class lr{constructor(e){Object.defineProperty(this,nr,{writable:!0,value:[]}),Object.defineProperty(this,sr,{writable:!0,value:p()}),Object.defineProperty(this,rr,{writable:!0,value:!1}),Object.defineProperty(this,or,{writable:!0,value:void 0}),Object.defineProperty(this,ar,{writable:!0,value:e=>{try{const t=JSON.parse(e.data);this.emit(t.action,t.payload)}catch(e){console.log(e)}}}),this.opts=e,e&&!1===e.autoOpen||this.open()}get isOpen(){return er(this,rr)[rr]}[Js](){return er(this,or)[or]}[Zs](){return er(this,nr)[nr]}open(){er(this,or)[or]=new WebSocket(this.opts.target),er(this,or)[or].onopen=()=>{for(er(this,rr)[rr]=!0;er(this,nr)[nr].length>0&&er(this,rr)[rr];){const e=er(this,nr)[nr].shift();this.send(e.action,e.payload)}},er(this,or)[or].onclose=()=>{er(this,rr)[rr]=!1},er(this,or)[or].onmessage=er(this,ar)[ar]}close(){var e;null==(e=er(this,or)[or])||e.close()}send(e,t){er(this,rr)[rr]?er(this,or)[or].send(JSON.stringify({action:e,payload:t})):er(this,nr)[nr].push({action:e,payload:t})}on(e,t){er(this,sr)[sr].on(e,t)}emit(e,t){er(this,sr)[sr].emit(e,t)}once(e,t){er(this,sr)[sr].once(e,t)}}const ur=d((function(e,t,i){const{progress:n,bytesUploaded:s,bytesTotal:r}=t;n&&(e.uppy.log(`Upload progress: ${n}`),e.uppy.emit("upload-progress",i,{uploader:e,bytesUploaded:s,bytesTotal:r}))}),300,{leading:!0,trailing:!0});function hr(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var pr=0;function cr(e){return"__private_"+pr+++"_"+e}var dr=cr("emitter"),fr=cr("events");class mr{constructor(e){Object.defineProperty(this,dr,{writable:!0,value:void 0}),Object.defineProperty(this,fr,{writable:!0,value:[]}),hr(this,dr)[dr]=e}on(e,t){return hr(this,fr)[fr].push([e,t]),hr(this,dr)[dr].on(e,t)}remove(){for(const[e,t]of hr(this,fr)[fr].splice(0))hr(this,dr)[dr].off(e,t)}}function gr(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var vr=0;function yr(e){return"__private_"+vr+++"_"+e}var br=yr("aliveTimer"),wr=yr("isDone"),xr=yr("onTimedOut"),Cr=yr("timeout");const _r=class{constructor(e,t){Object.defineProperty(this,br,{writable:!0,value:void 0}),Object.defineProperty(this,wr,{writable:!0,value:!1}),Object.defineProperty(this,xr,{writable:!0,value:void 0}),Object.defineProperty(this,Cr,{writable:!0,value:void 0}),gr(this,Cr)[Cr]=e,gr(this,xr)[xr]=t}progress(){gr(this,wr)[wr]||gr(this,Cr)[Cr]>0&&(clearTimeout(gr(this,br)[br]),gr(this,br)[br]=setTimeout(gr(this,xr)[xr],gr(this,Cr)[Cr]))}done(){gr(this,wr)[wr]||(clearTimeout(gr(this,br)[br]),gr(this,br)[br]=null,gr(this,wr)[wr]=!0)}};function Sr(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var Tr=0;function kr(e){return"__private_"+Tr+++"_"+e}function Pr(e){return new Error("Cancelled",{cause:e})}function Er(e){if(null!=e){const t=()=>this.abort(e.reason);e.addEventListener("abort",t,{once:!0});const i=()=>{e.removeEventListener("abort",t)};this.then(i,i)}return this}var Fr=kr("activeRequests"),Or=kr("queuedHandlers"),Ar=kr("paused"),Dr=kr("pauseTimer"),Nr=kr("downLimit"),Mr=kr("upperLimit"),Ir=kr("rateLimitingTimer"),Ur=kr("call"),Lr=kr("queueNext"),Rr=kr("next"),Br=kr("queue"),jr=kr("dequeue"),zr=kr("resume"),Hr=kr("increaseLimit");class qr{constructor(e){Object.defineProperty(this,jr,{value:Yr}),Object.defineProperty(this,Br,{value:Xr}),Object.defineProperty(this,Rr,{value:Vr}),Object.defineProperty(this,Lr,{value:Wr}),Object.defineProperty(this,Ur,{value:$r}),Object.defineProperty(this,Fr,{writable:!0,value:0}),Object.defineProperty(this,Or,{writable:!0,value:[]}),Object.defineProperty(this,Ar,{writable:!0,value:!1}),Object.defineProperty(this,Dr,{writable:!0,value:void 0}),Object.defineProperty(this,Nr,{writable:!0,value:1}),Object.defineProperty(this,Mr,{writable:!0,value:void 0}),Object.defineProperty(this,Ir,{writable:!0,value:void 0}),Object.defineProperty(this,zr,{writable:!0,value:()=>this.resume()}),Object.defineProperty(this,Hr,{writable:!0,value:()=>{if(Sr(this,Ar)[Ar])Sr(this,Ir)[Ir]=setTimeout(Sr(this,Hr)[Hr],0);else{Sr(this,Nr)[Nr]=this.limit,this.limit=Math.ceil((Sr(this,Mr)[Mr]+Sr(this,Nr)[Nr])/2);for(let e=Sr(this,Nr)[Nr];e<=this.limit;e++)Sr(this,Lr)[Lr]();Sr(this,Mr)[Mr]-Sr(this,Nr)[Nr]>3?Sr(this,Ir)[Ir]=setTimeout(Sr(this,Hr)[Hr],2e3):Sr(this,Nr)[Nr]=Math.floor(Sr(this,Nr)[Nr]/2)}}}),this.limit="number"!=typeof e||0===e?1/0:e}run(e,t){return!Sr(this,Ar)[Ar]&&Sr(this,Fr)[Fr]<this.limit?Sr(this,Ur)[Ur](e):Sr(this,Br)[Br](e,t)}wrapPromiseFunction(e,t){var i=this;return function(){for(var n=arguments.length,s=new Array(n),r=0;r<n;r++)s[r]=arguments[r];let o;const a=new Promise(((n,r)=>{o=i.run((()=>{let t,i;try{i=Promise.resolve(e(...s))}catch(e){i=Promise.reject(e)}return i.then((e=>{t?r(t):(o.done(),n(e))}),(e=>{t?r(t):(o.done(),r(e))})),e=>{t=Pr(e)}}),t)}));return a.abort=e=>{o.abort(e)},a.abortOn=Er,a}}resume(){Sr(this,Ar)[Ar]=!1,clearTimeout(Sr(this,Dr)[Dr]);for(let e=0;e<this.limit;e++)Sr(this,Lr)[Lr]()}pause(e){void 0===e&&(e=null),Sr(this,Ar)[Ar]=!0,clearTimeout(Sr(this,Dr)[Dr]),null!=e&&(Sr(this,Dr)[Dr]=setTimeout(Sr(this,zr)[zr],e))}rateLimit(e){clearTimeout(Sr(this,Ir)[Ir]),this.pause(e),this.limit>1&&Number.isFinite(this.limit)&&(Sr(this,Mr)[Mr]=this.limit-1,this.limit=Sr(this,Nr)[Nr],Sr(this,Ir)[Ir]=setTimeout(Sr(this,Hr)[Hr],e))}get isPaused(){return Sr(this,Ar)[Ar]}}function $r(e){Sr(this,Fr)[Fr]+=1;let t,i=!1;try{t=e()}catch(e){throw Sr(this,Fr)[Fr]-=1,e}return{abort:e=>{i||(i=!0,Sr(this,Fr)[Fr]-=1,t(e),Sr(this,Lr)[Lr]())},done:()=>{i||(i=!0,Sr(this,Fr)[Fr]-=1,Sr(this,Lr)[Lr]())}}}function Wr(){queueMicrotask((()=>Sr(this,Rr)[Rr]()))}function Vr(){if(Sr(this,Ar)[Ar]||Sr(this,Fr)[Fr]>=this.limit)return;if(0===Sr(this,Or)[Or].length)return;const e=Sr(this,Or)[Or].shift(),t=Sr(this,Ur)[Ur](e.fn);e.abort=t.abort,e.done=t.done}function Xr(e,t){void 0===t&&(t={});const i={fn:e,priority:t.priority||0,abort:()=>{Sr(this,jr)[jr](i)},done:()=>{throw new Error("Cannot mark a queued request as done: this indicates a bug")}},n=Sr(this,Or)[Or].findIndex((e=>i.priority>e.priority));return-1===n?Sr(this,Or)[Or].push(i):Sr(this,Or)[Or].splice(n,0,i),i}function Yr(e){const t=Sr(this,Or)[Or].indexOf(e);-1!==t&&Sr(this,Or)[Or].splice(t,1)}const Gr=Symbol("__queue");const Kr=function(e){return!!e&&(0!==e.readyState&&4!==e.readyState||0===e.status)},Qr={strings:{timedOut:"Upload stalled for %{seconds} seconds, aborting."}};function Jr(e,t){if(!Object.prototype.hasOwnProperty.call(e,t))throw new TypeError("attempted to use private field on non-instance");return e}var Zr=0;function eo(e){return"__private_"+Zr+++"_"+e}function to(e,t){let i=t;return i||(i=new Error("Upload error")),"string"==typeof i&&(i=new Error(i)),i instanceof Error||(i=Object.assign(new Error("Upload error"),{data:i})),Kr(e)?(i=new Ds(i,e),i):(i.request=e,i)}function io(e){return e.data.slice(0,e.data.size,e.meta.type)}var no=eo("queueRequestSocketToken"),so=eo("requestSocketToken");class ro extends tt{constructor(e,t){super(e,t),Object.defineProperty(this,no,{writable:!0,value:void 0}),Object.defineProperty(this,so,{writable:!0,value:async e=>{const t=this.getOptions(e),i=new(e.remote.providerOptions.provider?Qs:Ws)(this.uppy,e.remote.providerOptions),n=Array.isArray(t.allowedMetaFields)?t.allowedMetaFields:Object.keys(e.meta);return(await i.post(e.remote.url,{...e.remote.body,protocol:"multipart",endpoint:t.endpoint,size:e.data.size,fieldname:t.fieldName,metadata:Object.fromEntries(n.map((t=>[t,e.meta[t]]))),httpMethod:t.method,useFormData:t.formData,headers:t.headers})).token}}),this.type="uploader",this.id=this.opts.id||"XHRUpload",this.title="XHRUpload",this.defaultLocale=Qr;const i={formData:!0,fieldName:t.bundle?"files[]":"file",method:"post",allowedMetaFields:null,responseUrlFieldName:"url",bundle:!1,headers:{},timeout:3e4,limit:5,withCredentials:!1,responseType:"",getResponseData(t){let i={};try{i=JSON.parse(t)}catch(t){e.log(t)}return i},getResponseError(e,t){let i=new Error("Upload error");return Kr(t)&&(i=new Ds(i,t)),i},validateStatus:e=>e>=200&&e<300};if(this.opts={...i,...t},this.i18nInit(),this.handleUpload=this.handleUpload.bind(this),Gr in this.opts?this.requests=this.opts[Gr]:this.requests=new qr(this.opts.limit),this.opts.bundle&&!this.opts.formData)throw new Error("`opts.formData` must be true when `opts.bundle` is enabled.");if(void 0===(null==t?void 0:t.allowedMetaFields)&&"metaFields"in this.opts)throw new Error("The `metaFields` option has been renamed to `allowedMetaFields`.");this.uploaderEvents=Object.create(null),Jr(this,no)[no]=this.requests.wrapPromiseFunction(Jr(this,so)[so],{priority:-1})}getOptions(e){const t=this.uppy.getState().xhrUpload,{headers:i}=this.opts,n={...this.opts,...t||{},...e.xhrUpload||{},headers:{}};return"function"==typeof i?n.headers=i(e):Object.assign(n.headers,this.opts.headers),t&&Object.assign(n.headers,t.headers),e.xhrUpload&&Object.assign(n.headers,e.xhrUpload.headers),n}addMetadata(e,t,i){(Array.isArray(i.allowedMetaFields)?i.allowedMetaFields:Object.keys(t)).forEach((i=>{e.append(i,t[i])}))}createFormDataUpload(e,t){const i=new FormData;this.addMetadata(i,e.meta,t);const n=io(e);return e.name?i.append(t.fieldName,n,e.meta.name):i.append(t.fieldName,n),i}createBundledUpload(e,t){const i=new FormData,{meta:n}=this.uppy.getState();return this.addMetadata(i,n,t),e.forEach((e=>{const t=this.getOptions(e),n=io(e);e.name?i.append(t.fieldName,n,e.name):i.append(t.fieldName,n)})),i}upload(e,t,i){const n=this.getOptions(e);return this.uppy.log(`uploading ${t} of ${i}`),new Promise(((t,i)=>{this.uppy.emit("upload-started",e);const s=n.formData?this.createFormDataUpload(e,n):e.data,r=new XMLHttpRequest;let o;this.uploaderEvents[e.id]=new mr(this.uppy);const a=new _r(n.timeout,(()=>{r.abort(),o.done();const t=new Error(this.i18n("timedOut",{seconds:Math.ceil(n.timeout/1e3)}));this.uppy.emit("upload-error",e,t),i(t)})),l=c();r.upload.addEventListener("loadstart",(()=>{this.uppy.log(`[XHRUpload] ${l} started`)})),r.upload.addEventListener("progress",(t=>{this.uppy.log(`[XHRUpload] ${l} progress: ${t.loaded} / ${t.total}`),a.progress(),t.lengthComputable&&this.uppy.emit("upload-progress",e,{uploader:this,bytesUploaded:t.loaded,bytesTotal:t.total})})),r.addEventListener("load",(()=>{if(this.uppy.log(`[XHRUpload] ${l} finished`),a.done(),o.done(),this.uploaderEvents[e.id]&&(this.uploaderEvents[e.id].remove(),this.uploaderEvents[e.id]=null),n.validateStatus(r.status,r.responseText,r)){const i=n.getResponseData(r.responseText,r),s=i[n.responseUrlFieldName],o={status:r.status,body:i,uploadURL:s};return this.uppy.emit("upload-success",e,o),s&&this.uppy.log(`Download ${e.name} from ${s}`),t(e)}const s=n.getResponseData(r.responseText,r),u=to(r,n.getResponseError(r.responseText,r)),h={status:r.status,body:s};return this.uppy.emit("upload-error",e,u,h),i(u)})),r.addEventListener("error",(()=>{this.uppy.log(`[XHRUpload] ${l} errored`),a.done(),o.done(),this.uploaderEvents[e.id]&&(this.uploaderEvents[e.id].remove(),this.uploaderEvents[e.id]=null);const t=to(r,n.getResponseError(r.responseText,r));return this.uppy.emit("upload-error",e,t),i(t)})),r.open(n.method.toUpperCase(),n.endpoint,!0),r.withCredentials=n.withCredentials,""!==n.responseType&&(r.responseType=n.responseType),o=this.requests.run((()=>{this.uppy.emit("upload-started",e);const t=this.getOptions(e);return Object.keys(t.headers).forEach((e=>{r.setRequestHeader(e,t.headers[e])})),r.send(s),()=>{a.done(),r.abort()}})),this.onFileRemove(e.id,(()=>{o.abort(),i(new Error("File removed"))})),this.onCancelAll(e.id,(e=>{let{reason:t}=e;"user"===t&&o.abort(),i(new Error("Upload cancelled"))}))}))}async uploadRemote(e){try{if(this.uppy.emit("upload-started",e),e.serverToken)return this.connectToServerSocket(e);const t=await Jr(this,no)[no](e);if(!this.uppy.getState().files[e.id])return;return this.uppy.setFileState(e.id,{serverToken:t}),this.connectToServerSocket(this.uppy.getFile(e.id))}catch(t){throw this.uppy.emit("upload-error",e,t),t}}connectToServerSocket(e){return new Promise(((t,i)=>{const n=this.getOptions(e),s=e.serverToken,r=function(e){const t=/^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/i.exec(e)[1];return`${/^http:\/\//i.test(e)?"ws":"wss"}://${t}`}(e.remote.companionUrl);let o;const a=()=>{null==o&&(o=new lr({target:`${r}/api/${s}`}),o.on("progress",(t=>ur(this,t,e))),o.on("success",(i=>{const s=n.getResponseData(i.response.responseText,i.response),r=s[n.responseUrlFieldName],a={status:i.response.status,body:s,uploadURL:r};return this.uppy.emit("upload-success",e,a),l.done(),o.close(),this.uploaderEvents[e.id]&&(this.uploaderEvents[e.id].remove(),this.uploaderEvents[e.id]=null),t()})),o.on("error",(t=>{const s=t.response,r=s?n.getResponseError(s.responseText,s):Object.assign(new Error(t.error.message),{cause:t.error});this.uppy.emit("upload-error",e,r),l.done(),this.uploaderEvents[e.id]&&(this.uploaderEvents[e.id].remove(),this.uploaderEvents[e.id]=null),i(r)})))};this.uploaderEvents[e.id]=new mr(this.uppy);let l=this.requests.run((()=>{var t;e.isPaused?null==(t=o)||t.send("pause",{}):a();return()=>o.close()}));this.onFileRemove(e.id,(()=>{var i;null==(i=o)||i.send("cancel",{}),l.abort(),t(`upload ${e.id} was removed`)})),this.onCancelAll(e.id,(function(i){let{reason:n}=void 0===i?{}:i;var s;"user"===n&&(null==(s=o)||s.send("cancel",{}),l.abort());t(`upload ${e.id} was canceled`)}));const u=()=>{null==o?l.abort():(o.send("pause",{}),l.done()),l=this.requests.run((()=>(e.isPaused||(null==o?a():o.send("resume",{})),()=>o.close())))};this.onRetry(e.id,u),this.onRetryAll(e.id,u)})).catch((t=>(this.uppy.emit("upload-error",e,t),Promise.reject(t))))}uploadBundle(e){return new Promise(((t,i)=>{const{endpoint:n}=this.opts,{method:s}=this.opts,r=this.uppy.getState().xhrUpload,o=this.createBundledUpload(e,{...this.opts,...r||{}}),a=new XMLHttpRequest,l=t=>{e.forEach((e=>{this.uppy.emit("upload-error",e,t)}))},u=new _r(this.opts.timeout,(()=>{a.abort();const e=new Error(this.i18n("timedOut",{seconds:Math.ceil(this.opts.timeout/1e3)}));l(e),i(e)}));a.upload.addEventListener("loadstart",(()=>{this.uppy.log("[XHRUpload] started uploading bundle"),u.progress()})),a.upload.addEventListener("progress",(t=>{u.progress(),t.lengthComputable&&e.forEach((e=>{this.uppy.emit("upload-progress",e,{uploader:this,bytesUploaded:t.loaded/t.total*e.size,bytesTotal:e.size})}))})),a.addEventListener("load",(n=>{if(u.done(),this.opts.validateStatus(n.target.status,a.responseText,a)){const i=this.opts.getResponseData(a.responseText,a),s={status:n.target.status,body:i};return e.forEach((e=>{this.uppy.emit("upload-success",e,s)})),t()}const s=this.opts.getResponseError(a.responseText,a)||new Error("Upload error");return s.request=a,l(s),i(s)})),a.addEventListener("error",(()=>{u.done();const e=this.opts.getResponseError(a.responseText,a)||new Error("Upload error");return l(e),i(e)})),this.uppy.on("cancel-all",(function(e){let{reason:t}=void 0===e?{}:e;"user"===t&&(u.done(),a.abort())})),a.open(s.toUpperCase(),n,!0),a.withCredentials=this.opts.withCredentials,""!==this.opts.responseType&&(a.responseType=this.opts.responseType),Object.keys(this.opts.headers).forEach((e=>{a.setRequestHeader(e,this.opts.headers[e])})),a.send(o),e.forEach((e=>{this.uppy.emit("upload-started",e)}))}))}uploadFiles(e){const t=e.map(((t,i)=>{const n=parseInt(i,10)+1,s=e.length;return t.error?Promise.reject(new Error(t.error)):t.isRemote?this.uploadRemote(t,n,s):this.upload(t,n,s)}));return function(e){const t=[],i=[];function n(e){t.push(e)}function s(e){i.push(e)}return Promise.all(e.map((e=>e.then(n,s)))).then((()=>({successful:t,failed:i})))}(t)}onFileRemove(e,t){this.uploaderEvents[e].on("file-removed",(i=>{e===i.id&&t(i.id)}))}onRetry(e,t){this.uploaderEvents[e].on("upload-retry",(i=>{e===i&&t()}))}onRetryAll(e,t){this.uploaderEvents[e].on("retry-all",(()=>{this.uppy.getFile(e)&&t()}))}onCancelAll(e,t){var i=this;this.uploaderEvents[e].on("cancel-all",(function(){i.uppy.getFile(e)&&t(...arguments)}))}handleUpload(e){if(0===e.length)return this.uppy.log("[XHRUpload] No files to upload!"),Promise.resolve();0!==this.opts.limit||this.opts[Gr]||this.uppy.log("[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0","warning"),this.uppy.log("[XHRUpload] Uploading...");const t=e.map((e=>this.uppy.getFile(e)));if(this.opts.bundle){if(t.some((e=>e.isRemote)))throw new Error("Can’t upload remote files when the `bundle: true` option is set");if("function"==typeof this.opts.headers)throw new TypeError("`headers` may not be a function when the `bundle: true` option is set");return this.uploadBundle(t)}return this.uploadFiles(t).then((()=>null))}install(){if(this.opts.bundle){const{capabilities:e}=this.uppy.getState();this.uppy.setState({capabilities:{...e,individualCancellation:!1}})}this.uppy.addUploader(this.handleUpload)}uninstall(){if(this.opts.bundle){const{capabilities:e}=this.uppy.getState();this.uppy.setState({capabilities:{...e,individualCancellation:!0}})}this.uppy.removeUploader(this.handleUpload)}}ro.VERSION="3.0.4";var oo=i(3129);class ao extends De{constructor(e){super(e),this.granularRotateOnChange=e=>{const{rotationAngle:t,rotationDelta:i}=this.state,n=Number(e.target.value)-i;if(cancelAnimationFrame(this.granularRotateOnInputNextFrame),0!==n){const e=t+n;this.granularRotateOnInputNextFrame=requestAnimationFrame((()=>{this.cropper.rotateTo(e)}))}},this.state={rotationAngle:0,rotationDelta:0}}componentDidMount(){const{opts:e,storeCropperInstance:t}=this.props;this.cropper=new oo(this.imgElement,e.cropperOptions),t(this.cropper),e.actions.granularRotate&&this.imgElement.addEventListener("crop",(e=>{const t=e.detail.rotate;this.setState({rotationAngle:t,rotationDelta:(t+405)%90-45})}))}componentWillUnmount(){this.cropper.destroy()}renderGranularRotate(){const{i18n:e}=this.props,{rotationDelta:t,rotationAngle:i}=this.state;return Fe("label",{"data-microtip-position":"top",role:"tooltip","aria-label":`${i}º`,className:"uppy-ImageCropper-rangeWrapper uppy-u-reset"},Fe("input",{className:"uppy-ImageCropper-range uppy-u-reset",type:"range",onInput:this.granularRotateOnChange,onChange:this.granularRotateOnChange,value:t,min:"-45",max:"44","aria-label":e("rotate")}))}renderRevert(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("revert"),"data-microtip-position":"top",onClick:()=>{this.cropper.reset(),this.cropper.setAspectRatio(0)}},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M0 0h24v24H0z",fill:"none"}),Fe("path",{d:"M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"})))}renderRotate(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn",onClick:()=>this.cropper.rotate(-90),"aria-label":e("rotate"),"data-microtip-position":"top"},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M0 0h24v24H0V0zm0 0h24v24H0V0z",fill:"none"}),Fe("path",{d:"M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z"})))}renderFlip(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("flipHorizontal"),"data-microtip-position":"top",onClick:()=>this.cropper.scaleX(-this.cropper.getData().scaleX||-1)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M0 0h24v24H0z",fill:"none"}),Fe("path",{d:"M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z"})))}renderZoomIn(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("zoomIn"),"data-microtip-position":"top",onClick:()=>this.cropper.zoom(.1)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",height:"24",viewBox:"0 0 24 24",width:"24"},Fe("path",{d:"M0 0h24v24H0V0z",fill:"none"}),Fe("path",{d:"M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"}),Fe("path",{d:"M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"})))}renderZoomOut(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("zoomOut"),"data-microtip-position":"top",onClick:()=>this.cropper.zoom(-.1)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M0 0h24v24H0V0z",fill:"none"}),Fe("path",{d:"M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"})))}renderCropSquare(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("aspectRatioSquare"),"data-microtip-position":"top",onClick:()=>this.cropper.setAspectRatio(1)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M0 0h24v24H0z",fill:"none"}),Fe("path",{d:"M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"})))}renderCropWidescreen(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("aspectRatioLandscape"),"data-microtip-position":"top",onClick:()=>this.cropper.setAspectRatio(16/9)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M 19,4.9999992 V 17.000001 H 4.9999998 V 6.9999992 H 19 m 0,-2 H 4.9999998 c -1.0999999,0 -1.9999999,0.9000001 -1.9999999,2 V 17.000001 c 0,1.1 0.9,2 1.9999999,2 H 19 c 1.1,0 2,-0.9 2,-2 V 6.9999992 c 0,-1.0999999 -0.9,-2 -2,-2 z"}),Fe("path",{fill:"none",d:"M0 0h24v24H0z"})))}renderCropWidescreenVertical(){const{i18n:e}=this.props;return Fe("button",{type:"button",className:"uppy-u-reset uppy-c-btn","aria-label":e("aspectRatioPortrait"),"data-microtip-position":"top",onClick:()=>this.cropper.setAspectRatio(9/16)},Fe("svg",{"aria-hidden":"true",className:"uppy-c-icon",width:"24",height:"24",viewBox:"0 0 24 24"},Fe("path",{d:"M 19.000001,19 H 6.999999 V 5 h 10.000002 v 14 m 2,0 V 5 c 0,-1.0999999 -0.9,-1.9999999 -2,-1.9999999 H 6.999999 c -1.1,0 -2,0.9 -2,1.9999999 v 14 c 0,1.1 0.9,2 2,2 h 10.000002 c 1.1,0 2,-0.9 2,-2 z"}),Fe("path",{d:"M0 0h24v24H0z",fill:"none"})))}render(){const{currentImage:e,opts:t}=this.props,{actions:i}=t,n=URL.createObjectURL(e.data);return Fe("div",{className:"uppy-ImageCropper"},Fe("div",{className:"uppy-ImageCropper-container"},Fe("img",{className:"uppy-ImageCropper-image",alt:e.name,src:n,ref:e=>{this.imgElement=e}})),Fe("div",{className:"uppy-ImageCropper-controls"},i.revert&&this.renderRevert(),i.rotate&&this.renderRotate(),i.granularRotate&&this.renderGranularRotate(),i.flip&&this.renderFlip(),i.zoomIn&&this.renderZoomIn(),i.zoomOut&&this.renderZoomOut(),i.cropSquare&&this.renderCropSquare(),i.cropWidescreen&&this.renderCropWidescreen(),i.cropWidescreenVertical&&this.renderCropWidescreenVertical()))}}const lo={strings:{revert:"Revert",rotate:"Rotate",zoomIn:"Zoom in",zoomOut:"Zoom out",flipHorizontal:"Flip horizontal",aspectRatioSquare:"Crop square",aspectRatioLandscape:"Crop landscape (16:9)",aspectRatioPortrait:"Crop portrait (9:16)"}};class uo extends at{constructor(e,t){super(e,t),this.save=()=>{const{currentImage:e}=this.getPluginState();this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob((e=>{const{currentImage:t}=this.getPluginState();this.uppy.setFileState(t.id,{data:e,size:e.size,preview:null});const i=this.uppy.getFile(t.id);this.uppy.emit("thumbnail:request",i),this.setPluginState({currentImage:i}),this.uppy.emit("file-editor:complete",i)}),e.type,this.opts.quality)},this.storeCropperInstance=e=>{this.cropper=e},this.selectFile=e=>{this.uppy.emit("file-editor:start",e),this.setPluginState({currentImage:e})},this.id=this.opts.id||"ImageEditor",this.title="Image Editor",this.type="editor",this.defaultLocale=lo;this.opts={quality:.8,...t,actions:{revert:!0,rotate:!0,granularRotate:!0,flip:!0,zoomIn:!0,zoomOut:!0,cropSquare:!0,cropWidescreen:!0,cropWidescreenVertical:!0,...t.actions},cropperOptions:{viewMode:1,background:!1,autoCropArea:1,responsive:!0,croppedCanvasOptions:{},...t.cropperOptions}},this.i18nInit()}canEditFile(e){if(!e.type||e.isRemote)return!1;const t=e.type.split("/")[1];return!!/^(jpe?g|gif|png|bmp|webp)$/.test(t)}install(){this.setPluginState({currentImage:null});const{target:e}=this.opts;e&&this.mount(e,this)}uninstall(){const{currentImage:e}=this.getPluginState();if(e){const t=this.uppy.getFile(e.id);this.uppy.emit("file-editor:cancel",t)}this.unmount()}render(){const{currentImage:e}=this.getPluginState();return null===e||e.isRemote?null:Fe(ao,{currentImage:e,storeCropperInstance:this.storeCropperInstance,save:this.save,opts:this.opts,i18n:this.i18n})}}uo.VERSION="2.1.0";const ho={pluralize:e=>1===e?0:1,strings:{addBulkFilesFailed:{0:"Toevoegen van %{smart_count} bestand mislukt door een interne fout",1:"Toevoegen van %{smart_count} bestanden mislukt door interne fouten"},addingMoreFiles:"Bezig met extra bestanden toe te voegen",addMore:"Meer toevoegen",addMoreFiles:"Extra bestanden toevoegen",allFilesFromFolderNamed:"Alle bestanden uit de map %{name}",allowAccessDescription:"Geef toestemming om foto's of videobeelden te kunnen maken.",allowAccessTitle:"Geef toestemming om je camera te gebruiken",allowAudioAccessDescription:"Om geluidsopnamen te maken moet U toestemming geven voor deze website",allowAudioAccessTitle:"Geef toestemming om uw microfoon te gebruiken",aspectRatioLandscape:"Landschap knippen (16:9)",aspectRatioPortrait:"Portret knippen (9:16)",aspectRatioSquare:"Vierkant knippen",authAborted:"Authenticatie geannuleerd",authenticateWith:"Verbinden met %{pluginName}",authenticateWithTitle:"Verbind met %{pluginName} om bestanden te selecteren",back:"Terug",browse:"blader",browseFiles:"blader",browseFolders:"blader",cancel:"Annuleer",cancelUpload:"Annuleer upload",chooseFiles:"Kies bestanden",closeModal:"Sluit Venster",companionError:"Verbinding met Companion mislukt",companionUnauthorizeHint:"Om toegang te ontnemen voor uw %{provider} account, ga naar %{url}",complete:"Voltooid",compressedX:"%{size} bespaard door het comprimeren van afbeeldingen",compressingImages:"Afbeeldingen aan het comprimeren...",connectedToInternet:"Verbonden met het internet",copyLink:"Kopieer link",copyLinkToClipboardFallback:"Kopieer de onderstaande URL",copyLinkToClipboardSuccess:"Link naar klembord gekopieerd",creatingAssembly:"Upload voorbereiden...",creatingAssemblyFailed:"Transloadit: Kon Assembly niet creëeren",dashboardTitle:"Uppy Dashboard",dashboardWindowTitle:"Uppy Dashboard Venster (Druk escape om te sluiten)",dataUploadedOfTotal:"%{complete} van %{total}",discardRecordedFile:"Verwijder opgenomen bestand",done:"Klaar",dropHereOr:"Sleep hier je bestanden naartoe of %{browse}",dropHint:"Sleep hier je bestanden naartoe",dropPasteBoth:"Sleep hier je bestanden naartoe, plak of %{browse}",dropPasteFiles:"Sleep hier je bestanden naartoe, plak of %{browse}",dropPasteFolders:"Sleep hier je bestanden naartoe, plak of %{browse}",dropPasteImportBoth:"Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit",dropPasteImportFiles:"Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit",dropPasteImportFolders:"Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit",editFile:"Bestand aanpassen",editFileWithFilename:"Bestand aanpassen %{file}",editing:"Bezig %{file} aan te passen",emptyFolderAdded:"Er werden geen bestanden toegevoegd uit de lege map",encoding:"Coderen...",enterCorrectUrl:"Ongeldige URL: Zorg dat je een directe link naar een bestand invoert",enterTextToSearch:"Type hier om te zoeken naar plaatjes",enterUrlToImport:"Voeg URL toe om een bestand te importeren",exceedsSize:"%{file} overschrijdt de maximaal toegelaten bestandsgrootte van %{size}",failedToFetch:"Companion kan deze URL niet laden, controleer of de URL correct is",failedToUpload:"Kon %{file} niet uploaden",fileSource:"Bronbestand: %{name}",filesUploadedOfTotal:{0:"%{complete} van %{smart_count} bestand geüpload",1:"%{complete} van %{smart_count} bestanden geüpload"},filter:"Filter",finishEditingFile:"Klaar met bestand aan te passen",flipHorizontal:"Flip horizontaal",folderAdded:{0:"%{smart_count} bestand uit %{folder} toegevoegd",1:"%{smart_count} bestanden uit %{folder} toegevoegd"},folderAlreadyAdded:'De map "%{folder}" is al toegevoegd',generatingThumbnails:"Thumbnails genereren...",import:"Importeer",importFiles:"Importeer bestanden van:",importFrom:"Importeer vanuit %{name}",inferiorSize:"Dit bestand is kleiner dat de minimale grootte van %{size}",loading:"Bezig met laden...",logOut:"Uitloggen",micDisabled:"Microfoon toegang geweigerd door de gebruiker",missingRequiredMetaField:"De vereiste metadata ontbreekt",missingRequiredMetaFieldOnFile:"De vereiste metadata ontbreekt voor %{fileName}",missingRequiredMetaFields:{0:"Deze vereiste metadata ontbreekt: %{fields}.",1:"Deze vereiste metadata ontbreekt: %{fields}."},myDevice:"Mijn apparaat",noAudioDescription:"Om audio op te nemen, sluit een microfoon of andere geluidsinput aan",noAudioTitle:"Microfoon niet beschikbaar",noCameraDescription:"Om foto's en/of video op te nemen, sluit een camera aan",noCameraTitle:"Camera niet beschikbaar",noDuplicates:"Kan het dubbele bestand '%{fileName}' niet toevoegen, deze bestaat al",noFilesFound:"Geen bestanden of mappen gevonden",noInternetConnection:"Geen internetverbinding",noMoreFilesAllowed:"Meer bestanden kunnen niet worden toegevoegd",openFolderNamed:"Open map %{name}",pause:"Pauze",paused:"Gepauzeerd",pauseUpload:"Pauzeer upload",poweredBy:"Mogelijk gemaakt door %{uppy}",processingXFiles:{0:"Bezig met %{smart_count} bestand te verwerken",1:"Bezig met %{smart_count} bestanden te verwerken"},recording:"Aan het opnemen",recordingLength:"Opnameduur %{recording_length}",recordingStoppedMaxSize:"Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt",recoveredAllFiles:"Alle bestanden zijn herstel. U kunt doorgaan me de upload.",recoveredXFiles:{0:"We konden 1 bestand niet herstellen. Kies het bestand opnieuw en vervolg de upload",1:"We konden %{smart_count} bestanden niet herstellen. Kies de bestanden opnieuw en vervolg de upload."},removeFile:"Verwijder bestand %{file}",reSelect:"Opnieuw selecteren",resetFilter:"Filter resetten",resume:"Hervatten",resumeUpload:"Upload hervatten",retry:"Opnieuw",retryUpload:"Upload opnieuw",revert:"Terugdraaien",rotate:"Draai",save:"Opslaan",saveChanges:"Wijzigingen opslaan",search:"Zoek",searchImages:"Zoek naar plaatjes",selectFileNamed:"Selecteer bestand %{name}",selectX:{0:"Selecteer %{smart_count}",1:"Selecteer %{smart_count}"},sessionRestored:"Sessie hersteld",showErrorDetails:"Laat fout details zien",signInWithGoogle:"Inloggen met Google",smile:"Lach!",startAudioRecording:"Start audio-opname",startCapturing:"Start scherm-opname",startRecording:"Start video-opname",stopAudioRecording:"Stop audio-opname",stopCapturing:"Stop scherm-opname",stopRecording:"Stop video-opname",streamActive:"Stream actief",streamPassive:"Stream passief",submitRecordedFile:"Stuur opgenomen bestand",takePicture:"Neem een foto",timedOut:"Upload al gedurende %{seconds} seconden vastgelopen, bezig afbreken upload.",unselectFileNamed:"Deselecteer bestand %{name}",upload:"Upload",uploadComplete:"Upload voltooid",uploadFailed:"Upload mislukt",uploading:"Bezig met uploaden",uploadingXFiles:{0:"Bezig met %{smart_count} bestand te uploaden",1:"Bezig met %{smart_count} bestanden te uploaden"},uploadPaused:"Upload gepauzeerd",uploadXFiles:{0:"Upload %{smart_count} bestand",1:"Upload %{smart_count} bestanden"},uploadXNewFiles:{0:"Upload +%{smart_count} bestand",1:"Upload +%{smart_count} bestanden"},xFilesSelected:{0:"%{smart_count} bestand geselecteerd",1:"%{smart_count} bestanden geselecteerd"},xMoreFilesAdded:{0:"%{smart_count} extra bestand toegevoegd",1:"%{smart_count} extra bestanden toegevoegd"},xTimeLeft:"%{time} over",youCanOnlyUploadFileTypes:"Je kan enkel volgende types uploaden: %{types}",youCanOnlyUploadX:{0:"Je kan slechts %{smart_count} bestand uploaden",1:"Je kan slechts %{smart_count} bestanden uploaden"},youHaveToAtLeastSelectX:{0:"Je moet minstens %{smart_count} bestand selecteren",1:"Je moet minstens %{smart_count} bestanden selecteren"},zoomIn:"Zoom in",zoomOut:"Zoom uit"}};"undefined"!=typeof Uppy&&(globalThis.Uppy.locales.nl_NL=ho);const po=ho;var co=i(9755),fo=i(9755);function mo(e){return mo="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},mo(e)}function go(){go=function(){return e};var e={},t=Object.prototype,i=t.hasOwnProperty,n=Object.defineProperty||function(e,t,i){e[t]=i.value},s="function"==typeof Symbol?Symbol:{},r=s.iterator||"@@iterator",o=s.asyncIterator||"@@asyncIterator",a=s.toStringTag||"@@toStringTag";function l(e,t,i){return Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{l({},"")}catch(e){l=function(e,t,i){return e[t]=i}}function u(e,t,i,s){var r=t&&t.prototype instanceof c?t:c,o=Object.create(r.prototype),a=new T(s||[]);return n(o,"_invoke",{value:x(e,i,a)}),o}function h(e,t,i){try{return{type:"normal",arg:e.call(t,i)}}catch(e){return{type:"throw",arg:e}}}e.wrap=u;var p={};function c(){}function d(){}function f(){}var m={};l(m,r,(function(){return this}));var g=Object.getPrototypeOf,v=g&&g(g(k([])));v&&v!==t&&i.call(v,r)&&(m=v);var y=f.prototype=c.prototype=Object.create(m);function b(e){["next","throw","return"].forEach((function(t){l(e,t,(function(e){return this._invoke(t,e)}))}))}function w(e,t){function s(n,r,o,a){var l=h(e[n],e,r);if("throw"!==l.type){var u=l.arg,p=u.value;return p&&"object"==mo(p)&&i.call(p,"__await")?t.resolve(p.__await).then((function(e){s("next",e,o,a)}),(function(e){s("throw",e,o,a)})):t.resolve(p).then((function(e){u.value=e,o(u)}),(function(e){return s("throw",e,o,a)}))}a(l.arg)}var r;n(this,"_invoke",{value:function(e,i){function n(){return new t((function(t,n){s(e,i,t,n)}))}return r=r?r.then(n,n):n()}})}function x(e,t,i){var n="suspendedStart";return function(s,r){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===s)throw r;return P()}for(i.method=s,i.arg=r;;){var o=i.delegate;if(o){var a=C(o,i);if(a){if(a===p)continue;return a}}if("next"===i.method)i.sent=i._sent=i.arg;else if("throw"===i.method){if("suspendedStart"===n)throw n="completed",i.arg;i.dispatchException(i.arg)}else"return"===i.method&&i.abrupt("return",i.arg);n="executing";var l=h(e,t,i);if("normal"===l.type){if(n=i.done?"completed":"suspendedYield",l.arg===p)continue;return{value:l.arg,done:i.done}}"throw"===l.type&&(n="completed",i.method="throw",i.arg=l.arg)}}}function C(e,t){var i=e.iterator[t.method];if(void 0===i){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,C(e,t),"throw"===t.method))return p;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return p}var n=h(i,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,p;var s=n.arg;return s?s.done?(t[e.resultName]=s.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,p):s:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,p)}function _(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function S(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function T(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(_,this),this.reset(!0)}function k(e){if(e){var t=e[r];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,s=function t(){for(;++n<e.length;)if(i.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return s.next=s}}return{next:P}}function P(){return{value:void 0,done:!0}}return d.prototype=f,n(y,"constructor",{value:f,configurable:!0}),n(f,"constructor",{value:d,configurable:!0}),d.displayName=l(f,a,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===d||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,f):(e.__proto__=f,l(e,a,"GeneratorFunction")),e.prototype=Object.create(y),e},e.awrap=function(e){return{__await:e}},b(w.prototype),l(w.prototype,o,(function(){return this})),e.AsyncIterator=w,e.async=function(t,i,n,s,r){void 0===r&&(r=Promise);var o=new w(u(t,i,n,s),r);return e.isGeneratorFunction(i)?o:o.next().then((function(e){return e.done?e.value:o.next()}))},b(y),l(y,a,"Generator"),l(y,r,(function(){return this})),l(y,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=Object(e),i=[];for(var n in t)i.push(n);return i.reverse(),function e(){for(;i.length;){var n=i.pop();if(n in t)return e.value=n,e.done=!1,e}return e.done=!0,e}},e.values=k,T.prototype={constructor:T,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(S),!e)for(var t in this)"t"===t.charAt(0)&&i.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(i,n){return o.type="throw",o.arg=e,t.next=i,n&&(t.method="next",t.arg=void 0),!!n}for(var s=this.tryEntries.length-1;s>=0;--s){var r=this.tryEntries[s],o=r.completion;if("root"===r.tryLoc)return n("end");if(r.tryLoc<=this.prev){var a=i.call(r,"catchLoc"),l=i.call(r,"finallyLoc");if(a&&l){if(this.prev<r.catchLoc)return n(r.catchLoc,!0);if(this.prev<r.finallyLoc)return n(r.finallyLoc)}else if(a){if(this.prev<r.catchLoc)return n(r.catchLoc,!0)}else{if(!l)throw new Error("try statement without catch or finally");if(this.prev<r.finallyLoc)return n(r.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var s=this.tryEntries[n];if(s.tryLoc<=this.prev&&i.call(s,"finallyLoc")&&this.prev<s.finallyLoc){var r=s;break}}r&&("break"===e||"continue"===e)&&r.tryLoc<=t&&t<=r.finallyLoc&&(r=null);var o=r?r.completion:{};return o.type=e,o.arg=t,r?(this.method="next",this.next=r.finallyLoc,p):this.complete(o)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),p},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var i=this.tryEntries[t];if(i.finallyLoc===e)return this.complete(i.completion,i.afterLoc),S(i),p}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var i=this.tryEntries[t];if(i.tryLoc===e){var n=i.completion;if("throw"===n.type){var s=n.arg;S(i)}return s}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,i){return this.delegate={iterator:k(e),resultName:t,nextLoc:i},"next"===this.method&&(this.arg=void 0),p}},e}function vo(e,t,i,n,s,r,o){try{var a=e[r](o),l=a.value}catch(e){return void i(e)}a.done?t(l):Promise.resolve(l).then(n,s)}function yo(e){return function(){var t=this,i=arguments;return new Promise((function(n,s){var r=e.apply(t,i);function o(e){vo(r,n,s,o,a,"next",e)}function a(e){vo(r,n,s,o,a,"throw",e)}o(void 0)}))}}i.g.Uppy=ye,i.g.Dashboard=Os,i.g.XHRUpload=ro,i.g.ImageEditor=uo,i.g.UppyDutch=po;var bo=!1,wo=[],xo=null,Co=1;function _o(){return So.apply(this,arguments)}function So(){return(So=yo(go().mark((function e(){return go().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:co(".bulkselectionbutton").removeClass("bulkselected"),co(".media-container").addClass("mode-select"),co(".media-item").on("click",(function(e){To(e)}));case 3:case"end":return e.stop()}}),e)})))).apply(this,arguments)}function To(e){var t=null;if(!0===e.shiftKey){null===xo&&(xo=1);for(var i=1*xo,n=1*e.currentTarget.getAttribute("data-media_id"),s=i;s<=n;s++){var r=document.querySelector('.media-item[data-media_id="'+s+'"]');t=r.getAttribute("data-id"),wo.push(t),co("#"+t).addClass("selected")}}else t=e.currentTarget.getAttribute("data-id"),console.log("#"+t),wo.includes(t)?(wo=wo.filter((function(e){return e!==t})),co("#"+t).removeClass("selected")):(wo.push(t),co("#"+t).addClass("selected"));xo=e.currentTarget.getAttribute("data-media_id"),Co=wo.length}function ko(){return Po.apply(this,arguments)}function Po(){return(Po=yo(go().mark((function e(){return go().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:wo=[],co(".media-container").removeClass("mode-select"),co(".media-item").removeClass("selected"),Co=1;case 4:case"end":return e.stop()}}),e)})))).apply(this,arguments)}window.toggle_upload_view=function(){co("#upload_container").show(),co("#dropdown_overlay").removeClass("hide")},window.disable_x=function(e){co(".toggle_view."+e).removeClass("active"),co(".media-item").removeClass(e)},window.enable_x=function(e){co(".toggle_view."+e).addClass("active"),co(".media-item").addClass(e)},window.enable_grid_view=function(){disable_x("list"),enable_x("grid")},window.enable_list_view=function(){disable_x("grid"),enable_x("list")},co("#bulkselection").on("click",yo(go().mark((function e(){return go().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(!bo){e.next=5;break}return e.next=3,ko();case 3:e.next=7;break;case 5:return e.next=7,_o();case 7:bo=!bo;case 8:case"end":return e.stop()}}),e)})))),window.asideFolderSearch=function(e){var t,i,n,s;for(t=e.value.toUpperCase(),i=e.parentNode.parentNode.querySelector(".aside-item-list-container > ul").getElementsByTagName("li"),s=0;s<i.length;s++)((n=i[s].getElementsByTagName("a")[0]).textContent||n.innerText).toUpperCase().indexOf(t)>-1?i[s].classList.remove("menu-item-hidden"):i[s].classList.add("menu-item-hidden")},fo(document).mouseup((function(e){var t=co("#upload_container");t.is(e.target)||0!==t.has(e.target).length||t.hide()})),co((function(){var e=co("#gallery"),t=co(".media_category");function i(e,t,i){return i.indexOf(e)===t}function n(){return new URL(location.href).searchParams.get("media_taxonomy_id")||""}function s(e,t){if(n()!==e){var i=JSON.stringify({csrf:document.querySelector("#media_category_csrf").value,category_id_target:e,media_id:t,category_id_origin:n()});!function(){s.apply(this,arguments)}(path,i)}function s(){return s=yo(go().mark((function e(){var t,i,n,s=arguments;return go().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return t=s.length>0&&void 0!==s[0]?s[0]:"",i=s.length>1&&void 0!==s[1]?s[1]:{},e.next=4,fetch(t,{method:"PUT",mode:"cors",cache:"no-cache",credentials:"same-origin",redirect:"follow",referrerPolicy:"no-referrer",body:i});case 4:return n=e.sent,e.abrupt("return",n);case 6:case"end":return e.stop()}}),e)}))),s.apply(this,arguments)}}co("li.media-item",e).draggable({helper:"clone",cursorAt:{left:10,top:10},start:function(e,t){}}),t.droppable({activate:function(e,t){co(".ui-draggable-dragging").html('<div class="drag-media">'+Co+" item(s)</div>")},accept:"#gallery > li.media-item",cursorAt:{left:5,top:5},classes:{"ui-droppable-active":"ui-state-highlight"},drop:function(e,t){!function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null,r=e[0].id||null;if(wo.length>0){s(n,wo.filter(i))}else s(n,[r]);co(".media_category").removeClass("flash"),co("#"+n).addClass("flash")}(t.draggable,e,this.id)},over:function(e,t){}})}))})()})();
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./node_modules/jquery-ui/ui/core.js":
+/*!*******************************************!*\
+  !*** ./node_modules/jquery-ui/ui/core.js ***!
+  \*******************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;// This file is deprecated in 1.12.0 to be removed in 1.14
+( function() {
+"use strict";
+
+!(__WEBPACK_AMD_DEFINE_FACTORY__ = ([
+	"jquery",
+	"./data",
+	"./disable-selection",
+	"./focusable",
+	"./form",
+	"./ie",
+	"./keycode",
+	"./labels",
+	"./jquery-patch.js",
+	"./plugin",
+	"./safe-active-element",
+	"./safe-blur",
+	"./scroll-parent",
+	"./tabbable",
+	"./unique-id",
+	"./version"
+]),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+		__WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+} )();
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/data.js":
+/*!*******************************************!*\
+  !*** ./node_modules/jquery-ui/ui/data.js ***!
+  \*******************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI :data 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: :data Selector
+//>>group: Core
+//>>description: Selects elements which have data stored under the specified key.
+//>>docs: http://api.jqueryui.com/data-selector/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.extend( $.expr.pseudos, {
+	data: $.expr.createPseudo ?
+		$.expr.createPseudo( function( dataName ) {
+			return function( elem ) {
+				return !!$.data( elem, dataName );
+			};
+		} ) :
+
+		// Support: jQuery <1.8
+		function( elem, i, match ) {
+			return !!$.data( elem, match[ 3 ] );
+		}
+} );
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/ie.js":
+/*!*****************************************!*\
+  !*** ./node_modules/jquery-ui/ui/ie.js ***!
+  \*****************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+// This file is deprecated
+return $.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/plugin.js":
+/*!*********************************************!*\
+  !*** ./node_modules/jquery-ui/ui/plugin.js ***!
+  \*********************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+// $.ui.plugin is deprecated. Use $.widget() extensions instead.
+return $.ui.plugin = {
+	add: function( module, option, set ) {
+		var i,
+			proto = $.ui[ module ].prototype;
+		for ( i in set ) {
+			proto.plugins[ i ] = proto.plugins[ i ] || [];
+			proto.plugins[ i ].push( [ option, set[ i ] ] );
+		}
+	},
+	call: function( instance, name, args, allowDisconnected ) {
+		var i,
+			set = instance.plugins[ name ];
+
+		if ( !set ) {
+			return;
+		}
+
+		if ( !allowDisconnected && ( !instance.element[ 0 ].parentNode ||
+				instance.element[ 0 ].parentNode.nodeType === 11 ) ) {
+			return;
+		}
+
+		for ( i = 0; i < set.length; i++ ) {
+			if ( instance.options[ set[ i ][ 0 ] ] ) {
+				set[ i ][ 1 ].apply( instance.element, args );
+			}
+		}
+	}
+};
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/safe-active-element.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/safe-active-element.js ***!
+  \**********************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.ui.safeActiveElement = function( document ) {
+	var activeElement;
+
+	// Support: IE 9 only
+	// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+	try {
+		activeElement = document.activeElement;
+	} catch ( error ) {
+		activeElement = document.body;
+	}
+
+	// Support: IE 9 - 11 only
+	// IE may return null instead of an element
+	// Interestingly, this only seems to occur when NOT in an iframe
+	if ( !activeElement ) {
+		activeElement = document.body;
+	}
+
+	// Support: IE 11 only
+	// IE11 returns a seemingly empty object in some cases when accessing
+	// document.activeElement from an <iframe>
+	if ( !activeElement.nodeName ) {
+		activeElement = document.body;
+	}
+
+	return activeElement;
+};
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/safe-blur.js":
+/*!************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/safe-blur.js ***!
+  \************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.ui.safeBlur = function( element ) {
+
+	// Support: IE9 - 10 only
+	// If the <body> is blurred, IE will switch windows, see #9420
+	if ( element && element.nodeName.toLowerCase() !== "body" ) {
+		$( element ).trigger( "blur" );
+	}
+};
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/scroll-parent.js":
+/*!****************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/scroll-parent.js ***!
+  \****************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Scroll Parent 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: scrollParent
+//>>group: Core
+//>>description: Get the closest ancestor element that is scrollable.
+//>>docs: http://api.jqueryui.com/scrollParent/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.fn.scrollParent = function( includeHidden ) {
+	var position = this.css( "position" ),
+		excludeStaticParent = position === "absolute",
+		overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/,
+		scrollParent = this.parents().filter( function() {
+			var parent = $( this );
+			if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+				return false;
+			}
+			return overflowRegex.test( parent.css( "overflow" ) + parent.css( "overflow-y" ) +
+				parent.css( "overflow-x" ) );
+		} ).eq( 0 );
+
+	return position === "fixed" || !scrollParent.length ?
+		$( this[ 0 ].ownerDocument || document ) :
+		scrollParent;
+};
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/version.js":
+/*!**********************************************!*\
+  !*** ./node_modules/jquery-ui/ui/version.js ***!
+  \**********************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+$.ui = $.ui || {};
+
+return $.ui.version = "1.13.2";
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widget.js":
+/*!*********************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widget.js ***!
+  \*********************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Widget 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Widget
+//>>group: Core
+//>>description: Provides a factory for creating stateful widgets with a common API.
+//>>docs: http://api.jqueryui.com/jQuery.widget/
+//>>demos: http://jqueryui.com/widget/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! ./version */ "./node_modules/jquery-ui/ui/version.js") ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+var widgetUuid = 0;
+var widgetHasOwnProperty = Array.prototype.hasOwnProperty;
+var widgetSlice = Array.prototype.slice;
+
+$.cleanData = ( function( orig ) {
+	return function( elems ) {
+		var events, elem, i;
+		for ( i = 0; ( elem = elems[ i ] ) != null; i++ ) {
+
+			// Only trigger remove when necessary to save time
+			events = $._data( elem, "events" );
+			if ( events && events.remove ) {
+				$( elem ).triggerHandler( "remove" );
+			}
+		}
+		orig( elems );
+	};
+} )( $.cleanData );
+
+$.widget = function( name, base, prototype ) {
+	var existingConstructor, constructor, basePrototype;
+
+	// ProxiedPrototype allows the provided prototype to remain unmodified
+	// so that it can be used as a mixin for multiple widgets (#8876)
+	var proxiedPrototype = {};
+
+	var namespace = name.split( "." )[ 0 ];
+	name = name.split( "." )[ 1 ];
+	var fullName = namespace + "-" + name;
+
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
+
+	if ( Array.isArray( prototype ) ) {
+		prototype = $.extend.apply( null, [ {} ].concat( prototype ) );
+	}
+
+	// Create selector for plugin
+	$.expr.pseudos[ fullName.toLowerCase() ] = function( elem ) {
+		return !!$.data( elem, fullName );
+	};
+
+	$[ namespace ] = $[ namespace ] || {};
+	existingConstructor = $[ namespace ][ name ];
+	constructor = $[ namespace ][ name ] = function( options, element ) {
+
+		// Allow instantiation without "new" keyword
+		if ( !this || !this._createWidget ) {
+			return new constructor( options, element );
+		}
+
+		// Allow instantiation without initializing for simple inheritance
+		// must use "new" keyword (the code above always passes args)
+		if ( arguments.length ) {
+			this._createWidget( options, element );
+		}
+	};
+
+	// Extend with the existing constructor to carry over any static properties
+	$.extend( constructor, existingConstructor, {
+		version: prototype.version,
+
+		// Copy the object used to create the prototype in case we need to
+		// redefine the widget later
+		_proto: $.extend( {}, prototype ),
+
+		// Track widgets that inherit from this widget in case this widget is
+		// redefined after a widget inherits from it
+		_childConstructors: []
+	} );
+
+	basePrototype = new base();
+
+	// We need to make the options hash a property directly on the new instance
+	// otherwise we'll modify the options hash on the prototype that we're
+	// inheriting from
+	basePrototype.options = $.widget.extend( {}, basePrototype.options );
+	$.each( prototype, function( prop, value ) {
+		if ( typeof value !== "function" ) {
+			proxiedPrototype[ prop ] = value;
+			return;
+		}
+		proxiedPrototype[ prop ] = ( function() {
+			function _super() {
+				return base.prototype[ prop ].apply( this, arguments );
+			}
+
+			function _superApply( args ) {
+				return base.prototype[ prop ].apply( this, args );
+			}
+
+			return function() {
+				var __super = this._super;
+				var __superApply = this._superApply;
+				var returnValue;
+
+				this._super = _super;
+				this._superApply = _superApply;
+
+				returnValue = value.apply( this, arguments );
+
+				this._super = __super;
+				this._superApply = __superApply;
+
+				return returnValue;
+			};
+		} )();
+	} );
+	constructor.prototype = $.widget.extend( basePrototype, {
+
+		// TODO: remove support for widgetEventPrefix
+		// always use the name + a colon as the prefix, e.g., draggable:start
+		// don't prefix for widgets that aren't DOM-based
+		widgetEventPrefix: existingConstructor ? ( basePrototype.widgetEventPrefix || name ) : name
+	}, proxiedPrototype, {
+		constructor: constructor,
+		namespace: namespace,
+		widgetName: name,
+		widgetFullName: fullName
+	} );
+
+	// If this widget is being redefined then we need to find all widgets that
+	// are inheriting from it and redefine all of them so that they inherit from
+	// the new version of this widget. We're essentially trying to replace one
+	// level in the prototype chain.
+	if ( existingConstructor ) {
+		$.each( existingConstructor._childConstructors, function( i, child ) {
+			var childPrototype = child.prototype;
+
+			// Redefine the child widget using the same prototype that was
+			// originally used, but inherit from the new version of the base
+			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor,
+				child._proto );
+		} );
+
+		// Remove the list of existing child constructors from the old constructor
+		// so the old child constructors can be garbage collected
+		delete existingConstructor._childConstructors;
+	} else {
+		base._childConstructors.push( constructor );
+	}
+
+	$.widget.bridge( name, constructor );
+
+	return constructor;
+};
+
+$.widget.extend = function( target ) {
+	var input = widgetSlice.call( arguments, 1 );
+	var inputIndex = 0;
+	var inputLength = input.length;
+	var key;
+	var value;
+
+	for ( ; inputIndex < inputLength; inputIndex++ ) {
+		for ( key in input[ inputIndex ] ) {
+			value = input[ inputIndex ][ key ];
+			if ( widgetHasOwnProperty.call( input[ inputIndex ], key ) && value !== undefined ) {
+
+				// Clone objects
+				if ( $.isPlainObject( value ) ) {
+					target[ key ] = $.isPlainObject( target[ key ] ) ?
+						$.widget.extend( {}, target[ key ], value ) :
+
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend( {}, value );
+
+				// Copy everything else by reference
+				} else {
+					target[ key ] = value;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+$.widget.bridge = function( name, object ) {
+	var fullName = object.prototype.widgetFullName || name;
+	$.fn[ name ] = function( options ) {
+		var isMethodCall = typeof options === "string";
+		var args = widgetSlice.call( arguments, 1 );
+		var returnValue = this;
+
+		if ( isMethodCall ) {
+
+			// If this is an empty collection, we need to have the instance method
+			// return undefined instead of the jQuery instance
+			if ( !this.length && options === "instance" ) {
+				returnValue = undefined;
+			} else {
+				this.each( function() {
+					var methodValue;
+					var instance = $.data( this, fullName );
+
+					if ( options === "instance" ) {
+						returnValue = instance;
+						return false;
+					}
+
+					if ( !instance ) {
+						return $.error( "cannot call methods on " + name +
+							" prior to initialization; " +
+							"attempted to call method '" + options + "'" );
+					}
+
+					if ( typeof instance[ options ] !== "function" ||
+						options.charAt( 0 ) === "_" ) {
+						return $.error( "no such method '" + options + "' for " + name +
+							" widget instance" );
+					}
+
+					methodValue = instance[ options ].apply( instance, args );
+
+					if ( methodValue !== instance && methodValue !== undefined ) {
+						returnValue = methodValue && methodValue.jquery ?
+							returnValue.pushStack( methodValue.get() ) :
+							methodValue;
+						return false;
+					}
+				} );
+			}
+		} else {
+
+			// Allow multiple hashes to be passed on init
+			if ( args.length ) {
+				options = $.widget.extend.apply( null, [ options ].concat( args ) );
+			}
+
+			this.each( function() {
+				var instance = $.data( this, fullName );
+				if ( instance ) {
+					instance.option( options || {} );
+					if ( instance._init ) {
+						instance._init();
+					}
+				} else {
+					$.data( this, fullName, new object( options, this ) );
+				}
+			} );
+		}
+
+		return returnValue;
+	};
+};
+
+$.Widget = function( /* options, element */ ) {};
+$.Widget._childConstructors = [];
+
+$.Widget.prototype = {
+	widgetName: "widget",
+	widgetEventPrefix: "",
+	defaultElement: "<div>",
+
+	options: {
+		classes: {},
+		disabled: false,
+
+		// Callbacks
+		create: null
+	},
+
+	_createWidget: function( options, element ) {
+		element = $( element || this.defaultElement || this )[ 0 ];
+		this.element = $( element );
+		this.uuid = widgetUuid++;
+		this.eventNamespace = "." + this.widgetName + this.uuid;
+
+		this.bindings = $();
+		this.hoverable = $();
+		this.focusable = $();
+		this.classesElementLookup = {};
+
+		if ( element !== this ) {
+			$.data( element, this.widgetFullName, this );
+			this._on( true, this.element, {
+				remove: function( event ) {
+					if ( event.target === element ) {
+						this.destroy();
+					}
+				}
+			} );
+			this.document = $( element.style ?
+
+				// Element within the document
+				element.ownerDocument :
+
+				// Element is window or document
+				element.document || element );
+			this.window = $( this.document[ 0 ].defaultView || this.document[ 0 ].parentWindow );
+		}
+
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
+		this._create();
+
+		if ( this.options.disabled ) {
+			this._setOptionDisabled( this.options.disabled );
+		}
+
+		this._trigger( "create", null, this._getCreateEventData() );
+		this._init();
+	},
+
+	_getCreateOptions: function() {
+		return {};
+	},
+
+	_getCreateEventData: $.noop,
+
+	_create: $.noop,
+
+	_init: $.noop,
+
+	destroy: function() {
+		var that = this;
+
+		this._destroy();
+		$.each( this.classesElementLookup, function( key, value ) {
+			that._removeClass( value, key );
+		} );
+
+		// We can probably remove the unbind calls in 2.0
+		// all event bindings should go through this._on()
+		this.element
+			.off( this.eventNamespace )
+			.removeData( this.widgetFullName );
+		this.widget()
+			.off( this.eventNamespace )
+			.removeAttr( "aria-disabled" );
+
+		// Clean up events and states
+		this.bindings.off( this.eventNamespace );
+	},
+
+	_destroy: $.noop,
+
+	widget: function() {
+		return this.element;
+	},
+
+	option: function( key, value ) {
+		var options = key;
+		var parts;
+		var curOption;
+		var i;
+
+		if ( arguments.length === 0 ) {
+
+			// Don't return a reference to the internal hash
+			return $.widget.extend( {}, this.options );
+		}
+
+		if ( typeof key === "string" ) {
+
+			// Handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+			options = {};
+			parts = key.split( "." );
+			key = parts.shift();
+			if ( parts.length ) {
+				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
+				for ( i = 0; i < parts.length - 1; i++ ) {
+					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
+					curOption = curOption[ parts[ i ] ];
+				}
+				key = parts.pop();
+				if ( arguments.length === 1 ) {
+					return curOption[ key ] === undefined ? null : curOption[ key ];
+				}
+				curOption[ key ] = value;
+			} else {
+				if ( arguments.length === 1 ) {
+					return this.options[ key ] === undefined ? null : this.options[ key ];
+				}
+				options[ key ] = value;
+			}
+		}
+
+		this._setOptions( options );
+
+		return this;
+	},
+
+	_setOptions: function( options ) {
+		var key;
+
+		for ( key in options ) {
+			this._setOption( key, options[ key ] );
+		}
+
+		return this;
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "classes" ) {
+			this._setOptionClasses( value );
+		}
+
+		this.options[ key ] = value;
+
+		if ( key === "disabled" ) {
+			this._setOptionDisabled( value );
+		}
+
+		return this;
+	},
+
+	_setOptionClasses: function( value ) {
+		var classKey, elements, currentElements;
+
+		for ( classKey in value ) {
+			currentElements = this.classesElementLookup[ classKey ];
+			if ( value[ classKey ] === this.options.classes[ classKey ] ||
+					!currentElements ||
+					!currentElements.length ) {
+				continue;
+			}
+
+			// We are doing this to create a new jQuery object because the _removeClass() call
+			// on the next line is going to destroy the reference to the current elements being
+			// tracked. We need to save a copy of this collection so that we can add the new classes
+			// below.
+			elements = $( currentElements.get() );
+			this._removeClass( currentElements, classKey );
+
+			// We don't use _addClass() here, because that uses this.options.classes
+			// for generating the string of classes. We want to use the value passed in from
+			// _setOption(), this is the new value of the classes option which was passed to
+			// _setOption(). We pass this value directly to _classes().
+			elements.addClass( this._classes( {
+				element: elements,
+				keys: classKey,
+				classes: value,
+				add: true
+			} ) );
+		}
+	},
+
+	_setOptionDisabled: function( value ) {
+		this._toggleClass( this.widget(), this.widgetFullName + "-disabled", null, !!value );
+
+		// If the widget is becoming disabled, then nothing is interactive
+		if ( value ) {
+			this._removeClass( this.hoverable, null, "ui-state-hover" );
+			this._removeClass( this.focusable, null, "ui-state-focus" );
+		}
+	},
+
+	enable: function() {
+		return this._setOptions( { disabled: false } );
+	},
+
+	disable: function() {
+		return this._setOptions( { disabled: true } );
+	},
+
+	_classes: function( options ) {
+		var full = [];
+		var that = this;
+
+		options = $.extend( {
+			element: this.element,
+			classes: this.options.classes || {}
+		}, options );
+
+		function bindRemoveEvent() {
+			var nodesToBind = [];
+
+			options.element.each( function( _, element ) {
+				var isTracked = $.map( that.classesElementLookup, function( elements ) {
+					return elements;
+				} )
+					.some( function( elements ) {
+						return elements.is( element );
+					} );
+
+				if ( !isTracked ) {
+					nodesToBind.push( element );
+				}
+			} );
+
+			that._on( $( nodesToBind ), {
+				remove: "_untrackClassesElement"
+			} );
+		}
+
+		function processClassString( classes, checkOption ) {
+			var current, i;
+			for ( i = 0; i < classes.length; i++ ) {
+				current = that.classesElementLookup[ classes[ i ] ] || $();
+				if ( options.add ) {
+					bindRemoveEvent();
+					current = $( $.uniqueSort( current.get().concat( options.element.get() ) ) );
+				} else {
+					current = $( current.not( options.element ).get() );
+				}
+				that.classesElementLookup[ classes[ i ] ] = current;
+				full.push( classes[ i ] );
+				if ( checkOption && options.classes[ classes[ i ] ] ) {
+					full.push( options.classes[ classes[ i ] ] );
+				}
+			}
+		}
+
+		if ( options.keys ) {
+			processClassString( options.keys.match( /\S+/g ) || [], true );
+		}
+		if ( options.extra ) {
+			processClassString( options.extra.match( /\S+/g ) || [] );
+		}
+
+		return full.join( " " );
+	},
+
+	_untrackClassesElement: function( event ) {
+		var that = this;
+		$.each( that.classesElementLookup, function( key, value ) {
+			if ( $.inArray( event.target, value ) !== -1 ) {
+				that.classesElementLookup[ key ] = $( value.not( event.target ).get() );
+			}
+		} );
+
+		this._off( $( event.target ) );
+	},
+
+	_removeClass: function( element, keys, extra ) {
+		return this._toggleClass( element, keys, extra, false );
+	},
+
+	_addClass: function( element, keys, extra ) {
+		return this._toggleClass( element, keys, extra, true );
+	},
+
+	_toggleClass: function( element, keys, extra, add ) {
+		add = ( typeof add === "boolean" ) ? add : extra;
+		var shift = ( typeof element === "string" || element === null ),
+			options = {
+				extra: shift ? keys : extra,
+				keys: shift ? element : keys,
+				element: shift ? this.element : element,
+				add: add
+			};
+		options.element.toggleClass( this._classes( options ), add );
+		return this;
+	},
+
+	_on: function( suppressDisabledCheck, element, handlers ) {
+		var delegateElement;
+		var instance = this;
+
+		// No suppressDisabledCheck flag, shuffle arguments
+		if ( typeof suppressDisabledCheck !== "boolean" ) {
+			handlers = element;
+			element = suppressDisabledCheck;
+			suppressDisabledCheck = false;
+		}
+
+		// No element argument, shuffle and use this.element
+		if ( !handlers ) {
+			handlers = element;
+			element = this.element;
+			delegateElement = this.widget();
+		} else {
+			element = delegateElement = $( element );
+			this.bindings = this.bindings.add( element );
+		}
+
+		$.each( handlers, function( event, handler ) {
+			function handlerProxy() {
+
+				// Allow widgets to customize the disabled handling
+				// - disabled as an array instead of boolean
+				// - disabled class as method for disabling individual parts
+				if ( !suppressDisabledCheck &&
+						( instance.options.disabled === true ||
+						$( this ).hasClass( "ui-state-disabled" ) ) ) {
+					return;
+				}
+				return ( typeof handler === "string" ? instance[ handler ] : handler )
+					.apply( instance, arguments );
+			}
+
+			// Copy the guid so direct unbinding works
+			if ( typeof handler !== "string" ) {
+				handlerProxy.guid = handler.guid =
+					handler.guid || handlerProxy.guid || $.guid++;
+			}
+
+			var match = event.match( /^([\w:-]*)\s*(.*)$/ );
+			var eventName = match[ 1 ] + instance.eventNamespace;
+			var selector = match[ 2 ];
+
+			if ( selector ) {
+				delegateElement.on( eventName, selector, handlerProxy );
+			} else {
+				element.on( eventName, handlerProxy );
+			}
+		} );
+	},
+
+	_off: function( element, eventName ) {
+		eventName = ( eventName || "" ).split( " " ).join( this.eventNamespace + " " ) +
+			this.eventNamespace;
+		element.off( eventName );
+
+		// Clear the stack to avoid memory leaks (#10056)
+		this.bindings = $( this.bindings.not( element ).get() );
+		this.focusable = $( this.focusable.not( element ).get() );
+		this.hoverable = $( this.hoverable.not( element ).get() );
+	},
+
+	_delay: function( handler, delay ) {
+		function handlerProxy() {
+			return ( typeof handler === "string" ? instance[ handler ] : handler )
+				.apply( instance, arguments );
+		}
+		var instance = this;
+		return setTimeout( handlerProxy, delay || 0 );
+	},
+
+	_hoverable: function( element ) {
+		this.hoverable = this.hoverable.add( element );
+		this._on( element, {
+			mouseenter: function( event ) {
+				this._addClass( $( event.currentTarget ), null, "ui-state-hover" );
+			},
+			mouseleave: function( event ) {
+				this._removeClass( $( event.currentTarget ), null, "ui-state-hover" );
+			}
+		} );
+	},
+
+	_focusable: function( element ) {
+		this.focusable = this.focusable.add( element );
+		this._on( element, {
+			focusin: function( event ) {
+				this._addClass( $( event.currentTarget ), null, "ui-state-focus" );
+			},
+			focusout: function( event ) {
+				this._removeClass( $( event.currentTarget ), null, "ui-state-focus" );
+			}
+		} );
+	},
+
+	_trigger: function( type, event, data ) {
+		var prop, orig;
+		var callback = this.options[ type ];
+
+		data = data || {};
+		event = $.Event( event );
+		event.type = ( type === this.widgetEventPrefix ?
+			type :
+			this.widgetEventPrefix + type ).toLowerCase();
+
+		// The original event may come from any element
+		// so we need to reset the target on the new event
+		event.target = this.element[ 0 ];
+
+		// Copy original event properties over to the new event
+		orig = event.originalEvent;
+		if ( orig ) {
+			for ( prop in orig ) {
+				if ( !( prop in event ) ) {
+					event[ prop ] = orig[ prop ];
+				}
+			}
+		}
+
+		this.element.trigger( event, data );
+		return !( typeof callback === "function" &&
+			callback.apply( this.element[ 0 ], [ event ].concat( data ) ) === false ||
+			event.isDefaultPrevented() );
+	}
+};
+
+$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
+	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
+		if ( typeof options === "string" ) {
+			options = { effect: options };
+		}
+
+		var hasOptions;
+		var effectName = !options ?
+			method :
+			options === true || typeof options === "number" ?
+				defaultEffect :
+				options.effect || defaultEffect;
+
+		options = options || {};
+		if ( typeof options === "number" ) {
+			options = { duration: options };
+		} else if ( options === true ) {
+			options = {};
+		}
+
+		hasOptions = !$.isEmptyObject( options );
+		options.complete = callback;
+
+		if ( options.delay ) {
+			element.delay( options.delay );
+		}
+
+		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
+			element[ method ]( options );
+		} else if ( effectName !== method && element[ effectName ] ) {
+			element[ effectName ]( options.duration, options.easing, callback );
+		} else {
+			element.queue( function( next ) {
+				$( this )[ method ]();
+				if ( callback ) {
+					callback.call( element[ 0 ] );
+				}
+				next();
+			} );
+		}
+	};
+} );
+
+return $.widget;
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widgets/draggable.js":
+/*!********************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widgets/draggable.js ***!
+  \********************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Draggable 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Draggable
+//>>group: Interactions
+//>>description: Enables dragging functionality for any element.
+//>>docs: http://api.jqueryui.com/draggable/
+//>>demos: http://jqueryui.com/draggable/
+//>>css.structure: ../../themes/base/draggable.css
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+			__webpack_require__(/*! ./mouse */ "./node_modules/jquery-ui/ui/widgets/mouse.js"),
+			__webpack_require__(/*! ../data */ "./node_modules/jquery-ui/ui/data.js"),
+			__webpack_require__(/*! ../plugin */ "./node_modules/jquery-ui/ui/plugin.js"),
+			__webpack_require__(/*! ../safe-active-element */ "./node_modules/jquery-ui/ui/safe-active-element.js"),
+			__webpack_require__(/*! ../safe-blur */ "./node_modules/jquery-ui/ui/safe-blur.js"),
+			__webpack_require__(/*! ../scroll-parent */ "./node_modules/jquery-ui/ui/scroll-parent.js"),
+			__webpack_require__(/*! ../version */ "./node_modules/jquery-ui/ui/version.js"),
+			__webpack_require__(/*! ../widget */ "./node_modules/jquery-ui/ui/widget.js")
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+$.widget( "ui.draggable", $.ui.mouse, {
+	version: "1.13.2",
+	widgetEventPrefix: "drag",
+	options: {
+		addClasses: true,
+		appendTo: "parent",
+		axis: false,
+		connectToSortable: false,
+		containment: false,
+		cursor: "auto",
+		cursorAt: false,
+		grid: false,
+		handle: false,
+		helper: "original",
+		iframeFix: false,
+		opacity: false,
+		refreshPositions: false,
+		revert: false,
+		revertDuration: 500,
+		scope: "default",
+		scroll: true,
+		scrollSensitivity: 20,
+		scrollSpeed: 20,
+		snap: false,
+		snapMode: "both",
+		snapTolerance: 20,
+		stack: false,
+		zIndex: false,
+
+		// Callbacks
+		drag: null,
+		start: null,
+		stop: null
+	},
+	_create: function() {
+
+		if ( this.options.helper === "original" ) {
+			this._setPositionRelative();
+		}
+		if ( this.options.addClasses ) {
+			this._addClass( "ui-draggable" );
+		}
+		this._setHandleClassName();
+
+		this._mouseInit();
+	},
+
+	_setOption: function( key, value ) {
+		this._super( key, value );
+		if ( key === "handle" ) {
+			this._removeHandleClassName();
+			this._setHandleClassName();
+		}
+	},
+
+	_destroy: function() {
+		if ( ( this.helper || this.element ).is( ".ui-draggable-dragging" ) ) {
+			this.destroyOnClear = true;
+			return;
+		}
+		this._removeHandleClassName();
+		this._mouseDestroy();
+	},
+
+	_mouseCapture: function( event ) {
+		var o = this.options;
+
+		// Among others, prevent a drag on a resizable-handle
+		if ( this.helper || o.disabled ||
+				$( event.target ).closest( ".ui-resizable-handle" ).length > 0 ) {
+			return false;
+		}
+
+		//Quit if we're not on a valid handle
+		this.handle = this._getHandle( event );
+		if ( !this.handle ) {
+			return false;
+		}
+
+		this._blurActiveElement( event );
+
+		this._blockFrames( o.iframeFix === true ? "iframe" : o.iframeFix );
+
+		return true;
+
+	},
+
+	_blockFrames: function( selector ) {
+		this.iframeBlocks = this.document.find( selector ).map( function() {
+			var iframe = $( this );
+
+			return $( "<div>" )
+				.css( "position", "absolute" )
+				.appendTo( iframe.parent() )
+				.outerWidth( iframe.outerWidth() )
+				.outerHeight( iframe.outerHeight() )
+				.offset( iframe.offset() )[ 0 ];
+		} );
+	},
+
+	_unblockFrames: function() {
+		if ( this.iframeBlocks ) {
+			this.iframeBlocks.remove();
+			delete this.iframeBlocks;
+		}
+	},
+
+	_blurActiveElement: function( event ) {
+		var activeElement = $.ui.safeActiveElement( this.document[ 0 ] ),
+			target = $( event.target );
+
+		// Don't blur if the event occurred on an element that is within
+		// the currently focused element
+		// See #10527, #12472
+		if ( target.closest( activeElement ).length ) {
+			return;
+		}
+
+		// Blur any element that currently has focus, see #4261
+		$.ui.safeBlur( activeElement );
+	},
+
+	_mouseStart: function( event ) {
+
+		var o = this.options;
+
+		//Create and append the visible helper
+		this.helper = this._createHelper( event );
+
+		this._addClass( this.helper, "ui-draggable-dragging" );
+
+		//Cache the helper size
+		this._cacheHelperProportions();
+
+		//If ddmanager is used for droppables, set the global draggable
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.current = this;
+		}
+
+		/*
+		 * - Position generation -
+		 * This block generates everything position related - it's the core of draggables.
+		 */
+
+		//Cache the margins of the original element
+		this._cacheMargins();
+
+		//Store the helper's css position
+		this.cssPosition = this.helper.css( "position" );
+		this.scrollParent = this.helper.scrollParent( true );
+		this.offsetParent = this.helper.offsetParent();
+		this.hasFixedAncestor = this.helper.parents().filter( function() {
+				return $( this ).css( "position" ) === "fixed";
+			} ).length > 0;
+
+		//The element's absolute position on the page minus margins
+		this.positionAbs = this.element.offset();
+		this._refreshOffsets( event );
+
+		//Generate the original position
+		this.originalPosition = this.position = this._generatePosition( event, false );
+		this.originalPageX = event.pageX;
+		this.originalPageY = event.pageY;
+
+		//Adjust the mouse offset relative to the helper if "cursorAt" is supplied
+		if ( o.cursorAt ) {
+			this._adjustOffsetFromHelper( o.cursorAt );
+		}
+
+		//Set a containment if given in the options
+		this._setContainment();
+
+		//Trigger event + callbacks
+		if ( this._trigger( "start", event ) === false ) {
+			this._clear();
+			return false;
+		}
+
+		//Recache the helper size
+		this._cacheHelperProportions();
+
+		//Prepare the droppable offsets
+		if ( $.ui.ddmanager && !o.dropBehaviour ) {
+			$.ui.ddmanager.prepareOffsets( this, event );
+		}
+
+		// Execute the drag once - this causes the helper not to be visible before getting its
+		// correct position
+		this._mouseDrag( event, true );
+
+		// If the ddmanager is used for droppables, inform the manager that dragging has started
+		// (see #5003)
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.dragStart( this, event );
+		}
+
+		return true;
+	},
+
+	_refreshOffsets: function( event ) {
+		this.offset = {
+			top: this.positionAbs.top - this.margins.top,
+			left: this.positionAbs.left - this.margins.left,
+			scroll: false,
+			parent: this._getParentOffset(),
+			relative: this._getRelativeOffset()
+		};
+
+		this.offset.click = {
+			left: event.pageX - this.offset.left,
+			top: event.pageY - this.offset.top
+		};
+	},
+
+	_mouseDrag: function( event, noPropagation ) {
+
+		// reset any necessary cached properties (see #5009)
+		if ( this.hasFixedAncestor ) {
+			this.offset.parent = this._getParentOffset();
+		}
+
+		//Compute the helpers position
+		this.position = this._generatePosition( event, true );
+		this.positionAbs = this._convertPositionTo( "absolute" );
+
+		//Call plugins and callbacks and use the resulting position if something is returned
+		if ( !noPropagation ) {
+			var ui = this._uiHash();
+			if ( this._trigger( "drag", event, ui ) === false ) {
+				this._mouseUp( new $.Event( "mouseup", event ) );
+				return false;
+			}
+			this.position = ui.position;
+		}
+
+		this.helper[ 0 ].style.left = this.position.left + "px";
+		this.helper[ 0 ].style.top = this.position.top + "px";
+
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.drag( this, event );
+		}
+
+		return false;
+	},
+
+	_mouseStop: function( event ) {
+
+		//If we are using droppables, inform the manager about the drop
+		var that = this,
+			dropped = false;
+		if ( $.ui.ddmanager && !this.options.dropBehaviour ) {
+			dropped = $.ui.ddmanager.drop( this, event );
+		}
+
+		//if a drop comes from outside (a sortable)
+		if ( this.dropped ) {
+			dropped = this.dropped;
+			this.dropped = false;
+		}
+
+		if ( ( this.options.revert === "invalid" && !dropped ) ||
+				( this.options.revert === "valid" && dropped ) ||
+				this.options.revert === true || ( typeof this.options.revert === "function" &&
+				this.options.revert.call( this.element, dropped ) )
+		) {
+			$( this.helper ).animate(
+				this.originalPosition,
+				parseInt( this.options.revertDuration, 10 ),
+				function() {
+					if ( that._trigger( "stop", event ) !== false ) {
+						that._clear();
+					}
+				}
+			);
+		} else {
+			if ( this._trigger( "stop", event ) !== false ) {
+				this._clear();
+			}
+		}
+
+		return false;
+	},
+
+	_mouseUp: function( event ) {
+		this._unblockFrames();
+
+		// If the ddmanager is used for droppables, inform the manager that dragging has stopped
+		// (see #5003)
+		if ( $.ui.ddmanager ) {
+			$.ui.ddmanager.dragStop( this, event );
+		}
+
+		// Only need to focus if the event occurred on the draggable itself, see #10527
+		if ( this.handleElement.is( event.target ) ) {
+
+			// The interaction is over; whether or not the click resulted in a drag,
+			// focus the element
+			this.element.trigger( "focus" );
+		}
+
+		return $.ui.mouse.prototype._mouseUp.call( this, event );
+	},
+
+	cancel: function() {
+
+		if ( this.helper.is( ".ui-draggable-dragging" ) ) {
+			this._mouseUp( new $.Event( "mouseup", { target: this.element[ 0 ] } ) );
+		} else {
+			this._clear();
+		}
+
+		return this;
+
+	},
+
+	_getHandle: function( event ) {
+		return this.options.handle ?
+			!!$( event.target ).closest( this.element.find( this.options.handle ) ).length :
+			true;
+	},
+
+	_setHandleClassName: function() {
+		this.handleElement = this.options.handle ?
+			this.element.find( this.options.handle ) : this.element;
+		this._addClass( this.handleElement, "ui-draggable-handle" );
+	},
+
+	_removeHandleClassName: function() {
+		this._removeClass( this.handleElement, "ui-draggable-handle" );
+	},
+
+	_createHelper: function( event ) {
+
+		var o = this.options,
+			helperIsFunction = typeof o.helper === "function",
+			helper = helperIsFunction ?
+				$( o.helper.apply( this.element[ 0 ], [ event ] ) ) :
+				( o.helper === "clone" ?
+					this.element.clone().removeAttr( "id" ) :
+					this.element );
+
+		if ( !helper.parents( "body" ).length ) {
+			helper.appendTo( ( o.appendTo === "parent" ?
+				this.element[ 0 ].parentNode :
+				o.appendTo ) );
+		}
+
+		// Http://bugs.jqueryui.com/ticket/9446
+		// a helper function can return the original element
+		// which wouldn't have been set to relative in _create
+		if ( helperIsFunction && helper[ 0 ] === this.element[ 0 ] ) {
+			this._setPositionRelative();
+		}
+
+		if ( helper[ 0 ] !== this.element[ 0 ] &&
+				!( /(fixed|absolute)/ ).test( helper.css( "position" ) ) ) {
+			helper.css( "position", "absolute" );
+		}
+
+		return helper;
+
+	},
+
+	_setPositionRelative: function() {
+		if ( !( /^(?:r|a|f)/ ).test( this.element.css( "position" ) ) ) {
+			this.element[ 0 ].style.position = "relative";
+		}
+	},
+
+	_adjustOffsetFromHelper: function( obj ) {
+		if ( typeof obj === "string" ) {
+			obj = obj.split( " " );
+		}
+		if ( Array.isArray( obj ) ) {
+			obj = { left: +obj[ 0 ], top: +obj[ 1 ] || 0 };
+		}
+		if ( "left" in obj ) {
+			this.offset.click.left = obj.left + this.margins.left;
+		}
+		if ( "right" in obj ) {
+			this.offset.click.left = this.helperProportions.width - obj.right + this.margins.left;
+		}
+		if ( "top" in obj ) {
+			this.offset.click.top = obj.top + this.margins.top;
+		}
+		if ( "bottom" in obj ) {
+			this.offset.click.top = this.helperProportions.height - obj.bottom + this.margins.top;
+		}
+	},
+
+	_isRootNode: function( element ) {
+		return ( /(html|body)/i ).test( element.tagName ) || element === this.document[ 0 ];
+	},
+
+	_getParentOffset: function() {
+
+		//Get the offsetParent and cache its position
+		var po = this.offsetParent.offset(),
+			document = this.document[ 0 ];
+
+		// This is a special case where we need to modify a offset calculated on start, since the
+		// following happened:
+		// 1. The position of the helper is absolute, so it's position is calculated based on the
+		// next positioned parent
+		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't
+		// the document, which means that the scroll is included in the initial calculation of the
+		// offset of the parent, and never recalculated upon drag
+		if ( this.cssPosition === "absolute" && this.scrollParent[ 0 ] !== document &&
+				$.contains( this.scrollParent[ 0 ], this.offsetParent[ 0 ] ) ) {
+			po.left += this.scrollParent.scrollLeft();
+			po.top += this.scrollParent.scrollTop();
+		}
+
+		if ( this._isRootNode( this.offsetParent[ 0 ] ) ) {
+			po = { top: 0, left: 0 };
+		}
+
+		return {
+			top: po.top + ( parseInt( this.offsetParent.css( "borderTopWidth" ), 10 ) || 0 ),
+			left: po.left + ( parseInt( this.offsetParent.css( "borderLeftWidth" ), 10 ) || 0 )
+		};
+
+	},
+
+	_getRelativeOffset: function() {
+		if ( this.cssPosition !== "relative" ) {
+			return { top: 0, left: 0 };
+		}
+
+		var p = this.element.position(),
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
+
+		return {
+			top: p.top - ( parseInt( this.helper.css( "top" ), 10 ) || 0 ) +
+				( !scrollIsRootNode ? this.scrollParent.scrollTop() : 0 ),
+			left: p.left - ( parseInt( this.helper.css( "left" ), 10 ) || 0 ) +
+				( !scrollIsRootNode ? this.scrollParent.scrollLeft() : 0 )
+		};
+
+	},
+
+	_cacheMargins: function() {
+		this.margins = {
+			left: ( parseInt( this.element.css( "marginLeft" ), 10 ) || 0 ),
+			top: ( parseInt( this.element.css( "marginTop" ), 10 ) || 0 ),
+			right: ( parseInt( this.element.css( "marginRight" ), 10 ) || 0 ),
+			bottom: ( parseInt( this.element.css( "marginBottom" ), 10 ) || 0 )
+		};
+	},
+
+	_cacheHelperProportions: function() {
+		this.helperProportions = {
+			width: this.helper.outerWidth(),
+			height: this.helper.outerHeight()
+		};
+	},
+
+	_setContainment: function() {
+
+		var isUserScrollable, c, ce,
+			o = this.options,
+			document = this.document[ 0 ];
+
+		this.relativeContainer = null;
+
+		if ( !o.containment ) {
+			this.containment = null;
+			return;
+		}
+
+		if ( o.containment === "window" ) {
+			this.containment = [
+				$( window ).scrollLeft() - this.offset.relative.left - this.offset.parent.left,
+				$( window ).scrollTop() - this.offset.relative.top - this.offset.parent.top,
+				$( window ).scrollLeft() + $( window ).width() -
+					this.helperProportions.width - this.margins.left,
+				$( window ).scrollTop() +
+					( $( window ).height() || document.body.parentNode.scrollHeight ) -
+					this.helperProportions.height - this.margins.top
+			];
+			return;
+		}
+
+		if ( o.containment === "document" ) {
+			this.containment = [
+				0,
+				0,
+				$( document ).width() - this.helperProportions.width - this.margins.left,
+				( $( document ).height() || document.body.parentNode.scrollHeight ) -
+					this.helperProportions.height - this.margins.top
+			];
+			return;
+		}
+
+		if ( o.containment.constructor === Array ) {
+			this.containment = o.containment;
+			return;
+		}
+
+		if ( o.containment === "parent" ) {
+			o.containment = this.helper[ 0 ].parentNode;
+		}
+
+		c = $( o.containment );
+		ce = c[ 0 ];
+
+		if ( !ce ) {
+			return;
+		}
+
+		isUserScrollable = /(scroll|auto)/.test( c.css( "overflow" ) );
+
+		this.containment = [
+			( parseInt( c.css( "borderLeftWidth" ), 10 ) || 0 ) +
+				( parseInt( c.css( "paddingLeft" ), 10 ) || 0 ),
+			( parseInt( c.css( "borderTopWidth" ), 10 ) || 0 ) +
+				( parseInt( c.css( "paddingTop" ), 10 ) || 0 ),
+			( isUserScrollable ? Math.max( ce.scrollWidth, ce.offsetWidth ) : ce.offsetWidth ) -
+				( parseInt( c.css( "borderRightWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingRight" ), 10 ) || 0 ) -
+				this.helperProportions.width -
+				this.margins.left -
+				this.margins.right,
+			( isUserScrollable ? Math.max( ce.scrollHeight, ce.offsetHeight ) : ce.offsetHeight ) -
+				( parseInt( c.css( "borderBottomWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingBottom" ), 10 ) || 0 ) -
+				this.helperProportions.height -
+				this.margins.top -
+				this.margins.bottom
+		];
+		this.relativeContainer = c;
+	},
+
+	_convertPositionTo: function( d, pos ) {
+
+		if ( !pos ) {
+			pos = this.position;
+		}
+
+		var mod = d === "absolute" ? 1 : -1,
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
+
+		return {
+			top: (
+
+				// The absolute mouse position
+				pos.top	+
+
+				// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.relative.top * mod +
+
+				// The offsetParent's offset without borders (offset + border)
+				this.offset.parent.top * mod -
+				( ( this.cssPosition === "fixed" ?
+					-this.offset.scroll.top :
+					( scrollIsRootNode ? 0 : this.offset.scroll.top ) ) * mod )
+			),
+			left: (
+
+				// The absolute mouse position
+				pos.left +
+
+				// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.relative.left * mod +
+
+				// The offsetParent's offset without borders (offset + border)
+				this.offset.parent.left * mod	-
+				( ( this.cssPosition === "fixed" ?
+					-this.offset.scroll.left :
+					( scrollIsRootNode ? 0 : this.offset.scroll.left ) ) * mod )
+			)
+		};
+
+	},
+
+	_generatePosition: function( event, constrainPosition ) {
+
+		var containment, co, top, left,
+			o = this.options,
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] ),
+			pageX = event.pageX,
+			pageY = event.pageY;
+
+		// Cache the scroll
+		if ( !scrollIsRootNode || !this.offset.scroll ) {
+			this.offset.scroll = {
+				top: this.scrollParent.scrollTop(),
+				left: this.scrollParent.scrollLeft()
+			};
+		}
+
+		/*
+		 * - Position constraining -
+		 * Constrain the position to a mix of grid, containment.
+		 */
+
+		// If we are not dragging yet, we won't check for options
+		if ( constrainPosition ) {
+			if ( this.containment ) {
+				if ( this.relativeContainer ) {
+					co = this.relativeContainer.offset();
+					containment = [
+						this.containment[ 0 ] + co.left,
+						this.containment[ 1 ] + co.top,
+						this.containment[ 2 ] + co.left,
+						this.containment[ 3 ] + co.top
+					];
+				} else {
+					containment = this.containment;
+				}
+
+				if ( event.pageX - this.offset.click.left < containment[ 0 ] ) {
+					pageX = containment[ 0 ] + this.offset.click.left;
+				}
+				if ( event.pageY - this.offset.click.top < containment[ 1 ] ) {
+					pageY = containment[ 1 ] + this.offset.click.top;
+				}
+				if ( event.pageX - this.offset.click.left > containment[ 2 ] ) {
+					pageX = containment[ 2 ] + this.offset.click.left;
+				}
+				if ( event.pageY - this.offset.click.top > containment[ 3 ] ) {
+					pageY = containment[ 3 ] + this.offset.click.top;
+				}
+			}
+
+			if ( o.grid ) {
+
+				//Check for grid elements set to 0 to prevent divide by 0 error causing invalid
+				// argument errors in IE (see ticket #6950)
+				top = o.grid[ 1 ] ? this.originalPageY + Math.round( ( pageY -
+					this.originalPageY ) / o.grid[ 1 ] ) * o.grid[ 1 ] : this.originalPageY;
+				pageY = containment ? ( ( top - this.offset.click.top >= containment[ 1 ] ||
+					top - this.offset.click.top > containment[ 3 ] ) ?
+						top :
+						( ( top - this.offset.click.top >= containment[ 1 ] ) ?
+							top - o.grid[ 1 ] : top + o.grid[ 1 ] ) ) : top;
+
+				left = o.grid[ 0 ] ? this.originalPageX +
+					Math.round( ( pageX - this.originalPageX ) / o.grid[ 0 ] ) * o.grid[ 0 ] :
+					this.originalPageX;
+				pageX = containment ? ( ( left - this.offset.click.left >= containment[ 0 ] ||
+					left - this.offset.click.left > containment[ 2 ] ) ?
+						left :
+						( ( left - this.offset.click.left >= containment[ 0 ] ) ?
+							left - o.grid[ 0 ] : left + o.grid[ 0 ] ) ) : left;
+			}
+
+			if ( o.axis === "y" ) {
+				pageX = this.originalPageX;
+			}
+
+			if ( o.axis === "x" ) {
+				pageY = this.originalPageY;
+			}
+		}
+
+		return {
+			top: (
+
+				// The absolute mouse position
+				pageY -
+
+				// Click offset (relative to the element)
+				this.offset.click.top -
+
+				// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.relative.top -
+
+				// The offsetParent's offset without borders (offset + border)
+				this.offset.parent.top +
+				( this.cssPosition === "fixed" ?
+					-this.offset.scroll.top :
+					( scrollIsRootNode ? 0 : this.offset.scroll.top ) )
+			),
+			left: (
+
+				// The absolute mouse position
+				pageX -
+
+				// Click offset (relative to the element)
+				this.offset.click.left -
+
+				// Only for relative positioned nodes: Relative offset from element to offset parent
+				this.offset.relative.left -
+
+				// The offsetParent's offset without borders (offset + border)
+				this.offset.parent.left +
+				( this.cssPosition === "fixed" ?
+					-this.offset.scroll.left :
+					( scrollIsRootNode ? 0 : this.offset.scroll.left ) )
+			)
+		};
+
+	},
+
+	_clear: function() {
+		this._removeClass( this.helper, "ui-draggable-dragging" );
+		if ( this.helper[ 0 ] !== this.element[ 0 ] && !this.cancelHelperRemoval ) {
+			this.helper.remove();
+		}
+		this.helper = null;
+		this.cancelHelperRemoval = false;
+		if ( this.destroyOnClear ) {
+			this.destroy();
+		}
+	},
+
+	// From now on bulk stuff - mainly helpers
+
+	_trigger: function( type, event, ui ) {
+		ui = ui || this._uiHash();
+		$.ui.plugin.call( this, type, [ event, ui, this ], true );
+
+		// Absolute position and offset (see #6884 ) have to be recalculated after plugins
+		if ( /^(drag|start|stop)/.test( type ) ) {
+			this.positionAbs = this._convertPositionTo( "absolute" );
+			ui.offset = this.positionAbs;
+		}
+		return $.Widget.prototype._trigger.call( this, type, event, ui );
+	},
+
+	plugins: {},
+
+	_uiHash: function() {
+		return {
+			helper: this.helper,
+			position: this.position,
+			originalPosition: this.originalPosition,
+			offset: this.positionAbs
+		};
+	}
+
+} );
+
+$.ui.plugin.add( "draggable", "connectToSortable", {
+	start: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
+		} );
+
+		draggable.sortables = [];
+		$( draggable.options.connectToSortable ).each( function() {
+			var sortable = $( this ).sortable( "instance" );
+
+			if ( sortable && !sortable.options.disabled ) {
+				draggable.sortables.push( sortable );
+
+				// RefreshPositions is called at drag start to refresh the containerCache
+				// which is used in drag. This ensures it's initialized and synchronized
+				// with any changes that might have happened on the page since initialization.
+				sortable.refreshPositions();
+				sortable._trigger( "activate", event, uiSortable );
+			}
+		} );
+	},
+	stop: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
+		} );
+
+		draggable.cancelHelperRemoval = false;
+
+		$.each( draggable.sortables, function() {
+			var sortable = this;
+
+			if ( sortable.isOver ) {
+				sortable.isOver = 0;
+
+				// Allow this sortable to handle removing the helper
+				draggable.cancelHelperRemoval = true;
+				sortable.cancelHelperRemoval = false;
+
+				// Use _storedCSS To restore properties in the sortable,
+				// as this also handles revert (#9675) since the draggable
+				// may have modified them in unexpected ways (#8809)
+				sortable._storedCSS = {
+					position: sortable.placeholder.css( "position" ),
+					top: sortable.placeholder.css( "top" ),
+					left: sortable.placeholder.css( "left" )
+				};
+
+				sortable._mouseStop( event );
+
+				// Once drag has ended, the sortable should return to using
+				// its original helper, not the shared helper from draggable
+				sortable.options.helper = sortable.options._helper;
+			} else {
+
+				// Prevent this Sortable from removing the helper.
+				// However, don't set the draggable to remove the helper
+				// either as another connected Sortable may yet handle the removal.
+				sortable.cancelHelperRemoval = true;
+
+				sortable._trigger( "deactivate", event, uiSortable );
+			}
+		} );
+	},
+	drag: function( event, ui, draggable ) {
+		$.each( draggable.sortables, function() {
+			var innermostIntersecting = false,
+				sortable = this;
+
+			// Copy over variables that sortable's _intersectsWith uses
+			sortable.positionAbs = draggable.positionAbs;
+			sortable.helperProportions = draggable.helperProportions;
+			sortable.offset.click = draggable.offset.click;
+
+			if ( sortable._intersectsWith( sortable.containerCache ) ) {
+				innermostIntersecting = true;
+
+				$.each( draggable.sortables, function() {
+
+					// Copy over variables that sortable's _intersectsWith uses
+					this.positionAbs = draggable.positionAbs;
+					this.helperProportions = draggable.helperProportions;
+					this.offset.click = draggable.offset.click;
+
+					if ( this !== sortable &&
+							this._intersectsWith( this.containerCache ) &&
+							$.contains( sortable.element[ 0 ], this.element[ 0 ] ) ) {
+						innermostIntersecting = false;
+					}
+
+					return innermostIntersecting;
+				} );
+			}
+
+			if ( innermostIntersecting ) {
+
+				// If it intersects, we use a little isOver variable and set it once,
+				// so that the move-in stuff gets fired only once.
+				if ( !sortable.isOver ) {
+					sortable.isOver = 1;
+
+					// Store draggable's parent in case we need to reappend to it later.
+					draggable._parent = ui.helper.parent();
+
+					sortable.currentItem = ui.helper
+						.appendTo( sortable.element )
+						.data( "ui-sortable-item", true );
+
+					// Store helper option to later restore it
+					sortable.options._helper = sortable.options.helper;
+
+					sortable.options.helper = function() {
+						return ui.helper[ 0 ];
+					};
+
+					// Fire the start events of the sortable with our passed browser event,
+					// and our own helper (so it doesn't create a new one)
+					event.target = sortable.currentItem[ 0 ];
+					sortable._mouseCapture( event, true );
+					sortable._mouseStart( event, true, true );
+
+					// Because the browser event is way off the new appended portlet,
+					// modify necessary variables to reflect the changes
+					sortable.offset.click.top = draggable.offset.click.top;
+					sortable.offset.click.left = draggable.offset.click.left;
+					sortable.offset.parent.left -= draggable.offset.parent.left -
+						sortable.offset.parent.left;
+					sortable.offset.parent.top -= draggable.offset.parent.top -
+						sortable.offset.parent.top;
+
+					draggable._trigger( "toSortable", event );
+
+					// Inform draggable that the helper is in a valid drop zone,
+					// used solely in the revert option to handle "valid/invalid".
+					draggable.dropped = sortable.element;
+
+					// Need to refreshPositions of all sortables in the case that
+					// adding to one sortable changes the location of the other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					} );
+
+					// Hack so receive/update callbacks work (mostly)
+					draggable.currentItem = draggable.element;
+					sortable.fromOutside = draggable;
+				}
+
+				if ( sortable.currentItem ) {
+					sortable._mouseDrag( event );
+
+					// Copy the sortable's position because the draggable's can potentially reflect
+					// a relative position, while sortable is always absolute, which the dragged
+					// element has now become. (#8809)
+					ui.position = sortable.position;
+				}
+			} else {
+
+				// If it doesn't intersect with the sortable, and it intersected before,
+				// we fake the drag stop of the sortable, but make sure it doesn't remove
+				// the helper by using cancelHelperRemoval.
+				if ( sortable.isOver ) {
+
+					sortable.isOver = 0;
+					sortable.cancelHelperRemoval = true;
+
+					// Calling sortable's mouseStop would trigger a revert,
+					// so revert must be temporarily false until after mouseStop is called.
+					sortable.options._revert = sortable.options.revert;
+					sortable.options.revert = false;
+
+					sortable._trigger( "out", event, sortable._uiHash( sortable ) );
+					sortable._mouseStop( event, true );
+
+					// Restore sortable behaviors that were modfied
+					// when the draggable entered the sortable area (#9481)
+					sortable.options.revert = sortable.options._revert;
+					sortable.options.helper = sortable.options._helper;
+
+					if ( sortable.placeholder ) {
+						sortable.placeholder.remove();
+					}
+
+					// Restore and recalculate the draggable's offset considering the sortable
+					// may have modified them in unexpected ways. (#8809, #10669)
+					ui.helper.appendTo( draggable._parent );
+					draggable._refreshOffsets( event );
+					ui.position = draggable._generatePosition( event, true );
+
+					draggable._trigger( "fromSortable", event );
+
+					// Inform draggable that the helper is no longer in a valid drop zone
+					draggable.dropped = false;
+
+					// Need to refreshPositions of all sortables just in case removing
+					// from one sortable changes the location of other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					} );
+				}
+			}
+		} );
+	}
+} );
+
+$.ui.plugin.add( "draggable", "cursor", {
+	start: function( event, ui, instance ) {
+		var t = $( "body" ),
+			o = instance.options;
+
+		if ( t.css( "cursor" ) ) {
+			o._cursor = t.css( "cursor" );
+		}
+		t.css( "cursor", o.cursor );
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+		if ( o._cursor ) {
+			$( "body" ).css( "cursor", o._cursor );
+		}
+	}
+} );
+
+$.ui.plugin.add( "draggable", "opacity", {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+		if ( t.css( "opacity" ) ) {
+			o._opacity = t.css( "opacity" );
+		}
+		t.css( "opacity", o.opacity );
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+		if ( o._opacity ) {
+			$( ui.helper ).css( "opacity", o._opacity );
+		}
+	}
+} );
+
+$.ui.plugin.add( "draggable", "scroll", {
+	start: function( event, ui, i ) {
+		if ( !i.scrollParentNotHidden ) {
+			i.scrollParentNotHidden = i.helper.scrollParent( false );
+		}
+
+		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] &&
+				i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+			i.overflowOffset = i.scrollParentNotHidden.offset();
+		}
+	},
+	drag: function( event, ui, i  ) {
+
+		var o = i.options,
+			scrolled = false,
+			scrollParent = i.scrollParentNotHidden[ 0 ],
+			document = i.document[ 0 ];
+
+		if ( scrollParent !== document && scrollParent.tagName !== "HTML" ) {
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( ( i.overflowOffset.top + scrollParent.offsetHeight ) - event.pageY <
+						o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop + o.scrollSpeed;
+				} else if ( event.pageY - i.overflowOffset.top < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop - o.scrollSpeed;
+				}
+			}
+
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( ( i.overflowOffset.left + scrollParent.offsetWidth ) - event.pageX <
+						o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft + o.scrollSpeed;
+				} else if ( event.pageX - i.overflowOffset.left < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft - o.scrollSpeed;
+				}
+			}
+
+		} else {
+
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( event.pageY - $( document ).scrollTop() < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollTop( $( document ).scrollTop() - o.scrollSpeed );
+				} else if ( $( window ).height() - ( event.pageY - $( document ).scrollTop() ) <
+						o.scrollSensitivity ) {
+					scrolled = $( document ).scrollTop( $( document ).scrollTop() + o.scrollSpeed );
+				}
+			}
+
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( event.pageX - $( document ).scrollLeft() < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollLeft(
+						$( document ).scrollLeft() - o.scrollSpeed
+					);
+				} else if ( $( window ).width() - ( event.pageX - $( document ).scrollLeft() ) <
+						o.scrollSensitivity ) {
+					scrolled = $( document ).scrollLeft(
+						$( document ).scrollLeft() + o.scrollSpeed
+					);
+				}
+			}
+
+		}
+
+		if ( scrolled !== false && $.ui.ddmanager && !o.dropBehaviour ) {
+			$.ui.ddmanager.prepareOffsets( i, event );
+		}
+
+	}
+} );
+
+$.ui.plugin.add( "draggable", "snap", {
+	start: function( event, ui, i ) {
+
+		var o = i.options;
+
+		i.snapElements = [];
+
+		$( o.snap.constructor !== String ? ( o.snap.items || ":data(ui-draggable)" ) : o.snap )
+			.each( function() {
+				var $t = $( this ),
+					$o = $t.offset();
+				if ( this !== i.element[ 0 ] ) {
+					i.snapElements.push( {
+						item: this,
+						width: $t.outerWidth(), height: $t.outerHeight(),
+						top: $o.top, left: $o.left
+					} );
+				}
+			} );
+
+	},
+	drag: function( event, ui, inst ) {
+
+		var ts, bs, ls, rs, l, r, t, b, i, first,
+			o = inst.options,
+			d = o.snapTolerance,
+			x1 = ui.offset.left, x2 = x1 + inst.helperProportions.width,
+			y1 = ui.offset.top, y2 = y1 + inst.helperProportions.height;
+
+		for ( i = inst.snapElements.length - 1; i >= 0; i-- ) {
+
+			l = inst.snapElements[ i ].left - inst.margins.left;
+			r = l + inst.snapElements[ i ].width;
+			t = inst.snapElements[ i ].top - inst.margins.top;
+			b = t + inst.snapElements[ i ].height;
+
+			if ( x2 < l - d || x1 > r + d || y2 < t - d || y1 > b + d ||
+					!$.contains( inst.snapElements[ i ].item.ownerDocument,
+					inst.snapElements[ i ].item ) ) {
+				if ( inst.snapElements[ i ].snapping ) {
+					if ( inst.options.snap.release ) {
+						inst.options.snap.release.call(
+							inst.element,
+							event,
+							$.extend( inst._uiHash(), { snapItem: inst.snapElements[ i ].item } )
+						);
+					}
+				}
+				inst.snapElements[ i ].snapping = false;
+				continue;
+			}
+
+			if ( o.snapMode !== "inner" ) {
+				ts = Math.abs( t - y2 ) <= d;
+				bs = Math.abs( b - y1 ) <= d;
+				ls = Math.abs( l - x2 ) <= d;
+				rs = Math.abs( r - x1 ) <= d;
+				if ( ts ) {
+					ui.position.top = inst._convertPositionTo( "relative", {
+						top: t - inst.helperProportions.height,
+						left: 0
+					} ).top;
+				}
+				if ( bs ) {
+					ui.position.top = inst._convertPositionTo( "relative", {
+						top: b,
+						left: 0
+					} ).top;
+				}
+				if ( ls ) {
+					ui.position.left = inst._convertPositionTo( "relative", {
+						top: 0,
+						left: l - inst.helperProportions.width
+					} ).left;
+				}
+				if ( rs ) {
+					ui.position.left = inst._convertPositionTo( "relative", {
+						top: 0,
+						left: r
+					} ).left;
+				}
+			}
+
+			first = ( ts || bs || ls || rs );
+
+			if ( o.snapMode !== "outer" ) {
+				ts = Math.abs( t - y1 ) <= d;
+				bs = Math.abs( b - y2 ) <= d;
+				ls = Math.abs( l - x1 ) <= d;
+				rs = Math.abs( r - x2 ) <= d;
+				if ( ts ) {
+					ui.position.top = inst._convertPositionTo( "relative", {
+						top: t,
+						left: 0
+					} ).top;
+				}
+				if ( bs ) {
+					ui.position.top = inst._convertPositionTo( "relative", {
+						top: b - inst.helperProportions.height,
+						left: 0
+					} ).top;
+				}
+				if ( ls ) {
+					ui.position.left = inst._convertPositionTo( "relative", {
+						top: 0,
+						left: l
+					} ).left;
+				}
+				if ( rs ) {
+					ui.position.left = inst._convertPositionTo( "relative", {
+						top: 0,
+						left: r - inst.helperProportions.width
+					} ).left;
+				}
+			}
+
+			if ( !inst.snapElements[ i ].snapping && ( ts || bs || ls || rs || first ) ) {
+				if ( inst.options.snap.snap ) {
+					inst.options.snap.snap.call(
+						inst.element,
+						event,
+						$.extend( inst._uiHash(), {
+							snapItem: inst.snapElements[ i ].item
+						} ) );
+				}
+			}
+			inst.snapElements[ i ].snapping = ( ts || bs || ls || rs || first );
+
+		}
+
+	}
+} );
+
+$.ui.plugin.add( "draggable", "stack", {
+	start: function( event, ui, instance ) {
+		var min,
+			o = instance.options,
+			group = $.makeArray( $( o.stack ) ).sort( function( a, b ) {
+				return ( parseInt( $( a ).css( "zIndex" ), 10 ) || 0 ) -
+					( parseInt( $( b ).css( "zIndex" ), 10 ) || 0 );
+			} );
+
+		if ( !group.length ) {
+			return;
+		}
+
+		min = parseInt( $( group[ 0 ] ).css( "zIndex" ), 10 ) || 0;
+		$( group ).each( function( i ) {
+			$( this ).css( "zIndex", min + i );
+		} );
+		this.css( "zIndex", ( min + group.length ) );
+	}
+} );
+
+$.ui.plugin.add( "draggable", "zIndex", {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+
+		if ( t.css( "zIndex" ) ) {
+			o._zIndex = t.css( "zIndex" );
+		}
+		t.css( "zIndex", o.zIndex );
+	},
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+
+		if ( o._zIndex ) {
+			$( ui.helper ).css( "zIndex", o._zIndex );
+		}
+	}
+} );
+
+return $.ui.draggable;
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widgets/droppable.js":
+/*!********************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widgets/droppable.js ***!
+  \********************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Droppable 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Droppable
+//>>group: Interactions
+//>>description: Enables drop targets for draggable elements.
+//>>docs: http://api.jqueryui.com/droppable/
+//>>demos: http://jqueryui.com/droppable/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+			__webpack_require__(/*! ./draggable */ "./node_modules/jquery-ui/ui/widgets/draggable.js"),
+			__webpack_require__(/*! ./mouse */ "./node_modules/jquery-ui/ui/widgets/mouse.js"),
+			__webpack_require__(/*! ../version */ "./node_modules/jquery-ui/ui/version.js"),
+			__webpack_require__(/*! ../widget */ "./node_modules/jquery-ui/ui/widget.js")
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+$.widget( "ui.droppable", {
+	version: "1.13.2",
+	widgetEventPrefix: "drop",
+	options: {
+		accept: "*",
+		addClasses: true,
+		greedy: false,
+		scope: "default",
+		tolerance: "intersect",
+
+		// Callbacks
+		activate: null,
+		deactivate: null,
+		drop: null,
+		out: null,
+		over: null
+	},
+	_create: function() {
+
+		var proportions,
+			o = this.options,
+			accept = o.accept;
+
+		this.isover = false;
+		this.isout = true;
+
+		this.accept = typeof accept === "function" ? accept : function( d ) {
+			return d.is( accept );
+		};
+
+		this.proportions = function( /* valueToWrite */ ) {
+			if ( arguments.length ) {
+
+				// Store the droppable's proportions
+				proportions = arguments[ 0 ];
+			} else {
+
+				// Retrieve or derive the droppable's proportions
+				return proportions ?
+					proportions :
+					proportions = {
+						width: this.element[ 0 ].offsetWidth,
+						height: this.element[ 0 ].offsetHeight
+					};
+			}
+		};
+
+		this._addToManager( o.scope );
+
+		if ( o.addClasses ) {
+			this._addClass( "ui-droppable" );
+		}
+
+	},
+
+	_addToManager: function( scope ) {
+
+		// Add the reference and positions to the manager
+		$.ui.ddmanager.droppables[ scope ] = $.ui.ddmanager.droppables[ scope ] || [];
+		$.ui.ddmanager.droppables[ scope ].push( this );
+	},
+
+	_splice: function( drop ) {
+		var i = 0;
+		for ( ; i < drop.length; i++ ) {
+			if ( drop[ i ] === this ) {
+				drop.splice( i, 1 );
+			}
+		}
+	},
+
+	_destroy: function() {
+		var drop = $.ui.ddmanager.droppables[ this.options.scope ];
+
+		this._splice( drop );
+	},
+
+	_setOption: function( key, value ) {
+
+		if ( key === "accept" ) {
+			this.accept = typeof value === "function" ? value : function( d ) {
+				return d.is( value );
+			};
+		} else if ( key === "scope" ) {
+			var drop = $.ui.ddmanager.droppables[ this.options.scope ];
+
+			this._splice( drop );
+			this._addToManager( value );
+		}
+
+		this._super( key, value );
+	},
+
+	_activate: function( event ) {
+		var draggable = $.ui.ddmanager.current;
+
+		this._addActiveClass();
+		if ( draggable ) {
+			this._trigger( "activate", event, this.ui( draggable ) );
+		}
+	},
+
+	_deactivate: function( event ) {
+		var draggable = $.ui.ddmanager.current;
+
+		this._removeActiveClass();
+		if ( draggable ) {
+			this._trigger( "deactivate", event, this.ui( draggable ) );
+		}
+	},
+
+	_over: function( event ) {
+
+		var draggable = $.ui.ddmanager.current;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem ||
+				draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem ||
+				draggable.element ) ) ) {
+			this._addHoverClass();
+			this._trigger( "over", event, this.ui( draggable ) );
+		}
+
+	},
+
+	_out: function( event ) {
+
+		var draggable = $.ui.ddmanager.current;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem ||
+				draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem ||
+				draggable.element ) ) ) {
+			this._removeHoverClass();
+			this._trigger( "out", event, this.ui( draggable ) );
+		}
+
+	},
+
+	_drop: function( event, custom ) {
+
+		var draggable = custom || $.ui.ddmanager.current,
+			childrenIntersection = false;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem ||
+				draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return false;
+		}
+
+		this.element
+			.find( ":data(ui-droppable)" )
+			.not( ".ui-draggable-dragging" )
+			.each( function() {
+				var inst = $( this ).droppable( "instance" );
+				if (
+					inst.options.greedy &&
+					!inst.options.disabled &&
+					inst.options.scope === draggable.options.scope &&
+					inst.accept.call(
+						inst.element[ 0 ], ( draggable.currentItem || draggable.element )
+					) &&
+					$.ui.intersect(
+						draggable,
+						$.extend( inst, { offset: inst.element.offset() } ),
+						inst.options.tolerance, event
+					)
+				) {
+					childrenIntersection = true;
+					return false;
+				}
+			} );
+		if ( childrenIntersection ) {
+			return false;
+		}
+
+		if ( this.accept.call( this.element[ 0 ],
+				( draggable.currentItem || draggable.element ) ) ) {
+			this._removeActiveClass();
+			this._removeHoverClass();
+
+			this._trigger( "drop", event, this.ui( draggable ) );
+			return this.element;
+		}
+
+		return false;
+
+	},
+
+	ui: function( c ) {
+		return {
+			draggable: ( c.currentItem || c.element ),
+			helper: c.helper,
+			position: c.position,
+			offset: c.positionAbs
+		};
+	},
+
+	// Extension points just to make backcompat sane and avoid duplicating logic
+	// TODO: Remove in 1.14 along with call to it below
+	_addHoverClass: function() {
+		this._addClass( "ui-droppable-hover" );
+	},
+
+	_removeHoverClass: function() {
+		this._removeClass( "ui-droppable-hover" );
+	},
+
+	_addActiveClass: function() {
+		this._addClass( "ui-droppable-active" );
+	},
+
+	_removeActiveClass: function() {
+		this._removeClass( "ui-droppable-active" );
+	}
+} );
+
+$.ui.intersect = ( function() {
+	function isOverAxis( x, reference, size ) {
+		return ( x >= reference ) && ( x < ( reference + size ) );
+	}
+
+	return function( draggable, droppable, toleranceMode, event ) {
+
+		if ( !droppable.offset ) {
+			return false;
+		}
+
+		var x1 = ( draggable.positionAbs ||
+				draggable.position.absolute ).left + draggable.margins.left,
+			y1 = ( draggable.positionAbs ||
+				draggable.position.absolute ).top + draggable.margins.top,
+			x2 = x1 + draggable.helperProportions.width,
+			y2 = y1 + draggable.helperProportions.height,
+			l = droppable.offset.left,
+			t = droppable.offset.top,
+			r = l + droppable.proportions().width,
+			b = t + droppable.proportions().height;
+
+		switch ( toleranceMode ) {
+		case "fit":
+			return ( l <= x1 && x2 <= r && t <= y1 && y2 <= b );
+		case "intersect":
+			return ( l < x1 + ( draggable.helperProportions.width / 2 ) && // Right Half
+				x2 - ( draggable.helperProportions.width / 2 ) < r && // Left Half
+				t < y1 + ( draggable.helperProportions.height / 2 ) && // Bottom Half
+				y2 - ( draggable.helperProportions.height / 2 ) < b ); // Top Half
+		case "pointer":
+			return isOverAxis( event.pageY, t, droppable.proportions().height ) &&
+				isOverAxis( event.pageX, l, droppable.proportions().width );
+		case "touch":
+			return (
+				( y1 >= t && y1 <= b ) || // Top edge touching
+				( y2 >= t && y2 <= b ) || // Bottom edge touching
+				( y1 < t && y2 > b ) // Surrounded vertically
+			) && (
+				( x1 >= l && x1 <= r ) || // Left edge touching
+				( x2 >= l && x2 <= r ) || // Right edge touching
+				( x1 < l && x2 > r ) // Surrounded horizontally
+			);
+		default:
+			return false;
+		}
+	};
+} )();
+
+/*
+	This manager tracks offsets of draggables and droppables
+*/
+$.ui.ddmanager = {
+	current: null,
+	droppables: { "default": [] },
+	prepareOffsets: function( t, event ) {
+
+		var i, j,
+			m = $.ui.ddmanager.droppables[ t.options.scope ] || [],
+			type = event ? event.type : null, // workaround for #2317
+			list = ( t.currentItem || t.element ).find( ":data(ui-droppable)" ).addBack();
+
+		droppablesLoop: for ( i = 0; i < m.length; i++ ) {
+
+			// No disabled and non-accepted
+			if ( m[ i ].options.disabled || ( t && !m[ i ].accept.call( m[ i ].element[ 0 ],
+					( t.currentItem || t.element ) ) ) ) {
+				continue;
+			}
+
+			// Filter out elements in the current dragged item
+			for ( j = 0; j < list.length; j++ ) {
+				if ( list[ j ] === m[ i ].element[ 0 ] ) {
+					m[ i ].proportions().height = 0;
+					continue droppablesLoop;
+				}
+			}
+
+			m[ i ].visible = m[ i ].element.css( "display" ) !== "none";
+			if ( !m[ i ].visible ) {
+				continue;
+			}
+
+			// Activate the droppable if used directly from draggables
+			if ( type === "mousedown" ) {
+				m[ i ]._activate.call( m[ i ], event );
+			}
+
+			m[ i ].offset = m[ i ].element.offset();
+			m[ i ].proportions( {
+				width: m[ i ].element[ 0 ].offsetWidth,
+				height: m[ i ].element[ 0 ].offsetHeight
+			} );
+
+		}
+
+	},
+	drop: function( draggable, event ) {
+
+		var dropped = false;
+
+		// Create a copy of the droppables in case the list changes during the drop (#9116)
+		$.each( ( $.ui.ddmanager.droppables[ draggable.options.scope ] || [] ).slice(), function() {
+
+			if ( !this.options ) {
+				return;
+			}
+			if ( !this.options.disabled && this.visible &&
+					$.ui.intersect( draggable, this, this.options.tolerance, event ) ) {
+				dropped = this._drop.call( this, event ) || dropped;
+			}
+
+			if ( !this.options.disabled && this.visible && this.accept.call( this.element[ 0 ],
+					( draggable.currentItem || draggable.element ) ) ) {
+				this.isout = true;
+				this.isover = false;
+				this._deactivate.call( this, event );
+			}
+
+		} );
+		return dropped;
+
+	},
+	dragStart: function( draggable, event ) {
+
+		// Listen for scrolling so that if the dragging causes scrolling the position of the
+		// droppables can be recalculated (see #5003)
+		draggable.element.parentsUntil( "body" ).on( "scroll.droppable", function() {
+			if ( !draggable.options.refreshPositions ) {
+				$.ui.ddmanager.prepareOffsets( draggable, event );
+			}
+		} );
+	},
+	drag: function( draggable, event ) {
+
+		// If you have a highly dynamic page, you might try this option. It renders positions
+		// every time you move the mouse.
+		if ( draggable.options.refreshPositions ) {
+			$.ui.ddmanager.prepareOffsets( draggable, event );
+		}
+
+		// Run through all droppables and check their positions based on specific tolerance options
+		$.each( $.ui.ddmanager.droppables[ draggable.options.scope ] || [], function() {
+
+			if ( this.options.disabled || this.greedyChild || !this.visible ) {
+				return;
+			}
+
+			var parentInstance, scope, parent,
+				intersects = $.ui.intersect( draggable, this, this.options.tolerance, event ),
+				c = !intersects && this.isover ?
+					"isout" :
+					( intersects && !this.isover ? "isover" : null );
+			if ( !c ) {
+				return;
+			}
+
+			if ( this.options.greedy ) {
+
+				// find droppable parents with same scope
+				scope = this.options.scope;
+				parent = this.element.parents( ":data(ui-droppable)" ).filter( function() {
+					return $( this ).droppable( "instance" ).options.scope === scope;
+				} );
+
+				if ( parent.length ) {
+					parentInstance = $( parent[ 0 ] ).droppable( "instance" );
+					parentInstance.greedyChild = ( c === "isover" );
+				}
+			}
+
+			// We just moved into a greedy child
+			if ( parentInstance && c === "isover" ) {
+				parentInstance.isover = false;
+				parentInstance.isout = true;
+				parentInstance._out.call( parentInstance, event );
+			}
+
+			this[ c ] = true;
+			this[ c === "isout" ? "isover" : "isout" ] = false;
+			this[ c === "isover" ? "_over" : "_out" ].call( this, event );
+
+			// We just moved out of a greedy child
+			if ( parentInstance && c === "isout" ) {
+				parentInstance.isout = false;
+				parentInstance.isover = true;
+				parentInstance._over.call( parentInstance, event );
+			}
+		} );
+
+	},
+	dragStop: function( draggable, event ) {
+		draggable.element.parentsUntil( "body" ).off( "scroll.droppable" );
+
+		// Call prepareOffsets one final time since IE does not fire return scroll events when
+		// overflow was caused by drag (see #5003)
+		if ( !draggable.options.refreshPositions ) {
+			$.ui.ddmanager.prepareOffsets( draggable, event );
+		}
+	}
+};
+
+// DEPRECATED
+// TODO: switch return back to widget declaration at top of file when this is removed
+if ( $.uiBackCompat !== false ) {
+
+	// Backcompat for activeClass and hoverClass options
+	$.widget( "ui.droppable", $.ui.droppable, {
+		options: {
+			hoverClass: false,
+			activeClass: false
+		},
+		_addActiveClass: function() {
+			this._super();
+			if ( this.options.activeClass ) {
+				this.element.addClass( this.options.activeClass );
+			}
+		},
+		_removeActiveClass: function() {
+			this._super();
+			if ( this.options.activeClass ) {
+				this.element.removeClass( this.options.activeClass );
+			}
+		},
+		_addHoverClass: function() {
+			this._super();
+			if ( this.options.hoverClass ) {
+				this.element.addClass( this.options.hoverClass );
+			}
+		},
+		_removeHoverClass: function() {
+			this._super();
+			if ( this.options.hoverClass ) {
+				this.element.removeClass( this.options.hoverClass );
+			}
+		}
+	} );
+}
+
+return $.ui.droppable;
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widgets/mouse.js":
+/*!****************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widgets/mouse.js ***!
+  \****************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Mouse 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Mouse
+//>>group: Widgets
+//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
+//>>docs: http://api.jqueryui.com/mouse/
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+			__webpack_require__(/*! ../ie */ "./node_modules/jquery-ui/ui/ie.js"),
+			__webpack_require__(/*! ../version */ "./node_modules/jquery-ui/ui/version.js"),
+			__webpack_require__(/*! ../widget */ "./node_modules/jquery-ui/ui/widget.js")
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+var mouseHandled = false;
+$( document ).on( "mouseup", function() {
+	mouseHandled = false;
+} );
+
+return $.widget( "ui.mouse", {
+	version: "1.13.2",
+	options: {
+		cancel: "input, textarea, button, select, option",
+		distance: 1,
+		delay: 0
+	},
+	_mouseInit: function() {
+		var that = this;
+
+		this.element
+			.on( "mousedown." + this.widgetName, function( event ) {
+				return that._mouseDown( event );
+			} )
+			.on( "click." + this.widgetName, function( event ) {
+				if ( true === $.data( event.target, that.widgetName + ".preventClickEvent" ) ) {
+					$.removeData( event.target, that.widgetName + ".preventClickEvent" );
+					event.stopImmediatePropagation();
+					return false;
+				}
+			} );
+
+		this.started = false;
+	},
+
+	// TODO: make sure destroying one instance of mouse doesn't mess with
+	// other instances of mouse
+	_mouseDestroy: function() {
+		this.element.off( "." + this.widgetName );
+		if ( this._mouseMoveDelegate ) {
+			this.document
+				.off( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+				.off( "mouseup." + this.widgetName, this._mouseUpDelegate );
+		}
+	},
+
+	_mouseDown: function( event ) {
+
+		// don't let more than one widget handle mouseStart
+		if ( mouseHandled ) {
+			return;
+		}
+
+		this._mouseMoved = false;
+
+		// We may have missed mouseup (out of window)
+		if ( this._mouseStarted ) {
+			this._mouseUp( event );
+		}
+
+		this._mouseDownEvent = event;
+
+		var that = this,
+			btnIsLeft = ( event.which === 1 ),
+
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = ( typeof this.options.cancel === "string" && event.target.nodeName ?
+				$( event.target ).closest( this.options.cancel ).length : false );
+		if ( !btnIsLeft || elIsCancel || !this._mouseCapture( event ) ) {
+			return true;
+		}
+
+		this.mouseDelayMet = !this.options.delay;
+		if ( !this.mouseDelayMet ) {
+			this._mouseDelayTimer = setTimeout( function() {
+				that.mouseDelayMet = true;
+			}, this.options.delay );
+		}
+
+		if ( this._mouseDistanceMet( event ) && this._mouseDelayMet( event ) ) {
+			this._mouseStarted = ( this._mouseStart( event ) !== false );
+			if ( !this._mouseStarted ) {
+				event.preventDefault();
+				return true;
+			}
+		}
+
+		// Click event may never have fired (Gecko & Opera)
+		if ( true === $.data( event.target, this.widgetName + ".preventClickEvent" ) ) {
+			$.removeData( event.target, this.widgetName + ".preventClickEvent" );
+		}
+
+		// These delegates are required to keep context
+		this._mouseMoveDelegate = function( event ) {
+			return that._mouseMove( event );
+		};
+		this._mouseUpDelegate = function( event ) {
+			return that._mouseUp( event );
+		};
+
+		this.document
+			.on( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.on( "mouseup." + this.widgetName, this._mouseUpDelegate );
+
+		event.preventDefault();
+
+		mouseHandled = true;
+		return true;
+	},
+
+	_mouseMove: function( event ) {
+
+		// Only check for mouseups outside the document if you've moved inside the document
+		// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+		// fire a mousemove event if content is placed under the cursor. See #7778
+		// Support: IE <9
+		if ( this._mouseMoved ) {
+
+			// IE mouseup check - mouseup happened when mouse was out of window
+			if ( $.ui.ie && ( !document.documentMode || document.documentMode < 9 ) &&
+					!event.button ) {
+				return this._mouseUp( event );
+
+			// Iframe mouseup check - mouseup occurred in another document
+			} else if ( !event.which ) {
+
+				// Support: Safari <=8 - 9
+				// Safari sets which to 0 if you press any of the following keys
+				// during a drag (#14461)
+				if ( event.originalEvent.altKey || event.originalEvent.ctrlKey ||
+						event.originalEvent.metaKey || event.originalEvent.shiftKey ) {
+					this.ignoreMissingWhich = true;
+				} else if ( !this.ignoreMissingWhich ) {
+					return this._mouseUp( event );
+				}
+			}
+		}
+
+		if ( event.which || event.button ) {
+			this._mouseMoved = true;
+		}
+
+		if ( this._mouseStarted ) {
+			this._mouseDrag( event );
+			return event.preventDefault();
+		}
+
+		if ( this._mouseDistanceMet( event ) && this._mouseDelayMet( event ) ) {
+			this._mouseStarted =
+				( this._mouseStart( this._mouseDownEvent, event ) !== false );
+			if ( this._mouseStarted ) {
+				this._mouseDrag( event );
+			} else {
+				this._mouseUp( event );
+			}
+		}
+
+		return !this._mouseStarted;
+	},
+
+	_mouseUp: function( event ) {
+		this.document
+			.off( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.off( "mouseup." + this.widgetName, this._mouseUpDelegate );
+
+		if ( this._mouseStarted ) {
+			this._mouseStarted = false;
+
+			if ( event.target === this._mouseDownEvent.target ) {
+				$.data( event.target, this.widgetName + ".preventClickEvent", true );
+			}
+
+			this._mouseStop( event );
+		}
+
+		if ( this._mouseDelayTimer ) {
+			clearTimeout( this._mouseDelayTimer );
+			delete this._mouseDelayTimer;
+		}
+
+		this.ignoreMissingWhich = false;
+		mouseHandled = false;
+		event.preventDefault();
+	},
+
+	_mouseDistanceMet: function( event ) {
+		return ( Math.max(
+				Math.abs( this._mouseDownEvent.pageX - event.pageX ),
+				Math.abs( this._mouseDownEvent.pageY - event.pageY )
+			) >= this.options.distance
+		);
+	},
+
+	_mouseDelayMet: function( /* event */ ) {
+		return this.mouseDelayMet;
+	},
+
+	// These are placeholder methods, to be overriden by extending plugin
+	_mouseStart: function( /* event */ ) {},
+	_mouseDrag: function( /* event */ ) {},
+	_mouseStop: function( /* event */ ) {},
+	_mouseCapture: function( /* event */ ) {
+		return true;
+	}
+} );
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/ui/widgets/selectable.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/jquery-ui/ui/widgets/selectable.js ***!
+  \*********************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery UI Selectable 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Selectable
+//>>group: Interactions
+//>>description: Allows groups of elements to be selected with the mouse.
+//>>docs: http://api.jqueryui.com/selectable/
+//>>demos: http://jqueryui.com/selectable/
+//>>css.structure: ../../themes/base/selectable.css
+
+( function( factory ) {
+	"use strict";
+
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+			__webpack_require__(/*! ./mouse */ "./node_modules/jquery-ui/ui/widgets/mouse.js"),
+			__webpack_require__(/*! ../version */ "./node_modules/jquery-ui/ui/version.js"),
+			__webpack_require__(/*! ../widget */ "./node_modules/jquery-ui/ui/widget.js")
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+} )( function( $ ) {
+"use strict";
+
+return $.widget( "ui.selectable", $.ui.mouse, {
+	version: "1.13.2",
+	options: {
+		appendTo: "body",
+		autoRefresh: true,
+		distance: 0,
+		filter: "*",
+		tolerance: "touch",
+
+		// Callbacks
+		selected: null,
+		selecting: null,
+		start: null,
+		stop: null,
+		unselected: null,
+		unselecting: null
+	},
+	_create: function() {
+		var that = this;
+
+		this._addClass( "ui-selectable" );
+
+		this.dragged = false;
+
+		// Cache selectee children based on filter
+		this.refresh = function() {
+			that.elementPos = $( that.element[ 0 ] ).offset();
+			that.selectees = $( that.options.filter, that.element[ 0 ] );
+			that._addClass( that.selectees, "ui-selectee" );
+			that.selectees.each( function() {
+				var $this = $( this ),
+					selecteeOffset = $this.offset(),
+					pos = {
+						left: selecteeOffset.left - that.elementPos.left,
+						top: selecteeOffset.top - that.elementPos.top
+					};
+				$.data( this, "selectable-item", {
+					element: this,
+					$element: $this,
+					left: pos.left,
+					top: pos.top,
+					right: pos.left + $this.outerWidth(),
+					bottom: pos.top + $this.outerHeight(),
+					startselected: false,
+					selected: $this.hasClass( "ui-selected" ),
+					selecting: $this.hasClass( "ui-selecting" ),
+					unselecting: $this.hasClass( "ui-unselecting" )
+				} );
+			} );
+		};
+		this.refresh();
+
+		this._mouseInit();
+
+		this.helper = $( "<div>" );
+		this._addClass( this.helper, "ui-selectable-helper" );
+	},
+
+	_destroy: function() {
+		this.selectees.removeData( "selectable-item" );
+		this._mouseDestroy();
+	},
+
+	_mouseStart: function( event ) {
+		var that = this,
+			options = this.options;
+
+		this.opos = [ event.pageX, event.pageY ];
+		this.elementPos = $( this.element[ 0 ] ).offset();
+
+		if ( this.options.disabled ) {
+			return;
+		}
+
+		this.selectees = $( options.filter, this.element[ 0 ] );
+
+		this._trigger( "start", event );
+
+		$( options.appendTo ).append( this.helper );
+
+		// position helper (lasso)
+		this.helper.css( {
+			"left": event.pageX,
+			"top": event.pageY,
+			"width": 0,
+			"height": 0
+		} );
+
+		if ( options.autoRefresh ) {
+			this.refresh();
+		}
+
+		this.selectees.filter( ".ui-selected" ).each( function() {
+			var selectee = $.data( this, "selectable-item" );
+			selectee.startselected = true;
+			if ( !event.metaKey && !event.ctrlKey ) {
+				that._removeClass( selectee.$element, "ui-selected" );
+				selectee.selected = false;
+				that._addClass( selectee.$element, "ui-unselecting" );
+				selectee.unselecting = true;
+
+				// selectable UNSELECTING callback
+				that._trigger( "unselecting", event, {
+					unselecting: selectee.element
+				} );
+			}
+		} );
+
+		$( event.target ).parents().addBack().each( function() {
+			var doSelect,
+				selectee = $.data( this, "selectable-item" );
+			if ( selectee ) {
+				doSelect = ( !event.metaKey && !event.ctrlKey ) ||
+					!selectee.$element.hasClass( "ui-selected" );
+				that._removeClass( selectee.$element, doSelect ? "ui-unselecting" : "ui-selected" )
+					._addClass( selectee.$element, doSelect ? "ui-selecting" : "ui-unselecting" );
+				selectee.unselecting = !doSelect;
+				selectee.selecting = doSelect;
+				selectee.selected = doSelect;
+
+				// selectable (UN)SELECTING callback
+				if ( doSelect ) {
+					that._trigger( "selecting", event, {
+						selecting: selectee.element
+					} );
+				} else {
+					that._trigger( "unselecting", event, {
+						unselecting: selectee.element
+					} );
+				}
+				return false;
+			}
+		} );
+
+	},
+
+	_mouseDrag: function( event ) {
+
+		this.dragged = true;
+
+		if ( this.options.disabled ) {
+			return;
+		}
+
+		var tmp,
+			that = this,
+			options = this.options,
+			x1 = this.opos[ 0 ],
+			y1 = this.opos[ 1 ],
+			x2 = event.pageX,
+			y2 = event.pageY;
+
+		if ( x1 > x2 ) {
+			tmp = x2; x2 = x1; x1 = tmp;
+		}
+		if ( y1 > y2 ) {
+			tmp = y2; y2 = y1; y1 = tmp;
+		}
+		this.helper.css( { left: x1, top: y1, width: x2 - x1, height: y2 - y1 } );
+
+		this.selectees.each( function() {
+			var selectee = $.data( this, "selectable-item" ),
+				hit = false,
+				offset = {};
+
+			//prevent helper from being selected if appendTo: selectable
+			if ( !selectee || selectee.element === that.element[ 0 ] ) {
+				return;
+			}
+
+			offset.left   = selectee.left   + that.elementPos.left;
+			offset.right  = selectee.right  + that.elementPos.left;
+			offset.top    = selectee.top    + that.elementPos.top;
+			offset.bottom = selectee.bottom + that.elementPos.top;
+
+			if ( options.tolerance === "touch" ) {
+				hit = ( !( offset.left > x2 || offset.right < x1 || offset.top > y2 ||
+                    offset.bottom < y1 ) );
+			} else if ( options.tolerance === "fit" ) {
+				hit = ( offset.left > x1 && offset.right < x2 && offset.top > y1 &&
+                    offset.bottom < y2 );
+			}
+
+			if ( hit ) {
+
+				// SELECT
+				if ( selectee.selected ) {
+					that._removeClass( selectee.$element, "ui-selected" );
+					selectee.selected = false;
+				}
+				if ( selectee.unselecting ) {
+					that._removeClass( selectee.$element, "ui-unselecting" );
+					selectee.unselecting = false;
+				}
+				if ( !selectee.selecting ) {
+					that._addClass( selectee.$element, "ui-selecting" );
+					selectee.selecting = true;
+
+					// selectable SELECTING callback
+					that._trigger( "selecting", event, {
+						selecting: selectee.element
+					} );
+				}
+			} else {
+
+				// UNSELECT
+				if ( selectee.selecting ) {
+					if ( ( event.metaKey || event.ctrlKey ) && selectee.startselected ) {
+						that._removeClass( selectee.$element, "ui-selecting" );
+						selectee.selecting = false;
+						that._addClass( selectee.$element, "ui-selected" );
+						selectee.selected = true;
+					} else {
+						that._removeClass( selectee.$element, "ui-selecting" );
+						selectee.selecting = false;
+						if ( selectee.startselected ) {
+							that._addClass( selectee.$element, "ui-unselecting" );
+							selectee.unselecting = true;
+						}
+
+						// selectable UNSELECTING callback
+						that._trigger( "unselecting", event, {
+							unselecting: selectee.element
+						} );
+					}
+				}
+				if ( selectee.selected ) {
+					if ( !event.metaKey && !event.ctrlKey && !selectee.startselected ) {
+						that._removeClass( selectee.$element, "ui-selected" );
+						selectee.selected = false;
+
+						that._addClass( selectee.$element, "ui-unselecting" );
+						selectee.unselecting = true;
+
+						// selectable UNSELECTING callback
+						that._trigger( "unselecting", event, {
+							unselecting: selectee.element
+						} );
+					}
+				}
+			}
+		} );
+
+		return false;
+	},
+
+	_mouseStop: function( event ) {
+		var that = this;
+
+		this.dragged = false;
+
+		$( ".ui-unselecting", this.element[ 0 ] ).each( function() {
+			var selectee = $.data( this, "selectable-item" );
+			that._removeClass( selectee.$element, "ui-unselecting" );
+			selectee.unselecting = false;
+			selectee.startselected = false;
+			that._trigger( "unselected", event, {
+				unselected: selectee.element
+			} );
+		} );
+		$( ".ui-selecting", this.element[ 0 ] ).each( function() {
+			var selectee = $.data( this, "selectable-item" );
+			that._removeClass( selectee.$element, "ui-selecting" )
+				._addClass( selectee.$element, "ui-selected" );
+			selectee.selecting = false;
+			selectee.selected = true;
+			selectee.startselected = true;
+			that._trigger( "selected", event, {
+				selected: selectee.element
+			} );
+		} );
+		this._trigger( "stop", event );
+
+		this.helper.remove();
+
+		return false;
+	}
+
+} );
+
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery/dist/jquery.js":
+/*!********************************************!*\
+  !*** ./node_modules/jquery/dist/jquery.js ***!
+  \********************************************/
+/***/ (function(module, exports) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery JavaScript Library v3.6.1
+ * https://jquery.com/
+ *
+ * Includes Sizzle.js
+ * https://sizzlejs.com/
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license
+ * https://jquery.org/license
+ *
+ * Date: 2022-08-26T17:52Z
+ */
+( function( global, factory ) {
+
+	"use strict";
+
+	if (  true && typeof module.exports === "object" ) {
+
+		// For CommonJS and CommonJS-like environments where a proper `window`
+		// is present, execute the factory and get jQuery.
+		// For environments that do not have a `window` with a `document`
+		// (such as Node.js), expose a factory as module.exports.
+		// This accentuates the need for the creation of a real `window`.
+		// e.g. var jQuery = require("jquery")(window);
+		// See ticket trac-14549 for more info.
+		module.exports = global.document ?
+			factory( global, true ) :
+			function( w ) {
+				if ( !w.document ) {
+					throw new Error( "jQuery requires a window with a document" );
+				}
+				return factory( w );
+			};
+	} else {
+		factory( global );
+	}
+
+// Pass this if window is not defined yet
+} )( typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
+
+// Edge <= 12 - 13+, Firefox <=18 - 45+, IE 10 - 11, Safari 5.1 - 9+, iOS 6 - 9.1
+// throw exceptions when non-strict code (e.g., ASP.NET 4.5) accesses strict mode
+// arguments.callee.caller (trac-13335). But as of jQuery 3.0 (2016), strict mode should be common
+// enough that all such attempts are guarded in a try block.
+"use strict";
+
+var arr = [];
+
+var getProto = Object.getPrototypeOf;
+
+var slice = arr.slice;
+
+var flat = arr.flat ? function( array ) {
+	return arr.flat.call( array );
+} : function( array ) {
+	return arr.concat.apply( [], array );
+};
+
+
+var push = arr.push;
+
+var indexOf = arr.indexOf;
+
+var class2type = {};
+
+var toString = class2type.toString;
+
+var hasOwn = class2type.hasOwnProperty;
+
+var fnToString = hasOwn.toString;
+
+var ObjectFunctionString = fnToString.call( Object );
+
+var support = {};
+
+var isFunction = function isFunction( obj ) {
+
+		// Support: Chrome <=57, Firefox <=52
+		// In some browsers, typeof returns "function" for HTML <object> elements
+		// (i.e., `typeof document.createElement( "object" ) === "function"`).
+		// We don't want to classify *any* DOM node as a function.
+		// Support: QtWeb <=3.8.5, WebKit <=534.34, wkhtmltopdf tool <=0.12.5
+		// Plus for old WebKit, typeof returns "function" for HTML collections
+		// (e.g., `typeof document.getElementsByTagName("div") === "function"`). (gh-4756)
+		return typeof obj === "function" && typeof obj.nodeType !== "number" &&
+			typeof obj.item !== "function";
+	};
+
+
+var isWindow = function isWindow( obj ) {
+		return obj != null && obj === obj.window;
+	};
+
+
+var document = window.document;
+
+
+
+	var preservedScriptAttributes = {
+		type: true,
+		src: true,
+		nonce: true,
+		noModule: true
+	};
+
+	function DOMEval( code, node, doc ) {
+		doc = doc || document;
+
+		var i, val,
+			script = doc.createElement( "script" );
+
+		script.text = code;
+		if ( node ) {
+			for ( i in preservedScriptAttributes ) {
+
+				// Support: Firefox 64+, Edge 18+
+				// Some browsers don't support the "nonce" property on scripts.
+				// On the other hand, just using `getAttribute` is not enough as
+				// the `nonce` attribute is reset to an empty string whenever it
+				// becomes browsing-context connected.
+				// See https://github.com/whatwg/html/issues/2369
+				// See https://html.spec.whatwg.org/#nonce-attributes
+				// The `node.getAttribute` check was added for the sake of
+				// `jQuery.globalEval` so that it can fake a nonce-containing node
+				// via an object.
+				val = node[ i ] || node.getAttribute && node.getAttribute( i );
+				if ( val ) {
+					script.setAttribute( i, val );
+				}
+			}
+		}
+		doc.head.appendChild( script ).parentNode.removeChild( script );
+	}
+
+
+function toType( obj ) {
+	if ( obj == null ) {
+		return obj + "";
+	}
+
+	// Support: Android <=2.3 only (functionish RegExp)
+	return typeof obj === "object" || typeof obj === "function" ?
+		class2type[ toString.call( obj ) ] || "object" :
+		typeof obj;
+}
+/* global Symbol */
+// Defining this global in .eslintrc.json would create a danger of using the global
+// unguarded in another place, it seems safer to define global only for this module
+
+
+
+var
+	version = "3.6.1",
+
+	// Define a local copy of jQuery
+	jQuery = function( selector, context ) {
+
+		// The jQuery object is actually just the init constructor 'enhanced'
+		// Need init if jQuery is called (just allow error to be thrown if not included)
+		return new jQuery.fn.init( selector, context );
+	};
+
+jQuery.fn = jQuery.prototype = {
+
+	// The current version of jQuery being used
+	jquery: version,
+
+	constructor: jQuery,
+
+	// The default length of a jQuery object is 0
+	length: 0,
+
+	toArray: function() {
+		return slice.call( this );
+	},
+
+	// Get the Nth element in the matched element set OR
+	// Get the whole matched element set as a clean array
+	get: function( num ) {
+
+		// Return all the elements in a clean array
+		if ( num == null ) {
+			return slice.call( this );
+		}
+
+		// Return just the one element from the set
+		return num < 0 ? this[ num + this.length ] : this[ num ];
+	},
+
+	// Take an array of elements and push it onto the stack
+	// (returning the new matched element set)
+	pushStack: function( elems ) {
+
+		// Build a new jQuery matched element set
+		var ret = jQuery.merge( this.constructor(), elems );
+
+		// Add the old object onto the stack (as a reference)
+		ret.prevObject = this;
+
+		// Return the newly-formed element set
+		return ret;
+	},
+
+	// Execute a callback for every element in the matched set.
+	each: function( callback ) {
+		return jQuery.each( this, callback );
+	},
+
+	map: function( callback ) {
+		return this.pushStack( jQuery.map( this, function( elem, i ) {
+			return callback.call( elem, i, elem );
+		} ) );
+	},
+
+	slice: function() {
+		return this.pushStack( slice.apply( this, arguments ) );
+	},
+
+	first: function() {
+		return this.eq( 0 );
+	},
+
+	last: function() {
+		return this.eq( -1 );
+	},
+
+	even: function() {
+		return this.pushStack( jQuery.grep( this, function( _elem, i ) {
+			return ( i + 1 ) % 2;
+		} ) );
+	},
+
+	odd: function() {
+		return this.pushStack( jQuery.grep( this, function( _elem, i ) {
+			return i % 2;
+		} ) );
+	},
+
+	eq: function( i ) {
+		var len = this.length,
+			j = +i + ( i < 0 ? len : 0 );
+		return this.pushStack( j >= 0 && j < len ? [ this[ j ] ] : [] );
+	},
+
+	end: function() {
+		return this.prevObject || this.constructor();
+	},
+
+	// For internal use only.
+	// Behaves like an Array's method, not like a jQuery method.
+	push: push,
+	sort: arr.sort,
+	splice: arr.splice
+};
+
+jQuery.extend = jQuery.fn.extend = function() {
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[ 0 ] || {},
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if ( typeof target === "boolean" ) {
+		deep = target;
+
+		// Skip the boolean and the target
+		target = arguments[ i ] || {};
+		i++;
+	}
+
+	// Handle case when target is a string or something (possible in deep copy)
+	if ( typeof target !== "object" && !isFunction( target ) ) {
+		target = {};
+	}
+
+	// Extend jQuery itself if only one argument is passed
+	if ( i === length ) {
+		target = this;
+		i--;
+	}
+
+	for ( ; i < length; i++ ) {
+
+		// Only deal with non-null/undefined values
+		if ( ( options = arguments[ i ] ) != null ) {
+
+			// Extend the base object
+			for ( name in options ) {
+				copy = options[ name ];
+
+				// Prevent Object.prototype pollution
+				// Prevent never-ending loop
+				if ( name === "__proto__" || target === copy ) {
+					continue;
+				}
+
+				// Recurse if we're merging plain objects or arrays
+				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
+					( copyIsArray = Array.isArray( copy ) ) ) ) {
+					src = target[ name ];
+
+					// Ensure proper type for the source value
+					if ( copyIsArray && !Array.isArray( src ) ) {
+						clone = [];
+					} else if ( !copyIsArray && !jQuery.isPlainObject( src ) ) {
+						clone = {};
+					} else {
+						clone = src;
+					}
+					copyIsArray = false;
+
+					// Never move original objects, clone them
+					target[ name ] = jQuery.extend( deep, clone, copy );
+
+				// Don't bring in undefined values
+				} else if ( copy !== undefined ) {
+					target[ name ] = copy;
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+};
+
+jQuery.extend( {
+
+	// Unique for each copy of jQuery on the page
+	expando: "jQuery" + ( version + Math.random() ).replace( /\D/g, "" ),
+
+	// Assume jQuery is ready without the ready module
+	isReady: true,
+
+	error: function( msg ) {
+		throw new Error( msg );
+	},
+
+	noop: function() {},
+
+	isPlainObject: function( obj ) {
+		var proto, Ctor;
+
+		// Detect obvious negatives
+		// Use toString instead of jQuery.type to catch host objects
+		if ( !obj || toString.call( obj ) !== "[object Object]" ) {
+			return false;
+		}
+
+		proto = getProto( obj );
+
+		// Objects with no prototype (e.g., `Object.create( null )`) are plain
+		if ( !proto ) {
+			return true;
+		}
+
+		// Objects with prototype are plain iff they were constructed by a global Object function
+		Ctor = hasOwn.call( proto, "constructor" ) && proto.constructor;
+		return typeof Ctor === "function" && fnToString.call( Ctor ) === ObjectFunctionString;
+	},
+
+	isEmptyObject: function( obj ) {
+		var name;
+
+		for ( name in obj ) {
+			return false;
+		}
+		return true;
+	},
+
+	// Evaluates a script in a provided context; falls back to the global one
+	// if not specified.
+	globalEval: function( code, options, doc ) {
+		DOMEval( code, { nonce: options && options.nonce }, doc );
+	},
+
+	each: function( obj, callback ) {
+		var length, i = 0;
+
+		if ( isArrayLike( obj ) ) {
+			length = obj.length;
+			for ( ; i < length; i++ ) {
+				if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+					break;
+				}
+			}
+		} else {
+			for ( i in obj ) {
+				if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+					break;
+				}
+			}
+		}
+
+		return obj;
+	},
+
+	// results is for internal usage only
+	makeArray: function( arr, results ) {
+		var ret = results || [];
+
+		if ( arr != null ) {
+			if ( isArrayLike( Object( arr ) ) ) {
+				jQuery.merge( ret,
+					typeof arr === "string" ?
+						[ arr ] : arr
+				);
+			} else {
+				push.call( ret, arr );
+			}
+		}
+
+		return ret;
+	},
+
+	inArray: function( elem, arr, i ) {
+		return arr == null ? -1 : indexOf.call( arr, elem, i );
+	},
+
+	// Support: Android <=4.0 only, PhantomJS 1 only
+	// push.apply(_, arraylike) throws on ancient WebKit
+	merge: function( first, second ) {
+		var len = +second.length,
+			j = 0,
+			i = first.length;
+
+		for ( ; j < len; j++ ) {
+			first[ i++ ] = second[ j ];
+		}
+
+		first.length = i;
+
+		return first;
+	},
+
+	grep: function( elems, callback, invert ) {
+		var callbackInverse,
+			matches = [],
+			i = 0,
+			length = elems.length,
+			callbackExpect = !invert;
+
+		// Go through the array, only saving the items
+		// that pass the validator function
+		for ( ; i < length; i++ ) {
+			callbackInverse = !callback( elems[ i ], i );
+			if ( callbackInverse !== callbackExpect ) {
+				matches.push( elems[ i ] );
+			}
+		}
+
+		return matches;
+	},
+
+	// arg is for internal usage only
+	map: function( elems, callback, arg ) {
+		var length, value,
+			i = 0,
+			ret = [];
+
+		// Go through the array, translating each of the items to their new values
+		if ( isArrayLike( elems ) ) {
+			length = elems.length;
+			for ( ; i < length; i++ ) {
+				value = callback( elems[ i ], i, arg );
+
+				if ( value != null ) {
+					ret.push( value );
+				}
+			}
+
+		// Go through every key on the object,
+		} else {
+			for ( i in elems ) {
+				value = callback( elems[ i ], i, arg );
+
+				if ( value != null ) {
+					ret.push( value );
+				}
+			}
+		}
+
+		// Flatten any nested arrays
+		return flat( ret );
+	},
+
+	// A global GUID counter for objects
+	guid: 1,
+
+	// jQuery.support is not used in Core but other projects attach their
+	// properties to it so it needs to exist.
+	support: support
+} );
+
+if ( typeof Symbol === "function" ) {
+	jQuery.fn[ Symbol.iterator ] = arr[ Symbol.iterator ];
+}
+
+// Populate the class2type map
+jQuery.each( "Boolean Number String Function Array Date RegExp Object Error Symbol".split( " " ),
+	function( _i, name ) {
+		class2type[ "[object " + name + "]" ] = name.toLowerCase();
+	} );
+
+function isArrayLike( obj ) {
+
+	// Support: real iOS 8.2 only (not reproducible in simulator)
+	// `in` check used to prevent JIT error (gh-2145)
+	// hasOwn isn't used here due to false negatives
+	// regarding Nodelist length in IE
+	var length = !!obj && "length" in obj && obj.length,
+		type = toType( obj );
+
+	if ( isFunction( obj ) || isWindow( obj ) ) {
+		return false;
+	}
+
+	return type === "array" || length === 0 ||
+		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+}
+var Sizzle =
+/*!
+ * Sizzle CSS Selector Engine v2.3.6
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://js.foundation/
+ *
+ * Date: 2021-02-16
+ */
+( function( window ) {
+var i,
+	support,
+	Expr,
+	getText,
+	isXML,
+	tokenize,
+	compile,
+	select,
+	outermostContext,
+	sortInput,
+	hasDuplicate,
+
+	// Local document vars
+	setDocument,
+	document,
+	docElem,
+	documentIsHTML,
+	rbuggyQSA,
+	rbuggyMatches,
+	matches,
+	contains,
+
+	// Instance-specific data
+	expando = "sizzle" + 1 * new Date(),
+	preferredDoc = window.document,
+	dirruns = 0,
+	done = 0,
+	classCache = createCache(),
+	tokenCache = createCache(),
+	compilerCache = createCache(),
+	nonnativeSelectorCache = createCache(),
+	sortOrder = function( a, b ) {
+		if ( a === b ) {
+			hasDuplicate = true;
+		}
+		return 0;
+	},
+
+	// Instance methods
+	hasOwn = ( {} ).hasOwnProperty,
+	arr = [],
+	pop = arr.pop,
+	pushNative = arr.push,
+	push = arr.push,
+	slice = arr.slice,
+
+	// Use a stripped-down indexOf as it's faster than native
+	// https://jsperf.com/thor-indexof-vs-for/5
+	indexOf = function( list, elem ) {
+		var i = 0,
+			len = list.length;
+		for ( ; i < len; i++ ) {
+			if ( list[ i ] === elem ) {
+				return i;
+			}
+		}
+		return -1;
+	},
+
+	booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|" +
+		"ismap|loop|multiple|open|readonly|required|scoped",
+
+	// Regular expressions
+
+	// http://www.w3.org/TR/css3-selectors/#whitespace
+	whitespace = "[\\x20\\t\\r\\n\\f]",
+
+	// https://www.w3.org/TR/css-syntax-3/#ident-token-diagram
+	identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace +
+		"?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+",
+
+	// Attribute selectors: http://www.w3.org/TR/selectors/#attribute-selectors
+	attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace +
+
+		// Operator (capture 2)
+		"*([*^$|!~]?=)" + whitespace +
+
+		// "Attribute values must be CSS identifiers [capture 5]
+		// or strings [capture 3 or capture 4]"
+		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" +
+		whitespace + "*\\]",
+
+	pseudos = ":(" + identifier + ")(?:\\((" +
+
+		// To reduce the number of selectors needing tokenize in the preFilter, prefer arguments:
+		// 1. quoted (capture 3; capture 4 or capture 5)
+		"('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|" +
+
+		// 2. simple (capture 6)
+		"((?:\\\\.|[^\\\\()[\\]]|" + attributes + ")*)|" +
+
+		// 3. anything else (capture 2)
+		".*" +
+		")\\)|)",
+
+	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
+	rwhitespace = new RegExp( whitespace + "+", "g" ),
+	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" +
+		whitespace + "+$", "g" ),
+
+	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
+	rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace +
+		"*" ),
+	rdescend = new RegExp( whitespace + "|>" ),
+
+	rpseudo = new RegExp( pseudos ),
+	ridentifier = new RegExp( "^" + identifier + "$" ),
+
+	matchExpr = {
+		"ID": new RegExp( "^#(" + identifier + ")" ),
+		"CLASS": new RegExp( "^\\.(" + identifier + ")" ),
+		"TAG": new RegExp( "^(" + identifier + "|[*])" ),
+		"ATTR": new RegExp( "^" + attributes ),
+		"PSEUDO": new RegExp( "^" + pseudos ),
+		"CHILD": new RegExp( "^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" +
+			whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" +
+			whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i" ),
+		"bool": new RegExp( "^(?:" + booleans + ")$", "i" ),
+
+		// For use in libraries implementing .is()
+		// We use this for POS matching in `select`
+		"needsContext": new RegExp( "^" + whitespace +
+			"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace +
+			"*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
+	},
+
+	rhtml = /HTML$/i,
+	rinputs = /^(?:input|select|textarea|button)$/i,
+	rheader = /^h\d$/i,
+
+	rnative = /^[^{]+\{\s*\[native \w/,
+
+	// Easily-parseable/retrievable ID or TAG or CLASS selectors
+	rquickExpr = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,
+
+	rsibling = /[+~]/,
+
+	// CSS escapes
+	// http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
+	runescape = new RegExp( "\\\\[\\da-fA-F]{1,6}" + whitespace + "?|\\\\([^\\r\\n\\f])", "g" ),
+	funescape = function( escape, nonHex ) {
+		var high = "0x" + escape.slice( 1 ) - 0x10000;
+
+		return nonHex ?
+
+			// Strip the backslash prefix from a non-hex escape sequence
+			nonHex :
+
+			// Replace a hexadecimal escape sequence with the encoded Unicode code point
+			// Support: IE <=11+
+			// For values outside the Basic Multilingual Plane (BMP), manually construct a
+			// surrogate pair
+			high < 0 ?
+				String.fromCharCode( high + 0x10000 ) :
+				String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
+	},
+
+	// CSS string/identifier serialization
+	// https://drafts.csswg.org/cssom/#common-serializing-idioms
+	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,
+	fcssescape = function( ch, asCodePoint ) {
+		if ( asCodePoint ) {
+
+			// U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
+			if ( ch === "\0" ) {
+				return "\uFFFD";
+			}
+
+			// Control characters and (dependent upon position) numbers get escaped as code points
+			return ch.slice( 0, -1 ) + "\\" +
+				ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
+		}
+
+		// Other potentially-special ASCII characters get backslash-escaped
+		return "\\" + ch;
+	},
+
+	// Used for iframes
+	// See setDocument()
+	// Removing the function wrapper causes a "Permission Denied"
+	// error in IE
+	unloadHandler = function() {
+		setDocument();
+	},
+
+	inDisabledFieldset = addCombinator(
+		function( elem ) {
+			return elem.disabled === true && elem.nodeName.toLowerCase() === "fieldset";
+		},
+		{ dir: "parentNode", next: "legend" }
+	);
+
+// Optimize for push.apply( _, NodeList )
+try {
+	push.apply(
+		( arr = slice.call( preferredDoc.childNodes ) ),
+		preferredDoc.childNodes
+	);
+
+	// Support: Android<4.0
+	// Detect silently failing push.apply
+	// eslint-disable-next-line no-unused-expressions
+	arr[ preferredDoc.childNodes.length ].nodeType;
+} catch ( e ) {
+	push = { apply: arr.length ?
+
+		// Leverage slice if possible
+		function( target, els ) {
+			pushNative.apply( target, slice.call( els ) );
+		} :
+
+		// Support: IE<9
+		// Otherwise append directly
+		function( target, els ) {
+			var j = target.length,
+				i = 0;
+
+			// Can't trust NodeList.length
+			while ( ( target[ j++ ] = els[ i++ ] ) ) {}
+			target.length = j - 1;
+		}
+	};
+}
+
+function Sizzle( selector, context, results, seed ) {
+	var m, i, elem, nid, match, groups, newSelector,
+		newContext = context && context.ownerDocument,
+
+		// nodeType defaults to 9, since context defaults to document
+		nodeType = context ? context.nodeType : 9;
+
+	results = results || [];
+
+	// Return early from calls with invalid selector or context
+	if ( typeof selector !== "string" || !selector ||
+		nodeType !== 1 && nodeType !== 9 && nodeType !== 11 ) {
+
+		return results;
+	}
+
+	// Try to shortcut find operations (as opposed to filters) in HTML documents
+	if ( !seed ) {
+		setDocument( context );
+		context = context || document;
+
+		if ( documentIsHTML ) {
+
+			// If the selector is sufficiently simple, try using a "get*By*" DOM method
+			// (excepting DocumentFragment context, where the methods don't exist)
+			if ( nodeType !== 11 && ( match = rquickExpr.exec( selector ) ) ) {
+
+				// ID selector
+				if ( ( m = match[ 1 ] ) ) {
+
+					// Document context
+					if ( nodeType === 9 ) {
+						if ( ( elem = context.getElementById( m ) ) ) {
+
+							// Support: IE, Opera, Webkit
+							// TODO: identify versions
+							// getElementById can match elements by name instead of ID
+							if ( elem.id === m ) {
+								results.push( elem );
+								return results;
+							}
+						} else {
+							return results;
+						}
+
+					// Element context
+					} else {
+
+						// Support: IE, Opera, Webkit
+						// TODO: identify versions
+						// getElementById can match elements by name instead of ID
+						if ( newContext && ( elem = newContext.getElementById( m ) ) &&
+							contains( context, elem ) &&
+							elem.id === m ) {
+
+							results.push( elem );
+							return results;
+						}
+					}
+
+				// Type selector
+				} else if ( match[ 2 ] ) {
+					push.apply( results, context.getElementsByTagName( selector ) );
+					return results;
+
+				// Class selector
+				} else if ( ( m = match[ 3 ] ) && support.getElementsByClassName &&
+					context.getElementsByClassName ) {
+
+					push.apply( results, context.getElementsByClassName( m ) );
+					return results;
+				}
+			}
+
+			// Take advantage of querySelectorAll
+			if ( support.qsa &&
+				!nonnativeSelectorCache[ selector + " " ] &&
+				( !rbuggyQSA || !rbuggyQSA.test( selector ) ) &&
+
+				// Support: IE 8 only
+				// Exclude object elements
+				( nodeType !== 1 || context.nodeName.toLowerCase() !== "object" ) ) {
+
+				newSelector = selector;
+				newContext = context;
+
+				// qSA considers elements outside a scoping root when evaluating child or
+				// descendant combinators, which is not what we want.
+				// In such cases, we work around the behavior by prefixing every selector in the
+				// list with an ID selector referencing the scope context.
+				// The technique has to be used as well when a leading combinator is used
+				// as such selectors are not recognized by querySelectorAll.
+				// Thanks to Andrew Dupont for this technique.
+				if ( nodeType === 1 &&
+					( rdescend.test( selector ) || rcombinators.test( selector ) ) ) {
+
+					// Expand context for sibling selectors
+					newContext = rsibling.test( selector ) && testContext( context.parentNode ) ||
+						context;
+
+					// We can use :scope instead of the ID hack if the browser
+					// supports it & if we're not changing the context.
+					if ( newContext !== context || !support.scope ) {
+
+						// Capture the context ID, setting it first if necessary
+						if ( ( nid = context.getAttribute( "id" ) ) ) {
+							nid = nid.replace( rcssescape, fcssescape );
+						} else {
+							context.setAttribute( "id", ( nid = expando ) );
+						}
+					}
+
+					// Prefix every selector in the list
+					groups = tokenize( selector );
+					i = groups.length;
+					while ( i-- ) {
+						groups[ i ] = ( nid ? "#" + nid : ":scope" ) + " " +
+							toSelector( groups[ i ] );
+					}
+					newSelector = groups.join( "," );
+				}
+
+				try {
+					push.apply( results,
+						newContext.querySelectorAll( newSelector )
+					);
+					return results;
+				} catch ( qsaError ) {
+					nonnativeSelectorCache( selector, true );
+				} finally {
+					if ( nid === expando ) {
+						context.removeAttribute( "id" );
+					}
+				}
+			}
+		}
+	}
+
+	// All others
+	return select( selector.replace( rtrim, "$1" ), context, results, seed );
+}
+
+/**
+ * Create key-value caches of limited size
+ * @returns {function(string, object)} Returns the Object data after storing it on itself with
+ *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
+ *	deleting the oldest entry
+ */
+function createCache() {
+	var keys = [];
+
+	function cache( key, value ) {
+
+		// Use (key + " ") to avoid collision with native prototype properties (see Issue #157)
+		if ( keys.push( key + " " ) > Expr.cacheLength ) {
+
+			// Only keep the most recent entries
+			delete cache[ keys.shift() ];
+		}
+		return ( cache[ key + " " ] = value );
+	}
+	return cache;
+}
+
+/**
+ * Mark a function for special use by Sizzle
+ * @param {Function} fn The function to mark
+ */
+function markFunction( fn ) {
+	fn[ expando ] = true;
+	return fn;
+}
+
+/**
+ * Support testing using an element
+ * @param {Function} fn Passed the created element and returns a boolean result
+ */
+function assert( fn ) {
+	var el = document.createElement( "fieldset" );
+
+	try {
+		return !!fn( el );
+	} catch ( e ) {
+		return false;
+	} finally {
+
+		// Remove from its parent by default
+		if ( el.parentNode ) {
+			el.parentNode.removeChild( el );
+		}
+
+		// release memory in IE
+		el = null;
+	}
+}
+
+/**
+ * Adds the same handler for all of the specified attrs
+ * @param {String} attrs Pipe-separated list of attributes
+ * @param {Function} handler The method that will be applied
+ */
+function addHandle( attrs, handler ) {
+	var arr = attrs.split( "|" ),
+		i = arr.length;
+
+	while ( i-- ) {
+		Expr.attrHandle[ arr[ i ] ] = handler;
+	}
+}
+
+/**
+ * Checks document order of two siblings
+ * @param {Element} a
+ * @param {Element} b
+ * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
+ */
+function siblingCheck( a, b ) {
+	var cur = b && a,
+		diff = cur && a.nodeType === 1 && b.nodeType === 1 &&
+			a.sourceIndex - b.sourceIndex;
+
+	// Use IE sourceIndex if available on both nodes
+	if ( diff ) {
+		return diff;
+	}
+
+	// Check if b follows a
+	if ( cur ) {
+		while ( ( cur = cur.nextSibling ) ) {
+			if ( cur === b ) {
+				return -1;
+			}
+		}
+	}
+
+	return a ? 1 : -1;
+}
+
+/**
+ * Returns a function to use in pseudos for input types
+ * @param {String} type
+ */
+function createInputPseudo( type ) {
+	return function( elem ) {
+		var name = elem.nodeName.toLowerCase();
+		return name === "input" && elem.type === type;
+	};
+}
+
+/**
+ * Returns a function to use in pseudos for buttons
+ * @param {String} type
+ */
+function createButtonPseudo( type ) {
+	return function( elem ) {
+		var name = elem.nodeName.toLowerCase();
+		return ( name === "input" || name === "button" ) && elem.type === type;
+	};
+}
+
+/**
+ * Returns a function to use in pseudos for :enabled/:disabled
+ * @param {Boolean} disabled true for :disabled; false for :enabled
+ */
+function createDisabledPseudo( disabled ) {
+
+	// Known :disabled false positives: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
+	return function( elem ) {
+
+		// Only certain elements can match :enabled or :disabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
+		if ( "form" in elem ) {
+
+			// Check for inherited disabledness on relevant non-disabled elements:
+			// * listed form-associated elements in a disabled fieldset
+			//   https://html.spec.whatwg.org/multipage/forms.html#category-listed
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-fe-disabled
+			// * option elements in a disabled optgroup
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-option-disabled
+			// All such elements have a "form" property.
+			if ( elem.parentNode && elem.disabled === false ) {
+
+				// Option elements defer to a parent optgroup if present
+				if ( "label" in elem ) {
+					if ( "label" in elem.parentNode ) {
+						return elem.parentNode.disabled === disabled;
+					} else {
+						return elem.disabled === disabled;
+					}
+				}
+
+				// Support: IE 6 - 11
+				// Use the isDisabled shortcut property to check for disabled fieldset ancestors
+				return elem.isDisabled === disabled ||
+
+					// Where there is no isDisabled, check manually
+					/* jshint -W018 */
+					elem.isDisabled !== !disabled &&
+					inDisabledFieldset( elem ) === disabled;
+			}
+
+			return elem.disabled === disabled;
+
+		// Try to winnow out elements that can't be disabled before trusting the disabled property.
+		// Some victims get caught in our net (label, legend, menu, track), but it shouldn't
+		// even exist on them, let alone have a boolean value.
+		} else if ( "label" in elem ) {
+			return elem.disabled === disabled;
+		}
+
+		// Remaining elements are neither :enabled nor :disabled
+		return false;
+	};
+}
+
+/**
+ * Returns a function to use in pseudos for positionals
+ * @param {Function} fn
+ */
+function createPositionalPseudo( fn ) {
+	return markFunction( function( argument ) {
+		argument = +argument;
+		return markFunction( function( seed, matches ) {
+			var j,
+				matchIndexes = fn( [], seed.length, argument ),
+				i = matchIndexes.length;
+
+			// Match elements found at the specified indexes
+			while ( i-- ) {
+				if ( seed[ ( j = matchIndexes[ i ] ) ] ) {
+					seed[ j ] = !( matches[ j ] = seed[ j ] );
+				}
+			}
+		} );
+	} );
+}
+
+/**
+ * Checks a node for validity as a Sizzle context
+ * @param {Element|Object=} context
+ * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
+ */
+function testContext( context ) {
+	return context && typeof context.getElementsByTagName !== "undefined" && context;
+}
+
+// Expose support vars for convenience
+support = Sizzle.support = {};
+
+/**
+ * Detects XML nodes
+ * @param {Element|Object} elem An element or a document
+ * @returns {Boolean} True iff elem is a non-HTML XML node
+ */
+isXML = Sizzle.isXML = function( elem ) {
+	var namespace = elem && elem.namespaceURI,
+		docElem = elem && ( elem.ownerDocument || elem ).documentElement;
+
+	// Support: IE <=8
+	// Assume HTML when documentElement doesn't yet exist, such as inside loading iframes
+	// https://bugs.jquery.com/ticket/4833
+	return !rhtml.test( namespace || docElem && docElem.nodeName || "HTML" );
+};
+
+/**
+ * Sets document-related variables once based on the current document
+ * @param {Element|Object} [doc] An element or document object to use to set the document
+ * @returns {Object} Returns the current document
+ */
+setDocument = Sizzle.setDocument = function( node ) {
+	var hasCompare, subWindow,
+		doc = node ? node.ownerDocument || node : preferredDoc;
+
+	// Return early if doc is invalid or already selected
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( doc == document || doc.nodeType !== 9 || !doc.documentElement ) {
+		return document;
+	}
+
+	// Update global variables
+	document = doc;
+	docElem = document.documentElement;
+	documentIsHTML = !isXML( document );
+
+	// Support: IE 9 - 11+, Edge 12 - 18+
+	// Accessing iframe documents after unload throws "permission denied" errors (jQuery #13936)
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( preferredDoc != document &&
+		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
+
+		// Support: IE 11, Edge
+		if ( subWindow.addEventListener ) {
+			subWindow.addEventListener( "unload", unloadHandler, false );
+
+		// Support: IE 9 - 10 only
+		} else if ( subWindow.attachEvent ) {
+			subWindow.attachEvent( "onunload", unloadHandler );
+		}
+	}
+
+	// Support: IE 8 - 11+, Edge 12 - 18+, Chrome <=16 - 25 only, Firefox <=3.6 - 31 only,
+	// Safari 4 - 5 only, Opera <=11.6 - 12.x only
+	// IE/Edge & older browsers don't support the :scope pseudo-class.
+	// Support: Safari 6.0 only
+	// Safari 6.0 supports :scope but it's an alias of :root there.
+	support.scope = assert( function( el ) {
+		docElem.appendChild( el ).appendChild( document.createElement( "div" ) );
+		return typeof el.querySelectorAll !== "undefined" &&
+			!el.querySelectorAll( ":scope fieldset div" ).length;
+	} );
+
+	/* Attributes
+	---------------------------------------------------------------------- */
+
+	// Support: IE<8
+	// Verify that getAttribute really returns attributes and not properties
+	// (excepting IE8 booleans)
+	support.attributes = assert( function( el ) {
+		el.className = "i";
+		return !el.getAttribute( "className" );
+	} );
+
+	/* getElement(s)By*
+	---------------------------------------------------------------------- */
+
+	// Check if getElementsByTagName("*") returns only elements
+	support.getElementsByTagName = assert( function( el ) {
+		el.appendChild( document.createComment( "" ) );
+		return !el.getElementsByTagName( "*" ).length;
+	} );
+
+	// Support: IE<9
+	support.getElementsByClassName = rnative.test( document.getElementsByClassName );
+
+	// Support: IE<10
+	// Check if getElementById returns elements by name
+	// The broken getElementById methods don't pick up programmatically-set names,
+	// so use a roundabout getElementsByName test
+	support.getById = assert( function( el ) {
+		docElem.appendChild( el ).id = expando;
+		return !document.getElementsByName || !document.getElementsByName( expando ).length;
+	} );
+
+	// ID filter and find
+	if ( support.getById ) {
+		Expr.filter[ "ID" ] = function( id ) {
+			var attrId = id.replace( runescape, funescape );
+			return function( elem ) {
+				return elem.getAttribute( "id" ) === attrId;
+			};
+		};
+		Expr.find[ "ID" ] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var elem = context.getElementById( id );
+				return elem ? [ elem ] : [];
+			}
+		};
+	} else {
+		Expr.filter[ "ID" ] =  function( id ) {
+			var attrId = id.replace( runescape, funescape );
+			return function( elem ) {
+				var node = typeof elem.getAttributeNode !== "undefined" &&
+					elem.getAttributeNode( "id" );
+				return node && node.value === attrId;
+			};
+		};
+
+		// Support: IE 6 - 7 only
+		// getElementById is not reliable as a find shortcut
+		Expr.find[ "ID" ] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var node, i, elems,
+					elem = context.getElementById( id );
+
+				if ( elem ) {
+
+					// Verify the id attribute
+					node = elem.getAttributeNode( "id" );
+					if ( node && node.value === id ) {
+						return [ elem ];
+					}
+
+					// Fall back on getElementsByName
+					elems = context.getElementsByName( id );
+					i = 0;
+					while ( ( elem = elems[ i++ ] ) ) {
+						node = elem.getAttributeNode( "id" );
+						if ( node && node.value === id ) {
+							return [ elem ];
+						}
+					}
+				}
+
+				return [];
+			}
+		};
+	}
+
+	// Tag
+	Expr.find[ "TAG" ] = support.getElementsByTagName ?
+		function( tag, context ) {
+			if ( typeof context.getElementsByTagName !== "undefined" ) {
+				return context.getElementsByTagName( tag );
+
+			// DocumentFragment nodes don't have gEBTN
+			} else if ( support.qsa ) {
+				return context.querySelectorAll( tag );
+			}
+		} :
+
+		function( tag, context ) {
+			var elem,
+				tmp = [],
+				i = 0,
+
+				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
+				results = context.getElementsByTagName( tag );
+
+			// Filter out possible comments
+			if ( tag === "*" ) {
+				while ( ( elem = results[ i++ ] ) ) {
+					if ( elem.nodeType === 1 ) {
+						tmp.push( elem );
+					}
+				}
+
+				return tmp;
+			}
+			return results;
+		};
+
+	// Class
+	Expr.find[ "CLASS" ] = support.getElementsByClassName && function( className, context ) {
+		if ( typeof context.getElementsByClassName !== "undefined" && documentIsHTML ) {
+			return context.getElementsByClassName( className );
+		}
+	};
+
+	/* QSA/matchesSelector
+	---------------------------------------------------------------------- */
+
+	// QSA and matchesSelector support
+
+	// matchesSelector(:active) reports false when true (IE9/Opera 11.5)
+	rbuggyMatches = [];
+
+	// qSa(:focus) reports false when true (Chrome 21)
+	// We allow this because of a bug in IE8/9 that throws an error
+	// whenever `document.activeElement` is accessed on an iframe
+	// So, we allow :focus to pass through QSA all the time to avoid the IE error
+	// See https://bugs.jquery.com/ticket/13378
+	rbuggyQSA = [];
+
+	if ( ( support.qsa = rnative.test( document.querySelectorAll ) ) ) {
+
+		// Build QSA regex
+		// Regex strategy adopted from Diego Perini
+		assert( function( el ) {
+
+			var input;
+
+			// Select is set to empty string on purpose
+			// This is to test IE's treatment of not explicitly
+			// setting a boolean content attribute,
+			// since its presence should be enough
+			// https://bugs.jquery.com/ticket/12359
+			docElem.appendChild( el ).innerHTML = "<a id='" + expando + "'></a>" +
+				"<select id='" + expando + "-\r\\' msallowcapture=''>" +
+				"<option selected=''></option></select>";
+
+			// Support: IE8, Opera 11-12.16
+			// Nothing should be selected when empty strings follow ^= or $= or *=
+			// The test attribute must be unknown in Opera but "safe" for WinRT
+			// https://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
+			if ( el.querySelectorAll( "[msallowcapture^='']" ).length ) {
+				rbuggyQSA.push( "[*^$]=" + whitespace + "*(?:''|\"\")" );
+			}
+
+			// Support: IE8
+			// Boolean attributes and "value" are not treated correctly
+			if ( !el.querySelectorAll( "[selected]" ).length ) {
+				rbuggyQSA.push( "\\[" + whitespace + "*(?:value|" + booleans + ")" );
+			}
+
+			// Support: Chrome<29, Android<4.4, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.8+
+			if ( !el.querySelectorAll( "[id~=" + expando + "-]" ).length ) {
+				rbuggyQSA.push( "~=" );
+			}
+
+			// Support: IE 11+, Edge 15 - 18+
+			// IE 11/Edge don't find elements on a `[name='']` query in some cases.
+			// Adding a temporary attribute to the document before the selection works
+			// around the issue.
+			// Interestingly, IE 10 & older don't seem to have the issue.
+			input = document.createElement( "input" );
+			input.setAttribute( "name", "" );
+			el.appendChild( input );
+			if ( !el.querySelectorAll( "[name='']" ).length ) {
+				rbuggyQSA.push( "\\[" + whitespace + "*name" + whitespace + "*=" +
+					whitespace + "*(?:''|\"\")" );
+			}
+
+			// Webkit/Opera - :checked should return selected option elements
+			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
+			// IE8 throws error here and will not see later tests
+			if ( !el.querySelectorAll( ":checked" ).length ) {
+				rbuggyQSA.push( ":checked" );
+			}
+
+			// Support: Safari 8+, iOS 8+
+			// https://bugs.webkit.org/show_bug.cgi?id=136851
+			// In-page `selector#id sibling-combinator selector` fails
+			if ( !el.querySelectorAll( "a#" + expando + "+*" ).length ) {
+				rbuggyQSA.push( ".#.+[+~]" );
+			}
+
+			// Support: Firefox <=3.6 - 5 only
+			// Old Firefox doesn't throw on a badly-escaped identifier.
+			el.querySelectorAll( "\\\f" );
+			rbuggyQSA.push( "[\\r\\n\\f]" );
+		} );
+
+		assert( function( el ) {
+			el.innerHTML = "<a href='' disabled='disabled'></a>" +
+				"<select disabled='disabled'><option/></select>";
+
+			// Support: Windows 8 Native Apps
+			// The type and name attributes are restricted during .innerHTML assignment
+			var input = document.createElement( "input" );
+			input.setAttribute( "type", "hidden" );
+			el.appendChild( input ).setAttribute( "name", "D" );
+
+			// Support: IE8
+			// Enforce case-sensitivity of name attribute
+			if ( el.querySelectorAll( "[name=d]" ).length ) {
+				rbuggyQSA.push( "name" + whitespace + "*[*^$|!~]?=" );
+			}
+
+			// FF 3.5 - :enabled/:disabled and hidden elements (hidden elements are still enabled)
+			// IE8 throws error here and will not see later tests
+			if ( el.querySelectorAll( ":enabled" ).length !== 2 ) {
+				rbuggyQSA.push( ":enabled", ":disabled" );
+			}
+
+			// Support: IE9-11+
+			// IE's :disabled selector does not pick up the children of disabled fieldsets
+			docElem.appendChild( el ).disabled = true;
+			if ( el.querySelectorAll( ":disabled" ).length !== 2 ) {
+				rbuggyQSA.push( ":enabled", ":disabled" );
+			}
+
+			// Support: Opera 10 - 11 only
+			// Opera 10-11 does not throw on post-comma invalid pseudos
+			el.querySelectorAll( "*,:x" );
+			rbuggyQSA.push( ",.*:" );
+		} );
+	}
+
+	if ( ( support.matchesSelector = rnative.test( ( matches = docElem.matches ||
+		docElem.webkitMatchesSelector ||
+		docElem.mozMatchesSelector ||
+		docElem.oMatchesSelector ||
+		docElem.msMatchesSelector ) ) ) ) {
+
+		assert( function( el ) {
+
+			// Check to see if it's possible to do matchesSelector
+			// on a disconnected node (IE 9)
+			support.disconnectedMatch = matches.call( el, "*" );
+
+			// This should fail with an exception
+			// Gecko does not error, returns false instead
+			matches.call( el, "[s!='']:x" );
+			rbuggyMatches.push( "!=", pseudos );
+		} );
+	}
+
+	rbuggyQSA = rbuggyQSA.length && new RegExp( rbuggyQSA.join( "|" ) );
+	rbuggyMatches = rbuggyMatches.length && new RegExp( rbuggyMatches.join( "|" ) );
+
+	/* Contains
+	---------------------------------------------------------------------- */
+	hasCompare = rnative.test( docElem.compareDocumentPosition );
+
+	// Element contains another
+	// Purposefully self-exclusive
+	// As in, an element does not contain itself
+	contains = hasCompare || rnative.test( docElem.contains ) ?
+		function( a, b ) {
+			var adown = a.nodeType === 9 ? a.documentElement : a,
+				bup = b && b.parentNode;
+			return a === bup || !!( bup && bup.nodeType === 1 && (
+				adown.contains ?
+					adown.contains( bup ) :
+					a.compareDocumentPosition && a.compareDocumentPosition( bup ) & 16
+			) );
+		} :
+		function( a, b ) {
+			if ( b ) {
+				while ( ( b = b.parentNode ) ) {
+					if ( b === a ) {
+						return true;
+					}
+				}
+			}
+			return false;
+		};
+
+	/* Sorting
+	---------------------------------------------------------------------- */
+
+	// Document order sorting
+	sortOrder = hasCompare ?
+	function( a, b ) {
+
+		// Flag for duplicate removal
+		if ( a === b ) {
+			hasDuplicate = true;
+			return 0;
+		}
+
+		// Sort on method existence if only one input has compareDocumentPosition
+		var compare = !a.compareDocumentPosition - !b.compareDocumentPosition;
+		if ( compare ) {
+			return compare;
+		}
+
+		// Calculate position if both inputs belong to the same document
+		// Support: IE 11+, Edge 17 - 18+
+		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		compare = ( a.ownerDocument || a ) == ( b.ownerDocument || b ) ?
+			a.compareDocumentPosition( b ) :
+
+			// Otherwise we know they are disconnected
+			1;
+
+		// Disconnected nodes
+		if ( compare & 1 ||
+			( !support.sortDetached && b.compareDocumentPosition( a ) === compare ) ) {
+
+			// Choose the first element that is related to our preferred document
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			// eslint-disable-next-line eqeqeq
+			if ( a == document || a.ownerDocument == preferredDoc &&
+				contains( preferredDoc, a ) ) {
+				return -1;
+			}
+
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			// eslint-disable-next-line eqeqeq
+			if ( b == document || b.ownerDocument == preferredDoc &&
+				contains( preferredDoc, b ) ) {
+				return 1;
+			}
+
+			// Maintain original order
+			return sortInput ?
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
+				0;
+		}
+
+		return compare & 4 ? -1 : 1;
+	} :
+	function( a, b ) {
+
+		// Exit early if the nodes are identical
+		if ( a === b ) {
+			hasDuplicate = true;
+			return 0;
+		}
+
+		var cur,
+			i = 0,
+			aup = a.parentNode,
+			bup = b.parentNode,
+			ap = [ a ],
+			bp = [ b ];
+
+		// Parentless nodes are either documents or disconnected
+		if ( !aup || !bup ) {
+
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			/* eslint-disable eqeqeq */
+			return a == document ? -1 :
+				b == document ? 1 :
+				/* eslint-enable eqeqeq */
+				aup ? -1 :
+				bup ? 1 :
+				sortInput ?
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
+				0;
+
+		// If the nodes are siblings, we can do a quick check
+		} else if ( aup === bup ) {
+			return siblingCheck( a, b );
+		}
+
+		// Otherwise we need full lists of their ancestors for comparison
+		cur = a;
+		while ( ( cur = cur.parentNode ) ) {
+			ap.unshift( cur );
+		}
+		cur = b;
+		while ( ( cur = cur.parentNode ) ) {
+			bp.unshift( cur );
+		}
+
+		// Walk down the tree looking for a discrepancy
+		while ( ap[ i ] === bp[ i ] ) {
+			i++;
+		}
+
+		return i ?
+
+			// Do a sibling check if the nodes have a common ancestor
+			siblingCheck( ap[ i ], bp[ i ] ) :
+
+			// Otherwise nodes in our document sort first
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			/* eslint-disable eqeqeq */
+			ap[ i ] == preferredDoc ? -1 :
+			bp[ i ] == preferredDoc ? 1 :
+			/* eslint-enable eqeqeq */
+			0;
+	};
+
+	return document;
+};
+
+Sizzle.matches = function( expr, elements ) {
+	return Sizzle( expr, null, null, elements );
+};
+
+Sizzle.matchesSelector = function( elem, expr ) {
+	setDocument( elem );
+
+	if ( support.matchesSelector && documentIsHTML &&
+		!nonnativeSelectorCache[ expr + " " ] &&
+		( !rbuggyMatches || !rbuggyMatches.test( expr ) ) &&
+		( !rbuggyQSA     || !rbuggyQSA.test( expr ) ) ) {
+
+		try {
+			var ret = matches.call( elem, expr );
+
+			// IE 9's matchesSelector returns false on disconnected nodes
+			if ( ret || support.disconnectedMatch ||
+
+				// As well, disconnected nodes are said to be in a document
+				// fragment in IE 9
+				elem.document && elem.document.nodeType !== 11 ) {
+				return ret;
+			}
+		} catch ( e ) {
+			nonnativeSelectorCache( expr, true );
+		}
+	}
+
+	return Sizzle( expr, document, null, [ elem ] ).length > 0;
+};
+
+Sizzle.contains = function( context, elem ) {
+
+	// Set document vars if needed
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( ( context.ownerDocument || context ) != document ) {
+		setDocument( context );
+	}
+	return contains( context, elem );
+};
+
+Sizzle.attr = function( elem, name ) {
+
+	// Set document vars if needed
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( ( elem.ownerDocument || elem ) != document ) {
+		setDocument( elem );
+	}
+
+	var fn = Expr.attrHandle[ name.toLowerCase() ],
+
+		// Don't get fooled by Object.prototype properties (jQuery #13807)
+		val = fn && hasOwn.call( Expr.attrHandle, name.toLowerCase() ) ?
+			fn( elem, name, !documentIsHTML ) :
+			undefined;
+
+	return val !== undefined ?
+		val :
+		support.attributes || !documentIsHTML ?
+			elem.getAttribute( name ) :
+			( val = elem.getAttributeNode( name ) ) && val.specified ?
+				val.value :
+				null;
+};
+
+Sizzle.escape = function( sel ) {
+	return ( sel + "" ).replace( rcssescape, fcssescape );
+};
+
+Sizzle.error = function( msg ) {
+	throw new Error( "Syntax error, unrecognized expression: " + msg );
+};
+
+/**
+ * Document sorting and removing duplicates
+ * @param {ArrayLike} results
+ */
+Sizzle.uniqueSort = function( results ) {
+	var elem,
+		duplicates = [],
+		j = 0,
+		i = 0;
+
+	// Unless we *know* we can detect duplicates, assume their presence
+	hasDuplicate = !support.detectDuplicates;
+	sortInput = !support.sortStable && results.slice( 0 );
+	results.sort( sortOrder );
+
+	if ( hasDuplicate ) {
+		while ( ( elem = results[ i++ ] ) ) {
+			if ( elem === results[ i ] ) {
+				j = duplicates.push( i );
+			}
+		}
+		while ( j-- ) {
+			results.splice( duplicates[ j ], 1 );
+		}
+	}
+
+	// Clear input after sorting to release objects
+	// See https://github.com/jquery/sizzle/pull/225
+	sortInput = null;
+
+	return results;
+};
+
+/**
+ * Utility function for retrieving the text value of an array of DOM nodes
+ * @param {Array|Element} elem
+ */
+getText = Sizzle.getText = function( elem ) {
+	var node,
+		ret = "",
+		i = 0,
+		nodeType = elem.nodeType;
+
+	if ( !nodeType ) {
+
+		// If no nodeType, this is expected to be an array
+		while ( ( node = elem[ i++ ] ) ) {
+
+			// Do not traverse comment nodes
+			ret += getText( node );
+		}
+	} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
+
+		// Use textContent for elements
+		// innerText usage removed for consistency of new lines (jQuery #11153)
+		if ( typeof elem.textContent === "string" ) {
+			return elem.textContent;
+		} else {
+
+			// Traverse its children
+			for ( elem = elem.firstChild; elem; elem = elem.nextSibling ) {
+				ret += getText( elem );
+			}
+		}
+	} else if ( nodeType === 3 || nodeType === 4 ) {
+		return elem.nodeValue;
+	}
+
+	// Do not include comment or processing instruction nodes
+
+	return ret;
+};
+
+Expr = Sizzle.selectors = {
+
+	// Can be adjusted by the user
+	cacheLength: 50,
+
+	createPseudo: markFunction,
+
+	match: matchExpr,
+
+	attrHandle: {},
+
+	find: {},
+
+	relative: {
+		">": { dir: "parentNode", first: true },
+		" ": { dir: "parentNode" },
+		"+": { dir: "previousSibling", first: true },
+		"~": { dir: "previousSibling" }
+	},
+
+	preFilter: {
+		"ATTR": function( match ) {
+			match[ 1 ] = match[ 1 ].replace( runescape, funescape );
+
+			// Move the given value to match[3] whether quoted or unquoted
+			match[ 3 ] = ( match[ 3 ] || match[ 4 ] ||
+				match[ 5 ] || "" ).replace( runescape, funescape );
+
+			if ( match[ 2 ] === "~=" ) {
+				match[ 3 ] = " " + match[ 3 ] + " ";
+			}
+
+			return match.slice( 0, 4 );
+		},
+
+		"CHILD": function( match ) {
+
+			/* matches from matchExpr["CHILD"]
+				1 type (only|nth|...)
+				2 what (child|of-type)
+				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
+				4 xn-component of xn+y argument ([+-]?\d*n|)
+				5 sign of xn-component
+				6 x of xn-component
+				7 sign of y-component
+				8 y of y-component
+			*/
+			match[ 1 ] = match[ 1 ].toLowerCase();
+
+			if ( match[ 1 ].slice( 0, 3 ) === "nth" ) {
+
+				// nth-* requires argument
+				if ( !match[ 3 ] ) {
+					Sizzle.error( match[ 0 ] );
+				}
+
+				// numeric x and y parameters for Expr.filter.CHILD
+				// remember that false/true cast respectively to 0/1
+				match[ 4 ] = +( match[ 4 ] ?
+					match[ 5 ] + ( match[ 6 ] || 1 ) :
+					2 * ( match[ 3 ] === "even" || match[ 3 ] === "odd" ) );
+				match[ 5 ] = +( ( match[ 7 ] + match[ 8 ] ) || match[ 3 ] === "odd" );
+
+				// other types prohibit arguments
+			} else if ( match[ 3 ] ) {
+				Sizzle.error( match[ 0 ] );
+			}
+
+			return match;
+		},
+
+		"PSEUDO": function( match ) {
+			var excess,
+				unquoted = !match[ 6 ] && match[ 2 ];
+
+			if ( matchExpr[ "CHILD" ].test( match[ 0 ] ) ) {
+				return null;
+			}
+
+			// Accept quoted arguments as-is
+			if ( match[ 3 ] ) {
+				match[ 2 ] = match[ 4 ] || match[ 5 ] || "";
+
+			// Strip excess characters from unquoted arguments
+			} else if ( unquoted && rpseudo.test( unquoted ) &&
+
+				// Get excess from tokenize (recursively)
+				( excess = tokenize( unquoted, true ) ) &&
+
+				// advance to the next closing parenthesis
+				( excess = unquoted.indexOf( ")", unquoted.length - excess ) - unquoted.length ) ) {
+
+				// excess is a negative index
+				match[ 0 ] = match[ 0 ].slice( 0, excess );
+				match[ 2 ] = unquoted.slice( 0, excess );
+			}
+
+			// Return only captures needed by the pseudo filter method (type and argument)
+			return match.slice( 0, 3 );
+		}
+	},
+
+	filter: {
+
+		"TAG": function( nodeNameSelector ) {
+			var nodeName = nodeNameSelector.replace( runescape, funescape ).toLowerCase();
+			return nodeNameSelector === "*" ?
+				function() {
+					return true;
+				} :
+				function( elem ) {
+					return elem.nodeName && elem.nodeName.toLowerCase() === nodeName;
+				};
+		},
+
+		"CLASS": function( className ) {
+			var pattern = classCache[ className + " " ];
+
+			return pattern ||
+				( pattern = new RegExp( "(^|" + whitespace +
+					")" + className + "(" + whitespace + "|$)" ) ) && classCache(
+						className, function( elem ) {
+							return pattern.test(
+								typeof elem.className === "string" && elem.className ||
+								typeof elem.getAttribute !== "undefined" &&
+									elem.getAttribute( "class" ) ||
+								""
+							);
+				} );
+		},
+
+		"ATTR": function( name, operator, check ) {
+			return function( elem ) {
+				var result = Sizzle.attr( elem, name );
+
+				if ( result == null ) {
+					return operator === "!=";
+				}
+				if ( !operator ) {
+					return true;
+				}
+
+				result += "";
+
+				/* eslint-disable max-len */
+
+				return operator === "=" ? result === check :
+					operator === "!=" ? result !== check :
+					operator === "^=" ? check && result.indexOf( check ) === 0 :
+					operator === "*=" ? check && result.indexOf( check ) > -1 :
+					operator === "$=" ? check && result.slice( -check.length ) === check :
+					operator === "~=" ? ( " " + result.replace( rwhitespace, " " ) + " " ).indexOf( check ) > -1 :
+					operator === "|=" ? result === check || result.slice( 0, check.length + 1 ) === check + "-" :
+					false;
+				/* eslint-enable max-len */
+
+			};
+		},
+
+		"CHILD": function( type, what, _argument, first, last ) {
+			var simple = type.slice( 0, 3 ) !== "nth",
+				forward = type.slice( -4 ) !== "last",
+				ofType = what === "of-type";
+
+			return first === 1 && last === 0 ?
+
+				// Shortcut for :nth-*(n)
+				function( elem ) {
+					return !!elem.parentNode;
+				} :
+
+				function( elem, _context, xml ) {
+					var cache, uniqueCache, outerCache, node, nodeIndex, start,
+						dir = simple !== forward ? "nextSibling" : "previousSibling",
+						parent = elem.parentNode,
+						name = ofType && elem.nodeName.toLowerCase(),
+						useCache = !xml && !ofType,
+						diff = false;
+
+					if ( parent ) {
+
+						// :(first|last|only)-(child|of-type)
+						if ( simple ) {
+							while ( dir ) {
+								node = elem;
+								while ( ( node = node[ dir ] ) ) {
+									if ( ofType ?
+										node.nodeName.toLowerCase() === name :
+										node.nodeType === 1 ) {
+
+										return false;
+									}
+								}
+
+								// Reverse direction for :only-* (if we haven't yet done so)
+								start = dir = type === "only" && !start && "nextSibling";
+							}
+							return true;
+						}
+
+						start = [ forward ? parent.firstChild : parent.lastChild ];
+
+						// non-xml :nth-child(...) stores cache data on `parent`
+						if ( forward && useCache ) {
+
+							// Seek `elem` from a previously-cached index
+
+							// ...in a gzip-friendly way
+							node = parent;
+							outerCache = node[ expando ] || ( node[ expando ] = {} );
+
+							// Support: IE <9 only
+							// Defend against cloned attroperties (jQuery gh-1709)
+							uniqueCache = outerCache[ node.uniqueID ] ||
+								( outerCache[ node.uniqueID ] = {} );
+
+							cache = uniqueCache[ type ] || [];
+							nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
+							diff = nodeIndex && cache[ 2 ];
+							node = nodeIndex && parent.childNodes[ nodeIndex ];
+
+							while ( ( node = ++nodeIndex && node && node[ dir ] ||
+
+								// Fallback to seeking `elem` from the start
+								( diff = nodeIndex = 0 ) || start.pop() ) ) {
+
+								// When found, cache indexes on `parent` and break
+								if ( node.nodeType === 1 && ++diff && node === elem ) {
+									uniqueCache[ type ] = [ dirruns, nodeIndex, diff ];
+									break;
+								}
+							}
+
+						} else {
+
+							// Use previously-cached element index if available
+							if ( useCache ) {
+
+								// ...in a gzip-friendly way
+								node = elem;
+								outerCache = node[ expando ] || ( node[ expando ] = {} );
+
+								// Support: IE <9 only
+								// Defend against cloned attroperties (jQuery gh-1709)
+								uniqueCache = outerCache[ node.uniqueID ] ||
+									( outerCache[ node.uniqueID ] = {} );
+
+								cache = uniqueCache[ type ] || [];
+								nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
+								diff = nodeIndex;
+							}
+
+							// xml :nth-child(...)
+							// or :nth-last-child(...) or :nth(-last)?-of-type(...)
+							if ( diff === false ) {
+
+								// Use the same loop as above to seek `elem` from the start
+								while ( ( node = ++nodeIndex && node && node[ dir ] ||
+									( diff = nodeIndex = 0 ) || start.pop() ) ) {
+
+									if ( ( ofType ?
+										node.nodeName.toLowerCase() === name :
+										node.nodeType === 1 ) &&
+										++diff ) {
+
+										// Cache the index of each encountered element
+										if ( useCache ) {
+											outerCache = node[ expando ] ||
+												( node[ expando ] = {} );
+
+											// Support: IE <9 only
+											// Defend against cloned attroperties (jQuery gh-1709)
+											uniqueCache = outerCache[ node.uniqueID ] ||
+												( outerCache[ node.uniqueID ] = {} );
+
+											uniqueCache[ type ] = [ dirruns, diff ];
+										}
+
+										if ( node === elem ) {
+											break;
+										}
+									}
+								}
+							}
+						}
+
+						// Incorporate the offset, then check against cycle size
+						diff -= last;
+						return diff === first || ( diff % first === 0 && diff / first >= 0 );
+					}
+				};
+		},
+
+		"PSEUDO": function( pseudo, argument ) {
+
+			// pseudo-class names are case-insensitive
+			// http://www.w3.org/TR/selectors/#pseudo-classes
+			// Prioritize by case sensitivity in case custom pseudos are added with uppercase letters
+			// Remember that setFilters inherits from pseudos
+			var args,
+				fn = Expr.pseudos[ pseudo ] || Expr.setFilters[ pseudo.toLowerCase() ] ||
+					Sizzle.error( "unsupported pseudo: " + pseudo );
+
+			// The user may use createPseudo to indicate that
+			// arguments are needed to create the filter function
+			// just as Sizzle does
+			if ( fn[ expando ] ) {
+				return fn( argument );
+			}
+
+			// But maintain support for old signatures
+			if ( fn.length > 1 ) {
+				args = [ pseudo, pseudo, "", argument ];
+				return Expr.setFilters.hasOwnProperty( pseudo.toLowerCase() ) ?
+					markFunction( function( seed, matches ) {
+						var idx,
+							matched = fn( seed, argument ),
+							i = matched.length;
+						while ( i-- ) {
+							idx = indexOf( seed, matched[ i ] );
+							seed[ idx ] = !( matches[ idx ] = matched[ i ] );
+						}
+					} ) :
+					function( elem ) {
+						return fn( elem, 0, args );
+					};
+			}
+
+			return fn;
+		}
+	},
+
+	pseudos: {
+
+		// Potentially complex pseudos
+		"not": markFunction( function( selector ) {
+
+			// Trim the selector passed to compile
+			// to avoid treating leading and trailing
+			// spaces as combinators
+			var input = [],
+				results = [],
+				matcher = compile( selector.replace( rtrim, "$1" ) );
+
+			return matcher[ expando ] ?
+				markFunction( function( seed, matches, _context, xml ) {
+					var elem,
+						unmatched = matcher( seed, null, xml, [] ),
+						i = seed.length;
+
+					// Match elements unmatched by `matcher`
+					while ( i-- ) {
+						if ( ( elem = unmatched[ i ] ) ) {
+							seed[ i ] = !( matches[ i ] = elem );
+						}
+					}
+				} ) :
+				function( elem, _context, xml ) {
+					input[ 0 ] = elem;
+					matcher( input, null, xml, results );
+
+					// Don't keep the element (issue #299)
+					input[ 0 ] = null;
+					return !results.pop();
+				};
+		} ),
+
+		"has": markFunction( function( selector ) {
+			return function( elem ) {
+				return Sizzle( selector, elem ).length > 0;
+			};
+		} ),
+
+		"contains": markFunction( function( text ) {
+			text = text.replace( runescape, funescape );
+			return function( elem ) {
+				return ( elem.textContent || getText( elem ) ).indexOf( text ) > -1;
+			};
+		} ),
+
+		// "Whether an element is represented by a :lang() selector
+		// is based solely on the element's language value
+		// being equal to the identifier C,
+		// or beginning with the identifier C immediately followed by "-".
+		// The matching of C against the element's language value is performed case-insensitively.
+		// The identifier C does not have to be a valid language name."
+		// http://www.w3.org/TR/selectors/#lang-pseudo
+		"lang": markFunction( function( lang ) {
+
+			// lang value must be a valid identifier
+			if ( !ridentifier.test( lang || "" ) ) {
+				Sizzle.error( "unsupported lang: " + lang );
+			}
+			lang = lang.replace( runescape, funescape ).toLowerCase();
+			return function( elem ) {
+				var elemLang;
+				do {
+					if ( ( elemLang = documentIsHTML ?
+						elem.lang :
+						elem.getAttribute( "xml:lang" ) || elem.getAttribute( "lang" ) ) ) {
+
+						elemLang = elemLang.toLowerCase();
+						return elemLang === lang || elemLang.indexOf( lang + "-" ) === 0;
+					}
+				} while ( ( elem = elem.parentNode ) && elem.nodeType === 1 );
+				return false;
+			};
+		} ),
+
+		// Miscellaneous
+		"target": function( elem ) {
+			var hash = window.location && window.location.hash;
+			return hash && hash.slice( 1 ) === elem.id;
+		},
+
+		"root": function( elem ) {
+			return elem === docElem;
+		},
+
+		"focus": function( elem ) {
+			return elem === document.activeElement &&
+				( !document.hasFocus || document.hasFocus() ) &&
+				!!( elem.type || elem.href || ~elem.tabIndex );
+		},
+
+		// Boolean properties
+		"enabled": createDisabledPseudo( false ),
+		"disabled": createDisabledPseudo( true ),
+
+		"checked": function( elem ) {
+
+			// In CSS3, :checked should return both checked and selected elements
+			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
+			var nodeName = elem.nodeName.toLowerCase();
+			return ( nodeName === "input" && !!elem.checked ) ||
+				( nodeName === "option" && !!elem.selected );
+		},
+
+		"selected": function( elem ) {
+
+			// Accessing this property makes selected-by-default
+			// options in Safari work properly
+			if ( elem.parentNode ) {
+				// eslint-disable-next-line no-unused-expressions
+				elem.parentNode.selectedIndex;
+			}
+
+			return elem.selected === true;
+		},
+
+		// Contents
+		"empty": function( elem ) {
+
+			// http://www.w3.org/TR/selectors/#empty-pseudo
+			// :empty is negated by element (1) or content nodes (text: 3; cdata: 4; entity ref: 5),
+			//   but not by others (comment: 8; processing instruction: 7; etc.)
+			// nodeType < 6 works because attributes (2) do not appear as children
+			for ( elem = elem.firstChild; elem; elem = elem.nextSibling ) {
+				if ( elem.nodeType < 6 ) {
+					return false;
+				}
+			}
+			return true;
+		},
+
+		"parent": function( elem ) {
+			return !Expr.pseudos[ "empty" ]( elem );
+		},
+
+		// Element/input types
+		"header": function( elem ) {
+			return rheader.test( elem.nodeName );
+		},
+
+		"input": function( elem ) {
+			return rinputs.test( elem.nodeName );
+		},
+
+		"button": function( elem ) {
+			var name = elem.nodeName.toLowerCase();
+			return name === "input" && elem.type === "button" || name === "button";
+		},
+
+		"text": function( elem ) {
+			var attr;
+			return elem.nodeName.toLowerCase() === "input" &&
+				elem.type === "text" &&
+
+				// Support: IE<8
+				// New HTML5 attribute values (e.g., "search") appear with elem.type === "text"
+				( ( attr = elem.getAttribute( "type" ) ) == null ||
+					attr.toLowerCase() === "text" );
+		},
+
+		// Position-in-collection
+		"first": createPositionalPseudo( function() {
+			return [ 0 ];
+		} ),
+
+		"last": createPositionalPseudo( function( _matchIndexes, length ) {
+			return [ length - 1 ];
+		} ),
+
+		"eq": createPositionalPseudo( function( _matchIndexes, length, argument ) {
+			return [ argument < 0 ? argument + length : argument ];
+		} ),
+
+		"even": createPositionalPseudo( function( matchIndexes, length ) {
+			var i = 0;
+			for ( ; i < length; i += 2 ) {
+				matchIndexes.push( i );
+			}
+			return matchIndexes;
+		} ),
+
+		"odd": createPositionalPseudo( function( matchIndexes, length ) {
+			var i = 1;
+			for ( ; i < length; i += 2 ) {
+				matchIndexes.push( i );
+			}
+			return matchIndexes;
+		} ),
+
+		"lt": createPositionalPseudo( function( matchIndexes, length, argument ) {
+			var i = argument < 0 ?
+				argument + length :
+				argument > length ?
+					length :
+					argument;
+			for ( ; --i >= 0; ) {
+				matchIndexes.push( i );
+			}
+			return matchIndexes;
+		} ),
+
+		"gt": createPositionalPseudo( function( matchIndexes, length, argument ) {
+			var i = argument < 0 ? argument + length : argument;
+			for ( ; ++i < length; ) {
+				matchIndexes.push( i );
+			}
+			return matchIndexes;
+		} )
+	}
+};
+
+Expr.pseudos[ "nth" ] = Expr.pseudos[ "eq" ];
+
+// Add button/input type pseudos
+for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
+	Expr.pseudos[ i ] = createInputPseudo( i );
+}
+for ( i in { submit: true, reset: true } ) {
+	Expr.pseudos[ i ] = createButtonPseudo( i );
+}
+
+// Easy API for creating new setFilters
+function setFilters() {}
+setFilters.prototype = Expr.filters = Expr.pseudos;
+Expr.setFilters = new setFilters();
+
+tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
+	var matched, match, tokens, type,
+		soFar, groups, preFilters,
+		cached = tokenCache[ selector + " " ];
+
+	if ( cached ) {
+		return parseOnly ? 0 : cached.slice( 0 );
+	}
+
+	soFar = selector;
+	groups = [];
+	preFilters = Expr.preFilter;
+
+	while ( soFar ) {
+
+		// Comma and first run
+		if ( !matched || ( match = rcomma.exec( soFar ) ) ) {
+			if ( match ) {
+
+				// Don't consume trailing commas as valid
+				soFar = soFar.slice( match[ 0 ].length ) || soFar;
+			}
+			groups.push( ( tokens = [] ) );
+		}
+
+		matched = false;
+
+		// Combinators
+		if ( ( match = rcombinators.exec( soFar ) ) ) {
+			matched = match.shift();
+			tokens.push( {
+				value: matched,
+
+				// Cast descendant combinators to space
+				type: match[ 0 ].replace( rtrim, " " )
+			} );
+			soFar = soFar.slice( matched.length );
+		}
+
+		// Filters
+		for ( type in Expr.filter ) {
+			if ( ( match = matchExpr[ type ].exec( soFar ) ) && ( !preFilters[ type ] ||
+				( match = preFilters[ type ]( match ) ) ) ) {
+				matched = match.shift();
+				tokens.push( {
+					value: matched,
+					type: type,
+					matches: match
+				} );
+				soFar = soFar.slice( matched.length );
+			}
+		}
+
+		if ( !matched ) {
+			break;
+		}
+	}
+
+	// Return the length of the invalid excess
+	// if we're just parsing
+	// Otherwise, throw an error or return tokens
+	return parseOnly ?
+		soFar.length :
+		soFar ?
+			Sizzle.error( selector ) :
+
+			// Cache the tokens
+			tokenCache( selector, groups ).slice( 0 );
+};
+
+function toSelector( tokens ) {
+	var i = 0,
+		len = tokens.length,
+		selector = "";
+	for ( ; i < len; i++ ) {
+		selector += tokens[ i ].value;
+	}
+	return selector;
+}
+
+function addCombinator( matcher, combinator, base ) {
+	var dir = combinator.dir,
+		skip = combinator.next,
+		key = skip || dir,
+		checkNonElements = base && key === "parentNode",
+		doneName = done++;
+
+	return combinator.first ?
+
+		// Check against closest ancestor/preceding element
+		function( elem, context, xml ) {
+			while ( ( elem = elem[ dir ] ) ) {
+				if ( elem.nodeType === 1 || checkNonElements ) {
+					return matcher( elem, context, xml );
+				}
+			}
+			return false;
+		} :
+
+		// Check against all ancestor/preceding elements
+		function( elem, context, xml ) {
+			var oldCache, uniqueCache, outerCache,
+				newCache = [ dirruns, doneName ];
+
+			// We can't set arbitrary data on XML nodes, so they don't benefit from combinator caching
+			if ( xml ) {
+				while ( ( elem = elem[ dir ] ) ) {
+					if ( elem.nodeType === 1 || checkNonElements ) {
+						if ( matcher( elem, context, xml ) ) {
+							return true;
+						}
+					}
+				}
+			} else {
+				while ( ( elem = elem[ dir ] ) ) {
+					if ( elem.nodeType === 1 || checkNonElements ) {
+						outerCache = elem[ expando ] || ( elem[ expando ] = {} );
+
+						// Support: IE <9 only
+						// Defend against cloned attroperties (jQuery gh-1709)
+						uniqueCache = outerCache[ elem.uniqueID ] ||
+							( outerCache[ elem.uniqueID ] = {} );
+
+						if ( skip && skip === elem.nodeName.toLowerCase() ) {
+							elem = elem[ dir ] || elem;
+						} else if ( ( oldCache = uniqueCache[ key ] ) &&
+							oldCache[ 0 ] === dirruns && oldCache[ 1 ] === doneName ) {
+
+							// Assign to newCache so results back-propagate to previous elements
+							return ( newCache[ 2 ] = oldCache[ 2 ] );
+						} else {
+
+							// Reuse newcache so results back-propagate to previous elements
+							uniqueCache[ key ] = newCache;
+
+							// A match means we're done; a fail means we have to keep checking
+							if ( ( newCache[ 2 ] = matcher( elem, context, xml ) ) ) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		};
+}
+
+function elementMatcher( matchers ) {
+	return matchers.length > 1 ?
+		function( elem, context, xml ) {
+			var i = matchers.length;
+			while ( i-- ) {
+				if ( !matchers[ i ]( elem, context, xml ) ) {
+					return false;
+				}
+			}
+			return true;
+		} :
+		matchers[ 0 ];
+}
+
+function multipleContexts( selector, contexts, results ) {
+	var i = 0,
+		len = contexts.length;
+	for ( ; i < len; i++ ) {
+		Sizzle( selector, contexts[ i ], results );
+	}
+	return results;
+}
+
+function condense( unmatched, map, filter, context, xml ) {
+	var elem,
+		newUnmatched = [],
+		i = 0,
+		len = unmatched.length,
+		mapped = map != null;
+
+	for ( ; i < len; i++ ) {
+		if ( ( elem = unmatched[ i ] ) ) {
+			if ( !filter || filter( elem, context, xml ) ) {
+				newUnmatched.push( elem );
+				if ( mapped ) {
+					map.push( i );
+				}
+			}
+		}
+	}
+
+	return newUnmatched;
+}
+
+function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postSelector ) {
+	if ( postFilter && !postFilter[ expando ] ) {
+		postFilter = setMatcher( postFilter );
+	}
+	if ( postFinder && !postFinder[ expando ] ) {
+		postFinder = setMatcher( postFinder, postSelector );
+	}
+	return markFunction( function( seed, results, context, xml ) {
+		var temp, i, elem,
+			preMap = [],
+			postMap = [],
+			preexisting = results.length,
+
+			// Get initial elements from seed or context
+			elems = seed || multipleContexts(
+				selector || "*",
+				context.nodeType ? [ context ] : context,
+				[]
+			),
+
+			// Prefilter to get matcher input, preserving a map for seed-results synchronization
+			matcherIn = preFilter && ( seed || !selector ) ?
+				condense( elems, preMap, preFilter, context, xml ) :
+				elems,
+
+			matcherOut = matcher ?
+
+				// If we have a postFinder, or filtered seed, or non-seed postFilter or preexisting results,
+				postFinder || ( seed ? preFilter : preexisting || postFilter ) ?
+
+					// ...intermediate processing is necessary
+					[] :
+
+					// ...otherwise use results directly
+					results :
+				matcherIn;
+
+		// Find primary matches
+		if ( matcher ) {
+			matcher( matcherIn, matcherOut, context, xml );
+		}
+
+		// Apply postFilter
+		if ( postFilter ) {
+			temp = condense( matcherOut, postMap );
+			postFilter( temp, [], context, xml );
+
+			// Un-match failing elements by moving them back to matcherIn
+			i = temp.length;
+			while ( i-- ) {
+				if ( ( elem = temp[ i ] ) ) {
+					matcherOut[ postMap[ i ] ] = !( matcherIn[ postMap[ i ] ] = elem );
+				}
+			}
+		}
+
+		if ( seed ) {
+			if ( postFinder || preFilter ) {
+				if ( postFinder ) {
+
+					// Get the final matcherOut by condensing this intermediate into postFinder contexts
+					temp = [];
+					i = matcherOut.length;
+					while ( i-- ) {
+						if ( ( elem = matcherOut[ i ] ) ) {
+
+							// Restore matcherIn since elem is not yet a final match
+							temp.push( ( matcherIn[ i ] = elem ) );
+						}
+					}
+					postFinder( null, ( matcherOut = [] ), temp, xml );
+				}
+
+				// Move matched elements from seed to results to keep them synchronized
+				i = matcherOut.length;
+				while ( i-- ) {
+					if ( ( elem = matcherOut[ i ] ) &&
+						( temp = postFinder ? indexOf( seed, elem ) : preMap[ i ] ) > -1 ) {
+
+						seed[ temp ] = !( results[ temp ] = elem );
+					}
+				}
+			}
+
+		// Add elements to results, through postFinder if defined
+		} else {
+			matcherOut = condense(
+				matcherOut === results ?
+					matcherOut.splice( preexisting, matcherOut.length ) :
+					matcherOut
+			);
+			if ( postFinder ) {
+				postFinder( null, results, matcherOut, xml );
+			} else {
+				push.apply( results, matcherOut );
+			}
+		}
+	} );
+}
+
+function matcherFromTokens( tokens ) {
+	var checkContext, matcher, j,
+		len = tokens.length,
+		leadingRelative = Expr.relative[ tokens[ 0 ].type ],
+		implicitRelative = leadingRelative || Expr.relative[ " " ],
+		i = leadingRelative ? 1 : 0,
+
+		// The foundational matcher ensures that elements are reachable from top-level context(s)
+		matchContext = addCombinator( function( elem ) {
+			return elem === checkContext;
+		}, implicitRelative, true ),
+		matchAnyContext = addCombinator( function( elem ) {
+			return indexOf( checkContext, elem ) > -1;
+		}, implicitRelative, true ),
+		matchers = [ function( elem, context, xml ) {
+			var ret = ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
+				( checkContext = context ).nodeType ?
+					matchContext( elem, context, xml ) :
+					matchAnyContext( elem, context, xml ) );
+
+			// Avoid hanging onto element (issue #299)
+			checkContext = null;
+			return ret;
+		} ];
+
+	for ( ; i < len; i++ ) {
+		if ( ( matcher = Expr.relative[ tokens[ i ].type ] ) ) {
+			matchers = [ addCombinator( elementMatcher( matchers ), matcher ) ];
+		} else {
+			matcher = Expr.filter[ tokens[ i ].type ].apply( null, tokens[ i ].matches );
+
+			// Return special upon seeing a positional matcher
+			if ( matcher[ expando ] ) {
+
+				// Find the next relative operator (if any) for proper handling
+				j = ++i;
+				for ( ; j < len; j++ ) {
+					if ( Expr.relative[ tokens[ j ].type ] ) {
+						break;
+					}
+				}
+				return setMatcher(
+					i > 1 && elementMatcher( matchers ),
+					i > 1 && toSelector(
+
+					// If the preceding token was a descendant combinator, insert an implicit any-element `*`
+					tokens
+						.slice( 0, i - 1 )
+						.concat( { value: tokens[ i - 2 ].type === " " ? "*" : "" } )
+					).replace( rtrim, "$1" ),
+					matcher,
+					i < j && matcherFromTokens( tokens.slice( i, j ) ),
+					j < len && matcherFromTokens( ( tokens = tokens.slice( j ) ) ),
+					j < len && toSelector( tokens )
+				);
+			}
+			matchers.push( matcher );
+		}
+	}
+
+	return elementMatcher( matchers );
+}
+
+function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
+	var bySet = setMatchers.length > 0,
+		byElement = elementMatchers.length > 0,
+		superMatcher = function( seed, context, xml, results, outermost ) {
+			var elem, j, matcher,
+				matchedCount = 0,
+				i = "0",
+				unmatched = seed && [],
+				setMatched = [],
+				contextBackup = outermostContext,
+
+				// We must always have either seed elements or outermost context
+				elems = seed || byElement && Expr.find[ "TAG" ]( "*", outermost ),
+
+				// Use integer dirruns iff this is the outermost matcher
+				dirrunsUnique = ( dirruns += contextBackup == null ? 1 : Math.random() || 0.1 ),
+				len = elems.length;
+
+			if ( outermost ) {
+
+				// Support: IE 11+, Edge 17 - 18+
+				// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+				// two documents; shallow comparisons work.
+				// eslint-disable-next-line eqeqeq
+				outermostContext = context == document || context || outermost;
+			}
+
+			// Add elements passing elementMatchers directly to results
+			// Support: IE<9, Safari
+			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
+			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
+				if ( byElement && elem ) {
+					j = 0;
+
+					// Support: IE 11+, Edge 17 - 18+
+					// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+					// two documents; shallow comparisons work.
+					// eslint-disable-next-line eqeqeq
+					if ( !context && elem.ownerDocument != document ) {
+						setDocument( elem );
+						xml = !documentIsHTML;
+					}
+					while ( ( matcher = elementMatchers[ j++ ] ) ) {
+						if ( matcher( elem, context || document, xml ) ) {
+							results.push( elem );
+							break;
+						}
+					}
+					if ( outermost ) {
+						dirruns = dirrunsUnique;
+					}
+				}
+
+				// Track unmatched elements for set filters
+				if ( bySet ) {
+
+					// They will have gone through all possible matchers
+					if ( ( elem = !matcher && elem ) ) {
+						matchedCount--;
+					}
+
+					// Lengthen the array for every element, matched or not
+					if ( seed ) {
+						unmatched.push( elem );
+					}
+				}
+			}
+
+			// `i` is now the count of elements visited above, and adding it to `matchedCount`
+			// makes the latter nonnegative.
+			matchedCount += i;
+
+			// Apply set filters to unmatched elements
+			// NOTE: This can be skipped if there are no unmatched elements (i.e., `matchedCount`
+			// equals `i`), unless we didn't visit _any_ elements in the above loop because we have
+			// no element matchers and no seed.
+			// Incrementing an initially-string "0" `i` allows `i` to remain a string only in that
+			// case, which will result in a "00" `matchedCount` that differs from `i` but is also
+			// numerically zero.
+			if ( bySet && i !== matchedCount ) {
+				j = 0;
+				while ( ( matcher = setMatchers[ j++ ] ) ) {
+					matcher( unmatched, setMatched, context, xml );
+				}
+
+				if ( seed ) {
+
+					// Reintegrate element matches to eliminate the need for sorting
+					if ( matchedCount > 0 ) {
+						while ( i-- ) {
+							if ( !( unmatched[ i ] || setMatched[ i ] ) ) {
+								setMatched[ i ] = pop.call( results );
+							}
+						}
+					}
+
+					// Discard index placeholder values to get only actual matches
+					setMatched = condense( setMatched );
+				}
+
+				// Add matches to results
+				push.apply( results, setMatched );
+
+				// Seedless set matches succeeding multiple successful matchers stipulate sorting
+				if ( outermost && !seed && setMatched.length > 0 &&
+					( matchedCount + setMatchers.length ) > 1 ) {
+
+					Sizzle.uniqueSort( results );
+				}
+			}
+
+			// Override manipulation of globals by nested matchers
+			if ( outermost ) {
+				dirruns = dirrunsUnique;
+				outermostContext = contextBackup;
+			}
+
+			return unmatched;
+		};
+
+	return bySet ?
+		markFunction( superMatcher ) :
+		superMatcher;
+}
+
+compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
+	var i,
+		setMatchers = [],
+		elementMatchers = [],
+		cached = compilerCache[ selector + " " ];
+
+	if ( !cached ) {
+
+		// Generate a function of recursive functions that can be used to check each element
+		if ( !match ) {
+			match = tokenize( selector );
+		}
+		i = match.length;
+		while ( i-- ) {
+			cached = matcherFromTokens( match[ i ] );
+			if ( cached[ expando ] ) {
+				setMatchers.push( cached );
+			} else {
+				elementMatchers.push( cached );
+			}
+		}
+
+		// Cache the compiled function
+		cached = compilerCache(
+			selector,
+			matcherFromGroupMatchers( elementMatchers, setMatchers )
+		);
+
+		// Save selector and tokenization
+		cached.selector = selector;
+	}
+	return cached;
+};
+
+/**
+ * A low-level selection function that works with Sizzle's compiled
+ *  selector functions
+ * @param {String|Function} selector A selector or a pre-compiled
+ *  selector function built with Sizzle.compile
+ * @param {Element} context
+ * @param {Array} [results]
+ * @param {Array} [seed] A set of elements to match against
+ */
+select = Sizzle.select = function( selector, context, results, seed ) {
+	var i, tokens, token, type, find,
+		compiled = typeof selector === "function" && selector,
+		match = !seed && tokenize( ( selector = compiled.selector || selector ) );
+
+	results = results || [];
+
+	// Try to minimize operations if there is only one selector in the list and no seed
+	// (the latter of which guarantees us context)
+	if ( match.length === 1 ) {
+
+		// Reduce context if the leading compound selector is an ID
+		tokens = match[ 0 ] = match[ 0 ].slice( 0 );
+		if ( tokens.length > 2 && ( token = tokens[ 0 ] ).type === "ID" &&
+			context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[ 1 ].type ] ) {
+
+			context = ( Expr.find[ "ID" ]( token.matches[ 0 ]
+				.replace( runescape, funescape ), context ) || [] )[ 0 ];
+			if ( !context ) {
+				return results;
+
+			// Precompiled matchers will still verify ancestry, so step up a level
+			} else if ( compiled ) {
+				context = context.parentNode;
+			}
+
+			selector = selector.slice( tokens.shift().value.length );
+		}
+
+		// Fetch a seed set for right-to-left matching
+		i = matchExpr[ "needsContext" ].test( selector ) ? 0 : tokens.length;
+		while ( i-- ) {
+			token = tokens[ i ];
+
+			// Abort if we hit a combinator
+			if ( Expr.relative[ ( type = token.type ) ] ) {
+				break;
+			}
+			if ( ( find = Expr.find[ type ] ) ) {
+
+				// Search, expanding context for leading sibling combinators
+				if ( ( seed = find(
+					token.matches[ 0 ].replace( runescape, funescape ),
+					rsibling.test( tokens[ 0 ].type ) && testContext( context.parentNode ) ||
+						context
+				) ) ) {
+
+					// If seed is empty or no tokens remain, we can return early
+					tokens.splice( i, 1 );
+					selector = seed.length && toSelector( tokens );
+					if ( !selector ) {
+						push.apply( results, seed );
+						return results;
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
+	// Compile and execute a filtering function if one is not provided
+	// Provide `match` to avoid retokenization if we modified the selector above
+	( compiled || compile( selector, match ) )(
+		seed,
+		context,
+		!documentIsHTML,
+		results,
+		!context || rsibling.test( selector ) && testContext( context.parentNode ) || context
+	);
+	return results;
+};
+
+// One-time assignments
+
+// Sort stability
+support.sortStable = expando.split( "" ).sort( sortOrder ).join( "" ) === expando;
+
+// Support: Chrome 14-35+
+// Always assume duplicates if they aren't passed to the comparison function
+support.detectDuplicates = !!hasDuplicate;
+
+// Initialize against the default document
+setDocument();
+
+// Support: Webkit<537.32 - Safari 6.0.3/Chrome 25 (fixed in Chrome 27)
+// Detached nodes confoundingly follow *each other*
+support.sortDetached = assert( function( el ) {
+
+	// Should return 1, but returns 4 (following)
+	return el.compareDocumentPosition( document.createElement( "fieldset" ) ) & 1;
+} );
+
+// Support: IE<8
+// Prevent attribute/property "interpolation"
+// https://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
+if ( !assert( function( el ) {
+	el.innerHTML = "<a href='#'></a>";
+	return el.firstChild.getAttribute( "href" ) === "#";
+} ) ) {
+	addHandle( "type|href|height|width", function( elem, name, isXML ) {
+		if ( !isXML ) {
+			return elem.getAttribute( name, name.toLowerCase() === "type" ? 1 : 2 );
+		}
+	} );
+}
+
+// Support: IE<9
+// Use defaultValue in place of getAttribute("value")
+if ( !support.attributes || !assert( function( el ) {
+	el.innerHTML = "<input/>";
+	el.firstChild.setAttribute( "value", "" );
+	return el.firstChild.getAttribute( "value" ) === "";
+} ) ) {
+	addHandle( "value", function( elem, _name, isXML ) {
+		if ( !isXML && elem.nodeName.toLowerCase() === "input" ) {
+			return elem.defaultValue;
+		}
+	} );
+}
+
+// Support: IE<9
+// Use getAttributeNode to fetch booleans when getAttribute lies
+if ( !assert( function( el ) {
+	return el.getAttribute( "disabled" ) == null;
+} ) ) {
+	addHandle( booleans, function( elem, name, isXML ) {
+		var val;
+		if ( !isXML ) {
+			return elem[ name ] === true ? name.toLowerCase() :
+				( val = elem.getAttributeNode( name ) ) && val.specified ?
+					val.value :
+					null;
+		}
+	} );
+}
+
+return Sizzle;
+
+} )( window );
+
+
+
+jQuery.find = Sizzle;
+jQuery.expr = Sizzle.selectors;
+
+// Deprecated
+jQuery.expr[ ":" ] = jQuery.expr.pseudos;
+jQuery.uniqueSort = jQuery.unique = Sizzle.uniqueSort;
+jQuery.text = Sizzle.getText;
+jQuery.isXMLDoc = Sizzle.isXML;
+jQuery.contains = Sizzle.contains;
+jQuery.escapeSelector = Sizzle.escape;
+
+
+
+
+var dir = function( elem, dir, until ) {
+	var matched = [],
+		truncate = until !== undefined;
+
+	while ( ( elem = elem[ dir ] ) && elem.nodeType !== 9 ) {
+		if ( elem.nodeType === 1 ) {
+			if ( truncate && jQuery( elem ).is( until ) ) {
+				break;
+			}
+			matched.push( elem );
+		}
+	}
+	return matched;
+};
+
+
+var siblings = function( n, elem ) {
+	var matched = [];
+
+	for ( ; n; n = n.nextSibling ) {
+		if ( n.nodeType === 1 && n !== elem ) {
+			matched.push( n );
+		}
+	}
+
+	return matched;
+};
+
+
+var rneedsContext = jQuery.expr.match.needsContext;
+
+
+
+function nodeName( elem, name ) {
+
+	return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
+
+}
+var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
+
+
+
+// Implement the identical functionality for filter and not
+function winnow( elements, qualifier, not ) {
+	if ( isFunction( qualifier ) ) {
+		return jQuery.grep( elements, function( elem, i ) {
+			return !!qualifier.call( elem, i, elem ) !== not;
+		} );
+	}
+
+	// Single element
+	if ( qualifier.nodeType ) {
+		return jQuery.grep( elements, function( elem ) {
+			return ( elem === qualifier ) !== not;
+		} );
+	}
+
+	// Arraylike of elements (jQuery, arguments, Array)
+	if ( typeof qualifier !== "string" ) {
+		return jQuery.grep( elements, function( elem ) {
+			return ( indexOf.call( qualifier, elem ) > -1 ) !== not;
+		} );
+	}
+
+	// Filtered directly for both simple and complex selectors
+	return jQuery.filter( qualifier, elements, not );
+}
+
+jQuery.filter = function( expr, elems, not ) {
+	var elem = elems[ 0 ];
+
+	if ( not ) {
+		expr = ":not(" + expr + ")";
+	}
+
+	if ( elems.length === 1 && elem.nodeType === 1 ) {
+		return jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [];
+	}
+
+	return jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
+		return elem.nodeType === 1;
+	} ) );
+};
+
+jQuery.fn.extend( {
+	find: function( selector ) {
+		var i, ret,
+			len = this.length,
+			self = this;
+
+		if ( typeof selector !== "string" ) {
+			return this.pushStack( jQuery( selector ).filter( function() {
+				for ( i = 0; i < len; i++ ) {
+					if ( jQuery.contains( self[ i ], this ) ) {
+						return true;
+					}
+				}
+			} ) );
+		}
+
+		ret = this.pushStack( [] );
+
+		for ( i = 0; i < len; i++ ) {
+			jQuery.find( selector, self[ i ], ret );
+		}
+
+		return len > 1 ? jQuery.uniqueSort( ret ) : ret;
+	},
+	filter: function( selector ) {
+		return this.pushStack( winnow( this, selector || [], false ) );
+	},
+	not: function( selector ) {
+		return this.pushStack( winnow( this, selector || [], true ) );
+	},
+	is: function( selector ) {
+		return !!winnow(
+			this,
+
+			// If this is a positional/relative selector, check membership in the returned set
+			// so $("p:first").is("p:last") won't return true for a doc with two "p".
+			typeof selector === "string" && rneedsContext.test( selector ) ?
+				jQuery( selector ) :
+				selector || [],
+			false
+		).length;
+	}
+} );
+
+
+// Initialize a jQuery object
+
+
+// A central reference to the root jQuery(document)
+var rootjQuery,
+
+	// A simple way to check for HTML strings
+	// Prioritize #id over <tag> to avoid XSS via location.hash (trac-9521)
+	// Strict HTML recognition (trac-11290: must start with <)
+	// Shortcut simple #id case for speed
+	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/,
+
+	init = jQuery.fn.init = function( selector, context, root ) {
+		var match, elem;
+
+		// HANDLE: $(""), $(null), $(undefined), $(false)
+		if ( !selector ) {
+			return this;
+		}
+
+		// Method init() accepts an alternate rootjQuery
+		// so migrate can support jQuery.sub (gh-2101)
+		root = root || rootjQuery;
+
+		// Handle HTML strings
+		if ( typeof selector === "string" ) {
+			if ( selector[ 0 ] === "<" &&
+				selector[ selector.length - 1 ] === ">" &&
+				selector.length >= 3 ) {
+
+				// Assume that strings that start and end with <> are HTML and skip the regex check
+				match = [ null, selector, null ];
+
+			} else {
+				match = rquickExpr.exec( selector );
+			}
+
+			// Match html or make sure no context is specified for #id
+			if ( match && ( match[ 1 ] || !context ) ) {
+
+				// HANDLE: $(html) -> $(array)
+				if ( match[ 1 ] ) {
+					context = context instanceof jQuery ? context[ 0 ] : context;
+
+					// Option to run scripts is true for back-compat
+					// Intentionally let the error be thrown if parseHTML is not present
+					jQuery.merge( this, jQuery.parseHTML(
+						match[ 1 ],
+						context && context.nodeType ? context.ownerDocument || context : document,
+						true
+					) );
+
+					// HANDLE: $(html, props)
+					if ( rsingleTag.test( match[ 1 ] ) && jQuery.isPlainObject( context ) ) {
+						for ( match in context ) {
+
+							// Properties of context are called as methods if possible
+							if ( isFunction( this[ match ] ) ) {
+								this[ match ]( context[ match ] );
+
+							// ...and otherwise set as attributes
+							} else {
+								this.attr( match, context[ match ] );
+							}
+						}
+					}
+
+					return this;
+
+				// HANDLE: $(#id)
+				} else {
+					elem = document.getElementById( match[ 2 ] );
+
+					if ( elem ) {
+
+						// Inject the element directly into the jQuery object
+						this[ 0 ] = elem;
+						this.length = 1;
+					}
+					return this;
+				}
+
+			// HANDLE: $(expr, $(...))
+			} else if ( !context || context.jquery ) {
+				return ( context || root ).find( selector );
+
+			// HANDLE: $(expr, context)
+			// (which is just equivalent to: $(context).find(expr)
+			} else {
+				return this.constructor( context ).find( selector );
+			}
+
+		// HANDLE: $(DOMElement)
+		} else if ( selector.nodeType ) {
+			this[ 0 ] = selector;
+			this.length = 1;
+			return this;
+
+		// HANDLE: $(function)
+		// Shortcut for document ready
+		} else if ( isFunction( selector ) ) {
+			return root.ready !== undefined ?
+				root.ready( selector ) :
+
+				// Execute immediately if ready is not present
+				selector( jQuery );
+		}
+
+		return jQuery.makeArray( selector, this );
+	};
+
+// Give the init function the jQuery prototype for later instantiation
+init.prototype = jQuery.fn;
+
+// Initialize central reference
+rootjQuery = jQuery( document );
+
+
+var rparentsprev = /^(?:parents|prev(?:Until|All))/,
+
+	// Methods guaranteed to produce a unique set when starting from a unique set
+	guaranteedUnique = {
+		children: true,
+		contents: true,
+		next: true,
+		prev: true
+	};
+
+jQuery.fn.extend( {
+	has: function( target ) {
+		var targets = jQuery( target, this ),
+			l = targets.length;
+
+		return this.filter( function() {
+			var i = 0;
+			for ( ; i < l; i++ ) {
+				if ( jQuery.contains( this, targets[ i ] ) ) {
+					return true;
+				}
+			}
+		} );
+	},
+
+	closest: function( selectors, context ) {
+		var cur,
+			i = 0,
+			l = this.length,
+			matched = [],
+			targets = typeof selectors !== "string" && jQuery( selectors );
+
+		// Positional selectors never match, since there's no _selection_ context
+		if ( !rneedsContext.test( selectors ) ) {
+			for ( ; i < l; i++ ) {
+				for ( cur = this[ i ]; cur && cur !== context; cur = cur.parentNode ) {
+
+					// Always skip document fragments
+					if ( cur.nodeType < 11 && ( targets ?
+						targets.index( cur ) > -1 :
+
+						// Don't pass non-elements to Sizzle
+						cur.nodeType === 1 &&
+							jQuery.find.matchesSelector( cur, selectors ) ) ) {
+
+						matched.push( cur );
+						break;
+					}
+				}
+			}
+		}
+
+		return this.pushStack( matched.length > 1 ? jQuery.uniqueSort( matched ) : matched );
+	},
+
+	// Determine the position of an element within the set
+	index: function( elem ) {
+
+		// No argument, return index in parent
+		if ( !elem ) {
+			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
+		}
+
+		// Index in selector
+		if ( typeof elem === "string" ) {
+			return indexOf.call( jQuery( elem ), this[ 0 ] );
+		}
+
+		// Locate the position of the desired element
+		return indexOf.call( this,
+
+			// If it receives a jQuery object, the first element is used
+			elem.jquery ? elem[ 0 ] : elem
+		);
+	},
+
+	add: function( selector, context ) {
+		return this.pushStack(
+			jQuery.uniqueSort(
+				jQuery.merge( this.get(), jQuery( selector, context ) )
+			)
+		);
+	},
+
+	addBack: function( selector ) {
+		return this.add( selector == null ?
+			this.prevObject : this.prevObject.filter( selector )
+		);
+	}
+} );
+
+function sibling( cur, dir ) {
+	while ( ( cur = cur[ dir ] ) && cur.nodeType !== 1 ) {}
+	return cur;
+}
+
+jQuery.each( {
+	parent: function( elem ) {
+		var parent = elem.parentNode;
+		return parent && parent.nodeType !== 11 ? parent : null;
+	},
+	parents: function( elem ) {
+		return dir( elem, "parentNode" );
+	},
+	parentsUntil: function( elem, _i, until ) {
+		return dir( elem, "parentNode", until );
+	},
+	next: function( elem ) {
+		return sibling( elem, "nextSibling" );
+	},
+	prev: function( elem ) {
+		return sibling( elem, "previousSibling" );
+	},
+	nextAll: function( elem ) {
+		return dir( elem, "nextSibling" );
+	},
+	prevAll: function( elem ) {
+		return dir( elem, "previousSibling" );
+	},
+	nextUntil: function( elem, _i, until ) {
+		return dir( elem, "nextSibling", until );
+	},
+	prevUntil: function( elem, _i, until ) {
+		return dir( elem, "previousSibling", until );
+	},
+	siblings: function( elem ) {
+		return siblings( ( elem.parentNode || {} ).firstChild, elem );
+	},
+	children: function( elem ) {
+		return siblings( elem.firstChild );
+	},
+	contents: function( elem ) {
+		if ( elem.contentDocument != null &&
+
+			// Support: IE 11+
+			// <object> elements with no `data` attribute has an object
+			// `contentDocument` with a `null` prototype.
+			getProto( elem.contentDocument ) ) {
+
+			return elem.contentDocument;
+		}
+
+		// Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
+		// Treat the template element as a regular one in browsers that
+		// don't support it.
+		if ( nodeName( elem, "template" ) ) {
+			elem = elem.content || elem;
+		}
+
+		return jQuery.merge( [], elem.childNodes );
+	}
+}, function( name, fn ) {
+	jQuery.fn[ name ] = function( until, selector ) {
+		var matched = jQuery.map( this, fn, until );
+
+		if ( name.slice( -5 ) !== "Until" ) {
+			selector = until;
+		}
+
+		if ( selector && typeof selector === "string" ) {
+			matched = jQuery.filter( selector, matched );
+		}
+
+		if ( this.length > 1 ) {
+
+			// Remove duplicates
+			if ( !guaranteedUnique[ name ] ) {
+				jQuery.uniqueSort( matched );
+			}
+
+			// Reverse order for parents* and prev-derivatives
+			if ( rparentsprev.test( name ) ) {
+				matched.reverse();
+			}
+		}
+
+		return this.pushStack( matched );
+	};
+} );
+var rnothtmlwhite = ( /[^\x20\t\r\n\f]+/g );
+
+
+
+// Convert String-formatted options into Object-formatted ones
+function createOptions( options ) {
+	var object = {};
+	jQuery.each( options.match( rnothtmlwhite ) || [], function( _, flag ) {
+		object[ flag ] = true;
+	} );
+	return object;
+}
+
+/*
+ * Create a callback list using the following parameters:
+ *
+ *	options: an optional list of space-separated options that will change how
+ *			the callback list behaves or a more traditional option object
+ *
+ * By default a callback list will act like an event callback list and can be
+ * "fired" multiple times.
+ *
+ * Possible options:
+ *
+ *	once:			will ensure the callback list can only be fired once (like a Deferred)
+ *
+ *	memory:			will keep track of previous values and will call any callback added
+ *					after the list has been fired right away with the latest "memorized"
+ *					values (like a Deferred)
+ *
+ *	unique:			will ensure a callback can only be added once (no duplicate in the list)
+ *
+ *	stopOnFalse:	interrupt callings when a callback returns false
+ *
+ */
+jQuery.Callbacks = function( options ) {
+
+	// Convert options from String-formatted to Object-formatted if needed
+	// (we check in cache first)
+	options = typeof options === "string" ?
+		createOptions( options ) :
+		jQuery.extend( {}, options );
+
+	var // Flag to know if list is currently firing
+		firing,
+
+		// Last fire value for non-forgettable lists
+		memory,
+
+		// Flag to know if list was already fired
+		fired,
+
+		// Flag to prevent firing
+		locked,
+
+		// Actual callback list
+		list = [],
+
+		// Queue of execution data for repeatable lists
+		queue = [],
+
+		// Index of currently firing callback (modified by add/remove as needed)
+		firingIndex = -1,
+
+		// Fire callbacks
+		fire = function() {
+
+			// Enforce single-firing
+			locked = locked || options.once;
+
+			// Execute callbacks for all pending executions,
+			// respecting firingIndex overrides and runtime changes
+			fired = firing = true;
+			for ( ; queue.length; firingIndex = -1 ) {
+				memory = queue.shift();
+				while ( ++firingIndex < list.length ) {
+
+					// Run callback and check for early termination
+					if ( list[ firingIndex ].apply( memory[ 0 ], memory[ 1 ] ) === false &&
+						options.stopOnFalse ) {
+
+						// Jump to end and forget the data so .add doesn't re-fire
+						firingIndex = list.length;
+						memory = false;
+					}
+				}
+			}
+
+			// Forget the data if we're done with it
+			if ( !options.memory ) {
+				memory = false;
+			}
+
+			firing = false;
+
+			// Clean up if we're done firing for good
+			if ( locked ) {
+
+				// Keep an empty list if we have data for future add calls
+				if ( memory ) {
+					list = [];
+
+				// Otherwise, this object is spent
+				} else {
+					list = "";
+				}
+			}
+		},
+
+		// Actual Callbacks object
+		self = {
+
+			// Add a callback or a collection of callbacks to the list
+			add: function() {
+				if ( list ) {
+
+					// If we have memory from a past run, we should fire after adding
+					if ( memory && !firing ) {
+						firingIndex = list.length - 1;
+						queue.push( memory );
+					}
+
+					( function add( args ) {
+						jQuery.each( args, function( _, arg ) {
+							if ( isFunction( arg ) ) {
+								if ( !options.unique || !self.has( arg ) ) {
+									list.push( arg );
+								}
+							} else if ( arg && arg.length && toType( arg ) !== "string" ) {
+
+								// Inspect recursively
+								add( arg );
+							}
+						} );
+					} )( arguments );
+
+					if ( memory && !firing ) {
+						fire();
+					}
+				}
+				return this;
+			},
+
+			// Remove a callback from the list
+			remove: function() {
+				jQuery.each( arguments, function( _, arg ) {
+					var index;
+					while ( ( index = jQuery.inArray( arg, list, index ) ) > -1 ) {
+						list.splice( index, 1 );
+
+						// Handle firing indexes
+						if ( index <= firingIndex ) {
+							firingIndex--;
+						}
+					}
+				} );
+				return this;
+			},
+
+			// Check if a given callback is in the list.
+			// If no argument is given, return whether or not list has callbacks attached.
+			has: function( fn ) {
+				return fn ?
+					jQuery.inArray( fn, list ) > -1 :
+					list.length > 0;
+			},
+
+			// Remove all callbacks from the list
+			empty: function() {
+				if ( list ) {
+					list = [];
+				}
+				return this;
+			},
+
+			// Disable .fire and .add
+			// Abort any current/pending executions
+			// Clear all callbacks and values
+			disable: function() {
+				locked = queue = [];
+				list = memory = "";
+				return this;
+			},
+			disabled: function() {
+				return !list;
+			},
+
+			// Disable .fire
+			// Also disable .add unless we have memory (since it would have no effect)
+			// Abort any pending executions
+			lock: function() {
+				locked = queue = [];
+				if ( !memory && !firing ) {
+					list = memory = "";
+				}
+				return this;
+			},
+			locked: function() {
+				return !!locked;
+			},
+
+			// Call all callbacks with the given context and arguments
+			fireWith: function( context, args ) {
+				if ( !locked ) {
+					args = args || [];
+					args = [ context, args.slice ? args.slice() : args ];
+					queue.push( args );
+					if ( !firing ) {
+						fire();
+					}
+				}
+				return this;
+			},
+
+			// Call all the callbacks with the given arguments
+			fire: function() {
+				self.fireWith( this, arguments );
+				return this;
+			},
+
+			// To know if the callbacks have already been called at least once
+			fired: function() {
+				return !!fired;
+			}
+		};
+
+	return self;
+};
+
+
+function Identity( v ) {
+	return v;
+}
+function Thrower( ex ) {
+	throw ex;
+}
+
+function adoptValue( value, resolve, reject, noValue ) {
+	var method;
+
+	try {
+
+		// Check for promise aspect first to privilege synchronous behavior
+		if ( value && isFunction( ( method = value.promise ) ) ) {
+			method.call( value ).done( resolve ).fail( reject );
+
+		// Other thenables
+		} else if ( value && isFunction( ( method = value.then ) ) ) {
+			method.call( value, resolve, reject );
+
+		// Other non-thenables
+		} else {
+
+			// Control `resolve` arguments by letting Array#slice cast boolean `noValue` to integer:
+			// * false: [ value ].slice( 0 ) => resolve( value )
+			// * true: [ value ].slice( 1 ) => resolve()
+			resolve.apply( undefined, [ value ].slice( noValue ) );
+		}
+
+	// For Promises/A+, convert exceptions into rejections
+	// Since jQuery.when doesn't unwrap thenables, we can skip the extra checks appearing in
+	// Deferred#then to conditionally suppress rejection.
+	} catch ( value ) {
+
+		// Support: Android 4.0 only
+		// Strict mode functions invoked without .call/.apply get global-object context
+		reject.apply( undefined, [ value ] );
+	}
+}
+
+jQuery.extend( {
+
+	Deferred: function( func ) {
+		var tuples = [
+
+				// action, add listener, callbacks,
+				// ... .then handlers, argument index, [final state]
+				[ "notify", "progress", jQuery.Callbacks( "memory" ),
+					jQuery.Callbacks( "memory" ), 2 ],
+				[ "resolve", "done", jQuery.Callbacks( "once memory" ),
+					jQuery.Callbacks( "once memory" ), 0, "resolved" ],
+				[ "reject", "fail", jQuery.Callbacks( "once memory" ),
+					jQuery.Callbacks( "once memory" ), 1, "rejected" ]
+			],
+			state = "pending",
+			promise = {
+				state: function() {
+					return state;
+				},
+				always: function() {
+					deferred.done( arguments ).fail( arguments );
+					return this;
+				},
+				"catch": function( fn ) {
+					return promise.then( null, fn );
+				},
+
+				// Keep pipe for back-compat
+				pipe: function( /* fnDone, fnFail, fnProgress */ ) {
+					var fns = arguments;
+
+					return jQuery.Deferred( function( newDefer ) {
+						jQuery.each( tuples, function( _i, tuple ) {
+
+							// Map tuples (progress, done, fail) to arguments (done, fail, progress)
+							var fn = isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
+
+							// deferred.progress(function() { bind to newDefer or newDefer.notify })
+							// deferred.done(function() { bind to newDefer or newDefer.resolve })
+							// deferred.fail(function() { bind to newDefer or newDefer.reject })
+							deferred[ tuple[ 1 ] ]( function() {
+								var returned = fn && fn.apply( this, arguments );
+								if ( returned && isFunction( returned.promise ) ) {
+									returned.promise()
+										.progress( newDefer.notify )
+										.done( newDefer.resolve )
+										.fail( newDefer.reject );
+								} else {
+									newDefer[ tuple[ 0 ] + "With" ](
+										this,
+										fn ? [ returned ] : arguments
+									);
+								}
+							} );
+						} );
+						fns = null;
+					} ).promise();
+				},
+				then: function( onFulfilled, onRejected, onProgress ) {
+					var maxDepth = 0;
+					function resolve( depth, deferred, handler, special ) {
+						return function() {
+							var that = this,
+								args = arguments,
+								mightThrow = function() {
+									var returned, then;
+
+									// Support: Promises/A+ section 2.3.3.3.3
+									// https://promisesaplus.com/#point-59
+									// Ignore double-resolution attempts
+									if ( depth < maxDepth ) {
+										return;
+									}
+
+									returned = handler.apply( that, args );
+
+									// Support: Promises/A+ section 2.3.1
+									// https://promisesaplus.com/#point-48
+									if ( returned === deferred.promise() ) {
+										throw new TypeError( "Thenable self-resolution" );
+									}
+
+									// Support: Promises/A+ sections 2.3.3.1, 3.5
+									// https://promisesaplus.com/#point-54
+									// https://promisesaplus.com/#point-75
+									// Retrieve `then` only once
+									then = returned &&
+
+										// Support: Promises/A+ section 2.3.4
+										// https://promisesaplus.com/#point-64
+										// Only check objects and functions for thenability
+										( typeof returned === "object" ||
+											typeof returned === "function" ) &&
+										returned.then;
+
+									// Handle a returned thenable
+									if ( isFunction( then ) ) {
+
+										// Special processors (notify) just wait for resolution
+										if ( special ) {
+											then.call(
+												returned,
+												resolve( maxDepth, deferred, Identity, special ),
+												resolve( maxDepth, deferred, Thrower, special )
+											);
+
+										// Normal processors (resolve) also hook into progress
+										} else {
+
+											// ...and disregard older resolution values
+											maxDepth++;
+
+											then.call(
+												returned,
+												resolve( maxDepth, deferred, Identity, special ),
+												resolve( maxDepth, deferred, Thrower, special ),
+												resolve( maxDepth, deferred, Identity,
+													deferred.notifyWith )
+											);
+										}
+
+									// Handle all other returned values
+									} else {
+
+										// Only substitute handlers pass on context
+										// and multiple values (non-spec behavior)
+										if ( handler !== Identity ) {
+											that = undefined;
+											args = [ returned ];
+										}
+
+										// Process the value(s)
+										// Default process is resolve
+										( special || deferred.resolveWith )( that, args );
+									}
+								},
+
+								// Only normal processors (resolve) catch and reject exceptions
+								process = special ?
+									mightThrow :
+									function() {
+										try {
+											mightThrow();
+										} catch ( e ) {
+
+											if ( jQuery.Deferred.exceptionHook ) {
+												jQuery.Deferred.exceptionHook( e,
+													process.stackTrace );
+											}
+
+											// Support: Promises/A+ section 2.3.3.3.4.1
+											// https://promisesaplus.com/#point-61
+											// Ignore post-resolution exceptions
+											if ( depth + 1 >= maxDepth ) {
+
+												// Only substitute handlers pass on context
+												// and multiple values (non-spec behavior)
+												if ( handler !== Thrower ) {
+													that = undefined;
+													args = [ e ];
+												}
+
+												deferred.rejectWith( that, args );
+											}
+										}
+									};
+
+							// Support: Promises/A+ section 2.3.3.3.1
+							// https://promisesaplus.com/#point-57
+							// Re-resolve promises immediately to dodge false rejection from
+							// subsequent errors
+							if ( depth ) {
+								process();
+							} else {
+
+								// Call an optional hook to record the stack, in case of exception
+								// since it's otherwise lost when execution goes async
+								if ( jQuery.Deferred.getStackHook ) {
+									process.stackTrace = jQuery.Deferred.getStackHook();
+								}
+								window.setTimeout( process );
+							}
+						};
+					}
+
+					return jQuery.Deferred( function( newDefer ) {
+
+						// progress_handlers.add( ... )
+						tuples[ 0 ][ 3 ].add(
+							resolve(
+								0,
+								newDefer,
+								isFunction( onProgress ) ?
+									onProgress :
+									Identity,
+								newDefer.notifyWith
+							)
+						);
+
+						// fulfilled_handlers.add( ... )
+						tuples[ 1 ][ 3 ].add(
+							resolve(
+								0,
+								newDefer,
+								isFunction( onFulfilled ) ?
+									onFulfilled :
+									Identity
+							)
+						);
+
+						// rejected_handlers.add( ... )
+						tuples[ 2 ][ 3 ].add(
+							resolve(
+								0,
+								newDefer,
+								isFunction( onRejected ) ?
+									onRejected :
+									Thrower
+							)
+						);
+					} ).promise();
+				},
+
+				// Get a promise for this deferred
+				// If obj is provided, the promise aspect is added to the object
+				promise: function( obj ) {
+					return obj != null ? jQuery.extend( obj, promise ) : promise;
+				}
+			},
+			deferred = {};
+
+		// Add list-specific methods
+		jQuery.each( tuples, function( i, tuple ) {
+			var list = tuple[ 2 ],
+				stateString = tuple[ 5 ];
+
+			// promise.progress = list.add
+			// promise.done = list.add
+			// promise.fail = list.add
+			promise[ tuple[ 1 ] ] = list.add;
+
+			// Handle state
+			if ( stateString ) {
+				list.add(
+					function() {
+
+						// state = "resolved" (i.e., fulfilled)
+						// state = "rejected"
+						state = stateString;
+					},
+
+					// rejected_callbacks.disable
+					// fulfilled_callbacks.disable
+					tuples[ 3 - i ][ 2 ].disable,
+
+					// rejected_handlers.disable
+					// fulfilled_handlers.disable
+					tuples[ 3 - i ][ 3 ].disable,
+
+					// progress_callbacks.lock
+					tuples[ 0 ][ 2 ].lock,
+
+					// progress_handlers.lock
+					tuples[ 0 ][ 3 ].lock
+				);
+			}
+
+			// progress_handlers.fire
+			// fulfilled_handlers.fire
+			// rejected_handlers.fire
+			list.add( tuple[ 3 ].fire );
+
+			// deferred.notify = function() { deferred.notifyWith(...) }
+			// deferred.resolve = function() { deferred.resolveWith(...) }
+			// deferred.reject = function() { deferred.rejectWith(...) }
+			deferred[ tuple[ 0 ] ] = function() {
+				deferred[ tuple[ 0 ] + "With" ]( this === deferred ? undefined : this, arguments );
+				return this;
+			};
+
+			// deferred.notifyWith = list.fireWith
+			// deferred.resolveWith = list.fireWith
+			// deferred.rejectWith = list.fireWith
+			deferred[ tuple[ 0 ] + "With" ] = list.fireWith;
+		} );
+
+		// Make the deferred a promise
+		promise.promise( deferred );
+
+		// Call given func if any
+		if ( func ) {
+			func.call( deferred, deferred );
+		}
+
+		// All done!
+		return deferred;
+	},
+
+	// Deferred helper
+	when: function( singleValue ) {
+		var
+
+			// count of uncompleted subordinates
+			remaining = arguments.length,
+
+			// count of unprocessed arguments
+			i = remaining,
+
+			// subordinate fulfillment data
+			resolveContexts = Array( i ),
+			resolveValues = slice.call( arguments ),
+
+			// the primary Deferred
+			primary = jQuery.Deferred(),
+
+			// subordinate callback factory
+			updateFunc = function( i ) {
+				return function( value ) {
+					resolveContexts[ i ] = this;
+					resolveValues[ i ] = arguments.length > 1 ? slice.call( arguments ) : value;
+					if ( !( --remaining ) ) {
+						primary.resolveWith( resolveContexts, resolveValues );
+					}
+				};
+			};
+
+		// Single- and empty arguments are adopted like Promise.resolve
+		if ( remaining <= 1 ) {
+			adoptValue( singleValue, primary.done( updateFunc( i ) ).resolve, primary.reject,
+				!remaining );
+
+			// Use .then() to unwrap secondary thenables (cf. gh-3000)
+			if ( primary.state() === "pending" ||
+				isFunction( resolveValues[ i ] && resolveValues[ i ].then ) ) {
+
+				return primary.then();
+			}
+		}
+
+		// Multiple arguments are aggregated like Promise.all array elements
+		while ( i-- ) {
+			adoptValue( resolveValues[ i ], updateFunc( i ), primary.reject );
+		}
+
+		return primary.promise();
+	}
+} );
+
+
+// These usually indicate a programmer mistake during development,
+// warn about them ASAP rather than swallowing them by default.
+var rerrorNames = /^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;
+
+jQuery.Deferred.exceptionHook = function( error, stack ) {
+
+	// Support: IE 8 - 9 only
+	// Console exists when dev tools are open, which can happen at any time
+	if ( window.console && window.console.warn && error && rerrorNames.test( error.name ) ) {
+		window.console.warn( "jQuery.Deferred exception: " + error.message, error.stack, stack );
+	}
+};
+
+
+
+
+jQuery.readyException = function( error ) {
+	window.setTimeout( function() {
+		throw error;
+	} );
+};
+
+
+
+
+// The deferred used on DOM ready
+var readyList = jQuery.Deferred();
+
+jQuery.fn.ready = function( fn ) {
+
+	readyList
+		.then( fn )
+
+		// Wrap jQuery.readyException in a function so that the lookup
+		// happens at the time of error handling instead of callback
+		// registration.
+		.catch( function( error ) {
+			jQuery.readyException( error );
+		} );
+
+	return this;
+};
+
+jQuery.extend( {
+
+	// Is the DOM ready to be used? Set to true once it occurs.
+	isReady: false,
+
+	// A counter to track how many items to wait for before
+	// the ready event fires. See trac-6781
+	readyWait: 1,
+
+	// Handle when the DOM is ready
+	ready: function( wait ) {
+
+		// Abort if there are pending holds or we're already ready
+		if ( wait === true ? --jQuery.readyWait : jQuery.isReady ) {
+			return;
+		}
+
+		// Remember that the DOM is ready
+		jQuery.isReady = true;
+
+		// If a normal DOM Ready event fired, decrement, and wait if need be
+		if ( wait !== true && --jQuery.readyWait > 0 ) {
+			return;
+		}
+
+		// If there are functions bound, to execute
+		readyList.resolveWith( document, [ jQuery ] );
+	}
+} );
+
+jQuery.ready.then = readyList.then;
+
+// The ready event handler and self cleanup method
+function completed() {
+	document.removeEventListener( "DOMContentLoaded", completed );
+	window.removeEventListener( "load", completed );
+	jQuery.ready();
+}
+
+// Catch cases where $(document).ready() is called
+// after the browser event has already occurred.
+// Support: IE <=9 - 10 only
+// Older IE sometimes signals "interactive" too soon
+if ( document.readyState === "complete" ||
+	( document.readyState !== "loading" && !document.documentElement.doScroll ) ) {
+
+	// Handle it asynchronously to allow scripts the opportunity to delay ready
+	window.setTimeout( jQuery.ready );
+
+} else {
+
+	// Use the handy event callback
+	document.addEventListener( "DOMContentLoaded", completed );
+
+	// A fallback to window.onload, that will always work
+	window.addEventListener( "load", completed );
+}
+
+
+
+
+// Multifunctional method to get and set values of a collection
+// The value/s can optionally be executed if it's a function
+var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
+	var i = 0,
+		len = elems.length,
+		bulk = key == null;
+
+	// Sets many values
+	if ( toType( key ) === "object" ) {
+		chainable = true;
+		for ( i in key ) {
+			access( elems, fn, i, key[ i ], true, emptyGet, raw );
+		}
+
+	// Sets one value
+	} else if ( value !== undefined ) {
+		chainable = true;
+
+		if ( !isFunction( value ) ) {
+			raw = true;
+		}
+
+		if ( bulk ) {
+
+			// Bulk operations run against the entire set
+			if ( raw ) {
+				fn.call( elems, value );
+				fn = null;
+
+			// ...except when executing function values
+			} else {
+				bulk = fn;
+				fn = function( elem, _key, value ) {
+					return bulk.call( jQuery( elem ), value );
+				};
+			}
+		}
+
+		if ( fn ) {
+			for ( ; i < len; i++ ) {
+				fn(
+					elems[ i ], key, raw ?
+						value :
+						value.call( elems[ i ], i, fn( elems[ i ], key ) )
+				);
+			}
+		}
+	}
+
+	if ( chainable ) {
+		return elems;
+	}
+
+	// Gets
+	if ( bulk ) {
+		return fn.call( elems );
+	}
+
+	return len ? fn( elems[ 0 ], key ) : emptyGet;
+};
+
+
+// Matches dashed string for camelizing
+var rmsPrefix = /^-ms-/,
+	rdashAlpha = /-([a-z])/g;
+
+// Used by camelCase as callback to replace()
+function fcamelCase( _all, letter ) {
+	return letter.toUpperCase();
+}
+
+// Convert dashed to camelCase; used by the css and data modules
+// Support: IE <=9 - 11, Edge 12 - 15
+// Microsoft forgot to hump their vendor prefix (trac-9572)
+function camelCase( string ) {
+	return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
+}
+var acceptData = function( owner ) {
+
+	// Accepts only:
+	//  - Node
+	//    - Node.ELEMENT_NODE
+	//    - Node.DOCUMENT_NODE
+	//  - Object
+	//    - Any
+	return owner.nodeType === 1 || owner.nodeType === 9 || !( +owner.nodeType );
+};
+
+
+
+
+function Data() {
+	this.expando = jQuery.expando + Data.uid++;
+}
+
+Data.uid = 1;
+
+Data.prototype = {
+
+	cache: function( owner ) {
+
+		// Check if the owner object already has a cache
+		var value = owner[ this.expando ];
+
+		// If not, create one
+		if ( !value ) {
+			value = {};
+
+			// We can accept data for non-element nodes in modern browsers,
+			// but we should not, see trac-8335.
+			// Always return an empty object.
+			if ( acceptData( owner ) ) {
+
+				// If it is a node unlikely to be stringify-ed or looped over
+				// use plain assignment
+				if ( owner.nodeType ) {
+					owner[ this.expando ] = value;
+
+				// Otherwise secure it in a non-enumerable property
+				// configurable must be true to allow the property to be
+				// deleted when data is removed
+				} else {
+					Object.defineProperty( owner, this.expando, {
+						value: value,
+						configurable: true
+					} );
+				}
+			}
+		}
+
+		return value;
+	},
+	set: function( owner, data, value ) {
+		var prop,
+			cache = this.cache( owner );
+
+		// Handle: [ owner, key, value ] args
+		// Always use camelCase key (gh-2257)
+		if ( typeof data === "string" ) {
+			cache[ camelCase( data ) ] = value;
+
+		// Handle: [ owner, { properties } ] args
+		} else {
+
+			// Copy the properties one-by-one to the cache object
+			for ( prop in data ) {
+				cache[ camelCase( prop ) ] = data[ prop ];
+			}
+		}
+		return cache;
+	},
+	get: function( owner, key ) {
+		return key === undefined ?
+			this.cache( owner ) :
+
+			// Always use camelCase key (gh-2257)
+			owner[ this.expando ] && owner[ this.expando ][ camelCase( key ) ];
+	},
+	access: function( owner, key, value ) {
+
+		// In cases where either:
+		//
+		//   1. No key was specified
+		//   2. A string key was specified, but no value provided
+		//
+		// Take the "read" path and allow the get method to determine
+		// which value to return, respectively either:
+		//
+		//   1. The entire cache object
+		//   2. The data stored at the key
+		//
+		if ( key === undefined ||
+				( ( key && typeof key === "string" ) && value === undefined ) ) {
+
+			return this.get( owner, key );
+		}
+
+		// When the key is not a string, or both a key and value
+		// are specified, set or extend (existing objects) with either:
+		//
+		//   1. An object of properties
+		//   2. A key and value
+		//
+		this.set( owner, key, value );
+
+		// Since the "set" path can have two possible entry points
+		// return the expected data based on which path was taken[*]
+		return value !== undefined ? value : key;
+	},
+	remove: function( owner, key ) {
+		var i,
+			cache = owner[ this.expando ];
+
+		if ( cache === undefined ) {
+			return;
+		}
+
+		if ( key !== undefined ) {
+
+			// Support array or space separated string of keys
+			if ( Array.isArray( key ) ) {
+
+				// If key is an array of keys...
+				// We always set camelCase keys, so remove that.
+				key = key.map( camelCase );
+			} else {
+				key = camelCase( key );
+
+				// If a key with the spaces exists, use it.
+				// Otherwise, create an array by matching non-whitespace
+				key = key in cache ?
+					[ key ] :
+					( key.match( rnothtmlwhite ) || [] );
+			}
+
+			i = key.length;
+
+			while ( i-- ) {
+				delete cache[ key[ i ] ];
+			}
+		}
+
+		// Remove the expando if there's no more data
+		if ( key === undefined || jQuery.isEmptyObject( cache ) ) {
+
+			// Support: Chrome <=35 - 45
+			// Webkit & Blink performance suffers when deleting properties
+			// from DOM nodes, so set to undefined instead
+			// https://bugs.chromium.org/p/chromium/issues/detail?id=378607 (bug restricted)
+			if ( owner.nodeType ) {
+				owner[ this.expando ] = undefined;
+			} else {
+				delete owner[ this.expando ];
+			}
+		}
+	},
+	hasData: function( owner ) {
+		var cache = owner[ this.expando ];
+		return cache !== undefined && !jQuery.isEmptyObject( cache );
+	}
+};
+var dataPriv = new Data();
+
+var dataUser = new Data();
+
+
+
+//	Implementation Summary
+//
+//	1. Enforce API surface and semantic compatibility with 1.9.x branch
+//	2. Improve the module's maintainability by reducing the storage
+//		paths to a single mechanism.
+//	3. Use the same single mechanism to support "private" and "user" data.
+//	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
+//	5. Avoid exposing implementation details on user objects (eg. expando properties)
+//	6. Provide a clear path for implementation upgrade to WeakMap in 2014
+
+var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
+	rmultiDash = /[A-Z]/g;
+
+function getData( data ) {
+	if ( data === "true" ) {
+		return true;
+	}
+
+	if ( data === "false" ) {
+		return false;
+	}
+
+	if ( data === "null" ) {
+		return null;
+	}
+
+	// Only convert to a number if it doesn't change the string
+	if ( data === +data + "" ) {
+		return +data;
+	}
+
+	if ( rbrace.test( data ) ) {
+		return JSON.parse( data );
+	}
+
+	return data;
+}
+
+function dataAttr( elem, key, data ) {
+	var name;
+
+	// If nothing was found internally, try to fetch any
+	// data from the HTML5 data-* attribute
+	if ( data === undefined && elem.nodeType === 1 ) {
+		name = "data-" + key.replace( rmultiDash, "-$&" ).toLowerCase();
+		data = elem.getAttribute( name );
+
+		if ( typeof data === "string" ) {
+			try {
+				data = getData( data );
+			} catch ( e ) {}
+
+			// Make sure we set the data so it isn't changed later
+			dataUser.set( elem, key, data );
+		} else {
+			data = undefined;
+		}
+	}
+	return data;
+}
+
+jQuery.extend( {
+	hasData: function( elem ) {
+		return dataUser.hasData( elem ) || dataPriv.hasData( elem );
+	},
+
+	data: function( elem, name, data ) {
+		return dataUser.access( elem, name, data );
+	},
+
+	removeData: function( elem, name ) {
+		dataUser.remove( elem, name );
+	},
+
+	// TODO: Now that all calls to _data and _removeData have been replaced
+	// with direct calls to dataPriv methods, these can be deprecated.
+	_data: function( elem, name, data ) {
+		return dataPriv.access( elem, name, data );
+	},
+
+	_removeData: function( elem, name ) {
+		dataPriv.remove( elem, name );
+	}
+} );
+
+jQuery.fn.extend( {
+	data: function( key, value ) {
+		var i, name, data,
+			elem = this[ 0 ],
+			attrs = elem && elem.attributes;
+
+		// Gets all values
+		if ( key === undefined ) {
+			if ( this.length ) {
+				data = dataUser.get( elem );
+
+				if ( elem.nodeType === 1 && !dataPriv.get( elem, "hasDataAttrs" ) ) {
+					i = attrs.length;
+					while ( i-- ) {
+
+						// Support: IE 11 only
+						// The attrs elements can be null (trac-14894)
+						if ( attrs[ i ] ) {
+							name = attrs[ i ].name;
+							if ( name.indexOf( "data-" ) === 0 ) {
+								name = camelCase( name.slice( 5 ) );
+								dataAttr( elem, name, data[ name ] );
+							}
+						}
+					}
+					dataPriv.set( elem, "hasDataAttrs", true );
+				}
+			}
+
+			return data;
+		}
+
+		// Sets multiple values
+		if ( typeof key === "object" ) {
+			return this.each( function() {
+				dataUser.set( this, key );
+			} );
+		}
+
+		return access( this, function( value ) {
+			var data;
+
+			// The calling jQuery object (element matches) is not empty
+			// (and therefore has an element appears at this[ 0 ]) and the
+			// `value` parameter was not undefined. An empty jQuery object
+			// will result in `undefined` for elem = this[ 0 ] which will
+			// throw an exception if an attempt to read a data cache is made.
+			if ( elem && value === undefined ) {
+
+				// Attempt to get data from the cache
+				// The key will always be camelCased in Data
+				data = dataUser.get( elem, key );
+				if ( data !== undefined ) {
+					return data;
+				}
+
+				// Attempt to "discover" the data in
+				// HTML5 custom data-* attrs
+				data = dataAttr( elem, key );
+				if ( data !== undefined ) {
+					return data;
+				}
+
+				// We tried really hard, but the data doesn't exist.
+				return;
+			}
+
+			// Set the data...
+			this.each( function() {
+
+				// We always store the camelCased key
+				dataUser.set( this, key, value );
+			} );
+		}, null, value, arguments.length > 1, null, true );
+	},
+
+	removeData: function( key ) {
+		return this.each( function() {
+			dataUser.remove( this, key );
+		} );
+	}
+} );
+
+
+jQuery.extend( {
+	queue: function( elem, type, data ) {
+		var queue;
+
+		if ( elem ) {
+			type = ( type || "fx" ) + "queue";
+			queue = dataPriv.get( elem, type );
+
+			// Speed up dequeue by getting out quickly if this is just a lookup
+			if ( data ) {
+				if ( !queue || Array.isArray( data ) ) {
+					queue = dataPriv.access( elem, type, jQuery.makeArray( data ) );
+				} else {
+					queue.push( data );
+				}
+			}
+			return queue || [];
+		}
+	},
+
+	dequeue: function( elem, type ) {
+		type = type || "fx";
+
+		var queue = jQuery.queue( elem, type ),
+			startLength = queue.length,
+			fn = queue.shift(),
+			hooks = jQuery._queueHooks( elem, type ),
+			next = function() {
+				jQuery.dequeue( elem, type );
+			};
+
+		// If the fx queue is dequeued, always remove the progress sentinel
+		if ( fn === "inprogress" ) {
+			fn = queue.shift();
+			startLength--;
+		}
+
+		if ( fn ) {
+
+			// Add a progress sentinel to prevent the fx queue from being
+			// automatically dequeued
+			if ( type === "fx" ) {
+				queue.unshift( "inprogress" );
+			}
+
+			// Clear up the last queue stop function
+			delete hooks.stop;
+			fn.call( elem, next, hooks );
+		}
+
+		if ( !startLength && hooks ) {
+			hooks.empty.fire();
+		}
+	},
+
+	// Not public - generate a queueHooks object, or return the current one
+	_queueHooks: function( elem, type ) {
+		var key = type + "queueHooks";
+		return dataPriv.get( elem, key ) || dataPriv.access( elem, key, {
+			empty: jQuery.Callbacks( "once memory" ).add( function() {
+				dataPriv.remove( elem, [ type + "queue", key ] );
+			} )
+		} );
+	}
+} );
+
+jQuery.fn.extend( {
+	queue: function( type, data ) {
+		var setter = 2;
+
+		if ( typeof type !== "string" ) {
+			data = type;
+			type = "fx";
+			setter--;
+		}
+
+		if ( arguments.length < setter ) {
+			return jQuery.queue( this[ 0 ], type );
+		}
+
+		return data === undefined ?
+			this :
+			this.each( function() {
+				var queue = jQuery.queue( this, type, data );
+
+				// Ensure a hooks for this queue
+				jQuery._queueHooks( this, type );
+
+				if ( type === "fx" && queue[ 0 ] !== "inprogress" ) {
+					jQuery.dequeue( this, type );
+				}
+			} );
+	},
+	dequeue: function( type ) {
+		return this.each( function() {
+			jQuery.dequeue( this, type );
+		} );
+	},
+	clearQueue: function( type ) {
+		return this.queue( type || "fx", [] );
+	},
+
+	// Get a promise resolved when queues of a certain type
+	// are emptied (fx is the type by default)
+	promise: function( type, obj ) {
+		var tmp,
+			count = 1,
+			defer = jQuery.Deferred(),
+			elements = this,
+			i = this.length,
+			resolve = function() {
+				if ( !( --count ) ) {
+					defer.resolveWith( elements, [ elements ] );
+				}
+			};
+
+		if ( typeof type !== "string" ) {
+			obj = type;
+			type = undefined;
+		}
+		type = type || "fx";
+
+		while ( i-- ) {
+			tmp = dataPriv.get( elements[ i ], type + "queueHooks" );
+			if ( tmp && tmp.empty ) {
+				count++;
+				tmp.empty.add( resolve );
+			}
+		}
+		resolve();
+		return defer.promise( obj );
+	}
+} );
+var pnum = ( /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/ ).source;
+
+var rcssNum = new RegExp( "^(?:([+-])=|)(" + pnum + ")([a-z%]*)$", "i" );
+
+
+var cssExpand = [ "Top", "Right", "Bottom", "Left" ];
+
+var documentElement = document.documentElement;
+
+
+
+	var isAttached = function( elem ) {
+			return jQuery.contains( elem.ownerDocument, elem );
+		},
+		composed = { composed: true };
+
+	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
+	// Check attachment across shadow DOM boundaries when possible (gh-3504)
+	// Support: iOS 10.0-10.2 only
+	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
+	// leading to errors. We need to check for `getRootNode`.
+	if ( documentElement.getRootNode ) {
+		isAttached = function( elem ) {
+			return jQuery.contains( elem.ownerDocument, elem ) ||
+				elem.getRootNode( composed ) === elem.ownerDocument;
+		};
+	}
+var isHiddenWithinTree = function( elem, el ) {
+
+		// isHiddenWithinTree might be called from jQuery#filter function;
+		// in that case, element will be second argument
+		elem = el || elem;
+
+		// Inline style trumps all
+		return elem.style.display === "none" ||
+			elem.style.display === "" &&
+
+			// Otherwise, check computed style
+			// Support: Firefox <=43 - 45
+			// Disconnected elements can have computed display: none, so first confirm that elem is
+			// in the document.
+			isAttached( elem ) &&
+
+			jQuery.css( elem, "display" ) === "none";
+	};
+
+
+
+function adjustCSS( elem, prop, valueParts, tween ) {
+	var adjusted, scale,
+		maxIterations = 20,
+		currentValue = tween ?
+			function() {
+				return tween.cur();
+			} :
+			function() {
+				return jQuery.css( elem, prop, "" );
+			},
+		initial = currentValue(),
+		unit = valueParts && valueParts[ 3 ] || ( jQuery.cssNumber[ prop ] ? "" : "px" ),
+
+		// Starting value computation is required for potential unit mismatches
+		initialInUnit = elem.nodeType &&
+			( jQuery.cssNumber[ prop ] || unit !== "px" && +initial ) &&
+			rcssNum.exec( jQuery.css( elem, prop ) );
+
+	if ( initialInUnit && initialInUnit[ 3 ] !== unit ) {
+
+		// Support: Firefox <=54
+		// Halve the iteration target value to prevent interference from CSS upper bounds (gh-2144)
+		initial = initial / 2;
+
+		// Trust units reported by jQuery.css
+		unit = unit || initialInUnit[ 3 ];
+
+		// Iteratively approximate from a nonzero starting point
+		initialInUnit = +initial || 1;
+
+		while ( maxIterations-- ) {
+
+			// Evaluate and update our best guess (doubling guesses that zero out).
+			// Finish if the scale equals or crosses 1 (making the old*new product non-positive).
+			jQuery.style( elem, prop, initialInUnit + unit );
+			if ( ( 1 - scale ) * ( 1 - ( scale = currentValue() / initial || 0.5 ) ) <= 0 ) {
+				maxIterations = 0;
+			}
+			initialInUnit = initialInUnit / scale;
+
+		}
+
+		initialInUnit = initialInUnit * 2;
+		jQuery.style( elem, prop, initialInUnit + unit );
+
+		// Make sure we update the tween properties later on
+		valueParts = valueParts || [];
+	}
+
+	if ( valueParts ) {
+		initialInUnit = +initialInUnit || +initial || 0;
+
+		// Apply relative offset (+=/-=) if specified
+		adjusted = valueParts[ 1 ] ?
+			initialInUnit + ( valueParts[ 1 ] + 1 ) * valueParts[ 2 ] :
+			+valueParts[ 2 ];
+		if ( tween ) {
+			tween.unit = unit;
+			tween.start = initialInUnit;
+			tween.end = adjusted;
+		}
+	}
+	return adjusted;
+}
+
+
+var defaultDisplayMap = {};
+
+function getDefaultDisplay( elem ) {
+	var temp,
+		doc = elem.ownerDocument,
+		nodeName = elem.nodeName,
+		display = defaultDisplayMap[ nodeName ];
+
+	if ( display ) {
+		return display;
+	}
+
+	temp = doc.body.appendChild( doc.createElement( nodeName ) );
+	display = jQuery.css( temp, "display" );
+
+	temp.parentNode.removeChild( temp );
+
+	if ( display === "none" ) {
+		display = "block";
+	}
+	defaultDisplayMap[ nodeName ] = display;
+
+	return display;
+}
+
+function showHide( elements, show ) {
+	var display, elem,
+		values = [],
+		index = 0,
+		length = elements.length;
+
+	// Determine new display value for elements that need to change
+	for ( ; index < length; index++ ) {
+		elem = elements[ index ];
+		if ( !elem.style ) {
+			continue;
+		}
+
+		display = elem.style.display;
+		if ( show ) {
+
+			// Since we force visibility upon cascade-hidden elements, an immediate (and slow)
+			// check is required in this first loop unless we have a nonempty display value (either
+			// inline or about-to-be-restored)
+			if ( display === "none" ) {
+				values[ index ] = dataPriv.get( elem, "display" ) || null;
+				if ( !values[ index ] ) {
+					elem.style.display = "";
+				}
+			}
+			if ( elem.style.display === "" && isHiddenWithinTree( elem ) ) {
+				values[ index ] = getDefaultDisplay( elem );
+			}
+		} else {
+			if ( display !== "none" ) {
+				values[ index ] = "none";
+
+				// Remember what we're overwriting
+				dataPriv.set( elem, "display", display );
+			}
+		}
+	}
+
+	// Set the display of the elements in a second loop to avoid constant reflow
+	for ( index = 0; index < length; index++ ) {
+		if ( values[ index ] != null ) {
+			elements[ index ].style.display = values[ index ];
+		}
+	}
+
+	return elements;
+}
+
+jQuery.fn.extend( {
+	show: function() {
+		return showHide( this, true );
+	},
+	hide: function() {
+		return showHide( this );
+	},
+	toggle: function( state ) {
+		if ( typeof state === "boolean" ) {
+			return state ? this.show() : this.hide();
+		}
+
+		return this.each( function() {
+			if ( isHiddenWithinTree( this ) ) {
+				jQuery( this ).show();
+			} else {
+				jQuery( this ).hide();
+			}
+		} );
+	}
+} );
+var rcheckableType = ( /^(?:checkbox|radio)$/i );
+
+var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]*)/i );
+
+var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
+
+
+
+( function() {
+	var fragment = document.createDocumentFragment(),
+		div = fragment.appendChild( document.createElement( "div" ) ),
+		input = document.createElement( "input" );
+
+	// Support: Android 4.0 - 4.3 only
+	// Check state lost if the name is set (trac-11217)
+	// Support: Windows Web Apps (WWA)
+	// `name` and `type` must use .setAttribute for WWA (trac-14901)
+	input.setAttribute( "type", "radio" );
+	input.setAttribute( "checked", "checked" );
+	input.setAttribute( "name", "t" );
+
+	div.appendChild( input );
+
+	// Support: Android <=4.1 only
+	// Older WebKit doesn't clone checked state correctly in fragments
+	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
+
+	// Support: IE <=11 only
+	// Make sure textarea (and checkbox) defaultValue is properly cloned
+	div.innerHTML = "<textarea>x</textarea>";
+	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+
+	// Support: IE <=9 only
+	// IE <=9 replaces <option> tags with their contents when inserted outside of
+	// the select element.
+	div.innerHTML = "<option></option>";
+	support.option = !!div.lastChild;
+} )();
+
+
+// We have to close these tags to support XHTML (trac-13200)
+var wrapMap = {
+
+	// XHTML parsers do not magically insert elements in the
+	// same way that tag soup parsers do. So we cannot shorten
+	// this by omitting <tbody> or other required elements.
+	thead: [ 1, "<table>", "</table>" ],
+	col: [ 2, "<table><colgroup>", "</colgroup></table>" ],
+	tr: [ 2, "<table><tbody>", "</tbody></table>" ],
+	td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+
+	_default: [ 0, "", "" ]
+};
+
+wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+wrapMap.th = wrapMap.td;
+
+// Support: IE <=9 only
+if ( !support.option ) {
+	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
+}
+
+
+function getAll( context, tag ) {
+
+	// Support: IE <=9 - 11 only
+	// Use typeof to avoid zero-argument method invocation on host objects (trac-15151)
+	var ret;
+
+	if ( typeof context.getElementsByTagName !== "undefined" ) {
+		ret = context.getElementsByTagName( tag || "*" );
+
+	} else if ( typeof context.querySelectorAll !== "undefined" ) {
+		ret = context.querySelectorAll( tag || "*" );
+
+	} else {
+		ret = [];
+	}
+
+	if ( tag === undefined || tag && nodeName( context, tag ) ) {
+		return jQuery.merge( [ context ], ret );
+	}
+
+	return ret;
+}
+
+
+// Mark scripts as having already been evaluated
+function setGlobalEval( elems, refElements ) {
+	var i = 0,
+		l = elems.length;
+
+	for ( ; i < l; i++ ) {
+		dataPriv.set(
+			elems[ i ],
+			"globalEval",
+			!refElements || dataPriv.get( refElements[ i ], "globalEval" )
+		);
+	}
+}
+
+
+var rhtml = /<|&#?\w+;/;
+
+function buildFragment( elems, context, scripts, selection, ignored ) {
+	var elem, tmp, tag, wrap, attached, j,
+		fragment = context.createDocumentFragment(),
+		nodes = [],
+		i = 0,
+		l = elems.length;
+
+	for ( ; i < l; i++ ) {
+		elem = elems[ i ];
+
+		if ( elem || elem === 0 ) {
+
+			// Add nodes directly
+			if ( toType( elem ) === "object" ) {
+
+				// Support: Android <=4.0 only, PhantomJS 1 only
+				// push.apply(_, arraylike) throws on ancient WebKit
+				jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
+
+			// Convert non-html into a text node
+			} else if ( !rhtml.test( elem ) ) {
+				nodes.push( context.createTextNode( elem ) );
+
+			// Convert html into DOM nodes
+			} else {
+				tmp = tmp || fragment.appendChild( context.createElement( "div" ) );
+
+				// Deserialize a standard representation
+				tag = ( rtagName.exec( elem ) || [ "", "" ] )[ 1 ].toLowerCase();
+				wrap = wrapMap[ tag ] || wrapMap._default;
+				tmp.innerHTML = wrap[ 1 ] + jQuery.htmlPrefilter( elem ) + wrap[ 2 ];
+
+				// Descend through wrappers to the right content
+				j = wrap[ 0 ];
+				while ( j-- ) {
+					tmp = tmp.lastChild;
+				}
+
+				// Support: Android <=4.0 only, PhantomJS 1 only
+				// push.apply(_, arraylike) throws on ancient WebKit
+				jQuery.merge( nodes, tmp.childNodes );
+
+				// Remember the top-level container
+				tmp = fragment.firstChild;
+
+				// Ensure the created nodes are orphaned (trac-12392)
+				tmp.textContent = "";
+			}
+		}
+	}
+
+	// Remove wrapper from fragment
+	fragment.textContent = "";
+
+	i = 0;
+	while ( ( elem = nodes[ i++ ] ) ) {
+
+		// Skip elements already in the context collection (trac-4087)
+		if ( selection && jQuery.inArray( elem, selection ) > -1 ) {
+			if ( ignored ) {
+				ignored.push( elem );
+			}
+			continue;
+		}
+
+		attached = isAttached( elem );
+
+		// Append to fragment
+		tmp = getAll( fragment.appendChild( elem ), "script" );
+
+		// Preserve script evaluation history
+		if ( attached ) {
+			setGlobalEval( tmp );
+		}
+
+		// Capture executables
+		if ( scripts ) {
+			j = 0;
+			while ( ( elem = tmp[ j++ ] ) ) {
+				if ( rscriptType.test( elem.type || "" ) ) {
+					scripts.push( elem );
+				}
+			}
+		}
+	}
+
+	return fragment;
+}
+
+
+var rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
+
+function returnTrue() {
+	return true;
+}
+
+function returnFalse() {
+	return false;
+}
+
+// Support: IE <=9 - 11+
+// focus() and blur() are asynchronous, except when they are no-op.
+// So expect focus to be synchronous when the element is already active,
+// and blur to be synchronous when the element is not already active.
+// (focus and blur are always synchronous in other supported browsers,
+// this just defines when we can count on it).
+function expectSync( elem, type ) {
+	return ( elem === safeActiveElement() ) === ( type === "focus" );
+}
+
+// Support: IE <=9 only
+// Accessing document.activeElement can throw unexpectedly
+// https://bugs.jquery.com/ticket/13393
+function safeActiveElement() {
+	try {
+		return document.activeElement;
+	} catch ( err ) { }
+}
+
+function on( elem, types, selector, data, fn, one ) {
+	var origFn, type;
+
+	// Types can be a map of types/handlers
+	if ( typeof types === "object" ) {
+
+		// ( types-Object, selector, data )
+		if ( typeof selector !== "string" ) {
+
+			// ( types-Object, data )
+			data = data || selector;
+			selector = undefined;
+		}
+		for ( type in types ) {
+			on( elem, type, selector, data, types[ type ], one );
+		}
+		return elem;
+	}
+
+	if ( data == null && fn == null ) {
+
+		// ( types, fn )
+		fn = selector;
+		data = selector = undefined;
+	} else if ( fn == null ) {
+		if ( typeof selector === "string" ) {
+
+			// ( types, selector, fn )
+			fn = data;
+			data = undefined;
+		} else {
+
+			// ( types, data, fn )
+			fn = data;
+			data = selector;
+			selector = undefined;
+		}
+	}
+	if ( fn === false ) {
+		fn = returnFalse;
+	} else if ( !fn ) {
+		return elem;
+	}
+
+	if ( one === 1 ) {
+		origFn = fn;
+		fn = function( event ) {
+
+			// Can use an empty set, since event contains the info
+			jQuery().off( event );
+			return origFn.apply( this, arguments );
+		};
+
+		// Use same guid so caller can remove using origFn
+		fn.guid = origFn.guid || ( origFn.guid = jQuery.guid++ );
+	}
+	return elem.each( function() {
+		jQuery.event.add( this, types, fn, data, selector );
+	} );
+}
+
+/*
+ * Helper functions for managing events -- not part of the public interface.
+ * Props to Dean Edwards' addEvent library for many of the ideas.
+ */
+jQuery.event = {
+
+	global: {},
+
+	add: function( elem, types, handler, data, selector ) {
+
+		var handleObjIn, eventHandle, tmp,
+			events, t, handleObj,
+			special, handlers, type, namespaces, origType,
+			elemData = dataPriv.get( elem );
+
+		// Only attach events to objects that accept data
+		if ( !acceptData( elem ) ) {
+			return;
+		}
+
+		// Caller can pass in an object of custom data in lieu of the handler
+		if ( handler.handler ) {
+			handleObjIn = handler;
+			handler = handleObjIn.handler;
+			selector = handleObjIn.selector;
+		}
+
+		// Ensure that invalid selectors throw exceptions at attach time
+		// Evaluate against documentElement in case elem is a non-element node (e.g., document)
+		if ( selector ) {
+			jQuery.find.matchesSelector( documentElement, selector );
+		}
+
+		// Make sure that the handler has a unique ID, used to find/remove it later
+		if ( !handler.guid ) {
+			handler.guid = jQuery.guid++;
+		}
+
+		// Init the element's event structure and main handler, if this is the first
+		if ( !( events = elemData.events ) ) {
+			events = elemData.events = Object.create( null );
+		}
+		if ( !( eventHandle = elemData.handle ) ) {
+			eventHandle = elemData.handle = function( e ) {
+
+				// Discard the second event of a jQuery.event.trigger() and
+				// when an event is called after a page has unloaded
+				return typeof jQuery !== "undefined" && jQuery.event.triggered !== e.type ?
+					jQuery.event.dispatch.apply( elem, arguments ) : undefined;
+			};
+		}
+
+		// Handle multiple events separated by a space
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
+		t = types.length;
+		while ( t-- ) {
+			tmp = rtypenamespace.exec( types[ t ] ) || [];
+			type = origType = tmp[ 1 ];
+			namespaces = ( tmp[ 2 ] || "" ).split( "." ).sort();
+
+			// There *must* be a type, no attaching namespace-only handlers
+			if ( !type ) {
+				continue;
+			}
+
+			// If event changes its type, use the special event handlers for the changed type
+			special = jQuery.event.special[ type ] || {};
+
+			// If selector defined, determine special event api type, otherwise given type
+			type = ( selector ? special.delegateType : special.bindType ) || type;
+
+			// Update special based on newly reset type
+			special = jQuery.event.special[ type ] || {};
+
+			// handleObj is passed to all event handlers
+			handleObj = jQuery.extend( {
+				type: type,
+				origType: origType,
+				data: data,
+				handler: handler,
+				guid: handler.guid,
+				selector: selector,
+				needsContext: selector && jQuery.expr.match.needsContext.test( selector ),
+				namespace: namespaces.join( "." )
+			}, handleObjIn );
+
+			// Init the event handler queue if we're the first
+			if ( !( handlers = events[ type ] ) ) {
+				handlers = events[ type ] = [];
+				handlers.delegateCount = 0;
+
+				// Only use addEventListener if the special events handler returns false
+				if ( !special.setup ||
+					special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
+
+					if ( elem.addEventListener ) {
+						elem.addEventListener( type, eventHandle );
+					}
+				}
+			}
+
+			if ( special.add ) {
+				special.add.call( elem, handleObj );
+
+				if ( !handleObj.handler.guid ) {
+					handleObj.handler.guid = handler.guid;
+				}
+			}
+
+			// Add to the element's handler list, delegates in front
+			if ( selector ) {
+				handlers.splice( handlers.delegateCount++, 0, handleObj );
+			} else {
+				handlers.push( handleObj );
+			}
+
+			// Keep track of which events have ever been used, for event optimization
+			jQuery.event.global[ type ] = true;
+		}
+
+	},
+
+	// Detach an event or set of events from an element
+	remove: function( elem, types, handler, selector, mappedTypes ) {
+
+		var j, origCount, tmp,
+			events, t, handleObj,
+			special, handlers, type, namespaces, origType,
+			elemData = dataPriv.hasData( elem ) && dataPriv.get( elem );
+
+		if ( !elemData || !( events = elemData.events ) ) {
+			return;
+		}
+
+		// Once for each type.namespace in types; type may be omitted
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
+		t = types.length;
+		while ( t-- ) {
+			tmp = rtypenamespace.exec( types[ t ] ) || [];
+			type = origType = tmp[ 1 ];
+			namespaces = ( tmp[ 2 ] || "" ).split( "." ).sort();
+
+			// Unbind all events (on this namespace, if provided) for the element
+			if ( !type ) {
+				for ( type in events ) {
+					jQuery.event.remove( elem, type + types[ t ], handler, selector, true );
+				}
+				continue;
+			}
+
+			special = jQuery.event.special[ type ] || {};
+			type = ( selector ? special.delegateType : special.bindType ) || type;
+			handlers = events[ type ] || [];
+			tmp = tmp[ 2 ] &&
+				new RegExp( "(^|\\.)" + namespaces.join( "\\.(?:.*\\.|)" ) + "(\\.|$)" );
+
+			// Remove matching events
+			origCount = j = handlers.length;
+			while ( j-- ) {
+				handleObj = handlers[ j ];
+
+				if ( ( mappedTypes || origType === handleObj.origType ) &&
+					( !handler || handler.guid === handleObj.guid ) &&
+					( !tmp || tmp.test( handleObj.namespace ) ) &&
+					( !selector || selector === handleObj.selector ||
+						selector === "**" && handleObj.selector ) ) {
+					handlers.splice( j, 1 );
+
+					if ( handleObj.selector ) {
+						handlers.delegateCount--;
+					}
+					if ( special.remove ) {
+						special.remove.call( elem, handleObj );
+					}
+				}
+			}
+
+			// Remove generic event handler if we removed something and no more handlers exist
+			// (avoids potential for endless recursion during removal of special event handlers)
+			if ( origCount && !handlers.length ) {
+				if ( !special.teardown ||
+					special.teardown.call( elem, namespaces, elemData.handle ) === false ) {
+
+					jQuery.removeEvent( elem, type, elemData.handle );
+				}
+
+				delete events[ type ];
+			}
+		}
+
+		// Remove data and the expando if it's no longer used
+		if ( jQuery.isEmptyObject( events ) ) {
+			dataPriv.remove( elem, "handle events" );
+		}
+	},
+
+	dispatch: function( nativeEvent ) {
+
+		var i, j, ret, matched, handleObj, handlerQueue,
+			args = new Array( arguments.length ),
+
+			// Make a writable jQuery.Event from the native event object
+			event = jQuery.event.fix( nativeEvent ),
+
+			handlers = (
+				dataPriv.get( this, "events" ) || Object.create( null )
+			)[ event.type ] || [],
+			special = jQuery.event.special[ event.type ] || {};
+
+		// Use the fix-ed jQuery.Event rather than the (read-only) native event
+		args[ 0 ] = event;
+
+		for ( i = 1; i < arguments.length; i++ ) {
+			args[ i ] = arguments[ i ];
+		}
+
+		event.delegateTarget = this;
+
+		// Call the preDispatch hook for the mapped type, and let it bail if desired
+		if ( special.preDispatch && special.preDispatch.call( this, event ) === false ) {
+			return;
+		}
+
+		// Determine handlers
+		handlerQueue = jQuery.event.handlers.call( this, event, handlers );
+
+		// Run delegates first; they may want to stop propagation beneath us
+		i = 0;
+		while ( ( matched = handlerQueue[ i++ ] ) && !event.isPropagationStopped() ) {
+			event.currentTarget = matched.elem;
+
+			j = 0;
+			while ( ( handleObj = matched.handlers[ j++ ] ) &&
+				!event.isImmediatePropagationStopped() ) {
+
+				// If the event is namespaced, then each handler is only invoked if it is
+				// specially universal or its namespaces are a superset of the event's.
+				if ( !event.rnamespace || handleObj.namespace === false ||
+					event.rnamespace.test( handleObj.namespace ) ) {
+
+					event.handleObj = handleObj;
+					event.data = handleObj.data;
+
+					ret = ( ( jQuery.event.special[ handleObj.origType ] || {} ).handle ||
+						handleObj.handler ).apply( matched.elem, args );
+
+					if ( ret !== undefined ) {
+						if ( ( event.result = ret ) === false ) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+					}
+				}
+			}
+		}
+
+		// Call the postDispatch hook for the mapped type
+		if ( special.postDispatch ) {
+			special.postDispatch.call( this, event );
+		}
+
+		return event.result;
+	},
+
+	handlers: function( event, handlers ) {
+		var i, handleObj, sel, matchedHandlers, matchedSelectors,
+			handlerQueue = [],
+			delegateCount = handlers.delegateCount,
+			cur = event.target;
+
+		// Find delegate handlers
+		if ( delegateCount &&
+
+			// Support: IE <=9
+			// Black-hole SVG <use> instance trees (trac-13180)
+			cur.nodeType &&
+
+			// Support: Firefox <=42
+			// Suppress spec-violating clicks indicating a non-primary pointer button (trac-3861)
+			// https://www.w3.org/TR/DOM-Level-3-Events/#event-type-click
+			// Support: IE 11 only
+			// ...but not arrow key "clicks" of radio inputs, which can have `button` -1 (gh-2343)
+			!( event.type === "click" && event.button >= 1 ) ) {
+
+			for ( ; cur !== this; cur = cur.parentNode || this ) {
+
+				// Don't check non-elements (trac-13208)
+				// Don't process clicks on disabled elements (trac-6911, trac-8165, trac-11382, trac-11764)
+				if ( cur.nodeType === 1 && !( event.type === "click" && cur.disabled === true ) ) {
+					matchedHandlers = [];
+					matchedSelectors = {};
+					for ( i = 0; i < delegateCount; i++ ) {
+						handleObj = handlers[ i ];
+
+						// Don't conflict with Object.prototype properties (trac-13203)
+						sel = handleObj.selector + " ";
+
+						if ( matchedSelectors[ sel ] === undefined ) {
+							matchedSelectors[ sel ] = handleObj.needsContext ?
+								jQuery( sel, this ).index( cur ) > -1 :
+								jQuery.find( sel, this, null, [ cur ] ).length;
+						}
+						if ( matchedSelectors[ sel ] ) {
+							matchedHandlers.push( handleObj );
+						}
+					}
+					if ( matchedHandlers.length ) {
+						handlerQueue.push( { elem: cur, handlers: matchedHandlers } );
+					}
+				}
+			}
+		}
+
+		// Add the remaining (directly-bound) handlers
+		cur = this;
+		if ( delegateCount < handlers.length ) {
+			handlerQueue.push( { elem: cur, handlers: handlers.slice( delegateCount ) } );
+		}
+
+		return handlerQueue;
+	},
+
+	addProp: function( name, hook ) {
+		Object.defineProperty( jQuery.Event.prototype, name, {
+			enumerable: true,
+			configurable: true,
+
+			get: isFunction( hook ) ?
+				function() {
+					if ( this.originalEvent ) {
+						return hook( this.originalEvent );
+					}
+				} :
+				function() {
+					if ( this.originalEvent ) {
+						return this.originalEvent[ name ];
+					}
+				},
+
+			set: function( value ) {
+				Object.defineProperty( this, name, {
+					enumerable: true,
+					configurable: true,
+					writable: true,
+					value: value
+				} );
+			}
+		} );
+	},
+
+	fix: function( originalEvent ) {
+		return originalEvent[ jQuery.expando ] ?
+			originalEvent :
+			new jQuery.Event( originalEvent );
+	},
+
+	special: {
+		load: {
+
+			// Prevent triggered image.load events from bubbling to window.load
+			noBubble: true
+		},
+		click: {
+
+			// Utilize native event to ensure correct state for checkable inputs
+			setup: function( data ) {
+
+				// For mutual compressibility with _default, replace `this` access with a local var.
+				// `|| data` is dead code meant only to preserve the variable through minification.
+				var el = this || data;
+
+				// Claim the first handler
+				if ( rcheckableType.test( el.type ) &&
+					el.click && nodeName( el, "input" ) ) {
+
+					// dataPriv.set( el, "click", ... )
+					leverageNative( el, "click", returnTrue );
+				}
+
+				// Return false to allow normal processing in the caller
+				return false;
+			},
+			trigger: function( data ) {
+
+				// For mutual compressibility with _default, replace `this` access with a local var.
+				// `|| data` is dead code meant only to preserve the variable through minification.
+				var el = this || data;
+
+				// Force setup before triggering a click
+				if ( rcheckableType.test( el.type ) &&
+					el.click && nodeName( el, "input" ) ) {
+
+					leverageNative( el, "click" );
+				}
+
+				// Return non-false to allow normal event-path propagation
+				return true;
+			},
+
+			// For cross-browser consistency, suppress native .click() on links
+			// Also prevent it if we're currently inside a leveraged native-event stack
+			_default: function( event ) {
+				var target = event.target;
+				return rcheckableType.test( target.type ) &&
+					target.click && nodeName( target, "input" ) &&
+					dataPriv.get( target, "click" ) ||
+					nodeName( target, "a" );
+			}
+		},
+
+		beforeunload: {
+			postDispatch: function( event ) {
+
+				// Support: Firefox 20+
+				// Firefox doesn't alert if the returnValue field is not set.
+				if ( event.result !== undefined && event.originalEvent ) {
+					event.originalEvent.returnValue = event.result;
+				}
+			}
+		}
+	}
+};
+
+// Ensure the presence of an event listener that handles manually-triggered
+// synthetic events by interrupting progress until reinvoked in response to
+// *native* events that it fires directly, ensuring that state changes have
+// already occurred before other listeners are invoked.
+function leverageNative( el, type, expectSync ) {
+
+	// Missing expectSync indicates a trigger call, which must force setup through jQuery.event.add
+	if ( !expectSync ) {
+		if ( dataPriv.get( el, type ) === undefined ) {
+			jQuery.event.add( el, type, returnTrue );
+		}
+		return;
+	}
+
+	// Register the controller as a special universal handler for all event namespaces
+	dataPriv.set( el, type, false );
+	jQuery.event.add( el, type, {
+		namespace: false,
+		handler: function( event ) {
+			var notAsync, result,
+				saved = dataPriv.get( this, type );
+
+			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
+
+				// Interrupt processing of the outer synthetic .trigger()ed event
+				// Saved data should be false in such cases, but might be a leftover capture object
+				// from an async native handler (gh-4350)
+				if ( !saved.length ) {
+
+					// Store arguments for use when handling the inner native event
+					// There will always be at least one argument (an event object), so this array
+					// will not be confused with a leftover capture object.
+					saved = slice.call( arguments );
+					dataPriv.set( this, type, saved );
+
+					// Trigger the native event and capture its result
+					// Support: IE <=9 - 11+
+					// focus() and blur() are asynchronous
+					notAsync = expectSync( this, type );
+					this[ type ]();
+					result = dataPriv.get( this, type );
+					if ( saved !== result || notAsync ) {
+						dataPriv.set( this, type, false );
+					} else {
+						result = {};
+					}
+					if ( saved !== result ) {
+
+						// Cancel the outer synthetic event
+						event.stopImmediatePropagation();
+						event.preventDefault();
+
+						// Support: Chrome 86+
+						// In Chrome, if an element having a focusout handler is blurred by
+						// clicking outside of it, it invokes the handler synchronously. If
+						// that handler calls `.remove()` on the element, the data is cleared,
+						// leaving `result` undefined. We need to guard against this.
+						return result && result.value;
+					}
+
+				// If this is an inner synthetic event for an event with a bubbling surrogate
+				// (focus or blur), assume that the surrogate already propagated from triggering the
+				// native event and prevent that from happening again here.
+				// This technically gets the ordering wrong w.r.t. to `.trigger()` (in which the
+				// bubbling surrogate propagates *after* the non-bubbling base), but that seems
+				// less bad than duplication.
+				} else if ( ( jQuery.event.special[ type ] || {} ).delegateType ) {
+					event.stopPropagation();
+				}
+
+			// If this is a native event triggered above, everything is now in order
+			// Fire an inner synthetic event with the original arguments
+			} else if ( saved.length ) {
+
+				// ...and capture the result
+				dataPriv.set( this, type, {
+					value: jQuery.event.trigger(
+
+						// Support: IE <=9 - 11+
+						// Extend with the prototype to reset the above stopImmediatePropagation()
+						jQuery.extend( saved[ 0 ], jQuery.Event.prototype ),
+						saved.slice( 1 ),
+						this
+					)
+				} );
+
+				// Abort handling of the native event
+				event.stopImmediatePropagation();
+			}
+		}
+	} );
+}
+
+jQuery.removeEvent = function( elem, type, handle ) {
+
+	// This "if" is needed for plain objects
+	if ( elem.removeEventListener ) {
+		elem.removeEventListener( type, handle );
+	}
+};
+
+jQuery.Event = function( src, props ) {
+
+	// Allow instantiation without the 'new' keyword
+	if ( !( this instanceof jQuery.Event ) ) {
+		return new jQuery.Event( src, props );
+	}
+
+	// Event object
+	if ( src && src.type ) {
+		this.originalEvent = src;
+		this.type = src.type;
+
+		// Events bubbling up the document may have been marked as prevented
+		// by a handler lower down the tree; reflect the correct value.
+		this.isDefaultPrevented = src.defaultPrevented ||
+				src.defaultPrevented === undefined &&
+
+				// Support: Android <=2.3 only
+				src.returnValue === false ?
+			returnTrue :
+			returnFalse;
+
+		// Create target properties
+		// Support: Safari <=6 - 7 only
+		// Target should not be a text node (trac-504, trac-13143)
+		this.target = ( src.target && src.target.nodeType === 3 ) ?
+			src.target.parentNode :
+			src.target;
+
+		this.currentTarget = src.currentTarget;
+		this.relatedTarget = src.relatedTarget;
+
+	// Event type
+	} else {
+		this.type = src;
+	}
+
+	// Put explicitly provided properties onto the event object
+	if ( props ) {
+		jQuery.extend( this, props );
+	}
+
+	// Create a timestamp if incoming event doesn't have one
+	this.timeStamp = src && src.timeStamp || Date.now();
+
+	// Mark it as fixed
+	this[ jQuery.expando ] = true;
+};
+
+// jQuery.Event is based on DOM3 Events as specified by the ECMAScript Language Binding
+// https://www.w3.org/TR/2003/WD-DOM-Level-3-Events-20030331/ecma-script-binding.html
+jQuery.Event.prototype = {
+	constructor: jQuery.Event,
+	isDefaultPrevented: returnFalse,
+	isPropagationStopped: returnFalse,
+	isImmediatePropagationStopped: returnFalse,
+	isSimulated: false,
+
+	preventDefault: function() {
+		var e = this.originalEvent;
+
+		this.isDefaultPrevented = returnTrue;
+
+		if ( e && !this.isSimulated ) {
+			e.preventDefault();
+		}
+	},
+	stopPropagation: function() {
+		var e = this.originalEvent;
+
+		this.isPropagationStopped = returnTrue;
+
+		if ( e && !this.isSimulated ) {
+			e.stopPropagation();
+		}
+	},
+	stopImmediatePropagation: function() {
+		var e = this.originalEvent;
+
+		this.isImmediatePropagationStopped = returnTrue;
+
+		if ( e && !this.isSimulated ) {
+			e.stopImmediatePropagation();
+		}
+
+		this.stopPropagation();
+	}
+};
+
+// Includes all common event props including KeyEvent and MouseEvent specific props
+jQuery.each( {
+	altKey: true,
+	bubbles: true,
+	cancelable: true,
+	changedTouches: true,
+	ctrlKey: true,
+	detail: true,
+	eventPhase: true,
+	metaKey: true,
+	pageX: true,
+	pageY: true,
+	shiftKey: true,
+	view: true,
+	"char": true,
+	code: true,
+	charCode: true,
+	key: true,
+	keyCode: true,
+	button: true,
+	buttons: true,
+	clientX: true,
+	clientY: true,
+	offsetX: true,
+	offsetY: true,
+	pointerId: true,
+	pointerType: true,
+	screenX: true,
+	screenY: true,
+	targetTouches: true,
+	toElement: true,
+	touches: true,
+	which: true
+}, jQuery.event.addProp );
+
+jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateType ) {
+	jQuery.event.special[ type ] = {
+
+		// Utilize native event if possible so blur/focus sequence is correct
+		setup: function() {
+
+			// Claim the first handler
+			// dataPriv.set( this, "focus", ... )
+			// dataPriv.set( this, "blur", ... )
+			leverageNative( this, type, expectSync );
+
+			// Return false to allow normal processing in the caller
+			return false;
+		},
+		trigger: function() {
+
+			// Force setup before trigger
+			leverageNative( this, type );
+
+			// Return non-false to allow normal event-path propagation
+			return true;
+		},
+
+		// Suppress native focus or blur if we're currently inside
+		// a leveraged native-event stack
+		_default: function( event ) {
+			return dataPriv.get( event.target, type );
+		},
+
+		delegateType: delegateType
+	};
+} );
+
+// Create mouseenter/leave events using mouseover/out and event-time checks
+// so that event delegation works in jQuery.
+// Do the same for pointerenter/pointerleave and pointerover/pointerout
+//
+// Support: Safari 7 only
+// Safari sends mouseenter too often; see:
+// https://bugs.chromium.org/p/chromium/issues/detail?id=470258
+// for the description of the bug (it existed in older Chrome versions as well).
+jQuery.each( {
+	mouseenter: "mouseover",
+	mouseleave: "mouseout",
+	pointerenter: "pointerover",
+	pointerleave: "pointerout"
+}, function( orig, fix ) {
+	jQuery.event.special[ orig ] = {
+		delegateType: fix,
+		bindType: fix,
+
+		handle: function( event ) {
+			var ret,
+				target = this,
+				related = event.relatedTarget,
+				handleObj = event.handleObj;
+
+			// For mouseenter/leave call the handler if related is outside the target.
+			// NB: No relatedTarget if the mouse left/entered the browser window
+			if ( !related || ( related !== target && !jQuery.contains( target, related ) ) ) {
+				event.type = handleObj.origType;
+				ret = handleObj.handler.apply( this, arguments );
+				event.type = fix;
+			}
+			return ret;
+		}
+	};
+} );
+
+jQuery.fn.extend( {
+
+	on: function( types, selector, data, fn ) {
+		return on( this, types, selector, data, fn );
+	},
+	one: function( types, selector, data, fn ) {
+		return on( this, types, selector, data, fn, 1 );
+	},
+	off: function( types, selector, fn ) {
+		var handleObj, type;
+		if ( types && types.preventDefault && types.handleObj ) {
+
+			// ( event )  dispatched jQuery.Event
+			handleObj = types.handleObj;
+			jQuery( types.delegateTarget ).off(
+				handleObj.namespace ?
+					handleObj.origType + "." + handleObj.namespace :
+					handleObj.origType,
+				handleObj.selector,
+				handleObj.handler
+			);
+			return this;
+		}
+		if ( typeof types === "object" ) {
+
+			// ( types-object [, selector] )
+			for ( type in types ) {
+				this.off( type, selector, types[ type ] );
+			}
+			return this;
+		}
+		if ( selector === false || typeof selector === "function" ) {
+
+			// ( types [, fn] )
+			fn = selector;
+			selector = undefined;
+		}
+		if ( fn === false ) {
+			fn = returnFalse;
+		}
+		return this.each( function() {
+			jQuery.event.remove( this, types, fn, selector );
+		} );
+	}
+} );
+
+
+var
+
+	// Support: IE <=10 - 11, Edge 12 - 13 only
+	// In IE/Edge using regex groups here causes severe slowdowns.
+	// See https://connect.microsoft.com/IE/feedback/details/1736512/
+	rnoInnerhtml = /<script|<style|<link/i,
+
+	// checked="checked" or checked
+	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
+
+	rcleanScript = /^\s*<!\[CDATA\[|\]\]>\s*$/g;
+
+// Prefer a tbody over its parent table for containing new rows
+function manipulationTarget( elem, content ) {
+	if ( nodeName( elem, "table" ) &&
+		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
+
+		return jQuery( elem ).children( "tbody" )[ 0 ] || elem;
+	}
+
+	return elem;
+}
+
+// Replace/restore the type attribute of script elements for safe DOM manipulation
+function disableScript( elem ) {
+	elem.type = ( elem.getAttribute( "type" ) !== null ) + "/" + elem.type;
+	return elem;
+}
+function restoreScript( elem ) {
+	if ( ( elem.type || "" ).slice( 0, 5 ) === "true/" ) {
+		elem.type = elem.type.slice( 5 );
+	} else {
+		elem.removeAttribute( "type" );
+	}
+
+	return elem;
+}
+
+function cloneCopyEvent( src, dest ) {
+	var i, l, type, pdataOld, udataOld, udataCur, events;
+
+	if ( dest.nodeType !== 1 ) {
+		return;
+	}
+
+	// 1. Copy private data: events, handlers, etc.
+	if ( dataPriv.hasData( src ) ) {
+		pdataOld = dataPriv.get( src );
+		events = pdataOld.events;
+
+		if ( events ) {
+			dataPriv.remove( dest, "handle events" );
+
+			for ( type in events ) {
+				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
+					jQuery.event.add( dest, type, events[ type ][ i ] );
+				}
+			}
+		}
+	}
+
+	// 2. Copy user data
+	if ( dataUser.hasData( src ) ) {
+		udataOld = dataUser.access( src );
+		udataCur = jQuery.extend( {}, udataOld );
+
+		dataUser.set( dest, udataCur );
+	}
+}
+
+// Fix IE bugs, see support tests
+function fixInput( src, dest ) {
+	var nodeName = dest.nodeName.toLowerCase();
+
+	// Fails to persist the checked state of a cloned checkbox or radio button.
+	if ( nodeName === "input" && rcheckableType.test( src.type ) ) {
+		dest.checked = src.checked;
+
+	// Fails to return the selected option to the default selected state when cloning options
+	} else if ( nodeName === "input" || nodeName === "textarea" ) {
+		dest.defaultValue = src.defaultValue;
+	}
+}
+
+function domManip( collection, args, callback, ignored ) {
+
+	// Flatten any nested arrays
+	args = flat( args );
+
+	var fragment, first, scripts, hasScripts, node, doc,
+		i = 0,
+		l = collection.length,
+		iNoClone = l - 1,
+		value = args[ 0 ],
+		valueIsFunction = isFunction( value );
+
+	// We can't cloneNode fragments that contain checked, in WebKit
+	if ( valueIsFunction ||
+			( l > 1 && typeof value === "string" &&
+				!support.checkClone && rchecked.test( value ) ) ) {
+		return collection.each( function( index ) {
+			var self = collection.eq( index );
+			if ( valueIsFunction ) {
+				args[ 0 ] = value.call( this, index, self.html() );
+			}
+			domManip( self, args, callback, ignored );
+		} );
+	}
+
+	if ( l ) {
+		fragment = buildFragment( args, collection[ 0 ].ownerDocument, false, collection, ignored );
+		first = fragment.firstChild;
+
+		if ( fragment.childNodes.length === 1 ) {
+			fragment = first;
+		}
+
+		// Require either new content or an interest in ignored elements to invoke the callback
+		if ( first || ignored ) {
+			scripts = jQuery.map( getAll( fragment, "script" ), disableScript );
+			hasScripts = scripts.length;
+
+			// Use the original fragment for the last item
+			// instead of the first because it can end up
+			// being emptied incorrectly in certain situations (trac-8070).
+			for ( ; i < l; i++ ) {
+				node = fragment;
+
+				if ( i !== iNoClone ) {
+					node = jQuery.clone( node, true, true );
+
+					// Keep references to cloned scripts for later restoration
+					if ( hasScripts ) {
+
+						// Support: Android <=4.0 only, PhantomJS 1 only
+						// push.apply(_, arraylike) throws on ancient WebKit
+						jQuery.merge( scripts, getAll( node, "script" ) );
+					}
+				}
+
+				callback.call( collection[ i ], node, i );
+			}
+
+			if ( hasScripts ) {
+				doc = scripts[ scripts.length - 1 ].ownerDocument;
+
+				// Reenable scripts
+				jQuery.map( scripts, restoreScript );
+
+				// Evaluate executable scripts on first document insertion
+				for ( i = 0; i < hasScripts; i++ ) {
+					node = scripts[ i ];
+					if ( rscriptType.test( node.type || "" ) &&
+						!dataPriv.access( node, "globalEval" ) &&
+						jQuery.contains( doc, node ) ) {
+
+						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
+
+							// Optional AJAX dependency, but won't run scripts if not present
+							if ( jQuery._evalUrl && !node.noModule ) {
+								jQuery._evalUrl( node.src, {
+									nonce: node.nonce || node.getAttribute( "nonce" )
+								}, doc );
+							}
+						} else {
+
+							// Unwrap a CDATA section containing script contents. This shouldn't be
+							// needed as in XML documents they're already not visible when
+							// inspecting element contents and in HTML documents they have no
+							// meaning but we're preserving that logic for backwards compatibility.
+							// This will be removed completely in 4.0. See gh-4904.
+							DOMEval( node.textContent.replace( rcleanScript, "" ), node, doc );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return collection;
+}
+
+function remove( elem, selector, keepData ) {
+	var node,
+		nodes = selector ? jQuery.filter( selector, elem ) : elem,
+		i = 0;
+
+	for ( ; ( node = nodes[ i ] ) != null; i++ ) {
+		if ( !keepData && node.nodeType === 1 ) {
+			jQuery.cleanData( getAll( node ) );
+		}
+
+		if ( node.parentNode ) {
+			if ( keepData && isAttached( node ) ) {
+				setGlobalEval( getAll( node, "script" ) );
+			}
+			node.parentNode.removeChild( node );
+		}
+	}
+
+	return elem;
+}
+
+jQuery.extend( {
+	htmlPrefilter: function( html ) {
+		return html;
+	},
+
+	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
+		var i, l, srcElements, destElements,
+			clone = elem.cloneNode( true ),
+			inPage = isAttached( elem );
+
+		// Fix IE cloning issues
+		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
+				!jQuery.isXMLDoc( elem ) ) {
+
+			// We eschew Sizzle here for performance reasons: https://jsperf.com/getall-vs-sizzle/2
+			destElements = getAll( clone );
+			srcElements = getAll( elem );
+
+			for ( i = 0, l = srcElements.length; i < l; i++ ) {
+				fixInput( srcElements[ i ], destElements[ i ] );
+			}
+		}
+
+		// Copy the events from the original to the clone
+		if ( dataAndEvents ) {
+			if ( deepDataAndEvents ) {
+				srcElements = srcElements || getAll( elem );
+				destElements = destElements || getAll( clone );
+
+				for ( i = 0, l = srcElements.length; i < l; i++ ) {
+					cloneCopyEvent( srcElements[ i ], destElements[ i ] );
+				}
+			} else {
+				cloneCopyEvent( elem, clone );
+			}
+		}
+
+		// Preserve script evaluation history
+		destElements = getAll( clone, "script" );
+		if ( destElements.length > 0 ) {
+			setGlobalEval( destElements, !inPage && getAll( elem, "script" ) );
+		}
+
+		// Return the cloned set
+		return clone;
+	},
+
+	cleanData: function( elems ) {
+		var data, elem, type,
+			special = jQuery.event.special,
+			i = 0;
+
+		for ( ; ( elem = elems[ i ] ) !== undefined; i++ ) {
+			if ( acceptData( elem ) ) {
+				if ( ( data = elem[ dataPriv.expando ] ) ) {
+					if ( data.events ) {
+						for ( type in data.events ) {
+							if ( special[ type ] ) {
+								jQuery.event.remove( elem, type );
+
+							// This is a shortcut to avoid jQuery.event.remove's overhead
+							} else {
+								jQuery.removeEvent( elem, type, data.handle );
+							}
+						}
+					}
+
+					// Support: Chrome <=35 - 45+
+					// Assign undefined instead of using delete, see Data#remove
+					elem[ dataPriv.expando ] = undefined;
+				}
+				if ( elem[ dataUser.expando ] ) {
+
+					// Support: Chrome <=35 - 45+
+					// Assign undefined instead of using delete, see Data#remove
+					elem[ dataUser.expando ] = undefined;
+				}
+			}
+		}
+	}
+} );
+
+jQuery.fn.extend( {
+	detach: function( selector ) {
+		return remove( this, selector, true );
+	},
+
+	remove: function( selector ) {
+		return remove( this, selector );
+	},
+
+	text: function( value ) {
+		return access( this, function( value ) {
+			return value === undefined ?
+				jQuery.text( this ) :
+				this.empty().each( function() {
+					if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
+						this.textContent = value;
+					}
+				} );
+		}, null, value, arguments.length );
+	},
+
+	append: function() {
+		return domManip( this, arguments, function( elem ) {
+			if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
+				var target = manipulationTarget( this, elem );
+				target.appendChild( elem );
+			}
+		} );
+	},
+
+	prepend: function() {
+		return domManip( this, arguments, function( elem ) {
+			if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
+				var target = manipulationTarget( this, elem );
+				target.insertBefore( elem, target.firstChild );
+			}
+		} );
+	},
+
+	before: function() {
+		return domManip( this, arguments, function( elem ) {
+			if ( this.parentNode ) {
+				this.parentNode.insertBefore( elem, this );
+			}
+		} );
+	},
+
+	after: function() {
+		return domManip( this, arguments, function( elem ) {
+			if ( this.parentNode ) {
+				this.parentNode.insertBefore( elem, this.nextSibling );
+			}
+		} );
+	},
+
+	empty: function() {
+		var elem,
+			i = 0;
+
+		for ( ; ( elem = this[ i ] ) != null; i++ ) {
+			if ( elem.nodeType === 1 ) {
+
+				// Prevent memory leaks
+				jQuery.cleanData( getAll( elem, false ) );
+
+				// Remove any remaining nodes
+				elem.textContent = "";
+			}
+		}
+
+		return this;
+	},
+
+	clone: function( dataAndEvents, deepDataAndEvents ) {
+		dataAndEvents = dataAndEvents == null ? false : dataAndEvents;
+		deepDataAndEvents = deepDataAndEvents == null ? dataAndEvents : deepDataAndEvents;
+
+		return this.map( function() {
+			return jQuery.clone( this, dataAndEvents, deepDataAndEvents );
+		} );
+	},
+
+	html: function( value ) {
+		return access( this, function( value ) {
+			var elem = this[ 0 ] || {},
+				i = 0,
+				l = this.length;
+
+			if ( value === undefined && elem.nodeType === 1 ) {
+				return elem.innerHTML;
+			}
+
+			// See if we can take a shortcut and just use innerHTML
+			if ( typeof value === "string" && !rnoInnerhtml.test( value ) &&
+				!wrapMap[ ( rtagName.exec( value ) || [ "", "" ] )[ 1 ].toLowerCase() ] ) {
+
+				value = jQuery.htmlPrefilter( value );
+
+				try {
+					for ( ; i < l; i++ ) {
+						elem = this[ i ] || {};
+
+						// Remove element nodes and prevent memory leaks
+						if ( elem.nodeType === 1 ) {
+							jQuery.cleanData( getAll( elem, false ) );
+							elem.innerHTML = value;
+						}
+					}
+
+					elem = 0;
+
+				// If using innerHTML throws an exception, use the fallback method
+				} catch ( e ) {}
+			}
+
+			if ( elem ) {
+				this.empty().append( value );
+			}
+		}, null, value, arguments.length );
+	},
+
+	replaceWith: function() {
+		var ignored = [];
+
+		// Make the changes, replacing each non-ignored context element with the new content
+		return domManip( this, arguments, function( elem ) {
+			var parent = this.parentNode;
+
+			if ( jQuery.inArray( this, ignored ) < 0 ) {
+				jQuery.cleanData( getAll( this ) );
+				if ( parent ) {
+					parent.replaceChild( elem, this );
+				}
+			}
+
+		// Force callback invocation
+		}, ignored );
+	}
+} );
+
+jQuery.each( {
+	appendTo: "append",
+	prependTo: "prepend",
+	insertBefore: "before",
+	insertAfter: "after",
+	replaceAll: "replaceWith"
+}, function( name, original ) {
+	jQuery.fn[ name ] = function( selector ) {
+		var elems,
+			ret = [],
+			insert = jQuery( selector ),
+			last = insert.length - 1,
+			i = 0;
+
+		for ( ; i <= last; i++ ) {
+			elems = i === last ? this : this.clone( true );
+			jQuery( insert[ i ] )[ original ]( elems );
+
+			// Support: Android <=4.0 only, PhantomJS 1 only
+			// .get() because push.apply(_, arraylike) throws on ancient WebKit
+			push.apply( ret, elems.get() );
+		}
+
+		return this.pushStack( ret );
+	};
+} );
+var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
+
+var rcustomProp = /^--/;
+
+
+var getStyles = function( elem ) {
+
+		// Support: IE <=11 only, Firefox <=30 (trac-15098, trac-14150)
+		// IE throws on elements created in popups
+		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
+		var view = elem.ownerDocument.defaultView;
+
+		if ( !view || !view.opener ) {
+			view = window;
+		}
+
+		return view.getComputedStyle( elem );
+	};
+
+var swap = function( elem, options, callback ) {
+	var ret, name,
+		old = {};
+
+	// Remember the old values, and insert the new ones
+	for ( name in options ) {
+		old[ name ] = elem.style[ name ];
+		elem.style[ name ] = options[ name ];
+	}
+
+	ret = callback.call( elem );
+
+	// Revert the old values
+	for ( name in options ) {
+		elem.style[ name ] = old[ name ];
+	}
+
+	return ret;
+};
+
+
+var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
+
+var whitespace = "[\\x20\\t\\r\\n\\f]";
+
+
+var rtrimCSS = new RegExp(
+	"^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$",
+	"g"
+);
+
+
+
+
+( function() {
+
+	// Executing both pixelPosition & boxSizingReliable tests require only one layout
+	// so they're executed at the same time to save the second computation.
+	function computeStyleTests() {
+
+		// This is a singleton, we need to execute it only once
+		if ( !div ) {
+			return;
+		}
+
+		container.style.cssText = "position:absolute;left:-11111px;width:60px;" +
+			"margin-top:1px;padding:0;border:0";
+		div.style.cssText =
+			"position:relative;display:block;box-sizing:border-box;overflow:scroll;" +
+			"margin:auto;border:1px;padding:1px;" +
+			"width:60%;top:1%";
+		documentElement.appendChild( container ).appendChild( div );
+
+		var divStyle = window.getComputedStyle( div );
+		pixelPositionVal = divStyle.top !== "1%";
+
+		// Support: Android 4.0 - 4.3 only, Firefox <=3 - 44
+		reliableMarginLeftVal = roundPixelMeasures( divStyle.marginLeft ) === 12;
+
+		// Support: Android 4.0 - 4.3 only, Safari <=9.1 - 10.1, iOS <=7.0 - 9.3
+		// Some styles come back with percentage values, even though they shouldn't
+		div.style.right = "60%";
+		pixelBoxStylesVal = roundPixelMeasures( divStyle.right ) === 36;
+
+		// Support: IE 9 - 11 only
+		// Detect misreporting of content dimensions for box-sizing:border-box elements
+		boxSizingReliableVal = roundPixelMeasures( divStyle.width ) === 36;
+
+		// Support: IE 9 only
+		// Detect overflow:scroll screwiness (gh-3699)
+		// Support: Chrome <=64
+		// Don't get tricked when zoom affects offsetWidth (gh-4029)
+		div.style.position = "absolute";
+		scrollboxSizeVal = roundPixelMeasures( div.offsetWidth / 3 ) === 12;
+
+		documentElement.removeChild( container );
+
+		// Nullify the div so it wouldn't be stored in the memory and
+		// it will also be a sign that checks already performed
+		div = null;
+	}
+
+	function roundPixelMeasures( measure ) {
+		return Math.round( parseFloat( measure ) );
+	}
+
+	var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal,
+		reliableTrDimensionsVal, reliableMarginLeftVal,
+		container = document.createElement( "div" ),
+		div = document.createElement( "div" );
+
+	// Finish early in limited (non-browser) environments
+	if ( !div.style ) {
+		return;
+	}
+
+	// Support: IE <=9 - 11 only
+	// Style of cloned element affects source element cloned (trac-8908)
+	div.style.backgroundClip = "content-box";
+	div.cloneNode( true ).style.backgroundClip = "";
+	support.clearCloneStyle = div.style.backgroundClip === "content-box";
+
+	jQuery.extend( support, {
+		boxSizingReliable: function() {
+			computeStyleTests();
+			return boxSizingReliableVal;
+		},
+		pixelBoxStyles: function() {
+			computeStyleTests();
+			return pixelBoxStylesVal;
+		},
+		pixelPosition: function() {
+			computeStyleTests();
+			return pixelPositionVal;
+		},
+		reliableMarginLeft: function() {
+			computeStyleTests();
+			return reliableMarginLeftVal;
+		},
+		scrollboxSize: function() {
+			computeStyleTests();
+			return scrollboxSizeVal;
+		},
+
+		// Support: IE 9 - 11+, Edge 15 - 18+
+		// IE/Edge misreport `getComputedStyle` of table rows with width/height
+		// set in CSS while `offset*` properties report correct values.
+		// Behavior in IE 9 is more subtle than in newer versions & it passes
+		// some versions of this test; make sure not to make it pass there!
+		//
+		// Support: Firefox 70+
+		// Only Firefox includes border widths
+		// in computed dimensions. (gh-4529)
+		reliableTrDimensions: function() {
+			var table, tr, trChild, trStyle;
+			if ( reliableTrDimensionsVal == null ) {
+				table = document.createElement( "table" );
+				tr = document.createElement( "tr" );
+				trChild = document.createElement( "div" );
+
+				table.style.cssText = "position:absolute;left:-11111px;border-collapse:separate";
+				tr.style.cssText = "border:1px solid";
+
+				// Support: Chrome 86+
+				// Height set through cssText does not get applied.
+				// Computed height then comes back as 0.
+				tr.style.height = "1px";
+				trChild.style.height = "9px";
+
+				// Support: Android 8 Chrome 86+
+				// In our bodyBackground.html iframe,
+				// display for all div elements is set to "inline",
+				// which causes a problem only in Android 8 Chrome 86.
+				// Ensuring the div is display: block
+				// gets around this issue.
+				trChild.style.display = "block";
+
+				documentElement
+					.appendChild( table )
+					.appendChild( tr )
+					.appendChild( trChild );
+
+				trStyle = window.getComputedStyle( tr );
+				reliableTrDimensionsVal = ( parseInt( trStyle.height, 10 ) +
+					parseInt( trStyle.borderTopWidth, 10 ) +
+					parseInt( trStyle.borderBottomWidth, 10 ) ) === tr.offsetHeight;
+
+				documentElement.removeChild( table );
+			}
+			return reliableTrDimensionsVal;
+		}
+	} );
+} )();
+
+
+function curCSS( elem, name, computed ) {
+	var width, minWidth, maxWidth, ret,
+		isCustomProp = rcustomProp.test( name ),
+
+		// Support: Firefox 51+
+		// Retrieving style before computed somehow
+		// fixes an issue with getting wrong values
+		// on detached elements
+		style = elem.style;
+
+	computed = computed || getStyles( elem );
+
+	// getPropertyValue is needed for:
+	//   .css('filter') (IE 9 only, trac-12537)
+	//   .css('--customProperty) (gh-3144)
+	if ( computed ) {
+		ret = computed.getPropertyValue( name ) || computed[ name ];
+
+		// trim whitespace for custom property (issue gh-4926)
+		if ( isCustomProp ) {
+
+			// rtrim treats U+000D CARRIAGE RETURN and U+000C FORM FEED
+			// as whitespace while CSS does not, but this is not a problem
+			// because CSS preprocessing replaces them with U+000A LINE FEED
+			// (which *is* CSS whitespace)
+			// https://www.w3.org/TR/css-syntax-3/#input-preprocessing
+			ret = ret.replace( rtrimCSS, "$1" );
+		}
+
+		if ( ret === "" && !isAttached( elem ) ) {
+			ret = jQuery.style( elem, name );
+		}
+
+		// A tribute to the "awesome hack by Dean Edwards"
+		// Android Browser returns percentage for some values,
+		// but width seems to be reliably pixels.
+		// This is against the CSSOM draft spec:
+		// https://drafts.csswg.org/cssom/#resolved-values
+		if ( !support.pixelBoxStyles() && rnumnonpx.test( ret ) && rboxStyle.test( name ) ) {
+
+			// Remember the original values
+			width = style.width;
+			minWidth = style.minWidth;
+			maxWidth = style.maxWidth;
+
+			// Put in the new values to get a computed value out
+			style.minWidth = style.maxWidth = style.width = ret;
+			ret = computed.width;
+
+			// Revert the changed values
+			style.width = width;
+			style.minWidth = minWidth;
+			style.maxWidth = maxWidth;
+		}
+	}
+
+	return ret !== undefined ?
+
+		// Support: IE <=9 - 11 only
+		// IE returns zIndex value as an integer.
+		ret + "" :
+		ret;
+}
+
+
+function addGetHookIf( conditionFn, hookFn ) {
+
+	// Define the hook, we'll check on the first run if it's really needed.
+	return {
+		get: function() {
+			if ( conditionFn() ) {
+
+				// Hook not needed (or it's not possible to use it due
+				// to missing dependency), remove it.
+				delete this.get;
+				return;
+			}
+
+			// Hook needed; redefine it so that the support test is not executed again.
+			return ( this.get = hookFn ).apply( this, arguments );
+		}
+	};
+}
+
+
+var cssPrefixes = [ "Webkit", "Moz", "ms" ],
+	emptyStyle = document.createElement( "div" ).style,
+	vendorProps = {};
+
+// Return a vendor-prefixed property or undefined
+function vendorPropName( name ) {
+
+	// Check for vendor prefixed names
+	var capName = name[ 0 ].toUpperCase() + name.slice( 1 ),
+		i = cssPrefixes.length;
+
+	while ( i-- ) {
+		name = cssPrefixes[ i ] + capName;
+		if ( name in emptyStyle ) {
+			return name;
+		}
+	}
+}
+
+// Return a potentially-mapped jQuery.cssProps or vendor prefixed property
+function finalPropName( name ) {
+	var final = jQuery.cssProps[ name ] || vendorProps[ name ];
+
+	if ( final ) {
+		return final;
+	}
+	if ( name in emptyStyle ) {
+		return name;
+	}
+	return vendorProps[ name ] = vendorPropName( name ) || name;
+}
+
+
+var
+
+	// Swappable if display is none or starts with table
+	// except "table", "table-cell", or "table-caption"
+	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
+	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
+	cssNormalTransform = {
+		letterSpacing: "0",
+		fontWeight: "400"
+	};
+
+function setPositiveNumber( _elem, value, subtract ) {
+
+	// Any relative (+/-) values have already been
+	// normalized at this point
+	var matches = rcssNum.exec( value );
+	return matches ?
+
+		// Guard against undefined "subtract", e.g., when used as in cssHooks
+		Math.max( 0, matches[ 2 ] - ( subtract || 0 ) ) + ( matches[ 3 ] || "px" ) :
+		value;
+}
+
+function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computedVal ) {
+	var i = dimension === "width" ? 1 : 0,
+		extra = 0,
+		delta = 0;
+
+	// Adjustment may not be necessary
+	if ( box === ( isBorderBox ? "border" : "content" ) ) {
+		return 0;
+	}
+
+	for ( ; i < 4; i += 2 ) {
+
+		// Both box models exclude margin
+		if ( box === "margin" ) {
+			delta += jQuery.css( elem, box + cssExpand[ i ], true, styles );
+		}
+
+		// If we get here with a content-box, we're seeking "padding" or "border" or "margin"
+		if ( !isBorderBox ) {
+
+			// Add padding
+			delta += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+
+			// For "border" or "margin", add border
+			if ( box !== "padding" ) {
+				delta += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+
+			// But still keep track of it otherwise
+			} else {
+				extra += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+			}
+
+		// If we get here with a border-box (content + padding + border), we're seeking "content" or
+		// "padding" or "margin"
+		} else {
+
+			// For "content", subtract padding
+			if ( box === "content" ) {
+				delta -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
+			}
+
+			// For "content" or "padding", subtract border
+			if ( box !== "margin" ) {
+				delta -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
+			}
+		}
+	}
+
+	// Account for positive content-box scroll gutter when requested by providing computedVal
+	if ( !isBorderBox && computedVal >= 0 ) {
+
+		// offsetWidth/offsetHeight is a rounded sum of content, padding, scroll gutter, and border
+		// Assuming integer scroll gutter, subtract the rest and round down
+		delta += Math.max( 0, Math.ceil(
+			elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+			computedVal -
+			delta -
+			extra -
+			0.5
+
+		// If offsetWidth/offsetHeight is unknown, then we can't determine content-box scroll gutter
+		// Use an explicit zero to avoid NaN (gh-3964)
+		) ) || 0;
+	}
+
+	return delta;
+}
+
+function getWidthOrHeight( elem, dimension, extra ) {
+
+	// Start with computed style
+	var styles = getStyles( elem ),
+
+		// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-4322).
+		// Fake content-box until we know it's needed to know the true value.
+		boxSizingNeeded = !support.boxSizingReliable() || extra,
+		isBorderBox = boxSizingNeeded &&
+			jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+		valueIsBorderBox = isBorderBox,
+
+		val = curCSS( elem, dimension, styles ),
+		offsetProp = "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 );
+
+	// Support: Firefox <=54
+	// Return a confounding non-pixel value or feign ignorance, as appropriate.
+	if ( rnumnonpx.test( val ) ) {
+		if ( !extra ) {
+			return val;
+		}
+		val = "auto";
+	}
+
+
+	// Support: IE 9 - 11 only
+	// Use offsetWidth/offsetHeight for when box sizing is unreliable.
+	// In those cases, the computed value can be trusted to be border-box.
+	if ( ( !support.boxSizingReliable() && isBorderBox ||
+
+		// Support: IE 10 - 11+, Edge 15 - 18+
+		// IE/Edge misreport `getComputedStyle` of table rows with width/height
+		// set in CSS while `offset*` properties report correct values.
+		// Interestingly, in some cases IE 9 doesn't suffer from this issue.
+		!support.reliableTrDimensions() && nodeName( elem, "tr" ) ||
+
+		// Fall back to offsetWidth/offsetHeight when value is "auto"
+		// This happens for inline elements with no explicit setting (gh-3571)
+		val === "auto" ||
+
+		// Support: Android <=4.1 - 4.3 only
+		// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
+		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) &&
+
+		// Make sure the element is visible & connected
+		elem.getClientRects().length ) {
+
+		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
+
+		// Where available, offsetWidth/offsetHeight approximate border box dimensions.
+		// Where not available (e.g., SVG), assume unreliable box-sizing and interpret the
+		// retrieved value as a content box dimension.
+		valueIsBorderBox = offsetProp in elem;
+		if ( valueIsBorderBox ) {
+			val = elem[ offsetProp ];
+		}
+	}
+
+	// Normalize "" and auto
+	val = parseFloat( val ) || 0;
+
+	// Adjust for the element's box model
+	return ( val +
+		boxModelAdjustment(
+			elem,
+			dimension,
+			extra || ( isBorderBox ? "border" : "content" ),
+			valueIsBorderBox,
+			styles,
+
+			// Provide the current computed size to request scroll gutter calculation (gh-3589)
+			val
+		)
+	) + "px";
+}
+
+jQuery.extend( {
+
+	// Add in style property hooks for overriding the default
+	// behavior of getting and setting a style property
+	cssHooks: {
+		opacity: {
+			get: function( elem, computed ) {
+				if ( computed ) {
+
+					// We should always get a number back from opacity
+					var ret = curCSS( elem, "opacity" );
+					return ret === "" ? "1" : ret;
+				}
+			}
+		}
+	},
+
+	// Don't automatically add "px" to these possibly-unitless properties
+	cssNumber: {
+		"animationIterationCount": true,
+		"columnCount": true,
+		"fillOpacity": true,
+		"flexGrow": true,
+		"flexShrink": true,
+		"fontWeight": true,
+		"gridArea": true,
+		"gridColumn": true,
+		"gridColumnEnd": true,
+		"gridColumnStart": true,
+		"gridRow": true,
+		"gridRowEnd": true,
+		"gridRowStart": true,
+		"lineHeight": true,
+		"opacity": true,
+		"order": true,
+		"orphans": true,
+		"widows": true,
+		"zIndex": true,
+		"zoom": true
+	},
+
+	// Add in properties whose names you wish to fix before
+	// setting or getting the value
+	cssProps: {},
+
+	// Get and set the style property on a DOM Node
+	style: function( elem, name, value, extra ) {
+
+		// Don't set styles on text and comment nodes
+		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
+			return;
+		}
+
+		// Make sure that we're working with the right name
+		var ret, type, hooks,
+			origName = camelCase( name ),
+			isCustomProp = rcustomProp.test( name ),
+			style = elem.style;
+
+		// Make sure that we're working with the right name. We don't
+		// want to query the value if it is a CSS custom property
+		// since they are user-defined.
+		if ( !isCustomProp ) {
+			name = finalPropName( origName );
+		}
+
+		// Gets hook for the prefixed version, then unprefixed version
+		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
+
+		// Check if we're setting a value
+		if ( value !== undefined ) {
+			type = typeof value;
+
+			// Convert "+=" or "-=" to relative numbers (trac-7345)
+			if ( type === "string" && ( ret = rcssNum.exec( value ) ) && ret[ 1 ] ) {
+				value = adjustCSS( elem, name, ret );
+
+				// Fixes bug trac-9237
+				type = "number";
+			}
+
+			// Make sure that null and NaN values aren't set (trac-7116)
+			if ( value == null || value !== value ) {
+				return;
+			}
+
+			// If a number was passed in, add the unit (except for certain CSS properties)
+			// The isCustomProp check can be removed in jQuery 4.0 when we only auto-append
+			// "px" to a few hardcoded values.
+			if ( type === "number" && !isCustomProp ) {
+				value += ret && ret[ 3 ] || ( jQuery.cssNumber[ origName ] ? "" : "px" );
+			}
+
+			// background-* props affect original clone's values
+			if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
+				style[ name ] = "inherit";
+			}
+
+			// If a hook was provided, use that value, otherwise just set the specified value
+			if ( !hooks || !( "set" in hooks ) ||
+				( value = hooks.set( elem, value, extra ) ) !== undefined ) {
+
+				if ( isCustomProp ) {
+					style.setProperty( name, value );
+				} else {
+					style[ name ] = value;
+				}
+			}
+
+		} else {
+
+			// If a hook was provided get the non-computed value from there
+			if ( hooks && "get" in hooks &&
+				( ret = hooks.get( elem, false, extra ) ) !== undefined ) {
+
+				return ret;
+			}
+
+			// Otherwise just get the value from the style object
+			return style[ name ];
+		}
+	},
+
+	css: function( elem, name, extra, styles ) {
+		var val, num, hooks,
+			origName = camelCase( name ),
+			isCustomProp = rcustomProp.test( name );
+
+		// Make sure that we're working with the right name. We don't
+		// want to modify the value if it is a CSS custom property
+		// since they are user-defined.
+		if ( !isCustomProp ) {
+			name = finalPropName( origName );
+		}
+
+		// Try prefixed name followed by the unprefixed name
+		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
+
+		// If a hook was provided get the computed value from there
+		if ( hooks && "get" in hooks ) {
+			val = hooks.get( elem, true, extra );
+		}
+
+		// Otherwise, if a way to get the computed value exists, use that
+		if ( val === undefined ) {
+			val = curCSS( elem, name, styles );
+		}
+
+		// Convert "normal" to computed value
+		if ( val === "normal" && name in cssNormalTransform ) {
+			val = cssNormalTransform[ name ];
+		}
+
+		// Make numeric if forced or a qualifier was provided and val looks numeric
+		if ( extra === "" || extra ) {
+			num = parseFloat( val );
+			return extra === true || isFinite( num ) ? num || 0 : val;
+		}
+
+		return val;
+	}
+} );
+
+jQuery.each( [ "height", "width" ], function( _i, dimension ) {
+	jQuery.cssHooks[ dimension ] = {
+		get: function( elem, computed, extra ) {
+			if ( computed ) {
+
+				// Certain elements can have dimension info if we invisibly show them
+				// but it must have a current display style that would benefit
+				return rdisplayswap.test( jQuery.css( elem, "display" ) ) &&
+
+					// Support: Safari 8+
+					// Table columns in Safari have non-zero offsetWidth & zero
+					// getBoundingClientRect().width unless display is changed.
+					// Support: IE <=11 only
+					// Running getBoundingClientRect on a disconnected node
+					// in IE throws an error.
+					( !elem.getClientRects().length || !elem.getBoundingClientRect().width ) ?
+					swap( elem, cssShow, function() {
+						return getWidthOrHeight( elem, dimension, extra );
+					} ) :
+					getWidthOrHeight( elem, dimension, extra );
+			}
+		},
+
+		set: function( elem, value, extra ) {
+			var matches,
+				styles = getStyles( elem ),
+
+				// Only read styles.position if the test has a chance to fail
+				// to avoid forcing a reflow.
+				scrollboxSizeBuggy = !support.scrollboxSize() &&
+					styles.position === "absolute",
+
+				// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-3991)
+				boxSizingNeeded = scrollboxSizeBuggy || extra,
+				isBorderBox = boxSizingNeeded &&
+					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+				subtract = extra ?
+					boxModelAdjustment(
+						elem,
+						dimension,
+						extra,
+						isBorderBox,
+						styles
+					) :
+					0;
+
+			// Account for unreliable border-box dimensions by comparing offset* to computed and
+			// faking a content-box to get border and padding (gh-3699)
+			if ( isBorderBox && scrollboxSizeBuggy ) {
+				subtract -= Math.ceil(
+					elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
+					parseFloat( styles[ dimension ] ) -
+					boxModelAdjustment( elem, dimension, "border", false, styles ) -
+					0.5
+				);
+			}
+
+			// Convert to pixels if value adjustment is needed
+			if ( subtract && ( matches = rcssNum.exec( value ) ) &&
+				( matches[ 3 ] || "px" ) !== "px" ) {
+
+				elem.style[ dimension ] = value;
+				value = jQuery.css( elem, dimension );
+			}
+
+			return setPositiveNumber( elem, value, subtract );
+		}
+	};
+} );
+
+jQuery.cssHooks.marginLeft = addGetHookIf( support.reliableMarginLeft,
+	function( elem, computed ) {
+		if ( computed ) {
+			return ( parseFloat( curCSS( elem, "marginLeft" ) ) ||
+				elem.getBoundingClientRect().left -
+					swap( elem, { marginLeft: 0 }, function() {
+						return elem.getBoundingClientRect().left;
+					} )
+			) + "px";
+		}
+	}
+);
+
+// These hooks are used by animate to expand properties
+jQuery.each( {
+	margin: "",
+	padding: "",
+	border: "Width"
+}, function( prefix, suffix ) {
+	jQuery.cssHooks[ prefix + suffix ] = {
+		expand: function( value ) {
+			var i = 0,
+				expanded = {},
+
+				// Assumes a single number if not a string
+				parts = typeof value === "string" ? value.split( " " ) : [ value ];
+
+			for ( ; i < 4; i++ ) {
+				expanded[ prefix + cssExpand[ i ] + suffix ] =
+					parts[ i ] || parts[ i - 2 ] || parts[ 0 ];
+			}
+
+			return expanded;
+		}
+	};
+
+	if ( prefix !== "margin" ) {
+		jQuery.cssHooks[ prefix + suffix ].set = setPositiveNumber;
+	}
+} );
+
+jQuery.fn.extend( {
+	css: function( name, value ) {
+		return access( this, function( elem, name, value ) {
+			var styles, len,
+				map = {},
+				i = 0;
+
+			if ( Array.isArray( name ) ) {
+				styles = getStyles( elem );
+				len = name.length;
+
+				for ( ; i < len; i++ ) {
+					map[ name[ i ] ] = jQuery.css( elem, name[ i ], false, styles );
+				}
+
+				return map;
+			}
+
+			return value !== undefined ?
+				jQuery.style( elem, name, value ) :
+				jQuery.css( elem, name );
+		}, name, value, arguments.length > 1 );
+	}
+} );
+
+
+function Tween( elem, options, prop, end, easing ) {
+	return new Tween.prototype.init( elem, options, prop, end, easing );
+}
+jQuery.Tween = Tween;
+
+Tween.prototype = {
+	constructor: Tween,
+	init: function( elem, options, prop, end, easing, unit ) {
+		this.elem = elem;
+		this.prop = prop;
+		this.easing = easing || jQuery.easing._default;
+		this.options = options;
+		this.start = this.now = this.cur();
+		this.end = end;
+		this.unit = unit || ( jQuery.cssNumber[ prop ] ? "" : "px" );
+	},
+	cur: function() {
+		var hooks = Tween.propHooks[ this.prop ];
+
+		return hooks && hooks.get ?
+			hooks.get( this ) :
+			Tween.propHooks._default.get( this );
+	},
+	run: function( percent ) {
+		var eased,
+			hooks = Tween.propHooks[ this.prop ];
+
+		if ( this.options.duration ) {
+			this.pos = eased = jQuery.easing[ this.easing ](
+				percent, this.options.duration * percent, 0, 1, this.options.duration
+			);
+		} else {
+			this.pos = eased = percent;
+		}
+		this.now = ( this.end - this.start ) * eased + this.start;
+
+		if ( this.options.step ) {
+			this.options.step.call( this.elem, this.now, this );
+		}
+
+		if ( hooks && hooks.set ) {
+			hooks.set( this );
+		} else {
+			Tween.propHooks._default.set( this );
+		}
+		return this;
+	}
+};
+
+Tween.prototype.init.prototype = Tween.prototype;
+
+Tween.propHooks = {
+	_default: {
+		get: function( tween ) {
+			var result;
+
+			// Use a property on the element directly when it is not a DOM element,
+			// or when there is no matching style property that exists.
+			if ( tween.elem.nodeType !== 1 ||
+				tween.elem[ tween.prop ] != null && tween.elem.style[ tween.prop ] == null ) {
+				return tween.elem[ tween.prop ];
+			}
+
+			// Passing an empty string as a 3rd parameter to .css will automatically
+			// attempt a parseFloat and fallback to a string if the parse fails.
+			// Simple values such as "10px" are parsed to Float;
+			// complex values such as "rotate(1rad)" are returned as-is.
+			result = jQuery.css( tween.elem, tween.prop, "" );
+
+			// Empty strings, null, undefined and "auto" are converted to 0.
+			return !result || result === "auto" ? 0 : result;
+		},
+		set: function( tween ) {
+
+			// Use step hook for back compat.
+			// Use cssHook if its there.
+			// Use .style if available and use plain properties where available.
+			if ( jQuery.fx.step[ tween.prop ] ) {
+				jQuery.fx.step[ tween.prop ]( tween );
+			} else if ( tween.elem.nodeType === 1 && (
+				jQuery.cssHooks[ tween.prop ] ||
+					tween.elem.style[ finalPropName( tween.prop ) ] != null ) ) {
+				jQuery.style( tween.elem, tween.prop, tween.now + tween.unit );
+			} else {
+				tween.elem[ tween.prop ] = tween.now;
+			}
+		}
+	}
+};
+
+// Support: IE <=9 only
+// Panic based approach to setting things on disconnected nodes
+Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
+	set: function( tween ) {
+		if ( tween.elem.nodeType && tween.elem.parentNode ) {
+			tween.elem[ tween.prop ] = tween.now;
+		}
+	}
+};
+
+jQuery.easing = {
+	linear: function( p ) {
+		return p;
+	},
+	swing: function( p ) {
+		return 0.5 - Math.cos( p * Math.PI ) / 2;
+	},
+	_default: "swing"
+};
+
+jQuery.fx = Tween.prototype.init;
+
+// Back compat <1.8 extension point
+jQuery.fx.step = {};
+
+
+
+
+var
+	fxNow, inProgress,
+	rfxtypes = /^(?:toggle|show|hide)$/,
+	rrun = /queueHooks$/;
+
+function schedule() {
+	if ( inProgress ) {
+		if ( document.hidden === false && window.requestAnimationFrame ) {
+			window.requestAnimationFrame( schedule );
+		} else {
+			window.setTimeout( schedule, jQuery.fx.interval );
+		}
+
+		jQuery.fx.tick();
+	}
+}
+
+// Animations created synchronously will run synchronously
+function createFxNow() {
+	window.setTimeout( function() {
+		fxNow = undefined;
+	} );
+	return ( fxNow = Date.now() );
+}
+
+// Generate parameters to create a standard animation
+function genFx( type, includeWidth ) {
+	var which,
+		i = 0,
+		attrs = { height: type };
+
+	// If we include width, step value is 1 to do all cssExpand values,
+	// otherwise step value is 2 to skip over Left and Right
+	includeWidth = includeWidth ? 1 : 0;
+	for ( ; i < 4; i += 2 - includeWidth ) {
+		which = cssExpand[ i ];
+		attrs[ "margin" + which ] = attrs[ "padding" + which ] = type;
+	}
+
+	if ( includeWidth ) {
+		attrs.opacity = attrs.width = type;
+	}
+
+	return attrs;
+}
+
+function createTween( value, prop, animation ) {
+	var tween,
+		collection = ( Animation.tweeners[ prop ] || [] ).concat( Animation.tweeners[ "*" ] ),
+		index = 0,
+		length = collection.length;
+	for ( ; index < length; index++ ) {
+		if ( ( tween = collection[ index ].call( animation, prop, value ) ) ) {
+
+			// We're done with this property
+			return tween;
+		}
+	}
+}
+
+function defaultPrefilter( elem, props, opts ) {
+	var prop, value, toggle, hooks, oldfire, propTween, restoreDisplay, display,
+		isBox = "width" in props || "height" in props,
+		anim = this,
+		orig = {},
+		style = elem.style,
+		hidden = elem.nodeType && isHiddenWithinTree( elem ),
+		dataShow = dataPriv.get( elem, "fxshow" );
+
+	// Queue-skipping animations hijack the fx hooks
+	if ( !opts.queue ) {
+		hooks = jQuery._queueHooks( elem, "fx" );
+		if ( hooks.unqueued == null ) {
+			hooks.unqueued = 0;
+			oldfire = hooks.empty.fire;
+			hooks.empty.fire = function() {
+				if ( !hooks.unqueued ) {
+					oldfire();
+				}
+			};
+		}
+		hooks.unqueued++;
+
+		anim.always( function() {
+
+			// Ensure the complete handler is called before this completes
+			anim.always( function() {
+				hooks.unqueued--;
+				if ( !jQuery.queue( elem, "fx" ).length ) {
+					hooks.empty.fire();
+				}
+			} );
+		} );
+	}
+
+	// Detect show/hide animations
+	for ( prop in props ) {
+		value = props[ prop ];
+		if ( rfxtypes.test( value ) ) {
+			delete props[ prop ];
+			toggle = toggle || value === "toggle";
+			if ( value === ( hidden ? "hide" : "show" ) ) {
+
+				// Pretend to be hidden if this is a "show" and
+				// there is still data from a stopped show/hide
+				if ( value === "show" && dataShow && dataShow[ prop ] !== undefined ) {
+					hidden = true;
+
+				// Ignore all other no-op show/hide data
+				} else {
+					continue;
+				}
+			}
+			orig[ prop ] = dataShow && dataShow[ prop ] || jQuery.style( elem, prop );
+		}
+	}
+
+	// Bail out if this is a no-op like .hide().hide()
+	propTween = !jQuery.isEmptyObject( props );
+	if ( !propTween && jQuery.isEmptyObject( orig ) ) {
+		return;
+	}
+
+	// Restrict "overflow" and "display" styles during box animations
+	if ( isBox && elem.nodeType === 1 ) {
+
+		// Support: IE <=9 - 11, Edge 12 - 15
+		// Record all 3 overflow attributes because IE does not infer the shorthand
+		// from identically-valued overflowX and overflowY and Edge just mirrors
+		// the overflowX value there.
+		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
+
+		// Identify a display type, preferring old show/hide data over the CSS cascade
+		restoreDisplay = dataShow && dataShow.display;
+		if ( restoreDisplay == null ) {
+			restoreDisplay = dataPriv.get( elem, "display" );
+		}
+		display = jQuery.css( elem, "display" );
+		if ( display === "none" ) {
+			if ( restoreDisplay ) {
+				display = restoreDisplay;
+			} else {
+
+				// Get nonempty value(s) by temporarily forcing visibility
+				showHide( [ elem ], true );
+				restoreDisplay = elem.style.display || restoreDisplay;
+				display = jQuery.css( elem, "display" );
+				showHide( [ elem ] );
+			}
+		}
+
+		// Animate inline elements as inline-block
+		if ( display === "inline" || display === "inline-block" && restoreDisplay != null ) {
+			if ( jQuery.css( elem, "float" ) === "none" ) {
+
+				// Restore the original display value at the end of pure show/hide animations
+				if ( !propTween ) {
+					anim.done( function() {
+						style.display = restoreDisplay;
+					} );
+					if ( restoreDisplay == null ) {
+						display = style.display;
+						restoreDisplay = display === "none" ? "" : display;
+					}
+				}
+				style.display = "inline-block";
+			}
+		}
+	}
+
+	if ( opts.overflow ) {
+		style.overflow = "hidden";
+		anim.always( function() {
+			style.overflow = opts.overflow[ 0 ];
+			style.overflowX = opts.overflow[ 1 ];
+			style.overflowY = opts.overflow[ 2 ];
+		} );
+	}
+
+	// Implement show/hide animations
+	propTween = false;
+	for ( prop in orig ) {
+
+		// General show/hide setup for this element animation
+		if ( !propTween ) {
+			if ( dataShow ) {
+				if ( "hidden" in dataShow ) {
+					hidden = dataShow.hidden;
+				}
+			} else {
+				dataShow = dataPriv.access( elem, "fxshow", { display: restoreDisplay } );
+			}
+
+			// Store hidden/visible for toggle so `.stop().toggle()` "reverses"
+			if ( toggle ) {
+				dataShow.hidden = !hidden;
+			}
+
+			// Show elements before animating them
+			if ( hidden ) {
+				showHide( [ elem ], true );
+			}
+
+			/* eslint-disable no-loop-func */
+
+			anim.done( function() {
+
+				/* eslint-enable no-loop-func */
+
+				// The final step of a "hide" animation is actually hiding the element
+				if ( !hidden ) {
+					showHide( [ elem ] );
+				}
+				dataPriv.remove( elem, "fxshow" );
+				for ( prop in orig ) {
+					jQuery.style( elem, prop, orig[ prop ] );
+				}
+			} );
+		}
+
+		// Per-property setup
+		propTween = createTween( hidden ? dataShow[ prop ] : 0, prop, anim );
+		if ( !( prop in dataShow ) ) {
+			dataShow[ prop ] = propTween.start;
+			if ( hidden ) {
+				propTween.end = propTween.start;
+				propTween.start = 0;
+			}
+		}
+	}
+}
+
+function propFilter( props, specialEasing ) {
+	var index, name, easing, value, hooks;
+
+	// camelCase, specialEasing and expand cssHook pass
+	for ( index in props ) {
+		name = camelCase( index );
+		easing = specialEasing[ name ];
+		value = props[ index ];
+		if ( Array.isArray( value ) ) {
+			easing = value[ 1 ];
+			value = props[ index ] = value[ 0 ];
+		}
+
+		if ( index !== name ) {
+			props[ name ] = value;
+			delete props[ index ];
+		}
+
+		hooks = jQuery.cssHooks[ name ];
+		if ( hooks && "expand" in hooks ) {
+			value = hooks.expand( value );
+			delete props[ name ];
+
+			// Not quite $.extend, this won't overwrite existing keys.
+			// Reusing 'index' because we have the correct "name"
+			for ( index in value ) {
+				if ( !( index in props ) ) {
+					props[ index ] = value[ index ];
+					specialEasing[ index ] = easing;
+				}
+			}
+		} else {
+			specialEasing[ name ] = easing;
+		}
+	}
+}
+
+function Animation( elem, properties, options ) {
+	var result,
+		stopped,
+		index = 0,
+		length = Animation.prefilters.length,
+		deferred = jQuery.Deferred().always( function() {
+
+			// Don't match elem in the :animated selector
+			delete tick.elem;
+		} ),
+		tick = function() {
+			if ( stopped ) {
+				return false;
+			}
+			var currentTime = fxNow || createFxNow(),
+				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
+
+				// Support: Android 2.3 only
+				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (trac-12497)
+				temp = remaining / animation.duration || 0,
+				percent = 1 - temp,
+				index = 0,
+				length = animation.tweens.length;
+
+			for ( ; index < length; index++ ) {
+				animation.tweens[ index ].run( percent );
+			}
+
+			deferred.notifyWith( elem, [ animation, percent, remaining ] );
+
+			// If there's more to do, yield
+			if ( percent < 1 && length ) {
+				return remaining;
+			}
+
+			// If this was an empty animation, synthesize a final progress notification
+			if ( !length ) {
+				deferred.notifyWith( elem, [ animation, 1, 0 ] );
+			}
+
+			// Resolve the animation and report its conclusion
+			deferred.resolveWith( elem, [ animation ] );
+			return false;
+		},
+		animation = deferred.promise( {
+			elem: elem,
+			props: jQuery.extend( {}, properties ),
+			opts: jQuery.extend( true, {
+				specialEasing: {},
+				easing: jQuery.easing._default
+			}, options ),
+			originalProperties: properties,
+			originalOptions: options,
+			startTime: fxNow || createFxNow(),
+			duration: options.duration,
+			tweens: [],
+			createTween: function( prop, end ) {
+				var tween = jQuery.Tween( elem, animation.opts, prop, end,
+					animation.opts.specialEasing[ prop ] || animation.opts.easing );
+				animation.tweens.push( tween );
+				return tween;
+			},
+			stop: function( gotoEnd ) {
+				var index = 0,
+
+					// If we are going to the end, we want to run all the tweens
+					// otherwise we skip this part
+					length = gotoEnd ? animation.tweens.length : 0;
+				if ( stopped ) {
+					return this;
+				}
+				stopped = true;
+				for ( ; index < length; index++ ) {
+					animation.tweens[ index ].run( 1 );
+				}
+
+				// Resolve when we played the last frame; otherwise, reject
+				if ( gotoEnd ) {
+					deferred.notifyWith( elem, [ animation, 1, 0 ] );
+					deferred.resolveWith( elem, [ animation, gotoEnd ] );
+				} else {
+					deferred.rejectWith( elem, [ animation, gotoEnd ] );
+				}
+				return this;
+			}
+		} ),
+		props = animation.props;
+
+	propFilter( props, animation.opts.specialEasing );
+
+	for ( ; index < length; index++ ) {
+		result = Animation.prefilters[ index ].call( animation, elem, props, animation.opts );
+		if ( result ) {
+			if ( isFunction( result.stop ) ) {
+				jQuery._queueHooks( animation.elem, animation.opts.queue ).stop =
+					result.stop.bind( result );
+			}
+			return result;
+		}
+	}
+
+	jQuery.map( props, createTween, animation );
+
+	if ( isFunction( animation.opts.start ) ) {
+		animation.opts.start.call( elem, animation );
+	}
+
+	// Attach callbacks from options
+	animation
+		.progress( animation.opts.progress )
+		.done( animation.opts.done, animation.opts.complete )
+		.fail( animation.opts.fail )
+		.always( animation.opts.always );
+
+	jQuery.fx.timer(
+		jQuery.extend( tick, {
+			elem: elem,
+			anim: animation,
+			queue: animation.opts.queue
+		} )
+	);
+
+	return animation;
+}
+
+jQuery.Animation = jQuery.extend( Animation, {
+
+	tweeners: {
+		"*": [ function( prop, value ) {
+			var tween = this.createTween( prop, value );
+			adjustCSS( tween.elem, prop, rcssNum.exec( value ), tween );
+			return tween;
+		} ]
+	},
+
+	tweener: function( props, callback ) {
+		if ( isFunction( props ) ) {
+			callback = props;
+			props = [ "*" ];
+		} else {
+			props = props.match( rnothtmlwhite );
+		}
+
+		var prop,
+			index = 0,
+			length = props.length;
+
+		for ( ; index < length; index++ ) {
+			prop = props[ index ];
+			Animation.tweeners[ prop ] = Animation.tweeners[ prop ] || [];
+			Animation.tweeners[ prop ].unshift( callback );
+		}
+	},
+
+	prefilters: [ defaultPrefilter ],
+
+	prefilter: function( callback, prepend ) {
+		if ( prepend ) {
+			Animation.prefilters.unshift( callback );
+		} else {
+			Animation.prefilters.push( callback );
+		}
+	}
+} );
+
+jQuery.speed = function( speed, easing, fn ) {
+	var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
+		complete: fn || !fn && easing ||
+			isFunction( speed ) && speed,
+		duration: speed,
+		easing: fn && easing || easing && !isFunction( easing ) && easing
+	};
+
+	// Go to the end state if fx are off
+	if ( jQuery.fx.off ) {
+		opt.duration = 0;
+
+	} else {
+		if ( typeof opt.duration !== "number" ) {
+			if ( opt.duration in jQuery.fx.speeds ) {
+				opt.duration = jQuery.fx.speeds[ opt.duration ];
+
+			} else {
+				opt.duration = jQuery.fx.speeds._default;
+			}
+		}
+	}
+
+	// Normalize opt.queue - true/undefined/null -> "fx"
+	if ( opt.queue == null || opt.queue === true ) {
+		opt.queue = "fx";
+	}
+
+	// Queueing
+	opt.old = opt.complete;
+
+	opt.complete = function() {
+		if ( isFunction( opt.old ) ) {
+			opt.old.call( this );
+		}
+
+		if ( opt.queue ) {
+			jQuery.dequeue( this, opt.queue );
+		}
+	};
+
+	return opt;
+};
+
+jQuery.fn.extend( {
+	fadeTo: function( speed, to, easing, callback ) {
+
+		// Show any hidden elements after setting opacity to 0
+		return this.filter( isHiddenWithinTree ).css( "opacity", 0 ).show()
+
+			// Animate to the value specified
+			.end().animate( { opacity: to }, speed, easing, callback );
+	},
+	animate: function( prop, speed, easing, callback ) {
+		var empty = jQuery.isEmptyObject( prop ),
+			optall = jQuery.speed( speed, easing, callback ),
+			doAnimation = function() {
+
+				// Operate on a copy of prop so per-property easing won't be lost
+				var anim = Animation( this, jQuery.extend( {}, prop ), optall );
+
+				// Empty animations, or finishing resolves immediately
+				if ( empty || dataPriv.get( this, "finish" ) ) {
+					anim.stop( true );
+				}
+			};
+
+		doAnimation.finish = doAnimation;
+
+		return empty || optall.queue === false ?
+			this.each( doAnimation ) :
+			this.queue( optall.queue, doAnimation );
+	},
+	stop: function( type, clearQueue, gotoEnd ) {
+		var stopQueue = function( hooks ) {
+			var stop = hooks.stop;
+			delete hooks.stop;
+			stop( gotoEnd );
+		};
+
+		if ( typeof type !== "string" ) {
+			gotoEnd = clearQueue;
+			clearQueue = type;
+			type = undefined;
+		}
+		if ( clearQueue ) {
+			this.queue( type || "fx", [] );
+		}
+
+		return this.each( function() {
+			var dequeue = true,
+				index = type != null && type + "queueHooks",
+				timers = jQuery.timers,
+				data = dataPriv.get( this );
+
+			if ( index ) {
+				if ( data[ index ] && data[ index ].stop ) {
+					stopQueue( data[ index ] );
+				}
+			} else {
+				for ( index in data ) {
+					if ( data[ index ] && data[ index ].stop && rrun.test( index ) ) {
+						stopQueue( data[ index ] );
+					}
+				}
+			}
+
+			for ( index = timers.length; index--; ) {
+				if ( timers[ index ].elem === this &&
+					( type == null || timers[ index ].queue === type ) ) {
+
+					timers[ index ].anim.stop( gotoEnd );
+					dequeue = false;
+					timers.splice( index, 1 );
+				}
+			}
+
+			// Start the next in the queue if the last step wasn't forced.
+			// Timers currently will call their complete callbacks, which
+			// will dequeue but only if they were gotoEnd.
+			if ( dequeue || !gotoEnd ) {
+				jQuery.dequeue( this, type );
+			}
+		} );
+	},
+	finish: function( type ) {
+		if ( type !== false ) {
+			type = type || "fx";
+		}
+		return this.each( function() {
+			var index,
+				data = dataPriv.get( this ),
+				queue = data[ type + "queue" ],
+				hooks = data[ type + "queueHooks" ],
+				timers = jQuery.timers,
+				length = queue ? queue.length : 0;
+
+			// Enable finishing flag on private data
+			data.finish = true;
+
+			// Empty the queue first
+			jQuery.queue( this, type, [] );
+
+			if ( hooks && hooks.stop ) {
+				hooks.stop.call( this, true );
+			}
+
+			// Look for any active animations, and finish them
+			for ( index = timers.length; index--; ) {
+				if ( timers[ index ].elem === this && timers[ index ].queue === type ) {
+					timers[ index ].anim.stop( true );
+					timers.splice( index, 1 );
+				}
+			}
+
+			// Look for any animations in the old queue and finish them
+			for ( index = 0; index < length; index++ ) {
+				if ( queue[ index ] && queue[ index ].finish ) {
+					queue[ index ].finish.call( this );
+				}
+			}
+
+			// Turn off finishing flag
+			delete data.finish;
+		} );
+	}
+} );
+
+jQuery.each( [ "toggle", "show", "hide" ], function( _i, name ) {
+	var cssFn = jQuery.fn[ name ];
+	jQuery.fn[ name ] = function( speed, easing, callback ) {
+		return speed == null || typeof speed === "boolean" ?
+			cssFn.apply( this, arguments ) :
+			this.animate( genFx( name, true ), speed, easing, callback );
+	};
+} );
+
+// Generate shortcuts for custom animations
+jQuery.each( {
+	slideDown: genFx( "show" ),
+	slideUp: genFx( "hide" ),
+	slideToggle: genFx( "toggle" ),
+	fadeIn: { opacity: "show" },
+	fadeOut: { opacity: "hide" },
+	fadeToggle: { opacity: "toggle" }
+}, function( name, props ) {
+	jQuery.fn[ name ] = function( speed, easing, callback ) {
+		return this.animate( props, speed, easing, callback );
+	};
+} );
+
+jQuery.timers = [];
+jQuery.fx.tick = function() {
+	var timer,
+		i = 0,
+		timers = jQuery.timers;
+
+	fxNow = Date.now();
+
+	for ( ; i < timers.length; i++ ) {
+		timer = timers[ i ];
+
+		// Run the timer and safely remove it when done (allowing for external removal)
+		if ( !timer() && timers[ i ] === timer ) {
+			timers.splice( i--, 1 );
+		}
+	}
+
+	if ( !timers.length ) {
+		jQuery.fx.stop();
+	}
+	fxNow = undefined;
+};
+
+jQuery.fx.timer = function( timer ) {
+	jQuery.timers.push( timer );
+	jQuery.fx.start();
+};
+
+jQuery.fx.interval = 13;
+jQuery.fx.start = function() {
+	if ( inProgress ) {
+		return;
+	}
+
+	inProgress = true;
+	schedule();
+};
+
+jQuery.fx.stop = function() {
+	inProgress = null;
+};
+
+jQuery.fx.speeds = {
+	slow: 600,
+	fast: 200,
+
+	// Default speed
+	_default: 400
+};
+
+
+// Based off of the plugin by Clint Helfers, with permission.
+jQuery.fn.delay = function( time, type ) {
+	time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
+	type = type || "fx";
+
+	return this.queue( type, function( next, hooks ) {
+		var timeout = window.setTimeout( next, time );
+		hooks.stop = function() {
+			window.clearTimeout( timeout );
+		};
+	} );
+};
+
+
+( function() {
+	var input = document.createElement( "input" ),
+		select = document.createElement( "select" ),
+		opt = select.appendChild( document.createElement( "option" ) );
+
+	input.type = "checkbox";
+
+	// Support: Android <=4.3 only
+	// Default value for a checkbox should be "on"
+	support.checkOn = input.value !== "";
+
+	// Support: IE <=11 only
+	// Must access selectedIndex to make default options select
+	support.optSelected = opt.selected;
+
+	// Support: IE <=11 only
+	// An input loses its value after becoming a radio
+	input = document.createElement( "input" );
+	input.value = "t";
+	input.type = "radio";
+	support.radioValue = input.value === "t";
+} )();
+
+
+var boolHook,
+	attrHandle = jQuery.expr.attrHandle;
+
+jQuery.fn.extend( {
+	attr: function( name, value ) {
+		return access( this, jQuery.attr, name, value, arguments.length > 1 );
+	},
+
+	removeAttr: function( name ) {
+		return this.each( function() {
+			jQuery.removeAttr( this, name );
+		} );
+	}
+} );
+
+jQuery.extend( {
+	attr: function( elem, name, value ) {
+		var ret, hooks,
+			nType = elem.nodeType;
+
+		// Don't get/set attributes on text, comment and attribute nodes
+		if ( nType === 3 || nType === 8 || nType === 2 ) {
+			return;
+		}
+
+		// Fallback to prop when attributes are not supported
+		if ( typeof elem.getAttribute === "undefined" ) {
+			return jQuery.prop( elem, name, value );
+		}
+
+		// Attribute hooks are determined by the lowercase version
+		// Grab necessary hook if one is defined
+		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
+			hooks = jQuery.attrHooks[ name.toLowerCase() ] ||
+				( jQuery.expr.match.bool.test( name ) ? boolHook : undefined );
+		}
+
+		if ( value !== undefined ) {
+			if ( value === null ) {
+				jQuery.removeAttr( elem, name );
+				return;
+			}
+
+			if ( hooks && "set" in hooks &&
+				( ret = hooks.set( elem, value, name ) ) !== undefined ) {
+				return ret;
+			}
+
+			elem.setAttribute( name, value + "" );
+			return value;
+		}
+
+		if ( hooks && "get" in hooks && ( ret = hooks.get( elem, name ) ) !== null ) {
+			return ret;
+		}
+
+		ret = jQuery.find.attr( elem, name );
+
+		// Non-existent attributes return null, we normalize to undefined
+		return ret == null ? undefined : ret;
+	},
+
+	attrHooks: {
+		type: {
+			set: function( elem, value ) {
+				if ( !support.radioValue && value === "radio" &&
+					nodeName( elem, "input" ) ) {
+					var val = elem.value;
+					elem.setAttribute( "type", value );
+					if ( val ) {
+						elem.value = val;
+					}
+					return value;
+				}
+			}
+		}
+	},
+
+	removeAttr: function( elem, value ) {
+		var name,
+			i = 0,
+
+			// Attribute names can contain non-HTML whitespace characters
+			// https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+			attrNames = value && value.match( rnothtmlwhite );
+
+		if ( attrNames && elem.nodeType === 1 ) {
+			while ( ( name = attrNames[ i++ ] ) ) {
+				elem.removeAttribute( name );
+			}
+		}
+	}
+} );
+
+// Hooks for boolean attributes
+boolHook = {
+	set: function( elem, value, name ) {
+		if ( value === false ) {
+
+			// Remove boolean attributes when set to false
+			jQuery.removeAttr( elem, name );
+		} else {
+			elem.setAttribute( name, name );
+		}
+		return name;
+	}
+};
+
+jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( _i, name ) {
+	var getter = attrHandle[ name ] || jQuery.find.attr;
+
+	attrHandle[ name ] = function( elem, name, isXML ) {
+		var ret, handle,
+			lowercaseName = name.toLowerCase();
+
+		if ( !isXML ) {
+
+			// Avoid an infinite loop by temporarily removing this function from the getter
+			handle = attrHandle[ lowercaseName ];
+			attrHandle[ lowercaseName ] = ret;
+			ret = getter( elem, name, isXML ) != null ?
+				lowercaseName :
+				null;
+			attrHandle[ lowercaseName ] = handle;
+		}
+		return ret;
+	};
+} );
+
+
+
+
+var rfocusable = /^(?:input|select|textarea|button)$/i,
+	rclickable = /^(?:a|area)$/i;
+
+jQuery.fn.extend( {
+	prop: function( name, value ) {
+		return access( this, jQuery.prop, name, value, arguments.length > 1 );
+	},
+
+	removeProp: function( name ) {
+		return this.each( function() {
+			delete this[ jQuery.propFix[ name ] || name ];
+		} );
+	}
+} );
+
+jQuery.extend( {
+	prop: function( elem, name, value ) {
+		var ret, hooks,
+			nType = elem.nodeType;
+
+		// Don't get/set properties on text, comment and attribute nodes
+		if ( nType === 3 || nType === 8 || nType === 2 ) {
+			return;
+		}
+
+		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
+
+			// Fix name and attach hooks
+			name = jQuery.propFix[ name ] || name;
+			hooks = jQuery.propHooks[ name ];
+		}
+
+		if ( value !== undefined ) {
+			if ( hooks && "set" in hooks &&
+				( ret = hooks.set( elem, value, name ) ) !== undefined ) {
+				return ret;
+			}
+
+			return ( elem[ name ] = value );
+		}
+
+		if ( hooks && "get" in hooks && ( ret = hooks.get( elem, name ) ) !== null ) {
+			return ret;
+		}
+
+		return elem[ name ];
+	},
+
+	propHooks: {
+		tabIndex: {
+			get: function( elem ) {
+
+				// Support: IE <=9 - 11 only
+				// elem.tabIndex doesn't always return the
+				// correct value when it hasn't been explicitly set
+				// Use proper attribute retrieval (trac-12072)
+				var tabindex = jQuery.find.attr( elem, "tabindex" );
+
+				if ( tabindex ) {
+					return parseInt( tabindex, 10 );
+				}
+
+				if (
+					rfocusable.test( elem.nodeName ) ||
+					rclickable.test( elem.nodeName ) &&
+					elem.href
+				) {
+					return 0;
+				}
+
+				return -1;
+			}
+		}
+	},
+
+	propFix: {
+		"for": "htmlFor",
+		"class": "className"
+	}
+} );
+
+// Support: IE <=11 only
+// Accessing the selectedIndex property
+// forces the browser to respect setting selected
+// on the option
+// The getter ensures a default option is selected
+// when in an optgroup
+// eslint rule "no-unused-expressions" is disabled for this code
+// since it considers such accessions noop
+if ( !support.optSelected ) {
+	jQuery.propHooks.selected = {
+		get: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
+			var parent = elem.parentNode;
+			if ( parent && parent.parentNode ) {
+				parent.parentNode.selectedIndex;
+			}
+			return null;
+		},
+		set: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
+			var parent = elem.parentNode;
+			if ( parent ) {
+				parent.selectedIndex;
+
+				if ( parent.parentNode ) {
+					parent.parentNode.selectedIndex;
+				}
+			}
+		}
+	};
+}
+
+jQuery.each( [
+	"tabIndex",
+	"readOnly",
+	"maxLength",
+	"cellSpacing",
+	"cellPadding",
+	"rowSpan",
+	"colSpan",
+	"useMap",
+	"frameBorder",
+	"contentEditable"
+], function() {
+	jQuery.propFix[ this.toLowerCase() ] = this;
+} );
+
+
+
+
+	// Strip and collapse whitespace according to HTML spec
+	// https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace
+	function stripAndCollapse( value ) {
+		var tokens = value.match( rnothtmlwhite ) || [];
+		return tokens.join( " " );
+	}
+
+
+function getClass( elem ) {
+	return elem.getAttribute && elem.getAttribute( "class" ) || "";
+}
+
+function classesToArray( value ) {
+	if ( Array.isArray( value ) ) {
+		return value;
+	}
+	if ( typeof value === "string" ) {
+		return value.match( rnothtmlwhite ) || [];
+	}
+	return [];
+}
+
+jQuery.fn.extend( {
+	addClass: function( value ) {
+		var classNames, cur, curValue, className, i, finalValue;
+
+		if ( isFunction( value ) ) {
+			return this.each( function( j ) {
+				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
+			} );
+		}
+
+		classNames = classesToArray( value );
+
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+
+				if ( cur ) {
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
+						if ( cur.indexOf( " " + className + " " ) < 0 ) {
+							cur += className + " ";
+						}
+					}
+
+					// Only assign if different to avoid unneeded rendering.
+					finalValue = stripAndCollapse( cur );
+					if ( curValue !== finalValue ) {
+						this.setAttribute( "class", finalValue );
+					}
+				}
+			} );
+		}
+
+		return this;
+	},
+
+	removeClass: function( value ) {
+		var classNames, cur, curValue, className, i, finalValue;
+
+		if ( isFunction( value ) ) {
+			return this.each( function( j ) {
+				jQuery( this ).removeClass( value.call( this, j, getClass( this ) ) );
+			} );
+		}
+
+		if ( !arguments.length ) {
+			return this.attr( "class", "" );
+		}
+
+		classNames = classesToArray( value );
+
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
+
+				// This expression is here for better compressibility (see addClass)
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+
+				if ( cur ) {
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
+
+						// Remove *all* instances
+						while ( cur.indexOf( " " + className + " " ) > -1 ) {
+							cur = cur.replace( " " + className + " ", " " );
+						}
+					}
+
+					// Only assign if different to avoid unneeded rendering.
+					finalValue = stripAndCollapse( cur );
+					if ( curValue !== finalValue ) {
+						this.setAttribute( "class", finalValue );
+					}
+				}
+			} );
+		}
+
+		return this;
+	},
+
+	toggleClass: function( value, stateVal ) {
+		var classNames, className, i, self,
+			type = typeof value,
+			isValidValue = type === "string" || Array.isArray( value );
+
+		if ( isFunction( value ) ) {
+			return this.each( function( i ) {
+				jQuery( this ).toggleClass(
+					value.call( this, i, getClass( this ), stateVal ),
+					stateVal
+				);
+			} );
+		}
+
+		if ( typeof stateVal === "boolean" && isValidValue ) {
+			return stateVal ? this.addClass( value ) : this.removeClass( value );
+		}
+
+		classNames = classesToArray( value );
+
+		return this.each( function() {
+			if ( isValidValue ) {
+
+				// Toggle individual class names
+				self = jQuery( this );
+
+				for ( i = 0; i < classNames.length; i++ ) {
+					className = classNames[ i ];
+
+					// Check each className given, space separated list
+					if ( self.hasClass( className ) ) {
+						self.removeClass( className );
+					} else {
+						self.addClass( className );
+					}
+				}
+
+			// Toggle whole class name
+			} else if ( value === undefined || type === "boolean" ) {
+				className = getClass( this );
+				if ( className ) {
+
+					// Store className if set
+					dataPriv.set( this, "__className__", className );
+				}
+
+				// If the element has a class name or if we're passed `false`,
+				// then remove the whole classname (if there was one, the above saved it).
+				// Otherwise bring back whatever was previously saved (if anything),
+				// falling back to the empty string if nothing was stored.
+				if ( this.setAttribute ) {
+					this.setAttribute( "class",
+						className || value === false ?
+							"" :
+							dataPriv.get( this, "__className__" ) || ""
+					);
+				}
+			}
+		} );
+	},
+
+	hasClass: function( selector ) {
+		var className, elem,
+			i = 0;
+
+		className = " " + selector + " ";
+		while ( ( elem = this[ i++ ] ) ) {
+			if ( elem.nodeType === 1 &&
+				( " " + stripAndCollapse( getClass( elem ) ) + " " ).indexOf( className ) > -1 ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+} );
+
+
+
+
+var rreturn = /\r/g;
+
+jQuery.fn.extend( {
+	val: function( value ) {
+		var hooks, ret, valueIsFunction,
+			elem = this[ 0 ];
+
+		if ( !arguments.length ) {
+			if ( elem ) {
+				hooks = jQuery.valHooks[ elem.type ] ||
+					jQuery.valHooks[ elem.nodeName.toLowerCase() ];
+
+				if ( hooks &&
+					"get" in hooks &&
+					( ret = hooks.get( elem, "value" ) ) !== undefined
+				) {
+					return ret;
+				}
+
+				ret = elem.value;
+
+				// Handle most common string cases
+				if ( typeof ret === "string" ) {
+					return ret.replace( rreturn, "" );
+				}
+
+				// Handle cases where value is null/undef or number
+				return ret == null ? "" : ret;
+			}
+
+			return;
+		}
+
+		valueIsFunction = isFunction( value );
+
+		return this.each( function( i ) {
+			var val;
+
+			if ( this.nodeType !== 1 ) {
+				return;
+			}
+
+			if ( valueIsFunction ) {
+				val = value.call( this, i, jQuery( this ).val() );
+			} else {
+				val = value;
+			}
+
+			// Treat null/undefined as ""; convert numbers to string
+			if ( val == null ) {
+				val = "";
+
+			} else if ( typeof val === "number" ) {
+				val += "";
+
+			} else if ( Array.isArray( val ) ) {
+				val = jQuery.map( val, function( value ) {
+					return value == null ? "" : value + "";
+				} );
+			}
+
+			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
+
+			// If set returns undefined, fall back to normal setting
+			if ( !hooks || !( "set" in hooks ) || hooks.set( this, val, "value" ) === undefined ) {
+				this.value = val;
+			}
+		} );
+	}
+} );
+
+jQuery.extend( {
+	valHooks: {
+		option: {
+			get: function( elem ) {
+
+				var val = jQuery.find.attr( elem, "value" );
+				return val != null ?
+					val :
+
+					// Support: IE <=10 - 11 only
+					// option.text throws exceptions (trac-14686, trac-14858)
+					// Strip and collapse whitespace
+					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
+					stripAndCollapse( jQuery.text( elem ) );
+			}
+		},
+		select: {
+			get: function( elem ) {
+				var value, option, i,
+					options = elem.options,
+					index = elem.selectedIndex,
+					one = elem.type === "select-one",
+					values = one ? null : [],
+					max = one ? index + 1 : options.length;
+
+				if ( index < 0 ) {
+					i = max;
+
+				} else {
+					i = one ? index : 0;
+				}
+
+				// Loop through all the selected options
+				for ( ; i < max; i++ ) {
+					option = options[ i ];
+
+					// Support: IE <=9 only
+					// IE8-9 doesn't update selected after form reset (trac-2551)
+					if ( ( option.selected || i === index ) &&
+
+							// Don't return options that are disabled or in a disabled optgroup
+							!option.disabled &&
+							( !option.parentNode.disabled ||
+								!nodeName( option.parentNode, "optgroup" ) ) ) {
+
+						// Get the specific value for the option
+						value = jQuery( option ).val();
+
+						// We don't need an array for one selects
+						if ( one ) {
+							return value;
+						}
+
+						// Multi-Selects return an array
+						values.push( value );
+					}
+				}
+
+				return values;
+			},
+
+			set: function( elem, value ) {
+				var optionSet, option,
+					options = elem.options,
+					values = jQuery.makeArray( value ),
+					i = options.length;
+
+				while ( i-- ) {
+					option = options[ i ];
+
+					/* eslint-disable no-cond-assign */
+
+					if ( option.selected =
+						jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
+					) {
+						optionSet = true;
+					}
+
+					/* eslint-enable no-cond-assign */
+				}
+
+				// Force browsers to behave consistently when non-matching value is set
+				if ( !optionSet ) {
+					elem.selectedIndex = -1;
+				}
+				return values;
+			}
+		}
+	}
+} );
+
+// Radios and checkboxes getter/setter
+jQuery.each( [ "radio", "checkbox" ], function() {
+	jQuery.valHooks[ this ] = {
+		set: function( elem, value ) {
+			if ( Array.isArray( value ) ) {
+				return ( elem.checked = jQuery.inArray( jQuery( elem ).val(), value ) > -1 );
+			}
+		}
+	};
+	if ( !support.checkOn ) {
+		jQuery.valHooks[ this ].get = function( elem ) {
+			return elem.getAttribute( "value" ) === null ? "on" : elem.value;
+		};
+	}
+} );
+
+
+
+
+// Return jQuery for attributes-only inclusion
+
+
+support.focusin = "onfocusin" in window;
+
+
+var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
+	stopPropagationCallback = function( e ) {
+		e.stopPropagation();
+	};
+
+jQuery.extend( jQuery.event, {
+
+	trigger: function( event, data, elem, onlyHandlers ) {
+
+		var i, cur, tmp, bubbleType, ontype, handle, special, lastElement,
+			eventPath = [ elem || document ],
+			type = hasOwn.call( event, "type" ) ? event.type : event,
+			namespaces = hasOwn.call( event, "namespace" ) ? event.namespace.split( "." ) : [];
+
+		cur = lastElement = tmp = elem = elem || document;
+
+		// Don't do events on text and comment nodes
+		if ( elem.nodeType === 3 || elem.nodeType === 8 ) {
+			return;
+		}
+
+		// focus/blur morphs to focusin/out; ensure we're not firing them right now
+		if ( rfocusMorph.test( type + jQuery.event.triggered ) ) {
+			return;
+		}
+
+		if ( type.indexOf( "." ) > -1 ) {
+
+			// Namespaced trigger; create a regexp to match event type in handle()
+			namespaces = type.split( "." );
+			type = namespaces.shift();
+			namespaces.sort();
+		}
+		ontype = type.indexOf( ":" ) < 0 && "on" + type;
+
+		// Caller can pass in a jQuery.Event object, Object, or just an event type string
+		event = event[ jQuery.expando ] ?
+			event :
+			new jQuery.Event( type, typeof event === "object" && event );
+
+		// Trigger bitmask: & 1 for native handlers; & 2 for jQuery (always true)
+		event.isTrigger = onlyHandlers ? 2 : 3;
+		event.namespace = namespaces.join( "." );
+		event.rnamespace = event.namespace ?
+			new RegExp( "(^|\\.)" + namespaces.join( "\\.(?:.*\\.|)" ) + "(\\.|$)" ) :
+			null;
+
+		// Clean up the event in case it is being reused
+		event.result = undefined;
+		if ( !event.target ) {
+			event.target = elem;
+		}
+
+		// Clone any incoming data and prepend the event, creating the handler arg list
+		data = data == null ?
+			[ event ] :
+			jQuery.makeArray( data, [ event ] );
+
+		// Allow special events to draw outside the lines
+		special = jQuery.event.special[ type ] || {};
+		if ( !onlyHandlers && special.trigger && special.trigger.apply( elem, data ) === false ) {
+			return;
+		}
+
+		// Determine event propagation path in advance, per W3C events spec (trac-9951)
+		// Bubble up to document, then to window; watch for a global ownerDocument var (trac-9724)
+		if ( !onlyHandlers && !special.noBubble && !isWindow( elem ) ) {
+
+			bubbleType = special.delegateType || type;
+			if ( !rfocusMorph.test( bubbleType + type ) ) {
+				cur = cur.parentNode;
+			}
+			for ( ; cur; cur = cur.parentNode ) {
+				eventPath.push( cur );
+				tmp = cur;
+			}
+
+			// Only add window if we got to document (e.g., not plain obj or detached DOM)
+			if ( tmp === ( elem.ownerDocument || document ) ) {
+				eventPath.push( tmp.defaultView || tmp.parentWindow || window );
+			}
+		}
+
+		// Fire handlers on the event path
+		i = 0;
+		while ( ( cur = eventPath[ i++ ] ) && !event.isPropagationStopped() ) {
+			lastElement = cur;
+			event.type = i > 1 ?
+				bubbleType :
+				special.bindType || type;
+
+			// jQuery handler
+			handle = ( dataPriv.get( cur, "events" ) || Object.create( null ) )[ event.type ] &&
+				dataPriv.get( cur, "handle" );
+			if ( handle ) {
+				handle.apply( cur, data );
+			}
+
+			// Native handler
+			handle = ontype && cur[ ontype ];
+			if ( handle && handle.apply && acceptData( cur ) ) {
+				event.result = handle.apply( cur, data );
+				if ( event.result === false ) {
+					event.preventDefault();
+				}
+			}
+		}
+		event.type = type;
+
+		// If nobody prevented the default action, do it now
+		if ( !onlyHandlers && !event.isDefaultPrevented() ) {
+
+			if ( ( !special._default ||
+				special._default.apply( eventPath.pop(), data ) === false ) &&
+				acceptData( elem ) ) {
+
+				// Call a native DOM method on the target with the same name as the event.
+				// Don't do default actions on window, that's where global variables be (trac-6170)
+				if ( ontype && isFunction( elem[ type ] ) && !isWindow( elem ) ) {
+
+					// Don't re-trigger an onFOO event when we call its FOO() method
+					tmp = elem[ ontype ];
+
+					if ( tmp ) {
+						elem[ ontype ] = null;
+					}
+
+					// Prevent re-triggering of the same event, since we already bubbled it above
+					jQuery.event.triggered = type;
+
+					if ( event.isPropagationStopped() ) {
+						lastElement.addEventListener( type, stopPropagationCallback );
+					}
+
+					elem[ type ]();
+
+					if ( event.isPropagationStopped() ) {
+						lastElement.removeEventListener( type, stopPropagationCallback );
+					}
+
+					jQuery.event.triggered = undefined;
+
+					if ( tmp ) {
+						elem[ ontype ] = tmp;
+					}
+				}
+			}
+		}
+
+		return event.result;
+	},
+
+	// Piggyback on a donor event to simulate a different one
+	// Used only for `focus(in | out)` events
+	simulate: function( type, elem, event ) {
+		var e = jQuery.extend(
+			new jQuery.Event(),
+			event,
+			{
+				type: type,
+				isSimulated: true
+			}
+		);
+
+		jQuery.event.trigger( e, null, elem );
+	}
+
+} );
+
+jQuery.fn.extend( {
+
+	trigger: function( type, data ) {
+		return this.each( function() {
+			jQuery.event.trigger( type, data, this );
+		} );
+	},
+	triggerHandler: function( type, data ) {
+		var elem = this[ 0 ];
+		if ( elem ) {
+			return jQuery.event.trigger( type, data, elem, true );
+		}
+	}
+} );
+
+
+// Support: Firefox <=44
+// Firefox doesn't have focus(in | out) events
+// Related ticket - https://bugzilla.mozilla.org/show_bug.cgi?id=687787
+//
+// Support: Chrome <=48 - 49, Safari <=9.0 - 9.1
+// focus(in | out) events fire after focus & blur events,
+// which is spec violation - http://www.w3.org/TR/DOM-Level-3-Events/#events-focusevent-event-order
+// Related ticket - https://bugs.chromium.org/p/chromium/issues/detail?id=449857
+if ( !support.focusin ) {
+	jQuery.each( { focus: "focusin", blur: "focusout" }, function( orig, fix ) {
+
+		// Attach a single capturing handler on the document while someone wants focusin/focusout
+		var handler = function( event ) {
+			jQuery.event.simulate( fix, event.target, jQuery.event.fix( event ) );
+		};
+
+		jQuery.event.special[ fix ] = {
+			setup: function() {
+
+				// Handle: regular nodes (via `this.ownerDocument`), window
+				// (via `this.document`) & document (via `this`).
+				var doc = this.ownerDocument || this.document || this,
+					attaches = dataPriv.access( doc, fix );
+
+				if ( !attaches ) {
+					doc.addEventListener( orig, handler, true );
+				}
+				dataPriv.access( doc, fix, ( attaches || 0 ) + 1 );
+			},
+			teardown: function() {
+				var doc = this.ownerDocument || this.document || this,
+					attaches = dataPriv.access( doc, fix ) - 1;
+
+				if ( !attaches ) {
+					doc.removeEventListener( orig, handler, true );
+					dataPriv.remove( doc, fix );
+
+				} else {
+					dataPriv.access( doc, fix, attaches );
+				}
+			}
+		};
+	} );
+}
+var location = window.location;
+
+var nonce = { guid: Date.now() };
+
+var rquery = ( /\?/ );
+
+
+
+// Cross-browser xml parsing
+jQuery.parseXML = function( data ) {
+	var xml, parserErrorElem;
+	if ( !data || typeof data !== "string" ) {
+		return null;
+	}
+
+	// Support: IE 9 - 11 only
+	// IE throws on parseFromString with invalid input.
+	try {
+		xml = ( new window.DOMParser() ).parseFromString( data, "text/xml" );
+	} catch ( e ) {}
+
+	parserErrorElem = xml && xml.getElementsByTagName( "parsererror" )[ 0 ];
+	if ( !xml || parserErrorElem ) {
+		jQuery.error( "Invalid XML: " + (
+			parserErrorElem ?
+				jQuery.map( parserErrorElem.childNodes, function( el ) {
+					return el.textContent;
+				} ).join( "\n" ) :
+				data
+		) );
+	}
+	return xml;
+};
+
+
+var
+	rbracket = /\[\]$/,
+	rCRLF = /\r?\n/g,
+	rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
+	rsubmittable = /^(?:input|select|textarea|keygen)/i;
+
+function buildParams( prefix, obj, traditional, add ) {
+	var name;
+
+	if ( Array.isArray( obj ) ) {
+
+		// Serialize array item.
+		jQuery.each( obj, function( i, v ) {
+			if ( traditional || rbracket.test( prefix ) ) {
+
+				// Treat each array item as a scalar.
+				add( prefix, v );
+
+			} else {
+
+				// Item is non-scalar (array or object), encode its numeric index.
+				buildParams(
+					prefix + "[" + ( typeof v === "object" && v != null ? i : "" ) + "]",
+					v,
+					traditional,
+					add
+				);
+			}
+		} );
+
+	} else if ( !traditional && toType( obj ) === "object" ) {
+
+		// Serialize object item.
+		for ( name in obj ) {
+			buildParams( prefix + "[" + name + "]", obj[ name ], traditional, add );
+		}
+
+	} else {
+
+		// Serialize scalar item.
+		add( prefix, obj );
+	}
+}
+
+// Serialize an array of form elements or a set of
+// key/values into a query string
+jQuery.param = function( a, traditional ) {
+	var prefix,
+		s = [],
+		add = function( key, valueOrFunction ) {
+
+			// If value is a function, invoke it and use its return value
+			var value = isFunction( valueOrFunction ) ?
+				valueOrFunction() :
+				valueOrFunction;
+
+			s[ s.length ] = encodeURIComponent( key ) + "=" +
+				encodeURIComponent( value == null ? "" : value );
+		};
+
+	if ( a == null ) {
+		return "";
+	}
+
+	// If an array was passed in, assume that it is an array of form elements.
+	if ( Array.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
+
+		// Serialize the form elements
+		jQuery.each( a, function() {
+			add( this.name, this.value );
+		} );
+
+	} else {
+
+		// If traditional, encode the "old" way (the way 1.3.2 or older
+		// did it), otherwise encode params recursively.
+		for ( prefix in a ) {
+			buildParams( prefix, a[ prefix ], traditional, add );
+		}
+	}
+
+	// Return the resulting serialization
+	return s.join( "&" );
+};
+
+jQuery.fn.extend( {
+	serialize: function() {
+		return jQuery.param( this.serializeArray() );
+	},
+	serializeArray: function() {
+		return this.map( function() {
+
+			// Can add propHook for "elements" to filter or add form elements
+			var elements = jQuery.prop( this, "elements" );
+			return elements ? jQuery.makeArray( elements ) : this;
+		} ).filter( function() {
+			var type = this.type;
+
+			// Use .is( ":disabled" ) so that fieldset[disabled] works
+			return this.name && !jQuery( this ).is( ":disabled" ) &&
+				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
+				( this.checked || !rcheckableType.test( type ) );
+		} ).map( function( _i, elem ) {
+			var val = jQuery( this ).val();
+
+			if ( val == null ) {
+				return null;
+			}
+
+			if ( Array.isArray( val ) ) {
+				return jQuery.map( val, function( val ) {
+					return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+				} );
+			}
+
+			return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+		} ).get();
+	}
+} );
+
+
+var
+	r20 = /%20/g,
+	rhash = /#.*$/,
+	rantiCache = /([?&])_=[^&]*/,
+	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
+
+	// trac-7653, trac-8125, trac-8152: local protocol detection
+	rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/,
+	rnoContent = /^(?:GET|HEAD)$/,
+	rprotocol = /^\/\//,
+
+	/* Prefilters
+	 * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
+	 * 2) These are called:
+	 *    - BEFORE asking for a transport
+	 *    - AFTER param serialization (s.data is a string if s.processData is true)
+	 * 3) key is the dataType
+	 * 4) the catchall symbol "*" can be used
+	 * 5) execution will start with transport dataType and THEN continue down to "*" if needed
+	 */
+	prefilters = {},
+
+	/* Transports bindings
+	 * 1) key is the dataType
+	 * 2) the catchall symbol "*" can be used
+	 * 3) selection will start with transport dataType and THEN go to "*" if needed
+	 */
+	transports = {},
+
+	// Avoid comment-prolog char sequence (trac-10098); must appease lint and evade compression
+	allTypes = "*/".concat( "*" ),
+
+	// Anchor tag for parsing the document origin
+	originAnchor = document.createElement( "a" );
+
+originAnchor.href = location.href;
+
+// Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
+function addToPrefiltersOrTransports( structure ) {
+
+	// dataTypeExpression is optional and defaults to "*"
+	return function( dataTypeExpression, func ) {
+
+		if ( typeof dataTypeExpression !== "string" ) {
+			func = dataTypeExpression;
+			dataTypeExpression = "*";
+		}
+
+		var dataType,
+			i = 0,
+			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
+
+		if ( isFunction( func ) ) {
+
+			// For each dataType in the dataTypeExpression
+			while ( ( dataType = dataTypes[ i++ ] ) ) {
+
+				// Prepend if requested
+				if ( dataType[ 0 ] === "+" ) {
+					dataType = dataType.slice( 1 ) || "*";
+					( structure[ dataType ] = structure[ dataType ] || [] ).unshift( func );
+
+				// Otherwise append
+				} else {
+					( structure[ dataType ] = structure[ dataType ] || [] ).push( func );
+				}
+			}
+		}
+	};
+}
+
+// Base inspection function for prefilters and transports
+function inspectPrefiltersOrTransports( structure, options, originalOptions, jqXHR ) {
+
+	var inspected = {},
+		seekingTransport = ( structure === transports );
+
+	function inspect( dataType ) {
+		var selected;
+		inspected[ dataType ] = true;
+		jQuery.each( structure[ dataType ] || [], function( _, prefilterOrFactory ) {
+			var dataTypeOrTransport = prefilterOrFactory( options, originalOptions, jqXHR );
+			if ( typeof dataTypeOrTransport === "string" &&
+				!seekingTransport && !inspected[ dataTypeOrTransport ] ) {
+
+				options.dataTypes.unshift( dataTypeOrTransport );
+				inspect( dataTypeOrTransport );
+				return false;
+			} else if ( seekingTransport ) {
+				return !( selected = dataTypeOrTransport );
+			}
+		} );
+		return selected;
+	}
+
+	return inspect( options.dataTypes[ 0 ] ) || !inspected[ "*" ] && inspect( "*" );
+}
+
+// A special extend for ajax options
+// that takes "flat" options (not to be deep extended)
+// Fixes trac-9887
+function ajaxExtend( target, src ) {
+	var key, deep,
+		flatOptions = jQuery.ajaxSettings.flatOptions || {};
+
+	for ( key in src ) {
+		if ( src[ key ] !== undefined ) {
+			( flatOptions[ key ] ? target : ( deep || ( deep = {} ) ) )[ key ] = src[ key ];
+		}
+	}
+	if ( deep ) {
+		jQuery.extend( true, target, deep );
+	}
+
+	return target;
+}
+
+/* Handles responses to an ajax request:
+ * - finds the right dataType (mediates between content-type and expected dataType)
+ * - returns the corresponding response
+ */
+function ajaxHandleResponses( s, jqXHR, responses ) {
+
+	var ct, type, finalDataType, firstDataType,
+		contents = s.contents,
+		dataTypes = s.dataTypes;
+
+	// Remove auto dataType and get content-type in the process
+	while ( dataTypes[ 0 ] === "*" ) {
+		dataTypes.shift();
+		if ( ct === undefined ) {
+			ct = s.mimeType || jqXHR.getResponseHeader( "Content-Type" );
+		}
+	}
+
+	// Check if we're dealing with a known content-type
+	if ( ct ) {
+		for ( type in contents ) {
+			if ( contents[ type ] && contents[ type ].test( ct ) ) {
+				dataTypes.unshift( type );
+				break;
+			}
+		}
+	}
+
+	// Check to see if we have a response for the expected dataType
+	if ( dataTypes[ 0 ] in responses ) {
+		finalDataType = dataTypes[ 0 ];
+	} else {
+
+		// Try convertible dataTypes
+		for ( type in responses ) {
+			if ( !dataTypes[ 0 ] || s.converters[ type + " " + dataTypes[ 0 ] ] ) {
+				finalDataType = type;
+				break;
+			}
+			if ( !firstDataType ) {
+				firstDataType = type;
+			}
+		}
+
+		// Or just use first one
+		finalDataType = finalDataType || firstDataType;
+	}
+
+	// If we found a dataType
+	// We add the dataType to the list if needed
+	// and return the corresponding response
+	if ( finalDataType ) {
+		if ( finalDataType !== dataTypes[ 0 ] ) {
+			dataTypes.unshift( finalDataType );
+		}
+		return responses[ finalDataType ];
+	}
+}
+
+/* Chain conversions given the request and the original response
+ * Also sets the responseXXX fields on the jqXHR instance
+ */
+function ajaxConvert( s, response, jqXHR, isSuccess ) {
+	var conv2, current, conv, tmp, prev,
+		converters = {},
+
+		// Work with a copy of dataTypes in case we need to modify it for conversion
+		dataTypes = s.dataTypes.slice();
+
+	// Create converters map with lowercased keys
+	if ( dataTypes[ 1 ] ) {
+		for ( conv in s.converters ) {
+			converters[ conv.toLowerCase() ] = s.converters[ conv ];
+		}
+	}
+
+	current = dataTypes.shift();
+
+	// Convert to each sequential dataType
+	while ( current ) {
+
+		if ( s.responseFields[ current ] ) {
+			jqXHR[ s.responseFields[ current ] ] = response;
+		}
+
+		// Apply the dataFilter if provided
+		if ( !prev && isSuccess && s.dataFilter ) {
+			response = s.dataFilter( response, s.dataType );
+		}
+
+		prev = current;
+		current = dataTypes.shift();
+
+		if ( current ) {
+
+			// There's only work to do if current dataType is non-auto
+			if ( current === "*" ) {
+
+				current = prev;
+
+			// Convert response if prev dataType is non-auto and differs from current
+			} else if ( prev !== "*" && prev !== current ) {
+
+				// Seek a direct converter
+				conv = converters[ prev + " " + current ] || converters[ "* " + current ];
+
+				// If none found, seek a pair
+				if ( !conv ) {
+					for ( conv2 in converters ) {
+
+						// If conv2 outputs current
+						tmp = conv2.split( " " );
+						if ( tmp[ 1 ] === current ) {
+
+							// If prev can be converted to accepted input
+							conv = converters[ prev + " " + tmp[ 0 ] ] ||
+								converters[ "* " + tmp[ 0 ] ];
+							if ( conv ) {
+
+								// Condense equivalence converters
+								if ( conv === true ) {
+									conv = converters[ conv2 ];
+
+								// Otherwise, insert the intermediate dataType
+								} else if ( converters[ conv2 ] !== true ) {
+									current = tmp[ 0 ];
+									dataTypes.unshift( tmp[ 1 ] );
+								}
+								break;
+							}
+						}
+					}
+				}
+
+				// Apply converter (if not an equivalence)
+				if ( conv !== true ) {
+
+					// Unless errors are allowed to bubble, catch and return them
+					if ( conv && s.throws ) {
+						response = conv( response );
+					} else {
+						try {
+							response = conv( response );
+						} catch ( e ) {
+							return {
+								state: "parsererror",
+								error: conv ? e : "No conversion from " + prev + " to " + current
+							};
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return { state: "success", data: response };
+}
+
+jQuery.extend( {
+
+	// Counter for holding the number of active queries
+	active: 0,
+
+	// Last-Modified header cache for next request
+	lastModified: {},
+	etag: {},
+
+	ajaxSettings: {
+		url: location.href,
+		type: "GET",
+		isLocal: rlocalProtocol.test( location.protocol ),
+		global: true,
+		processData: true,
+		async: true,
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+
+		/*
+		timeout: 0,
+		data: null,
+		dataType: null,
+		username: null,
+		password: null,
+		cache: null,
+		throws: false,
+		traditional: false,
+		headers: {},
+		*/
+
+		accepts: {
+			"*": allTypes,
+			text: "text/plain",
+			html: "text/html",
+			xml: "application/xml, text/xml",
+			json: "application/json, text/javascript"
+		},
+
+		contents: {
+			xml: /\bxml\b/,
+			html: /\bhtml/,
+			json: /\bjson\b/
+		},
+
+		responseFields: {
+			xml: "responseXML",
+			text: "responseText",
+			json: "responseJSON"
+		},
+
+		// Data converters
+		// Keys separate source (or catchall "*") and destination types with a single space
+		converters: {
+
+			// Convert anything to text
+			"* text": String,
+
+			// Text to html (true = no transformation)
+			"text html": true,
+
+			// Evaluate text as a json expression
+			"text json": JSON.parse,
+
+			// Parse text as xml
+			"text xml": jQuery.parseXML
+		},
+
+		// For options that shouldn't be deep extended:
+		// you can add your own custom options here if
+		// and when you create one that shouldn't be
+		// deep extended (see ajaxExtend)
+		flatOptions: {
+			url: true,
+			context: true
+		}
+	},
+
+	// Creates a full fledged settings object into target
+	// with both ajaxSettings and settings fields.
+	// If target is omitted, writes into ajaxSettings.
+	ajaxSetup: function( target, settings ) {
+		return settings ?
+
+			// Building a settings object
+			ajaxExtend( ajaxExtend( target, jQuery.ajaxSettings ), settings ) :
+
+			// Extending ajaxSettings
+			ajaxExtend( jQuery.ajaxSettings, target );
+	},
+
+	ajaxPrefilter: addToPrefiltersOrTransports( prefilters ),
+	ajaxTransport: addToPrefiltersOrTransports( transports ),
+
+	// Main method
+	ajax: function( url, options ) {
+
+		// If url is an object, simulate pre-1.5 signature
+		if ( typeof url === "object" ) {
+			options = url;
+			url = undefined;
+		}
+
+		// Force options to be an object
+		options = options || {};
+
+		var transport,
+
+			// URL without anti-cache param
+			cacheURL,
+
+			// Response headers
+			responseHeadersString,
+			responseHeaders,
+
+			// timeout handle
+			timeoutTimer,
+
+			// Url cleanup var
+			urlAnchor,
+
+			// Request state (becomes false upon send and true upon completion)
+			completed,
+
+			// To know if global events are to be dispatched
+			fireGlobals,
+
+			// Loop variable
+			i,
+
+			// uncached part of the url
+			uncached,
+
+			// Create the final options object
+			s = jQuery.ajaxSetup( {}, options ),
+
+			// Callbacks context
+			callbackContext = s.context || s,
+
+			// Context for global events is callbackContext if it is a DOM node or jQuery collection
+			globalEventContext = s.context &&
+				( callbackContext.nodeType || callbackContext.jquery ) ?
+				jQuery( callbackContext ) :
+				jQuery.event,
+
+			// Deferreds
+			deferred = jQuery.Deferred(),
+			completeDeferred = jQuery.Callbacks( "once memory" ),
+
+			// Status-dependent callbacks
+			statusCode = s.statusCode || {},
+
+			// Headers (they are sent all at once)
+			requestHeaders = {},
+			requestHeadersNames = {},
+
+			// Default abort message
+			strAbort = "canceled",
+
+			// Fake xhr
+			jqXHR = {
+				readyState: 0,
+
+				// Builds headers hashtable if needed
+				getResponseHeader: function( key ) {
+					var match;
+					if ( completed ) {
+						if ( !responseHeaders ) {
+							responseHeaders = {};
+							while ( ( match = rheaders.exec( responseHeadersString ) ) ) {
+								responseHeaders[ match[ 1 ].toLowerCase() + " " ] =
+									( responseHeaders[ match[ 1 ].toLowerCase() + " " ] || [] )
+										.concat( match[ 2 ] );
+							}
+						}
+						match = responseHeaders[ key.toLowerCase() + " " ];
+					}
+					return match == null ? null : match.join( ", " );
+				},
+
+				// Raw string
+				getAllResponseHeaders: function() {
+					return completed ? responseHeadersString : null;
+				},
+
+				// Caches the header
+				setRequestHeader: function( name, value ) {
+					if ( completed == null ) {
+						name = requestHeadersNames[ name.toLowerCase() ] =
+							requestHeadersNames[ name.toLowerCase() ] || name;
+						requestHeaders[ name ] = value;
+					}
+					return this;
+				},
+
+				// Overrides response content-type header
+				overrideMimeType: function( type ) {
+					if ( completed == null ) {
+						s.mimeType = type;
+					}
+					return this;
+				},
+
+				// Status-dependent callbacks
+				statusCode: function( map ) {
+					var code;
+					if ( map ) {
+						if ( completed ) {
+
+							// Execute the appropriate callbacks
+							jqXHR.always( map[ jqXHR.status ] );
+						} else {
+
+							// Lazy-add the new callbacks in a way that preserves old ones
+							for ( code in map ) {
+								statusCode[ code ] = [ statusCode[ code ], map[ code ] ];
+							}
+						}
+					}
+					return this;
+				},
+
+				// Cancel the request
+				abort: function( statusText ) {
+					var finalText = statusText || strAbort;
+					if ( transport ) {
+						transport.abort( finalText );
+					}
+					done( 0, finalText );
+					return this;
+				}
+			};
+
+		// Attach deferreds
+		deferred.promise( jqXHR );
+
+		// Add protocol if not provided (prefilters might expect it)
+		// Handle falsy url in the settings object (trac-10093: consistency with old signature)
+		// We also use the url parameter if available
+		s.url = ( ( url || s.url || location.href ) + "" )
+			.replace( rprotocol, location.protocol + "//" );
+
+		// Alias method option to type as per ticket trac-12004
+		s.type = options.method || options.type || s.method || s.type;
+
+		// Extract dataTypes list
+		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnothtmlwhite ) || [ "" ];
+
+		// A cross-domain request is in order when the origin doesn't match the current origin.
+		if ( s.crossDomain == null ) {
+			urlAnchor = document.createElement( "a" );
+
+			// Support: IE <=8 - 11, Edge 12 - 15
+			// IE throws exception on accessing the href property if url is malformed,
+			// e.g. http://example.com:80x/
+			try {
+				urlAnchor.href = s.url;
+
+				// Support: IE <=8 - 11 only
+				// Anchor's host property isn't correctly set when s.url is relative
+				urlAnchor.href = urlAnchor.href;
+				s.crossDomain = originAnchor.protocol + "//" + originAnchor.host !==
+					urlAnchor.protocol + "//" + urlAnchor.host;
+			} catch ( e ) {
+
+				// If there is an error parsing the URL, assume it is crossDomain,
+				// it can be rejected by the transport if it is invalid
+				s.crossDomain = true;
+			}
+		}
+
+		// Convert data if not already a string
+		if ( s.data && s.processData && typeof s.data !== "string" ) {
+			s.data = jQuery.param( s.data, s.traditional );
+		}
+
+		// Apply prefilters
+		inspectPrefiltersOrTransports( prefilters, s, options, jqXHR );
+
+		// If request was aborted inside a prefilter, stop there
+		if ( completed ) {
+			return jqXHR;
+		}
+
+		// We can fire global events as of now if asked to
+		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (trac-15118)
+		fireGlobals = jQuery.event && s.global;
+
+		// Watch for a new set of requests
+		if ( fireGlobals && jQuery.active++ === 0 ) {
+			jQuery.event.trigger( "ajaxStart" );
+		}
+
+		// Uppercase the type
+		s.type = s.type.toUpperCase();
+
+		// Determine if request has content
+		s.hasContent = !rnoContent.test( s.type );
+
+		// Save the URL in case we're toying with the If-Modified-Since
+		// and/or If-None-Match header later on
+		// Remove hash to simplify url manipulation
+		cacheURL = s.url.replace( rhash, "" );
+
+		// More options handling for requests with no content
+		if ( !s.hasContent ) {
+
+			// Remember the hash so we can put it back
+			uncached = s.url.slice( cacheURL.length );
+
+			// If data is available and should be processed, append data to url
+			if ( s.data && ( s.processData || typeof s.data === "string" ) ) {
+				cacheURL += ( rquery.test( cacheURL ) ? "&" : "?" ) + s.data;
+
+				// trac-9682: remove data so that it's not used in an eventual retry
+				delete s.data;
+			}
+
+			// Add or update anti-cache param if needed
+			if ( s.cache === false ) {
+				cacheURL = cacheURL.replace( rantiCache, "$1" );
+				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce.guid++ ) +
+					uncached;
+			}
+
+			// Put hash and anti-cache on the URL that will be requested (gh-1732)
+			s.url = cacheURL + uncached;
+
+		// Change '%20' to '+' if this is encoded form body content (gh-2658)
+		} else if ( s.data && s.processData &&
+			( s.contentType || "" ).indexOf( "application/x-www-form-urlencoded" ) === 0 ) {
+			s.data = s.data.replace( r20, "+" );
+		}
+
+		// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+		if ( s.ifModified ) {
+			if ( jQuery.lastModified[ cacheURL ] ) {
+				jqXHR.setRequestHeader( "If-Modified-Since", jQuery.lastModified[ cacheURL ] );
+			}
+			if ( jQuery.etag[ cacheURL ] ) {
+				jqXHR.setRequestHeader( "If-None-Match", jQuery.etag[ cacheURL ] );
+			}
+		}
+
+		// Set the correct header, if data is being sent
+		if ( s.data && s.hasContent && s.contentType !== false || options.contentType ) {
+			jqXHR.setRequestHeader( "Content-Type", s.contentType );
+		}
+
+		// Set the Accepts header for the server, depending on the dataType
+		jqXHR.setRequestHeader(
+			"Accept",
+			s.dataTypes[ 0 ] && s.accepts[ s.dataTypes[ 0 ] ] ?
+				s.accepts[ s.dataTypes[ 0 ] ] +
+					( s.dataTypes[ 0 ] !== "*" ? ", " + allTypes + "; q=0.01" : "" ) :
+				s.accepts[ "*" ]
+		);
+
+		// Check for headers option
+		for ( i in s.headers ) {
+			jqXHR.setRequestHeader( i, s.headers[ i ] );
+		}
+
+		// Allow custom headers/mimetypes and early abort
+		if ( s.beforeSend &&
+			( s.beforeSend.call( callbackContext, jqXHR, s ) === false || completed ) ) {
+
+			// Abort if not done already and return
+			return jqXHR.abort();
+		}
+
+		// Aborting is no longer a cancellation
+		strAbort = "abort";
+
+		// Install callbacks on deferreds
+		completeDeferred.add( s.complete );
+		jqXHR.done( s.success );
+		jqXHR.fail( s.error );
+
+		// Get transport
+		transport = inspectPrefiltersOrTransports( transports, s, options, jqXHR );
+
+		// If no transport, we auto-abort
+		if ( !transport ) {
+			done( -1, "No Transport" );
+		} else {
+			jqXHR.readyState = 1;
+
+			// Send global event
+			if ( fireGlobals ) {
+				globalEventContext.trigger( "ajaxSend", [ jqXHR, s ] );
+			}
+
+			// If request was aborted inside ajaxSend, stop there
+			if ( completed ) {
+				return jqXHR;
+			}
+
+			// Timeout
+			if ( s.async && s.timeout > 0 ) {
+				timeoutTimer = window.setTimeout( function() {
+					jqXHR.abort( "timeout" );
+				}, s.timeout );
+			}
+
+			try {
+				completed = false;
+				transport.send( requestHeaders, done );
+			} catch ( e ) {
+
+				// Rethrow post-completion exceptions
+				if ( completed ) {
+					throw e;
+				}
+
+				// Propagate others as results
+				done( -1, e );
+			}
+		}
+
+		// Callback for when everything is done
+		function done( status, nativeStatusText, responses, headers ) {
+			var isSuccess, success, error, response, modified,
+				statusText = nativeStatusText;
+
+			// Ignore repeat invocations
+			if ( completed ) {
+				return;
+			}
+
+			completed = true;
+
+			// Clear timeout if it exists
+			if ( timeoutTimer ) {
+				window.clearTimeout( timeoutTimer );
+			}
+
+			// Dereference transport for early garbage collection
+			// (no matter how long the jqXHR object will be used)
+			transport = undefined;
+
+			// Cache response headers
+			responseHeadersString = headers || "";
+
+			// Set readyState
+			jqXHR.readyState = status > 0 ? 4 : 0;
+
+			// Determine if successful
+			isSuccess = status >= 200 && status < 300 || status === 304;
+
+			// Get response data
+			if ( responses ) {
+				response = ajaxHandleResponses( s, jqXHR, responses );
+			}
+
+			// Use a noop converter for missing script but not if jsonp
+			if ( !isSuccess &&
+				jQuery.inArray( "script", s.dataTypes ) > -1 &&
+				jQuery.inArray( "json", s.dataTypes ) < 0 ) {
+				s.converters[ "text script" ] = function() {};
+			}
+
+			// Convert no matter what (that way responseXXX fields are always set)
+			response = ajaxConvert( s, response, jqXHR, isSuccess );
+
+			// If successful, handle type chaining
+			if ( isSuccess ) {
+
+				// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+				if ( s.ifModified ) {
+					modified = jqXHR.getResponseHeader( "Last-Modified" );
+					if ( modified ) {
+						jQuery.lastModified[ cacheURL ] = modified;
+					}
+					modified = jqXHR.getResponseHeader( "etag" );
+					if ( modified ) {
+						jQuery.etag[ cacheURL ] = modified;
+					}
+				}
+
+				// if no content
+				if ( status === 204 || s.type === "HEAD" ) {
+					statusText = "nocontent";
+
+				// if not modified
+				} else if ( status === 304 ) {
+					statusText = "notmodified";
+
+				// If we have data, let's convert it
+				} else {
+					statusText = response.state;
+					success = response.data;
+					error = response.error;
+					isSuccess = !error;
+				}
+			} else {
+
+				// Extract error from statusText and normalize for non-aborts
+				error = statusText;
+				if ( status || !statusText ) {
+					statusText = "error";
+					if ( status < 0 ) {
+						status = 0;
+					}
+				}
+			}
+
+			// Set data for the fake xhr object
+			jqXHR.status = status;
+			jqXHR.statusText = ( nativeStatusText || statusText ) + "";
+
+			// Success/Error
+			if ( isSuccess ) {
+				deferred.resolveWith( callbackContext, [ success, statusText, jqXHR ] );
+			} else {
+				deferred.rejectWith( callbackContext, [ jqXHR, statusText, error ] );
+			}
+
+			// Status-dependent callbacks
+			jqXHR.statusCode( statusCode );
+			statusCode = undefined;
+
+			if ( fireGlobals ) {
+				globalEventContext.trigger( isSuccess ? "ajaxSuccess" : "ajaxError",
+					[ jqXHR, s, isSuccess ? success : error ] );
+			}
+
+			// Complete
+			completeDeferred.fireWith( callbackContext, [ jqXHR, statusText ] );
+
+			if ( fireGlobals ) {
+				globalEventContext.trigger( "ajaxComplete", [ jqXHR, s ] );
+
+				// Handle the global AJAX counter
+				if ( !( --jQuery.active ) ) {
+					jQuery.event.trigger( "ajaxStop" );
+				}
+			}
+		}
+
+		return jqXHR;
+	},
+
+	getJSON: function( url, data, callback ) {
+		return jQuery.get( url, data, callback, "json" );
+	},
+
+	getScript: function( url, callback ) {
+		return jQuery.get( url, undefined, callback, "script" );
+	}
+} );
+
+jQuery.each( [ "get", "post" ], function( _i, method ) {
+	jQuery[ method ] = function( url, data, callback, type ) {
+
+		// Shift arguments if data argument was omitted
+		if ( isFunction( data ) ) {
+			type = type || callback;
+			callback = data;
+			data = undefined;
+		}
+
+		// The url can be an options object (which then must have .url)
+		return jQuery.ajax( jQuery.extend( {
+			url: url,
+			type: method,
+			dataType: type,
+			data: data,
+			success: callback
+		}, jQuery.isPlainObject( url ) && url ) );
+	};
+} );
+
+jQuery.ajaxPrefilter( function( s ) {
+	var i;
+	for ( i in s.headers ) {
+		if ( i.toLowerCase() === "content-type" ) {
+			s.contentType = s.headers[ i ] || "";
+		}
+	}
+} );
+
+
+jQuery._evalUrl = function( url, options, doc ) {
+	return jQuery.ajax( {
+		url: url,
+
+		// Make this explicit, since user can override this through ajaxSetup (trac-11264)
+		type: "GET",
+		dataType: "script",
+		cache: true,
+		async: false,
+		global: false,
+
+		// Only evaluate the response if it is successful (gh-4126)
+		// dataFilter is not invoked for failure responses, so using it instead
+		// of the default converter is kludgy but it works.
+		converters: {
+			"text script": function() {}
+		},
+		dataFilter: function( response ) {
+			jQuery.globalEval( response, options, doc );
+		}
+	} );
+};
+
+
+jQuery.fn.extend( {
+	wrapAll: function( html ) {
+		var wrap;
+
+		if ( this[ 0 ] ) {
+			if ( isFunction( html ) ) {
+				html = html.call( this[ 0 ] );
+			}
+
+			// The elements to wrap the target around
+			wrap = jQuery( html, this[ 0 ].ownerDocument ).eq( 0 ).clone( true );
+
+			if ( this[ 0 ].parentNode ) {
+				wrap.insertBefore( this[ 0 ] );
+			}
+
+			wrap.map( function() {
+				var elem = this;
+
+				while ( elem.firstElementChild ) {
+					elem = elem.firstElementChild;
+				}
+
+				return elem;
+			} ).append( this );
+		}
+
+		return this;
+	},
+
+	wrapInner: function( html ) {
+		if ( isFunction( html ) ) {
+			return this.each( function( i ) {
+				jQuery( this ).wrapInner( html.call( this, i ) );
+			} );
+		}
+
+		return this.each( function() {
+			var self = jQuery( this ),
+				contents = self.contents();
+
+			if ( contents.length ) {
+				contents.wrapAll( html );
+
+			} else {
+				self.append( html );
+			}
+		} );
+	},
+
+	wrap: function( html ) {
+		var htmlIsFunction = isFunction( html );
+
+		return this.each( function( i ) {
+			jQuery( this ).wrapAll( htmlIsFunction ? html.call( this, i ) : html );
+		} );
+	},
+
+	unwrap: function( selector ) {
+		this.parent( selector ).not( "body" ).each( function() {
+			jQuery( this ).replaceWith( this.childNodes );
+		} );
+		return this;
+	}
+} );
+
+
+jQuery.expr.pseudos.hidden = function( elem ) {
+	return !jQuery.expr.pseudos.visible( elem );
+};
+jQuery.expr.pseudos.visible = function( elem ) {
+	return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+};
+
+
+
+
+jQuery.ajaxSettings.xhr = function() {
+	try {
+		return new window.XMLHttpRequest();
+	} catch ( e ) {}
+};
+
+var xhrSuccessStatus = {
+
+		// File protocol always yields status code 0, assume 200
+		0: 200,
+
+		// Support: IE <=9 only
+		// trac-1450: sometimes IE returns 1223 when it should be 204
+		1223: 204
+	},
+	xhrSupported = jQuery.ajaxSettings.xhr();
+
+support.cors = !!xhrSupported && ( "withCredentials" in xhrSupported );
+support.ajax = xhrSupported = !!xhrSupported;
+
+jQuery.ajaxTransport( function( options ) {
+	var callback, errorCallback;
+
+	// Cross domain only allowed if supported through XMLHttpRequest
+	if ( support.cors || xhrSupported && !options.crossDomain ) {
+		return {
+			send: function( headers, complete ) {
+				var i,
+					xhr = options.xhr();
+
+				xhr.open(
+					options.type,
+					options.url,
+					options.async,
+					options.username,
+					options.password
+				);
+
+				// Apply custom fields if provided
+				if ( options.xhrFields ) {
+					for ( i in options.xhrFields ) {
+						xhr[ i ] = options.xhrFields[ i ];
+					}
+				}
+
+				// Override mime type if needed
+				if ( options.mimeType && xhr.overrideMimeType ) {
+					xhr.overrideMimeType( options.mimeType );
+				}
+
+				// X-Requested-With header
+				// For cross-domain requests, seeing as conditions for a preflight are
+				// akin to a jigsaw puzzle, we simply never set it to be sure.
+				// (it can always be set on a per-request basis or even using ajaxSetup)
+				// For same-domain requests, won't change header if already provided.
+				if ( !options.crossDomain && !headers[ "X-Requested-With" ] ) {
+					headers[ "X-Requested-With" ] = "XMLHttpRequest";
+				}
+
+				// Set headers
+				for ( i in headers ) {
+					xhr.setRequestHeader( i, headers[ i ] );
+				}
+
+				// Callback
+				callback = function( type ) {
+					return function() {
+						if ( callback ) {
+							callback = errorCallback = xhr.onload =
+								xhr.onerror = xhr.onabort = xhr.ontimeout =
+									xhr.onreadystatechange = null;
+
+							if ( type === "abort" ) {
+								xhr.abort();
+							} else if ( type === "error" ) {
+
+								// Support: IE <=9 only
+								// On a manual native abort, IE9 throws
+								// errors on any property access that is not readyState
+								if ( typeof xhr.status !== "number" ) {
+									complete( 0, "error" );
+								} else {
+									complete(
+
+										// File: protocol always yields status 0; see trac-8605, trac-14207
+										xhr.status,
+										xhr.statusText
+									);
+								}
+							} else {
+								complete(
+									xhrSuccessStatus[ xhr.status ] || xhr.status,
+									xhr.statusText,
+
+									// Support: IE <=9 only
+									// IE9 has no XHR2 but throws on binary (trac-11426)
+									// For XHR2 non-text, let the caller handle it (gh-2498)
+									( xhr.responseType || "text" ) !== "text"  ||
+									typeof xhr.responseText !== "string" ?
+										{ binary: xhr.response } :
+										{ text: xhr.responseText },
+									xhr.getAllResponseHeaders()
+								);
+							}
+						}
+					};
+				};
+
+				// Listen to events
+				xhr.onload = callback();
+				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
+
+				// Support: IE 9 only
+				// Use onreadystatechange to replace onabort
+				// to handle uncaught aborts
+				if ( xhr.onabort !== undefined ) {
+					xhr.onabort = errorCallback;
+				} else {
+					xhr.onreadystatechange = function() {
+
+						// Check readyState before timeout as it changes
+						if ( xhr.readyState === 4 ) {
+
+							// Allow onerror to be called first,
+							// but that will not handle a native abort
+							// Also, save errorCallback to a variable
+							// as xhr.onerror cannot be accessed
+							window.setTimeout( function() {
+								if ( callback ) {
+									errorCallback();
+								}
+							} );
+						}
+					};
+				}
+
+				// Create the abort callback
+				callback = callback( "abort" );
+
+				try {
+
+					// Do send the request (this may raise an exception)
+					xhr.send( options.hasContent && options.data || null );
+				} catch ( e ) {
+
+					// trac-14683: Only rethrow if this hasn't been notified as an error yet
+					if ( callback ) {
+						throw e;
+					}
+				}
+			},
+
+			abort: function() {
+				if ( callback ) {
+					callback();
+				}
+			}
+		};
+	}
+} );
+
+
+
+
+// Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
+jQuery.ajaxPrefilter( function( s ) {
+	if ( s.crossDomain ) {
+		s.contents.script = false;
+	}
+} );
+
+// Install script dataType
+jQuery.ajaxSetup( {
+	accepts: {
+		script: "text/javascript, application/javascript, " +
+			"application/ecmascript, application/x-ecmascript"
+	},
+	contents: {
+		script: /\b(?:java|ecma)script\b/
+	},
+	converters: {
+		"text script": function( text ) {
+			jQuery.globalEval( text );
+			return text;
+		}
+	}
+} );
+
+// Handle cache's special case and crossDomain
+jQuery.ajaxPrefilter( "script", function( s ) {
+	if ( s.cache === undefined ) {
+		s.cache = false;
+	}
+	if ( s.crossDomain ) {
+		s.type = "GET";
+	}
+} );
+
+// Bind script tag hack transport
+jQuery.ajaxTransport( "script", function( s ) {
+
+	// This transport only deals with cross domain or forced-by-attrs requests
+	if ( s.crossDomain || s.scriptAttrs ) {
+		var script, callback;
+		return {
+			send: function( _, complete ) {
+				script = jQuery( "<script>" )
+					.attr( s.scriptAttrs || {} )
+					.prop( { charset: s.scriptCharset, src: s.url } )
+					.on( "load error", callback = function( evt ) {
+						script.remove();
+						callback = null;
+						if ( evt ) {
+							complete( evt.type === "error" ? 404 : 200, evt.type );
+						}
+					} );
+
+				// Use native DOM manipulation to avoid our domManip AJAX trickery
+				document.head.appendChild( script[ 0 ] );
+			},
+			abort: function() {
+				if ( callback ) {
+					callback();
+				}
+			}
+		};
+	}
+} );
+
+
+
+
+var oldCallbacks = [],
+	rjsonp = /(=)\?(?=&|$)|\?\?/;
+
+// Default jsonp settings
+jQuery.ajaxSetup( {
+	jsonp: "callback",
+	jsonpCallback: function() {
+		var callback = oldCallbacks.pop() || ( jQuery.expando + "_" + ( nonce.guid++ ) );
+		this[ callback ] = true;
+		return callback;
+	}
+} );
+
+// Detect, normalize options and install callbacks for jsonp requests
+jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
+
+	var callbackName, overwritten, responseContainer,
+		jsonProp = s.jsonp !== false && ( rjsonp.test( s.url ) ?
+			"url" :
+			typeof s.data === "string" &&
+				( s.contentType || "" )
+					.indexOf( "application/x-www-form-urlencoded" ) === 0 &&
+				rjsonp.test( s.data ) && "data"
+		);
+
+	// Handle iff the expected data type is "jsonp" or we have a parameter to set
+	if ( jsonProp || s.dataTypes[ 0 ] === "jsonp" ) {
+
+		// Get callback name, remembering preexisting value associated with it
+		callbackName = s.jsonpCallback = isFunction( s.jsonpCallback ) ?
+			s.jsonpCallback() :
+			s.jsonpCallback;
+
+		// Insert callback into url or form data
+		if ( jsonProp ) {
+			s[ jsonProp ] = s[ jsonProp ].replace( rjsonp, "$1" + callbackName );
+		} else if ( s.jsonp !== false ) {
+			s.url += ( rquery.test( s.url ) ? "&" : "?" ) + s.jsonp + "=" + callbackName;
+		}
+
+		// Use data converter to retrieve json after script execution
+		s.converters[ "script json" ] = function() {
+			if ( !responseContainer ) {
+				jQuery.error( callbackName + " was not called" );
+			}
+			return responseContainer[ 0 ];
+		};
+
+		// Force json dataType
+		s.dataTypes[ 0 ] = "json";
+
+		// Install callback
+		overwritten = window[ callbackName ];
+		window[ callbackName ] = function() {
+			responseContainer = arguments;
+		};
+
+		// Clean-up function (fires after converters)
+		jqXHR.always( function() {
+
+			// If previous value didn't exist - remove it
+			if ( overwritten === undefined ) {
+				jQuery( window ).removeProp( callbackName );
+
+			// Otherwise restore preexisting value
+			} else {
+				window[ callbackName ] = overwritten;
+			}
+
+			// Save back as free
+			if ( s[ callbackName ] ) {
+
+				// Make sure that re-using the options doesn't screw things around
+				s.jsonpCallback = originalSettings.jsonpCallback;
+
+				// Save the callback name for future use
+				oldCallbacks.push( callbackName );
+			}
+
+			// Call if it was a function and we have a response
+			if ( responseContainer && isFunction( overwritten ) ) {
+				overwritten( responseContainer[ 0 ] );
+			}
+
+			responseContainer = overwritten = undefined;
+		} );
+
+		// Delegate to script
+		return "script";
+	}
+} );
+
+
+
+
+// Support: Safari 8 only
+// In Safari 8 documents created via document.implementation.createHTMLDocument
+// collapse sibling forms: the second one becomes a child of the first one.
+// Because of that, this security measure has to be disabled in Safari 8.
+// https://bugs.webkit.org/show_bug.cgi?id=137337
+support.createHTMLDocument = ( function() {
+	var body = document.implementation.createHTMLDocument( "" ).body;
+	body.innerHTML = "<form></form><form></form>";
+	return body.childNodes.length === 2;
+} )();
+
+
+// Argument "data" should be string of html
+// context (optional): If specified, the fragment will be created in this context,
+// defaults to document
+// keepScripts (optional): If true, will include scripts passed in the html string
+jQuery.parseHTML = function( data, context, keepScripts ) {
+	if ( typeof data !== "string" ) {
+		return [];
+	}
+	if ( typeof context === "boolean" ) {
+		keepScripts = context;
+		context = false;
+	}
+
+	var base, parsed, scripts;
+
+	if ( !context ) {
+
+		// Stop scripts or inline event handlers from being executed immediately
+		// by using document.implementation
+		if ( support.createHTMLDocument ) {
+			context = document.implementation.createHTMLDocument( "" );
+
+			// Set the base href for the created document
+			// so any parsed elements with URLs
+			// are based on the document's URL (gh-2965)
+			base = context.createElement( "base" );
+			base.href = document.location.href;
+			context.head.appendChild( base );
+		} else {
+			context = document;
+		}
+	}
+
+	parsed = rsingleTag.exec( data );
+	scripts = !keepScripts && [];
+
+	// Single tag
+	if ( parsed ) {
+		return [ context.createElement( parsed[ 1 ] ) ];
+	}
+
+	parsed = buildFragment( [ data ], context, scripts );
+
+	if ( scripts && scripts.length ) {
+		jQuery( scripts ).remove();
+	}
+
+	return jQuery.merge( [], parsed.childNodes );
+};
+
+
+/**
+ * Load a url into a page
+ */
+jQuery.fn.load = function( url, params, callback ) {
+	var selector, type, response,
+		self = this,
+		off = url.indexOf( " " );
+
+	if ( off > -1 ) {
+		selector = stripAndCollapse( url.slice( off ) );
+		url = url.slice( 0, off );
+	}
+
+	// If it's a function
+	if ( isFunction( params ) ) {
+
+		// We assume that it's the callback
+		callback = params;
+		params = undefined;
+
+	// Otherwise, build a param string
+	} else if ( params && typeof params === "object" ) {
+		type = "POST";
+	}
+
+	// If we have elements to modify, make the request
+	if ( self.length > 0 ) {
+		jQuery.ajax( {
+			url: url,
+
+			// If "type" variable is undefined, then "GET" method will be used.
+			// Make value of this field explicit since
+			// user can override it through ajaxSetup method
+			type: type || "GET",
+			dataType: "html",
+			data: params
+		} ).done( function( responseText ) {
+
+			// Save response for use in complete callback
+			response = arguments;
+
+			self.html( selector ?
+
+				// If a selector was specified, locate the right elements in a dummy div
+				// Exclude scripts to avoid IE 'Permission Denied' errors
+				jQuery( "<div>" ).append( jQuery.parseHTML( responseText ) ).find( selector ) :
+
+				// Otherwise use the full result
+				responseText );
+
+		// If the request succeeds, this function gets "data", "status", "jqXHR"
+		// but they are ignored because response was set above.
+		// If it fails, this function gets "jqXHR", "status", "error"
+		} ).always( callback && function( jqXHR, status ) {
+			self.each( function() {
+				callback.apply( this, response || [ jqXHR.responseText, status, jqXHR ] );
+			} );
+		} );
+	}
+
+	return this;
+};
+
+
+
+
+jQuery.expr.pseudos.animated = function( elem ) {
+	return jQuery.grep( jQuery.timers, function( fn ) {
+		return elem === fn.elem;
+	} ).length;
+};
+
+
+
+
+jQuery.offset = {
+	setOffset: function( elem, options, i ) {
+		var curPosition, curLeft, curCSSTop, curTop, curOffset, curCSSLeft, calculatePosition,
+			position = jQuery.css( elem, "position" ),
+			curElem = jQuery( elem ),
+			props = {};
+
+		// Set position first, in-case top/left are set even on static elem
+		if ( position === "static" ) {
+			elem.style.position = "relative";
+		}
+
+		curOffset = curElem.offset();
+		curCSSTop = jQuery.css( elem, "top" );
+		curCSSLeft = jQuery.css( elem, "left" );
+		calculatePosition = ( position === "absolute" || position === "fixed" ) &&
+			( curCSSTop + curCSSLeft ).indexOf( "auto" ) > -1;
+
+		// Need to be able to calculate position if either
+		// top or left is auto and position is either absolute or fixed
+		if ( calculatePosition ) {
+			curPosition = curElem.position();
+			curTop = curPosition.top;
+			curLeft = curPosition.left;
+
+		} else {
+			curTop = parseFloat( curCSSTop ) || 0;
+			curLeft = parseFloat( curCSSLeft ) || 0;
+		}
+
+		if ( isFunction( options ) ) {
+
+			// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
+			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
+		}
+
+		if ( options.top != null ) {
+			props.top = ( options.top - curOffset.top ) + curTop;
+		}
+		if ( options.left != null ) {
+			props.left = ( options.left - curOffset.left ) + curLeft;
+		}
+
+		if ( "using" in options ) {
+			options.using.call( elem, props );
+
+		} else {
+			curElem.css( props );
+		}
+	}
+};
+
+jQuery.fn.extend( {
+
+	// offset() relates an element's border box to the document origin
+	offset: function( options ) {
+
+		// Preserve chaining for setter
+		if ( arguments.length ) {
+			return options === undefined ?
+				this :
+				this.each( function( i ) {
+					jQuery.offset.setOffset( this, options, i );
+				} );
+		}
+
+		var rect, win,
+			elem = this[ 0 ];
+
+		if ( !elem ) {
+			return;
+		}
+
+		// Return zeros for disconnected and hidden (display: none) elements (gh-2310)
+		// Support: IE <=11 only
+		// Running getBoundingClientRect on a
+		// disconnected node in IE throws an error
+		if ( !elem.getClientRects().length ) {
+			return { top: 0, left: 0 };
+		}
+
+		// Get document-relative position by adding viewport scroll to viewport-relative gBCR
+		rect = elem.getBoundingClientRect();
+		win = elem.ownerDocument.defaultView;
+		return {
+			top: rect.top + win.pageYOffset,
+			left: rect.left + win.pageXOffset
+		};
+	},
+
+	// position() relates an element's margin box to its offset parent's padding box
+	// This corresponds to the behavior of CSS absolute positioning
+	position: function() {
+		if ( !this[ 0 ] ) {
+			return;
+		}
+
+		var offsetParent, offset, doc,
+			elem = this[ 0 ],
+			parentOffset = { top: 0, left: 0 };
+
+		// position:fixed elements are offset from the viewport, which itself always has zero offset
+		if ( jQuery.css( elem, "position" ) === "fixed" ) {
+
+			// Assume position:fixed implies availability of getBoundingClientRect
+			offset = elem.getBoundingClientRect();
+
+		} else {
+			offset = this.offset();
+
+			// Account for the *real* offset parent, which can be the document or its root element
+			// when a statically positioned element is identified
+			doc = elem.ownerDocument;
+			offsetParent = elem.offsetParent || doc.documentElement;
+			while ( offsetParent &&
+				( offsetParent === doc.body || offsetParent === doc.documentElement ) &&
+				jQuery.css( offsetParent, "position" ) === "static" ) {
+
+				offsetParent = offsetParent.parentNode;
+			}
+			if ( offsetParent && offsetParent !== elem && offsetParent.nodeType === 1 ) {
+
+				// Incorporate borders into its offset, since they are outside its content origin
+				parentOffset = jQuery( offsetParent ).offset();
+				parentOffset.top += jQuery.css( offsetParent, "borderTopWidth", true );
+				parentOffset.left += jQuery.css( offsetParent, "borderLeftWidth", true );
+			}
+		}
+
+		// Subtract parent offsets and element margins
+		return {
+			top: offset.top - parentOffset.top - jQuery.css( elem, "marginTop", true ),
+			left: offset.left - parentOffset.left - jQuery.css( elem, "marginLeft", true )
+		};
+	},
+
+	// This method will return documentElement in the following cases:
+	// 1) For the element inside the iframe without offsetParent, this method will return
+	//    documentElement of the parent window
+	// 2) For the hidden or detached element
+	// 3) For body or html element, i.e. in case of the html node - it will return itself
+	//
+	// but those exceptions were never presented as a real life use-cases
+	// and might be considered as more preferable results.
+	//
+	// This logic, however, is not guaranteed and can change at any point in the future
+	offsetParent: function() {
+		return this.map( function() {
+			var offsetParent = this.offsetParent;
+
+			while ( offsetParent && jQuery.css( offsetParent, "position" ) === "static" ) {
+				offsetParent = offsetParent.offsetParent;
+			}
+
+			return offsetParent || documentElement;
+		} );
+	}
+} );
+
+// Create scrollLeft and scrollTop methods
+jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( method, prop ) {
+	var top = "pageYOffset" === prop;
+
+	jQuery.fn[ method ] = function( val ) {
+		return access( this, function( elem, method, val ) {
+
+			// Coalesce documents and windows
+			var win;
+			if ( isWindow( elem ) ) {
+				win = elem;
+			} else if ( elem.nodeType === 9 ) {
+				win = elem.defaultView;
+			}
+
+			if ( val === undefined ) {
+				return win ? win[ prop ] : elem[ method ];
+			}
+
+			if ( win ) {
+				win.scrollTo(
+					!top ? val : win.pageXOffset,
+					top ? val : win.pageYOffset
+				);
+
+			} else {
+				elem[ method ] = val;
+			}
+		}, method, val, arguments.length );
+	};
+} );
+
+// Support: Safari <=7 - 9.1, Chrome <=37 - 49
+// Add the top/left cssHooks using jQuery.fn.position
+// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
+// Blink bug: https://bugs.chromium.org/p/chromium/issues/detail?id=589347
+// getComputedStyle returns percent when specified for top/left/bottom/right;
+// rather than make the css module depend on the offset module, just check for it here
+jQuery.each( [ "top", "left" ], function( _i, prop ) {
+	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
+		function( elem, computed ) {
+			if ( computed ) {
+				computed = curCSS( elem, prop );
+
+				// If curCSS returns percentage, fallback to offset
+				return rnumnonpx.test( computed ) ?
+					jQuery( elem ).position()[ prop ] + "px" :
+					computed;
+			}
+		}
+	);
+} );
+
+
+// Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
+jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
+	jQuery.each( {
+		padding: "inner" + name,
+		content: type,
+		"": "outer" + name
+	}, function( defaultExtra, funcName ) {
+
+		// Margin is only for outerHeight, outerWidth
+		jQuery.fn[ funcName ] = function( margin, value ) {
+			var chainable = arguments.length && ( defaultExtra || typeof margin !== "boolean" ),
+				extra = defaultExtra || ( margin === true || value === true ? "margin" : "border" );
+
+			return access( this, function( elem, type, value ) {
+				var doc;
+
+				if ( isWindow( elem ) ) {
+
+					// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
+					return funcName.indexOf( "outer" ) === 0 ?
+						elem[ "inner" + name ] :
+						elem.document.documentElement[ "client" + name ];
+				}
+
+				// Get document width or height
+				if ( elem.nodeType === 9 ) {
+					doc = elem.documentElement;
+
+					// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
+					// whichever is greatest
+					return Math.max(
+						elem.body[ "scroll" + name ], doc[ "scroll" + name ],
+						elem.body[ "offset" + name ], doc[ "offset" + name ],
+						doc[ "client" + name ]
+					);
+				}
+
+				return value === undefined ?
+
+					// Get width or height on the element, requesting but not forcing parseFloat
+					jQuery.css( elem, type, extra ) :
+
+					// Set width or height on the element
+					jQuery.style( elem, type, value, extra );
+			}, type, chainable ? margin : undefined, chainable );
+		};
+	} );
+} );
+
+
+jQuery.each( [
+	"ajaxStart",
+	"ajaxStop",
+	"ajaxComplete",
+	"ajaxError",
+	"ajaxSuccess",
+	"ajaxSend"
+], function( _i, type ) {
+	jQuery.fn[ type ] = function( fn ) {
+		return this.on( type, fn );
+	};
+} );
+
+
+
+
+jQuery.fn.extend( {
+
+	bind: function( types, data, fn ) {
+		return this.on( types, null, data, fn );
+	},
+	unbind: function( types, fn ) {
+		return this.off( types, null, fn );
+	},
+
+	delegate: function( selector, types, data, fn ) {
+		return this.on( types, selector, data, fn );
+	},
+	undelegate: function( selector, types, fn ) {
+
+		// ( namespace ) or ( selector, types [, fn] )
+		return arguments.length === 1 ?
+			this.off( selector, "**" ) :
+			this.off( types, selector || "**", fn );
+	},
+
+	hover: function( fnOver, fnOut ) {
+		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+	}
+} );
+
+jQuery.each(
+	( "blur focus focusin focusout resize scroll click dblclick " +
+	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
+	function( _i, name ) {
+
+		// Handle event binding
+		jQuery.fn[ name ] = function( data, fn ) {
+			return arguments.length > 0 ?
+				this.on( name, null, data, fn ) :
+				this.trigger( name );
+		};
+	}
+);
+
+
+
+
+// Support: Android <=4.0 only
+// Make sure we trim BOM and NBSP
+// Require that the "whitespace run" starts from a non-whitespace
+// to avoid O(N^2) behavior when the engine would try matching "\s+$" at each space position.
+var rtrim = /^[\s\uFEFF\xA0]+|([^\s\uFEFF\xA0])[\s\uFEFF\xA0]+$/g;
+
+// Bind a function to a context, optionally partially applying any
+// arguments.
+// jQuery.proxy is deprecated to promote standards (specifically Function#bind)
+// However, it is not slated for removal any time soon
+jQuery.proxy = function( fn, context ) {
+	var tmp, args, proxy;
+
+	if ( typeof context === "string" ) {
+		tmp = fn[ context ];
+		context = fn;
+		fn = tmp;
+	}
+
+	// Quick check to determine if target is callable, in the spec
+	// this throws a TypeError, but we will just return undefined.
+	if ( !isFunction( fn ) ) {
+		return undefined;
+	}
+
+	// Simulated bind
+	args = slice.call( arguments, 2 );
+	proxy = function() {
+		return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
+	};
+
+	// Set the guid of unique handler to the same of original handler, so it can be removed
+	proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+
+	return proxy;
+};
+
+jQuery.holdReady = function( hold ) {
+	if ( hold ) {
+		jQuery.readyWait++;
+	} else {
+		jQuery.ready( true );
+	}
+};
+jQuery.isArray = Array.isArray;
+jQuery.parseJSON = JSON.parse;
+jQuery.nodeName = nodeName;
+jQuery.isFunction = isFunction;
+jQuery.isWindow = isWindow;
+jQuery.camelCase = camelCase;
+jQuery.type = toType;
+
+jQuery.now = Date.now;
+
+jQuery.isNumeric = function( obj ) {
+
+	// As of jQuery 3.0, isNumeric is limited to
+	// strings and numbers (primitives or objects)
+	// that can be coerced to finite numbers (gh-2662)
+	var type = jQuery.type( obj );
+	return ( type === "number" || type === "string" ) &&
+
+		// parseFloat NaNs numeric-cast false positives ("")
+		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+		// subtraction forces infinities to NaN
+		!isNaN( obj - parseFloat( obj ) );
+};
+
+jQuery.trim = function( text ) {
+	return text == null ?
+		"" :
+		( text + "" ).replace( rtrim, "$1" );
+};
+
+
+
+// Register as a named AMD module, since jQuery can be concatenated with other
+// files that may use define, but not via a proper concatenation script that
+// understands anonymous AMD modules. A named AMD is safest and most robust
+// way to register. Lowercase jquery is used because AMD module names are
+// derived from file names, and jQuery is normally delivered in a lowercase
+// file name. Do this after creating the global so that if an AMD module wants
+// to call noConflict to hide this version of jQuery, it will work.
+
+// Note that for maximum portability, libraries that are not jQuery should
+// declare themselves as anonymous modules, and avoid setting a global if an
+// AMD loader is present. jQuery is a special case. For more information, see
+// https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
+
+if ( true ) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+		return jQuery;
+	}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+}
+
+
+
+
+var
+
+	// Map over jQuery in case of overwrite
+	_jQuery = window.jQuery,
+
+	// Map over the $ in case of overwrite
+	_$ = window.$;
+
+jQuery.noConflict = function( deep ) {
+	if ( window.$ === jQuery ) {
+		window.$ = _$;
+	}
+
+	if ( deep && window.jQuery === jQuery ) {
+		window.jQuery = _jQuery;
+	}
+
+	return jQuery;
+};
+
+// Expose jQuery and $ identifiers, even in AMD
+// (trac-7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// and CommonJS for browser emulators (trac-13566)
+if ( typeof noGlobal === "undefined" ) {
+	window.jQuery = window.$ = jQuery;
+}
+
+
+
+
+return jQuery;
+} );
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/themes/base/core.css":
+/*!*****************************************************!*\
+  !*** ./node_modules/jquery-ui/themes/base/core.css ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/themes/base/draggable.css":
+/*!**********************************************************!*\
+  !*** ./node_modules/jquery-ui/themes/base/draggable.css ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/themes/base/selectable.css":
+/*!***********************************************************!*\
+  !*** ./node_modules/jquery-ui/themes/base/selectable.css ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./node_modules/jquery-ui/themes/base/theme.css":
+/*!******************************************************!*\
+  !*** ./node_modules/jquery-ui/themes/base/theme.css ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var __webpack_exports__ = {};
+/*!******************************************************************!*\
+  !*** ./src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js ***!
+  \******************************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var jquery_ui_themes_base_core_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery-ui/themes/base/core.css */ "./node_modules/jquery-ui/themes/base/core.css");
+/* harmony import */ var jquery_ui_themes_base_theme_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery-ui/themes/base/theme.css */ "./node_modules/jquery-ui/themes/base/theme.css");
+/* harmony import */ var jquery_ui_themes_base_selectable_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery-ui/themes/base/selectable.css */ "./node_modules/jquery-ui/themes/base/selectable.css");
+/* harmony import */ var jquery_ui_themes_base_draggable_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery-ui/themes/base/draggable.css */ "./node_modules/jquery-ui/themes/base/draggable.css");
+/* harmony import */ var jquery_ui_ui_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery-ui/ui/core */ "./node_modules/jquery-ui/ui/core.js");
+/* harmony import */ var jquery_ui_ui_core__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_core__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var jquery_ui_ui_widgets_selectable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery-ui/ui/widgets/selectable */ "./node_modules/jquery-ui/ui/widgets/selectable.js");
+/* harmony import */ var jquery_ui_ui_widgets_selectable__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_selectable__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var jquery_ui_ui_widgets_droppable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery-ui/ui/widgets/droppable */ "./node_modules/jquery-ui/ui/widgets/droppable.js");
+/* harmony import */ var jquery_ui_ui_widgets_droppable__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_droppable__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var jquery_ui_ui_widgets_draggable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! jquery-ui/ui/widgets/draggable */ "./node_modules/jquery-ui/ui/widgets/draggable.js");
+/* harmony import */ var jquery_ui_ui_widgets_draggable__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_draggable__WEBPACK_IMPORTED_MODULE_8__);
+
+
+
+
+
+
+
+
+
+})();
+
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!**********************************************************************!*\
+  !*** ./src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js ***!
+  \**********************************************************************/
+__webpack_require__.r(__webpack_exports__);
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/core'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/dashboard'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/xhr-upload'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/image-editor'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/locales/lib/nl_NL'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* provided dependency */ var jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+__webpack_require__.g.Uppy = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/core'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
+__webpack_require__.g.Dashboard = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/dashboard'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
+__webpack_require__.g.XHRUpload = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/xhr-upload'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
+__webpack_require__.g.ImageEditor = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/image-editor'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
+__webpack_require__.g.UppyDutch = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@uppy/locales/lib/nl_NL'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+$('.button_enable_grid_view').bind("click", function () {
+  enable_grid_view();
+});
+$('.button_enable_list_view').bind("click", function () {
+  enable_list_view();
+});
+$('.button_toggle_upload_view').bind("click", function () {
+  toggle_upload_view();
+});
+$('.input_aside_folder_search').change(function () {
+  asideFolderSearch(this);
+}).keyup(function () {
+  asideFolderSearch(this);
+});
+
+//BULKSELECTION FUNCTIONALITY
+var bulkSelectionEnabled = false; //this controls if we show an icon with each image
+var bulkSelection = []; //this keeps track which items are selected
+var latestBulkSelectionItemClicked = null; //so we can handle a shift click with a from - to
+var draggingAmountOfItems = 1;
+window.toggle_upload_view = function () {
+  $('#upload_container').show();
+  $('#dropdown_overlay').removeClass('hide');
+};
+window.disable_x = function (view) {
+  $('.toggle_view.' + view).removeClass('active');
+  $('.media-item').removeClass(view);
+};
+window.enable_x = function (view) {
+  $('.toggle_view.' + view).addClass('active');
+  $('.media-item').addClass(view);
+};
+window.enable_grid_view = function () {
+  disable_x('list');
+  enable_x('grid');
+};
+window.enable_list_view = function () {
+  disable_x('grid');
+  enable_x('list');
+};
+$("#bulkselection").on("click", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+  return _regeneratorRuntime().wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          if (!bulkSelectionEnabled) {
+            _context.next = 5;
+            break;
+          }
+          _context.next = 3;
+          return disableBulkSelection();
+        case 3:
+          _context.next = 7;
+          break;
+        case 5:
+          _context.next = 7;
+          return enableBulkSelection();
+        case 7:
+          bulkSelectionEnabled = !bulkSelectionEnabled;
+        case 8:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _callee);
+})));
+function enableBulkSelection() {
+  return _enableBulkSelection.apply(this, arguments);
+}
+function _enableBulkSelection() {
+  _enableBulkSelection = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            $('.bulkselectionbutton').removeClass('bulkselected');
+            $('.media-container').addClass('mode-select');
+            $(".media-item").on("click", function (event) {
+              handleBulkItemClick(event);
+            });
+          case 3:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _enableBulkSelection.apply(this, arguments);
+}
+function handleBulkItemClick(event) {
+  var media_id = null;
+  if (event.shiftKey === true) {
+    //SHIFT CLICK
+    if (latestBulkSelectionItemClicked === null) {
+      latestBulkSelectionItemClicked = 1;
+    }
+    var step_from = latestBulkSelectionItemClicked * 1;
+    var step_to = event.currentTarget.getAttribute('data-media_id') * 1;
+    for (var step = step_from; step <= step_to; step++) {
+      var element = document.querySelector('.media-item[data-media_id="' + step + '"]');
+      media_id = element.getAttribute('data-id');
+      bulkSelection.push(media_id);
+      $('#' + media_id).addClass('selected');
+    }
+  } else {
+    //SINGLE CLICK
+    media_id = event.currentTarget.getAttribute('data-id');
+    if (bulkSelection.includes(media_id)) {
+      bulkSelection = bulkSelection.filter(function (item) {
+        return item !== media_id;
+      });
+      $('#' + media_id).removeClass('selected');
+    } else {
+      bulkSelection.push(media_id);
+      $('#' + media_id).addClass('selected');
+    }
+  }
+  latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id');
+  draggingAmountOfItems = bulkSelection.length;
+}
+function disableBulkSelection() {
+  return _disableBulkSelection.apply(this, arguments);
+}
+function _disableBulkSelection() {
+  _disableBulkSelection = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            bulkSelection = [];
+            $('.media-container').removeClass('mode-select');
+            $('.media-item').removeClass('selected');
+            draggingAmountOfItems = 1;
+          case 4:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _disableBulkSelection.apply(this, arguments);
+}
+window.asideFolderSearch = function (elem) {
+  var filter, ul, li, a, i, txtValue;
+  filter = elem.value.toUpperCase();
+  ul = elem.parentNode.parentNode.querySelector('.aside-item-list-container > ul');
+  li = ul.getElementsByTagName('li');
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName('a')[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].classList.remove('menu-item-hidden');
+    } else {
+      li[i].classList.add('menu-item-hidden');
+    }
+  }
+};
+
+//hide uploadimages view when clicked outside of uploadimages modal:
+jQuery(document).mouseup(function (e) {
+  var uppyModal = $('#upload_container');
+
+  // if the target of the click isn't the container nor a descendant of the container
+  if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
+    uppyModal.hide();
+  }
+});
+$(function () {
+  var $gallery = $("#gallery");
+  var $media_items = $(".media_category");
+
+  //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
+  $('li.media-item', $gallery).draggable({
+    helper: "clone",
+    cursorAt: {
+      left: 10,
+      top: 10
+    },
+    start: function start(ev, ui) {}
+  });
+
+  // Let the media items be droppable, accepting the gallery items
+  $media_items.droppable({
+    activate: function activate(event, ui) {
+      $('.ui-draggable-dragging').html('<div class="drag-media">' + draggingAmountOfItems + ' item(s)</div>');
+    },
+    accept: '#gallery > li.media-item',
+    cursorAt: {
+      left: 5,
+      top: 5
+    },
+    classes: {
+      'ui-droppable-active': 'ui-state-highlight'
+    },
+    drop: function drop(event, ui) {
+      moveImage(ui.draggable, event, this.id);
+    },
+    over: function over(event, ui) {}
+  });
+  function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+  function moveImage($item, event) {
+    var category_id = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var media_id = $item[0].id || null;
+
+    //So here we want to send something to the server
+    if (bulkSelection.length > 0) {
+      var duplicatesRemoved = bulkSelection.filter(onlyUnique);
+      sendAjaxRequest(category_id, duplicatesRemoved);
+    } else {
+      sendAjaxRequest(category_id, [media_id]);
+    }
+    $('.media_category').removeClass('flash');
+    $('#' + category_id).addClass("flash");
+  }
+  function get_current_category_id() {
+    return new URL(location.href).searchParams.get("media_taxonomy_id") || "";
+  }
+  function sendAjaxRequest(category_id, media_id) {
+    if (get_current_category_id() === category_id) {
+      return;
+    }
+    var jsonContent = JSON.stringify({
+      csrf: document.querySelector('#media_category_csrf').value,
+      category_id_target: category_id,
+      media_id: media_id,
+      category_id_origin: get_current_category_id()
+    });
+    postData(path, jsonContent);
+    function postData() {
+      return _postData.apply(this, arguments);
+    }
+    function _postData() {
+      _postData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var url,
+          data,
+          response,
+          _args2 = arguments;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                url = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : '';
+                data = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : {};
+                _context2.next = 4;
+                return fetch(url, {
+                  method: 'PUT',
+                  mode: 'cors',
+                  cache: 'no-cache',
+                  credentials: 'same-origin',
+                  redirect: 'follow',
+                  referrerPolicy: 'no-referrer',
+                  body: data
+                });
+              case 4:
+                response = _context2.sent;
+                return _context2.abrupt("return", response);
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+      return _postData.apply(this, arguments);
+    }
+  }
+});
+})();
+
+/******/ })()
+;

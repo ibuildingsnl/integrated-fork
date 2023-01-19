@@ -1,1 +1,50 @@
-#wrapper-holder{padding-bottom:85px}#wrapper-holder>.container{background:#fff;width:auto}#wrapper-holder>.container .section-radius{box-shadow:none}.section-padding{padding:10px 20px 10px 10px}body{background:#fff}
+/*!******************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[1].use[2]!./src/Bundle/BlockBundle/Resources/assets/css/iframe.css ***!
+  \******************************************************************************************************************************************************************************************************************************/
+#wrapper-holder {
+    padding-bottom: 85px;
+    top: 0px;
+}
+
+#wrapper-holder > .container {
+    width: auto;
+    background: #fff;
+}
+
+#wrapper-holder > .container .section-radius {
+    box-shadow: none;
+}
+
+.add-relation {
+    display: none;
+}
+
+.prefooter-holder {
+    border-top: 1px solid #e5e5e5;
+    background: #fcfcfc;
+}
+
+.aside-options {
+    height: calc(100vh - 50px);
+}
+
+.aside-options .aside-holder {
+    padding-top: 0;
+}
+
+.sidebar {
+    display: none;
+}
+
+.content-wrapper {
+    width: 100%;
+}
+
+#wrapper-holder {
+    height: 100%;
+}
+
+#toolbar .back .form-group {
+    display: none;
+}
+
