@@ -18,7 +18,16 @@ trait RankTrait
     /**
      * @var string|null
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentRankType', options: ['label' => 'Rank', 'route' => 'integrated_content_rank_lookup'])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentRankType', options: [
+        'label' => 'Rank',
+        'route' => 'integrated_content_rank_lookup',
+        'attr' => [
+            'location' => 'sidebar',
+            'icon' => 'numbered-list-left',
+            'style' => 'sidebar',
+        ]
+
+    ])]
     protected $rank;
 
     public function getRank(): ?string

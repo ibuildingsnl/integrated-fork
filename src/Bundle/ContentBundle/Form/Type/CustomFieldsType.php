@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -35,12 +36,16 @@ class CustomFieldsType extends AbstractType
             if (!$field instanceof CustomField) {
                 continue;
             }
-
             $options = $field->getOptions();
+            $options['constraints'] = !empty($options['required']) ? [new NotBlank()] : [];
+            if ($field->getType() == CheckboxType::class) {
+                $options['attr'] = ['style' => 'switcher', 'align_with_widget' => true];
+                $options['label'] = ' ';
+            }
             $builder->add(
                 $field->getName(),
                 $field->getType(),
-                $options + ['constraints' => !empty($options['required']) ? [new NotBlank()] : []]
+                $options
             );
         }
     }
@@ -52,8 +57,7 @@ class CustomFieldsType extends AbstractType
     {
         $resolver
             ->setRequired(['contentType'])
-            ->setAllowedTypes('contentType', ContentTypeInterface::class)
-        ;
+            ->setAllowedTypes('contentType', ContentTypeInterface::class);
     }
 
     /**

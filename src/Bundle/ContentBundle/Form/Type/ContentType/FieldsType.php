@@ -50,8 +50,6 @@ class FieldsType extends AbstractType
                 'allow_delete' => true,
                 'add_button_text' => 'Add custom field',
                 'delete_button_text' => 'Delete field',
-                'sub_widget_col' => 9,
-                'button_col' => 3,
             ]
         );
 

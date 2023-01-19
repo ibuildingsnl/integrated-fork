@@ -39,11 +39,72 @@ class ChannelType extends AbstractType
     {
         $builder->add('name', TextType::class, [
             'constraints' => new Length(['max' => 100]),
+            'attr' => [
+                'location' => 'editor',
+                'style' => 'inline',
+            ],
         ]);
 
-        $builder->add('logo', ImageDropzoneType::class);
-        $builder->add('color', ColorType::class, ['label' => 'Primary Color', 'required' => false]);
-        $builder->add('secondarycolor', ColorType::class, ['label' => 'Secondary Color','required' => false]);
+        $builder->add(
+            'scope',
+            EntityType::class,
+            [
+                'required' => false,
+                'class' => Scope::class,
+                'placeholder' => 'No user login allowed',
+                'label' => 'User scope',
+                'choice_label' => 'name',
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'precision-tool'
+                ],
+            ]
+        );
+
+        $builder->add(
+            'color',
+            ColorType::class,
+            [
+                'label' => 'Primary Color',
+                'required' => false,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'droplet'
+                ],
+            ]
+        );
+        $builder->add(
+            'secondarycolor',
+            ColorType::class,
+            [
+                'label' => 'Secondary Color',
+                'required' => false,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'droplet'
+                ],
+            ]
+        );
+
+
+        $builder->add(
+            'logo',
+            ImageDropzoneType::class,
+            [
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'media-image'
+                ],
+            ]
+        );
 
         $builder->add('domains', TailwindCollectionType::class, [
             'label' => 'Domains (example.com)',
@@ -60,31 +121,55 @@ class ChannelType extends AbstractType
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
 
         $builder->add(
-            $builder->create('options', FormType::class, ['inherit_data' => true])
-                    ->add(
-                        'primaryDomainRedirect',
-                        CheckboxType::class,
-                        [
-                            'label' => 'Redirect to primary domain',
-                            'required' => false,
-                            'attr' => [
-                                'align_with_widget' => true,
-                                'style' => 'switcher',
-                            ],
-                        ]
-                    )
-                    ->add(
-                        'ipProtected',
-                        CheckboxType::class,
-                        [
-                            'label' => 'Protect by IP address or logged in user',
-                            'required' => false,
-                            'attr' => [
-                                'align_with_widget' => true,
-                                'style' => 'switcher',
-                            ],
-                        ]
-                    )
+            $builder->create('permissions', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'key-alt-back'
+                ],
+            ])->add(
+                'permissions',
+                PermissionsType::class,
+                [
+                    'required' => false,
+                ]
+            )
+        );
+
+        $builder->add(
+            $builder->create('options', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'tools'
+                ],
+            ])->add(
+                'primaryDomainRedirect',
+                CheckboxType::class,
+                [
+                    'label' => 'Redirect to primary domain',
+                    'required' => false,
+                    'attr' => [
+                        'align_with_widget' => true,
+                        'style' => 'switcher',
+                    ],
+                ]
+            )->add(
+                'ipProtected',
+                CheckboxType::class,
+                [
+                    'label' => 'Protect by IP address or logged in user',
+                    'required' => false,
+                    'attr' => [
+                        'align_with_widget' => true,
+                        'style' => 'switcher',
+                    ],
+                ]
+            )
         );
 
         // validate domain names
@@ -117,28 +202,5 @@ class ChannelType extends AbstractType
                 }
             }
         });
-
-        $builder->add(
-            'scope',
-            EntityType::class,
-            [
-                'required' => false,
-                'class' => Scope::class,
-                'placeholder' => 'No user login allowed',
-                'label' => 'User scope',
-                'choice_label' => 'name',
-            ]
-        );
-
-        $builder->add(
-            $builder->create('permissions', FormType::class, ['inherit_data' => true])
-                    ->add(
-                        'permissions',
-                        PermissionsType::class,
-                        [
-                            'required' => false,
-                        ]
-                    )
-        );
     }
 }

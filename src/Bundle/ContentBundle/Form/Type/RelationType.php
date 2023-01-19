@@ -38,17 +38,14 @@ class RelationType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => [
-                        'Embedded' => 'embedded',
+                        'Multimedia' => 'embedded',
                         'Cover' => 'cover',
+                        'Slider' => 'slider',
                         'Taxonomy' => 'taxonomy',
-                        'Category' => 'category',
+                        'Category' => 'taxonomy_category',
+                        'Tags' => 'taxonomy_tags',
                         'Edition' => 'edition',
                         'Commercial' => 'commercial',
-                        'Parent' => 'parent',
-                        'Subscriptiontypes' => 'subscriptiontypes',
-                        'Author' => 'author',
-                        'File' => 'file',
-                        'Slider' => 'slider',
                     ],
                 ]
             )->add(

@@ -32,13 +32,20 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'wallet']])]
     protected $accountnumber;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType',  options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show',
+            'class' => 'content-edit-form'
+        ]
+    ])]
     protected $description;
 
     /**
@@ -49,13 +56,14 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Phonenumber',
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
     ])]
     protected $phonenumbers;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
     protected $email;
 
     /**
@@ -67,6 +75,7 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Address',
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
     ])]
     protected $addresses;
 
@@ -169,7 +178,7 @@ abstract class Relation extends Content implements RankableInterface
      * Add phonenumber to phonenumbers collection.
      *
      * @param string|Phonenumber $phonenumber
-     * @param string             $type
+     * @param string $type
      *
      * @return $this
      */

@@ -21,6 +21,7 @@ class Address
     /**
      * @var string
      */
+    #[Type\Field(options: ['attr' => ['style' => 'horizontal']])]
     protected $type;
 
     /**

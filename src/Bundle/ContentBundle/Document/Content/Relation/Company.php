@@ -27,26 +27,39 @@ class Company extends Relation
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'editor',
+            'state' => 'title_tinymce',
+            'class' => 'fancy_tinymce',
+            'style' => 'horizontal'
+        ]
+    ])]
     protected $name;
 
     /**
      * @var string
      */
     #[Slug(fields: ['name'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
     protected $slug;
 
     /**
      * @var StorageInterface
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType')]
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'icon' => 'media-image'
+        ]
+    ])]
     protected $logo;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'www']])]
     protected $website;
 
     /**
@@ -173,6 +186,6 @@ class Company extends Relation
      */
     public function __toString()
     {
-        return (string) $this->name;
+        return (string)$this->name;
     }
 }

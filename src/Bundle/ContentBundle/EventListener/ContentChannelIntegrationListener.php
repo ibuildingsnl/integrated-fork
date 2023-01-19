@@ -128,6 +128,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
                 $builder->add('channels', ChoiceType::class, [
                     'required' => false,
+                    'priority' => 999,
 
                     'choices' => $choices,
                     'choice_value' => 'id',
@@ -135,7 +136,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
                     'multiple' => true,
                     'expanded' => true,
-                    'attr' => ['class' => 'channel-options'],
+                    'attr' => ['class' => 'channel-options', 'location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show search', 'icon' => 'network-alt'],
                     'choice_attr' => function ($value) use ($enforce) {
                         if ($value instanceof Channel && (isset($enforce[$value->getId()]) || !$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value))) {
                             return ['disabled' => 'disabled'];

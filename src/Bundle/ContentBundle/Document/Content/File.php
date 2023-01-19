@@ -28,31 +28,63 @@ class File extends Content implements FileInterface
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'link'
+        ]
+    ])]
     protected $slug;
 
     /**
      * @var StorageInterface
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType')]
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show',
+        ]
+    ])]
     protected $file;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $description;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'copyright'
+        ]
+    ])]
     protected $credits;
 
     /**

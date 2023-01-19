@@ -24,25 +24,50 @@ class Comment extends Content
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $name;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $email;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show',
+            'placeholder' => 'Your comment starts here'
+        ]
+    ])]
     protected $comment;
 
     /**
@@ -127,7 +152,7 @@ class Comment extends Content
         }
 
         if (\strlen($this->comment) > 60) {
-            return substr($this->comment, 0, 60).'...';
+            return substr($this->comment, 0, 60) . '...';
         }
 
         return $this->comment;
@@ -138,6 +163,6 @@ class Comment extends Content
      */
     public function __toString()
     {
-        return (string) $this->getDescriptor();
+        return (string)$this->getDescriptor();
     }
 }

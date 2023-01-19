@@ -34,38 +34,58 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['priority' => 1, 'attr' => ['location' => 'editor', 'state' => 'title_tinymce', 'class' => 'fancy_tinymce', 'style' => 'horizontal']])]
     protected $title;
 
     /**
      * @var string
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 2,
+        'attr' => [
+            'location' => 'editor',
+            'state' => 'fancy_tinymce',
+            'class' => 'content-edit-form fancy_tinymce',
+            'placeholder' => 'Your content starts here'
+        ]
+    ])]
+    protected $content;
+
+    /**
+     * @var string
+     */
     #[Slug(fields: ['title'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
     protected $subtitle;
 
     /**
      * @var ArrayCollection Embedded\Author[]
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: ['label' => 'Authors'])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
+        'label' => 'Authors',
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'user']
+    ])]
     protected $authors;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'megaphone']])]
     protected $source;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: ['label' => 'Source URL'])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
+        'label' => 'Source URL',
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'open-new-window']
+    ])]
     protected $sourceUrl;
 
     /**
@@ -76,25 +96,37 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $intro;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'icon' => 'message-text'
+        ]
+    ])]
     protected $description;
-
-    /**
-     * @var string
-     */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
-    protected $content;
 
     /**
      * @var Embedded\Address
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType')]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'icon' => 'pin-alt'
+        ]
+    ])]
     protected $address;
 
     /**
@@ -128,6 +160,30 @@ class Article extends Content implements RankableInterface
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get the content of the document.
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set the content of the document.
+     *
+     * @param string $content
+     *
+     * @return $this
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
 
         return $this;
     }
@@ -341,30 +397,6 @@ class Article extends Content implements RankableInterface
     }
 
     /**
-     * Get the content of the document.
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Set the content of the document.
-     *
-     * @param string $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
      * Get the address of the document.
      *
      * @return Embedded\Address
@@ -414,6 +446,6 @@ class Article extends Content implements RankableInterface
      */
     public function __toString()
     {
-        return (string) $this->title;
+        return (string)$this->title;
     }
 }

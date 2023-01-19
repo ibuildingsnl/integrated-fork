@@ -22,19 +22,19 @@ class Event extends Article
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['priority' => 150, 'label' => 'Event start', 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'calendar']])]
     protected $startDate;
 
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['priority' => 150,'label' => 'Event end', 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'calendar']])]
     protected $endDate;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'www']])]
     protected $website;
 
     /**

@@ -34,10 +34,12 @@ class ContentTypeFormType extends AbstractType
         $metadata = $options['metadata'];
 
         $builder
-            ->add('name', TextType::class, ['label' => 'Name'])
+            ->add('name', TextType::class, [
+                'label' => 'Name',
+                'attr' => ['style' => 'inline']
+            ])
             ->add('fields', FieldsType::class, ['metadata' => $metadata])
-            ->add('channels', ContentTypeChannelsType::class, ['property_path' => 'options[channels]'])
-        ;
+            ->add('channels', ContentTypeChannelsType::class, ['property_path' => 'options[channels]']);
 
         $builder->add('options_publication', ChoiceType::class, [
             'label' => 'Publication',
@@ -47,23 +49,30 @@ class ContentTypeFormType extends AbstractType
             ],
             'property_path' => 'options[publication]',
             'required' => false,
+            'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
         ]);
         foreach ($metadata->getOptions() as $option) {
-            $ype = $builder->create('options_'.$option->getName(), $option->getType(), ['label' => ucfirst($option->getName())] + $option->getOptions())
-                ->setPropertyPath('options['.$option->getName().']');
+            $ype = $builder->create(
+                'options_' . $option->getName(),
+                $option->getType(),
+                [
+                    'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'stackoverflow'],
+                    'label' => ucfirst($option->getName())
+                ] + $option->getOptions()
+            )->setPropertyPath('options[' . $option->getName() . ']');
 
             $builder->add($ype);
         }
 
         $builder->add(
-            $builder->create('permissions', FormType::class, ['inherit_data' => true])
+            $builder->create('permissions', FormType::class, ['inherit_data' => true, 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'key-alt-back']])
                     ->add(
                         'permissions',
                         PermissionsType::class,
                         [
                             'required' => false,
                         ]
-                    )
+                    ),
         );
     }
 

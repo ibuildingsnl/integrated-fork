@@ -42,6 +42,9 @@ class CustomFieldListener implements EventSubscriberInterface
             if ($field instanceof CustomField) {
                 $event->getBuilder()->add(self::FORM_NAME, CustomFieldsType::class, [
                     'contentType' => $type,
+                    'attr' => [
+                        'style' => 'editor',
+                    ]
                 ]);
 
                 return;
