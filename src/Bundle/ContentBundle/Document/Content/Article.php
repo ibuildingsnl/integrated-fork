@@ -34,7 +34,15 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['priority' => 1, 'attr' => ['location' => 'editor', 'state' => 'title_tinymce', 'class' => 'fancy_tinymce', 'style' => 'horizontal']])]
+    #[Type\Field(options: [
+        'priority' => 1,
+        'attr' => [
+            'location' => 'editor',
+            'state' => 'title_tinymce',
+            'class' => 'fancy_tinymce',
+            'style' => 'horizontal'
+        ]
+    ])]
     protected $title;
 
     /**

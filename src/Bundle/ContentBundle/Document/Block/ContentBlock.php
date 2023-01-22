@@ -37,14 +37,22 @@ class ContentBlock extends Block
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0, 'label' => 'Items per page']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'attr' => [
+            'min' => 0,
+            'label' => 'Items per page'
+        ]
+    ])]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0, 'label' => 'Max items'], ])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'required' => false,
+        'attr' => ['min' => 0, 'label' => 'Max items'],
+    ])]
     protected $maxItems;
 
     /**
@@ -72,8 +80,13 @@ class ContentBlock extends Block
     /**
      * @var array
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: ['allow_add' => true,
-        'add_button_text' => 'Add Facet field', 'allow_delete' => true, 'required' => false, 'attr' => ['show_headings' => 'false']])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
+        'allow_add' => true,
+        'add_button_text' => 'Add Facet field',
+        'allow_delete' => true,
+        'required' => false,
+        'attr' => ['show_headings' => 'false']
+    ])]
     protected $facetFields = [];
 
     /**

@@ -131,6 +131,6 @@ class Taxonomy extends Content implements RankableInterface
      */
     public function __toString()
     {
-        return (string) $this->title;
+        return (string)$this->title;
     }
 }
