@@ -29,7 +29,6 @@
         }
 
         var showModal = function(title, content) {
-            console.log('showModal')
             let element = document.createElement('div');
 
             element.classList.add('integrated-modal');
@@ -50,7 +49,6 @@
 
         var hideModal = function() {
             let element = document.querySelector('.integrated-modal');
-            console.log('hideModal')
             element.parentNode.removeChild(element);
         };
 

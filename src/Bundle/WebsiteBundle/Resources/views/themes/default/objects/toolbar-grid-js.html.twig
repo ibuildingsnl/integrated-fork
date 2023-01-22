@@ -48,7 +48,6 @@
             $element.appendChild(createColumnButtons());
 
             $element.querySelectorAll('[data-block-type="block"]').forEach(item => {
-                console.log(item);
                 item.prepend(createBlockButtons());
             });
         };
@@ -58,7 +57,6 @@
          * @param element  $before
          */
         var addBlock = function(blockId, $before) {
-            console.log('addBlock')
             var element = document.createElement('div');
 
             element.dataset.id = blockId;
@@ -74,15 +72,12 @@
          * @param element $block
          */
         var refreshBlock = function($block, buttons = true) {
-            console.log('refreshBlock')
             fetch(
                 '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', $block.dataset.id)).
                 then(response => response.json()).
                 then(data => {
                     $block.innerHTML = data.html;
-                    // console.log($block)
                     if (buttons) {
-                        console.log($block)
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
                 });
@@ -92,7 +87,6 @@
          * @return element
          */
         var createRow = function() {
-            console.log('createRow')
             var element = document.createElement('div');
 
             element.dataset.blockType = 'row';
@@ -106,27 +100,21 @@
          * @param size
          */
         var createColumn = function(size) {
-            console.log('createColumn')
             var element = document.createElement('div');
-            var framework = 'tailwind';
             var colClass = 'w-full';
-
-            console.log(size);
-
-            if (size !== 12 && framework === 'tailwind') {
-                console.log('tailwind');
-                var colClass = ['w-full','md:w-' + size + '/12'];
-            } else if (framework !== 'tailwind') {
-                var colClass = 'col-sm-' + size;
-            }
-
-            console.log(colClass);
 
             element.dataset.blockType = 'column';
             element.dataset.size = size;
             element.classList.add('integrated-website-col');
             element.classList.add('integrated-website-droppable');
-            element.classList.add(...colClass);
+
+            if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
+                var colClass = ['w-full', 'md:w-' + size + '/12'];
+                element.classList.add(...colClass);
+            } else {
+                var colClass = 'col-sm-' + size;
+                element.classList.add(colClass);
+            }
 
             element.appendChild(createColumnButtons());
 
@@ -139,7 +127,6 @@
          * @return Element
          */
         var createRowButtons = function() {
-            console.log('createRowButtons')
             var element = document.createElement('div');
             element.classList.add('integrated-row-buttons');
             element.innerHTML = '' +
@@ -160,7 +147,6 @@
          * @return Element
          */
         var createColumnButtons = function() {
-            console.log('createColumnButtons')
             var element = document.createElement('div');
             element.classList.add('integrated-column-buttons');
             element.innerHTML = '' +
@@ -181,7 +167,6 @@
          * @return Element
          */
         var createBlockButtons = function() {
-            console.log('createBlockButtons')
             var element = document.createElement('div');
             element.classList.add('integrated-block-buttons');
             element.innerHTML =
@@ -201,7 +186,6 @@
         };
 
         var showLoader = function() {
-            console.log('showLoader')
             let element = document.createElement('div');
 
             element.innerHTML = '<div id="integrated-loader"><div id="integrated-loader-spinner"></div></div>';
@@ -209,14 +193,12 @@
         };
 
         var hideLoader = function() {
-            console.log('hideLoader')
             let element = document.querySelector('#integrated-loader');
 
             element.parentNode.removeChild(element);
         };
 
         var addBlockModalTemplateHTML = function(data) {
-            console.log('addBlockModalTemplateHTML')
             var output = `<div class="integrated-block-filters">
                    <div id="add_block_filters" class="integrated-control-row">
                        <form id="add_block_filters_form" action="{{ path('integrated_block_block_index', { '_format': 'json', 'limit': 10}) }}">
@@ -382,7 +364,6 @@
             Array.from(element.parentNode.parentNode.children).forEach(item => {
                 if (item.classList.contains('integrated-website-col')) {
                     item.classList.add('integrated-block-hover');
-                    console.log('item.classList.add(\'integrated-block-hover\')')
                 }
             });
         }, true);
@@ -396,7 +377,6 @@
             Array.from(element.parentNode.parentNode.children).forEach(item => {
                 if (item.classList.contains('integrated-website-col')) {
                     item.classList.remove('integrated-block-hover');
-                    console.log('item.classList.remove(\'integrated-block-hover\')')
                 }
             });
         }, true);
@@ -463,8 +443,6 @@
                 return;
             }
 
-            console.log('item removed? r466')
-
             e.preventDefault();
 
             if (confirm('Are you sure?')) {
@@ -481,8 +459,6 @@
             if (!element) {
                 return;
             }
-
-            console.log('item removed? r488')
 
             e.preventDefault();
 
@@ -618,12 +594,11 @@
 
                     doneSize = doneSize + size;
 
-                    let framework = 'tailwind';
                     let colClass = ' w-full';
 
-                    if (size !== 12 && framework === 'tailwind') {
+                    if (typeof framework !== 'undefined' && (size !== 12 && framework === 'tailwind')) {
                         colClass = ' w-full md:w-' + size + '/12';
-                    } else if (framework !== 'tailwind') {
+                    } else {
                         colClass = ' col-sm-' + size;
                     }
 
@@ -661,7 +636,6 @@
                 return;
             }
 
-            console.log('newChannelBlockButton)')
             e.preventDefault();
 
             button = element;
@@ -683,9 +657,7 @@
             fetch('{{ path('integrated_block_block_new_channel_block') }}', {
                 method: 'POST',
                 body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
+            }).then(response => response.json()).then(data => {
                 hideLoader();
 
                 var url = '{{ path('integrated_block_block_edit', {'id': 'block-id', '_format':'iframe.html'}) }}'.replace(
@@ -729,8 +701,6 @@
         var createIframe = function(url, title) {
             showLoader();
 
-            console.log('createIframe')
-
             let element = document.createElement('iframe');
             element.classList.add('integrated-iframe');
             element.setAttribute('src', url);
@@ -749,7 +719,6 @@
 
                 cancelButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Clicked Cancel');
                     Integrated.hideModal();
                 });
             };
@@ -761,7 +730,6 @@
          * @param $element
          */
         var initSortable = function($element) {
-            console.log('initSortable')
             new Sortable($element, {
                 group: 'integrated-grid',
                 sort: true,
@@ -771,17 +739,6 @@
                 ghostClass: 'integrated-website-item-ghost',
                 filter: '.integrated-block-buttons',
                 dragClass: 'integrated-website-item-dragging',
-                onStart: function(/**Event*/evt) {
-                    // $buttons = evt.item.firstChild;
-                    // console.log($buttons)
-                    // $buttons.removeChild($buttons);
-                    // console.log('initSortable onStart')
-                },
-                onEnd: function(/**Event*/evt) {
-                    // $newItem = evt.item;
-                    // $newItem.prepend(createBlockButtons(), $newItem);
-                    // console.log('initSortable onEnd')
-                },
             });
         };
 
@@ -801,7 +758,6 @@
                     refreshBlock(item, true);
                 });
             }
-            console.log('blockAdded')
         }, false);
 
         /**
@@ -815,7 +771,6 @@
             if (!e.target.classList.contains('integrated-block-filter')) {
                 return;
             }
-            console.log('refrashBlockData r819')
             refreshBlockData(document.querySelector('#add_block_filters_form'));
             return false;
         });
@@ -826,7 +781,6 @@
             }
 
             e.preventDefault();
-            console.log('refrashBlockData r830')
             refreshBlockData(e.target);
         });
 
@@ -838,8 +792,6 @@
 
             e.preventDefault();
 
-            console.log('refrashBlockData r842')
-
             let form = document.querySelector('#add_block_filters_form');
             form.setAttribute('action', element.dataset.href);
             refreshBlockData(form);
@@ -850,16 +802,13 @@
         function refreshBlockData(form) {
             document.querySelector('#add_block_results').innerHTML = 'Loading blocks...';
 
-            console.log('refreshBlockData')
             fetch(form.action, {
                 method: 'post',
                 body: new URLSearchParams(new FormData(form)),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-            })
-            .then(response => response.json())
-            .then(data => {
+            }).then(response => response.json()).then(data => {
                 data.type = document.querySelector('[name="integrated_block_filter[type][]"] option:checked').value;
                 data.q = document.querySelector('[name="integrated_block_filter[q]"]').value;
                 data.channel = document.querySelector(
