@@ -30,3 +30,5 @@ Coloris({
 });
 
 import './scripts'
+
+import './global'

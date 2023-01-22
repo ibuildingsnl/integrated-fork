@@ -32,12 +32,12 @@ $('[data-prototype]').each(function(index, elm) {
             $collection.find('> ul').append(item);
 
             if ($collection.find('ul li:last-child').
-                find('select.integrated_content_choice')) {
+                find('select.integrated_content_choice').length > 0) {
                 initContentChoice();
             }
 
             if ($collection.find('ul li:last-child').
-                find('select.select2')) {
+                find('select.select2').length > 0) {
                 $($collection.find('ul li:last-child').
                     find('select.select2')).select2({
                     placeholder: $(this).data('placeholder'),
