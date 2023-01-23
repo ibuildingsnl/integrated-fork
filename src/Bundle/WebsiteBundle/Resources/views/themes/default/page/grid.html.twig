@@ -30,15 +30,7 @@
                 <div class="{% if edit|default %} integrated-website-sortable" data-block-type="row{% endif %}"
                 {%- for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
                 {% for column in item.row.columns %}
-                    {% set gridSize = column.size %}
-
-                        {% if gridSize is same as 12 %}
-                            {% set gridClass = 'w-full' %}
-                        {% else %}
-                            {% set gridClass = 'w-full md:w-' ~ gridSize|trans ~ '/12' %}
-                        {% endif %}
-                        <div
-                            class="{{ gridClass }}{% if edit|default %} integrated-website-col integrated-website-droppable"
+                    <div class="col-sm-{{ column.size }}{% if edit|default %} integrated-website-col integrated-website-droppable"
                             data-block-type="column" data-size="{{ column.size }}{% endif %}">
                             {{ include(integrated_active_theme('page/grid.html.twig'), { 'grid': column }) }}
                         </div>

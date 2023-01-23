@@ -113,6 +113,10 @@ class StateType extends AbstractType
             'write-placeholder' => 'Inherit from content type',
         ]);
 
+        $builder->add('order', Type\HiddenType::class, [
+            'attr' => ['data-itemorder' => 'collection']
+        ]);
+
         if ($options['transitions'] == 'data') {
             $builder->addEventSubscriber(new ExtractTransitionsFromDataListener());
         }

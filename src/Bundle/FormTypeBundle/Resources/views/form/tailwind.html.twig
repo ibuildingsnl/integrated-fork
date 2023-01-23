@@ -140,7 +140,7 @@
                             {% endif %}
                             <div id="{{ field.vars.id }}"
                                  class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
-                                <div class="panel-body {{ form.vars.sub_widget_col }}">
+                                <div class="panel-body">
                                     {{ form_widget(field) }}
                                     {{ form_errors(field) }}
                                     {% if (panel_heading is not defined) %}

@@ -34,7 +34,7 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('New status')) ~ '</span></a>' %}
+            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('New status')) ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
                 {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
             {% endif %}
@@ -53,7 +53,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse">
-                                        <i class="iconoir-nav-arrow-down"></i>
+                                        <i class="iconoir-line-space"></i>
                                         <div class="workflow-status"
                                              style="background-color:{{ field.vars.value.color }};">
                                             <i class="iconoir-{{ field.vars.value.icon }}"></i>
@@ -102,11 +102,11 @@
                 </a>
             {% endif %}
         </div>
-        {% integrated_javascripts mode='append'
-            'bundles/integratedintegrated/content_sortable.js' %}
-        {% endintegrated_javascripts %}
         {% integrated_javascripts mode='prepend'
             'bundles/integratedformtype/js/content_choice.js' %}
+        {% endintegrated_javascripts %}
+        {% integrated_javascripts mode='append'
+            'bundles/integratedintegrated/content_sortable.js' %}
         {% endintegrated_javascripts %}
     {% endapply %}
 {% endblock workflow_definition_state_collection_widget %}

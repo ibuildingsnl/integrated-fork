@@ -74,8 +74,6 @@
 {{ parent() }}
 <script type="text/javascript">
     $(function () {
-        $('[data-toggle="popover"]').popover();
-
         $('form[name="integrated_user_filter"]').on('change', function () {
             $(this).trigger('submit');
         });

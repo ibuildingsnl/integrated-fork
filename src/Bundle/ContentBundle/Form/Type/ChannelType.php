@@ -112,8 +112,6 @@ class ChannelType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
-            'sub_widget_col' => 5,
-            'button_col' => 3,
             'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
 
         ]);
