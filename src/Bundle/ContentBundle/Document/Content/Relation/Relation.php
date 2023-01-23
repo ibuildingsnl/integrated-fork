@@ -38,12 +38,13 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType',  options: [
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 998,
         'attr' => [
             'location' => 'editor',
-            'style' => 'editor',
-            'state' => 'show',
-            'class' => 'content-edit-form'
+            'state' => 'fancy_tinymce',
+            'class' => 'content-edit-form fancy_tinymce',
+            'placeholder' => 'Your content starts here'
         ]
     ])]
     protected $description;
@@ -63,11 +64,17 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+        'attr' => [
+            'location' => 'editor',
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ])]
     protected $email;
 
     /**
-     * @var Address[]
+     * @var Address[]|Collection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
         'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\AddressType',

@@ -36,7 +36,8 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface,
+                                  PublishableInterface, ConnectorInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -97,7 +98,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true, 'location' => 'custom', 'style' => 'switcher']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+            'location' => 'custom',
+            'style' => 'switcher'
+        ]
+    ])]
     protected $disabled = false;
 
     /**
@@ -113,8 +120,12 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      */
-    #[Type\Field(options: ['label' => 'Copyright restrictions', 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'copyright']])]
+    #[Type\Field(options: [
+        'label' => 'Copyright restrictions',
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'copyright']
+    ])]
     protected $copyrightRestrictions;
+
     /**
      * Constructor.
      */
@@ -329,7 +340,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool   $published
+     * @param bool $published
      *
      * @return ArrayCollection
      */
@@ -356,7 +367,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool   $published
+     * @param bool $published
      *
      * @return Content|null
      */
@@ -434,9 +445,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Get the published of the document.
      *
+     * @return bool
      * @deprecated
      *
-     * @return bool
      */
     public function getPublished()
     {
