@@ -19,8 +19,6 @@ $(function() {
             ev.preventDefault();
             loadUsedBy($(this).attr('href'));
         });
-        var toggle = $('#used-by .aside-item-header');
-        toggle.click(toggleOptionsElement);
     };
 
     var loadUsedBy = function(url) {

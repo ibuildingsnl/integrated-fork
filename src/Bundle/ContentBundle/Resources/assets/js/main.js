@@ -29,6 +29,6 @@ Coloris({
     format: 'mixed',
 });
 
-import './scripts'
-
 import './global'
+
+import './scripts'
