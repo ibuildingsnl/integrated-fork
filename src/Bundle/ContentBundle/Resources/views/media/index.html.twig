@@ -4,112 +4,7 @@
 
     <div class="flex flex-wrap media-library">
 
-        <div class="media-sidebar">
-            <aside>
-                <h2 class="heading ">{% trans %}Folders{% endtrans %}</h2>
-                <div class="aside-holder bg-white section-radius">
-                    <div class="aside-item-wrapper">
-                        <div class="aside-folder-header">
-                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
-                                <i class="iconoir-folder"></i>
-                                <span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
-                            </a>
-                        </div>
-                        <div class="aside-item-list-container">
-                            <div class="aside-item-search">
-                                <i class="iconoir-search"></i>
-                                <input type="text" class="input_aside_folder_search list-search"
-                                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
-                            </div>
-
-                            <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
-                                <input type="hidden" id="media_category_csrf" name="token"
-                                       value="{{ csrf_token('delete-item') }}"/>
-                                <input type="hidden" id="media_id" name="media_id" value=""/>
-                                <input type="hidden" id="category_id" name="category_id" value=""/>
-                                <input type="hidden" id="channel_id" name="channel_id" value=""/>
-                            </form>
-                            <ul class="aside-filter-menu">
-                                {% for key, menu_item in menu %}
-                                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
-                                        {% if selectedMediaTaxonomy.current == menu_item.title %}
-                                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
-                                            {% else %}
-                                            <a href="{{ path(app.request.attributes.get('_route'),
-                                                app.request.query.all|
-                                                merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
-                                                merge({'media_taxonomy_id':menu_item.ID})|
-                                                merge({'page':1})
-                                            ) }}"
-                                               tabindex="-1"
-                                               role="menuitem"
-                                               class="media_category"
-                                               id="{{ menu_item.ID }}">
-                                                {% endif %}
-                                                <i class="iconoir-folder"></i>
-                                                <span>{{ menu_item.title|trans|capitalize }}</span>
-                                            </a>
-                                            {% if menu_item.children %}
-                                                <ul class="child-menu">
-                                                    {% for key_1, menu_item_1 in menu_item.children %}
-                                                        <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
-                                                            {% if selectedMediaTaxonomy.current == menu_item_1.title %}
-                                                            <a tabindex="-1" role="menuitem" class="media_category"
-                                                               id="{{ menu_item_1.ID }}">
-                                                                {% else %}
-                                                                <a href="{{ path(app.request.attributes.get('_route'),
-                                                                    app.request.query.all|
-                                                                    merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
-                                                                    merge({'media_taxonomy_id':menu_item_1.ID})|
-                                                                    merge({'page':1})
-                                                                ) }}"
-                                                                   tabindex="-1"
-                                                                   role="menuitem"
-                                                                   class="media_category"
-                                                                   id="{{ menu_item_1.ID }}">
-                                                                    {% endif %}
-                                                                    <i class="iconoir-folder"></i>
-                                                                    <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
-                                                                {% if menu_item_1.children %}
-                                                                    <ul class="child-menu">
-                                                                        {% for key_2, menu_item_2 in menu_item_1.children %}
-                                                                            <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
-                                                                                {% if selectedMediaTaxonomy.current == menu_item_2.title %}
-                                                                                <a tabindex="-1" role="menuitem"
-                                                                                   class="media_category"
-                                                                                   id="{{ menu_item_2.ID }}">
-                                                                                    {% else %}
-                                                                                    <a href="{{ path(app.request.attributes.get('_route'),
-                                                                                        app.request.query.all|
-                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title })|
-                                                                                        merge({'media_taxonomy_id':menu_item_2.ID})|
-                                                                                        merge({'page':1})
-                                                                                    ) }}"
-                                                                                       tabindex="-1"
-                                                                                       role="menuitem"
-                                                                                       class="media_category"
-                                                                                       id="{{ menu_item_2.ID }}">
-                                                                                        {% endif %}
-                                                                                        <i class="iconoir-folder"></i>
-                                                                                        <span>{{ menu_item_2.title|trans|capitalize }}</span>
-                                                                                    </a>
-                                                                            </li>
-                                                                        {% endfor %}
-                                                                    </ul>
-                                                                {% endif %}
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-        </div>
-        <div class="media-gallery">
+        <div class="media-gallery index-wrapper">
             <div class="page-title">
                 <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
                 <ul class="options-no-bg">
@@ -322,6 +217,120 @@
                 </div>
 
             </section>
+        </div>
+
+        <div class="aside-filters close-outside media-sidebar">
+            <aside>
+                <div class="aside-header">
+                    <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
+                            class="iconoir-cancel"></i></button>
+                    <span>{% trans %}Folders{% endtrans %}</span>
+                    <a href="{{ path('integrated_content_media_index') }}"
+                       class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <i class="iconoir-cancel"></i>
+                    </a>
+                </div>
+                <div class="aside-holder bg-white section-radius">
+                    <div class="aside-item-wrapper">
+                        <div class="aside-folder-header">
+                            <a href="{{ path(app.request.attributes.get('_route') ) }}">
+                                <i class="iconoir-folder"></i>
+                                <span class="p-4 text-black">{% trans %}All files{% endtrans %}</span>
+                            </a>
+                        </div>
+                        <div class="aside-item-list-container">
+                            <div class="aside-item-search">
+                                <i class="iconoir-search"></i>
+                                <input type="text" class="input_aside_folder_search list-search"
+                                       placeholder="{% trans %}Enter the name of a folder{% endtrans %}">
+                            </div>
+
+                            <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
+                                <input type="hidden" id="media_category_csrf" name="token"
+                                       value="{{ csrf_token('delete-item') }}"/>
+                                <input type="hidden" id="media_id" name="media_id" value=""/>
+                                <input type="hidden" id="category_id" name="category_id" value=""/>
+                                <input type="hidden" id="channel_id" name="channel_id" value=""/>
+                            </form>
+                            <ul class="aside-filter-menu">
+                                {% for key, menu_item in menu %}
+                                    <li class="menu-parent {% if selectedMediaTaxonomy.current == menu_item.title %}current-menu-item{% endif %}">
+                                        {% if selectedMediaTaxonomy.current == menu_item.title %}
+                                        <a tabindex="-1" role="menuitem" class="media_category" id="{{ menu_item.ID }}">
+                                            {% else %}
+                                            <a href="{{ path(app.request.attributes.get('_route'),
+                                                app.request.query.all|
+                                                merge({'MediaTaxonomy': menu_item.title == selectedMediaTaxonomy.default ? null : menu_item.title })|
+                                                merge({'media_taxonomy_id':menu_item.ID})|
+                                                merge({'page':1})
+                                            ) }}"
+                                               tabindex="-1"
+                                               role="menuitem"
+                                               class="media_category"
+                                               id="{{ menu_item.ID }}">
+                                                {% endif %}
+                                                <i class="iconoir-folder"></i>
+                                                <span>{{ menu_item.title|trans|capitalize }}</span>
+                                            </a>
+                                            {% if menu_item.children %}
+                                                <ul class="child-menu">
+                                                    {% for key_1, menu_item_1 in menu_item.children %}
+                                                        <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_1.title %}current-menu-item{% endif %}">
+                                                            {% if selectedMediaTaxonomy.current == menu_item_1.title %}
+                                                            <a tabindex="-1" role="menuitem" class="media_category"
+                                                               id="{{ menu_item_1.ID }}">
+                                                                {% else %}
+                                                                <a href="{{ path(app.request.attributes.get('_route'),
+                                                                    app.request.query.all|
+                                                                    merge({'MediaTaxonomy': menu_item_1.title == selectedMediaTaxonomy.default ? null : menu_item_1.title })|
+                                                                    merge({'media_taxonomy_id':menu_item_1.ID})|
+                                                                    merge({'page':1})
+                                                                ) }}"
+                                                                   tabindex="-1"
+                                                                   role="menuitem"
+                                                                   class="media_category"
+                                                                   id="{{ menu_item_1.ID }}">
+                                                                    {% endif %}
+                                                                    <i class="iconoir-folder"></i>
+                                                                    <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
+                                                                {% if menu_item_1.children %}
+                                                                    <ul class="child-menu">
+                                                                        {% for key_2, menu_item_2 in menu_item_1.children %}
+                                                                            <li class="menu-child {% if selectedMediaTaxonomy.current == menu_item_2.title %}current-menu-item{% endif %}">
+                                                                                {% if selectedMediaTaxonomy.current == menu_item_2.title %}
+                                                                                <a tabindex="-1" role="menuitem"
+                                                                                   class="media_category"
+                                                                                   id="{{ menu_item_2.ID }}">
+                                                                                    {% else %}
+                                                                                    <a href="{{ path(app.request.attributes.get('_route'),
+                                                                                        app.request.query.all|
+                                                                                        merge({'MediaTaxonomy': menu_item_2.title == selectedMediaTaxonomy.default ? null : menu_item_2.title })|
+                                                                                        merge({'media_taxonomy_id':menu_item_2.ID})|
+                                                                                        merge({'page':1})
+                                                                                    ) }}"
+                                                                                       tabindex="-1"
+                                                                                       role="menuitem"
+                                                                                       class="media_category"
+                                                                                       id="{{ menu_item_2.ID }}">
+                                                                                        {% endif %}
+                                                                                        <i class="iconoir-folder"></i>
+                                                                                        <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                                    </a>
+                                                                            </li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                {% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
