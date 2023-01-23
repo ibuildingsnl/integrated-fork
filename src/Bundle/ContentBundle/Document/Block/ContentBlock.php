@@ -67,8 +67,7 @@ class ContentBlock extends Block
             '4 Columns' => 4,
             '5 Columns' => 5,
         ],
-    ]
-    )]
+    ])]
     protected $gridSize;
 
     /**
