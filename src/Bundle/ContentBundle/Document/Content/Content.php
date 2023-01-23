@@ -36,8 +36,7 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface,
-                                  PublishableInterface, ConnectorInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -102,8 +101,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         'attr' => [
             'align_with_widget' => true,
             'location' => 'custom',
-            'style' => 'switcher'
-        ]
+            'style' => 'switcher',
+        ],
     ])]
     protected $disabled = false;
 
@@ -122,7 +121,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     #[Type\Field(options: [
         'label' => 'Copyright restrictions',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'copyright']
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'copyright'],
     ])]
     protected $copyrightRestrictions;
 
@@ -340,7 +339,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      *
      * @return ArrayCollection
      */
@@ -367,7 +366,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      *
      * @return Content|null
      */
@@ -446,8 +445,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * Get the published of the document.
      *
      * @return bool
-     * @deprecated
      *
+     * @deprecated
      */
     public function getPublished()
     {

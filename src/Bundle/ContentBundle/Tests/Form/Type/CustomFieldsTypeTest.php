@@ -35,7 +35,12 @@ class CustomFieldsTypeTest extends TypeTestCase
      */
     public function testSubmitValidData(array $data)
     {
-        $form = $this->factory->create(CustomFieldsType::class, [], ['contentType' => $this->getContentType()]);
+        $form = $this->factory->create(CustomFieldsType::class, [], [
+            'contentType' => $this->getContentType(),
+            'attr' => [
+                'style' => 'editor',
+            ],
+        ]);
         $form->submit($data);
 
         $this->assertTrue($form->isSynchronized());
@@ -95,7 +100,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField1');
 
         $customField1
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getType')
             ->willReturn(TextType::class);
 
@@ -110,7 +115,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField2');
 
         $customField2
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getType')
             ->willReturn(TextareaType::class);
 
@@ -125,7 +130,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField3');
 
         $customField3
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getType')
             ->willReturn(CheckboxType::class);
 
@@ -149,7 +154,10 @@ class CustomFieldsTypeTest extends TypeTestCase
     {
         $validator = $this->createMock('\Symfony\Component\Validator\Validator\ValidatorInterface');
         $validator->method('validate')->willReturn(new ConstraintViolationList());
-        $validator->method('getMetadataFor')->willReturn($this->getMockBuilder('\Symfony\Component\Validator\Mapping\ClassMetadata')->disableOriginalConstructor()->getMock());
+        $validator->method('getMetadataFor')->willReturn(
+            $this->getMockBuilder('\Symfony\Component\Validator\Mapping\ClassMetadata')->disableOriginalConstructor(
+            )->getMock()
+        );
 
         return [new ValidatorExtension($validator)];
     }

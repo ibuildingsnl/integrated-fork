@@ -28,8 +28,8 @@ class Comment extends Content
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $title;
 
@@ -40,8 +40,8 @@ class Comment extends Content
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $name;
 
@@ -52,8 +52,8 @@ class Comment extends Content
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $email;
 
@@ -65,8 +65,8 @@ class Comment extends Content
             'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
-            'placeholder' => 'Your comment starts here'
-        ]
+            'placeholder' => 'Your comment starts here',
+        ],
     ])]
     protected $comment;
 
@@ -152,7 +152,7 @@ class Comment extends Content
         }
 
         if (\strlen($this->comment) > 60) {
-            return substr($this->comment, 0, 60) . '...';
+            return substr($this->comment, 0, 60).'...';
         }
 
         return $this->comment;
@@ -163,6 +163,6 @@ class Comment extends Content
      */
     public function __toString()
     {
-        return (string)$this->getDescriptor();
+        return (string) $this->getDescriptor();
     }
 }

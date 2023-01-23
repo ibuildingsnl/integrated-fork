@@ -57,7 +57,7 @@ class LayoutLocator
                                 fclose($f);
 
                                 if (str_starts_with($line, '{#')) {
-                                    preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line , $matchedLine );
+                                    preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
                                     $this->layouts[$type][$matchedLine[0]] = $file->getRelativePathname();
                                 } else {
                                     $this->layouts[$type][$file->getRelativePathname()] = $file->getRelativePathname();

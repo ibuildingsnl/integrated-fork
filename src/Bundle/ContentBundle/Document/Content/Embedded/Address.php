@@ -11,17 +11,19 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
+use Integrated\Common\Form\Mapping\Attributes as Type;
+
 /**
  * Embedded document Address.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
+#[Type\Document('Embedded')]
 class Address
 {
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'horizontal']])]
     protected $type;
 
     /**
@@ -63,6 +65,12 @@ class Address
      * @var Location
      */
     protected $location;
+
+    /**
+     * @var int
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
+    protected $order;
 
     /**
      * Get the type of the document.
@@ -262,6 +270,26 @@ class Address
     public function setCountry($country)
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param int $order
+     *
+     * @return $this
+     */
+    public function setOrder($order)
+    {
+        $this->order = (int) $order;
 
         return $this;
     }

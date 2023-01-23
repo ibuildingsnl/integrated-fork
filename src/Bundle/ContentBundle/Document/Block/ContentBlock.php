@@ -40,8 +40,8 @@ class ContentBlock extends Block
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
         'attr' => [
             'min' => 0,
-            'label' => 'Items per page'
-        ]
+            'label' => 'Items per page',
+        ],
     ])]
     protected $itemsPerPage = 10;
 
@@ -85,7 +85,7 @@ class ContentBlock extends Block
         'add_button_text' => 'Add Facet field',
         'allow_delete' => true,
         'required' => false,
-        'attr' => ['show_headings' => 'false']
+        'attr' => ['show_headings' => 'false'],
     ])]
     protected $facetFields = [];
 

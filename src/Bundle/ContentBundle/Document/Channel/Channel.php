@@ -206,8 +206,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param array $domains
-     *
      * @return $this
      */
     public function setDomains(array $domains)

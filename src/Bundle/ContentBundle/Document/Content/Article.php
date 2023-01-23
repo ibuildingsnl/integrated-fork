@@ -40,8 +40,8 @@ class Article extends Content implements RankableInterface
             'location' => 'editor',
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
-            'style' => 'horizontal'
-        ]
+            'style' => 'horizontal',
+        ],
     ])]
     protected $title;
 
@@ -54,8 +54,8 @@ class Article extends Content implements RankableInterface
             'location' => 'editor',
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',
-            'placeholder' => 'Your content starts here'
-        ]
+            'placeholder' => 'Your content starts here',
+        ],
     ])]
     protected $content;
 
@@ -77,7 +77,7 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
         'label' => 'Authors',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'user']
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'user'],
     ])]
     protected $authors;
 
@@ -92,7 +92,7 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'label' => 'Source URL',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'open-new-window']
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'open-new-window'],
     ])]
     protected $sourceUrl;
 
@@ -108,8 +108,8 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $intro;
 
@@ -120,8 +120,8 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',
-            'icon' => 'message-text'
-        ]
+            'icon' => 'message-text',
+        ],
     ])]
     protected $description;
 
@@ -132,8 +132,8 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',
-            'icon' => 'pin-alt'
-        ]
+            'icon' => 'pin-alt',
+        ],
     ])]
     protected $address;
 
@@ -454,6 +454,6 @@ class Article extends Content implements RankableInterface
      */
     public function __toString()
     {
-        return (string)$this->title;
+        return (string) $this->title;
     }
 }

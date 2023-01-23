@@ -142,6 +142,14 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->with(ConfigureMenuSubscriber::MENU_MANAGE)
             ->willReturn($menuManage)
         ;
+
+        $menuManage
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-settings')
+            ->willReturnSelf()
+        ;
+
         $menuManage
             ->expects($this->atLeastOnce())
             ->method('addChild')
