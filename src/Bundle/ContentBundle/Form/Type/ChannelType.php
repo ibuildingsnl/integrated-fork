@@ -58,7 +58,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'precision-tool'
+                    'icon' => 'precision-tool',
                 ],
             ]
         );
@@ -73,7 +73,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'droplet'
+                    'icon' => 'droplet',
                 ],
             ]
         );
@@ -87,11 +87,10 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'droplet'
+                    'icon' => 'droplet',
                 ],
             ]
         );
-
 
         $builder->add(
             'logo',
@@ -101,7 +100,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'media-image'
+                    'icon' => 'media-image',
                 ],
             ]
         );
@@ -113,7 +112,6 @@ class ChannelType extends AbstractType
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
             'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
-
         ]);
 
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
@@ -125,7 +123,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'key-alt-back'
+                    'icon' => 'key-alt-back',
                 ],
             ])->add(
                 'permissions',
@@ -143,7 +141,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'tools'
+                    'icon' => 'tools',
                 ],
             ])->add(
                 'primaryDomainRedirect',

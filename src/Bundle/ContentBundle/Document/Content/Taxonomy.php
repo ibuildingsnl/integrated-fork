@@ -49,8 +49,8 @@ class Taxonomy extends Content implements RankableInterface
             'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
-            'placeholder' => 'Your taxonomy description starts here'
-        ]
+            'placeholder' => 'Your taxonomy description starts here',
+        ],
     ])]
     protected $description;
 
@@ -131,6 +131,6 @@ class Taxonomy extends Content implements RankableInterface
      */
     public function __toString()
     {
-        return (string)$this->title;
+        return (string) $this->title;
     }
 }

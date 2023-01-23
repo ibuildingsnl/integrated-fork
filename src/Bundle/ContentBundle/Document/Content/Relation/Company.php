@@ -32,8 +32,8 @@ class Company extends Relation
             'location' => 'editor',
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
-            'style' => 'horizontal'
-        ]
+            'style' => 'horizontal',
+        ],
     ])]
     protected $name;
 
@@ -51,8 +51,8 @@ class Company extends Relation
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',
-            'icon' => 'media-image'
-        ]
+            'icon' => 'media-image',
+        ],
     ])]
     protected $logo;
 
@@ -186,6 +186,6 @@ class Company extends Relation
      */
     public function __toString()
     {
-        return (string)$this->name;
+        return (string) $this->name;
     }
 }

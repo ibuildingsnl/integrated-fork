@@ -114,7 +114,7 @@ class StateType extends AbstractType
         ]);
 
         $builder->add('order', Type\HiddenType::class, [
-            'attr' => ['data-itemorder' => 'collection']
+            'attr' => ['data-itemorder' => 'collection'],
         ]);
 
         if ($options['transitions'] == 'data') {

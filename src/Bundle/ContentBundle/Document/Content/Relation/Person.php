@@ -31,7 +31,7 @@ class Person extends Relation
      */
     #[Type\Field(options: [
         'label' => 'First name',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
     ])]
     protected $firstName;
 
@@ -40,7 +40,7 @@ class Person extends Relation
      */
     #[Type\Field(options: [
         'label' => 'Last name',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
     ])]
     protected $lastName;
 
@@ -50,7 +50,7 @@ class Person extends Relation
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
         'placeholder' => 'Select gender',
         'choices' => ['Male' => 'Male', 'Female' => 'Female'],
-        'attr' => ['style' => 'sidebar', 'location' => 'sidebar', 'state' => 'show', 'icon' => 'female']
+        'attr' => ['style' => 'sidebar', 'location' => 'sidebar', 'state' => 'show', 'icon' => 'female'],
     ])]
     protected $gender;
 
@@ -86,8 +86,8 @@ class Person extends Relation
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',
-            'icon' => 'media-image'
-        ]
+            'icon' => 'media-image',
+        ],
     ])]
     protected $picture;
 
@@ -337,6 +337,6 @@ class Person extends Relation
      */
     public function __toString()
     {
-        return trim((string)$this->firstName . ' ' . (string)$this->lastName);
+        return trim((string) $this->firstName.' '.(string) $this->lastName);
     }
 }

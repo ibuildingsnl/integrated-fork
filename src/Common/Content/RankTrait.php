@@ -25,8 +25,7 @@ trait RankTrait
             'location' => 'sidebar',
             'icon' => 'numbered-list-left',
             'style' => 'sidebar',
-        ]
-
+        ],
     ])]
     protected $rank;
 

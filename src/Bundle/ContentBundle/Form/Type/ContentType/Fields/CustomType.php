@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType\Fields;
 
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\CustomTransformer;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 use Integrated\Common\ContentType\Form\Custom\Type\RegistryInterface;
 use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 use Symfony\Component\Form\AbstractType;

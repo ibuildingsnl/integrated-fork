@@ -21,7 +21,7 @@ trait ParentIDTrait
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentParentIDType', options: [
         'label' => 'Parent',
         'route' => 'integrated_content_parent_id_lookup',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show']
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show'],
     ])]
     protected $parent_id;
 

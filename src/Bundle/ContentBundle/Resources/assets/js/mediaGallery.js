@@ -10,8 +10,8 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-import UppyDutch from '@uppy/locales/lib/nl_NL'
-global.UppyDutch = UppyDutch
+// import UppyDutch from '@uppy/locales/lib/nl_NL'
+// global.UppyDutch = UppyDutch
 
 $('.button_enable_grid_view').bind( "click", function() {
     enable_grid_view()

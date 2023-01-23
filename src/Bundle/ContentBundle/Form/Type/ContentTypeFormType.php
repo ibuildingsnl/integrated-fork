@@ -36,7 +36,7 @@ class ContentTypeFormType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Name',
-                'attr' => ['style' => 'inline']
+                'attr' => ['style' => 'inline'],
             ])
             ->add('fields', FieldsType::class, ['metadata' => $metadata])
             ->add('channels', ContentTypeChannelsType::class, ['property_path' => 'options[channels]']);
@@ -53,13 +53,13 @@ class ContentTypeFormType extends AbstractType
         ]);
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create(
-                'options_' . $option->getName(),
+                'options_'.$option->getName(),
                 $option->getType(),
                 [
                     'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'stackoverflow'],
-                    'label' => ucfirst($option->getName())
+                    'label' => ucfirst($option->getName()),
                 ] + $option->getOptions()
-            )->setPropertyPath('options[' . $option->getName() . ']');
+            )->setPropertyPath('options['.$option->getName().']');
 
             $builder->add($ype);
         }

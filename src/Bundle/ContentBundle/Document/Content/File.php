@@ -33,8 +33,8 @@ class File extends Content implements FileInterface
             'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
-            'icon' => 'link'
-        ]
+            'icon' => 'link',
+        ],
     ])]
     protected $slug;
 
@@ -46,7 +46,7 @@ class File extends Content implements FileInterface
             'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
-        ]
+        ],
     ])]
     protected $file;
 
@@ -57,8 +57,8 @@ class File extends Content implements FileInterface
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $title;
 
@@ -69,8 +69,8 @@ class File extends Content implements FileInterface
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $description;
 
@@ -82,8 +82,8 @@ class File extends Content implements FileInterface
             'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
-            'icon' => 'copyright'
-        ]
+            'icon' => 'copyright',
+        ],
     ])]
     protected $credits;
 

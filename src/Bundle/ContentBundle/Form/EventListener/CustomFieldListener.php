@@ -44,7 +44,7 @@ class CustomFieldListener implements EventSubscriberInterface
                     'contentType' => $type,
                     'attr' => [
                         'style' => 'editor',
-                    ]
+                    ],
                 ]);
 
                 return;

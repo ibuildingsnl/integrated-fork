@@ -44,8 +44,8 @@ abstract class Relation extends Content implements RankableInterface
             'location' => 'editor',
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',
-            'placeholder' => 'Your content starts here'
-        ]
+            'placeholder' => 'Your content starts here',
+        ],
     ])]
     protected $description;
 
@@ -57,7 +57,7 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Phonenumber',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
     ])]
     protected $phonenumbers;
 
@@ -68,8 +68,8 @@ abstract class Relation extends Content implements RankableInterface
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ])]
     protected $email;
 
@@ -82,7 +82,7 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Address',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
     ])]
     protected $addresses;
 
@@ -185,7 +185,7 @@ abstract class Relation extends Content implements RankableInterface
      * Add phonenumber to phonenumbers collection.
      *
      * @param string|Phonenumber $phonenumber
-     * @param string $type
+     * @param string             $type
      *
      * @return $this
      */

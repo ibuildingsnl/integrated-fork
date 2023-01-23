@@ -17,9 +17,10 @@ class TwigBodyClass extends AbstractExtension
     public static function bodyClass($bodyClass)
     {
         preg_match_all('/(?:[^_]*_\s*){2}(.*)/', $bodyClass, $stripped);
-        if (count($stripped) > 1) {
+        if (\count($stripped) > 1) {
             $bodyClass = $stripped[1][0];
         }
+
         return $bodyClass;
     }
 }

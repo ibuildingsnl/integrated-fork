@@ -32,7 +32,7 @@ class Image extends File
             'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
-        ]
+        ],
     ])]
     protected $file;
 }

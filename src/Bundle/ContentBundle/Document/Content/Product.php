@@ -36,8 +36,8 @@ class Product extends Content
             'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
-            'placeholder' => 'Your product content starts here'
-        ]
+            'placeholder' => 'Your product content starts here',
+        ],
     ])]
     protected $content;
 
@@ -88,8 +88,6 @@ class Product extends Content
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
     protected $description;
-
-
 
     /**
      * Constructor.

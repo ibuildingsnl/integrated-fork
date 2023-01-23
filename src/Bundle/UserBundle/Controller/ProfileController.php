@@ -12,12 +12,12 @@
 namespace Integrated\Bundle\UserBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Symfony\Component\Form\FormInterface;
 use Integrated\Bundle\UserBundle\Form\Type\ProfileFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
