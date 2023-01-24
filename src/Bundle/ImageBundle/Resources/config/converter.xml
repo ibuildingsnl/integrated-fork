@@ -1,37 +1,32 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-
-        <parameter key="integrated_image.converter_magick">Integrated\Bundle\ImageBundle\Converter\Adapter\ImageMagickAdapter</parameter>
-        <parameter key="integrated_image.container_converter">Integrated\Bundle\ImageBundle\Converter\Container</parameter>
-        <parameter key="integrated_image.converter_web_format">Integrated\Bundle\ImageBundle\Converter\WebFormatConverter</parameter>
 
         <parameter key="integrated_image.converter.web_format">png</parameter>
 
     </parameters>
 
-
     <services>
 
-        <service id="integrated_image.container_converter" class="%integrated_image.container_converter%" />
+        <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="integrated_image.converter_imagemagick" class="%integrated_image.converter_magick%">
+        <service id="integrated_image.container_converter" class="Integrated\Bundle\ImageBundle\Converter\Container" />
+
+        <service id="integrated_image.converter_imagemagick" class="Integrated\Bundle\ImageBundle\Converter\Adapter\ImageMagickAdapter">
             <argument type="service" id="integrated_storage.cache_app" />
 
             <tag name="integrated_image.converter" />
         </service>
 
-        <service id="integrated_image.converter_web_format" class="%integrated_image.converter_web_format%">
-
+        <service id="integrated_image.converter_web_format" class="Integrated\Bundle\ImageBundle\Converter\WebFormatConverter">
             <argument type="service" id="integrated_image.container_converter" />
             <argument type="service" id="integrated_image.format_web" />
             <argument type="service" id="integrated_storage.cache_app" />
             <argument>%integrated_image.converter.web_format%</argument>
-
         </service>
 
     </services>

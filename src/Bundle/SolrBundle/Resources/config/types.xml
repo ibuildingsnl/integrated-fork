@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_solr.type.property_accessor" class="Symfony\Component\PropertyAccess\PropertyAccessor">
             <argument>0</argument>
         </service>

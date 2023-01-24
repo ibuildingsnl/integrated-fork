@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,12 +6,13 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\ContentHistoryBundle\History\Cleaner">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
-        <service id="Integrated\Bundle\ContentHistoryBundle\History\Parser">
-        </service>
+        <service id="Integrated\Bundle\ContentHistoryBundle\History\Parser" />
 
     </services>
 

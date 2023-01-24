@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_content.block_handler.content" class="Integrated\Bundle\ContentBundle\Block\ContentBlockHandler">
             <argument type="service" id="integrated_content.provider.solarium" />
@@ -28,7 +30,7 @@
             <tag name="integrated.block" type="form" />
         </service>
 
-        <service id="integrated_content.block_handler.search" class="%integrated_block.block_handler.class%">
+        <service id="integrated_content.block_handler.search" class="Integrated\Bundle\BlockBundle\Block\BlockHandler">
             <tag name="integrated.block" type="search" />
         </service>
 

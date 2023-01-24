@@ -3,7 +3,10 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
 	<services>
+
+        <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_form_type.form_type.date_time_type" class="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType">
             <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
@@ -97,4 +100,5 @@
         </service>
 
     </services>
+
 </container>

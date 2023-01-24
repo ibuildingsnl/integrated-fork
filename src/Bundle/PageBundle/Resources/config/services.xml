@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_page.layout_locator" class="Integrated\Bundle\PageBundle\Locator\LayoutLocator">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
         </service>
