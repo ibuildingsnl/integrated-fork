@@ -63,19 +63,24 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: [
+        'priority' => 500,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: [
+        'priority' => 500,
+        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
     protected $subtitle;
 
     /**
      * @var ArrayCollection Embedded\Author[]
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
+        'priority' => 460,
         'label' => 'Authors',
         'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'user'],
     ])]
@@ -84,13 +89,16 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'megaphone']])]
+    #[Type\Field(options: [
+        'priority' => 450,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'megaphone']])]
     protected $source;
 
     /**
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
+        'priority' => 440,
         'label' => 'Source URL',
         'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'open-new-window'],
     ])]
@@ -105,6 +113,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'priority' => 490,
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
@@ -117,6 +126,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'priority' => 420,
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',
@@ -129,6 +139,7 @@ class Article extends Content implements RankableInterface
      * @var Embedded\Address
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
+        'priority' => 430,
         'attr' => [
             'location' => 'sidebar',
             'style' => 'sidebar',

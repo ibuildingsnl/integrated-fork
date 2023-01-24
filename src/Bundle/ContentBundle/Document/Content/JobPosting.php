@@ -22,19 +22,25 @@ class JobPosting extends Article
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: [
+        'priority' => 490,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
     protected $jobTitle;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'euro']])]
+    #[Type\Field(options: [
+        'priority' => 480,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'euro']])]
     protected $salary;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: [
+        'priority' => 470,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
     protected $applyUrl;
 
     /**

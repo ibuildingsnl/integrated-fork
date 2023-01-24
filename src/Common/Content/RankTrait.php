@@ -19,6 +19,7 @@ trait RankTrait
      * @var string|null
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentRankType', options: [
+        'priority' => 250,
         'label' => 'Rank',
         'route' => 'integrated_content_rank_lookup',
         'attr' => [
