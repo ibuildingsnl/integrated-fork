@@ -96,7 +96,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
             'placeholder' => 'Don\'t change status',
 
-//            'expanded' => true,
             'mapped' => false,
             'required' => false,
             'attr' => ['class' => 'next-status-choice'],
