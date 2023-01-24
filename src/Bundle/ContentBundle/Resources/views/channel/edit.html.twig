@@ -36,10 +36,13 @@
                 <h1 class="heading">{% trans %}Edit {% endtrans %} {{ channel.name }}</h1>
             </div>
             <section class="editor">
+                {{ form_errors(form) }}
+
                 {% block content_form %}
                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
                         {{ form_row(child) }}
                     {% endfor %}
+
                     {{ form_rest(form, {'style':'editor', 'state':'show'})}}
                 {% endblock %}
             </section>

@@ -12,32 +12,34 @@
         <aside>
             <div class="aside-holder">
                 {% block sidebar %}
-                <div class="aside-header">
-                    <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button"><i class="iconoir-cancel"></i>
-                    </button>
-                    <span>{% trans %}Options{% endtrans %}</span>
-                </div>
-                {% if form.location is defined %}
-                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.icon is defined %}
-                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'iconoir', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.options is defined %}
-                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                {% endif %}
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button"><i class="iconoir-cancel"></i>
+                        </button>
+                        <span>{% trans %}Options{% endtrans %}</span>
+                    </div>
+                    {% block content_meta %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                            {{ form_row(child) }}
+                        {% endfor %}
+                    {% endblock %}
                 {% endblock %}
             </div>
         </aside>
     </div>
     <div class="editor-wrapper">
         <div class="page-title">
-            <h1 class="heading">{% trans %}New{% endtrans %} {% trans %}relation{% endtrans %}</h1>
+            <h1 class="heading">{% trans %}New relation{% endtrans %}</h1>
         </div>
-        <section class="editor">
-            <section class="section-white section-padding section-radius">
+        <section class="editor editor-wrapped">
+            {{ form_errors(form) }}
+
+            {% block content_form %}
+                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                    {{ form_row(child) }}
+                {% endfor %}
+
                 {{ form_rest(form, {'style':'horizontal'}) }}
-            </section>
+            {% endblock %}
         </section>
     </div>
     {% block form_end %}
