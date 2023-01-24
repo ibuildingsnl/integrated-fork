@@ -74,6 +74,12 @@ class RelationType extends AbstractType
                         'Sidebar' => Embedded\Relation::LOCATION_SIDEBAR,
                         'Editor' => Embedded\Relation::LOCATION_EDITOR,
                     ],
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'precision-tool',
+                    ],
                 ]
             )->add(
                 'icon',
@@ -81,35 +87,49 @@ class RelationType extends AbstractType
                 [
                     'attr' => [
                         'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'iconoir',
                     ],
                 ]
             )
             ->add(
-                $builder->create('options', FormType::class, ['inherit_data' => true])
-                        ->add(
-                            'multiple',
-                            CheckboxType::class,
-                            [
-                                'label' => ' ',
-                                'required' => false,
-                                'attr' => [
-                                    'align_with_widget' => true,
-                                    'style' => 'switcher',
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'required',
-                            CheckboxType::class,
-                            [
-                                'label' => ' ',
-                                'required' => false,
-                                'attr' => [
-                                    'align_with_widget' => true,
-                                    'style' => 'switcher',
-                                ],
-                            ]
-                        )
+                $builder->create(
+                    'options',
+                    FormType::class,
+                    [
+                        'inherit_data' => true,
+                        'attr' => [
+                            'style' => 'sidebar',
+                            'location' => 'sidebar',
+                            'state' => 'show',
+                            'icon' => 'tools',
+                        ],
+                    ]
+                )->add(
+                    'multiple',
+                    CheckboxType::class,
+                    [
+                        'label' => ' ',
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                            'style' => 'switcher',
+                        ],
+                    ]
+                )->add(
+                    'required',
+                    CheckboxType::class,
+                    [
+                        'label' => ' ',
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                            'style' => 'switcher',
+                        ],
+                    ]
+                )
             );
     }
 

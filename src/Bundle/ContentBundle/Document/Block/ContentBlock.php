@@ -41,6 +41,10 @@ class ContentBlock extends Block
         'attr' => [
             'min' => 0,
             'label' => 'Items per page',
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'grid-add',
         ],
     ])]
     protected $itemsPerPage = 10;
@@ -51,7 +55,14 @@ class ContentBlock extends Block
     #[Assert\Length(min: 0)]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
         'required' => false,
-        'attr' => ['min' => 0, 'label' => 'Max items'],
+        'attr' => [
+            'min' => 0,
+            'label' => 'Max items',
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'tools',
+        ],
     ])]
     protected $maxItems;
 
@@ -66,6 +77,12 @@ class ContentBlock extends Block
             '3 Columns' => 3,
             '4 Columns' => 4,
             '5 Columns' => 5,
+        ],
+        'attr' => [
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'view-grid',
         ],
     ])]
     protected $gridSize;
@@ -92,7 +109,7 @@ class ContentBlock extends Block
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
+    #[Type\Field(options: ['attr' => ['class' => 'main-title'], 'priority' => 999])]
     protected $title;
 
     /**

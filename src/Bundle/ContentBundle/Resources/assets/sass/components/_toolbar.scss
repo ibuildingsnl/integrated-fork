@@ -63,12 +63,6 @@
                 display: flex;
             }
         }
-
-
-        //.preview {
-        //    padding: 9px;
-        //    align-items: unset;
-        //}
     }
 
     .back {
@@ -88,11 +82,7 @@
     }
 
     .toggle-settings {
-        //display: none;
         padding: 0 0.8rem;
-        @include media(max-lg) {
-            //display: inherit;
-        }
 
         &.hidden {
             display: none !important;

@@ -107,10 +107,11 @@
                 {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
                 {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
             {% else %}
-                {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+                {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
+                {% set prototype_html = prototype_html ~ '</div></div>' %}
             {% endif %}
             {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
 

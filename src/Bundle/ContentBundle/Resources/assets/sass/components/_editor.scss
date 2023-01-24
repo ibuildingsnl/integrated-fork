@@ -2,10 +2,6 @@ textarea#integrated_content_content {
     display: none;
 }
 
-//div#integrated_content_content_container {
-//    min-height: 500px;
-//}
-
 .title_tinymce {
     position: absolute;
     display: flex;
@@ -161,7 +157,6 @@ body[class*="edit"], body[class*="new"] {
             }
 
             .panel {
-                //padding-bottom: 1rem;
                 &.in {
                     .panel-heading {
                         background: #eaf7fe;

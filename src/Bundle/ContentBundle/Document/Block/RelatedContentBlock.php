@@ -85,21 +85,43 @@ class RelatedContentBlock extends Block
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['choices' => ['asc' => 'asc', 'desc' => 'desc']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            'Ascending' => 'asc',
+            'Descending' => 'desc',
+        ],
+    ])]
     protected $sortDirection;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'attr' => [
+            'min' => 0,
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'grid-add',
+        ],
+    ])]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'required' => false,
+        'attr' => [
+            'min' => 0,
+            'location' => 'sidebar',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'tools',
+        ],
+    ])]
     protected $maxItems;
 
     /**

@@ -166,12 +166,6 @@ label {
 
     .search-form {
         width: 100%;
-        @include media(max-md) {
-            //padding: 8px 0;
-            //margin: 0;
-            //border: none;
-            //box-shadow: none;
-        }
 
         .form-control {
             line-height: inherit;

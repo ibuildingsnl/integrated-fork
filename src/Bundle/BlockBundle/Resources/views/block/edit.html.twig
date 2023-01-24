@@ -63,18 +63,11 @@
                                 </div>
                             </div>
                         </div>
-                        {% if form.itemsPerPage is defined %}
-                            {{ form_row(form.itemsPerPage, {'style': 'sidebar', 'icon':'grid-add', 'state': 'show'}) }}
-                        {% endif %}
-                        {% if form.maxItems is defined %}
-                            {{ form_row(form.maxItems, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                        {% endif %}
-                        {% if form.gridSize is defined %}
-                            {{ form_row(form.gridSize, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                        {% endif %}
-                        {% if form.groups is defined %}
-                            {{ form_row(form.groups, {'style': 'sidebar', 'icon':'group', 'state': 'show'}) }}
-                        {% endif %}
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                                {{ form_row(child) }}
+                            {% endfor %}
+                        {% endblock %}
                     {% endblock %}
                 </div>
             </aside>
@@ -87,11 +80,13 @@
                 <div id="integrated_block_block">
                     {{ form_errors(form) }}
 
-                    {% if form.title is defined %}
-                        {{ form_row(form.title, {'style': 'horizontal'}) }}
-                    {% endif %}
+                    {% block content_form %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                            {{ form_row(child) }}
+                        {% endfor %}
 
-                    {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
+                        {{ form_rest(form, {'style':'horizontal'}) }}
+                    {% endblock %}
                 </div>
             </section>
         </div>
