@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true" />
+
         <service id="Integrated\Bundle\WorkflowBundle\Command\IndexCommand">
             <argument type="service" id="Integrated\Bundle\WorkflowBundle\Service\StateManager"/>
             <argument type="service" id="integrated_content.resolver"/>

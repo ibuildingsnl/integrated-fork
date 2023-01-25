@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true" />
+
         <service id="integrated_workflow.lock.flock" class="Symfony\Component\Lock\Store\FlockStore" />
 
         <service id="integrated_workflow.lock.store" class="Symfony\Component\Lock\Store\RetryTillSaveStore">
