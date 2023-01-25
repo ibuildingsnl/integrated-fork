@@ -610,6 +610,10 @@
                 <source>No results with this selection.</source>
                 <target>Geen resultaten met deze selectie.</target>
             </trans-unit>
+            <trans-unit id="155">
+                <source>Keep current selection</source>
+                <target>Behoud huidige selectie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
