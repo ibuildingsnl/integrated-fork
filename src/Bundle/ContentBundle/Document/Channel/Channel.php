@@ -79,6 +79,11 @@ class Channel implements ChannelInterface
     protected $contacts;
 
     /**
+     * @var Socials[]|Collection
+     */
+    protected $socials;
+
+    /**
      * @var mixed[]
      */
     protected $options = [];
@@ -215,6 +220,52 @@ class Channel implements ChannelInterface
     public function removeContact(Contact $contact)
     {
         return $this->contacts->removeElement($contact);
+    }
+
+    /**
+     * Get the Socials of the document.
+     *
+     * @return Socials[]
+     */
+    public function getSocials()
+    {
+        return $this->socials;
+    }
+
+    /**
+     * Set the Socials of the document.
+     *
+     * @return $this
+     */
+    public function setSocials(Collection $socials)
+    {
+        $this->socials = $socials;
+
+        return $this;
+    }
+
+    /**
+     * Add Socials to Socials collection.
+     *
+     * @param Socials $socials
+     *
+     * @return $this
+     */
+    public function addSocials(Socials $socials = null)
+    {
+        if ($socials !== null) {
+            $this->socials->add($socials);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeSocials(Socials $socials)
+    {
+        return $this->socials->removeElement($socials);
     }
 
     /**

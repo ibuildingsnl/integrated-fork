@@ -122,6 +122,10 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="integrated_content.form.type.socials" class="Integrated\Bundle\ContentBundle\Form\Type\SocialsType">
+            <tag name="form.type"/>
+        </service>
+
 
         <service id="integrated_formtype_form_type_author" class="Integrated\Bundle\ContentBundle\Form\Type\AuthorType">
             <argument type="service" id="doctrine_mongodb"/>

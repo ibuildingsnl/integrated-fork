@@ -28,7 +28,13 @@
 
         <embed-many
             field="contacts"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact" />
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact"
+        />
+
+        <embed-many
+            field="socials"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials"
+        />
 
         <embed-many
                 field="permissions"

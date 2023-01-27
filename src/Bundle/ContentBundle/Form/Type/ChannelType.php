@@ -12,9 +12,10 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
-use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -122,14 +123,23 @@ class ChannelType extends AbstractType
             'priority' => 500,
             'attr' => ['class' => 'primary-domain-input']]);
 
-        $builder->add('contacts', SortableCollectionType::class, [
+        $builder->add('contacts', CollectionType::class, [
             'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\ContactType',
             'priority' => 490,
-            'default_title' => 'New contact',
             'allow_add' => true,
             'allow_delete' => true,
             'add_button_text' => 'Add contact',
             'label' => 'Address',
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+        ]);
+
+        $builder->add('socials', CollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialsType',
+            'priority' => 480,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'add_button_text' => 'Add social',
+            'label' => 'Socials',
             'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
