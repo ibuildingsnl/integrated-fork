@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -71,6 +72,11 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $primaryDomainRedirect;
+
+    /**
+     * @var Contact[]|Collection
+     */
+    protected $contacts;
 
     /**
      * @var mixed[]
@@ -163,6 +169,52 @@ class Channel implements ChannelInterface
         $this->logo = $logo;
 
         return $this;
+    }
+
+    /**
+     * Get the Contacts of the document.
+     *
+     * @return Contact[]
+     */
+    public function getContacts()
+    {
+        return $this->contacts;
+    }
+
+    /**
+     * Set the Contacts of the document.
+     *
+     * @return $this
+     */
+    public function setContacts(Collection $contacts)
+    {
+        $this->contacts = $contacts;
+
+        return $this;
+    }
+
+    /**
+     * Add Contact to Contacts collection.
+     *
+     * @param Contact $contact
+     *
+     * @return $this
+     */
+    public function addContact(Contact $contact = null)
+    {
+        if ($contact !== null) {
+            $this->contacts->add($contact);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeContact(Contact $contact)
+    {
+        return $this->contacts->removeElement($contact);
     }
 
     /**
