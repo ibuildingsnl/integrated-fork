@@ -25,6 +25,7 @@ class Comment extends Content
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 999,
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
@@ -37,6 +38,7 @@ class Comment extends Content
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 990,
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
@@ -49,6 +51,7 @@ class Comment extends Content
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+        'priority' => 980,
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',
@@ -61,6 +64,7 @@ class Comment extends Content
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 970,
         'attr' => [
             'location' => 'editor',
             'style' => 'editor',

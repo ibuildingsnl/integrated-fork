@@ -60,7 +60,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @var string
      */
     #[Slug(fields: ['id'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar']])]
+    #[Type\Field(options: [
+        'priority' => 500,
+        'attr' => ['location' => 'sidebar', 'style' => 'sidebar']])]
     protected $slug;
 
     /**
