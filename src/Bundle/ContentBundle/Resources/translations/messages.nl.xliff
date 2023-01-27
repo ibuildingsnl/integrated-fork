@@ -244,7 +244,7 @@
                 <source>The document is currently locked by your self in a different browser or tab and can not be
                     edited until this lock is released.
                 </source>
-                <target>Het document is op dit moment in gebruik bij u zelf in een ander venster. Sluit het venster af
+                <target>Het document is op dit moment in gebruik bij uzelf in een ander venster. Sluit het venster af
                     of wacht tot het document weer beschikbaar komt.
                 </target>
             </trans-unit>
@@ -702,7 +702,7 @@
             </trans-unit>
             <trans-unit id="176">
                 <source>Please confirm that you wish to execute the following actions on the selected content items (%selection%)</source>
-                <target>Bevestig dat je wilt de onderstaande bewerking wilt uitvoeren op de %selection% geselecteerde items</target>
+                <target>Bevestig dat je de onderstaande bewerking wilt uitvoeren op de %selection% geselecteerde items</target>
             </trans-unit>
             <trans-unit id="177">
                 <source>Confirm</source>
@@ -727,6 +727,98 @@
             <trans-unit id="182">
                 <source>Change content type</source>
                 <target>Contenttype wijzigen</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>Alle mediafiles</source>
+                <target>Alle mediabestanden</target>
+            </trans-unit>
+            <trans-unit id="184">
+                <source>All dates</source>
+                <target>Alle datums</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>Bulkselection</source>
+                <target>Bulkselectie</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>Image</source>
+                <target>Afbeelding</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>All files</source>
+                <target>Alle bestanden</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>Folders</source>
+                <target>Mappen</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>Publish date</source>
+                <target>Publicatiedatum</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>Remove active filters</source>
+                <target>Verwijder actieve filters</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>PublishTime</source>
+                <target>Publicatie tijdstip</target>
+            </trans-unit>
+            <trans-unit id="192">
+                <source>Source URL</source>
+                <target>Bron url</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>Copyright restrictions</source>
+                <target>Copyright restricties</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>Custom Fields</source>
+                <target>Custom velden</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>Add custom field</source>
+                <target>Custom veld toevoegen</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>Publication</source>
+                <target>Publiceren</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>Publish items on selected channels</source>
+                <target>Publiceer items op geselecteerde kanalen</target>
+            </trans-unit>
+            <trans-unit id="198">
+                <source>Disable for publication</source>
+                <target>Publiceren uitschakelen</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>None</source>
+                <target>Geen</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>Jobs</source>
+                <target>Functies</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>Reference</source>
+                <target>Referentie</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>Price</source>
+                <target>Prijs</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>Stock quantity</source>
+                <target>Voorraad</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>Draft</source>
+                <target>Concept</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>Orderable</source>
+                <target>Sorteerbaar</target>
             </trans-unit>
             <trans-unit id="">
                 <source>No results with this selection.</source>
