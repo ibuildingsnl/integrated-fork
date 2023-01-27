@@ -23,7 +23,7 @@ class ContentItemsBlock extends Block
     /**
      * @var ArrayCollection
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: ['priority' => 450])]
     protected $items;
 
     /**

@@ -34,7 +34,7 @@ abstract class Block implements BlockInterface
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field]
+    #[Type\Field(options: ['priority' => 999])]
     protected $title;
 
     /**
@@ -55,19 +55,25 @@ abstract class Block implements BlockInterface
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['priority' => 550])]
     protected $publishedAt;
 
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
+        'priority' => 540,
+        'required' => false])]
     protected $publishedUntil;
 
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'label' => ' ', 'attr' => ['align_with_widget' => true, 'style' => 'switcher']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
+        'priority' => 150,
+        'required' => false,
+        'label' => ' ',
+        'attr' => ['align_with_widget' => true, 'style' => 'switcher']])]
     protected $disabled = false;
 
     /**

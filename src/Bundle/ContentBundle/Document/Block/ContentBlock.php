@@ -30,7 +30,9 @@ class ContentBlock extends Block
     /**
      * @var SearchSelection
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionChoiceType')]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionChoiceType', options: [
+        'priority' => 500,
+    ])]
     protected $searchSelection;
 
     /**
@@ -38,6 +40,7 @@ class ContentBlock extends Block
      */
     #[Assert\Length(min: 0)]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'priority' => 500,
         'attr' => [
             'min' => 0,
             'label' => 'Items per page',
@@ -54,6 +57,7 @@ class ContentBlock extends Block
      */
     #[Assert\Length(min: 0)]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'priority' => 490,
         'required' => false,
         'attr' => [
             'min' => 0,
@@ -71,6 +75,7 @@ class ContentBlock extends Block
      */
     #[Assert\NotBlank]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 480,
         'choices' => [
             '1 Column' => 1,
             '2 Columns' => 2,
@@ -90,13 +95,16 @@ class ContentBlock extends Block
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['required' => false])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
+        'priority' => 490,
+        'required' => false])]
     protected $readMoreUrl;
 
     /**
      * @var array
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
+        'priority' => 480,
         'allow_add' => true,
         'add_button_text' => 'Add Facet field',
         'allow_delete' => true,
@@ -109,7 +117,9 @@ class ContentBlock extends Block
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['attr' => ['class' => 'main-title'], 'priority' => 999])]
+    #[Type\Field(options: [
+        'priority' => 999,
+        'attr' => ['class' => 'main-title'], 'priority' => 999])]
     protected $title;
 
     /**

@@ -26,6 +26,7 @@ class ContainerBlock extends Block
      * @var ArrayCollection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'priority' => 500,
         'entry_type' => 'Integrated\Bundle\BlockBundle\Form\Type\BlockSizeType',
         'default_title' => 'New block',
         'allow_add' => true,
