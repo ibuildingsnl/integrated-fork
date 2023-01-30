@@ -100,6 +100,7 @@ class RelatedContentBlock extends Block
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
         'attr' => [
             'min' => 0,
+            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'grid-add',
@@ -115,6 +116,7 @@ class RelatedContentBlock extends Block
         'required' => false,
         'attr' => [
             'min' => 0,
+            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'tools',

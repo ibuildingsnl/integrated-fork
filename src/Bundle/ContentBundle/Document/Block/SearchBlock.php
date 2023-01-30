@@ -25,7 +25,11 @@ class SearchBlock extends Block
     /**
      * @var ContentBlock
      */
-    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: ['class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock', 'choice_label' => 'title', 'placeholder' => ''])]
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock',
+        'choice_label' => 'title',
+        'placeholder' => ''
+    ])]
     protected $block;
 
     /**
