@@ -156,7 +156,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
@@ -202,7 +202,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturn(null);
 
@@ -211,7 +211,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('addChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
@@ -267,7 +267,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturn(null);
 
@@ -276,7 +276,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('addChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
