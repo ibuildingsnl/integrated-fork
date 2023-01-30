@@ -111,7 +111,7 @@ class RelationType extends AbstractType
                     'multiple',
                     CheckboxType::class,
                     [
-                        'label' => ' ',
+                        'label' => false,
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,
@@ -122,7 +122,7 @@ class RelationType extends AbstractType
                     'required',
                     CheckboxType::class,
                     [
-                        'label' => ' ',
+                        'label' => false,
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,

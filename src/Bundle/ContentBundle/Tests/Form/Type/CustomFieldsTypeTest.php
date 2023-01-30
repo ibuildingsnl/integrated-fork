@@ -100,7 +100,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField1');
 
         $customField1
-            ->expects($this->atLeastOnce())
+            ->expects($this->exactly(2))
             ->method('getType')
             ->willReturn(TextType::class);
 
@@ -115,7 +115,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField2');
 
         $customField2
-            ->expects($this->atLeastOnce())
+            ->expects($this->exactly(2))
             ->method('getType')
             ->willReturn(TextareaType::class);
 
@@ -130,7 +130,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField3');
 
         $customField3
-            ->expects($this->atLeastOnce())
+            ->expects($this->exactly(2))
             ->method('getType')
             ->willReturn(CheckboxType::class);
 

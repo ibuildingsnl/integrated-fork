@@ -45,7 +45,7 @@ class ExtractTransitionsFromDataListener implements EventSubscriberInterface
 
         $form->add('transitions', ChoiceType::class, [
             'required' => false,
-            'label' => ' ',
+            'label' => false,
             'style' => 'switcher',
             'choices' => $this->getChoices($event->getData()),
             'choice_value' => 'id',

@@ -51,7 +51,7 @@
             </call>
         </service>
 
-        <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController" class="%integrated_website.controller.grid.class%">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.grid.factory" />
 

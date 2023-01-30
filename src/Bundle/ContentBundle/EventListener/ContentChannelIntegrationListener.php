@@ -117,9 +117,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                 }
 
                 if (isset($options['restricted']) && \count($options['restricted']) > 0 && !\in_array(
-                    $value->getId(),
-                    $options['restricted']
-                )) {
+                        $value->getId(),
+                        $options['restricted']
+                    )) {
                     unset($choices[$index]);
                 }
             }
@@ -149,12 +149,13 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                         'icon' => 'network-alt',
                     ],
                     'choice_attr' => function ($value) use ($enforce) {
-                        if ($value instanceof Channel && (isset(
-                            $enforce[$value->getId()]
-                        ) || !$this->authorizationChecker->isGranted(
-                            PermissionInterface::WRITE,
-                            $value
-                        ))) {
+                        if ($value instanceof Channel && (
+                                isset(
+                                    $enforce[$value->getId()]
+                                ) || !$this->authorizationChecker->isGranted(
+                                    PermissionInterface::WRITE,
+                                    $value
+                                ))) {
                             return ['disabled' => 'disabled'];
                         }
 

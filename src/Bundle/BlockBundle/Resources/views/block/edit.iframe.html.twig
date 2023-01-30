@@ -2,56 +2,7 @@
 
 {% block style %}
     {{ parent() }}
-
-    <style>
-        #wrapper-holder {
-            padding-bottom: 85px;
-            top: 0px;
-        }
-
-        #wrapper-holder > .container {
-            width: auto;
-            background: #fff;
-        }
-
-        #wrapper-holder > .container .section-radius {
-            box-shadow: none;
-        }
-
-        .add-relation {
-            display: none;
-        }
-
-        .prefooter-holder {
-            border-top: 1px solid #e5e5e5;
-            background: #fcfcfc;
-        }
-
-        .aside-options {
-            height: calc(100vh - 50px);
-        }
-
-        .aside-options .aside-holder {
-            padding-top: 0;
-        }
-
-        .sidebar {
-            display: none;
-        }
-
-        .content-wrapper {
-            width: 100%;
-        }
-
-        #wrapper-holder {
-            height: 100%;
-        }
-
-        #toolbar .back .form-group {
-            display: none;
-        }
-
-    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
 {% endblock %}
 
 

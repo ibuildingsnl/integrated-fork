@@ -18,7 +18,6 @@ class Field
 {
     public const LOCATION_EDITOR = 'editor';
     public const LOCATION_SIDEBAR = 'sidebar';
-    public const LOCATION_CUSTOM = 'custom';
 
     /**
      * @var string

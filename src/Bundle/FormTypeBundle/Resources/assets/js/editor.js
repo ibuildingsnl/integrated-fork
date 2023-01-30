@@ -66,7 +66,6 @@ $('.integrated_tinymce').each(function(key, elem){
         fixed_toolbar_container: '.tox-editor-header',
         width: "100%",
         height: "100%",
-        // autoresize_min_height: 500,
         browser_spellcheck : true,
         autoresize_bottom_margin: "0px",
         convert_urls: false,

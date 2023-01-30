@@ -15,7 +15,7 @@
                 <div class="convert">
                     {% if (content.isPublished and content.getChannels|length > 0) or (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                         <!-- TODO: Make a function for this -->
-                        <a href="#">{% trans %}Convert to draft{% endtrans %}</a>
+                        <a>{% trans %}Convert to draft{% endtrans %}</a>
                     {% endif %}
                 </div>
             {% endif %}
@@ -25,7 +25,7 @@
                         {% if content.getChannels|length > 0 %}
                             <ul class="options-no-bg">
                                 <li class="dropdown close-outside" data-underlay="no">
-                                    <a href="#" data-toggle="dropdown" role="button" id="drop_1"
+                                    <a data-toggle="dropdown" role="button" id="drop_1"
                                        class="btn btn-dropdown">
                                         <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
                                         <i class="iconoir-nav-arrow-down"></i>
