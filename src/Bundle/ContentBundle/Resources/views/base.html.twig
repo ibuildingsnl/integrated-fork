@@ -50,7 +50,7 @@
 
 </head>
 <body style="overflow: hidden;"
-      class="{{ app.request.attributes.get('_route')|bodyClass }} auto-hide">
+      class="{{ app.request.attributes.get('_route') }} auto-hide">
 {% block form_theme %}
     {% if form is defined %}
         {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
