@@ -118,6 +118,10 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="integrated_content.form.type.checkbox.switcher" class="Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType">
+            <tag name="form.type"/>
+        </service>
+
         <service id="integrated_formtype_form_type_author" class="Integrated\Bundle\ContentBundle\Form\Type\AuthorType">
             <argument type="service" id="doctrine_mongodb"/>
             <argument type="service" id="integrated_content.content_type.manager"/>

@@ -21,8 +21,8 @@ trait PublishTitleTrait
     #[Type\Field(options: ['required' => false, 'attr' => ['class' => 'published-title']])]
     protected $publishedTitle = '';
 
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
-        'required' => false, 'label' => false, 'attr' => ['class' => 'use-title', 'align_with_widget' => true, 'style' => 'switcher'],
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'required' => false, 'attr' => ['class' => 'use-title', 'align_with_widget' => true],
     ])]
     protected $useTitle;
 

@@ -17,7 +17,6 @@ use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -145,24 +144,22 @@ class ChannelType extends AbstractType
                 ],
             ])->add(
                 'primaryDomainRedirect',
-                CheckboxType::class,
+                CheckboxSwitcherType::class,
                 [
                     'label' => 'Redirect to primary domain',
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
-                        'style' => 'switcher',
                     ],
                 ]
             )->add(
                 'ipProtected',
-                CheckboxType::class,
+                CheckboxSwitcherType::class,
                 [
                     'label' => 'Protect by IP address or logged in user',
                     'required' => false,
                     'attr' => [
                         'align_with_widget' => true,
-                        'style' => 'switcher',
                     ],
                 ]
             )

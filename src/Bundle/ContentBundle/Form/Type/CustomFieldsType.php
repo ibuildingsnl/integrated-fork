@@ -37,15 +37,10 @@ class CustomFieldsType extends AbstractType
                 continue;
             }
             $options = $field->getOptions();
-            $options['constraints'] = !empty($options['required']) ? [new NotBlank()] : [];
-            if ($field->getType() == CheckboxType::class) {
-                $options['attr'] = ['style' => 'switcher', 'align_with_widget' => true];
-                $options['label'] = false;
-            }
             $builder->add(
                 $field->getName(),
                 $field->getType(),
-                $options
+                $options + ['constraints' => !empty($options['required']) ? [new NotBlank()] : []]
             );
         }
     }
