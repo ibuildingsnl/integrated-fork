@@ -32,7 +32,7 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'wallet']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'wallet']], location: 'sidebar')]
     protected $accountnumber;
 
     /**
@@ -41,12 +41,11 @@ abstract class Relation extends Content implements RankableInterface
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 998,
         'attr' => [
-            'location' => 'editor',
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',
             'placeholder' => 'Your content starts here',
         ],
-    ])]
+    ], location: 'editor')]
     protected $description;
 
     /**
@@ -57,8 +56,8 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Phonenumber',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $phonenumbers;
 
     /**
@@ -66,11 +65,10 @@ abstract class Relation extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $email;
 
     /**
@@ -82,8 +80,8 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Address',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $addresses;
 
     /**

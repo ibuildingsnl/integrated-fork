@@ -22,11 +22,10 @@ trait RankTrait
         'label' => 'Rank',
         'route' => 'integrated_content_rank_lookup',
         'attr' => [
-            'location' => 'sidebar',
             'icon' => 'numbered-list-left',
             'style' => 'sidebar',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $rank;
 
     public function getRank(): ?string

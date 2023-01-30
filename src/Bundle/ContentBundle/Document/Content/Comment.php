@@ -26,11 +26,10 @@ class Comment extends Content
      */
     #[Type\Field(options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $title;
 
     /**
@@ -38,11 +37,10 @@ class Comment extends Content
      */
     #[Type\Field(options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $name;
 
     /**
@@ -50,11 +48,10 @@ class Comment extends Content
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $email;
 
     /**
@@ -62,12 +59,11 @@ class Comment extends Content
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
             'placeholder' => 'Your comment starts here',
         ],
-    ])]
+    ], location: 'editor')]
     protected $comment;
 
     /**

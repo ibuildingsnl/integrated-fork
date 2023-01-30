@@ -25,7 +25,7 @@ class Product extends Content
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
@@ -33,31 +33,30 @@ class Product extends Content
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
             'placeholder' => 'Your product content starts here',
         ],
-    ])]
+    ], location: 'editor')]
     protected $content;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $reference;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $variant;
 
     /**
@@ -68,13 +67,21 @@ class Product extends Content
     /**
      * @var float
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ], location: 'editor')]
     protected $price;
 
     /**
      * @var int
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['label' => 'Stock quantity', 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'link']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'label' => 'Stock quantity',
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'link']
+    ], location: 'sidebar')]
     protected $stockQuantity;
 
     /**
@@ -90,7 +97,12 @@ class Product extends Content
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show'
+        ]
+    ], location: 'editor')]
     protected $description;
 
     /**
@@ -266,7 +278,7 @@ class Product extends Content
      */
     public function isOrderable(): bool
     {
-        return (bool) $this->orderable;
+        return (bool)$this->orderable;
     }
 
     /**
@@ -352,6 +364,6 @@ class Product extends Content
 
     public function __toString(): string
     {
-        return (string) $this->title;
+        return (string)$this->title;
     }
 }

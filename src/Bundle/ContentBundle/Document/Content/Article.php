@@ -37,12 +37,11 @@ class Article extends Content implements RankableInterface
     #[Type\Field(options: [
         'priority' => 999,
         'attr' => [
-            'location' => 'editor',
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
             'style' => 'horizontal',
         ],
-    ])]
+    ], location: 'editor')]
     protected $title;
 
     /**
@@ -51,25 +50,24 @@ class Article extends Content implements RankableInterface
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 998,
         'attr' => [
-            'location' => 'editor',
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',
             'placeholder' => 'Your content starts here',
         ],
-    ])]
+    ], location: 'editor')]
     protected $content;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $subtitle;
 
     /**
@@ -77,14 +75,14 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
         'label' => 'Authors',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'user'],
-    ])]
+        'attr' => ['style' => 'sidebar', 'icon' => 'user'],
+    ], location: 'sidebar')]
     protected $authors;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'megaphone']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'megaphone']], location: 'sidebar')]
     protected $source;
 
     /**
@@ -92,8 +90,8 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'label' => 'Source URL',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'open-new-window'],
-    ])]
+        'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
+    ], location: 'sidebar')]
     protected $sourceUrl;
 
     /**
@@ -106,11 +104,10 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $intro;
 
     /**
@@ -118,11 +115,10 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'icon' => 'message-text',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $description;
 
     /**
@@ -130,11 +126,10 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'icon' => 'pin-alt',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $address;
 
     /**

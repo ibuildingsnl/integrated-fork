@@ -60,7 +60,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @var string
      */
     #[Slug(fields: ['id'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar']], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -86,7 +86,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var PublishTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType', options: ['attr' => ['location' => 'custom']])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType', location: 'custom')]
     protected $publishTime;
 
     /**
@@ -119,8 +119,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     #[Type\Field(options: [
         'label' => 'Copyright restrictions',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'copyright'],
-    ])]
+        'attr' => ['style' => 'sidebar', 'icon' => 'copyright'],
+    ], location: 'sidebar')]
     protected $copyrightRestrictions;
 
     /**

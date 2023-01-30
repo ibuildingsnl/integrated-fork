@@ -12,10 +12,10 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType\Fields;
 
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\CustomTransformer;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Common\ContentType\Form\Custom\Type\RegistryInterface;
 use Integrated\Common\ContentType\Form\Custom\TypeInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -64,12 +64,11 @@ class CustomType extends AbstractType
 
         $builder->add(
             'required',
-            CheckboxType::class,
+            CheckboxSwitcherType::class,
             [
                 'required' => false,
                 'attr' => [
                     'align_with_widget' => true,
-                    'style' => 'switcher',
                 ],
             ]
         );

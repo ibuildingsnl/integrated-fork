@@ -31,8 +31,8 @@ class Person extends Relation
      */
     #[Type\Field(options: [
         'label' => 'First name',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $firstName;
 
     /**
@@ -40,8 +40,8 @@ class Person extends Relation
      */
     #[Type\Field(options: [
         'label' => 'Last name',
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'sidebar')]
     protected $lastName;
 
     /**
@@ -50,33 +50,35 @@ class Person extends Relation
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
         'placeholder' => 'Select gender',
         'choices' => ['Male' => 'Male', 'Female' => 'Female'],
-        'attr' => ['style' => 'sidebar', 'location' => 'sidebar', 'state' => 'show', 'icon' => 'female'],
-    ])]
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'female'],
+    ], location: 'sidebar')]
     protected $gender;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $prefix;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
     protected $nickname;
 
     /**
      * @var string
      */
     #[Slug(fields: ['firstName', 'lastName'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var Collection Job[]
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType', options: ['attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(
+        type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType',
+        options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $jobs;
 
     /**
@@ -84,11 +86,10 @@ class Person extends Relation
      */
     #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'icon' => 'media-image',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $picture;
 
     /**
