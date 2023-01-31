@@ -41,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Form;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -655,13 +656,11 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        $formRelationsWithIdAsKey = $this->getFormRelations($form);
-
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
-            'formRelations' => $formRelationsWithIdAsKey,
+            'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
             'showContentHistory' => true,
@@ -669,21 +668,19 @@ class ContentController extends AbstractController
         ]);
     }
 
-    private function getFormRelations(\Symfony\Component\Form\Form $form): array
+    private function getFormRelations(Form $form): array
     {
-        $formRelationsWithIdAsKey = [];
+        $relations = [];
 
-        $formRelations = $form->getData()->getRelations()->toArray();
-        foreach ($formRelations as $relation) {
-            $imageObjects = $relation->getReferences()->toArray();
-            $imageObjectsWithIdAsKey = [];
-            foreach ($imageObjects as $imageObject) {
-                $imageObjectsWithIdAsKey[$imageObject->getId()] = $imageObject;
+        foreach ($form->getData()->getRelations()->toArray() as $relation) {
+            $references = [];
+            foreach ($relation->getReferences()->toArray() as $imageObject) {
+                $references[$imageObject->getId()] = $imageObject;
             }
-            $formRelationsWithIdAsKey[$relation->getRelationId()] = $imageObjectsWithIdAsKey;
+            $relations[$relation->getRelationId()] = $references;
         }
 
-        return $formRelationsWithIdAsKey;
+        return $relations;
     }
 
     /**

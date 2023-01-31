@@ -58,41 +58,35 @@
 {% endblock %}
 
 {% block header %}
-    {% if hide_header|default(false) == true %}
-    {% else %}
-        <nav class="navbar">
-            <div class="flex justify-between sm:px-4 w-full">
-                {% include '@IntegratedContent/partials/block.logo.html.twig' %}
+    <nav class="navbar">
+        <div class="flex justify-between sm:px-4 w-full">
+            {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
-                <div class="flex wrap w-full">
-                    {% block navbar_content_type %}
+            <div class="flex wrap w-full">
+                {% block navbar_content_type %}
 
-                        <div class="new-contenttype dropdown top-bar">
-                            <a href="#" class="btn btn-green"
-                               data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
-                                    class="iconoir-plus"></i></a>
-                            {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
-                        </div>
-                    {% endblock navbar_content_type %}
-                    {% include '@IntegratedContent/partials/block.search.html.twig' %}
-                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
-                </div>
+                    <div class="new-contenttype dropdown top-bar">
+                        <a href="#" class="btn btn-green"
+                           data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i
+                                class="iconoir-plus"></i></a>
+                        {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+                    </div>
+                {% endblock navbar_content_type %}
+                {% include '@IntegratedContent/partials/block.search.html.twig' %}
+                {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
             </div>
-        </nav>
-    {% endif %}
+        </div>
+    </nav>
 {% endblock %}
 
 {% block body %}
     <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-        {% if hide_sidebar_menu|default(false) == true %}
-        {% else %}
             {% block sidebar_menu %}
                 <div class="sidebar">
                     {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
                 </div>
             {% endblock sidebar_menu %}
-        {% endif %}
         <div class="content-wrapper">
             {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                 {% for message in messages %}
