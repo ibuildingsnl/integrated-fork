@@ -35,13 +35,13 @@ use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Form;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
