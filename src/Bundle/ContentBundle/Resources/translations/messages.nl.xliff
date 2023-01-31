@@ -618,6 +618,10 @@
                 <source>Selected</source>
                 <target>Geselecteerd</target>
             </trans-unit>
+            <trans-unit id="158">
+                <source>Keep current selection</source>
+                <target>Behoud huidige selectie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
