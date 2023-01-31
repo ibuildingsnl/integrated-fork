@@ -521,11 +521,6 @@ class ContentController extends AbstractController
 
                 return $this->redirectToRoute('integrated_content_content_index', ['id' => $content->getId(), 'remember' => 1]);
             }
-            foreach ($form->getErrors() as $error) {
-                dump($error->getMessage());
-                dump($error);
-            }
-            dd('Fix these errors please.');
         }
 
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
@@ -660,27 +655,35 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        $form_relations = $form->getData()->getRelations()->toArray();
-        $form_relations_with_id_as_key = [];
-        foreach ($form_relations as $relation) {
-            $image_objects = $relation->getReferences()->toArray();
-            $image_objects_with_id_as_key = [];
-            foreach ($image_objects as $image_object) {
-                $image_objects_with_id_as_key[$image_object->getId()] = $image_object;
-            }
-            $form_relations_with_id_as_key[$relation->getRelationId()] = $image_objects_with_id_as_key;
-        }
+        $formRelationsWithIdAsKey = $this->getFormRelations($form);
 
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
-            'form_relations' => $form_relations_with_id_as_key,
+            'formRelations' => $formRelationsWithIdAsKey,
             'content' => $content,
             'locking' => $locking,
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function getFormRelations(\Symfony\Component\Form\Form $form): array
+    {
+        $formRelationsWithIdAsKey = [];
+
+        $formRelations = $form->getData()->getRelations()->toArray();
+        foreach ($formRelations as $relation) {
+            $imageObjects = $relation->getReferences()->toArray();
+            $imageObjectsWithIdAsKey = [];
+            foreach ($imageObjects as $imageObject) {
+                $imageObjectsWithIdAsKey[$imageObject->getId()] = $imageObject;
+            }
+            $formRelationsWithIdAsKey[$relation->getRelationId()] = $imageObjectsWithIdAsKey;
+        }
+
+        return $formRelationsWithIdAsKey;
     }
 
     /**

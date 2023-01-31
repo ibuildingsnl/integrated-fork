@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Config\Provider;
 use Integrated\Common\Converter\Config\TypeConfig;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Exception\RuntimeException;
+use SimpleXMLElement;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 

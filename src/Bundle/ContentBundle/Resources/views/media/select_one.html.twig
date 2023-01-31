@@ -1,5 +1,9 @@
-{% extends '@IntegratedContent/empty.html.twig' %}
+{% extends '@IntegratedContent/base.html.twig'  %}
+
+{% set hide_sidebar_menu = true %}
+{% set hide_header = true %}
 {% set selected_modus = 'select_one' %}
+
 {% block title %} {% trans %}Select an image{% endtrans %}{% endblock title %}
 {% block content %}
 
