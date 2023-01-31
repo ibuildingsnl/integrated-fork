@@ -367,10 +367,7 @@ class ContentProvider
             $availableContenttypes = $request->query->get('available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } else {
-                if (null === $contentType) {
-                    return;
-                }
+            } else if (\is_array($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }

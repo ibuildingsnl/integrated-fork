@@ -322,6 +322,13 @@ class MediaController extends AbstractController
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
 
+        $available_contenttypes = $request->get('available_contenttypes') ?? [];
+        if ([] !== $available_contenttypes) {
+            $allContentTypes = array_filter($allContentTypes, function ($item) use ($available_contenttypes) {
+                return in_array($item->getId(), $available_contenttypes) == true;
+            });
+        }
+
         foreach ($allContentTypes as $contentType) {
             if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {
                 continue;

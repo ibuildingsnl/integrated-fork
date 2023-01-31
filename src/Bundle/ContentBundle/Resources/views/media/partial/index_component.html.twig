@@ -141,27 +141,24 @@
                     <button class="button_enable_list_view toggle_view list switcher mr-2"><i
                                 class="iconoir-list"></i></button>
 
-                    {% if selected_modus == 'media_gallery' %}
+                    {% if app.request.query.get('available_contenttypes')|length == 1 %}
+                    {% else %}
                         <ul class="mr-2">
                             <li class="dropdown">
                                 <a href data-toggle="dropdown" role="button" id="sorting-list"
                                    class="btn btn-select space-between"><span>{{ contentTypeFilterOptions.options[contentTypeFilterOptions.current].name|trans }}</span>
                                     <i class="iconoir-nav-arrow-down"></i></a>
                                 <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-
+                                    
                                     {% for content_type_key, content_type in contentTypeFilterOptions.options %}
-
-                                        <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
-                                            {% endif %}role="presentation">
+                                        <li {% if content_type_key == contentTypeFilterOptions.current %}class="active" {% endif %} role="presentation">
                                             <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
                                                 merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                                 merge({'page':1})
                                             ) }}"
-                                               tabindex="-1"
-                                               role="menuitem">{{ content_type.name|trans|capitalize }}
+                                               tabindex="-1" role="menuitem">{{ content_type.name|trans|capitalize }}
                                             </a>
                                         </li>
-
                                     {% endfor %}
 
                                 </ul>
@@ -196,7 +193,7 @@
                     </ul>
 
                     <button class="btn btn-action mr-2"
-                            id="bulkselection">{% trans %} Bulkselection {% endtrans %}
+                        id="bulkselection">{% trans %} Bulkselection {% endtrans %}
                     </button>
 
                     <button class="button_toggle_upload_view btn btn-action">
@@ -216,7 +213,6 @@
         </div>
 
         <section class="section-white section-radius p-4">
-
             <div id="upload_container" class="hidden">
                 {% include '@IntegratedContent/media/upload.html.twig'
                     with {
