@@ -30,14 +30,6 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
         </service>
 
-        <service id="integrated_content.services.content.creator" class="Integrated\Bundle\ContentBundle\Services\ContentCreator">
-            <argument type="service" id="integrated.form.resolver" />
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="form.factory" />
-            <argument type="service" id="router" />
-        </service>
-
         <service id="integrated_content.services.flusher" class="Integrated\Bundle\ContentBundle\Services\CombinedFlusher">
             <argument type="service" id="integrated_content.services.doctrine-flusher" />
             <argument type="service" id="integrated_content.services.locking-flusher" />

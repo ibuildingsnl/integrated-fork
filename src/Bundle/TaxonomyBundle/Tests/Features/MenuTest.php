@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\TaxonomyBundle\Tests;
+namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;

@@ -5,16 +5,16 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="integrated_taxonomy.taxonomy.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
+        <service id="integrated_taxonomy.taxonomy.odm.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Taxonomy</argument>
         </service>
-        <service id="integrated_taxonomy.taxonomy.usage_counter" class="Integrated\Bundle\TaxonomyBundle\Services\UsageCounter">
+        <service id="integrated_taxonomy.taxonomy.repository" class="Integrated\Bundle\TaxonomyBundle\Infrastructure\ODMTaxonomyRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_taxonomy.taxonomy.odm.repository" />
         </service>
         <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
-            <argument type="service" id="integrated_taxonomy.taxonomy.usage_counter" />
         </service>
     </services>
 </container>

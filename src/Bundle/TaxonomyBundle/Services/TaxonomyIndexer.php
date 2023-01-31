@@ -2,28 +2,23 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Services;
 
-use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
+use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepository;
 
 final class TaxonomyIndexer implements TaxonomyIndexerInterface
 {
     public function __construct(
-        private readonly ObjectRepository $taxonomies,
-        private readonly UsageCounter $usage,
+        private readonly TaxonomyRepository $taxonomies,
     ) {
     }
 
     /** @return IndexedItem[] */
     public function buildTaxonomyIndex(): array
     {
-        return $this->toTreeIndex(...$this->taxonomies->findAll());
-    }
-
-    private function toTreeIndex(Taxonomy ...$taxonomies): array
-    {
         $byParent = [];
-        foreach ($taxonomies as $taxonomy) {
+
+        foreach ($this->taxonomies->all() as $taxonomy) {
             $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
         }
 
@@ -61,7 +56,7 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
             $taxonomy->getId(),
             $taxonomy->getTitle(),
             $taxonomy->getSlug(),
-            $this->usage->countUsages($taxonomy->getId()),
+            $this->taxonomies->countUsages($taxonomy),
             $depth
         );
     }
