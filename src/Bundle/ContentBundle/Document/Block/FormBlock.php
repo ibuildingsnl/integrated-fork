@@ -44,6 +44,12 @@ class FormBlock extends Block
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: ['required' => false])]
     protected string $textAfterSubmit;
 
+    /**
+     * @Assert\All({
+     *
+     *     @Assert\Email
+     * })
+     */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
         'label' => 'Sent form to e-mail address(es)',
         'entry_type' => 'Symfony\Component\Form\Extension\Core\Type\EmailType',
@@ -51,11 +57,6 @@ class FormBlock extends Block
         'allow_delete' => true,
         'required' => false,
     ])]
-    /**
-     * @Assert\All({
-     *     @Assert\Email
-     * })
-     */
     protected array $emailAddresses = [];
 
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
