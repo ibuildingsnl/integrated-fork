@@ -167,7 +167,7 @@
     document.addEventListener('DOMContentLoaded', initMenu);
 
     window.addEventListener('click', function(event) {
-        if (!event.srcElement.classList.contains('tt-input')) {
+        if (event.srcElement.classList.contains('modal_overlay')) {
             hideDropDownBackgroud();
         }
     });

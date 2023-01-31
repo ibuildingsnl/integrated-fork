@@ -25,6 +25,9 @@ webpackConfig = Encore.setOutputPath(
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',
     ])
+    .addEntry('upload_uppy', [
+        './src/Bundle/ContentBundle/Resources/assets/js/upload_uppy.js',
+    ])
     .addEntry('iframe', [
         './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
     ])

@@ -85,6 +85,6 @@ class ContentParentIDType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'integrated_content_rank';
+        return 'integrated_content_parent_id';
     }
 }

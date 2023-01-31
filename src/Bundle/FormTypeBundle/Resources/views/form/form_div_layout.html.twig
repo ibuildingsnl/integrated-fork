@@ -263,6 +263,25 @@
     {% endapply %}
 {% endblock %}
 
+{% block integrated_content_parent_id_widget %}
+    {% integrated_javascripts mode='prepend'
+        'bundles/integratedformtype/js/content_choice.js' %}
+    {% endintegrated_javascripts %}
+
+    {% set attr = attr|merge({
+        'data-ajax-url' : path(route, params|merge({'current': data})|merge({'contentType': form.vars.form.parent.vars.value.contentType})),
+        'data-allow-clear' : (allow_clear ? 'true' : 'false'),
+        'class' : (attr.class|default('') ~ ' form-control integrated_content_choice')|trim,
+    }) %}
+    {% apply spaceless %}
+        <select {{ block('widget_attributes') }}>
+            {% if data %}
+                <option value="{{ data }}" selected="selected">{% trans %}Keep current selection{% endtrans %}</option>
+            {% endif %}
+        </select>
+    {% endapply %}
+{% endblock %}
+
 {% block integrated_content_choice_single %}
     {% if data %}
         {# todo publishable title INTEGRATED-364 #}

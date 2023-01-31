@@ -31,6 +31,7 @@ class BulkActionChannelType extends AbstractType
             [
                 'label' => $options['label'],
                 'multiple' => false,
+                'required' => false,
             ]
         );
     }
