@@ -36,7 +36,7 @@ class ProgressIteratorUtil
      */
     private $output;
 
-    public function __construct(Iterator $iterator, OutputInterface $output)
+    public function __construct(\Iterator $iterator, OutputInterface $output)
     {
         $this->iterator = $iterator;
         $this->output = $output;
