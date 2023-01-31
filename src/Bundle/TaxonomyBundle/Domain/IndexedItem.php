@@ -13,41 +13,26 @@ final class IndexedItem
     ) {
     }
 
-    /**
-     * @return string
-     */
     public function getTaxonomyId(): string
     {
         return $this->taxonomyId;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @return string
-     */
     public function getSlug(): string
     {
         return $this->slug;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @return int
-     */
     public function getDepth(): int
     {
         return $this->depth;

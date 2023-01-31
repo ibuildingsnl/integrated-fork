@@ -70,6 +70,7 @@ final class IndexController extends AbstractController
         $this->flusher->flush();
 
         $this->addFlash('success', 'Taxonomy item created');
+
         return $this->redirectToRoute('integrated_taxonomy_index');
     }
 }
