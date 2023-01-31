@@ -7,7 +7,6 @@ use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepository;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
-use Integrated\Bundle\TaxonomyBundle\Services\UsageCounter;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +18,6 @@ final class TaxonomyIndexingTest extends TestCase
     protected function setUp(): void
     {
         $this->taxonomies = new MemoryTaxonomyRepository();
-        $this->usageCounter = $this->createMock(UsageCounter::class);
         $this->indexer = new TaxonomyIndexer($this->taxonomies);
     }
 
