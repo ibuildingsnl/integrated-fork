@@ -38,7 +38,9 @@ class MetadataType extends AbstractType
         $metadata = $this->factory->getMetadata($options['data_class']); // @todo: auto-resolve class
 
         foreach ($metadata->getFields() as $field) {
-            $builder->add($field->getName(), $field->getType(),
+            $builder->add(
+                $field->getName(),
+                $field->getType(),
                 array_replace_recursive($field->getOptions(), [
                     'attr' => ['location' => $field->getLocation()],
                 ])
