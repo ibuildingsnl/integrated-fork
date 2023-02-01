@@ -78,7 +78,9 @@ class Person extends Relation
      */
     #[Type\Field(
         type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType',
-        options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+        options: ['attr' => ['style' => 'editor', 'state' => 'show']],
+        location: 'editor'
+    )]
     protected $jobs;
 
     /**
@@ -338,6 +340,6 @@ class Person extends Relation
      */
     public function __toString()
     {
-        return trim((string) $this->firstName.' '.(string) $this->lastName);
+        return trim((string)$this->firstName . ' ' . (string)$this->lastName);
     }
 }
