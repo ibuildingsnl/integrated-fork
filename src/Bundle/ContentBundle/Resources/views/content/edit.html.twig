@@ -127,7 +127,7 @@
                                 {% for relation in form.relations %}
                                     {% if relation.vars.attr['data-location'] == 'sidebar' %}
 
-                                        <div class="aside-item-wrapper relations">
+                                        <div class="aside-item-wrapper relations {% if relation.vars.attr['data-relationtype'] == 'taxonomy' %}search{% endif %}">
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
@@ -141,6 +141,11 @@
                                                 <div class="aside-item-list-container relation">
                                                     {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                            relation: relation,
+                                                            form_relations: formRelations|default(null),
+                                                        } %}
+                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy' %}
+                                                        {% include '@IntegratedContent/relation/partial/taxonomy_component.html.twig' with {
                                                             relation: relation,
                                                             form_relations: formRelations|default(null),
                                                         } %}
