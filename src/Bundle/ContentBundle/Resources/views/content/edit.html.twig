@@ -139,7 +139,7 @@
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
-                                                    {% if relation.vars.attr['data-relationtype'] == 'multimedia_choice' %}
+                                                    {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                             relation: relation,
                                                             form_relations: formRelations|default(null),
@@ -201,7 +201,7 @@
                                         <div class="editor-item-list-container relation">
                                             <div class="input-group relative flex items-stretch w-full">
 
-                                                {% if relation.vars.attr['data-relationtype'] == 'multimedia_choice' %}
+                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
 
                                                     {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                         relation: relation,
@@ -228,7 +228,7 @@
                             {% endif %}
                         {% endfor %}
 
-                        {# This element will be copied for every image for a multimedia_choice relation #}
+                        {# This element will be copied for every image for a embedded relation #}
                         <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid ml-1 mb-1">
                             <div class="media-preview">
                                 <div class="thumbnail">

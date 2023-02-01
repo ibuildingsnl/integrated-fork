@@ -10,8 +10,8 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-import UppyDutch from '@uppy/locales/lib/nl_NL'
-global.UppyDutch = UppyDutch
+// import UppyDutch from '@uppy/locales/lib/nl_NL'
+// global.UppyDutch = UppyDutch
 
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
