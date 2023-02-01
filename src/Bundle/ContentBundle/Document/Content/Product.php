@@ -70,8 +70,8 @@ class Product extends Content
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType', options: [
         'attr' => [
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ], location: 'editor')]
     protected $price;
 
@@ -80,7 +80,7 @@ class Product extends Content
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
         'label' => 'Stock quantity',
-        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'link']
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
     ], location: 'sidebar')]
     protected $stockQuantity;
 
@@ -90,7 +90,7 @@ class Product extends Content
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
         'attr' => [
             'align_with_widget' => true,
-        ]
+        ],
     ])]
     protected $orderable;
 
@@ -100,8 +100,8 @@ class Product extends Content
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'attr' => [
             'style' => 'editor',
-            'state' => 'show'
-        ]
+            'state' => 'show',
+        ],
     ], location: 'editor')]
     protected $description;
 
@@ -278,7 +278,7 @@ class Product extends Content
      */
     public function isOrderable(): bool
     {
-        return (bool)$this->orderable;
+        return (bool) $this->orderable;
     }
 
     /**
@@ -364,6 +364,6 @@ class Product extends Content
 
     public function __toString(): string
     {
-        return (string)$this->title;
+        return (string) $this->title;
     }
 }

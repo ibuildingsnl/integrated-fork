@@ -14,7 +14,6 @@ namespace Integrated\Bundle\WorkflowBundle\Form\EventListener;
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 

@@ -1,10 +1,9 @@
 <?php
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\MongoDB\Connection;
-use Doctrine\ODM\MongoDB\DocumentManager;
 
 class RenameContentTypeCommand extends Command
 {

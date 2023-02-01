@@ -46,8 +46,8 @@ class CheckboxSwitcherType extends CheckboxType
                 },
                 'attr' => [
                     'align_with_widget' => true,
-                    'style' => 'switcher'
-                ]
+                    'style' => 'switcher',
+                ],
             ]
         );
 

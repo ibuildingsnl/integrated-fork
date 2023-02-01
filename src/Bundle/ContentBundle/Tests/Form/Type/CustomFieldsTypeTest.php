@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\CustomFieldsType;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -63,11 +64,13 @@ class CustomFieldsTypeTest extends TypeTestCase
                     'customField1' => 'Data for customField1',
                     'customField2' => 'Data for customField2',
                     'customField3' => true,
+                    'customField4' => true,
                 ],
                 'data2' => [
                     'customField1' => null,
                     'customField2' => 'Data for customField2',
                     'customField3' => false,
+                    'customField4' => false,
                 ],
             ],
         ];
@@ -93,6 +96,9 @@ class CustomFieldsTypeTest extends TypeTestCase
         /** @var CustomField|MockObject $customField3 */
         $customField3 = $this->createMock(CustomField::class);
 
+        /** @var CustomField|MockObject $customField4 */
+        $customField4 = $this->createMock(CustomField::class);
+
         // Stub the customField getters so we can check the outcome
         $customField1
             ->expects($this->once())
@@ -100,7 +106,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField1');
 
         $customField1
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getType')
             ->willReturn(TextType::class);
 
@@ -115,7 +121,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField2');
 
         $customField2
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getType')
             ->willReturn(TextareaType::class);
 
@@ -130,7 +136,7 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->willReturn('customField3');
 
         $customField3
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getType')
             ->willReturn(CheckboxType::class);
 
@@ -139,10 +145,25 @@ class CustomFieldsTypeTest extends TypeTestCase
             ->method('getOptions')
             ->willReturn(['required' => true]);
 
+        $customField4
+            ->expects($this->once())
+            ->method('getName')
+            ->willReturn('customField4');
+
+        $customField4
+            ->expects($this->once())
+            ->method('getType')
+            ->willReturn(CheckboxSwitcherType::class);
+
+        $customField4
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['required' => true]);
+
         $contentType
             ->expects($this->once())
             ->method('getFields')
-            ->willReturn([$defaultField, $customField1, $customField2, $customField3]);
+            ->willReturn([$defaultField, $customField1, $customField2, $customField3, $customField4]);
 
         return $contentType;
     }
