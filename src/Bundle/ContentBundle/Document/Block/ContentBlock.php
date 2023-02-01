@@ -41,7 +41,6 @@ class ContentBlock extends Block
         'attr' => [
             'min' => 0,
             'label' => 'Items per page',
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'grid-add',
@@ -58,7 +57,6 @@ class ContentBlock extends Block
         'attr' => [
             'min' => 0,
             'label' => 'Max items',
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'tools',
@@ -79,7 +77,6 @@ class ContentBlock extends Block
             '5 Columns' => 5,
         ],
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'view-grid',
