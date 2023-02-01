@@ -82,13 +82,12 @@
 {% block body %}
     <div id="wrapper-holder">
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
-        {% block sidebar_menu %}
-            <div class="sidebar">
-                {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
-            </div>
-        {% endblock sidebar_menu %}
+            {% block sidebar_menu %}
+                <div class="sidebar">
+                    {% include '@IntegratedContent/partials/block.navigation.html.twig' %}
+                </div>
+            {% endblock sidebar_menu %}
         <div class="content-wrapper">
-
             {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
                 {% for message in messages %}
                     {% if label == 'alert' %}

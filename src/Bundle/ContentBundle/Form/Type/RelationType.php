@@ -47,6 +47,7 @@ class RelationType extends AbstractType
                         'Parent' => 'parent',
                         'Subscriptiontypes' => 'subscriptiontypes',
                         'Author' => 'author',
+                        'Multimedia' => 'multimedia_choice',
                         'File' => 'file',
                         'Slider' => 'slider',
                     ],

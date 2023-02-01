@@ -35,6 +35,7 @@ use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -659,11 +660,27 @@ class ContentController extends AbstractController
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
+            'formRelations' => $this->getFormRelations($form),
             'content' => $content,
             'locking' => $locking,
             'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function getFormRelations(Form $form): array
+    {
+        $relations = [];
+
+        foreach ($form->getData()->getRelations()->toArray() as $relation) {
+            $references = [];
+            foreach ($relation->getReferences()->toArray() as $imageObject) {
+                $references[$imageObject->getId()] = $imageObject;
+            }
+            $relations[$relation->getRelationId()] = $references;
+        }
+
+        return $relations;
     }
 
     /**
