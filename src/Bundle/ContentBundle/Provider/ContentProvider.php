@@ -18,11 +18,11 @@ use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
+use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Solarium\QueryType\Select\Query\FilterQuery;
 
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
@@ -367,7 +367,7 @@ class ContentProvider
             $availableContenttypes = $request->query->get('available_contenttypes');
             if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
-            } else if (\is_array($contentType)) {
+            } elseif (\is_array($contentType)) {
                 $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
             }
         }
