@@ -30,10 +30,6 @@ document.querySelectorAll('.toggle-data-target').forEach(function(el) {
     el.addEventListener('click', toggleDataTarget, false);
 });
 
-document.querySelectorAll('.editor-item-header').forEach(function(el) {
-    el.addEventListener('click', toggleOptionsElement, false);
-});
-
 document.querySelectorAll('.menu-label').forEach(function(el) {
     el.addEventListener('click', toggleSidebarElement, false);
 });

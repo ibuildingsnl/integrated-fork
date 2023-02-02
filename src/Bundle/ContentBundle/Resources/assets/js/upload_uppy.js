@@ -26,7 +26,7 @@ function inititalizeUppy(uppyOptions) {
     }
 
     let uppy = new Uppy({
-        locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
+        // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
             let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
             if (null !== current_category_id && '' !== current_category_id) {

@@ -150,7 +150,7 @@
                             {% endif %}
 
                             <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
-                                id="{{ media.id }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}">
+                                id="{{ media.id }}" data-content_type="{{ media.contenttype }}" data-id="{{ media.id }}" data-media_id="{{ loop.index }}" data-thumbnail="{{ thumbnail }}" data-file="{{ media.file }}" data-title="{{ media.title  }}">
                                 <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
                                     <div class="media-preview">
                                         <div class="thumbnail">
