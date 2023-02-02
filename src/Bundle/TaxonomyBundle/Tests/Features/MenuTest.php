@@ -3,19 +3,22 @@
 namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
 use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Security\ContentTypeVoter;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Integrated\Bundle\TaxonomyBundle\EventListener\ConfigureMenuSubscriber;
+use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTypeResolver;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\Role;
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permission;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -30,23 +33,25 @@ final class MenuTest extends TestCase
 {
     private AuthorizationCheckerInterface $authorizationChecker;
     private TokenStorageInterface $tokenStorage;
-    /** @var ObjectRepository&MockObject */
-    private ObjectRepository $repository;
+    private ResolverInterface $repository;
     private ItemInterface $menu;
     private ConfigureMenuSubscriber $menuSubscriber;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(ObjectRepository::class);
+        $this->repository = new MemoryTypeResolver([]);
         $this->tokenStorage = new TokenStorage();
         $this->authorizationChecker = new AuthorizationChecker(
             $this->tokenStorage,
             new AccessDecisionManager(
-                [new ContentTypeVoter($this->repository)],
+                [new ContentTypeVoter($this->createMock(ObjectRepository::class))],
                 new UnanimousStrategy(),
             ),
         );
-        $this->menuSubscriber = new ConfigureMenuSubscriber($this->authorizationChecker, $this->repository);
+        $this->menuSubscriber = new ConfigureMenuSubscriber($this->authorizationChecker, new ContentTypeManager(
+            $this->repository,
+            ContentType::class
+        ));
         $this->menu = new MenuItem('integrated_menu', new MenuFactory());
     }
 
@@ -58,7 +63,7 @@ final class MenuTest extends TestCase
         $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
 
         $section = $this->menu->getChild('Taxonomy');
-        $item = $section->getChild('Taxonomies');
+        $item = $section->getChild('Taxonomy index');
 
         self::assertInstanceOf(MenuItem::class, $section);
         self::assertInstanceOf(MenuItem::class, $item);
@@ -104,7 +109,7 @@ final class MenuTest extends TestCase
         $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
 
         $section = $this->menu->getChild('Taxonomy');
-        $item = $section->getChild('Taxonomies');
+        $item = $section->getChild('Taxonomy index');
 
         self::assertInstanceOf(MenuItem::class, $section);
         self::assertInstanceOf(MenuItem::class, $item);
@@ -132,21 +137,39 @@ final class MenuTest extends TestCase
         self::assertEmpty($unrelatedMenu->getChildren());
     }
 
-    private function withTaxonomyContentType(): void
+    public function testShowingBothTagsAndCategoryOptions()
     {
-        $taxonomy = new ContentType();
-        $taxonomy->setId('taxonomy');
-        $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, 'taxonomy-access'));
-        $taxonomy->addPermission($this->permission(PermissionInterface::READ, 'taxonomy-read'));
-        $this->repository->method('find')->willReturn($taxonomy);
+        $this->withTaxonomyContentType('tag');
+        $this->withTaxonomyContentType('category');
+        $this->tokenStorage->setToken($this->user('tag-access', 'category-access'));
+
+        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
+
+        $section = $this->menu->getChild('Taxonomy');
+
+        self::assertCount(2, $section->getChildren());
     }
 
-    private function user(string $group, string ...$roles): TokenInterface
+    private function withTaxonomyContentType(string $name = 'taxonomy'): void
+    {
+        $taxonomy = new ContentType();
+        $taxonomy->setId($name);
+        $taxonomy->setName(ucfirst($name));
+        $taxonomy->setClass(Taxonomy::class);
+        $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, $name . '-access'));
+        $taxonomy->addPermission($this->permission(PermissionInterface::READ, $name . '-read'));
+        $this->repository->addType($taxonomy);
+    }
+
+    private function user(string ...$roles): TokenInterface
     {
         $user = new User();
-        $user->addGroup(new Group($group));
         foreach ($roles as $role) {
-            $user->addRole(new Role($role));
+            if (str_starts_with($role, 'ROLE')) {
+                $user->addRole(new Role($role));
+            } else {
+                $user->addGroup(new Group($role));
+            }
         }
 
         return new PreAuthenticatedToken($user, 'main', ['foo']);

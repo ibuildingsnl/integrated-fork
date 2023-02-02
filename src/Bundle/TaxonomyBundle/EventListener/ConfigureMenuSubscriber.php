@@ -2,7 +2,8 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\EventListener;
 
-use Doctrine\Persistence\ObjectRepository;
+use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +16,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
 
     public function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly ObjectRepository $contentTypes,
+        private readonly ContentTypeManager $contentTypes,
     ) {
     }
 
@@ -34,11 +35,16 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $taxonomyType = $this->contentTypes->find('taxonomy');
+        $taxonomyTypes = $this->contentTypes->filterInstanceOf(Taxonomy::class);
 
-        if ($taxonomyType && $this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
-            $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
-            $menuAdmin->addChild('Taxonomies', ['route' => 'integrated_taxonomy_index']);
+        foreach ($taxonomyTypes as $taxonomyType) {
+            if ($this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
+                $menuAdmin = $menu->getChild(self::MENU_TAXONOMIES);
+                if (!$menuAdmin) {
+                    $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
+                }
+                $menuAdmin->addChild($taxonomyType->getName() . ' index', ['route' => 'integrated_taxonomy_index']);
+            }
         }
     }
 }
