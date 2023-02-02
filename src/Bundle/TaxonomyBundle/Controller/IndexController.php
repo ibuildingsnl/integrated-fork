@@ -54,7 +54,7 @@ final class IndexController extends AbstractController
             return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
                 'form' => $form->createView(),
                 'index' => $this->paginator->paginate(
-                    $this->indexer->buildTaxonomyIndex(),
+                    $this->indexer->buildTaxonomyIndex($contentType->getId()),
                     $request->query->getInt('page', 1),
                     25,
                 ),

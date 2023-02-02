@@ -7,5 +7,5 @@ use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 interface TaxonomyIndexerInterface
 {
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(): array;
+    public function buildTaxonomyIndex(string $contentType): array;
 }

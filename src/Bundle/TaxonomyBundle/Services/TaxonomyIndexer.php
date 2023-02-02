@@ -14,11 +14,11 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(): array
+    public function buildTaxonomyIndex(string $contentType): array
     {
         $byParent = [];
 
-        foreach ($this->taxonomies->all() as $taxonomy) {
+        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
             $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
         }
 
