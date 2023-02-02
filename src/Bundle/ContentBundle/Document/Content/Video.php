@@ -27,6 +27,11 @@ class Video extends File
      * @var StorageInterface
      */
     #[Assert\File(mimeTypes: 'video/*')]
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType')]
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $file;
 }

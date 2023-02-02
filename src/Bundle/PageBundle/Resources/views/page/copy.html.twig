@@ -14,40 +14,16 @@
 {% endblock %}
 {% block content %}
     <div class="flex flex-wrap edit-form">
-        {% form_theme form with '@IntegratedPage/form/form_div_layout.html.twig' %}
+        {% form_theme form with ['@IntegratedPage/form/form_div_layout.html.twig', '@IntegratedContent/form/form_div_layout.html.twig'] %}
 
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal' }) }}
         {% endblock %}
-        <div id="toolbar" class="w-full flex justify-between">
-            <div class="options">
-                <div class="form-actions">
-                    {% block form_actions %}
-                        {% if form.actions.save is defined %}
-                            {{ form_row(form.actions.save) }}
-                        {% endif %}
-                        {% if form.actions.reload is defined %}
-                            {{ form_row(form.actions.reload) }}
-                        {% endif %}
-                        {% if form.actions.create is defined %}
-                            {{ form_row(form.actions.create) }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-            </div>
-            <div class="back">
-                {% block form_return %}
-                    {% if form.actions.back is defined %}
-                        {{ form_row(form.actions.back) }}
-                    {% endif %}
-                    {% if form.actions.cancel is defined %}
-                        {{ form_row(form.actions.cancel) }}
-                    {% endif %}
-                {% endblock %}
-            </div>
-        </div>
+        {% block toolbar %}
+            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+        {% endblock toolbar %}
         <div class="aside-options"></div>
-        <div class="editor-wrapper">
+        <div class="editor-wrapper editor-wrapper-full">
             <div class="page-title">
                 <h1 class="heading">
                     {% block contentTitle %}
@@ -69,7 +45,7 @@
     {{ parent() }}
 
     <script>
-    $('.copy-pages-blocks input:radio').click(function() {
+    $('.copy-pages-blocks select').change(function() {
         var newBlockIdField = $(this).closest('div.row').find('input:text');
         if ($(this).val() == '') {
             newBlockIdField.prop('disabled', true);

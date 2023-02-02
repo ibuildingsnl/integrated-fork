@@ -55,19 +55,19 @@ abstract class Block implements BlockInterface
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', location: 'custom')]
     protected $publishedAt;
 
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['required' => false], location: 'custom')]
     protected $publishedUntil;
 
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'attr' => ['align_with_widget' => true]])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: ['required' => false, 'attr' => ['align_with_widget' => true]], location: 'custom')]
     protected $disabled = false;
 
     /**

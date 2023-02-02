@@ -66,19 +66,16 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->event
             ->expects($this->once())
             ->method('getMenu')
-            ->willReturn($menu)
-        ;
+            ->willReturn($menu);
 
         $menu
             ->expects($this->once())
             ->method('getName')
-            ->willReturn('invalid_menu_name')
-        ;
+            ->willReturn('invalid_menu_name');
 
         $menu
             ->expects($this->never())
-            ->method('getChild')
-        ;
+            ->method('getChild');
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -97,13 +94,11 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getChild')
             ->with(ConfigureMenuSubscriber::MENU_CONTENT)
-            ->willReturn($subMenu)
-        ;
+            ->willReturn($subMenu);
 
         $subMenu
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -122,20 +117,23 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getChild')
             ->with(ConfigureMenuSubscriber::MENU_CONTENT)
-            ->willReturn(null)
-        ;
+            ->willReturn(null);
 
         $menu
             ->expects($this->once())
             ->method('addChild')
             ->with(ConfigureMenuSubscriber::MENU_CONTENT)
-            ->willReturn($menuContent)
-        ;
+            ->willReturn($menuContent);
+
+        $menuContent
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-journal-page')
+            ->willReturnSelf();
 
         $menuContent
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -158,35 +156,30 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
                 $menuManage
-            )
-        ;
+            );
 
         $menu
             ->expects($this->never())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $menuContent
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $menuManage
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $this->authorizationChecker
             ->expects($this->exactly(3))
             ->method('isGranted')
             ->with(ConfigureMenuSubscriber::ROLE_ADMIN)
-            ->willReturn(true)
-        ;
+            ->willReturn(true);
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -209,41 +202,49 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
-            ->willReturn(null)
-        ;
+            ->willReturn(null);
 
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
                 $menuManage
-            )
-        ;
+            );
+
+        $menuContent
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-journal-page')
+            ->willReturnSelf();
 
         $menuContent
             ->expects($this->atLeastOnce())
-            ->method('addChild')
+            ->method('addChild');
+
+        $menuManage
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-settings')
+            ->willReturnSelf()
         ;
 
         $menuManage
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         // Stub isGranted
         $this->authorizationChecker
             ->expects($this->exactly(3))
             ->method('isGranted')
             ->with(ConfigureMenuSubscriber::ROLE_ADMIN)
-            ->willReturn(true)
-        ;
+            ->willReturn(true);
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -266,33 +267,41 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
-            ->willReturn(null)
-        ;
+            ->willReturn(null);
 
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
             ->withConsecutive(
                 [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
+                [ConfigureMenuSubscriber::MENU_SETTINGS]
             )
             ->willReturnOnConsecutiveCalls(
                 $menuContent,
                 $menuManage
-            )
-        ;
+            );
+
+        $menuContent
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-journal-page')
+            ->willReturnSelf();
 
         $menuContent
             ->expects($this->atLeastOnce())
-            ->method('addChild')
-        ;
+            ->method('addChild');
 
         $menuManage
-            ->expects($this->exactly(1))
-            ->method('addChild')
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-settings')
+            ->willReturnSelf()
         ;
+        $menuManage
+            ->expects($this->exactly(1))
+            ->method('addChild');
 
         // Stub isGranted
         $this->authorizationChecker
@@ -304,8 +313,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
                 [ConfigureMenuSubscriber::ROLE_ADMIN],
                 [ConfigureMenuSubscriber::ROLE_ADMIN]
             )
-            ->willReturnOnConsecutiveCalls(false, true, false, false)
-        ;
+            ->willReturnOnConsecutiveCalls(false, true, false, false);
 
         $this->subscriber->onMenuConfigure($this->event);
     }
@@ -323,15 +331,13 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->once())
             ->method('getName')
-            ->willReturn(ConfigureMenuSubscriber::MENU)
-        ;
+            ->willReturn(ConfigureMenuSubscriber::MENU);
 
         if (null !== $event) {
             $event
                 ->expects($this->once())
                 ->method('getMenu')
-                ->willReturn($menu)
-            ;
+                ->willReturn($menu);
         }
 
         return $menu;

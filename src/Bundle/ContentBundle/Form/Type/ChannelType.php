@@ -17,7 +17,6 @@ use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -39,10 +38,71 @@ class ChannelType extends AbstractType
     {
         $builder->add('name', TextType::class, [
             'constraints' => new Length(['max' => 100]),
+            'attr' => [
+                'location' => 'editor',
+                'style' => 'inline',
+            ],
         ]);
 
-        $builder->add('logo', ImageDropzoneType::class);
-        $builder->add('color', ColorType::class, ['required' => false]);
+        $builder->add(
+            'scope',
+            EntityType::class,
+            [
+                'required' => false,
+                'class' => Scope::class,
+                'placeholder' => 'No user login allowed',
+                'label' => 'User scope',
+                'choice_label' => 'name',
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'precision-tool',
+                ],
+            ]
+        );
+
+        $builder->add(
+            'color',
+            ColorType::class,
+            [
+                'label' => 'Primary Color',
+                'required' => false,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'droplet',
+                ],
+            ]
+        );
+        $builder->add(
+            'secondarycolor',
+            ColorType::class,
+            [
+                'label' => 'Secondary Color',
+                'required' => false,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'droplet',
+                ],
+            ]
+        );
+
+        $builder->add(
+            'logo',
+            ImageDropzoneType::class,
+            [
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'media-image',
+                ],
+            ]
+        );
 
         $builder->add('domains', TailwindCollectionType::class, [
             'label' => 'Domains (example.com)',
@@ -50,37 +110,59 @@ class ChannelType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
-            'sub_widget_col' => 5,
-            'button_col' => 3,
-            'attr' => ['class' => 'channel-domains'],
+            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
         ]);
 
         $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
 
         $builder->add(
-            $builder->create('options', FormType::class, ['inherit_data' => true])
-                    ->add(
-                        'primaryDomainRedirect',
-                        CheckboxType::class,
-                        [
-                            'label' => 'Redirect to primary domain',
-                            'required' => false,
-                            'attr' => [
-                                'align_with_widget' => true,
-                            ],
-                        ]
-                    )
-                    ->add(
-                        'ipProtected',
-                        CheckboxType::class,
-                        [
-                            'label' => 'Protect by IP address or logged in user',
-                            'required' => false,
-                            'attr' => [
-                                'align_with_widget' => true,
-                            ],
-                        ]
-                    )
+            $builder->create('permissions', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'key-alt-back',
+                ],
+            ])->add(
+                'permissions',
+                PermissionsType::class,
+                [
+                    'required' => false,
+                ]
+            )
+        );
+
+        $builder->add(
+            $builder->create('options', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'tools',
+                ],
+            ])->add(
+                'primaryDomainRedirect',
+                CheckboxSwitcherType::class,
+                [
+                    'label' => 'Redirect to primary domain',
+                    'required' => false,
+                    'attr' => [
+                        'align_with_widget' => true,
+                    ],
+                ]
+            )->add(
+                'ipProtected',
+                CheckboxSwitcherType::class,
+                [
+                    'label' => 'Protect by IP address or logged in user',
+                    'required' => false,
+                    'attr' => [
+                        'align_with_widget' => true,
+                    ],
+                ]
+            )
         );
 
         // validate domain names
@@ -113,28 +195,5 @@ class ChannelType extends AbstractType
                 }
             }
         });
-
-        $builder->add(
-            'scope',
-            EntityType::class,
-            [
-                'required' => false,
-                'class' => Scope::class,
-                'placeholder' => 'No user login allowed',
-                'label' => 'User scope',
-                'choice_label' => 'name',
-            ]
-        );
-
-        $builder->add(
-            $builder->create('permissions', FormType::class, ['inherit_data' => true])
-                    ->add(
-                        'permissions',
-                        PermissionsType::class,
-                        [
-                            'required' => false,
-                        ]
-                    )
-        );
     }
 }

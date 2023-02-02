@@ -94,9 +94,8 @@ class WorkflowStateListener implements EventSubscriberInterface
             'choice_value' => 'id',
             'choice_label' => 'name',
 
-            'placeholder' => 'Don\'t change',
+            'placeholder' => 'Don\'t change status',
 
-            'expanded' => true,
             'mapped' => false,
             'required' => false,
             'attr' => ['class' => 'next-status-choice'],
@@ -186,7 +185,6 @@ class WorkflowStateListener implements EventSubscriberInterface
 
                 continue;
             }
-
             $choices[] = $transition;
         }
 

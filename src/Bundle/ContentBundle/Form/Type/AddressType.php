@@ -48,15 +48,15 @@ class AddressType extends AbstractType
                         'placeholder' => 'Select address type',
                         'required' => false,
                         'choices' => [
-                            'postal' => 'Postal address',
-                            'visiting' => 'Visiting address',
-                            'mailing' => 'Mailing address',
+                            'Postal address' => 'postal',
+                            'Visiting address' => 'visiting',
+                            'Mailing address' => 'mailing',
                         ],
                     ];
                     break;
                 case 'country':
                     $type = CountryType::class;
-                    $default['placeholder'] = '';
+                    $default['placeholder'] = 'Select a country';
                     break;
             }
 

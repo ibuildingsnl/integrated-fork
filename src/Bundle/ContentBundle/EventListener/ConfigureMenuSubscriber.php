@@ -24,7 +24,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public const MENU = 'integrated_menu';
     public const MENU_CONTENT = 'Content';
-    public const MENU_MANAGE = 'Manage';
+    public const MENU_SETTINGS = 'Settings';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     public const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
 
@@ -56,7 +56,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         }
 
         if (!$menuContent = $menu->getChild(self::MENU_CONTENT)) {
-            $menuContent = $menu->addChild(self::MENU_CONTENT);
+            $menuContent = $menu->addChild(self::MENU_CONTENT)->setExtra('icon', 'iconoir-journal-page');
         }
 
         $menuContent->addChild('Content navigator', ['route' => 'integrated_content_content_index']);
@@ -64,8 +64,8 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         $menuContent->addChild('Media', ['route' => 'integrated_content_media_index']);
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN) || $this->authorizationChecker->isGranted(self::ROLE_CHANNEL_MANAGER)) {
-            if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
-                $menuManage = $menu->addChild(self::MENU_MANAGE);
+            if (!$menuManage = $menu->getChild(self::MENU_SETTINGS)) {
+                $menuManage = $menu->addChild(self::MENU_SETTINGS)->setExtra('icon', 'iconoir-settings');
             }
 
             if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {

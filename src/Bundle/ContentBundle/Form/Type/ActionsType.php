@@ -51,14 +51,14 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Reload',
                         'button_class' => 'orange icon-left',
-                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate'],
+                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'refresh'],
                     ],
                 ],
                 'reload_changed' => [
                     'type' => SubmitType::class,
                     'options' => [
                         'label' => 'Reload (keep changes)',
-                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'rotate'],
+                        'attr' => ['formnovalidate' => 'formnovalidate', 'icon' => 'refresh'],
                     ],
                 ],
                 'cancel' => [

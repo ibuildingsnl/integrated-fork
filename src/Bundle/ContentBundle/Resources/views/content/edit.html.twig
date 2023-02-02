@@ -2,34 +2,26 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-    {% if 'Article' in type.class or 'News' in type.class or 'Comment' in type.class or 'Product' in type.class or 'Company' in type.class %}
-        {# https://eactive.atlassian.net/browse/INTEGRATED-1783 #}
-        {% set title_state = 'title_tinymce' %}
-        {% set title_style = '' %}
-        {% set tinymce_state = 'fancy_tinymce' %}
-        {% set form_class = 'content-edit-form' %}
-    {% else %}
-        {% set title_state = '' %}
-        {% set title_style = 'inline' %}
-        {% set tinymce_state = 'show' %}
-        {% set form_class = 'edit-form' %}
-    {% endif %}
-
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
-    <div class="flex flex-wrap {{ form_class }}">
+    <div class="flex flex-wrap content-edit-form">
         {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
+            {{ form_start(form, { 'style': 'horizontal'}) }}
         {% endblock %}
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
         <div class="aside-options">
             <aside>
-                <div class="aside-holder section-gray section-radius">
+                <div class="aside-holder">
                     {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                                <i class="iconoir-cancel"></i></button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
@@ -45,10 +37,19 @@
                                             {{ form_row(form.publishTime, {style: 'inline'}) }}
                                         {% endif %}
                                     </div>
+                                    <div class="workflow-info">
+                                        {% if form.extension_workflow is defined %}
+                                            {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
+                                        {% endif %}
+                                    </div>
+                                    {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
+                                        {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
+                                    {% endif %}
                                     <div class="status-options">
-                                        {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
-                                            <div class="status published">
-                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                        {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate |date('U')) %}
+                                            <div class="status {{ workflow.name|lower }}"
+                                                 style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
+                                                <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
@@ -58,10 +59,46 @@
                                             <div class="status planned">
                                                 <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                             </div>
+                                            <a class="delete"
+                                               href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                <i class="iconoir-trash"></i>
+                                            </a>
                                         {% else %}
-                                            <div class="status draft">
-                                                <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                            </div>
+                                            {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
+                                                <div class="status published">
+                                                    <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                                <div class="status planned">
+                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% else %}
+                                                <div class="status draft">
+                                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                                </div>
+                                                {% if content is defined %}
+                                                    <a class="delete"
+                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                        <i class="iconoir-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2">
+                                        {% if form.disabled is defined %}
+                                            {{ form_row(form.disabled) }}
+                                        {% endif %}
+                                        {% if form.orderable is defined %}
+                                            {{ form_row(form.orderable) }}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -102,7 +139,7 @@
                                             </div>
                                             <div class="aside-item-list">
                                                 <div class="aside-item-list-container relation">
-                                                    {% if relation.vars.attr['data-relationtype'] == 'multimedia_choice' %}
+                                                    {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                             relation: relation,
                                                             form_relations: formRelations|default(null),
@@ -151,7 +188,9 @@
                                 <div class="editor-item-wrapper relations">
                                     <div class="editor-item-header">
                                         <h3 class="editor-item-title">
-                                            <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                            {% if relation.vars.attr['data-icon'] is defined %}
+                                                <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                            {% endif %}
                                             <label
                                                     class="editor-item-icon"
                                                     for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
@@ -162,11 +201,11 @@
                                         <div class="editor-item-list-container relation">
                                             <div class="input-group relative flex items-stretch w-full">
 
-                                                {% if relation.vars.attr['data-relationtype'] == 'multimedia_choice' %}
+                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
 
                                                     {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                         relation: relation,
-                                                        form_relations: form_relations|default(null),
+                                                        form_relations: formRelations|default(null),
                                                     } %}
 
                                                 {% else %}
@@ -189,7 +228,7 @@
                             {% endif %}
                         {% endfor %}
 
-                        {# This element will be copied for every image for a multimedia_choice relation #}
+                        {# This element will be copied for every image for a embedded relation #}
                         <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid ml-1 mb-1">
                             <div class="media-preview">
                                 <div class="thumbnail">
@@ -239,11 +278,11 @@
                  </div>
                 {{/equals}}
                 {{/if}}
-                <div class="modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal add-modal" id="relation-add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i class="iconoir-cancel"></i></span><span class="sr-only">{% endverbatim %}{% trans %}Close{% endtrans %}{% verbatim %}</span></button>
                                 <h4 class="modal-title">{% endverbatim %}{% trans %}Add{% endtrans %}{% verbatim %}</h4>
                             </div>
                             <iframe width="100%" height="400">{% endverbatim %}{% trans %}Loading{% endtrans %}{% verbatim %}</iframe>
@@ -269,8 +308,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button"
-                            class="btn btn-primary live-page">{% trans %}Leave this page{% endtrans %}</button>
-                    <button type="button" class="btn btn-gray-thin"
+                            class="btn btn-dark-green live-page">{% trans %}Leave this page{% endtrans %}</button>
+                    <button type="button" class="btn btn-white"
                             data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
                 </div>
             </div>
@@ -283,20 +322,22 @@
 
 {% block javascript %}
 {{ parent() }}
+
 <script>
     textarea = document.querySelector('.title_tinymce_input');
     if (textarea !== null) {
         textarea.addEventListener('input', autoResize, false);
-        textarea.addEventListener('DOMContentLoaded', autoResize, false);
-
         textarea.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
             }
         });
+
+        autoResize();
+
         function autoResize() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
 
         setTimeout(function() {
@@ -310,8 +351,8 @@
 
                 editor = document.querySelector('div.tox-edit-area');
                 wrapper = document.querySelector('div.tox-sidebar-wrap');
-                editor.style.top = (46 + height) + 'px';
-                wrapper.style.paddingBottom = (46 + height) + 'px';
+                editor.style.top = (height) + 'px';
+                wrapper.style.paddingBottom = (height) + 'px';
             });
 
             //TODO: Need to fix comments alignment.
@@ -323,57 +364,7 @@
 
 {% if content is defined %}
     <script>
-        $(function() {
-            var cnt = $('#used-by');
-
-            var handleUsedBy = function(data) {
-                var optionsTemplateSource = $('#used-by-template').html(),
-                    optionsTemplate = Handlebars.compile(optionsTemplateSource);
-                var paginationTemplateSource = $('#pagination-template').html(),
-                    paginationTemplate = Handlebars.compile(paginationTemplateSource);
-
-                data.title = "{% trans %}Used by{% endtrans %}";
-
-                if (data.pagination.numFound == 0) {
-                    cnt.hide();
-                }
-                cnt.html(optionsTemplate(data)).find('.content_column_inner').append(paginationTemplate(data));
-                cnt.find('.pagination a').click(function(ev) {
-                    ev.preventDefault();
-                    loadUsedBy($(this).attr('href'));
-                });
-            };
-
-            var loadUsedBy = function(url) {
-                cnt.find('.pagination a').unbind('click').click(function(ev) {
-                    ev.preventDefault();
-                });
-
-                $.ajax({
-                    url: url,
-                    data: {
-                        'limit': 5,
-                    },
-                    success: handleUsedBy,
-                });
-            };
-
-            loadUsedBy('{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}');
-
-            window.addEventListener('message', function(event) {
-                // also resize modal if relations are changed
-                var iframe = $('[data-id="' + event.data.resizeModal + '"]');
-                var height = iframe.contents().height();
-                var margin = 120;
-
-                if (height > ($(window).height() - margin)) {
-                    height = $(window).height() - margin;
-                }
-
-                iframe.attr('height', height);
-            }, false);
-
-        });
+        usedByUrl = '{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}';
     </script>
 {% endif %}
 {% if editable %}

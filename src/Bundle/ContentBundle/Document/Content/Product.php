@@ -25,26 +25,38 @@ class Product extends Content
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+            'placeholder' => 'Your product content starts here',
+        ],
+    ], location: 'editor')]
+    protected $content;
+
+    /**
+     * @var string
+     */
     #[Slug(fields: ['title'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $reference;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $variant;
 
     /**
@@ -55,32 +67,43 @@ class Product extends Content
     /**
      * @var float
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $price;
 
     /**
      * @var int
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['label' => 'Stock quantity'])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'label' => 'Stock quantity',
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
+    ], location: 'sidebar')]
     protected $stockQuantity;
 
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true]])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ])]
     protected $orderable;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $description;
-
-    /**
-     * @var string
-     */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
-    protected $content;
 
     /**
      * Constructor.

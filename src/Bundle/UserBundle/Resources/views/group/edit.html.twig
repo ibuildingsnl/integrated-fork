@@ -6,33 +6,9 @@
             {% block form_start %}
                 {{ form_start(form, { 'style': 'horizontal' }) }}
             {% endblock %}
-            <div id="toolbar" class="w-full flex justify-between">
-                <div class="options">
-                    <div class="form-actions">
-                        {% block form_actions %}
-                            {% if form.actions.save is defined %}
-                                {{ form_row(form.actions.save) }}
-                            {% endif %}
-                            {% if form.actions.reload is defined %}
-                                {{ form_row(form.actions.reload) }}
-                            {% endif %}
-                            {% if form.actions.create is defined %}
-                                {{ form_row(form.actions.create) }}
-                            {% endif %}
-                        {% endblock %}
-                    </div>
-                </div>
-                <div class="back">
-                    {% block form_return %}
-                        {% if form.actions.back is defined %}
-                            {{ form_row(form.actions.back) }}
-                        {% endif %}
-                        {% if form.actions.cancel is defined %}
-                            {{ form_row(form.actions.cancel) }}
-                        {% endif %}
-                    {% endblock %}
-                </div>
-            </div>
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
             <div class="aside-options"></div>
             <div class="editor-wrapper">
                 <div class="page-title">

@@ -24,15 +24,15 @@
                 {% set label_col = label_col|default(tailwind_get_label_col()) %}
                 {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
 
-                <div class="w-full {{ widget_col }}">
+                <div class="w-full subheader">
                     <strong>{{ label|trans({}, translation_domain)|raw }}</strong>
                 </div>
             {% else %}
                 <strong>{{ label|trans({}, translation_domain)|raw }}</strong>
             {% endif %}
+            {{ block('form_rows') }}
         </div>
 
-        {{ block('form_rows') }}
 
     {% endapply %}
 {% endblock %}

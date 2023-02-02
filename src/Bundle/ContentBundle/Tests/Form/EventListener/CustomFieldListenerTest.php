@@ -103,6 +103,9 @@ class CustomFieldListenerTest extends \PHPUnit\Framework\TestCase
                 CustomFieldsType::class,
                 [
                     'contentType' => $contentType,
+                    'attr' => [
+                        'style' => 'editor',
+                    ],
                 ]
             )
         ;

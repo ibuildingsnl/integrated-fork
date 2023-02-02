@@ -26,8 +26,6 @@ class TailwindCollectionType extends AbstractType
                 'add_button_class' => $options['add_button_class'],
                 'delete_button_text' => $options['delete_button_text'],
                 'delete_button_class' => $options['delete_button_class'],
-                'sub_widget_col' => $options['sub_widget_col'],
-                'button_col' => $options['button_col'],
                 'prototype_name' => $options['prototype_name'],
             ]
         );
@@ -63,8 +61,6 @@ class TailwindCollectionType extends AbstractType
             'add_button_class' => 'btn btn-green',
             'delete_button_text' => '',
             'delete_button_class' => 'remove',
-            'sub_widget_col' => 10,
-            'button_col' => 2,
             'options' => [],
         ];
 

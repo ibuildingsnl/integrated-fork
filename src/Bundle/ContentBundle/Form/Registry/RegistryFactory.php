@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Registry;
 
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Common\ContentType\Form\Custom\Type;
 use Integrated\Common\ContentType\Form\Custom\Type\Registry;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -50,10 +51,17 @@ class RegistryFactory
             ->setName('Checkbox')
         ;
 
+        $checkboxSwitcher = new Type();
+        $checkboxSwitcher
+            ->setType(CheckboxSwitcherType::class)
+            ->setName('Yes/No switcher')
+        ;
+
         $registry
             ->add($text)
             ->add($textarea)
             ->add($checkbox)
+            ->add($checkboxSwitcher)
         ;
 
         return $registry;

@@ -31,20 +31,26 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+            'placeholder' => 'Your taxonomy description starts here',
+        ],
+    ], location: 'sidebar')]
     protected $description;
 
     /**

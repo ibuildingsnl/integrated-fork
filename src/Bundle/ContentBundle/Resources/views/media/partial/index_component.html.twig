@@ -1,24 +1,12 @@
 
 <div class="flex flex-wrap media-library">
-
-    <div class="media-sidebar">
-
-        {% if selected_modus != 'media_gallery' %}
-            <button class="p-4 text-xl text-bold mx-auto m-2 border border-black bg-green-200" onclick="send_message_to_parent()">Selecteer afbeelding</button>
-            <button class="p-4 text-xl text-bold mx-auto m-2 border border-black bg-green-200" onclick="send_cancel_to_parent()">Annuleren</button>
-        {% endif %}
-
-        <aside>
-            {% include '@IntegratedContent/media/partial/menu_component.html.twig' %}
-        </aside>
-    </div>
-    <div class="media-gallery">
+    <div class="media-gallery index-wrapper">
         <div class="page-title">
-            <h1 class="heading">{% trans %}Media Library{% endtrans %}</h1>
             {% include '@IntegratedContent/media/partial/header_component.html.twig' %}
         </div>
 
         <section class="section-white section-radius p-4">
+
             <div id="upload_container" class="hidden">
                 {% include '@IntegratedContent/media/upload.html.twig'
                     with {
@@ -67,6 +55,18 @@
 
         </section>
     </div>
+    <div class="aside-filters close-outside media-sidebar">
+
+        {% if selected_modus != 'media_gallery' %}
+            <button class="p-4 text-xl text-bold mx-auto m-2 border border-black bg-green-200" onclick="send_message_to_parent()">Selecteer afbeelding</button>
+            <button class="p-4 text-xl text-bold mx-auto m-2 border border-black bg-green-200" onclick="send_cancel_to_parent()">Annuleren</button>
+        {% endif %}
+
+        <aside>
+            {% include '@IntegratedContent/media/partial/menu_component.html.twig' %}
+        </aside>
+    </div>
+
 </div>
 
 <script>

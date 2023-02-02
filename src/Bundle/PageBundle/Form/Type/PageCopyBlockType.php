@@ -31,7 +31,6 @@ class PageCopyBlockType extends AbstractType
     {
         $builder->add('operation', ChoiceType::class, [
             'required' => true,
-            'expanded' => true,
             'choices' => [
                 'Re-use' => '',
                 'Clone' => 'clone',
@@ -44,6 +43,7 @@ class PageCopyBlockType extends AbstractType
         $builder->add('newBlockId', TextType::class, [
             'required' => false,
             'label' => false,
+            'disabled' => true,
             'attr' => [
                 'data-proposed-block-id' => str_replace($options['channel'], $options['targetChannel'], $options['block']->getId()),
                 'style' => 'height: 26px;',
@@ -53,8 +53,7 @@ class PageCopyBlockType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-
-            if ($data['operation'] != 'clone') {
+            if ($data != null && $data['operation'] != 'clone') {
                 $options = $form->get('newBlockId')->getConfig()->getOptions();
                 $options['attr']['disabled'] = true;
 

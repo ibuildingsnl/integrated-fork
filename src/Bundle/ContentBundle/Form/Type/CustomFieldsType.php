@@ -35,7 +35,6 @@ class CustomFieldsType extends AbstractType
             if (!$field instanceof CustomField) {
                 continue;
             }
-
             $options = $field->getOptions();
             $builder->add(
                 $field->getName(),
@@ -52,8 +51,7 @@ class CustomFieldsType extends AbstractType
     {
         $resolver
             ->setRequired(['contentType'])
-            ->setAllowedTypes('contentType', ContentTypeInterface::class)
-        ;
+            ->setAllowedTypes('contentType', ContentTypeInterface::class);
     }
 
     /**

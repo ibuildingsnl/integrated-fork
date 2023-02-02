@@ -51,7 +51,7 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.grid" class="%integrated_website.controller.grid.class%">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.grid.factory" />
 
@@ -77,7 +77,7 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.menu" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
+        <service id="integrated_website.controller.search_selection" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
             <argument type="service" id="integrated_content.provider.solarium" />
 
             <tag name="controller.service_arguments" />

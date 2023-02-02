@@ -37,15 +37,52 @@ class ContentBlock extends Block
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'attr' => [
+            'min' => 0,
+            'label' => 'Items per page',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'grid-add',
+        ],
+    ], location: 'sidebar')]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'required' => false,
+        'attr' => [
+            'min' => 0,
+            'label' => 'Max items',
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'tools',
+        ],
+    ], location: 'sidebar')]
     protected $maxItems;
+
+    /**
+     * @var int
+     */
+    #[Assert\NotBlank]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            '1 Column' => 1,
+            '2 Columns' => 2,
+            '3 Columns' => 3,
+            '4 Columns' => 4,
+            '5 Columns' => 5,
+        ],
+        'attr' => [
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'view-grid',
+        ],
+    ], location: 'sidebar')]
+    protected $gridSize;
 
     /**
      * @var string
@@ -56,14 +93,20 @@ class ContentBlock extends Block
     /**
      * @var array
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: ['allow_add' => true, 'allow_delete' => true, 'required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
+        'allow_add' => true,
+        'add_button_text' => 'Add Facet field',
+        'allow_delete' => true,
+        'required' => false,
+        'attr' => ['show_headings' => 'false'],
+    ])]
     protected $facetFields = [];
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
+    #[Type\Field(options: ['attr' => ['class' => 'main-title'], 'priority' => 999])]
     protected $title;
 
     /**
@@ -122,6 +165,26 @@ class ContentBlock extends Block
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $maxItems;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGridSize()
+    {
+        return $this->gridSize;
+    }
+
+    /**
+     * @param int $gridSize
+     *
+     * @return $this
+     */
+    public function setGridSize($gridSize)
+    {
+        $this->gridSize = $gridSize;
 
         return $this;
     }

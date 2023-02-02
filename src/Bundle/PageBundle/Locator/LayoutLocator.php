@@ -57,8 +57,14 @@ class LayoutLocator
 
                                 /** @var \Symfony\Component\Finder\SplFileInfo $file */
                                 foreach ($finder as $file) {
-                                    if (!\in_array($file->getRelativePathname(), $this->layouts)) {
-                                        $this->layouts[] = $file->getRelativePathname();
+                                    $f = fopen($file, 'r');
+                                    $line = fgets($f);
+                                    fclose($f);
+                                    if (str_starts_with($line, '{#')) {
+                                        preg_match('/(?<=\{# Template name: )(.*?)(?=\ #})/', $line, $matchedLine);
+                                        $this->layouts[$matchedLine[0]] = $file->getRelativePathname();
+                                    } else {
+                                        $this->layouts[$file->getRelativePathname()] = $file->getRelativePathname();
                                     }
                                 }
                             }

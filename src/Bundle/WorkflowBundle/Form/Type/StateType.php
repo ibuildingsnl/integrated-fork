@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
@@ -46,9 +47,9 @@ class StateType extends AbstractType
 
         $builder->add(
             'publishable',
-            Type\CheckboxType::class,
+            CheckboxSwitcherType::class,
             [
-                'label' => 'Publish when this status is selected',
+                'label' => 'Publish',
                 'required' => false,
                 'attr' => [
                     'align_with_widget' => true,
@@ -58,9 +59,9 @@ class StateType extends AbstractType
 
         $builder->add(
             'default',
-            Type\CheckboxType::class,
+            CheckboxSwitcherType::class,
             [
-                'label' => 'This is the default Status',
+                'label' => 'Default',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
@@ -111,6 +112,10 @@ class StateType extends AbstractType
             'write-placeholder' => 'Inherit from content type',
         ]);
 
+        $builder->add('order', Type\HiddenType::class, [
+            'attr' => ['data-itemorder' => 'collection'],
+        ]);
+
         if ($options['transitions'] == 'data') {
             $builder->addEventSubscriber(new ExtractTransitionsFromDataListener());
         }
@@ -119,7 +124,7 @@ class StateType extends AbstractType
             $builder->add('transitions', Type\ChoiceType::class, [
                 'required' => false,
                 'mapped' => false,
-
+                'label' => 'Transitions to',
                 'choices' => [],
 
                 'multiple' => true,
