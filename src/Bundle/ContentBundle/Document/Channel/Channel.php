@@ -84,6 +84,21 @@ class Channel implements ChannelInterface
     protected $socials;
 
     /**
+     * @var string
+     */
+    protected $vat;
+
+    /**
+     * @var string
+     */
+    protected $companyID;
+
+    /**
+     * @var string
+     */
+    protected $analytics;
+
+    /**
      * @var mixed[]
      */
     protected $options = [];
@@ -266,6 +281,66 @@ class Channel implements ChannelInterface
     public function removeSocials(Socials $socials)
     {
         return $this->socials->removeElement($socials);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVat()
+    {
+        return $this->vat;
+    }
+
+    /**
+     * @param string $vat
+     *
+     * @return $this
+     */
+    public function setVat($vat)
+    {
+        $this->vat = $vat;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompanyID()
+    {
+        return $this->companyID;
+    }
+
+    /**
+     * @param string $companyID
+     *
+     * @return $this
+     */
+    public function setCompanyID($companyID)
+    {
+        $this->companyID = $companyID;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnalytics()
+    {
+        return $this->analytics;
+    }
+
+    /**
+     * @param string $analytics
+     *
+     * @return $this
+     */
+    public function setAnalytics($analytics)
+    {
+        $this->analytics = $analytics;
+
+        return $this;
     }
 
     /**
