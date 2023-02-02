@@ -103,7 +103,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         $options = $field->getOptions();
 
         if ($comment = $this->getComment($content->getId(), $field->getName())) {
-            $options['attr'] = ['data-comment-id' => $comment[0]->getId()];
+            $options['attr']['data-comment-id'] = $comment[0]->getId();
 
             $field->setOptions($options);
         }

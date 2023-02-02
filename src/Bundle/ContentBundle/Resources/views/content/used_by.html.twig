@@ -1,15 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block content %}
-
-    {% block crumbs %}
-        <ol class="breadcrumb">
-            <li>
-                <a href="{{ path('integrated_content_content_index') }}">{% trans %}Home{% endtrans %}</a>
-            </li>
-            <li class="active">{{ content }} {% trans %}used by{% endtrans %}</li>
-        </ol>
-    {% endblock %}
-
     <div class="content_columns_holder">
         <div class="w-full sm:w-2/3 content_column">
             <div class="content_column_inner">

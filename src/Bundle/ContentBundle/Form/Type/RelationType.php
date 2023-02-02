@@ -15,7 +15,6 @@ use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,18 +37,14 @@ class RelationType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => [
-                        'Embedded' => 'embedded',
+                        'Multimedia' => 'embedded',
                         'Cover' => 'cover',
+                        'Slider' => 'slider',
                         'Taxonomy' => 'taxonomy',
-                        'Category' => 'category',
+                        'Category' => 'taxonomy_category',
+                        'Tags' => 'taxonomy_tags',
                         'Edition' => 'edition',
                         'Commercial' => 'commercial',
-                        'Parent' => 'parent',
-                        'Subscriptiontypes' => 'subscriptiontypes',
-                        'Author' => 'author',
-                        'Multimedia' => 'multimedia_choice',
-                        'File' => 'file',
-                        'Slider' => 'slider',
                     ],
                 ]
             )->add(
@@ -78,6 +73,12 @@ class RelationType extends AbstractType
                         'Sidebar' => Embedded\Relation::LOCATION_SIDEBAR,
                         'Editor' => Embedded\Relation::LOCATION_EDITOR,
                     ],
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'precision-tool',
+                    ],
                 ]
             )->add(
                 'icon',
@@ -85,33 +86,47 @@ class RelationType extends AbstractType
                 [
                     'attr' => [
                         'help_text' => '<span>You can use any <a href="https://iconoir.com/" target="_blank">Iconoir</a> icon</span>',
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'iconoir',
                     ],
                 ]
             )
             ->add(
-                $builder->create('options', FormType::class, ['inherit_data' => true])
-                        ->add(
-                            'multiple',
-                            CheckboxType::class,
-                            [
-                                'label' => 'Allow multiselect',
-                                'required' => false,
-                                'attr' => [
-                                    'align_with_widget' => true,
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'required',
-                            CheckboxType::class,
-                            [
-                                'label' => 'This relation is required',
-                                'required' => false,
-                                'attr' => [
-                                    'align_with_widget' => true,
-                                ],
-                            ]
-                        )
+                $builder->create(
+                    'options',
+                    FormType::class,
+                    [
+                        'inherit_data' => true,
+                        'attr' => [
+                            'style' => 'sidebar',
+                            'location' => 'sidebar',
+                            'state' => 'show',
+                            'icon' => 'tools',
+                        ],
+                    ]
+                )->add(
+                    'multiple',
+                    CheckboxSwitcherType::class,
+                    [
+                        'label' => false,
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                        ],
+                    ]
+                )->add(
+                    'required',
+                    CheckboxSwitcherType::class,
+                    [
+                        'label' => false,
+                        'required' => false,
+                        'attr' => [
+                            'align_with_widget' => true,
+                        ],
+                    ]
+                )
             );
     }
 

@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public const MENU = 'integrated_menu';
-    public const MENU_MANAGE = 'Manage';
+    public const MENU_SETTINGS = 'Settings';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
@@ -52,8 +52,8 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         }
 
         if ($this->authorizationChecker->isGranted(self::ROLE_ADMIN)) {
-            if (!$menuManage = $menu->getChild(self::MENU_MANAGE)) {
-                $menuManage = $menu->addChild(self::MENU_MANAGE);
+            if (!$menuManage = $menu->getChild(self::MENU_SETTINGS)) {
+                $menuManage = $menu->addChild(self::MENU_SETTINGS)->setExtra('icon', 'iconoir-settings');
             }
 
             $menuManage->addChild('Scraper', ['route' => 'integrated_theme_scraper_index']);

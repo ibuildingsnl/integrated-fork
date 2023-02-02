@@ -22,10 +22,10 @@ class TailwindFormExtension extends AbstractExtension
     private $style;
 
     /** @var int */
-    private $widgetCol = 'sm:w-10/12 2xl:w-11/12';
+    private $widgetCol = 'md:w-9/12 xl:w-10/12 3xl:w-11/12';
 
     /** @var int */
-    private $labelCol = 'sm:w-2/12 2xl:w-1/12';
+    private $labelCol = 'md:w-3/12 xl:w-2/12 3xl:w-1/12';
 
     /** @var bool */
     private $showLabel = true;

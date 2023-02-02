@@ -6,6 +6,7 @@
     <style type="text/css">
         #wrapper-holder {
             padding-bottom: 85px;
+            top: 0px;
         }
 
         #wrapper-holder > .container {
@@ -28,6 +29,9 @@
         .aside-options {
             height: calc(100vh - 50px);
         }
+        .aside-options .aside-holder {
+            padding-top:0;
+        }
         .sidebar {
             display: none;
         }
@@ -42,6 +46,7 @@
 
 {% block header %}{% endblock %}
 {% block crumbs %}{% endblock %}
+{% block sidebar_menu %}{% endblock %}
 {% block filters %}{% endblock %}
 {% block main_title %}{% endblock %}
 
@@ -49,7 +54,9 @@
     {{ parent() }}
     <script>
         $('button[data-dismiss="modal"]').click(function() {
-            parent.$("#relation-add-modal.modal").modal('hide');
+            parent.$('.modal-backdrop').remove();
+            parent.$("#relation-add-modal.modal").hide();
+
         });
     </script>
 {% endblock %}

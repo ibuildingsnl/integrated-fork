@@ -1,8 +1,17 @@
 {% block integrated_file_dropzone_row %}
     {% apply spaceless %}
         {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        {% set style = style|default(tailwind_get_style()) %}
         {% set state = state|default(tailwind_get_state()) %}
+        {% set style = style|default(tailwind_get_style()) %}
+        {% if attr.style is defined and attr.style is not empty %}
+            {% set style = attr.style %}
+        {% endif %}
+        {% if attr.icon is defined and attr.icon is not empty %}
+            {% set icon = attr.icon %}
+        {% endif %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
+        {% endif %}
         {% if style == 'sidebar' %}
             <div
                 class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
@@ -32,7 +41,7 @@
 
                             {% set options = options|merge({'changeInput': changeInput}) %}
 
-                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
+                            <div class="jFiler-input-dragDrop integrated-dropzone widget{% if required %}required{% endif %}"
                                  data-options="{{ options|json_encode }}">
                                 {{ form_widget(form.file) }}
                                 {{ form_widget(form.remove) }}
@@ -85,7 +94,7 @@
         {% else %}
             <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
                 {{ form_label(form) }}
-                <div class="w-full {{ widget_col }}">
+                <div class="w-full {{ widget_col }} widget">
                     {% set changeInput %}
                         <div class="jFiler-input-inner dropzone-empty">
                             <div class="jFiler-input-icon">

@@ -4,20 +4,13 @@
         <div class="w-full">
 
             <table class="table table-fixed">
-                <colgroup>
-                    <col />
-                    <col />
-                    <col />
-                    <col style="width: 60px;" />
-                </colgroup>
-
                 <thead>
-                <tr>
-                    <th>{{ knp_pagination_sortable(blocks, 'Block name'|trans, 'title') }}</th>
-                    <th>{{ knp_pagination_sortable(blocks, 'Short code'|trans, 'id') }}</th>
-                    <th>{{ knp_pagination_sortable(blocks, 'Type'|trans, 'type') }}</th>
-                    <th>{% trans %}Usage{% endtrans %}</th>
-                </tr>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(blocks, 'Block name'|trans, 'title') }}</th>
+                        <th>{{ knp_pagination_sortable(blocks, 'Short code'|trans, 'id') }}</th>
+                        <th>{{ knp_pagination_sortable(blocks, 'Type'|trans, 'type') }}</th>
+                        <th>{% trans %}Usage{% endtrans %}</th>
+                    </tr>
                 </thead>
                 <tbody>
 
@@ -36,9 +29,10 @@
                                 </a>
                                 {% if not block.locked and (is_granted('ROLE_ADMIN') or is_granted('ROLE_WEBSITE_MANAGER')) %}
                                     {% if not integrated_find_pages(block) %}
-                                        | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}" class="color-red" title="{% trans %}Delete{% endtrans %}">
-                                            {% trans %}Delete{% endtrans %}
-                                        </a>
+                                        | <a href="{{ path('integrated_block_block_delete', { 'id': block.id }) }}"
+                                             class="color-red" title="{% trans %}Delete{% endtrans %}">
+                                        {% trans %}Delete{% endtrans %}
+                                    </a>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -72,7 +66,9 @@
                             {% endset %}
 
                             {% if pageList|trim %}
-                                <span class="iconoir-list" data-toggle="popover" data-trigger="hover" data-content="{{ pageList|e }}" data-html="true" data-placement="left"></span>
+                                <span class="iconoir-list" data-toggle="popover" data-trigger="hover"
+                                      data-content="{{ pageList|e }}" data-html="true" data-placement="left">
+                                </span>
                             {% endif %}
                         </td>
                     </tr>
@@ -81,7 +77,7 @@
 
                     <tr>
                         <td colspan="4">
-                            {% if facetFilter.vars.value.q|default or facetFilter.vars.value.type|default or facetFilter.vars.value.channels|default  %}
+                            {% if facetFilter.vars.value.q|default or facetFilter.vars.value.type|default or facetFilter.vars.value.channels|default %}
                                 {% trans %}No blocks found{% endtrans %}
                             {% else %}
                                 {% trans %}No blocks added{% endtrans %}

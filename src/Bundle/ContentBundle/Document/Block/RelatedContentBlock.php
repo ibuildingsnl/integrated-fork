@@ -65,7 +65,7 @@ class RelatedContentBlock extends Block
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
         'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
         'choice_label' => 'name',
-        'placeholder' => '',
+        'placeholder' => 'Select a relation',
     ])]
     protected $relation;
 
@@ -85,21 +85,41 @@ class RelatedContentBlock extends Block
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['choices' => ['asc' => 'asc', 'desc' => 'desc']])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'choices' => [
+            'Ascending' => 'asc',
+            'Descending' => 'desc',
+        ],
+    ])]
     protected $sortDirection;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'attr' => [
+            'min' => 0,
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'grid-add',
+        ],
+    ], location: 'sidebar')]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
      */
     #[Assert\Length(min: 0)]
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'required' => false,
+        'attr' => [
+            'min' => 0,
+            'style' => 'sidebar',
+            'state' => 'show',
+            'icon' => 'tools',
+        ],
+    ], location: 'sidebar')]
     protected $maxItems;
 
     /**

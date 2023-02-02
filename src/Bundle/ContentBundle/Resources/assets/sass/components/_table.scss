@@ -1,9 +1,11 @@
 /* TABLE */
 .table {
-    width:100%;
+    width: 100%;
+
     &.table-fixed {
         table-layout: fixed;
     }
+
     a {
         text-decoration: none;
     }
@@ -37,9 +39,11 @@
 
         a {
             color: #2271b1;
+
             &:hover {
                 color: darken(#2271b1, 20%);
             }
+
             &.color-red {
                 color: #c90000;
             }
@@ -101,15 +105,22 @@
         > th {
             &:first-child {
                 padding: .8rem .8rem .8rem 2rem;
+                @include media(max-sm) {
+                    padding: .8rem;
+                }
             }
         }
 
         > td {
             &:first-child {
                 padding: .8rem .8rem .8rem 2rem;
+                @include media(max-sm) {
+                    padding: .8rem;
+                }
             }
         }
     }
+
     .row-options {
         color: #a7aaad;
         font-size: 13px;
@@ -125,6 +136,23 @@
                     position: static;
                 }
             }
+
+            @include media(max-sm) {
+                div.row-options {
+                    position: static;
+                    display: none;
+                }
+            }
+        }
+    }
+
+    span.locked-text {
+        display: flex;
+        align-items: center;
+
+        i:before {
+            width: 15px;
+            height: 15px;
         }
     }
 }
@@ -176,36 +204,63 @@ thead {
     font-size: .8rem;
 }
 
-@media screen and (max-width: 600px) {
-    table {
+@include media(max-sm) {
+
+    table.table {
         width: 100%;
-    }
-    thead {
-        display: none;
-    }
-    tr {
-        &:nth-of-type(2n) {
-            background-color: inherit;
+
+        thead {
+            display: none;
         }
 
-        td {
-            &:first-child {
-                background: $bg-gray;
-                font-weight: bold;
-                font-size: 1.3em;
-            }
-        }
-    }
-    tbody {
-        td {
+        tr {
+            border-radius: 8px;
+            background-color: white;
+            margin: 10px 0;
             display: block;
-            text-align: center;
 
-            &:before {
-                content: attr(data-th);
-                display: block;
-                text-align: center;
+            td {
+                &:first-child {
+                    font-weight: bold;
+                    font-size: 1.3em;
+                }
+
+                &.pub-date, &.content-type {
+                    width: 50%;
+                    display: block;
+                    float: left;
+                }
+
+                &.state {
+                    clear: both;
+                    border: none;
+                }
+
+                &.title > strong a {
+                    font-size: 14px;
+                }
             }
+
+            &.content-type {
+                width: 50%;
+            }
+        }
+
+        tbody {
+            td {
+                display: block;
+                text-align: left;
+
+                &:before {
+                    content: attr(data-th);
+                    display: block;
+                    text-align: center;
+                }
+            }
+        }
+
+        .index-wrapper .section-white {
+            background-color: transparent;
         }
     }
 }
@@ -214,6 +269,7 @@ thead {
     width: 100%;
     text-align: center;
     padding: 1rem;
+
     span {
         background-color: #ecf6ff;
         color: white;
@@ -224,6 +280,7 @@ thead {
         justify-content: center;
         padding: 0;
         border-radius: 6px;
+
         a {
             width: 100%;
             height: 100%;
@@ -231,15 +288,28 @@ thead {
             justify-content: center;
             align-items: center;
         }
+
         &.current {
             background-color: #f2f2f2;
             color: black;
         }
+
+        &.disabled {
+            background-color: #dee3e9;
+            color: #404040;
+        }
+
         &:hover {
             background-color: #2fa3f9;
+
             a {
                 color: white;
             }
         }
+    }
+
+    @include media(max-sm) {
+        background-color: white;
+        border-radius: 8px;
     }
 }

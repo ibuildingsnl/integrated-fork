@@ -176,5 +176,9 @@ $(document).ready(function () {
     }
 });
 
+/* handle closing of Alerts */
+$('.alert.alert-dismissible .close').on('click', function() {
+    $(this).parent().remove();
+});
 
 

@@ -54,11 +54,13 @@
                 {{ page.path }}
             </td>
             <td class="copy-pages-blocks">
+                <div class="copy-pages-blocks-wrapper">
                 {% for field in form %}
 
-                    {{ form_row(field) }}
+                    {{ form_rest(field) }}
 
                 {% endfor %}
+                </div>
             </td>
         </tr>
     {% endapply %}
@@ -66,14 +68,14 @@
 
 {% block page_copy_block_row %}
     {% apply spaceless %}
-        <div class="flex flex-wrap">
-            <div class="w-full md:w-1/3 pr-4 pl-4">
+        <div class="flex flex-wrap h-full row">
+            <div class="w-full md:w-1/3 flex items-center">
                 {{ block.id|u.truncate(20) }}
             </div>
-            <div class="w-full md:w-1/3 pr-4 pl-4">
+            <div class="w-full md:w-1/3 pr-2">
                 {{ form_widget(form.operation) }}
             </div>
-            <div class="w-full md:w-1/3 pr-4 pl-4">
+            <div class="w-full md:w-1/3">
                 {{ form_widget(form.newBlockId) }}
             </div>
         </div>

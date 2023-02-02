@@ -51,13 +51,25 @@ class WorkflowFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('state', WorkflowStateType::class, ['label' => 'Workflow status', 'workflow' => $options['workflow']]);
+        $builder->add(
+            'state',
+            WorkflowStateType::class,
+            ['label' => 'Workflow status', 'workflow' => $options['workflow']]
+        );
 
         $builder->add('comment', TextareaType::class, ['required' => false, 'attr' => ['class' => 'comment']]);
 
-        $builder->add('workflow', HiddenType::class, ['data' => $options['workflow'], 'attr' => ['class' => 'workflow-hidden']]);
+        $builder->add(
+            'workflow',
+            HiddenType::class,
+            ['data' => $options['workflow'], 'attr' => ['class' => 'workflow-hidden']]
+        );
 
-        $builder->add('contentType', HiddenType::class, ['data' => $options['contentType'], 'attr' => ['class' => 'content-type-hidden']]);
+        $builder->add(
+            'contentType',
+            HiddenType::class,
+            ['data' => $options['contentType'], 'attr' => ['class' => 'content-type-hidden']]
+        );
 
         $builder->add(
             'assigned',

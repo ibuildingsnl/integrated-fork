@@ -129,12 +129,12 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
                 [
                     $this->equalTo('field1'),
                     $this->equalTo('type1'),
-                    $this->equalTo(['override1', 'options' => '1', 'attr' => ['style' => Field::LOCATION_EDITOR, 'location' => Field::LOCATION_EDITOR]]),
+                    $this->equalTo(['override1', 'options' => '1', 'attr' => ['location' => Field::LOCATION_EDITOR]]),
                 ],
                 [
                     $this->equalTo('field3'),
                     $this->equalTo('type3'),
-                    $this->equalTo(['override3', 'options' => '3', 'attr' => ['style' => Field::LOCATION_SIDEBAR, 'location' => Field::LOCATION_SIDEBAR]]),
+                    $this->equalTo(['override3', 'options' => '3', 'attr' => ['location' => Field::LOCATION_SIDEBAR]]),
                 ]
             );
 
@@ -357,7 +357,7 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->once())
             ->method('add')
             ->with($this->equalTo('field1'), $this->equalTo('type2'), $this->equalTo(['options2', 'attr' => [
-                'style' => Field::LOCATION_SIDEBAR, 'location' => Field::LOCATION_SIDEBAR,
+                'location' => Field::LOCATION_SIDEBAR,
             ]]));
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);

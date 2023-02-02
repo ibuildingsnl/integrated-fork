@@ -1,10 +1,10 @@
 <div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
     <div
-            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-            data-types="{{ relation.vars.attr['data-types'] }}"
-            data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
-            data-relationid="{{ relation.vars.attr['data-relation'] }}"
-            class="select_multimedia_button p-2 bg-blue-200 border border-black w-32 mb-4">
+        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+        data-types="{{ relation.vars.attr['data-types'] }}"
+        data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
+        data-relationid="{{ relation.vars.attr['data-relation'] }}"
+        class="select_multimedia_button p-2 bg-blue-200 border border-black w-32 mb-4">
         {% trans %}Select multimedia{% endtrans %}
     </div>
 
@@ -36,19 +36,10 @@
 
     </div>
 
-    {% if relation.vars.attr['data-multiple'] == 0 %}
-        <input hidden type="text"
-               class="w-full integrated_content_media_gallery_image_file"
-               name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
-               value="">
-    {% endif %}
-
-    {% if relation.vars.attr['data-multiple'] == 1 %}
-        <input hidden type="text"
-               class="w-full integrated_content_media_gallery_image_file"
-               name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
-               value="">
-    {% endif %}
+    <input hidden type="text"
+           class="w-full integrated_content_media_gallery_image_file"
+           name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
+           value="">
 </div>
 
 <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>

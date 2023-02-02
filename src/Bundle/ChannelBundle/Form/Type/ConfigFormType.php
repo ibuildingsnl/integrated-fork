@@ -61,6 +61,13 @@ class ConfigFormType extends AbstractType
             'translation_domain' => 'IntegratedChannelBundle',
             'multiple' => true,
             'expanded' => true,
+            'attr' => [
+                'class' => 'channel-options',
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'state' => 'show search',
+                'icon' => 'network-alt',
+            ],
         ]);
 
         $builder->add('publicationStartDate', DateTimeType::class, [
@@ -123,11 +130,13 @@ class ConfigFormType extends AbstractType
             }
 
             if (!$adapter instanceof AdapterInterface) {
-                throw new InvalidOptionsException(sprintf(
-                    'The option "%s" could not be normalized to a valid "%s" object',
-                    'adapter',
-                    'Integrated\\Common\\Channel\\Connector\\AdapterInterface'
-                ));
+                throw new InvalidOptionsException(
+                    sprintf(
+                        'The option "%s" could not be normalized to a valid "%s" object',
+                        'adapter',
+                        'Integrated\\Common\\Channel\\Connector\\AdapterInterface'
+                    )
+                );
             }
 
             return $adapter;

@@ -1,5 +1,6 @@
 #wrapper-holder {
     padding-bottom: 85px;
+    top: 0px;
 }
 
 #wrapper-holder > .container {
@@ -11,10 +12,35 @@
     box-shadow: none;
 }
 
-.section-padding {
-    padding: 10px 20px 10px 10px;
+.add-relation {
+    display: none;
 }
 
-body {
-    background: #fff;
+.prefooter-holder {
+    border-top: 1px solid #e5e5e5;
+    background: #fcfcfc;
+}
+
+.aside-options {
+    height: calc(100vh - 50px);
+}
+
+.aside-options .aside-holder {
+    padding-top: 0;
+}
+
+.sidebar {
+    display: none;
+}
+
+.content-wrapper {
+    width: 100%;
+}
+
+#wrapper-holder {
+    height: 100%;
+}
+
+#toolbar .back .form-group {
+    display: none;
 }
