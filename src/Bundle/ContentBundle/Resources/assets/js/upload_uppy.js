@@ -10,8 +10,8 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-import UppyDutch from '@uppy/locales/lib/nl_NL'
-global.UppyDutch = UppyDutch
+// import UppyDutch from '@uppy/locales/lib/nl_NL'
+// global.UppyDutch = UppyDutch
 
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
@@ -26,7 +26,7 @@ function inititalizeUppy(uppyOptions) {
     }
 
     let uppy = new Uppy({
-        locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
+        // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
             let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
             if (null !== current_category_id && '' !== current_category_id) {

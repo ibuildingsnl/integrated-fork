@@ -30,10 +30,9 @@ class Image extends File
     #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
         'priority' => 500,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $file;
 }

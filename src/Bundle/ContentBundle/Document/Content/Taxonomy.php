@@ -31,18 +31,14 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: [
-        'priority' => 999,
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: [
-        'priority' => 500,
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -51,12 +47,11 @@ class Taxonomy extends Content implements RankableInterface
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 998,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
             'placeholder' => 'Your taxonomy description starts here',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $description;
 
     /**

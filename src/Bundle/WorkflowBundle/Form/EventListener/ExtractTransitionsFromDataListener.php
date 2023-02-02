@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\EventListener;
 
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
@@ -43,10 +43,9 @@ class ExtractTransitionsFromDataListener implements EventSubscriberInterface
             $form->remove('transitions');
         }
 
-        $form->add('transitions', ChoiceType::class, [
+        $form->add('transitions', CheckboxSwitcherType::class, [
             'required' => false,
-            'label' => ' ',
-            'style' => 'switcher',
+            'label' => false,
             'choices' => $this->getChoices($event->getData()),
             'choice_value' => 'id',
             'choice_label' => 'name',

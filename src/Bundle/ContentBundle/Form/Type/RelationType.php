@@ -15,7 +15,6 @@ use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -109,24 +108,22 @@ class RelationType extends AbstractType
                     ]
                 )->add(
                     'multiple',
-                    CheckboxType::class,
+                    CheckboxSwitcherType::class,
                     [
-                        'label' => ' ',
+                        'label' => false,
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,
-                            'style' => 'switcher',
                         ],
                     ]
                 )->add(
                     'required',
-                    CheckboxType::class,
+                    CheckboxSwitcherType::class,
                     [
-                        'label' => ' ',
+                        'label' => false,
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,
-                            'style' => 'switcher',
                         ],
                     ]
                 )

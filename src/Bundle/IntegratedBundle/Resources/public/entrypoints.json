@@ -29,6 +29,11 @@
         "/bundles/integratedintegrated/mediagallery.js"
       ]
     },
+    "mediagallery_selection": {
+      "js": [
+        "/bundles/integratedintegrated/mediagallery_selection.js"
+      ]
+    },
     "upload_uppy": {
       "js": [
         "/bundles/integratedintegrated/upload_uppy.js"

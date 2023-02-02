@@ -29,19 +29,18 @@ class Company extends Relation
      */
     #[Type\Field(options: [
         'attr' => [
-            'location' => 'editor',
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
             'style' => 'horizontal',
         ],
-    ])]
+    ], location: 'editor')]
     protected $name;
 
     /**
      * @var string
      */
     #[Slug(fields: ['name'])]
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -49,17 +48,16 @@ class Company extends Relation
      */
     #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'icon' => 'media-image',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $logo;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'www']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www']], location: 'sidebar')]
     protected $website;
 
     /**

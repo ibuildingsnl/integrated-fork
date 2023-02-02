@@ -316,7 +316,7 @@
             {% set class = 'w-full ' ~ widget_col %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
-            {% if style == 'horizontal' or style == 'switcher' %}
+            {% if style == 'horizontal' %}
                 <label class="control-label {{ label_col }}">
                     {% if label is defined and label|length > 1 %}
                         {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
@@ -344,16 +344,10 @@
                 {% if label is empty %}
                     {% set label = name|humanize %}
                 {% endif %}
-                {% if style == 'switcher' %}
-                    <label
-                        class="checkbox-switcher" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-                    {{ block('checkbox_widget') }}
-                {% else %}
-                    <label
-                        class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-                    {{ block('checkbox_widget') }}
-                    {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
-                {% endif %}
+                <label
+                    class="checkbox-container" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                {{ block('checkbox_widget') }}
+                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
                 </label>
             {% else %}
                 {{ block('checkbox_widget') }}
@@ -363,8 +357,6 @@
 
         {% if inline is defined and inline %}
             {{ checkboxdata|raw }}
-        {% elseif style == 'switcher' %}
-            <div class="checkbox-switcher">{{ checkboxdata|raw }}</div>
         {% else %}
             <div class="checkbox">{{ checkboxdata|raw }}</div>
         {% endif %}
@@ -381,6 +373,81 @@
         {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
     {% endapply %}
 {% endblock checkbox_row %}
+
+
+{% block checkbox_switcher_row %}
+    {% apply spaceless %}
+
+        {% if attr.label_col is defined and attr.label_col is not empty %}
+            {% set label_col = attr.label_col %}
+        {% endif %}
+        {% if attr.widget_col is defined and attr.widget_col is not empty %}
+            {% set widget_col = attr.widget_col %}
+        {% endif %}
+        {% if attr.style is defined and attr.style is not empty %}
+            {% set style = attr.style %}
+        {% endif %}
+        {% if attr.state is defined and attr.state is not empty %}
+            {% set state = attr.state %}
+        {% endif %}
+
+        {% set class = '' %}
+        {% if align_with_widget is defined or attr.align_with_widget is defined %}
+            {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
+            {% set label_col = label_col|default(tailwind_get_label_col()) %}
+            {% set class = 'w-full ' ~ widget_col %}
+            <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+            {% set label_col = label_col|default(tailwind_get_label_col()) %}
+            <label class="control-label {{ label_col }}">
+                {% if label is defined and label|length > 1 %}
+                    {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
+                {% else %}
+                    {{ name|humanize }}
+                {% endif %}
+            </label>
+            <div class="w-full widget {{ widget_col }}">
+        {% elseif no_form_group is not defined or no_form_group == false %}
+            <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+        {% endif %}
+
+        {% set checkboxdata %}
+            {% if label is not same as (false) %}
+                {% if not compound %}
+                    {% set label_attr = label_attr|merge({'for': id}) %}
+                {% endif %}
+                {% if inline is defined and inline %}
+                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' checkbox-inline')|trim}) %}
+                {% endif %}
+                {% if required %}
+                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+                {% endif %}
+                {% if label is empty %}
+                    {% set label = name|humanize %}
+                {% endif %}
+                <label
+                    class="checkbox-switcher" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                {{ block('checkbox_switcher_widget') }}
+                </label>
+            {% else %}
+                {{ block('checkbox_switcher_widget') }}
+            {% endif %}
+            {{ form_errors(form) }}
+        {% endset %}
+
+        <div class="checkbox-switcher">{{ checkboxdata|raw }}</div>
+
+        {{ block('form_help') }}
+
+        {% if align_with_widget is defined or attr.align_with_widget is defined %}
+            </div>
+            </div>
+        {% elseif no_form_group is not defined or no_form_group == false %}
+            </div>
+        {% endif %}
+
+        {#        {% if style == 'inline' %}&nbsp;{% endif %} #}
+    {% endapply %}
+{% endblock checkbox_switcher_row %}
 
 {% block radio_row %}
     {% apply spaceless %}
@@ -447,19 +514,21 @@
 
 {% block checkbox_widget %}
     {% apply spaceless %}
-        {% if style is defined and style == 'switcher' %}
-            <input class="switch-input"
-                   type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
-            <span class="switch-handle"></span>
-        {% else %}
-            <input
-                type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <span class="checkmark"></span>
-            <div class="background"></div>
-        {% endif %}
+        <input
+            type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        <span class="checkmark"></span>
+        <div class="background"></div>
     {% endapply %}
 {% endblock checkbox_widget %}
+
+{% block checkbox_switcher_widget %}
+    {% apply spaceless %}
+        <input class="switch-input"
+               type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        <span class="switch-label" data-on="Yes" data-off="No"></span>
+        <span class="switch-handle"></span>
+    {% endapply %}
+{% endblock checkbox_switcher_widget %}
 
 {% block radio_widget %}
     {% apply spaceless %}

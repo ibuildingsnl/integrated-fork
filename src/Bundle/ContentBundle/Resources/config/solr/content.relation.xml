@@ -104,7 +104,6 @@
 
         <type name="integrated.fields">
             <options>
-
                 <array>
                     <string key="name">url</string>
                     <array>
@@ -113,7 +112,6 @@
                         <string>@slug</string>
                     </array>
                 </array>
-
             </options>
         </type>
 
@@ -123,15 +121,10 @@
             </options>
         </type>
 
-
         <type name="integrated.storage">
-
             <options>
-
                 <string key="cover">cover</string>
-
             </options>
-
         </type>
 
     </class>

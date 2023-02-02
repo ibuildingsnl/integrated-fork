@@ -105,12 +105,11 @@ class RelatedContentBlock extends Block
         'priority' => 500,
         'attr' => [
             'min' => 0,
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'grid-add',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $itemsPerPage = 10;
 
     /**
@@ -122,12 +121,11 @@ class RelatedContentBlock extends Block
         'required' => false,
         'attr' => [
             'min' => 0,
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'tools',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $maxItems;
 
     /**

@@ -25,9 +25,7 @@ class Product extends Content
     /**
      * @var string
      */
-    #[Type\Field(options: [
-        'priority' => 999,
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
@@ -36,37 +34,30 @@ class Product extends Content
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 490,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
             'placeholder' => 'Your product content starts here',
         ],
-    ])]
+    ], location: 'editor')]
     protected $content;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: [
-        'priority' => 500,
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
-    #[Type\Field(options: [
-        'priority' => 400,
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'icon' => 'link']])]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $reference;
 
     /**
      * @var string
      */
-    #[Type\Field(options: [
-        'priority' => 480,
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $variant;
 
     /**
@@ -78,33 +69,41 @@ class Product extends Content
      * @var float
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\MoneyType', options: [
-        'priority' => 470,
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $price;
 
     /**
      * @var int
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
-        'priority' => 390,
         'label' => 'Stock quantity',
-        'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'link']])]
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'link'],
+    ], location: 'sidebar')]
     protected $stockQuantity;
 
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
-        'priority' => 350,
-        'attr' => ['align_with_widget' => true, 'style' => 'switcher']])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ])]
     protected $orderable;
 
     /**
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
-        'priority' => 470,
-        'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show']])]
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $description;
 
     /**

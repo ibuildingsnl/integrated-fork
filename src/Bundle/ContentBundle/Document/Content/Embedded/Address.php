@@ -18,7 +18,6 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-#[Type\Document('Embedded')]
 class Address
 {
     /**

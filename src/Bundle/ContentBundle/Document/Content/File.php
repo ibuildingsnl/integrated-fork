@@ -31,12 +31,11 @@ class File extends Content implements FileInterface
     #[Type\Field(options: [
         'priority' => 500,
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'link',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -45,11 +44,10 @@ class File extends Content implements FileInterface
     #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
         'priority' => 500,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $file;
 
     /**
@@ -58,11 +56,10 @@ class File extends Content implements FileInterface
     #[Type\Field(options: [
         'priority' => 999,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $title;
 
     /**
@@ -71,11 +68,10 @@ class File extends Content implements FileInterface
     #[Type\Field(options: [
         'priority' => 998,
         'attr' => [
-            'location' => 'editor',
             'style' => 'editor',
             'state' => 'show',
         ],
-    ])]
+    ], location: 'editor')]
     protected $description;
 
     /**
@@ -84,12 +80,11 @@ class File extends Content implements FileInterface
     #[Type\Field(options: [
         'priority' => 410,
         'attr' => [
-            'location' => 'sidebar',
             'style' => 'sidebar',
             'state' => 'show',
             'icon' => 'copyright',
         ],
-    ])]
+    ], location: 'sidebar')]
     protected $credits;
 
     /**

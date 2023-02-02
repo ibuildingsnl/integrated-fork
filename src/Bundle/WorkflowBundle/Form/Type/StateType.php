@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractTransitionsFromDataListener;
@@ -46,20 +47,19 @@ class StateType extends AbstractType
 
         $builder->add(
             'publishable',
-            Type\CheckboxType::class,
+            CheckboxSwitcherType::class,
             [
                 'label' => 'Publish',
                 'required' => false,
                 'attr' => [
                     'align_with_widget' => true,
-                    'style' => 'switcher',
                 ],
             ]
         );
 
         $builder->add(
             'default',
-            Type\CheckboxType::class,
+            CheckboxSwitcherType::class,
             [
                 'label' => 'Default',
                 'required' => false,
@@ -67,7 +67,6 @@ class StateType extends AbstractType
                 'attr' => [
                     'class' => 'state_default_input_field',
                     'align_with_widget' => true,
-                    'style' => 'switcher',
                 ],
             ]
         );

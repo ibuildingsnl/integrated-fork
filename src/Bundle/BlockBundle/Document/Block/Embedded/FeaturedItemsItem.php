@@ -63,7 +63,7 @@ class FeaturedItemsItem
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'label' => ' ', 'attr' => ['align_with_widget' => true, 'style' => 'switcher']])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: ['required' => false, 'attr' => ['align_with_widget' => true]])]
     protected $disabled = false;
 
     /**

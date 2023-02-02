@@ -12,12 +12,12 @@
 namespace Integrated\Bundle\PageBundle\Form\Type;
 
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\PageBundle\Resolver\ThemeResolver;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -81,12 +81,11 @@ class PageType extends AbstractType
             ],
         ]);
 
-        $builder->add('disabled', CheckboxType::class, [
-            'label' => ' ',
+        $builder->add('disabled', CheckboxSwitcherType::class, [
+            'label' => false,
             'required' => false,
             'attr' => [
                 'align_with_widget' => true,
-                'style' => 'switcher',
             ],
         ]);
 

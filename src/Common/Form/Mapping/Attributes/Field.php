@@ -50,7 +50,7 @@ class Field
 
         $location = $location ?? $extra['location'] ?? $this->location;
 
-        $extra['location'] = self::LOCATION_SIDEBAR === $location ? self::LOCATION_SIDEBAR : self::LOCATION_EDITOR;
+        $extra['location'] = $location;
 
         foreach ($extra as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);

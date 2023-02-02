@@ -83,7 +83,7 @@ class FormBlock extends Block
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
         'priority' => 440,
         'label' => 'Enable reCaptcha for this form',
         'required' => false,

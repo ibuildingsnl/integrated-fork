@@ -200,12 +200,16 @@
     <div id="authorTypes">
         {% if value is not empty %}
             {% for item in value %}
-                <div id="type_{{ item.id }}" style="margin-top: 10px;" class="input-group input-group"><span
-                        class="input-group-addon">{{ item.text }}</span><input type="text"
-                                                                               class="form-control type-text"
-                                                                               name="{{ full_name }}[types][{{ item.id }}]"
-                                                                               value="{{ item.type }}"
-                                                                               placeholder="Type"/></div>
+                <div id="type_{{ item.id }}" style="margin-top: 10px;" class="input-group input-group">
+                    <span class="input-group-addon">
+                        {{ item.text }}
+                    </span>
+                    <input type="text"
+                           class="form-control type-text"
+                           name="{{ full_name }}[types][{{ item.id }}]"
+                           value="{{ item.type }}"
+                           placeholder="Type"/>
+                </div>
             {% endfor %}
         {% endif %}
     </div>
