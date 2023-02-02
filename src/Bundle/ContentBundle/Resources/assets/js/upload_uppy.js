@@ -13,7 +13,7 @@ global.ImageEditor = ImageEditor
 // import UppyDutch from '@uppy/locales/lib/nl_NL'
 // global.UppyDutch = UppyDutch
 
-function inititalizeUppy(uppyOptions) {
+async function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
     let default_language = '' //defaults to eng
     if (! ("target" in uppyOptions)) {
@@ -56,6 +56,59 @@ function inititalizeUppy(uppyOptions) {
             quality: 0.9,
         });
     }
+
+    async function loadXHR(url) {
+        let test = await new Promise(function(resolve, reject) {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", url);
+                xhr.responseType = "blob";
+                xhr.onerror = function() {reject("Network error.")};
+                xhr.onload = function() {
+                    if (xhr.status === 200) {resolve(xhr.response)}
+                    else {reject("Loading error:" + xhr.statusText)}
+                };
+                xhr.send();
+            }
+            catch(err) {reject(err.message)}
+        });
+
+        return test
+    }
+
+    console.log(uppyOptions)
+    if (uppyOptions.mode = "edit_images") {
+
+        uppy.addFile({
+            name: 'my-file.jpg', // file name
+            type: 'image/jpeg', // file type
+            data: blob, // file blob
+            meta: {
+                // optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
+                // relativePath: webkitFileSystemEntry.relativePath,
+            },
+            source: 'Local', // optional, determines the source of the file, for example, Instagram.
+            isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example,
+            // when using companion in combination with Instagram.
+        })
+        console.log(uppyOptions.endpoint)
+        console.log(uppyOptions.imageSource)
+    }
+
+    uppy.on('file-editor:start', (file) => {
+        console.log("fe start")
+        console.log(file)
+    })
+
+    uppy.on('file-editor:complete', (updatedFile) => {
+        console.log("fe complete")
+        console.log(updatedFile)
+    })
+
+    uppy.on('file-editor:cancel', (file) => {
+        console.log("fe cancel")
+        console.log(file)
+    })
 
     return uppy;
 }

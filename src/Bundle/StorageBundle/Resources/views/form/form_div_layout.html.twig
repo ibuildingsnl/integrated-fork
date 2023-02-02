@@ -1,17 +1,8 @@
 {% block integrated_file_dropzone_row %}
     {% apply spaceless %}
         {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
-        {% set state = state|default(tailwind_get_state()) %}
         {% set style = style|default(tailwind_get_style()) %}
-        {% if attr.style is defined and attr.style is not empty %}
-            {% set style = attr.style %}
-        {% endif %}
-        {% if attr.icon is defined and attr.icon is not empty %}
-            {% set icon = attr.icon %}
-        {% endif %}
-        {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
-        {% endif %}
+        {% set state = state|default(tailwind_get_state()) %}
         {% if style == 'sidebar' %}
             <div
                 class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
@@ -41,7 +32,7 @@
 
                             {% set options = options|merge({'changeInput': changeInput}) %}
 
-                            <div class="jFiler-input-dragDrop integrated-dropzone widget{% if required %}required{% endif %}"
+                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
                                  data-options="{{ options|json_encode }}">
                                 {{ form_widget(form.file) }}
                                 {{ form_widget(form.remove) }}
@@ -94,7 +85,27 @@
         {% else %}
             <div class="form-group w-full flex flex-wrap{% if not form.vars.valid %} has-error{% endif %}">
                 {{ form_label(form) }}
-                <div class="w-full {{ widget_col }} widget">
+                <div class="w-full {{ widget_col }}">
+
+                    {% set thumbnail = integrated_image(form.vars.data).zoomCrop(500, 500) %}
+
+                    <div class="centered">
+                        <img src="{{ thumbnail }}" alt="rawr">
+                    </div>
+
+{#                    <img src=     "{{ web_image(document.file).cropResize(1140, 600) }}" alt="{{ document.title|default }}" title="{{ document.description|default }}" class="{{ class|default }}" />#}
+
+                    <div id="upload_container" >
+                        {% include '@IntegratedContent/media/upload.html.twig'
+                            with {
+                            'language': app.request.defaultLocale,
+                            'endpoint': path('integrated_content_media_upload_file'),
+                            'height': '750px',
+                            'imageEditorEnabled': true,
+                            'target': '#upload_container .drag-drop-area',
+                        } %}
+                    </div>
+
                     {% set changeInput %}
                         <div class="jFiler-input-inner dropzone-empty">
                             <div class="jFiler-input-icon">
