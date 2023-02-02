@@ -19,7 +19,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepository
 
     public function byType(string $contentType): array
     {
-        return array_filter($this->taxonomies, fn(Taxonomy $t) => $t->getContentType() === $contentType);
+        return array_filter($this->taxonomies, fn (Taxonomy $t) => $t->getContentType() === $contentType);
     }
 
     public function add(Taxonomy $taxonomy): void

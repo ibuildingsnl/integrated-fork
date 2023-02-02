@@ -43,7 +43,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
                 if (!$menuAdmin) {
                     $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES);
                 }
-                $menuAdmin->addChild($taxonomyType->getName() . ' index', [
+                $menuAdmin->addChild($taxonomyType->getName().' index', [
                     'route' => 'integrated_taxonomy_index',
                     'routeParameters' => ['type' => $taxonomyType->getId()],
                 ]);

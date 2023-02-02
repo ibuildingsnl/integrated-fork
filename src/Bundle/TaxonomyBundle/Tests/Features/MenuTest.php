@@ -156,8 +156,8 @@ final class MenuTest extends TestCase
         $taxonomy->setId($name);
         $taxonomy->setName(ucfirst($name));
         $taxonomy->setClass(Taxonomy::class);
-        $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, $name . '-access'));
-        $taxonomy->addPermission($this->permission(PermissionInterface::READ, $name . '-read'));
+        $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, $name.'-access'));
+        $taxonomy->addPermission($this->permission(PermissionInterface::READ, $name.'-read'));
         $this->repository->addType($taxonomy);
     }
 
