@@ -1,14 +1,35 @@
+body, html {
+    height: -webkit-fill-available;
+    -webkit-overflow-scrolling: touch !important;
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+body {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
 .content-wrapper {
-    padding-bottom: 120px;
     position: relative;
     overflow: hidden;
-    width: calc(100vw - 200px);
-    padding: 2rem;
+    width: calc(100vw - 250px);
+    height: 100%;
     background-color: $bg-gray;
+    @include media(max-xl) {
+        width: calc(100vw - 50px);
+    }
+    @include media(max-sm) {
+        width: 100%;
+    }
 
     &.iframe {
         width: 100vw;
-        max-height: calc(100vh - 50px);
+        max-height: calc(100vh - 60px);
+
         .aside-options {
             height: 100vh
         }
@@ -30,23 +51,86 @@
         background-color: white;
         padding-bottom: 100px;
 
+        &-full {
+            width: 100%;
+        }
+
+        @include media(max-lg) {
+            width: 100%;
+        }
+
         .editor-wrapped {
             background-color: white;
             padding: 2rem;
             border-radius: 15px;
+            @include media(max-sm) {
+                padding: 1rem;
+            }
+        }
+    }
+
+    .index-wrapper {
+        width: calc(100% - 350px);
+        max-height: calc(100vh - 60px);
+        overflow: auto;
+        position: relative;
+        padding: 2rem 2rem 100px;
+
+        &.index-wrapper {
+            position: inherit;
+        }
+
+        &-full {
+            width: 100%;
+            max-height: calc(100vh - 60px);
+            overflow: auto;
+            position: relative;
+            padding: 2rem;
+            padding-bottom: 100px;
+            @include media(max-lg) {
+                padding: 1rem;
+            }
+            @include media(max-md) {
+                * {
+                    word-break: break-word;
+                }
+            }
+        }
+
+        @include media(max-lg) {
+            width: 100%;
+            padding: 1rem 1rem 5rem 1rem;
+        }
+        @include media(max-md) {
+            * {
+                word-break: break-word;
+            }
+        }
+
+        .toggle-filters {
+            display: none;
+            @include media(max-lg) {
+                display: inline-flex;
+            }
         }
     }
 
     .edit-form {
         .editor-wrapper {
             background-color: $bg-gray;
-            padding: 2rem;
+            padding: 2rem 2rem 5rem 2rem;
+            @include media(max-lg) {
+                padding: 1rem 1rem 10rem 1rem;
+            }
 
             .editor:not(.editor-wrapped) {
                 .form-item, .editor-item-wrapper {
                     margin-bottom: 2rem;
                     border-radius: 15px;
                     border: 0;
+                    @include media(max-sm) {
+                        margin-bottom: 1rem;
+                    }
                 }
 
                 .form-item {
@@ -55,6 +139,28 @@
                         padding: 1rem 2rem;
                     }
                 }
+            }
+
+            .editor {
+                div.form-group {
+                    border-top: 1px solid #dee3e9;
+                    padding-top: 2rem;
+                    margin-top: 2rem;
+
+                    .subheader {
+                        position: absolute;
+                        top: -11px;
+
+                        strong {
+                            background-color: #dee3e9;
+                            padding: 0 1rem;
+                            display: inline-block;
+                            border-radius: 8px;
+                        }
+                    }
+                }
+
+
             }
         }
 
@@ -84,15 +190,76 @@
     }
 }
 
-body[class*="_edit"], body[class*="_new"], body[class*="_show"], body[class*="_delete"], body[class*="_update"] {
+.section-white {
+    background: $color-white;
+}
+
+.section-gray {
+    background: $color-alabaster;
+}
+
+.section-padding {
+    padding: 2rem;
+    @include media(max-md) {
+        padding: 1rem;
+    }
+}
+
+.section-radius {
+    border-radius: 1rem;
+}
+
+
+body[class*="edit"], body[class*="new"], body[class*="show"], body[class*="delete"], body[class*="update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index, body.history_index, body.page_copy {
     .content-wrapper {
         padding: 50px 0 0;
     }
 }
 
-body[class*="_index"] {
-    .content-wrapper {
-        overflow-y:scroll;
+body.bulk_select, body.bulk_configure, body.bulk_confirm {
+    .form-wrapper.compound .form-group > div {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+@include media(max-sm) {
+    body[class*="_index"]:not(.media_index) {
+        .section-white {
+            background: transparent;
+        }
+    }
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+body.show-options {
+    @include media(max-lg) {
+        #wrapper-holder {
+            .editor-wrapper {
+                width: calc(100% - 350px);
+            }
+        }
+    }
+    @include media(max-md) {
+        position: inherit;
+        #wrapper-holder {
+            position: inherit;
+
+            .content-wrapper {
+                position: inherit;
+            }
+        }
+    }
+}
+
+body.hide-options {
+    #wrapper-holder {
+        .editor-wrapper {
+            width: 100%;
+        }
     }
 }
 
@@ -124,13 +291,21 @@ body[class*="_index"] {
     }
 
     .options {
-        height: 49px;
         background-color: white;
         border-radius: 1rem;
         padding: 0.5rem;
         display: flex;
         margin-top: 1rem;
         width: 100%;
+        flex-wrap: wrap;
+
+        @include media(max-md) {
+            height: auto;
+            padding: 1rem 1rem 0 1rem;
+            li {
+                margin-bottom: 1rem;
+            }
+        }
     }
 
     .options-no-bg {
@@ -162,6 +337,10 @@ body[class*="_index"] {
 
     .editor-item-list-container {
         padding: 0 2rem 2rem;
+        position: relative;
+        @include media(max-sm) {
+            padding: 0 1rem 1rem;
+        }
     }
 
     .editor-item-header {
@@ -172,6 +351,10 @@ body[class*="_index"] {
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
+
+        * {
+            pointer-events: none;
+        }
 
         > i {
             width: 20px;
@@ -258,8 +441,10 @@ span.help-block {
     font-size: 12px;
     display: flex;
     align-items: center;
+
     i {
-        margin-right:5px;
+        margin-right: 5px;
+
         &:before {
             width: 14px;
             height: 14px;

@@ -18,6 +18,7 @@ use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
+use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -72,7 +73,7 @@ class ContentProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getFilterOptionsFromSolr(Request $request, $filterOnDayOrYear, $contentTypeSelectOptions): array
+    public function getFilterOptionsFromSolr(Request $request, $dateFilterGap, $contentTypeSelectOptions): array
     {
         $query = $this->client->createSelect();
 
@@ -90,13 +91,8 @@ class ContentProvider
             }
         }
 
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
-            }
-        }
+        $contentTypesQuery = $query->createFilterQuery('contenttypes');
+        $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
@@ -116,13 +112,12 @@ class ContentProvider
         }
 
         // Filter on dates
-        // TODO with some more data, update this to MONTH
         $facetSet = $query->getFacetSet();
         $facet = $facetSet->createFacetRange('pub_created');
         $facet->setField('pub_created');
         $facet->setStart('2022-01-01T00:00:00Z'); // TODO Can we fill this dynamically with Lowest?
-        $facet->setGap($filterOnDayOrYear);
-        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z'); // Is there a prettier way?
+        $facet->setGap($dateFilterGap);
+        $facet->setEnd(date('Y-m-d').'T'.date('H:i:s').'Z');
 
         $resultSet = $this->client->select($query);
 
@@ -200,14 +195,8 @@ class ContentProvider
             }
         }
 
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->addTag('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
-            }
-        }
+        $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
+        $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
 
         // If the workflow bundle is loaded then only display the results that the
         // user has read rights to
@@ -363,5 +352,24 @@ class ContentProvider
         }
 
         return $fq;
+    }
+
+    // If there is ONE contenttype selected, we only want to show files with this contenttype
+    // Else ,if available_contenttypes is filled, we only want to show those file.
+    // Else, we are showing all the contenttypes
+    // $contentType is what the user has in its selection,
+    // $available_contenttypes is what the user can choose from
+    private function setContentTypes(array|null $contentType, FilterQuery $contentTypesQuery, \Closure $filter, Request $request): void
+    {
+        if (\is_array($contentType) && \count($contentType) === 1) {
+            $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+        } else {
+            $availableContenttypes = $request->query->get('available_contenttypes');
+            if (\is_array($availableContenttypes) && \count($availableContenttypes)) {
+                $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $availableContenttypes))]);
+            } elseif (\is_array($contentType)) {
+                $contentTypesQuery->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
+            }
+        }
     }
 }

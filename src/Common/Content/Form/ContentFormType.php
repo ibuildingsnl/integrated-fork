@@ -78,24 +78,30 @@ class ContentFormType extends AbstractType
 
         // Allow events to change the options or add fields at the start of the form
         if ($dispatcher->hasListeners(Events::PRE_BUILD)) {
-            $options = $dispatcher->dispatch(new BuilderEvent(
-                $type,
-                $metadata,
-                $builder,
-                $options,
-            ), Events::PRE_BUILD)->getOptions();
+            $options = $dispatcher->dispatch(
+                new BuilderEvent(
+                    $type,
+                    $metadata,
+                    $builder,
+                    $options,
+                ),
+                Events::PRE_BUILD
+            )->getOptions();
         }
 
         foreach ($metadata->getFields() as $field) {
             // Allow events to add fields before the supplied field
             if ($dispatcher->hasListeners(Events::PRE_BUILD_FIELD)) {
-                $dispatcher->dispatch(new BuilderEvent(
-                    $type,
-                    $metadata,
-                    $builder,
-                    $options,
-                    $field->getName()
-                ), Events::PRE_BUILD_FIELD);
+                $dispatcher->dispatch(
+                    new BuilderEvent(
+                        $type,
+                        $metadata,
+                        $builder,
+                        $options,
+                        $field->getName()
+                    ),
+                    Events::PRE_BUILD_FIELD
+                );
             }
 
             if ($type->hasField($field->getName())) {
@@ -116,21 +122,28 @@ class ContentFormType extends AbstractType
                 }
 
                 if ($config) {
-                    $builder->add($config->getName(), $config->getType(), $config->getOptions() + [
-                        'attr' => ['style' => $config->getLocation(), 'location' => $config->getLocation()],
-                    ]);
+                    $builder->add(
+                        $config->getName(),
+                        $config->getType(),
+                        array_replace_recursive($config->getOptions(), [
+                            'attr' => ['location' => $config->getLocation()],
+                        ])
+                    );
                 }
             }
 
             // Allow events to add fields after the supplied field
             if ($dispatcher->hasListeners(Events::POST_BUILD_FIELD)) {
-                $dispatcher->dispatch(new BuilderEvent(
-                    $type,
-                    $metadata,
-                    $builder,
-                    $options,
-                    $field->getName()
-                ), Events::POST_BUILD_FIELD);
+                $dispatcher->dispatch(
+                    new BuilderEvent(
+                        $type,
+                        $metadata,
+                        $builder,
+                        $options,
+                        $field->getName()
+                    ),
+                    Events::POST_BUILD_FIELD
+                );
             }
         }
 
@@ -155,13 +168,16 @@ class ContentFormType extends AbstractType
         $type = $options['content_type'];
         unset($options['content_type']);
 
-        $dispatcher->dispatch(new ViewEvent(
-            $type,
-            $this->metadataFactory->getMetadata($type->getClass()),
-            $view,
-            $form,
-            $options
-        ), Events::PRE_VIEW);
+        $dispatcher->dispatch(
+            new ViewEvent(
+                $type,
+                $this->metadataFactory->getMetadata($type->getClass()),
+                $view,
+                $form,
+                $options
+            ),
+            Events::PRE_VIEW
+        );
     }
 
     /**
@@ -179,13 +195,16 @@ class ContentFormType extends AbstractType
         $type = $options['content_type'];
         unset($options['content_type']);
 
-        $dispatcher->dispatch(new ViewEvent(
-            $type,
-            $this->metadataFactory->getMetadata($type->getClass()),
-            $view,
-            $form,
-            $options
-        ), Events::POST_VIEW);
+        $dispatcher->dispatch(
+            new ViewEvent(
+                $type,
+                $this->metadataFactory->getMetadata($type->getClass()),
+                $view,
+                $form,
+                $options
+            ),
+            Events::POST_VIEW
+        );
     }
 
     /**
@@ -199,11 +218,13 @@ class ContentFormType extends AbstractType
             }
 
             if (!$value instanceof ContentTypeInterface) {
-                throw new InvalidOptionsException(sprintf(
-                    'The option "%s" could not be normalized to a valid "%s" object',
-                    'content_type',
-                    ContentTypeInterface::class
-                ));
+                throw new InvalidOptionsException(
+                    sprintf(
+                        'The option "%s" could not be normalized to a valid "%s" object',
+                        'content_type',
+                        ContentTypeInterface::class
+                    )
+                );
             }
 
             return $value;
@@ -222,8 +243,7 @@ class ContentFormType extends AbstractType
             ->setAllowedTypes('content_type', [ContentTypeInterface::class, 'string'])
             ->setNormalizer('content_type', $contentTypeNormalizer)
             ->setNormalizer('data_class', $dataClassNormalizer)
-            ->setNormalizer('empty_data', $emptyDataNormalizer)
-        ;
+            ->setNormalizer('empty_data', $emptyDataNormalizer);
     }
 
     /**

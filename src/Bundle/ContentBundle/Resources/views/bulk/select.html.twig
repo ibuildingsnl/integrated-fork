@@ -15,12 +15,23 @@
 
 {% block content %}
 
-    {{ form_start(form) }}
-
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_content_index", app.request.query.all) }}">{% trans %}Cancel{% endtrans %}</a>&nbsp;
-        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
-    </div>
+<div class="row">
+    {% block form_start %}
+        {{ form_start(form, { 'style': 'horizontal' }) }}
+    {% endblock %}
+    {% block toolbar %}
+        <div id="toolbar" class="w-full flex justify-between">
+            <div class="options">
+                <div class="form-actions">
+                    <button class="no-icon btn btn-green" type="submit">{% trans %}Next{% endtrans %}</button>
+                </div>
+            </div>
+            <div class="back">
+                <a class="no-icon btn btn-white icon-left" href="{{ path("integrated_content_content_index", app.request.query.all) }}"><i class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+            </div>
+        </div>
+    {% endblock toolbar %}
+    <div class="index-wrapper-full">
 
     <h1>{% trans %}Step 1 of 3: Choose Issues{% endtrans %}</h1>
 
@@ -69,12 +80,14 @@
         </section>
     </div>
 
-    <div class="pull-right">
-        <a class="btn btn-gray-thin" href="{{ path("integrated_content_content_index", app.request.query.all) }}">{% trans %}Cancel{% endtrans %}</a>&nbsp;
-        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
-    </div>
+{#    <div class="pull-right">#}
+{#        <a class="btn btn-gray-thin" href="{{ path("integrated_content_content_index", app.request.query.all) }}">{% trans %}Cancel{% endtrans %}</a>&nbsp;#}
+{#        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>#}
+{#    </div>#}
 
     {{ form_end(form) }}
+    </div>
+</div>
 
 {% endblock %}
 

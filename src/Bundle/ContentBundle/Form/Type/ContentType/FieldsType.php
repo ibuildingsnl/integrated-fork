@@ -44,14 +44,12 @@ class FieldsType extends AbstractType
             'custom',
             TailwindCollectionType::class,
             [
-                'label' => false,
+                'label' => 'Custom Fields',
                 'entry_type' => Fields\CustomType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'add_button_text' => 'Add custom field',
                 'delete_button_text' => 'Delete field',
-                'sub_widget_col' => 9,
-                'button_col' => 3,
             ]
         );
 

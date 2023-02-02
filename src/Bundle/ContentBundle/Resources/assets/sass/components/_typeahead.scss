@@ -15,6 +15,15 @@
         border-radius: 8px;
         overflow: hidden;
         padding: 1rem 0;
+        @include media(max-lg) {
+            position: fixed !important;
+            left: 0;
+            right: 0;
+            width: 100%;
+            top: 40px !important;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
     }
 
     .tt-divider,

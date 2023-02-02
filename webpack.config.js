@@ -6,6 +6,7 @@ webpackConfig = Encore.setOutputPath(
     .setPublicPath('/bundles/integratedintegrated')
     .setManifestKeyPrefix('bundles/integratedintegrated')
     .addEntry('app', [
+            './node_modules/iconoir/css/iconoir.css',
             './src/Bundle/ContentBundle/Resources/assets/sass/main.scss',
             './src/Bundle/WorkflowBundle/Resources/assets/css/style.css',
             './src/Bundle/ContentBundle/Resources/assets/js/main.js'])
@@ -24,6 +25,9 @@ webpackConfig = Encore.setOutputPath(
     .addEntry('mediagallery', [
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',
+    ])
+    .addEntry('mediagallery_selection', [
+        './src/Bundle/ContentBundle/Resources/assets/js/mediagallery_selection.js',
     ])
     .addEntry('upload_uppy', [
         './src/Bundle/ContentBundle/Resources/assets/js/upload_uppy.js',

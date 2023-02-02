@@ -38,8 +38,8 @@ class LayoutChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choice_label' => function ($value) {
-                return $value;
+            'choice_label' => function ($value, $key) {
+                return $key;
             },
             'choices' => function (Options $options) {
                 return $this->getChoiceList($options['type']);
@@ -58,7 +58,7 @@ class LayoutChoiceType extends AbstractType
     {
         $layouts = $this->locator->getLayouts($type);
 
-        sort($layouts);
+        ksort($layouts);
 
         return $layouts;
     }

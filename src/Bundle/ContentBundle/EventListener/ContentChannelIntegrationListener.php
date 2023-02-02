@@ -79,7 +79,9 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
             // A empty channel list can also be enforced so no check for a empty
             // enforce array.
 
-            $builder->addEventSubscriber(new ChannelEnforcerListener($this->getChannels($enforce), ChannelEnforcerListener::SET));
+            $builder->addEventSubscriber(
+                new ChannelEnforcerListener($this->getChannels($enforce), ChannelEnforcerListener::SET)
+            );
         } else {
             $channels = [];
 
@@ -114,7 +116,10 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                     unset($choices[$index]);
                 }
 
-                if (isset($options['restricted']) && \count($options['restricted']) > 0 && !\in_array($value->getId(), $options['restricted'])) {
+                if (isset($options['restricted']) && \count($options['restricted']) > 0 && !\in_array(
+                    $value->getId(),
+                    $options['restricted']
+                )) {
                     unset($choices[$index]);
                 }
             }
@@ -128,6 +133,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
                 $builder->add('channels', ChoiceType::class, [
                     'required' => false,
+                    'priority' => 999,
 
                     'choices' => $choices,
                     'choice_value' => 'id',
@@ -135,9 +141,21 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
                     'multiple' => true,
                     'expanded' => true,
-                    'attr' => ['class' => 'channel-options'],
+                    'attr' => [
+                        'class' => 'channel-options',
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show search',
+                        'icon' => 'network-alt',
+                    ],
                     'choice_attr' => function ($value) use ($enforce) {
-                        if ($value instanceof Channel && (isset($enforce[$value->getId()]) || !$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value))) {
+                        if ($value instanceof Channel && (
+                            isset(
+                                $enforce[$value->getId()]
+                            ) || !$this->authorizationChecker->isGranted(
+                                PermissionInterface::WRITE,
+                                $value
+                            ))) {
                             return ['disabled' => 'disabled'];
                         }
 

@@ -59,7 +59,7 @@ class FormBlock extends Block
     ])]
     protected array $emailAddresses = [];
 
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
         'label' => 'Enable reCaptcha for this form',
         'required' => false,
         'attr' => ['align_with_widget' => true],

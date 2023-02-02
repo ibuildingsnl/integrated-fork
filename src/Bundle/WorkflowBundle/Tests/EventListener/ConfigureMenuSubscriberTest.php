@@ -95,7 +95,7 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->once())
             ->method('getChild')
-            ->with(ConfigureMenuSubscriber::MENU_MANAGE)
+            ->with(ConfigureMenuSubscriber::MENU_SETTINGS)
             ->willReturn($menuManage)
         ;
 
@@ -132,16 +132,24 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->once())
             ->method('getChild')
-            ->with(ConfigureMenuSubscriber::MENU_MANAGE)
+            ->with(ConfigureMenuSubscriber::MENU_SETTINGS)
             ->willReturn(null)
         ;
 
         $menu
             ->expects($this->once())
             ->method('addChild')
-            ->with(ConfigureMenuSubscriber::MENU_MANAGE)
+            ->with(ConfigureMenuSubscriber::MENU_SETTINGS)
             ->willReturn($menuManage)
         ;
+
+        $menuManage
+            ->expects($this->once())
+            ->method('setExtra')
+            ->with('icon', 'iconoir-settings')
+            ->willReturnSelf()
+        ;
+
         $menuManage
             ->expects($this->atLeastOnce())
             ->method('addChild')

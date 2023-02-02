@@ -1,83 +1,62 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Edit {% endtrans %} {{ relation.name }}{% endblock title %}
 {% block content %}
-    <div class="flex flex-wrap edit-form">
-        {% block form_start %}
-            {{ form_start(form, { 'style': 'horizontal' }) }}
-        {% endblock %}
-        {% block toolbar %}
-            {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
-        {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                            <i class="iconoir-info-empty"></i>
-                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                        </h3>
-                        <i class="iconoir-nav-arrow-up"></i>
-                    </div>
-                    <div class="aside-item-list">
-                        <div class="aside-item-list-container">
-                            <div class="status-info">
-                                {% if relation.createdAt is defined %}
-                                    Aangemaakt op: {{ relation.createdAt|date }}
-                                {% endif %}
-                            </div>
-                            <div class="status-options">
-                                {% if relation is defined and relation.createdAt is defined %}
-                                    <div class="status published">
-                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
-                                    </div>
-                                    <a class="delete"
-                                       href="{{ path('integrated_content_relation_delete', {'id': relation.id}) }}">
-                                        <i class="iconoir-trash"></i>
-                                    </a>
-                                {% else %}
-                                    <div class="status draft">
-                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+<div class="flex flex-wrap edit-form">
+    {% block form_start %}
+        {{ form_start(form, { 'style': 'horizontal' }) }}
+    {% endblock %}
+    {% block toolbar %}
+        {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+    {% endblock toolbar %}
+    <div class="aside-options">
+        <aside>
+            <div class="aside-holder">
+                {% block sidebar %}
+                <div class="aside-header">
+                    <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
+                        <i class="iconoir-cancel"></i>
+                    </button>
+                    <span>{% trans %}Options{% endtrans %}</span>
                 </div>
-                {% if form.location is defined %}
-                    {{ form_row(form.location, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.icon is defined %}
-                    {{ form_row(form.icon, {'style': 'sidebar', 'icon':'iconoir', 'state': 'show'}) }}
-                {% endif %}
-                {% if form.options is defined %}
-                    {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                {% endif %}
-            </aside>
-        </div>
-        <div class="editor-wrapper">
-            <div class="page-title">
-                <h1 class="heading">{% trans %}Edit{% endtrans %} {{ relation.name }}</h1>
+                    {% block content_meta %}
+                        {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                            {{ form_row(child) }}
+                        {% endfor %}
+                    {% endblock %}
+                {% endblock %}
             </div>
-            <section class="editor editor-wrapped">
-                {% if form.name is defined %}
-                {{ form_row(form.name) }}
-                {% endif %}
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
-            </section>
-        </div>
-        {% block form_end %}
-            {{ form_end(form) }}
-        {% endblock %}
+        </aside>
     </div>
+    <div class="editor-wrapper">
+        <div class="page-title">
+            <h1 class="heading">{% trans %}Edit{% endtrans %} {{ relation.name }}</h1>
+        </div>
+        <section class="editor editor-wrapped">
+            {% block content_form %}
+                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                    {{ form_row(child) }}
+                {% endfor %}
+
+                {{ form_rest(form, {'style':'horizontal'}) }}
+            {% endblock %}
+        </section>
+    </div>
+    {% block form_end %}
+        {{ form_end(form) }}
+    {% endblock %}
+</div>
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-    $(document).ready(function() {
-        $('#integrated_relation_sources').select2();
-        $('#integrated_relation_targets').select2();
-    });
-    </script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#integrated_relation_sources').select2();
+    $('#integrated_relation_targets').select2();
+});
+$(function () {
+    $('[data-toggle="popover"]').popover();
+});
+</script>
 {% endblock javascript %}

@@ -9,47 +9,8 @@
         {% block toolbar %}
             {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
         {% endblock toolbar %}
-        <div class="aside-options">
-            <aside>
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                            <i class="iconoir-info-empty"></i>
-                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
-                        </h3>
-                        <i class="iconoir-nav-arrow-up"></i>
-                    </div>
-                    <div class="aside-item-list">
-                        <div class="aside-item-list-container">
-                            <div class="status-info">
-                                {% if form.publicationStartDate is defined %}
-                                    {{ form_row(form.publicationStartDate) }}
-                                {% endif %}
-                            </div>
-                            <div class="status-options">
-                                {% if workflow is defined %}
-                                    <div class="status published">
-                                        <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
-                                    </div>
-                                    <a class="delete"
-                                       href="{{ path('integrated_workflow_delete', {'id': workflow.id}) }}">
-                                        <i class="iconoir-trash"></i>
-                                    </a>
-                                {% else %}
-                                    <div class="status draft">
-                                        <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% if form.channels is defined %}
-                    {{ form_row(form.channels, {'style': 'sidebar', 'icon':'network-alt', 'state': 'show'}) }}
-                {% endif %}
-            </aside>
-        </div>
-        <div class="editor-wrapper">
+        <div class="aside-options"></div>
+        <div class="editor-wrapper editor-wrapper-full">
             <div class="page-title">
                 <h1 class="heading">
                     {% block contentTitle %}
@@ -60,7 +21,7 @@
             <section class="editor editor-wrapped">
                 {{ form_errors(form) }}
 
-                {{ form_rest(form, {'style':'horizontal', 'state': 'show'})}}
+                {{ form_rest(form, {'style':'horizontal', 'state': 'show'}) }}
             </section>
         </div>
         {% block form_end %}
@@ -68,11 +29,9 @@
         {% endblock %}
     </div>
 {% endblock %}
-{#{% block webpack_js %}#}
-{#{% endblock %}#}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script src="{{ asset('bundles/integratedintegrated/workflow.js') }}"></script>
+<script src="{{ asset('bundles/integratedintegrated/workflow.js') }}"></script>
 {% endblock %}

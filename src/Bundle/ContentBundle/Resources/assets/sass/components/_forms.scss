@@ -7,6 +7,8 @@
     width: 100%;
     box-shadow: none;
     border-color: $border-color;
+    -webkit-appearance: none;
+    max-width: 750px;
     @include custom-placeholder($color: $input-color-placeholder, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 
     &:focus {
@@ -23,6 +25,16 @@
             border: 1px solid $border-color-focus;
         }
     }
+}
+
+.editor-item-list .form-control {
+    max-width: 100%;
+}
+
+select.form-control {
+    background-image: url('data:image/svg+xml;utf8,<svg width=\'20px\' height=\'20px\' stroke-width=\'0.95\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\' color=\'%23000000\'><path d=\'M6 9l6 6 6-6\' stroke=\'%23000000\' stroke-width=\'0.95\' stroke-linecap=\'round\' stroke-linejoin=\'round\'></path></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-position: center right 5px !important;
 }
 
 .form-group, .form-item {
@@ -121,6 +133,9 @@ label {
     @include clearfix();
     @include display(flex);
     flex-direction: row-reverse;
+    @include media(max-md) {
+        padding-left: 5px;
+    }
 
     .nav-form-inner {
         @include transition(300ms);
@@ -151,12 +166,6 @@ label {
 
     .search-form {
         width: 100%;
-        @include media(max-md) {
-            padding: 8px 0;
-            margin: 0;
-            border: none;
-            box-shadow: none;
-        }
 
         .form-control {
             line-height: inherit;
@@ -186,6 +195,7 @@ label {
         border: none;
         box-shadow: none;
         border-radius: 6px;
+        max-width: 100%;
         @include custom-placeholder($color: $input-color-placeholder, $font-size: $input-font-size-placeholder, $line-height: $input-line-height-placeholder);
 
         &:focus {
@@ -359,6 +369,7 @@ label {
     -ms-user-select: none;
     user-select: none;
     font-weight: 300;
+    flex-wrap: wrap;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;
@@ -416,6 +427,111 @@ label {
     /* Show the checkmark when checked */
     input:checked ~ .checkmark:after {
         display: block;
+    }
+}
+
+
+.checkbox-switcher {
+    position: relative;
+    display: block;
+    vertical-align: top;
+    width: 100px;
+    height: 33px;
+    border-radius: 8px;
+    box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, .05);
+    cursor: pointer;
+    box-sizing: content-box;
+    padding: 0 !important;
+
+    .switch-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        box-sizing: content-box;
+    }
+
+    .switch-label {
+        position: relative;
+        display: block;
+        height: inherit;
+        font-size: 14px;
+        background: #eceeef;
+        border-radius: inherit;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+        box-sizing: content-box;
+    }
+
+    .switch-label:before, .switch-label:after {
+        position: absolute;
+        top: 50%;
+        margin-top: -.5em;
+        line-height: 1;
+        -webkit-transition: inherit;
+        -moz-transition: inherit;
+        -o-transition: inherit;
+        transition: inherit;
+        box-sizing: content-box;
+    }
+
+    .switch-label:before {
+        content: attr(data-off);
+        right: 11px;
+        color: black;
+        text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .switch-label:after {
+        content: attr(data-on);
+        left: 11px;
+        color: #ffffff;
+        text-shadow: 0 1px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+    }
+
+    .switch-input:checked ~ .switch-label {
+        background: #00b2ee;
+        border-color: #345767;
+    }
+
+    .switch-input:checked ~ .switch-label:before {
+        opacity: 0;
+    }
+
+    .switch-input:checked ~ .switch-label:after {
+        opacity: 1;
+    }
+
+    .switch-handle {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        bottom: 4px;
+        right: 50%;
+        z-index: 1;
+        background: #fff;
+        border-radius: 3px;
+        border: #cfd1d2 solid 1px;
+        -webkit-transition: all 0.25s ease;
+        -moz-transition: all 0.25s ease;
+        -o-transition: all 0.25s ease;
+        transition: all 0.25s ease;
+        transition-property: left, right;
+    }
+
+    .switch-input:checked ~ .switch-handle {
+        left: 50%;
+        right: 4px;
+        border-color: #007cba;
+    }
+
+    /* Transition
+    ========================== */
+    .switch-label, .switch-handle {
+        transition: All 0.3s ease;
+        -webkit-transition: All 0.3s ease;
+        -moz-transition: All 0.3s ease;
+        -o-transition: All 0.3s ease;
     }
 }
 
@@ -549,16 +665,32 @@ label {
     }
 }
 
+.workflow-state {
+    @include media(max-sm) {
+        .remove {
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+    }
+}
 
 .definition-state-collection-widget .widget {
     ul[id^='integrated_workflow_definition_states'] {
         display: flex;
         margin: -.5rem;
+        @include media(max-sm) {
+            flex-wrap: wrap;
+        }
 
         li {
             display: inline-block;
             width: 33.333%;
             padding: .5rem;
+            max-width:171px;
+            @include media(max-sm) {
+                width: 100%;
+                max-width:100%;
+            }
 
             .radio {
                 label {
@@ -566,6 +698,7 @@ label {
                     padding: 1rem;
                     cursor: pointer;
                     margin-bottom: 0;
+                    height: 33px;
                 }
             }
         }
@@ -578,6 +711,10 @@ label {
     .remove {
         top: 16px;
         right: 16px;
+        @include media(max-sm) {
+            top: -4px;
+            right: -4px;
+        }
     }
 
     li {
@@ -599,7 +736,21 @@ label {
 }
 
 .channel-domains {
-    .row {
+    ul.no-heading {
+        li {
+            margin-bottom:1rem;
+        }
+        .panel-body {
+            max-width: 750px;
+            position: relative;
+        }
+    }
+    .panel {
+        position: relative;
+        .remove {
+            top: 16px;
+            right: 16px;
+        }
         input {
             padding-left: 175px;
         }
@@ -662,9 +813,29 @@ label {
             }
         }
 
-        .row .radiobutton-container .background {
+        .panel .radiobutton-container .background {
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
+        }
+    }
+
+    @include media(max-sm) {
+        label.primary-domain {
+            .radiobutton-label {
+                display: none;
+            }
+        }
+        .panel {
+            input {
+                padding-left: 55px;
+            }
+        }
+        .list-unstyled .remove {
+            top: 16px;
+            right: 16px;
+        }
+        .radiobutton-container .radiobutton {
+            margin-right: 0;
         }
     }
 }

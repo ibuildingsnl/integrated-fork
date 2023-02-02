@@ -5,8 +5,6 @@ $custom-font-path: '../../';
 @tailwind components;
 @tailwind utilities;
 
-@import '/node_modules/iconoir/css/iconoir.css';
-
 @import url('//fonts.googleapis.com/css?family=Poppins:400,500,600');
 
 @import 'components/fonts';
@@ -19,7 +17,6 @@ $custom-font-path: '../../';
 @import 'components/hrefs';
 @import 'components/nav';
 @import 'components/megamenu';
-@import 'components/reset';
 @import 'components/dropdown';
 @import 'components/sidebar';
 @import 'components/base';
@@ -43,6 +40,7 @@ $custom-font-path: '../../';
 @import 'components/workflow';
 @import 'components/tooltip';
 @import 'components/iconoir';
+@import 'components/contenttype';
 @import 'components/colorpicker';
 
 @import 'partials/header';

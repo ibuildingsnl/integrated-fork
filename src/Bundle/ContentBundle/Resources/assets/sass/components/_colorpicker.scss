@@ -300,6 +300,9 @@ input.clr-color:focus {
     display: inline-block;
     position: relative;
     color: transparent;
+    input[type=text] {
+        color: black !important;
+    }
 }
 
 .clr-field button {

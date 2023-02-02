@@ -1,45 +1,61 @@
+{% if type is defined and
+    ('Article' in type.class or 'News' in type.class or 'Product' in type.class or 'Company' in type.class or 'Jobposting' in type.class or 'Form' in type.class or 'Event' in type.class)
+    and form.actions.delete is not defined %}
+    {% set convert = true %}
+    {% set preview = true %}
+{% else %}
+    {% set convert = false %}
+    {% set preview = false %}
+{% endif %}
+
 <div id="toolbar" class="w-full flex justify-between">
     <div class="options">
-        <div class="convert">
-            {% if content is defined %}
-                {% if (content.isPublished and content.getChannels|length > 0) or (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
-                    <!-- TODO: Make a function for this -->
-                    <a href="#">{% trans %}Convert to draft{% endtrans %}</a>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% block content_website_links %}
-            <div class="preview">
-                {% if content is defined %}
-                    {% if content.getChannels|length > 0 %}
-                        <ul class="options-no-bg">
-                            <li class="dropdown">
-                                <a href="#" data-toggle="dropdown" role="button" id="drop_1"
-                                   class="btn btn-dropdown">
-                                    <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
-                                    <i class="iconoir-nav-arrow-down"></i>
-                                </a>
-                                <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt" id="menu_1">
-                                    {% for channel in content.getChannels %}
-                                        {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
-                                        {% set url = integrated_url(content, channel.id, false) %}
-                                        {% if (domain != "" and url) %}
-                                            {% if (domain != app.request.httphost) %}
-                                                {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
-                                            {% endif %}
-                                            <li>
-                                                <a target="_blank"
-                                                   href="{{ url }}">{% trans %}View on{% endtrans %} {{ channel.name }}</a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        </ul>
+        <div class="form-actions-extra">
+            {% if content is defined and convert is same as (true) %}
+                <div class="convert">
+                    {% if (content.isPublished and content.getChannels|length > 0) or (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                        <!-- TODO: Make a function for this -->
+                        <a>{% trans %}Convert to draft{% endtrans %}</a>
                     {% endif %}
+                </div>
+            {% endif %}
+            {% block content_website_links %}
+                {% if content is defined and preview is same as (true) %}
+                    <div class="preview">
+                        {% if content.getChannels|length > 0 %}
+                            <ul class="options-no-bg">
+                                <li class="dropdown close-outside" data-underlay="no">
+                                    <a data-toggle="dropdown" role="button" id="drop_1"
+                                       class="btn btn-dropdown">
+                                        <span>{% trans %}Preview this{% endtrans %} {{ type.name|trans }}</span>
+                                        <i class="iconoir-nav-arrow-down"></i>
+                                    </a>
+                                    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt" id="menu_1">
+                                        {% for channel in content.getChannels %}
+                                            {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
+                                            {% set url = integrated_url(content, channel.id, false) %}
+                                            {% if (domain != "" and url) %}
+                                                {% if (domain != app.request.httphost) %}
+                                                    {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': url}) %}
+                                                {% endif %}
+                                                <li>
+                                                    <a target="_blank"
+                                                       href="{{ url }}">{% trans %}View on{% endtrans %} {{ channel.name }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
                 {% endif %}
-            </div>
-        {% endblock %}
+            {% endblock %}
+        </div>
+        <button class="form-actions-extra-toggle toggle-data-target"  data-target="form-actions-extra"
+                data-underlay="no" type="button">
+            <i class="iconoir-more-horiz"></i>
+        </button>
         <div class="form-actions">
             {% block form_actions %}
                 {% if form.actions.reload is defined %}
@@ -54,6 +70,12 @@
                 {% if form.actions.create is defined %}
                     {{ form_row(form.actions.create) }}
                 {% endif %}
+                {% if form.actions.copy is defined %}
+                    {{ form_row(form.actions.copy) }}
+                {% endif %}
+                <button type="button"
+                        class="toggle-settings toggle-options-sidebar btn btn-white ml-2" data-target="aside-options"><i
+                        class="iconoir-settings"></i></button>
             {% endblock %}
         </div>
     </div>

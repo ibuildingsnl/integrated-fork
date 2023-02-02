@@ -32,13 +32,20 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'wallet']], location: 'sidebar')]
     protected $accountnumber;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 998,
+        'attr' => [
+            'state' => 'fancy_tinymce',
+            'class' => 'content-edit-form fancy_tinymce',
+            'placeholder' => 'Your content starts here',
+        ],
+    ], location: 'editor')]
     protected $description;
 
     /**
@@ -49,17 +56,23 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Phonenumber',
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $phonenumbers;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $email;
 
     /**
-     * @var Address[]
+     * @var Address[]|Collection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
         'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\AddressType',
@@ -67,7 +80,8 @@ abstract class Relation extends Content implements RankableInterface
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Address',
-    ])]
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $addresses;
 
     /**

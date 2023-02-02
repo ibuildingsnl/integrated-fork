@@ -2,9 +2,7 @@
     <thead>
     <tr>
         <th>{% trans %}Name{% endtrans %}</th>
-        <th>{% trans %}Type{% endtrans %}</th>
-        <th>{% trans %}Location{% endtrans %}</th>
-        <th>{% trans %}Created{% endtrans %}</th>
+        <th>{% trans %}Info{% endtrans %}</th>
     </tr>
     </thead>
     <tbody>
@@ -25,18 +23,36 @@
                 </div>
             </td>
             <td>
-                {{ document.type }}
-            </td>
-            <td>
-                {{ document.location }}
-            </td>
-            <td>
-                {{ document.createdAt|date }}
+                {% set pageList %}
+                    <h3>
+                        {% trans %}Type{% endtrans %}
+                    </h3>
+                    <ul>
+                        <li>{{ document.type }}</li>
+                    </ul>
+                    <h3>
+                        {% trans %}Location{% endtrans %}
+                    </h3>
+                    <ul>
+                        <li>{{ document.location }}</li>
+                    </ul>
+                    <h3>
+                        {% trans %}Created{% endtrans %}
+                    </h3>
+                    <ul>
+                        <li>{{ document.createdAt|date }}</li>
+                    </ul>
+                {% endset %}
+
+                {% if pageList|trim %}
+                    <span class="iconoir-list" data-toggle="popover" data-trigger="hover" data-content="{{ pageList|e }}" data-html="true" data-placement="left"></span>
+                {% endif %}
             </td>
         </tr>
+
     {% else %}
         <tr>
-            <td colspan="4">
+            <td colspan="2">
                 {% trans %}No relations added{% endtrans %}
             </td>
         </tr>

@@ -29,50 +29,69 @@ class Person extends Relation
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: ['choices' => ['Male' => 'Male', 'Female' => 'Female']])]
-    protected $gender;
-
-    /**
-     * @var string
-     */
-    #[Type\Field]
-    protected $prefix;
-
-    /**
-     * @var string
-     */
-    #[Type\Field]
-    protected $nickname;
-
-    /**
-     * @var string
-     */
-    #[Type\Field(options: ['label' => 'First name'])]
+    #[Type\Field(options: [
+        'label' => 'First name',
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'editor')]
     protected $firstName;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['label' => 'Last name'])]
+    #[Type\Field(options: [
+        'label' => 'Last name',
+        'attr' => ['style' => 'editor', 'state' => 'show'],
+    ], location: 'sidebar')]
     protected $lastName;
 
     /**
      * @var string
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'placeholder' => 'Select gender',
+        'choices' => ['Male' => 'Male', 'Female' => 'Female'],
+        'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'female'],
+    ], location: 'sidebar')]
+    protected $gender;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
+    protected $prefix;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'sidebar')]
+    protected $nickname;
+
+    /**
+     * @var string
+     */
     #[Slug(fields: ['firstName', 'lastName'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var Collection Job[]
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType')]
+    #[Type\Field(
+        type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType',
+        options: ['attr' => ['style' => 'editor', 'state' => 'show']],
+        location: 'editor'
+    )]
     protected $jobs;
 
     /**
      * @var StorageInterface|null
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType')]
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'media-image',
+        ],
+    ], location: 'sidebar')]
     protected $picture;
 
     /**
