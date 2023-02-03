@@ -3,9 +3,9 @@
 namespace Integrated\Bundle\NewsletterBundle\Document;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
-use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 

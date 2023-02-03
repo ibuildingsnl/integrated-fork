@@ -65,8 +65,8 @@ class RecurringScheduleEntryPartType extends AbstractType
             ],
         ]);
         $builder->addModelTransformer(new CallbackTransformer(
-            fn(?array $flat) => ($flat ?: []) + ['time' => ['hour' => $flat['hour'] ?? 0, 'minute' => $flat['minute'] ?? 0]],
-            fn(array $nest) => $nest + ['hour' => $nest['time']['hour'], 'minute' => $nest['time']['minute']],
+            fn (?array $flat) => ($flat ?: []) + ['time' => ['hour' => $flat['hour'] ?? 0, 'minute' => $flat['minute'] ?? 0]],
+            fn (array $nest) => $nest + ['hour' => $nest['time']['hour'], 'minute' => $nest['time']['minute']],
         ));
     }
 }

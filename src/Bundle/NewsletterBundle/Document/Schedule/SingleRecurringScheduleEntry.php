@@ -5,6 +5,7 @@ namespace Integrated\Bundle\NewsletterBundle\Document\Schedule;
 class SingleRecurringScheduleEntry implements RecurringScheduleEntry
 {
     private string $id;
+
     public function __construct(
         private readonly array $baseModifiers,
         private readonly string $nextModifier,
@@ -24,6 +25,7 @@ class SingleRecurringScheduleEntry implements RecurringScheduleEntry
         while ($next < $dateTime) {
             $next = $this->applyBaseModifiers($next->modify($this->nextModifier));
         }
+
         return $next;
     }
 
@@ -37,6 +39,7 @@ class SingleRecurringScheduleEntry implements RecurringScheduleEntry
         foreach ($this->baseModifiers as $modifier) {
             $dateTime = $dateTime->modify($modifier);
         }
+
         return $dateTime;
     }
 }

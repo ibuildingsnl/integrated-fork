@@ -49,7 +49,7 @@ class ScheduleEntryFactory
         return new SingleRecurringScheduleEntry(
             [
                 sprintf('midnight first %s of this month', $day),
-                sprintf('+ %d days + %d hours + %d minutes', ($day === 'day' ? $nthDay - 1 : ($nthDay - 1) * 7), $hour, $minute),
+                sprintf('+ %d days + %d hours + %d minutes', $day === 'day' ? $nthDay - 1 : ($nthDay - 1) * 7, $hour, $minute),
             ],
             'first day of next month',
             [[
@@ -90,16 +90,17 @@ class ScheduleEntryFactory
 
     public function fromArray(array $entryData)
     {
-        $entries = array_map(fn(array $entry) => match ($entry['frequency']) {
+        $entries = array_map(fn (array $entry) => match ($entry['frequency']) {
             self::DAILY => $this->daily($entry['hour'], $entry['minute']),
             self::WEEKLY => $this->weekly($entry['hour'], $entry['minute'], $entry['weekday']),
             self::MONTHLY => $this->monthly($entry['hour'], $entry['minute'], $entry['day'], $entry['weekday'] ?? 'day'),
             self::QUARTERLY => $this->quarterly($entry['hour'], $entry['minute'], $entry['day']),
             self::YEARLY => $this->yearly($entry['hour'], $entry['minute'], $entry['month'], $entry['day']),
         }, $entryData);
-        if (count($entries) === 1) {
+        if (\count($entries) === 1) {
             return $entries[0];
         }
+
         return new CombinedRecurringScheduleEntry(...$entries);
     }
 }

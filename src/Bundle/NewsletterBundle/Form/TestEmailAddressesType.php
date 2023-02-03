@@ -13,8 +13,8 @@ class TestEmailAddressesType extends AbstractType
     {
         $builder->add('recipients', CollectionType::class, [
             'entry_type' => EmailType::class,
-            "allow_add" => true,
-            "allow_delete" => true,
+            'allow_add' => true,
+            'allow_delete' => true,
             'delete_empty' => true,
             'prototype' => true,
             'entry_options' => [

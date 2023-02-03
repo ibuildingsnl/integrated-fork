@@ -21,6 +21,6 @@ class CombinedContent extends Content
 
     public function __toString()
     {
-        return implode($this->content);
+        return implode('', $this->content);
     }
 }

@@ -24,17 +24,17 @@ class RecurringScheduleEntryType extends AbstractType
     {
         $builder->add(self::TITLE, CollectionType::class, [
             'entry_type' => RecurringScheduleEntryPartType::class,
-            "allow_add" => true,
-            "allow_delete" => true,
+            'allow_add' => true,
+            'allow_delete' => true,
             'prototype' => true,
             'prototype_data' => ['day' => 1],
             'attr' => [
-                'class' => 'frequencyComponent'
+                'class' => 'frequencyComponent',
             ],
         ]);
         $builder->addModelTransformer(new CallbackTransformer(
-            fn(?RecurringScheduleEntry $entry) => [self::TITLE => $entry?->toArray() ?: []],
-            fn(array $entry) => $this->entryFactory->fromArray($entry[self::TITLE]),
+            fn (?RecurringScheduleEntry $entry) => [self::TITLE => $entry?->toArray() ?: []],
+            fn (array $entry) => $this->entryFactory->fromArray($entry[self::TITLE]),
         ));
     }
 }

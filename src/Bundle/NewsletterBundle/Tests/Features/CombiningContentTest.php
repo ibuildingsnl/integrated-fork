@@ -72,6 +72,7 @@ final class CombiningContentTest extends TestCase
         $contentType = new ContentType();
         $contentType->setId($type);
         $contentType->setClass($class);
+
         return $contentType;
     }
 
@@ -83,7 +84,7 @@ final class CombiningContentTest extends TestCase
             $content->setPublished(true);
             $t = new PublishTime();
             $t->setStartDate(new \DateTime("now - $hoursAgo hours"));
-            $t->setEndDate(new \DateTime("next week"));
+            $t->setEndDate(new \DateTime('next week'));
             $content->setPublishTime($t);
         }
         if ($content instanceof Article) {
@@ -95,6 +96,7 @@ final class CombiningContentTest extends TestCase
         if ($content instanceof Company) {
             $content->setName($title);
         }
+
         return $content;
     }
 }

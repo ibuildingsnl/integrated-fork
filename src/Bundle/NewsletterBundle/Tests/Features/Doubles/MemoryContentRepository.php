@@ -19,6 +19,7 @@ final class MemoryContentRepository implements ContentRepository
                 return $content;
             }
         }
+
         return null;
     }
 
@@ -27,7 +28,7 @@ final class MemoryContentRepository implements ContentRepository
         $this->content[] = $content;
         usort(
             $this->content,
-            fn(Content $left, Content $right) => $right->getPublishTime() <=> $left->getPublishTime()
+            fn (Content $left, Content $right) => $right->getPublishTime() <=> $left->getPublishTime()
         );
     }
 }
