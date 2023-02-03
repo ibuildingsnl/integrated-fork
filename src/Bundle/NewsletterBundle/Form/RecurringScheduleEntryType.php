@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\NewsletterBundle\Form;
 
-use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryPartType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;

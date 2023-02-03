@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\NewsletterBundle\Tests;
+namespace Integrated\Bundle\NewsletterBundle\Tests\Features;
 
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
