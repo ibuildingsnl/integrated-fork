@@ -47,10 +47,20 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $id;
 
     /**
+     * @var Collection
+     */
+    protected $channels;
+
+    /**
+     * @var Channel
+     */
+    protected $primaryChannel;
+
+    /**
      * @var string
      */
     #[Slug(fields: ['id'])]
-    #[Type\Field]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar']], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -76,7 +86,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var PublishTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType')]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\PublishTimeType', location: 'custom')]
     protected $publishTime;
 
     /**
@@ -87,23 +97,17 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var bool
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['attr' => ['align_with_widget' => true]])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ], location: 'custom')]
     protected $disabled = false;
 
     /**
      * @var Metadata
      */
     protected $metadata;
-
-    /**
-     * @var Collection
-     */
-    protected $channels;
-
-    /**
-     * @var Channel
-     */
-    protected $primaryChannel;
 
     /**
      * @var Embedded\CustomFields
@@ -113,7 +117,10 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * @var string
      */
-    #[Type\Field(options: ['label' => 'Copyright restrictions'])]
+    #[Type\Field(options: [
+        'label' => 'Copyright restrictions',
+        'attr' => ['style' => 'sidebar', 'icon' => 'copyright'],
+    ], location: 'sidebar')]
     protected $copyrightRestrictions;
 
     /**
@@ -435,9 +442,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Get the published of the document.
      *
-     * @deprecated
-     *
      * @return bool
+     *
+     * @deprecated
      */
     public function getPublished()
     {

@@ -1,13 +1,10 @@
 .integrated-comment {
-    background: #0199f8;
-    border-radius: 3px;
-    padding: 1px;
+    background-color: rgb(255, 166, 32);
+    border-radius: 8px;
+    padding: 1px 6px;
+    margin: 0 -2px;
     color: #fff;
     position: relative;
-}
-
-.integrated-comment {
-    background-color: rgba(1, 153, 248, 0.5);
 }
 
 .added-comment-line {

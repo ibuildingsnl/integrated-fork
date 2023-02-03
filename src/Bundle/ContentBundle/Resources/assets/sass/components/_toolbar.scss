@@ -12,15 +12,56 @@
     .options {
         display: flex;
 
-        .convert, .preview, .form-actions {
+        .form-actions, .form-actions-extra {
             display: flex;
             align-items: center;
             margin-right: 20px;
+            @include media(max-xl) {
+                margin-right: 10px;
+            }
+
+            .convert {
+                margin-right: 20px;
+                @include media(max-xl) {
+                    margin-right: 10px;
+                }
+            }
         }
 
-        .preview {
-            padding: 9px;
-            align-items: unset;
+        .form-actions-extra {
+            @include media(max-sm) {
+                display: none;
+                &.show {
+                    display: flex;
+                    position: absolute;
+                    left: 0;
+                    top: 50px;
+                    z-index: 1000;
+                    width: 100%;
+                    background-color: white;
+                    padding: 0 1rem;
+                    height: 39px;
+                    border-bottom: 1px solid $border-color;
+                }
+            }
+        }
+
+        button.form-actions-extra-toggle {
+            display: none;
+            width: 40px;
+            margin-right: 10px;
+            align-items: center;
+            justify-content: center;
+            &.hidden {
+                display: none;
+            }
+            i:before {
+                width: 25px;
+                height: 25px;
+            }
+            @include media(max-sm) {
+                display: flex;
+            }
         }
     }
 
@@ -28,9 +69,23 @@
         align-items: center;
         display: flex;
         margin-left: 27px;
+        @include media(max-xl) {
+            margin-left: 15px;
+        }
+        @include media(max-md) {
+            margin-left: 5px;
+        }
     }
 
     a {
         color: $green;
+    }
+
+    .toggle-settings {
+        padding: 0 0.8rem;
+
+        &.hidden {
+            display: none !important;
+        }
     }
 }

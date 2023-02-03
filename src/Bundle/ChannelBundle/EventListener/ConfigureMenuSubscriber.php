@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public const MENU = 'integrated_menu';
-    public const MENU_ADMIN = 'Manage';
+    public const MENU_ADMIN = 'Settings';
     public const ROLE_CHANNEL_MANAGER = 'ROLE_CHANNEL_MANAGER';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
 

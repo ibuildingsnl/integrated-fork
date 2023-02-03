@@ -606,9 +606,21 @@
                 <source>Files</source>
                 <target>Bestanden</target>
             </trans-unit>
-            <trans-unit id="">
+            <trans-unit id="155">
                 <source>No results with this selection.</source>
                 <target>Geen resultaten met deze selectie.</target>
+            </trans-unit>
+            <trans-unit id="156">
+                <source>Select multimedia</source>
+                <target>Selecteer multimedia</target>
+            </trans-unit>
+            <trans-unit id="157">
+                <source>Selected</source>
+                <target>Geselecteerd</target>
+            </trans-unit>
+            <trans-unit id="158">
+                <source>Keep current selection</source>
+                <target>Behoud huidige selectie</target>
             </trans-unit>
         </body>
     </file>

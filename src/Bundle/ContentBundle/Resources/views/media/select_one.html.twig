@@ -1,0 +1,25 @@
+{% extends '@IntegratedContent/base.html.twig'  %}
+
+{% set selected_modus = 'select_one' %}
+
+{% block title %} {% trans %}Select an image{% endtrans %}{% endblock title %}
+
+{% block sidebar_menu %}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    {% include '@IntegratedContent/media/partial/index_component.html.twig' with {
+        selected_modus: selected_modus|default('select_one'),
+    } %}
+{% endblock %}
+
+{% block webpack_js %}
+    <script>
+        const path = '{{ path('integrated_content_media_manage_relations') }}'
+        const selected_modus = '{{ selected_modus|default('select_one') }}'
+    </script>
+
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}

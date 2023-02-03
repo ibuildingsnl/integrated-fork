@@ -24,25 +24,46 @@ class Comment extends Content
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field]
+    #[Type\Field(options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $name;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $email;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+            'placeholder' => 'Your comment starts here',
+        ],
+    ], location: 'editor')]
     protected $comment;
 
     /**

@@ -15,10 +15,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -39,7 +41,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class MediaController extends AbstractController
 {
     public const PAGINATOR_LIMIT = 40;
-    public const DATE_FILTER_ON = '+1MONTH'; // 1DAY or 1MONTH
+    public const DATE_FILTER_ON = '+1MONTH';
     public const NOT_SHOWN_FILETYPES = ['jpg', 'jpeg', 'png', 'tif', 'webp', 'mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
     public const HARD_CODED_CATEGORY = 'MediaTaxonomy';
     public const DEFAULT_FILE_TYPES = [
@@ -72,12 +74,41 @@ class MediaController extends AbstractController
         private MediaGalleryMenu $mediaGalleryMenu,
         private ContentProvider $provider,
         private TaxonomyRelationManager $taxonomyRelationManager,
-        protected AuthorizationCheckerInterface $authorizationChecker
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        private MediaGalleryUploadFile $mediaGalleryUploadFile,
     ) {
     }
 
-    // TODO: Either work with ID`s or do some checks that a category has a unique name
     public function index(Request $requestSource): Response
+    {
+        $data = $this->indexComponent($requestSource);
+
+        return $this->render('@IntegratedContent/media/index.html.twig', [
+            ...$data,
+        ]);
+    }
+
+    public function selectOne(Request $request): Response
+    {
+        $data = $this->indexComponent($request);
+
+        return $this->render('@IntegratedContent/media/select_one.html.twig', [
+            'selected_modus' => 'select_one',
+            ...$data,
+        ]);
+    }
+
+    public function selectMultiple(Request $request): Response
+    {
+        $data = $this->indexComponent($request);
+
+        return $this->render('@IntegratedContent/media/select_multiple.html.twig', [
+            'selected_modus' => 'select_multiple',
+            ...$data,
+        ]);
+    }
+
+    public function indexComponent(Request $requestSource): array
     {
         $contentTypeSelectOptions = $this->getContentTypes();
 
@@ -109,9 +140,8 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
-        return $this->render('@IntegratedContent/media/index.html.twig', [
+        return [
             'paginator' => $this->createPaginator($items, $requestSource),
-            'items' => $items,
             'contentTypeSelectOptions' => $contentTypeSelectOptions,
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
@@ -121,7 +151,24 @@ class MediaController extends AbstractController
                 fn ($item) => strtolower($item),
                 $this::NOT_SHOWN_FILETYPES
             ),
-        ]);
+        ];
+    }
+
+    public function uploadFile(Request $request)
+    {
+        try {
+            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+
+            $request->attributes->set('media_id', $file->getId());
+
+            $this->taxonomyRelationManager->manageRelations($request);
+
+            return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'This filetype is not allowed.']);
+        }
+
+        return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
@@ -213,22 +260,13 @@ class MediaController extends AbstractController
         } elseif ('all_dates' === $yearMonthFilter) {
             $request->query->set('year_month_day_filter', '1000-01-01T00:00:00Z TO 3000-09-17T23:59:59Z');
         } else {
-            if ($this::DATE_FILTER_ON == '+1DAY') {
-                if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
-                    list($year, $month, $day) = explode('-', $yearMonthFilter);
-                    $startDate = "{$year}-{$month}-{$day}T00:00:00Z";
-                    $endDate = "$year-{$month}-{$day}T23:59:59Z";
-                    $fullDateFilter = $startDate.' TO '.$endDate;
-                    $request->query->set('year_month_day_filter', $fullDateFilter);
-                }
-
-                return $yearMonthFilter;
-            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
+            if ($this::DATE_FILTER_ON == '+1MONTH') {
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
                     $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
+                        $year = (int) $year + 1;
                     }
                     $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
@@ -254,9 +292,7 @@ class MediaController extends AbstractController
         $result = [];
         foreach ($dates as $yearMonth => $amount) {
             $label = '';
-            if ($this::DATE_FILTER_ON == '+1DAY') {
-                $label = substr($yearMonth, 0, 10);
-            } elseif ($this::DATE_FILTER_ON == '+1MONTH') {
+            if ($this::DATE_FILTER_ON == '+1MONTH') {
                 $label = substr($yearMonth, 0, 7);
             }
 
@@ -285,6 +321,13 @@ class MediaController extends AbstractController
 
         $contentTypes = array_column($this::DEFAULT_FILE_TYPES, 'class_path');
         $allContentTypes = $this->documentManager->getRepository(ContentType::class)->findAll();
+
+        $availableContenttypes = $request->get('available_contenttypes', []);
+        if (!empty($availableContenttypes)) {
+            $allContentTypes = array_filter($allContentTypes, function ($item) use ($availableContenttypes) {
+                return \in_array($item->getId(), $availableContenttypes) == true;
+            });
+        }
 
         foreach ($allContentTypes as $contentType) {
             if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $contentType)) {

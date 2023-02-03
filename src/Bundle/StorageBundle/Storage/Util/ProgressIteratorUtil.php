@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\StorageBundle\Storage\Util;
 
-use Iterator;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 

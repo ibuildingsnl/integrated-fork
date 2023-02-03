@@ -14,7 +14,6 @@ namespace Integrated\Common\Converter\Config\Provider;
 use Integrated\Common\Converter\Config\TypeConfig;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Exception\RuntimeException;
-use SimpleXMLElement;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -150,9 +149,9 @@ class XmlProvider extends AbstractFileProvider
     }
 
     /**
-     * Load the file into a SimpleXMLElement.
+     * Load the file into aSimpleXMLElement.
      *
-     * @return \SimpleXMLElement
+     * @return SimpleXMLElement
      *
      * @trows RuntimeException if $file can not be read or parsed
      */

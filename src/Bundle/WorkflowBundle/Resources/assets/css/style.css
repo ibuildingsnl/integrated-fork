@@ -1,17 +1,23 @@
-ul.integrated-collection > li {
+div:not(.channel-domains) > ul.integrated-collection > li {
     background-color: #f2f2f2;
     border-radius: 8px;
     display: block;
     padding: 2rem;
     position: relative;
 }
+@media only screen and (max-width: 640px) {
+    div:not(.channel-domains) > ul.integrated-collection > li {
+        padding: 1rem;
+    }
+}
 
-ul.integrated-collection > li + li {
+div:not(.channel-domains) > ul.integrated-collection > li + li {
     margin-top: 10px;
 }
 
-ul.integrated-collection > li:after {
+div:not(.channel-domains) > ul.integrated-collection > li:after {
     content: " ";
     display: table;
     clear: both;
 }
+

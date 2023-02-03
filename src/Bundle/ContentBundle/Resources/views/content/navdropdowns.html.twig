@@ -6,12 +6,12 @@
             <li class="divider-nav hidden-xs"></li>
             {% set divided = true %}
 
-            <li class="dropdown-assigned-to-me dropdown top-bar hidden-xs">
-                <a href="#" class="btn btn-orange icon-left" data-toggle="dropdown">
+            <li class="dropdown-assigned-to-me dropdown close-outside top-bar hidden-xs">
+                <a class="btn btn-orange icon-left" data-toggle="dropdown">
                     <i class="iconoir-bell-notification"></i>
                     <span>{{ assignedContent|length }}</span>
                 </a>
-                <ul class="dropdown-menu-left dropdown-icons">
+                <ul class="dropdown-menu-right dropdown-icons">
                     <li>
                         <div class="megamenu-content">
                             <ul class="list list-large list-border">
@@ -48,8 +48,8 @@
                 <li class="divider-nav hidden-xs"></li>
             {% endif %}
 
-            <li class="dropdown-queue dropdown top-bar hidden-xs">
-                <a href="#" class="btn btn-green icon-left" data-toggle="dropdown">
+            <li class="dropdown-queue dropdown close-outside top-bar hidden-xs">
+                <a class="btn btn-green icon-left" data-toggle="dropdown">
                     <i class="iconoir-database-backup"></i>
                     <span class="">{{ queuecount }}</span>
                 </a>
@@ -79,8 +79,8 @@
         <li class="divider-nav hidden-xs"></li>
 
         {% if app.user %}
-            <li class="dropdown-profile dropdown top-bar hidden-xs">
-                <a href="#" class="flex" data-toggle="dropdown">
+            <li class="dropdown-profile dropdown close-outside top-bar hidden-xs">
+                <a class="flex" data-toggle="dropdown">
                     <img src="{{ avatarurl }}" class="profile-image"/>
 
                     <span class="welcome-msg">

@@ -7,10 +7,11 @@ body {
 	font-family: 'Poppins', sans-serif;
     margin:0;
 }
-html {
-    max-width: 768px;
-    margin: 0 auto;
+
+body#tinymce {
+    padding: 1rem!important;
 }
+
 p {
 	margin-top: 0px;
 }
@@ -22,4 +23,13 @@ h2 {
 
 h2,h3,h4,h5,h6 {
     font-weight: 500;
+}
+
+img {
+    max-width:768px;
+    width:100%;
+}
+
+.mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    left:unset;
 }

@@ -2,14 +2,14 @@
 
 {% block style %}
     {{ parent() }}
-
     <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
 {% endblock %}
 
+
 {% block header %}{% endblock %}
 {% block crumbs %}{% endblock %}
-{% block body %}
-<div class="content-wrapper iframe">
-    {{ block('form_section') }}
-</div>
-{% endblock %}
+{% block sidebar_menu %}{% endblock %}
+{% block filters %}{% endblock %}
+{% block main_title %}{% endblock %}
+
+

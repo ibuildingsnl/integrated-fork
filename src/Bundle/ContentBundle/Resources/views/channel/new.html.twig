@@ -16,28 +16,17 @@
         {% endblock toolbar %}
         <div class="aside-options">
             <aside>
-                <div class="aside-holder section-gray section-radius">
+                <div class="aside-holder">
                     {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                                <i class="iconoir-cancel"></i></button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
                         {% block content_meta %}
-                            {% if form.scope is defined %}
-                                {{ form_row(form.scope, {'style': 'sidebar', 'icon':'precision-tool', 'state': 'show'}) }}
-                            {% endif %}
-
-                            {% if form.permissions is defined %}
-                                {{ form_row(form.permissions, {'style': 'sidebar', 'icon':'key-alt-back', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.ipProtected is defined %}
-                                {{ form_row(form.ipProtected, {'style': 'sidebar', 'icon':'antenna-off', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.color is defined %}
-                                {{ form_row(form.color, {'style': 'sidebar', 'icon':'droplet', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.logo is defined %}
-                                {{ form_row(form.logo, {'style': 'sidebar', 'icon':'media-image', 'state': 'show'}) }}
-                            {% endif %}
-                            {% if form.options is defined %}
-                                {{ form_row(form.options, {'style': 'sidebar', 'icon':'tools', 'state': 'show'}) }}
-                            {% endif %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                {{ form_row(child) }}
+                            {% endfor %}
                         {% endblock %}
                     {% endblock %}
                 </div>
@@ -48,16 +37,14 @@
                 <h1 class="heading">{% trans %}New{% endtrans %} Channel</h1>
             </div>
             <section class="editor">
+                {{ form_errors(form) }}
+
                 {% block content_form %}
-                    {% if form.name is defined %}
-                        {{ form_row(form.name, {'style': 'inline'}) }}
-                    {% endif %}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                        {{ form_row(child) }}
+                    {% endfor %}
 
-                    {% if form.domains is defined %}
-                        {{ form_row(form.domains, {'style': 'editor','state': 'show'}) }}
-                    {% endif %}
-
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
+                    {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
             </section>
         </div>
@@ -74,7 +61,7 @@
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}" />
+<script src="{{ asset('bundles/integratedcontent/js/channel.js') }}"></script>
 {% endblock javascript %}

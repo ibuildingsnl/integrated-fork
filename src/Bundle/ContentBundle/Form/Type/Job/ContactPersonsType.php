@@ -28,6 +28,7 @@ class ContactPersonsType extends AbstractType
             'allow_delete' => true,
             'label' => 'Jobs',
             'delete_button_text' => 'x',
+            'add_button_text' => 'Add Job',
         ]);
     }
 

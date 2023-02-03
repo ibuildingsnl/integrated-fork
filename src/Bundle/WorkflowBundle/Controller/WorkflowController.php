@@ -140,6 +140,8 @@ class WorkflowController extends AbstractController
                 $this->entityManager->flush();
 
                 $this->addFlash('success', sprintf('The changes to the workflow %s are saved', $workflow->getName()));
+
+                return $this->redirectToRoute('integrated_workflow_edit', ['id' => $workflow->getId()]);
             }
         }
 

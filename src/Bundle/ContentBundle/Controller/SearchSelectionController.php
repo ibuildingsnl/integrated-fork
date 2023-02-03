@@ -210,7 +210,7 @@ class SearchSelectionController extends AbstractController
             ]
         );
 
-        $form->add('actions', ActionsType::class, ['buttons' => ['save', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
 
         return $form;
     }

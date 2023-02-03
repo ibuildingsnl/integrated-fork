@@ -80,7 +80,7 @@ class ExtractTransitionsFromCollectionListener implements EventSubscriberInterfa
                 // created in the SUBMIT events will not be available, as a State object, until the
                 // POST_SUBMIT event. So it is not possible to create a complete and correct list
                 // of States in the execution of the PRE_* events to feed to a view transformer.
-
+                'label' => 'Transitions to',
                 'mapped' => false,
 
                 'choices' => $this->getChoicesFiltered($data, $child->getName()),

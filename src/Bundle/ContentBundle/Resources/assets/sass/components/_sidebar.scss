@@ -1,25 +1,229 @@
 #wrapper-holder {
     display: flex;
     height: calc(100vh - 60px);
+    height: -webkit-fill-available;
     overflow: hidden;
     padding-bottom: 0px !important;
     position: relative;
-    z-index:1000;
-    .sidebar {
+    z-index: 1000;
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .sidebar-menu {
         background-color: $sidebar-green;
-        width: 250px;
-        height: calc(100vh - 50px);
+        height: calc(100vh - 60px);
         flex-shrink: 0;
-        ul.sidebar-menu {
-            padding:2rem;
+        width: 250px;
+
+        .sidebar-menu-wrapper {
+            padding: 1rem;
+
             a {
-                color:white;
-            }
-            li.menu-label {
                 color: white;
-                font-weight: bold;
-                font-size: 20px;
-                margin-top: 10px;
+            }
+
+            div.menu-label {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                div.label {
+                    color: white;
+                    font-size: 18px;
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 0.75rem 0;
+
+                    i {
+                        margin-right: 10px;
+
+                        &:before {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+                }
+
+                i.toggle {
+                    color: #515864;
+                    transition: all .3s;
+                }
+            }
+
+            .sidebar-sub-menu {
+                border-bottom: 1px solid #515864;
+                padding: 0 1rem;
+                cursor: pointer;
+
+                .sub-menu-children {
+                    display: none;
+                    height: 0;
+                    overflow: hidden;
+                    transition: height 0.35s ease-in-out;
+                    margin-left: -10px;
+                    margin-right: -10px;
+
+                    li {
+                        a {
+                            padding: 3px 0rem 3px 38px;
+                            margin-bottom: 1px;
+                            display: block;
+                            width: 100%;
+                            position: relative;
+                        }
+
+                        &.current {
+                            a {
+                                background-color: #345767;
+                                border-radius: 8px;
+                                padding: 3px 0rem 3px 38px;
+
+                                &:before {
+                                    content: "";
+                                    display: inline-block;
+                                    width: 5px;
+                                    position: absolute;
+                                    height: 5px;
+                                    -moz-border-radius: 7.5px;
+                                    -webkit-border-radius: 7.5px;
+                                    border-radius: 7.5px;
+                                    background-color: #f5f5f5;
+                                    left: 17px;
+                                    top: 12px;
+                                }
+                            }
+                        }
+
+                        &:hover {
+                            a {
+                                background-color: #345767;
+                                border-radius: 8px;
+                            }
+                        }
+
+                        &.last {
+                            margin-bottom: 10px;
+                        }
+                    }
+                }
+
+                &.show {
+                    .sub-menu-children {
+                        display: block;
+                        height: auto;
+                    }
+
+                    div.menu-label {
+                        i.toggle {
+                            rotate: 180deg;
+                            transition: all .3s;
+                        }
+                    }
+                }
+            }
+        }
+
+        @media only screen and (min-width: 640px) and (max-width: 1280px) {
+
+            width: 50px;
+            padding-top: 10px;
+            .sidebar-menu-wrapper {
+                padding: 0;
+
+                div.menu-label {
+                    display: block;
+
+                    div.label {
+                        color: white;
+                        font-size: 18px;
+                        display: flex;
+                        align-items: center;
+                        cursor: pointer;
+                        padding: 1.5rem 0;
+                        justify-content: center;
+                        border-bottom: 1px solid #345767;
+
+                        i {
+                            margin: 0;
+                        }
+
+                        span.title {
+                            display: none;
+                        }
+                    }
+
+                    i.toggle {
+                        display: none;
+                    }
+                }
+
+                .sidebar-sub-menu {
+                    position: relative;
+                    padding: 0;
+                    border: none;
+                    margin: 0;
+                    &.show {
+                        .sub-menu-children {
+                            display: none;
+                        }
+                    }
+                    .sub-menu-children {
+                        display: none;
+                        position: absolute;
+                        left: 50px;
+                        z-index: 1050;
+                        width: 200px;
+                        height: auto !important;
+                        top: 0;
+                        background-color: #345767;
+                        padding: 0.5rem;
+                        margin: 0;
+
+                        li {
+                            a {
+                                color: white;
+                                padding: 0.25rem 0.5rem;
+                                display: block;
+
+                                &:hover {
+                                    background-color: #18303b;
+                                    border-radius: 8px;
+                                }
+                            }
+                            &.current {
+                                a {
+                                    background-color: #18303b;
+                                    border-radius: 8px;
+                                    padding: 0.25rem 0.5rem;
+                                    &:before {
+                                        content:unset;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        .sub-menu-children {
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+        @include media(max-sm) {
+            width: 250px;
+            position: absolute;
+            left: -250px;
+            z-index: 1050;
+            transition: all .3s;
+            &.show {
+                left:0;
+                transition: all .3s;
             }
         }
     }
@@ -27,6 +231,6 @@
 
 body.modal-open {
     #wrapper-holder {
-        z-index:unset;
+        z-index: unset;
     }
 }

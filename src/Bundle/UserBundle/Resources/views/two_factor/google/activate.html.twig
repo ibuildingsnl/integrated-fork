@@ -1,5 +1,5 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-
+{# //TODO: Rework this page #}
 {% block header %}
     {% if not config.required %}
         {{ parent() }}
@@ -12,25 +12,9 @@
     {% endif %}
 {% endblock %}
 
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                {% if not config.required %}
-                <li>
-                    <a href="{{ path('integrated_content_content_index') }}">{% trans %}Home{% endtrans %}</a>
-                </li>
-                {% endif %}
-
-                <li class="active">{% trans %}Profile{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
-
 {% block content %}
     <div class="row">
-        <div class="w-full mb-4 md:mb-0">
+        <div class="index-wrapper-full">
             <h1 class="main-title font-regular">{% trans %}Activate{% endtrans %} <small>{% trans %}Google Authenticator{% endtrans %}</small></h1>
 
             <section class="section-white section-padding section-radius">

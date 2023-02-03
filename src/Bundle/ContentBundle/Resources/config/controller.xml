@@ -59,6 +59,7 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Provider\ContentProvider" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager" />
             <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

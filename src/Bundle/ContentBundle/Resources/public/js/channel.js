@@ -16,7 +16,7 @@ $(function() {
     function refresh_checked_status() {
         /* if a domain input has entered domain name allow to set it as primary */
         $('.primary-domain-radio', $domains_collection).each(function () {
-            var domain_name = $(this).closest('.row').find('input:text').val().trim();
+            var domain_name = $(this).closest('.panel-body').find('input:text').val().trim();
 
             if (domain_name) {
                 $(this).removeAttr('disabled');

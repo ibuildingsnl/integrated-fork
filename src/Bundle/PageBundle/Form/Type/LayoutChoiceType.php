@@ -37,15 +37,18 @@ class LayoutChoiceType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'theme' => 'default',
-            'directory' => null,
-            'choices' => function (Options $options) {
-                $layout = $this->locator->getLayouts($options['theme'], $options['directory']);
-
-                return array_combine($layout, $layout);
-            },
-        ]);
+        $resolver->setDefaults(
+            [
+                'theme' => 'default',
+                'directory' => null,
+                'choice_label' => function ($value, $key) {
+                    return $key;
+                },
+                'choices' => function (Options $options) {
+                    return array_unique($this->locator->getLayouts($options['theme'], $options['directory']));
+                },
+            ]
+        );
     }
 
     /**

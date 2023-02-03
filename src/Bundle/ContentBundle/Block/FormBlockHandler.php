@@ -186,7 +186,7 @@ class FormBlockHandler extends BlockHandler
         if (null !== $block && $block->isRecaptcha()) {
             $form->add('recaptcha', EWZRecaptchaType::class, [
                 'mapped' => false,
-                'label' => ' ',
+                'label' => false,
                 'constraints' => [
                     new RecaptchaTrue(),
                 ],
