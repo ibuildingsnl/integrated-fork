@@ -284,7 +284,7 @@ class RecurringScheduleEntryTest extends TestCase
 
     public function testScheduleYearlyToArray()
     {
-        $entry = $this->schedule->yearly(12, 25,'february', 6);
+        $entry = $this->schedule->yearly(12, 25, 'february', 6);
 
         $details = $entry->toArray();
 
@@ -377,7 +377,7 @@ class RecurringScheduleEntryTest extends TestCase
 
     public function testScheduleQuarterlyToArray()
     {
-        $entry = $this->schedule->quarterly(14, 39,3);
+        $entry = $this->schedule->quarterly(14, 39, 3);
 
         $details = $entry->toArray();
 

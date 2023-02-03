@@ -9,7 +9,8 @@ class SingleRecurringScheduleEntry implements RecurringScheduleEntry
         private readonly array $baseModifiers,
         private readonly string $nextModifier,
         private readonly array $description,
-    ) {}
+    ) {
+    }
 
     public function firstAfter(\DateTimeInterface $dateTime): \DateTimeInterface
     {

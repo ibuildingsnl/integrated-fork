@@ -90,7 +90,7 @@ class ScheduleEntryFactory
 
     public function fromArray(array $entryData)
     {
-        $entries = array_map(fn(array $entry) => match($entry['frequency']) {
+        $entries = array_map(fn(array $entry) => match ($entry['frequency']) {
             self::DAILY => $this->daily($entry['hour'], $entry['minute']),
             self::WEEKLY => $this->weekly($entry['hour'], $entry['minute'], $entry['weekday']),
             self::MONTHLY => $this->monthly($entry['hour'], $entry['minute'], $entry['day'], $entry['weekday'] ?? 'day'),

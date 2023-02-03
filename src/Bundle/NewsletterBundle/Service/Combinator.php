@@ -11,7 +11,8 @@ class Combinator
 {
     public function __construct(
         private readonly ContentRepository $repository,
-    ) {}
+    ) {
+    }
 
     public function combine(ContentType ...$types): CombinedContent
     {
