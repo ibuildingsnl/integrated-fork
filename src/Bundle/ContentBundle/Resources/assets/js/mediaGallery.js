@@ -45,7 +45,7 @@ let latestBulkSelectionItemClicked = null //so we can handle a shift click with 
 let draggingAmountOfItems = 1
 
 window.toggle_upload_view = function() {
-    $('#upload_container').show();
+    $('#upload_container').addClass('show').addClass('close-outside');
     $('#dropdown_overlay').removeClass('hide');
 }
 
@@ -68,6 +68,11 @@ window.enable_list_view = function() {
     disable_x('grid')
     enable_x('list')
 }
+
+$(".uppy-close").on("click", function () {
+    $('#dropdown_overlay').addClass('hide');
+    $('#upload_container').removeClass('show').removeClass('close-outside');
+});
 
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
@@ -172,15 +177,15 @@ window.asideFolderSearch = function (elem) {
     }
 };
 
-//hide uploadimages view when clicked outside of uploadimages modal:
-jQuery(document).mouseup(function(e) {
-    let uppyModal = $('#upload_container');
-
-    // if the target of the click isn't the container nor a descendant of the container
-    if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
-        uppyModal.hide();
-    }
-});
+// //hide uploadimages view when clicked outside of uploadimages modal:
+// jQuery(document).mouseup(function(e) {
+//     let uppyModal = $('#upload_container');
+//
+//     // if the target of the click isn't the container nor a descendant of the container
+//     if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
+//         uppyModal.hide();
+//     }
+// });
 
 $(function () {
     const $gallery = $("#gallery")
