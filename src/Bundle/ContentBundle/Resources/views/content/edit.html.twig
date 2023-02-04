@@ -228,18 +228,6 @@
                             {% endif %}
                         {% endfor %}
 
-                        {# This element will be copied for every image for a embedded relation #}
-                        <li id="selected_image" class="hidden media-item ui-widget-content ui-corner-tr grid ml-1 mb-1">
-                            <div class="media-preview">
-                                <div class="thumbnail">
-                                    <div class="centered">
-                                        <img src="">
-                                    </div>
-                                    <div class="remove_link bg-red-200 p-2 border border-black">{% trans %}Delete{% endtrans %}</div>
-                                </div>
-                            </div>
-                        </li>
-
                     {% endif %}
                 {% endblock content_relations_editor %}
             </section>

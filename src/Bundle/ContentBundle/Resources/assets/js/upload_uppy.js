@@ -44,6 +44,10 @@ function inititalizeUppy(uppyOptions) {
         height: uppyOptions.height || default_height,
         proudlyDisplayPoweredByUppy: false,
         showProgressDetails: true,
+        doneButtonHandler: () => {
+            $('#upload_container').removeClass('show');
+            $('#dropdown_overlay').addClass('hide');
+        },
     });
 
     uppy.use(XHRUpload, {
