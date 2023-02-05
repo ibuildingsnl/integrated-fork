@@ -12,6 +12,12 @@ body#tinymce {
     padding-top: 70px;
 }
 
+@media only screen and (max-width: 640px) {
+    body#tinymce {
+        padding-top: 10px;
+    }
+}
+
 html {
     max-width: 768px;
     margin: 0 auto;
