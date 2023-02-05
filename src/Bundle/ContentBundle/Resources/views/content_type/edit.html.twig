@@ -51,6 +51,8 @@
                         {{ form_row(child) }}
                     {% endfor %}
 
+                    {{ form_errors(form) }}
+
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
             </section>

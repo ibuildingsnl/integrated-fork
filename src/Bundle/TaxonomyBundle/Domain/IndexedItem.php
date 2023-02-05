@@ -6,8 +6,9 @@ final class IndexedItem
 {
     public function __construct(
         private readonly string $taxonomyId,
-        private readonly string $title,
-        private readonly string $slug,
+        private readonly string|null $title,
+        private readonly string|null $description,
+        private readonly string|null $slug,
         private readonly int $count,
         private readonly int $depth,
     ) {
@@ -18,12 +19,17 @@ final class IndexedItem
         return $this->taxonomyId;
     }
 
-    public function getTitle(): string
+    public function getTitle(): string|null
     {
         return $this->title;
     }
 
-    public function getSlug(): string
+    public function getDescription(): string|null
+    {
+        return $this->description;
+    }
+
+    public function getSlug(): string|null
     {
         return $this->slug;
     }

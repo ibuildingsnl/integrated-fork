@@ -63,7 +63,7 @@ final class MenuTest extends TestCase
         $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
 
         $section = $this->menu->getChild('Taxonomy');
-        $item = $section->getChild('Taxonomy index');
+        $item = $section->getChild('Taxonomy');
 
         self::assertInstanceOf(MenuItem::class, $section);
         self::assertInstanceOf(MenuItem::class, $item);
@@ -109,7 +109,7 @@ final class MenuTest extends TestCase
         $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
 
         $section = $this->menu->getChild('Taxonomy');
-        $item = $section->getChild('Taxonomy index');
+        $item = $section->getChild('Taxonomy');
 
         self::assertInstanceOf(MenuItem::class, $section);
         self::assertInstanceOf(MenuItem::class, $item);

@@ -55,6 +55,7 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
         return new IndexedItem(
             $taxonomy->getId(),
             $taxonomy->getTitle(),
+            $taxonomy->getDescription(),
             $taxonomy->getSlug(),
             $this->taxonomies->countUsages($taxonomy),
             $depth
