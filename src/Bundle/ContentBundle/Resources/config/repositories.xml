@@ -6,10 +6,13 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_content.content_type_repository" class="Doctrine\Persistence\ObjectRepository">
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument>Integrated\Bundle\ContentBundle\Document\ContentType\ContentType</argument>
         </service>
 
     </services>
+
 </container>

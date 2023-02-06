@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver">
             <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
             <argument id="integrated_page.services.url_resolver" type="service"/>

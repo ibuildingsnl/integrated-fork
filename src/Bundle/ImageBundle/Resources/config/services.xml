@@ -1,12 +1,10 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-
-        <parameter key="integrated_image.format_web">Integrated\Bundle\ImageBundle\Converter\Format\WebFormat</parameter>
 
         <parameter key="integrated_image.format" type="collection">
             <parameter>jpg</parameter>
@@ -18,10 +16,11 @@
 
     </parameters>
 
-
     <services>
 
-        <service id="integrated_image.format_web" class="%integrated_image.format_web%">
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_image.format_web" class="Integrated\Bundle\ImageBundle\Converter\Format\WebFormat">
             <argument>%integrated_image.format%</argument>
         </service>
 

@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_channel.exporter.simple" class="Integrated\Common\Channel\Exporter\Exporter">
             <argument type="service" id="integrated_channel.adapter.registry" />
             <argument type="service" id="integrated_channel.config.resolver" />
