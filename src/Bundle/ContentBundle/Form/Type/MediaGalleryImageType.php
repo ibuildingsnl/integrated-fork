@@ -11,7 +11,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class MediaGalleryImageType extends AbstractType
 {
-
     /**
      * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
      */
