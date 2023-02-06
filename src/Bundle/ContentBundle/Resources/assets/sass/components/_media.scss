@@ -552,6 +552,14 @@
     .selected_images {
         width: fit-content;
 
+        &[data-multiple="true"] {
+            margin: 0 -0.5rem;
+            li {
+                width: 33%;
+                padding: .5rem;
+            }
+        }
+
         &:empty {
             background-color: #eceeef;
             height: 90px;
@@ -584,8 +592,8 @@
 
             .remove {
                 display: none;
-                right: 1rem;
-                top: 1rem;
+                right: .5rem;
+                top: .5rem;
                 @media (hover: none) {
                     display:flex;
                 }

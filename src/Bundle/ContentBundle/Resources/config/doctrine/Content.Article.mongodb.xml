@@ -15,6 +15,11 @@
         <field field-name="content" type="string" />
         <field field-name="rank" type="string" index="true" />
 
+        <reference-one
+            field="featuredImage"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+        />
+
         <embed-one
                 field="address"
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address" />

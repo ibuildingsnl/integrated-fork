@@ -8,9 +8,9 @@
         <field field-name="name" type="string" />
         <field field-name="website" type="string" />
 
-        <embed-one
+        <reference-one
             field="logo"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
     </document>

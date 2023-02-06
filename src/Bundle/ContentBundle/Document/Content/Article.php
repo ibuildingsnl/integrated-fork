@@ -71,6 +71,21 @@ class Article extends Content implements RankableInterface
     protected $subtitle;
 
     /**
+     * @var Image
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+        'label' => 'Featured Image',
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select featured image',
+            'data-multiple' => false,
+        ],
+    ], location: 'sidebar')]
+    protected $featuredImage;
+
+    /**
      * @var ArrayCollection Embedded\Author[]
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
@@ -243,6 +258,23 @@ class Article extends Content implements RankableInterface
 
         return $this;
     }
+
+    /**
+     * @return Image|null
+     */
+    public function getFeaturedImage(): Image|null
+    {
+        return $this->featuredImage;
+    }
+
+    /**
+     * @param Image $featuredImage
+     */
+    public function setFeaturedImage(Image $featuredImage): void
+    {
+        $this->featuredImage = $featuredImage;
+    }
+
 
     /**
      * Get the authors of the document.

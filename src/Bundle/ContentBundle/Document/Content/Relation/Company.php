@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
@@ -44,12 +45,15 @@ class Company extends Relation
     protected $slug;
 
     /**
-     * @var StorageInterface
+     * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select Logo',
+            'data-multiple' => 'true',
         ],
     ], location: 'sidebar')]
     protected $logo;
@@ -111,7 +115,7 @@ class Company extends Relation
     /**
      * Get the file of the document.
      *
-     * @return StorageInterface
+     * @return Image
      */
     public function getLogo()
     {
@@ -123,7 +127,7 @@ class Company extends Relation
      *
      * @return $this
      */
-    public function setLogo(StorageInterface $logo = null)
+    public function setLogo(Image $logo = null)
     {
         $this->logo = $logo;
 
