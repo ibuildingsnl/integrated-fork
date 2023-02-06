@@ -4,7 +4,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Domain;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 
-interface TaxonomyRepository
+interface TaxonomyRepositoryInterface
 {
     /** @return Taxonomy[] */
     public function all(): array;

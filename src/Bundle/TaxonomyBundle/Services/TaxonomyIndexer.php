@@ -4,12 +4,12 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepository;
+use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
 final class TaxonomyIndexer implements TaxonomyIndexerInterface
 {
     public function __construct(
-        private readonly TaxonomyRepository $taxonomies,
+        private readonly TaxonomyRepositoryInterface $taxonomies,
     ) {
     }
 

@@ -6,9 +6,9 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepository;
+use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
-final class ODMTaxonomyRepository implements TaxonomyRepository
+final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     public function __construct(
         private readonly DocumentManager $manager,

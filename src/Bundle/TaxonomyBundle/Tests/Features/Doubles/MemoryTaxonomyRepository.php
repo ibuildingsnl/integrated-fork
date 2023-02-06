@@ -3,9 +3,9 @@
 namespace Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepository;
+use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
-final class MemoryTaxonomyRepository implements TaxonomyRepository
+final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     /** @var Taxonomy[] */
     private array $taxonomies = [];
