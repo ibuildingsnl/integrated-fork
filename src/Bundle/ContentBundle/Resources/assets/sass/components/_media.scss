@@ -324,7 +324,9 @@
     }
 
     .media-wrapper ul {
-        margin: -0.5rem;
+        @include media(min-sm) {
+            margin: -0.5rem;
+        }
     }
 
     form.media-search-form {
@@ -657,7 +659,7 @@
 .aside-item-list-container {
     .mediagallery_selector {
         .iframe-wrapper {
-            @include media(max-sm) {
+            @include media(max-md) {
                 top: 0;
 
                 .media-library {
