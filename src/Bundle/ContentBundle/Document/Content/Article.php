@@ -254,22 +254,15 @@ class Article extends Content implements RankableInterface
         return $this;
     }
 
-    /**
-     * @return Image|null
-     */
     public function getFeaturedImage(): Image|null
     {
         return $this->featuredImage;
     }
 
-    /**
-     * @param Image $featuredImage
-     */
     public function setFeaturedImage(Image $featuredImage): void
     {
         $this->featuredImage = $featuredImage;
     }
-
 
     /**
      * Get the authors of the document.
