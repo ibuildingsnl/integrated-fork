@@ -145,7 +145,6 @@
                                                             form_relations: formRelations|default(null),
                                                         } %}
                                                     {% else %}
-                                                        <div class="input-group relative flex items-stretch w-full">
                                                             <select
                                                                     multiple
                                                                     id="{{ relation.vars.name }}"
@@ -157,7 +156,6 @@
                                                                     style="display: none; width: 89%">
                                                             </select>
                                                             <span class="input-group-addon" data-add="1"></span>
-                                                        </div>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -199,10 +197,8 @@
                                     </div>
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
-                                            <div class="input-group relative flex items-stretch w-full">
 
                                                 {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-
                                                     {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                         relation: relation,
                                                         form_relations: formRelations|default(null),
@@ -221,7 +217,6 @@
                                                     </select>
                                                     <span class="input-group-addon" data-add="1"></span>
                                                 {% endif %}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
