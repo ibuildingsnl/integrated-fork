@@ -48,10 +48,5 @@
             <argument type="service" id="integrated_workflow.lock.factory" />
             <argument type="service" id="integrated_content.services.solr-flusher" />
         </service>
-
-        <service id="integrated_content.content.repository" class="Integrated\Bundle\ContentBundle\Document\Content\ContentRepository">
-            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
-            <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Content</argument>
-        </service>
     </services>
 </container>
