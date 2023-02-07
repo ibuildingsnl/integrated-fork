@@ -41,17 +41,6 @@
             <tag name="form.type" />
         </service>
 
-        <service id="integrated_storage.form.type.media_gallery_image" class="Integrated\Bundle\StorageBundle\Form\Type\MediaGalleryImageType">
-            <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
-            <argument type="service" id="integrated_asset.manager.javascript_manager" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="integrated_image.twig_extension" />
-            <argument type="service" id="integrated_image.format_web" />
-            <argument type="service" id="integrated_image.container_converter" />
-
-            <tag name="form.type" />
-        </service>
-
     </services>
 
 </container>

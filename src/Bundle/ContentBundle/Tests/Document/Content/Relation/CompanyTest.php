@@ -75,8 +75,8 @@ class CompanyTest extends RelationTest
      */
     public function testGetAndSetLogoFunction()
     {
-        /* @var $logo \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $logo = $this->createMock('Integrated\Common\Content\Document\Storage\Embedded\StorageInterface');
+        /* @var $logo \Integrated\Bundle\ContentBundle\Document\Content\Image | \PHPUnit_Framework_MockObject_MockObject */
+        $logo = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Image');
         $this->assertSame($logo, $this->company->setLogo($logo)->getLogo());
     }
 
