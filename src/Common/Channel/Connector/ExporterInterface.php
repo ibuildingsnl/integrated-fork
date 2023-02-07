@@ -23,7 +23,6 @@ interface ExporterInterface
     /**
      * @param object           $content
      * @param string           $state
-     * @param ChannelInterface $channel
      *
      * @return ExporterResponse|null
      */
