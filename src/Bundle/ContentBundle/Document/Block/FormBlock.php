@@ -46,7 +46,6 @@ class FormBlock extends Block
 
     /**
      * @Assert\All({
-     *
      *     @Assert\Email
      * })
      */
