@@ -177,16 +177,6 @@ window.asideFolderSearch = function (elem) {
     }
 };
 
-// //hide uploadimages view when clicked outside of uploadimages modal:
-// jQuery(document).mouseup(function(e) {
-//     let uppyModal = $('#upload_container');
-//
-//     // if the target of the click isn't the container nor a descendant of the container
-//     if (!uppyModal.is(e.target) && uppyModal.has(e.target).length === 0) {
-//         uppyModal.hide();
-//     }
-// });
-
 $(function () {
     const $gallery = $("#gallery")
     const $media_items = $(".media_category");
