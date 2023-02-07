@@ -162,6 +162,8 @@ class MediaController extends AbstractController
             $request->attributes->set('media_id', $file->getId());
 
             $this->taxonomyRelationManager->manageRelations($request);
+            $this->taxonomyRelationManager->updateQueueToSolr($file);
+            $this->taxonomyRelationManager->updateQueueToSolr($file);
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {

@@ -119,7 +119,7 @@ class TaxonomyRelationManager
         }
     }
 
-    private function updateQueueToSolr(mixed $content): void
+    public function updateQueueToSolr(mixed $content): void
     {
         $queue = $this->queueSubscriber->getQueue();
         $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
