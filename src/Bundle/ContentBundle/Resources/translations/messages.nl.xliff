@@ -820,21 +820,145 @@
                 <source>Orderable</source>
                 <target>Sorteerbaar</target>
             </trans-unit>
-            <trans-unit id="">
-                <source>No results with this selection.</source>
-                <target>Geen resultaten met deze selectie.</target>
+            <trans-unit id="206">
+                <source>Enable channel field</source>
+                <target>Kanaalkeuze toestaan</target>
             </trans-unit>
-            <trans-unit id="156">
-                <source>Select multimedia</source>
-                <target>Selecteer multimedia</target>
+            <trans-unit id="207">
+                <source>Enable but hide channel field</source>
+                <target>Kanaalkeuze toestaan maar veld verbergen</target>
             </trans-unit>
-            <trans-unit id="157">
-                <source>Selected</source>
-                <target>Geselecteerd</target>
+            <trans-unit id="208">
+                <source>Disable channel field</source>
+                <target>Kanaalkeuze uitschakelen</target>
             </trans-unit>
-            <trans-unit id="158">
-                <source>Keep current selection</source>
-                <target>Behoud huidige selectie</target>
+            <trans-unit id="209">
+                <source>Event start</source>
+                <target>Start event</target>
+            </trans-unit>
+            <trans-unit id="210">
+                <source>Event end</source>
+                <target>Einde event</target>
+            </trans-unit>
+            <trans-unit id="211">
+                <source>Text</source>
+                <target>Tekst</target>
+            </trans-unit>
+            <trans-unit id="212">
+                <source>Textarea</source>
+                <target>Tekstveld</target>
+            </trans-unit>
+            <trans-unit id="213">
+                <source>Yes/No switcher</source>
+                <target>Ja/Nee switcher</target>
+            </trans-unit>
+            <trans-unit id="214">
+                <source>Yes/No switcher</source>
+                <target>Ja/Nee switcher</target>
+            </trans-unit>
+            <trans-unit id="215">
+                <source>JobTitle</source>
+                <target>Functietitel</target>
+            </trans-unit>
+            <trans-unit id="216">
+                <source>Salary</source>
+                <target>Salaris</target>
+            </trans-unit>
+            <trans-unit id="217">
+                <source>ApplyUrl</source>
+                <target>Url voor solliciteren</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>Domains</source>
+                <target>Domeinen</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>Channel</source>
+                <target>Kanaal</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>Add contact</source>
+                <target>Contactgegevens toevoegen</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>Add social</source>
+                <target>Socials toevoegen</target>
+            </trans-unit>
+            <trans-unit id="222">
+                <source>Location</source>
+                <target>Locatie</target>
+            </trans-unit>
+            <trans-unit id="223">
+                <source>Sources</source>
+                <target>Bronnen</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>Targets</source>
+                <target>Doelen</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>Enable login</source>
+                <target>Inloggen toestaan</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>Enable login</source>
+                <target>Inloggen toestaan</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>Roles</source>
+                <target>Rollen</target>
+            </trans-unit>
+            <trans-unit id="228">
+                <source>Username</source>
+                <target>Gebruikersnaam</target>
+            </trans-unit>
+            <trans-unit id="229">
+                <source>Theme</source>
+                <target>Thema</target>
+            </trans-unit>
+            <trans-unit id="230">
+                <source>Options</source>
+                <target>Opties</target>
+            </trans-unit>
+            <trans-unit id="231">
+                <source>New relation</source>
+                <target>Nieuwe relatie</target>
+            </trans-unit>
+            <trans-unit id="232">
+                <source>Template name</source>
+                <target>Naam template</target>
+            </trans-unit>
+            <trans-unit id="233">
+                <source>Scraper page URL</source>
+                <target>Scraper pagina url</target>
+            </trans-unit>
+            <trans-unit id="234">
+                <source>Configuration name</source>
+                <target>Configuratie name</target>
+            </trans-unit>
+            <trans-unit id="235">
+                <source>Options</source>
+                <target>Opties</target>
+            </trans-unit>
+            <trans-unit id="236">
+                <source>Theme</source>
+                <target>Thema</target>
+            </trans-unit>
+            <trans-unit id="237">
+                <source>Copy page</source>
+                <target>Pagina kopiëren</target>
+            </trans-unit>
+            <trans-unit id="238">
+                <source>Select a page type</source>
+                <target>Selecteer een pagina type</target>
+            </trans-unit>
+            <trans-unit id="239">
+                <source>Static pages</source>
+                <target>Statische pagina's</target>
+            </trans-unit>
+            <trans-unit id="240">
+                <source>Content type pages</source>
+                <target>Content type pagina's</target>
             </trans-unit>
         </body>
     </file>
