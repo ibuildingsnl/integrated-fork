@@ -11,35 +11,24 @@
 
 namespace Integrated\Bundle\SocialBundle\Connector\Facebook;
 
-use Facebook\Facebook;
-use Facebook\GraphNodes\GraphNode;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
-use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
+use JanuSoftware\Facebook\Facebook;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class Exporter implements ExporterInterface
 {
-    /**
-     * @var Facebook
-     */
-    private $facebook;
+    private Facebook $facebook;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private ConfigInterface $config;
 
-    /**
-     * @var UrlResolver
-     */
-    private $urlResolver;
+    private UrlResolver $urlResolver;
 
     public function __construct(Facebook $facebook, ConfigInterface $config, UrlResolver $urlResolver)
     {
@@ -54,15 +43,15 @@ class Exporter implements ExporterInterface
     public function export($content, $state, ChannelInterface $channel)
     {
         if (!$content instanceof Article) {
-            return;
+            return null;
         }
 
         if ($state != self::STATE_ADD) {
-            return;
+            return null;
         }
 
         if ($content->hasConnector($this->config->getId())) {
-            return;
+            return null;
         }
 
         try {
@@ -81,11 +70,7 @@ class Exporter implements ExporterInterface
             $graphNode = $postResponse->getGraphNode();
         } catch (\Exception $e) {
             // @todo probably should log this somewhere INTEGRATED-995
-            return;
-        }
-
-        if (!$graphNode instanceof GraphNode) {
-            throw new UnexpectedTypeException($graphNode, GraphNode::class);
+            return null;
         }
 
         $response = new ExporterResponse($this->config->getId(), $this->config->getAdapter());
