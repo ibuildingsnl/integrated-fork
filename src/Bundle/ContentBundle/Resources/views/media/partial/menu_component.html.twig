@@ -1,13 +1,12 @@
 <div class="aside-header">
-    <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i class="iconoir-cancel"></i>
-    </button>
+    <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
+            class="iconoir-cancel"></i></button>
     <span>{% trans %}Folders{% endtrans %}</span>
     <a href="{{ path('integrated_content_media_index') }}"
        class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
         <i class="iconoir-cancel"></i>
     </a>
 </div>
-
 <div class="aside-holder bg-white section-radius">
     <div class="aside-item-wrapper">
         <div class="aside-folder-header">
@@ -24,7 +23,8 @@
             </div>
 
             <form id="media_form" action="{{ path('integrated_content_media_manage_relations') }}">
-                <input type="hidden" id="media_category_csrf" name="token" value="{{ csrf_token('delete-item') }}"/>
+                <input type="hidden" id="media_category_csrf" name="token"
+                       value="{{ csrf_token('delete-item') }}"/>
                 <input type="hidden" id="media_id" name="media_id" value=""/>
                 <input type="hidden" id="category_id" name="category_id" value=""/>
                 <input type="hidden" id="channel_id" name="channel_id" value=""/>
