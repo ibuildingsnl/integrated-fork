@@ -274,6 +274,9 @@ body.hide-options {
     margin-bottom: 1rem;
     align-items: center;
     flex-wrap: wrap;
+    @include media(max-sm) {
+        margin-bottom: .5rem;
+    }
 
     h1.heading {
         margin-bottom: 0;
@@ -304,6 +307,13 @@ body.hide-options {
             padding: 1rem 1rem 0 1rem;
             li {
                 margin-bottom: 1rem;
+            }
+        }
+        @include media(max-sm) {
+            padding: .5rem .5rem 0 .5rem;
+            margin-top: .5rem;
+            li {
+                margin-bottom: .5rem;
             }
         }
     }

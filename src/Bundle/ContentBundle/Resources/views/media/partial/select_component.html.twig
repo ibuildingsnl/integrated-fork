@@ -1,21 +1,4 @@
-<div class="mediagallery_selector m-12" id="{{ relation.vars.attr['data-relation'] }}">
-    <div
-        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-        data-types="{{ relation.vars.attr['data-types'] }}"
-        data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
-        data-relationid="{{ relation.vars.attr['data-relation'] }}"
-        class="select_multimedia_button p-2 bg-blue-200 border border-black w-32 mb-4">
-        {% trans %}Select multimedia{% endtrans %}
-    </div>
-
-    <div class="wrap mb-4" style="display: none;">
-        <iframe class="iframe" src="" width="1500" height="500">
-        </iframe>
-    </div>
-
-    <div class="mb-2">{% trans %}Selected{% endtrans %}
-    </div>
-
+<div class="mediagallery_selector" id="{{ relation.vars.attr['data-relation'] }}">
     <div class="previously_selected_images hidden">
         {% if form_relations[relation.vars.attr['data-relation']]|default(null) %}
             {% for media in form_relations[relation.vars.attr['data-relation']] %}
@@ -31,15 +14,40 @@
         {% endif %}
     </div>
 
-    {# This will be populated with current and new items #}
-    <div class="selected_images flex flex-wrap mb-4">
-
+    <div class="selected_images flex flex-wrap mb-4"
+         data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+         data-types="{{ relation.vars.attr['data-types'] }}"
+         data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
+         data-relationid="{{ relation.vars.attr['data-relation'] }}"
+         data-emptytext="{% trans %}Select{% endtrans %} {{ relation.vars.attr['data-title'] }}">
+        {# This will be populated with current and new items #}
     </div>
 
-    <input hidden type="text"
-           class="w-full integrated_content_media_gallery_image_file"
-           name="integrated_content[relations][{{ relation.vars.attr['data-relation'] }}]"
-           value="">
+    <div
+        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+        data-types="{{ relation.vars.attr['data-types'] }}"
+        data-relationtype="{{ relation.vars.attr['data-relationtype'] }}"
+        data-relationid="{{ relation.vars.attr['data-relation'] }}"
+        class="select_multimedia_button btn btn-white">
+        {% trans %}Select{% endtrans %} {{ relation.vars.attr['data-title'] }}
+    </div>
+
+    <div class="wrap iframe-wrapper close-outside">
+        <iframe class="iframe media-library" src="">
+        </iframe>
+    </div>
+
+    {# This element will be copied for every image for a embedded relation #}
+    <li id="selected_image" class="hidden media-item">
+        <div class="media-preview">
+            <div class="thumbnail relative">
+                <div class="centered">
+                    <img src="">
+                </div>
+                <a class="remove_link remove"><i class="iconoir-cancel"></i></a>
+            </div>
+        </div>
+    </li>
 </div>
 
 <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>

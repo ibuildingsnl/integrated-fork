@@ -1,6 +1,6 @@
 $(document).mouseup(function(e) {
-    var closeOutside = $('.close-outside');
-    var toggleButton = $('.toggle-button');
+    let closeOutside = $('.close-outside');
+    let toggleButton = $('.toggle-button');
 
     if (((!closeOutside.is(e.target) && closeOutside.has(e.target).length ===
                 0) &&
@@ -10,7 +10,19 @@ $(document).mouseup(function(e) {
         !event.srcElement.classList.contains('dropdown-menu')
     ) {
         closeOutside.removeClass('show');
-        hideDropDownBackgroud();
+        hideDropDownBackGround();
+    }
+
+});
+
+$(document).keyup(function(e) {
+    if (e.key === 'Escape') { // escape key maps to keycode `27`
+        let closeOutside = $('.close-outside');
+        if (closeOutside.is("#upload_container")) {
+            closeOutside.removeClass('close-outside');
+        }
+        closeOutside.removeClass('show');
+        hideDropDownBackGround();
     }
 });
 
@@ -19,7 +31,7 @@ $('.search-form .form-control').focus(function() {
 });
 
 $('.search-form .form-control').blur(function() {
-    hideDropDownBackgroud();
+    hideDropDownBackGround();
 });
 
 document.querySelectorAll('a[data-toggle="dropdown"]').forEach(function(el) {
@@ -128,7 +140,7 @@ function toggleDataTarget(el) {
     } else {
         targetElement.classList.remove('show');
         if (el.target.getAttribute('data-underlay') !== 'no') {
-            hideDropDownBackgroud();
+            hideDropDownBackGround();
         }
     }
 }
@@ -147,7 +159,7 @@ function toggleDropdown(el) {
     } else {
         dropdown.classList.remove('show');
         if (dropdown.getAttribute('data-underlay') !== 'no') {
-            hideDropDownBackgroud();
+            hideDropDownBackGround();
         }
     }
 }
@@ -192,7 +204,7 @@ function asideItemsSearch(el) {
     }
 }
 
-function hideDropDownBackgroud() {
+function hideDropDownBackGround() {
     const menuItemDropDownUnderlay = document.querySelector(
         '#dropdown_overlay');
     if (!menuItemDropDownUnderlay.classList.contains('hide')) {
@@ -215,6 +227,7 @@ function isElement(o) {
             typeof o.nodeName === 'string'
     );
 }
+
 if (document.querySelector('.aside-holder') !== null) {
     document.querySelector('.aside-holder').
         addEventListener('click', function(event) {

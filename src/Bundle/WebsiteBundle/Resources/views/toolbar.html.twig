@@ -89,12 +89,12 @@
         } else {
             dropdown.classList.remove('show');
             if (dropdown.getAttribute('data-underlay') !== 'no') {
-                hideDropDownBackgroud();
+                hideDropDownBackGround();
             }
         }
     }
 
-    function hideDropDownBackgroud() {
+    function hideDropDownBackGround() {
         const menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
         if (!menuItemDropDownUnderlay.classList.contains('hide')) {
             menuItemDropDownUnderlay.classList.add('hide');

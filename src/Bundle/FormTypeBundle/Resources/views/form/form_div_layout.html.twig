@@ -106,19 +106,19 @@
             <div class="{{ class }}">
         {% endif %}
         <div id="{{ id }}_container">
-                    <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
-                              data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
-                              data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
-                              data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
-                              data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                              data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
-                              data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
-                              placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
-                              data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
-                        {% if value is not empty %}
-                            {{ value }}
-                        {% endif %}
-                    </textarea>
+                        <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
+                                  data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
+                                  data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
+                                  data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
+                                  data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                  data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
+                                  data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
+                                  placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
+                                  data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
+                            {% if value is not empty %}
+                                {{ value }}
+                            {% endif %}
+                        </textarea>
         </div>
         {{ block('form_errors') }}
         {% if style == 'editor' %}
@@ -495,3 +495,65 @@
         {% endif %}
     {% endapply %}
 {% endblock form_row %}
+
+
+{% block integrated_media_gallery_image_widget %}
+    {% apply spaceless %}
+        <div class="mediagallery_selector" id="{{ form.vars.name }}">
+            <div class="previously_selected_images hidden">
+                {% if form.vars.value is defined and form.vars.value is not empty %}
+                    {% set imageArray = form.vars.value|split(',') %}
+                    {% if imageArray|length > 0 %}
+                        {% for media in imageArray %}
+                            {% set image = integrated_document(media).file %}
+                            {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                            <li id="{{ media }}"
+                                data-id="{{ media }}"
+                                data-file="{{ image }}"
+                                data-thumbnail="{{ thumbnail }}">
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="selected_images flex flex-wrap mb-4"
+                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                 data-types="{{ form.vars.attr['data-types'] }}"
+                 data-relationtype="embedded"
+                 data-relationid="{{ form.vars.name }}"
+                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}">
+            </div>
+
+            <div
+                data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                data-types="{{ form.vars.attr['data-types'] }}"
+                data-relationtype="embedded"
+                data-relationid="{{ form.vars.name }}"
+                class="select_multimedia_button btn btn-white">
+                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
+            </div>
+
+            <div class="wrap iframe-wrapper close-outside">
+                <iframe class="iframe media-library" src="">
+                </iframe>
+            </div>
+
+            <li id="selected_image" class="hidden media-item">
+                <div class="media-preview">
+                    <div class="thumbnail relative">
+                        <div class="centered">
+                            <img src="">
+                        </div>
+                        <a class="remove_link remove"><i class="iconoir-cancel"></i></a>
+                    </div>
+                </div>
+            </li>
+        </div>
+
+        <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
+        {{ form_errors(form) }}
+        <input hidden type="text" class="w-full" name="integrated_content[{{ form.vars.name }}]">
+    {% endapply %}
+
+{% endblock %}
