@@ -21,9 +21,9 @@ interface ExporterInterface
     public const STATE_DELETE = 'delete';
 
     /**
-     * @param object                  $content
-     * @param string                  $state
-     * @param string|ChannelInterface $channel
+     * @param object           $content
+     * @param string           $state
+     * @param ChannelInterface $channel
      *
      * @return ExporterResponse|null
      */

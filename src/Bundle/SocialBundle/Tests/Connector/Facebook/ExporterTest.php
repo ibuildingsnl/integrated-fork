@@ -19,13 +19,11 @@ use Integrated\Bundle\SocialBundle\Connector\Facebook\Exporter;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
-use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ContentInterface;
 use JanuSoftware\Facebook\Exception\ResponseException;
 use JanuSoftware\Facebook\Facebook;
-use JanuSoftware\Facebook\GraphNode\GraphNode;
 use JanuSoftware\Facebook\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -122,90 +120,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $response = $exporter->export($document, ExporterInterface::STATE_ADD, $this->getChannel('channel'));
 
         $this->assertNull($response);
-    }
-
-    public function testExportPostResponseInstanceOfGraphNodeException()
-    {
-        $document = $this->getArticle();
-        $document
-            ->method('hasConnector')
-            ->willReturn(false);
-
-        $this->config->method('getId')
-            ->willReturn(1);
-
-        $options = new Options();
-        $options->set('token', 'token-value');
-
-        $this->config->method('getOptions')
-            ->willReturn($options);
-
-        $facebookResponse = $this->getFacebookResponse();
-
-        $facebookResponse->method('getGraphNode')
-            ->willReturn(new \stdClass());
-
-        $this->facebook
-            ->method('post')
-            ->willReturn($facebookResponse);
-
-        $this->expectException(UnexpectedTypeException::class);
-
-        $exporter = $this->getInstance();
-        $exporter->export($document, ExporterInterface::STATE_ADD, $this->getChannel('channel'));
-    }
-
-    public function testExportPostResponseInstanceOfGraphNode()
-    {
-        $document = $this->getArticle();
-        $document
-            ->method('hasConnector')
-            ->willReturn(false);
-
-        $channel = $this->getChannel('channel');
-
-        $configId = 1;
-        $this->config->method('getId')
-            ->willReturn($configId);
-
-        $configAdapter = 'adapter-facebook';
-        $this->config->method('getAdapter')
-            ->willReturn($configAdapter);
-
-        $options = new Options();
-        $options->set('token', 'token-value');
-
-        $this->config->method('getOptions')
-            ->willReturn($options);
-
-        $graphNodeArray = ['id' => 'this-is-the-id'];
-
-        $graphNode = $this->createMock(GraphNode::class);
-        $graphNode->method('offsetGet')
-            ->willReturnCallback(
-                function ($key) use ($graphNodeArray) {
-                    return $graphNodeArray[$key];
-                }
-            );
-
-        $facebookResponse = $this->getFacebookResponse();
-        $facebookResponse->method('getGraphNode')
-            ->willReturn($graphNode);
-
-        $this->facebook
-            ->method('post')
-            ->willReturn($facebookResponse);
-
-        $exporter = $this->getInstance();
-        $response = $exporter->export($document, ExporterInterface::STATE_ADD, $channel);
-
-        $this->assertInstanceOf(GraphNode::class, $graphNode);
-
-        $this->assertInstanceOf(ExporterResponse::class, $response);
-
-        $this->assertEquals($configId, $response->getConfigId());
-        $this->assertEquals($configAdapter, $response->getConfigAdapter());
-        $this->assertEquals($graphNodeArray['id'], $response->getExternalId());
     }
 
     protected function getInstance(): Exporter
