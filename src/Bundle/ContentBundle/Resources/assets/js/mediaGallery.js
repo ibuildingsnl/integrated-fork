@@ -155,6 +155,7 @@ async function disableBulkSelection() {
     bulkSelection = []
     $('.media-container').removeClass('mode-select')
     $('.media-item').removeClass('selected')
+    $(".media-item").unbind()
     draggingAmountOfItems = 1
 }
 
