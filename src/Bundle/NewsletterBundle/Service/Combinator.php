@@ -16,14 +16,16 @@ class Combinator
     public function combine(ContentType ...$types): CombinedContent
     {
         $offsets = [];
-        $content = new CombinedContent();
+        $combined = new CombinedContent();
         foreach ($types as $type) {
-            $content->addContent(
-                $this->repository->latestByType($type, $offsets[$type->getId()] ?? 0)
-            );
+            $content = $this->repository->mostRecentlyPublished($type, $offsets[$type->getId()] ?? 0);
+            if (!$content) {
+                continue;
+            }
+            $combined->addContent($content);
             $offsets[$type->getId()] = ($offsets[$type->getId()] ?? 0) + 1;
         }
 
-        return $content;
+        return $combined;
     }
 }

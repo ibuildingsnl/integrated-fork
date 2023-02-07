@@ -33,7 +33,7 @@ final class CombiningContentTest extends TestCase
         $repository->add($this->content($event, 'event 1', 24));
         $repository->add($this->content($event, 'event 2', 3));
 
-        $repository->add($this->content($article, 'article 1', 31));
+        $repository->add($this->content($article, 'article 1', null));
         $repository->add($this->content($article, 'article 2', 22));
         $repository->add($this->content($article, 'article 3', 2));
 
@@ -67,6 +67,19 @@ final class CombiningContentTest extends TestCase
         self::assertEquals('article 2', $combined->getContent()[1]->getTitle());
     }
 
+    public function testSkippingUnpublishedArticles()
+    {
+        $article = $this->contentType('article', Article::class);
+
+        $combined = $this->combinator->combine($article, $article, $article);
+
+        self::assertCount(2, $combined->getContent());
+        self::assertInstanceOf(Article::class, $combined->getContent()[0]);
+        self::assertEquals('article 3', $combined->getContent()[0]->getTitle());
+        self::assertInstanceOf(Article::class, $combined->getContent()[1]);
+        self::assertEquals('article 2', $combined->getContent()[1]->getTitle());
+    }
+
     private function contentType(string $type, string $class): ContentType
     {
         $contentType = new ContentType();
@@ -81,7 +94,6 @@ final class CombiningContentTest extends TestCase
         /** @var Content $content */
         $content = $type->create();
         if (null !== $hoursAgo) {
-            $content->setPublished(true);
             $t = new PublishTime();
             $t->setStartDate(new \DateTime("now - $hoursAgo hours"));
             $t->setEndDate(new \DateTime('next week'));

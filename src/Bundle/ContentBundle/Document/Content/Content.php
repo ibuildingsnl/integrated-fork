@@ -466,16 +466,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setPublished($published)
-    {
-        $this->published = $published;
-
-        return $this;
-    }
-
-    /**
      * Get the disabled of the document.
      *
      * @return bool

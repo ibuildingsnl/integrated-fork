@@ -14,28 +14,19 @@ namespace Integrated\Common\Content;
 interface PublishableInterface
 {
     /**
-     * Get the publish time of the document.
+     * Get the publishing time of the document.
      */
     public function getPublishTime(): PublishTimeInterface;
 
     /**
-     * Set the publish time of the document.
+     * Set the publishing time of the document.
      *
      * @return $this
      */
     public function setPublishTime(PublishTimeInterface $publishTime);
 
     /**
-     * Set the published of the document.
-     *
-     * @param bool $published
-     *
-     * @return $this
-     */
-    public function setPublished($published);
-
-    /**
-     * Get the published of the document.
+     * Check whether the document is published.
      *
      * @param bool $checkPublishTime
      */

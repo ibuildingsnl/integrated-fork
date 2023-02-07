@@ -7,7 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 
 interface ContentRepository
 {
-    public function latestByType(ContentType $type, int $offset = 0): ?Content;
+    public function mostRecentlyPublished(ContentType $type, int $offset = 0): ?Content;
 
     public function add(Content $content): void;
 }

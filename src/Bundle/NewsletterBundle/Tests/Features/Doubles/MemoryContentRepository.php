@@ -11,10 +11,13 @@ final class MemoryContentRepository implements ContentRepository
     /** @var Content[] */
     private array $content = [];
 
-    public function latestByType(ContentType $type, int $offset = 0): ?Content
+    public function mostRecentlyPublished(ContentType $type, int $offset = 0): ?Content
     {
         $n = 0;
         foreach ($this->content as $content) {
+            if (!$content->isPublished()) {
+                continue;
+            }
             if ($content->getContentType() === $type->getId() && $n++ === $offset) {
                 return $content;
             }
