@@ -87,7 +87,15 @@
                 {{ form_label(form) }}
                 <div class="w-full {{ widget_col }}">
 
+{#                    {{ dump(form) }}#}
+{#                    {{ dump(integrated_image(form.vars.data)) }}#}
+{#                    {{ dump(form.vars.data) }}#}
+
+                    {% set testVar = integrated_image(form.vars.data) %}
+
                     {% set thumbnail = integrated_image(form.vars.data).zoomCrop(500, 500) %}
+
+                    {{ dump(testVar.getName) }}
 
                     <div class="centered">
                         <img src="{{ thumbnail }}" alt="rawr">
@@ -101,9 +109,10 @@
                             'language': app.request.defaultLocale,
                             'endpoint': path('integrated_content_media_upload_file'),
                             'height': '750px',
-                            'imageEditorEnabled': true,
                             'target': '#upload_container .drag-drop-area',
+                            'imageEditorEnabled': true,
                         } %}
+                        {#                            'imageSource': form.vars.data.pathname#}
                     </div>
 
                     {% set changeInput %}

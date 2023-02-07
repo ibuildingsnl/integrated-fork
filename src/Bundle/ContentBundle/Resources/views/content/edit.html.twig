@@ -137,7 +137,6 @@
             <section class="editor">
                 {% block content_form %}
                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-{#                        {{ dump(child) }}#}
                         {{ form_row(child) }}
                     {% endfor %}
 

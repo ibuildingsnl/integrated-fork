@@ -49,6 +49,17 @@ class File extends Content implements FileInterface
     protected $file;
 
     /**
+     * @var StorageInterface
+     */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
+    protected $editedFile;
+
+    /**
      * @var string
      */
     #[Type\Field(options: [

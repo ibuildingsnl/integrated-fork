@@ -10,6 +10,7 @@
         <field field-name="credits" type="string" />
 
         <embed-one field="file" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage" />
+        <embed-one field="editedFile" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage" />
 
     </document>
 
