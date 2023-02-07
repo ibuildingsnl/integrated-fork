@@ -21,9 +21,6 @@ class ContentOptionsType extends AbstractType
             ->add('featured', CheckboxSwitcherType::class, [
                 'label' => 'This content is featured',
                 'required' => false,
-            ])->add('dont_use', CheckboxSwitcherType::class, [
-                'label' => 'This content is not used for newsletter',
-                'required' => false,
             ]);
     }
 
