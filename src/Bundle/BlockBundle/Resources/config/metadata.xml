@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-
-    <parameters>
-        <parameter key="integrated_block.metadata.factory.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
-        <parameter key="integrated_block.metadata.factory.class">Integrated\Common\Form\Mapping\MetadataFactory</parameter>
-        <parameter key="integrated_block.metadata.factory.type.class">Integrated\Common\Block\BlockInterface</parameter>
-
-    </parameters>
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="integrated_block.metadata.factory.event_dispatcher" class="%integrated_block.metadata.factory.event_dispatcher.class%" public="false" />
 
-        <service id="integrated_block.metadata.factory" class="%integrated_block.metadata.factory.class%" public="true">
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_block.metadata.event_dispatcher" class="Symfony\Component\EventDispatcher\EventDispatcher" public="false" />
+
+        <service id="integrated_block.metadata.factory" class="Integrated\Common\Form\Mapping\MetadataFactory" public="true">
             <argument type="service" id="integrated_content.metadata.driver.registry" />
-            <argument>%integrated_block.metadata.factory.type.class%</argument>
+            <argument>Integrated\Common\Block\BlockInterface</argument>
 
             <call method="setEventDispatcher">
-                <argument type="service" id="integrated_block.metadata.factory.event_dispatcher" />
+                <argument type="service" id="integrated_block.metadata.event_dispatcher" />
             </call>
         </service>
 
     </services>
+
 </container>

@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ChannelBundle\DependencyInjection;
 
+use Integrated\Common\Channel\Connector\Config\Config;
+use Integrated\Common\Channel\Connector\Config\Options;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -78,7 +80,7 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
                 $id_options = $id.'.options.'.uniqid();
             } while ($container->hasDefinition($id_options));
 
-            $definition = new Definition('%integrated_channel.config.options.class%');
+            $definition = new Definition(Options::class);
             $definition->setPublic(false);
             $definition->setArguments([$arguments['options']]);
 
@@ -86,7 +88,7 @@ class IntegratedChannelExtension extends Extension implements PrependExtensionIn
 
             // create the config it self
 
-            $definition = new Definition('%integrated_channel.config.class%');
+            $definition = new Definition(Config::class);
             $definition->setArguments([
                 $name,
                 $arguments['adaptor'],

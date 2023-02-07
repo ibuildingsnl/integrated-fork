@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\ContentBundle\Controller\ContentController">
             <argument type="service" id="integrated.form.resolver" />
             <argument type="service" id="integrated_content.content_type.manager" />

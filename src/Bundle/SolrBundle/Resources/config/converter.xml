@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_solr.converter.type.resolved_factory" class="Integrated\Common\Converter\Type\ResolvedTypeFactory" />
 
         <service id="integrated_solr.converter.type.registry_builder" class="Integrated\Common\Converter\Type\RegistryBuilder">

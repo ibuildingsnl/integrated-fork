@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_user.twig.authenticator_extension" class="Integrated\Bundle\UserBundle\Twig\AuthenticatorExtension">
             <argument type="service" id="scheb_two_factor.security.google_authenticator" />
             <tag name="twig.extension" />

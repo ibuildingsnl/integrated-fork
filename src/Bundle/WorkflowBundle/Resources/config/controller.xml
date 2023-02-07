@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true" />
+
         <service id="Integrated\Bundle\WorkflowBundle\Controller\WorkflowController">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
@@ -18,6 +20,7 @@
                 <argument type="service" id="service_container" />
             </call>
         </service>
+
     </services>
 
 </container>
