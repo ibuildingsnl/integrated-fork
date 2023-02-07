@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\PageBundle\Controller\ContentTypePageController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.services.route_cache" />

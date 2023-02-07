@@ -6,4 +6,5 @@
 
     <import resource="@IntegratedPageBundle/Resources/config/routing/page.xml" prefix="/page" />
     <import resource="@IntegratedPageBundle/Resources/config/routing/content_type_page.xml" prefix="/content-type-page" />
+
 </routes>

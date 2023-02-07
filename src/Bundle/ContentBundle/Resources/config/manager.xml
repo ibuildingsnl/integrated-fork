@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		   xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-	<parameters>
+    <services>
 
-		<parameter key="integrated_content.channel.class">Integrated\Bundle\ContentBundle\Document\Channel\Channel</parameter>
-		<parameter key="integrated_content.content_type.class">Integrated\Bundle\ContentBundle\Document\ContentType\ContentType</parameter>
+        <defaults autowire="true" autoconfigure="true"/>
 
-	</parameters>
+        <service id="integrated_content.channel.manager" alias="integrated_content.channel.manager.doctrine" public="true"/>
+        <service id="integrated_content.content_type.manager" alias="integrated_content.content_type.manager.doctrine" public="true"/>
 
-	<services>
-
-		<service id="integrated_content.channel.manager" alias="integrated_content.channel.manager.doctrine" public="true"/>
-		<service id="integrated_content.content_type.manager" alias="integrated_content.content_type.manager.doctrine" public="true" />
-
-	</services>
+    </services>
 
 </container>

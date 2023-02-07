@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_user.two_factor.handler_factory" class="Integrated\Bundle\UserBundle\Handler\TwoFactor\HandlerFactory">
             <argument type="collection" />
             <argument type="service" id="twig"/>

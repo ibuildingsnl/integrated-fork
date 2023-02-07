@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\CommentBundle\Controller\DefaultController" public="true">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="form.factory" />
