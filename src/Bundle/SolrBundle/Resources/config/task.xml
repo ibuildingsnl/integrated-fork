@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_solr.task.reference_queue_handler.mongodb_reference_subscriber" class="Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBReferencesListener">
             <argument type="service" id="integrated_queue.solr_worker" />
 

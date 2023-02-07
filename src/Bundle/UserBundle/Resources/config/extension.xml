@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		   xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-	<parameters>
+    <services>
 
-		<parameter key="integrated_user.extension.class">Integrated\Bundle\UserBundle\Extension\UserExtension</parameter>
-		<parameter key="integrated_user.extension.user_relation.subscriber.class">Integrated\Bundle\UserBundle\Doctrine\Subscriber\OrmRelationSubscriber</parameter>
+        <defaults autowire="true" autoconfigure="true"/>
 
-	</parameters>
+        <service id="integrated_user.extension" class="Integrated\Bundle\UserBundle\Extension\UserExtension">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <tag name="integrated_content.extension"/>
+        </service>
 
-	<services>
+        <service id="integrated_user.extension.user_relation" class="Integrated\Bundle\UserBundle\Doctrine\Subscriber\OrmRelationSubscriber">
+            <argument type="service" id="doctrine_mongodb" on-invalid="ignore"/>
+            <tag name="doctrine.event_subscriber" connection="default"/>
+        </service>
 
-		<service id="integrated_user.extension" class="%integrated_user.extension.class%">
-			<call method="setContainer">
-				<argument type="service" id="service_container"/>
-			</call>
-			<tag name="integrated_content.extension" />
-		</service>
-
-		<service id="integrated_user.extension.user_relation" class="%integrated_user.extension.user_relation.subscriber.class%">
-			<argument type="service" id="doctrine_mongodb" on-invalid="ignore" />
-			<tag name="doctrine.event_subscriber" connection="default" />
-		</service>
-
-	</services>
+    </services>
 
 </container>

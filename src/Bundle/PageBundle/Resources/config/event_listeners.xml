@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_page.event_listener.configure_menu_subscriber" class="Integrated\Bundle\PageBundle\EventListener\ConfigureMenuSubscriber">
             <argument type="service" id="security.authorization_checker" />
 

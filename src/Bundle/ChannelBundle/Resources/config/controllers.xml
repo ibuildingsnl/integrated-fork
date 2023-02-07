@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\ChannelBundle\Controller\ConfigController">
             <argument type="service" id="integrated_channel.config.manager" />
             <argument type="service" id="integrated_channel.adapter.registry" />
