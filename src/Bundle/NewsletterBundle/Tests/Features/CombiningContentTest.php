@@ -7,16 +7,22 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Event;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\JobPosting;
+use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
+use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
-use Integrated\Bundle\NewsletterBundle\Service\Combinator;
+use Integrated\Bundle\NewsletterBundle\Service\CombinatorInterface;
+use Integrated\Bundle\NewsletterBundle\Service\ContentCombinator;
+use Integrated\Bundle\NewsletterBundle\Service\DocumentTypeValidator;
+use Integrated\Bundle\NewsletterBundle\Service\Exception\UnacceptableContentTypeException;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\MemoryContentRepository;
 use PHPUnit\Framework\TestCase;
 
 final class CombiningContentTest extends TestCase
 {
-    private Combinator $combinator;
+    private CombinatorInterface $combinator;
 
     protected function setUp(): void
     {
@@ -37,7 +43,15 @@ final class CombiningContentTest extends TestCase
         $repository->add($this->content($article, 'article 2', 22));
         $repository->add($this->content($article, 'article 3', 2));
 
-        $this->combinator = new Combinator($repository);
+        $this->combinator = new DocumentTypeValidator(
+            new ContentCombinator($repository),
+            Article::class,
+            Event::class,
+            JobPosting::class,
+            News::class,
+            Video::class,
+            Company::class,
+        );
     }
 
     public function testCombiningAJobPostingAndAnEvent()
@@ -80,10 +94,30 @@ final class CombiningContentTest extends TestCase
         self::assertEquals('article 2', $combined->getContent()[1]->getTitle());
     }
 
+    public function testRefusingUnwantedContentTypes()
+    {
+        $image = $this->contentType('image', Image::class);
+
+        $this->expectException(UnacceptableContentTypeException::class);
+
+        $this->combinator->combine($image);
+    }
+
+    public function testRefusingUnwantedContentTypesEvenWhenCombinedWithValidOnes()
+    {
+        $article = $this->contentType('article', Article::class);
+        $image = $this->contentType('image', Image::class);
+
+        $this->expectException(UnacceptableContentTypeException::class);
+
+        $this->combinator->combine($article, $article, $image);
+    }
+
     private function contentType(string $type, string $class): ContentType
     {
         $contentType = new ContentType();
         $contentType->setId($type);
+        $contentType->setName(ucfirst($type));
         $contentType->setClass($class);
 
         return $contentType;
@@ -112,5 +146,3 @@ final class CombiningContentTest extends TestCase
         return $content;
     }
 }
-
-// article, event, jobposting, news, video, company
