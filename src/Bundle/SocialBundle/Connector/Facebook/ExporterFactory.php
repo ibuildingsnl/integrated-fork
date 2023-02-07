@@ -11,13 +11,13 @@
 
 namespace Integrated\Bundle\SocialBundle\Connector\Facebook;
 
-use Facebook\Facebook;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface as ModelConfigInterface;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
+use JanuSoftware\Facebook\Facebook;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

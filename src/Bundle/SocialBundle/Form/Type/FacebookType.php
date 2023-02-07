@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\SocialBundle\Form\Type;
 
-use Facebook\Facebook;
 use Integrated\Bundle\SocialBundle\Form\EventListener\AddFacebookPageFieldListener;
 use Integrated\Bundle\SocialBundle\Form\EventListener\SetFacebookPageTokenListener;
+use JanuSoftware\Facebook\Facebook;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
