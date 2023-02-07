@@ -6,6 +6,8 @@
 
 	<services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_content.serializer.json_ld.normalizer" class="Integrated\Bundle\ContentBundle\JsonLD\Serializer\Normalizer">
             <argument type="service" id="integrated_content.json_ld.normalizer" />
 

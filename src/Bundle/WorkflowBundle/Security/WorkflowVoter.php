@@ -308,6 +308,10 @@ class WorkflowVoter implements VoterInterface
 
             $workflowExtension = $extensions->get('integrated.extension.workflow');
 
+            if (!isset($workflowExtension['assigned'])) {
+                return false;
+            }
+
             /** @var User $assigned */
             $assigned = $workflowExtension['assigned'];
 

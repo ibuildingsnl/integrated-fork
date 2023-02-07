@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_user.security.provider" class="Integrated\Bundle\UserBundle\Security\UserProvider">
             <argument type="service" id="integrated_user.user.manager"/>
         </service>

@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_sitemap.controller.default" class="Integrated\Bundle\SitemapBundle\Controller\DefaultController">
             <argument type="service" id="doctrine_mongodb" />
             <argument type="service" id="integrated_content.channel.context" />

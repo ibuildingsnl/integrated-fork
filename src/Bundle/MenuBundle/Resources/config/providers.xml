@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_menu.provider.menu_provider" class="Integrated\Bundle\MenuBundle\Provider\MenuProvider">
             <argument type="service" id="knp_menu.factory" />
             <argument type="service" id="event_dispatcher" />

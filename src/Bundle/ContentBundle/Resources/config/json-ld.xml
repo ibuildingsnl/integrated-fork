@@ -6,6 +6,8 @@
 
 	<services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_content.json_ld.normalizer" class="Integrated\Common\Normalizer\Normalizer">
             <argument type="service" id="integrated_content.json_ld.resolver" />
         </service>

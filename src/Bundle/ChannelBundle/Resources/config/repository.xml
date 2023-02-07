@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_channel.repository.config" class="Doctrine\Persistence\ObjectRepository">
             <factory service="integrated_channel.orm.doctrine" method="getRepository" />
 

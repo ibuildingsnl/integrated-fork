@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_social.form.twitter_type" class="Integrated\Bundle\SocialBundle\Form\Type\TwitterType">
             <tag name="form.type" />
         </service>
