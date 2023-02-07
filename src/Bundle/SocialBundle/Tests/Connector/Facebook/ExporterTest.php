@@ -11,10 +11,6 @@
 
 namespace Integrated\Bundle\SocialBundle\Tests\Connector\Facebook;
 
-use Facebook\Exceptions\FacebookResponseException;
-use Facebook\Facebook;
-use Facebook\FacebookResponse;
-use Facebook\GraphNodes\GraphNode;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ChannelBundle\Model\Options;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -27,21 +23,26 @@ use Integrated\Common\Channel\Exception\UnexpectedTypeException;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ContentInterface;
+use JanuSoftware\Facebook\Exception\ResponseException;
+use JanuSoftware\Facebook\Facebook;
+use JanuSoftware\Facebook\GraphNode\GraphNode;
+use JanuSoftware\Facebook\Response;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ExporterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Facebook|\PHPUnit_Framework_MockObject_MockObject
+     * @var Facebook|MockObject
      */
     private $facebook;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigInterface|MockObject
      */
     private $config;
 
     /**
-     * @var UrlResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlResolver|MockObject
      */
     private $urlResolver;
 
@@ -115,7 +116,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $facebookResponse = $this->getFacebookResponse();
         $this->facebook
             ->method('post')
-            ->willThrowException(new FacebookResponseException($facebookResponse));
+            ->willThrowException(new ResponseException($facebookResponse));
 
         $exporter = $this->getInstance();
         $response = $exporter->export($document, ExporterInterface::STATE_ADD, $this->getChannel('channel'));
@@ -215,7 +216,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ChannelInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel($id)
     {
@@ -227,7 +228,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return Article|MockObject
      */
     protected function getArticle()
     {
@@ -235,15 +236,15 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return Response|MockObject
      */
     protected function getFacebookResponse()
     {
-        return $this->createMock(FacebookResponse::class);
+        return $this->createMock(Response::class);
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return OptionsInterface|MockObject
      */
     protected function getOptions()
     {

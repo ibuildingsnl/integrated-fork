@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\SocialBundle\Form\EventListener;
 
-use Facebook\Facebook;
+use JanuSoftware\Facebook\Facebook;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

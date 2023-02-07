@@ -2,17 +2,15 @@
 
 namespace Integrated\Bundle\SocialBundle\Form\EventListener;
 
-use Facebook\Facebook;
+use JanuSoftware\Facebook\Exception\SDKException;
+use JanuSoftware\Facebook\Facebook;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 class SetFacebookPageTokenListener implements EventSubscriberInterface
 {
-    /**
-     * @var Facebook
-     */
-    private $facebook;
+    private Facebook $facebook;
 
     public function __construct(Facebook $facebook)
     {
@@ -30,7 +28,7 @@ class SetFacebookPageTokenListener implements EventSubscriberInterface
     }
 
     /**
-     * @throws \Facebook\Exceptions\FacebookSDKException
+     * @throws SDKException
      */
     public function onSubmit(FormEvent $event)
     {
