@@ -163,6 +163,8 @@ class MediaController extends AbstractController
 
             $this->taxonomyRelationManager->manageRelations($request);
 
+            $this->taxonomyRelationManager->runSolrQueue(2);
+
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
             return new JsonResponse(['message' => 'This filetype is not allowed.']);

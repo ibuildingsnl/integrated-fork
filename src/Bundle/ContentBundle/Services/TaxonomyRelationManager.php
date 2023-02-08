@@ -7,6 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
+use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,10 +52,11 @@ class TaxonomyRelationManager
             return new JsonResponse('Origin is same as target');
         }
 
-        $taxonomy = $this->getTaxonomy($taxonomyRelation);
         $mediaItems = $this->getMediaItems($taxonomyRelation);
 
         foreach ($mediaItems as $mediaItem) {
+            $taxonomy = $this->getTaxonomy($taxonomyRelation);
+
             $relations = $this->getOrCreateRelation($mediaItem);
 
             $relationIDs = $this->getArrayOfRelationIDs($relations);
@@ -63,10 +65,18 @@ class TaxonomyRelationManager
 
             $this->addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs);
 
-            $this->updateQueueToSolr($mediaItem);
+            $this->queueSubscriber->setPriority(QueueInterface::PRIORITY_HIGH);
+            $this->dm->flush();
         }
 
-        return new JsonResponse('Ok');
+        $this->runSolrQueue(count($mediaItems) * 2);
+
+        return new JsonResponse($messages);
+    }
+
+    public function runSolrQueue(int $amount):void {
+        $this->indexer->setOption('queue.size', $amount);
+        $this->indexer->execute();
     }
 
     private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
@@ -119,13 +129,4 @@ class TaxonomyRelationManager
         }
     }
 
-    private function updateQueueToSolr(mixed $content): void
-    {
-        $queue = $this->queueSubscriber->getQueue();
-        $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
-        $this->dm->persist($content);
-        $this->dm->flush();
-        $this->indexer->setOption('queue.size', 2); // 1 voor het item, 1 voor de commit message
-        $this->indexer->execute();
-    }
 }
