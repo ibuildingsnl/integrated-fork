@@ -69,12 +69,12 @@ class TaxonomyRelationManager
             $this->dm->flush();
         }
 
-        $this->runSolrQueue(count($mediaItems) * 2);
+        $this->runSolrQueue(\count($mediaItems) * 2);
 
-        return new JsonResponse($messages);
+        return new JsonResponse('Done');
     }
 
-    public function runSolrQueue(int $amount):void
+    public function runSolrQueue(int $amount): void
     {
         $this->indexer->setOption('queue.size', $amount);
         $this->indexer->execute();
