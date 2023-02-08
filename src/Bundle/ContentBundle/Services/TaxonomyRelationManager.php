@@ -74,7 +74,8 @@ class TaxonomyRelationManager
         return new JsonResponse($messages);
     }
 
-    public function runSolrQueue(int $amount):void {
+    public function runSolrQueue(int $amount):void
+    {
         $this->indexer->setOption('queue.size', $amount);
         $this->indexer->execute();
     }
@@ -128,5 +129,4 @@ class TaxonomyRelationManager
             $mediaItem->addRelation($relations);
         }
     }
-
 }
