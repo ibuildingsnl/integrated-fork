@@ -4,7 +4,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
-use Integrated\Bundle\ContentBundle\Services\Flusher;
+use Integrated\Common\Services\Flusher;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
 use Integrated\Common\Content\Form\ContentFormType;

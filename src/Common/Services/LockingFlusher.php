@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\ContentBundle\Services;
+namespace Integrated\Common\Services;
 
 use Integrated\Bundle\ContentBundle\Controller\ContentController;
 use Integrated\Bundle\ContentBundle\Services\Exception\FlushingException;

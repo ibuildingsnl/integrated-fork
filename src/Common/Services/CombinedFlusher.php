@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\ContentBundle\Services;
+namespace Integrated\Common\Services;
 
 final class CombinedFlusher implements Flusher
 {

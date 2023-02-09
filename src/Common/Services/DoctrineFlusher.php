@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\ContentBundle\Services;
+namespace Integrated\Common\Services;
 
 use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Services\Exception\FlushingException;
