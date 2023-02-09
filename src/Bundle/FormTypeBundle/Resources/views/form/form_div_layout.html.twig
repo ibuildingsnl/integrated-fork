@@ -517,8 +517,14 @@
                 {% endif %}
             </div>
 
+            {% if form.vars.attr['data-multiple'] is defined and form.vars.attr['data-multiple'] = '1' or form.vars.attr['data-multiple'] = 'true' %}
+                {% set dataMultiple = 'true' %}
+            {% else %}
+                {% set dataMultiple = 'false' %}
+            {% endif %}
+
             <div class="selected_images flex flex-wrap mb-4"
-                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                 data-multiple="{{ dataMultiple }}"
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
                  data-relationid="{{ form.vars.name }}"
@@ -526,7 +532,7 @@
             </div>
 
             <div
-                data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                data-multiple="{{ dataMultiple }}"
                 data-types="{{ form.vars.attr['data-types'] }}"
                 data-relationtype="embedded"
                 data-relationid="{{ form.vars.name }}"

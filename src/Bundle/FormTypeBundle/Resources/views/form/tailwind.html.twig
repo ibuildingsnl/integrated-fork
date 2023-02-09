@@ -429,7 +429,10 @@
                 {{ block('checkbox_switcher_widget') }}
                 </label>
             {% else %}
+                <label
+                    class="checkbox-switcher" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
                 {{ block('checkbox_switcher_widget') }}
+                </label>
             {% endif %}
             {{ form_errors(form) }}
         {% endset %}

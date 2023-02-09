@@ -63,6 +63,44 @@ class ChannelType extends AbstractType
         );
 
         $builder->add(
+            $builder->create('colors', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'state' => 'show',
+                    'icon' => 'tools',
+                ],
+            ])->add(
+                'color',
+                ColorType::class,
+                [
+                    'label' => 'Primary Color',
+                    'required' => false,
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'droplet',
+                    ],
+                ]
+            )->add(
+                'secondarycolor',
+                ColorType::class,
+                [
+                    'label' => 'Secondary Color',
+                    'required' => false,
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'droplet',
+                    ],
+                ]
+            )
+        );
+
+        $builder->add(
             'color',
             ColorType::class,
             [

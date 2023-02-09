@@ -124,7 +124,6 @@ function filterImages(selection) {
 }
 
 function addImageIDsToInputField() {
-    console.log(selected_relation.input_selector);
     $(selected_relation.input_selector).
         attr('value', JSON.stringify(
             selected_relation.selected_images.map(item => item.id)).

@@ -317,8 +317,10 @@
                 }
             }
 
-            a {
-                pointer-events: none;
+            li.media-item {
+                a {
+                    pointer-events: none;
+                }
             }
         }
     }
@@ -554,6 +556,7 @@
 
         &[data-multiple="true"] {
             margin: 0 -0.5rem;
+
             li {
                 width: 33%;
                 padding: .5rem;
@@ -595,7 +598,7 @@
                 right: .5rem;
                 top: .5rem;
                 @media (hover: none) {
-                    display:flex;
+                    display: flex;
                 }
             }
 
