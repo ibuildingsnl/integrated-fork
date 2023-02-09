@@ -6,6 +6,8 @@
         <div class="filters_row"></div>
     {% endblock %}
 
+    {{ dump("EDIT?") }}
+
     <div class="flex flex-wrap content-edit-form">
         {% block form_start %}
             {{ form_start(form, { 'style': 'horizontal'}) }}
@@ -145,17 +147,17 @@
                                                             form_relations: formRelations|default(null),
                                                         } %}
                                                     {% else %}
-                                                            <select
-                                                                    multiple
-                                                                    id="{{ relation.vars.name }}"
-                                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                                    data-types="{{ relation.vars.attr['data-types'] }}"
-                                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                                    class="relation-items form-control"
-                                                                    style="display: none; width: 89%">
-                                                            </select>
-                                                            <span class="input-group-addon" data-add="1"></span>
+                                                        <select
+                                                                multiple
+                                                                id="{{ relation.vars.name }}"
+                                                                data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                                data-types="{{ relation.vars.attr['data-types'] }}"
+                                                                data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                                data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                                class="relation-items form-control"
+                                                                style="display: none; width: 89%">
+                                                        </select>
+                                                        <span class="input-group-addon" data-add="1"></span>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -198,25 +200,25 @@
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
 
-                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-                                                    {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
-                                                        relation: relation,
-                                                        form_relations: formRelations|default(null),
-                                                    } %}
+                                            {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                    relation: relation,
+                                                    form_relations: formRelations|default(null),
+                                                } %}
 
-                                                {% else %}
-                                                    <select
-                                                            multiple
-                                                            id="{{ relation.vars.name }}"
-                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                            data-types="{{ relation.vars.attr['data-types'] }}"
-                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                            class="relation-items form-control"
-                                                            style="display: none; width: 89%">
-                                                    </select>
-                                                    <span class="input-group-addon" data-add="1"></span>
-                                                {% endif %}
+                                            {% else %}
+                                                <select
+                                                        multiple
+                                                        id="{{ relation.vars.name }}"
+                                                        data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                        data-types="{{ relation.vars.attr['data-types'] }}"
+                                                        data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                        data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                        class="relation-items form-control"
+                                                        style="display: none; width: 89%">
+                                                </select>
+                                                <span class="input-group-addon" data-add="1"></span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
