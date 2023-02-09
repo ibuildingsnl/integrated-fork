@@ -38,16 +38,20 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
         $taxonomyTypes = $this->contentTypes->filterInstanceOf(Taxonomy::class);
 
         foreach ($taxonomyTypes as $taxonomyType) {
-            if ($this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
-                $menuAdmin = $menu->getChild(self::MENU_TAXONOMIES);
-                if (!$menuAdmin) {
-                    $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label-outline');
-                }
-                $menuAdmin->addChild($taxonomyType->getName(), [
-                    'route' => 'integrated_taxonomy_index',
-                    'routeParameters' => ['type' => $taxonomyType->getId()],
-                ]);
+            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
+                continue;
             }
+            if (!$taxonomyType->hasField('parent_id')) {
+                continue;
+            }
+            $menuAdmin = $menu->getChild(self::MENU_TAXONOMIES);
+            if (!$menuAdmin) {
+                $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label-outline');
+            }
+            $menuAdmin->addChild($taxonomyType->getName(), [
+                'route' => 'integrated_taxonomy_index',
+                'routeParameters' => ['type' => $taxonomyType->getId()],
+            ]);
         }
     }
 }

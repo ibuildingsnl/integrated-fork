@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Security\ContentTypeVoter;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Integrated\Bundle\TaxonomyBundle\EventListener\ConfigureMenuSubscriber;
@@ -150,7 +151,22 @@ final class MenuTest extends TestCase
         self::assertCount(2, $section->getChildren());
     }
 
-    private function withTaxonomyContentType(string $name = 'taxonomy'): void
+    public function testNotShowingTaxonomyWithoutParents()
+    {
+        $this->withTaxonomyContentType('tag', false);
+        $this->withTaxonomyContentType('category');
+        $this->tokenStorage->setToken($this->user('tag-access', 'category-access'));
+
+        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
+
+        $section = $this->menu->getChild('Taxonomy');
+
+        self::assertCount(1, $section->getChildren());
+        self::assertInstanceOf(ItemInterface::class, $section->getChild('Category'));
+        self::assertNull($section->getChild('Tag'));
+    }
+
+    private function withTaxonomyContentType(string $name = 'taxonomy', bool $hasParent = true): void
     {
         $taxonomy = new ContentType();
         $taxonomy->setId($name);
@@ -158,6 +174,11 @@ final class MenuTest extends TestCase
         $taxonomy->setClass(Taxonomy::class);
         $taxonomy->addPermission($this->permission(PermissionInterface::WRITE, $name.'-access'));
         $taxonomy->addPermission($this->permission(PermissionInterface::READ, $name.'-read'));
+        if ($hasParent) {
+            $field = new Field();
+            $field->setName('parent_id');
+            $taxonomy->setFields($taxonomy->getFields() + [$field]);
+        }
         $this->repository->addType($taxonomy);
     }
 
