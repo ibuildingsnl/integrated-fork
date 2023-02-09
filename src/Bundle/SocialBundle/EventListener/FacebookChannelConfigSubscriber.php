@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\SocialBundle\EventListener;
 
-use Facebook\Facebook;
 use Integrated\Bundle\ChannelBundle\Event\FormConfigEvent;
 use Integrated\Bundle\ChannelBundle\Event\GetResponseConfigEvent;
 use Integrated\Bundle\ChannelBundle\IntegratedChannelEvents;
 use Integrated\Bundle\SocialBundle\Connector\FacebookAdapter;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
+use JanuSoftware\Facebook\Facebook;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;

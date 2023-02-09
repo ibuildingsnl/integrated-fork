@@ -8,7 +8,7 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="integrated_social.facebook" class="Facebook\Facebook" public="false">
+        <service id="integrated_social.facebook" class="JanuSoftware\Facebook\Facebook" public="false">
             <argument type="collection" />
         </service>
 
