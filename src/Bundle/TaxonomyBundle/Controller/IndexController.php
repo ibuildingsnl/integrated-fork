@@ -50,28 +50,28 @@ final class IndexController extends AbstractController
 
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted()) {
-            return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
-                'form' => $form->createView(),
-                'content_type' => $contentType,
-                'index' => $this->paginator->paginate(
-                    $this->indexer->buildTaxonomyIndex($contentType->getId()),
-                    $request->query->getInt('page', 1),
-                    15,
-                ),
-            ]);
+        if ($form->isSubmitted()) {
+            if (!$form->isValid() || !$content instanceof Taxonomy) {
+                return $this->redirectToRoute('integrated_content_content_index');
+            }
+
+            $this->taxonomies->add($content);
+
+            $this->flusher->flush();
+
+            $this->addFlash('success', 'Taxonomy item created');
+
+            return $this->redirectToRoute('integrated_taxonomy_index');
         }
 
-        if (!$form->isValid() || !$content instanceof Taxonomy) {
-            return $this->redirectToRoute('integrated_content_content_index');
-        }
-
-        $this->taxonomies->add($content);
-
-        $this->flusher->flush();
-
-        $this->addFlash('success', 'Taxonomy item created');
-
-        return $this->redirectToRoute('integrated_taxonomy_index');
+        return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
+            'form' => $form->createView(),
+            'content_type' => $contentType,
+            'index' => $this->paginator->paginate(
+                $this->indexer->buildTaxonomyIndex($contentType->getId()),
+                $request->query->getInt('page', 1),
+                15,
+            ),
+        ]);
     }
 }
