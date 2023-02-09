@@ -47,6 +47,7 @@ class IntegratedSocialExtension extends Extension
             $defintion->replaceArgument(0, [
                 'app_id' => $config['facebook']['app_id'],
                 'app_secret' => $config['facebook']['app_secret'],
+                'default_graph_version' => $config['facebook']['default_graph_version'],
             ]);
         }
     }
