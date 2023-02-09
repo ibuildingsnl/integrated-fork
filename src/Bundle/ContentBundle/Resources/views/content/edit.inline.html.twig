@@ -1,0 +1,214 @@
+{% block form_theme %}
+    {% if form is defined %}
+        {% form_theme form with '@IntegratedContent/form/form_div_layout.html.twig' %}
+    {% endif %}
+{% endblock %}
+
+{% block component %}
+    {{ dump("INLINE?") }}
+    {% block filters %}
+        <div class="filters_row"></div>
+    {% endblock %}
+
+    <div class="flex flex-wrap sidebar-edit-form">
+        <div class="aside-options">
+            {% block form_start %}
+                {{ form_start(form, { 'style': 'horizontal'}) }}
+            {% endblock %}
+
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
+
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                                <i class="iconoir-cancel"></i></button>
+                            <span>{% trans %}Options{% endtrans %}</span>
+                        </div>
+
+                        {% block content_editor %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                                {{ form_row(child, {style:'sidebar'}) }}
+                            {% endfor %}
+                        {% endblock %}
+
+                        <div class="aside-item-wrapper show">
+                            <div class="aside-item-header">
+                                <h3 class="aside-item-title">
+                                    <i class="iconoir-info-empty"></i>
+                                    <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                                </h3>
+                                <i class="iconoir-nav-arrow-up"></i>
+                            </div>
+                            <div class="aside-item-list">
+                                <div class="aside-item-list-container">
+                                    <div class="status-info">
+                                        {% if form.publishTime is defined %}
+                                            {{ form_row(form.publishTime, {style: 'inline'}) }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="workflow-info">
+                                        {% if form.extension_workflow is defined %}
+                                            {{ form_row(form.extension_workflow, {style: 'inline', 'show_label': 'true'}) }}
+                                        {% endif %}
+                                    </div>
+                                    {% if content is defined and content.extensions['integrated.extension.workflow']['state'] is defined %}
+                                        {% set workflow = content.extensions['integrated.extension.workflow']['state'] %}
+                                    {% endif %}
+                                    <div class="status-options">
+                                        {% if workflow is defined and ('now'|date('U') > content.publishTime.startDate |date('U')) %}
+                                            <div class="status {{ workflow.name|lower }}"
+                                                 style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
+                                                <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
+                                            </div>
+                                            <a class="delete"
+                                               href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                <i class="iconoir-trash"></i>
+                                            </a>
+                                        {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                            <div class="status planned">
+                                                <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                            </div>
+                                            <a class="delete"
+                                               href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                <i class="iconoir-trash"></i>
+                                            </a>
+                                        {% else %}
+                                            {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
+                                                <div class="status published">
+                                                    <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
+                                                <div class="status planned">
+                                                    <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
+                                                </div>
+                                                <a class="delete"
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                    <i class="iconoir-trash"></i>
+                                                </a>
+                                            {% else %}
+                                                <div class="status draft">
+                                                    <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
+                                                </div>
+                                                {% if content is defined %}
+                                                    <a class="delete"
+                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                        <i class="iconoir-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2">
+                                        {% if form.disabled is defined %}
+                                            {{ form_row(form.disabled) }}
+                                        {% endif %}
+                                        {% if form.orderable is defined %}
+                                            {{ form_row(form.orderable) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="aside-item-wrapper" id="used-by">
+
+                        </div>
+
+                        {% block content_history %}
+                            {% if showContentHistory %}
+                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
+                            {% endif %}
+                        {% endblock %}
+
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                                {{ form_row(child) }}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% block content_relations %}
+                            {% if form.offsetGet('relations').count() %}
+                                <input type="hidden" id="default_references" value="{{ references }}">
+                                {% for relation in form.relations %}
+
+                                    <div class="aside-item-wrapper relations show">
+                                        <div class="aside-item-header">
+                                            <h3 class="aside-item-title">
+                                                <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
+                                                <label
+                                                    class="aside-item-icon"
+                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                            </h3>
+                                            <i class="iconoir-nav-arrow-up"></i>
+                                        </div>
+                                        <div class="aside-item-list">
+                                            <div class="aside-item-list-container relation">
+                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                    {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                        relation: relation,
+                                                        form_relations: formRelations|default(null),
+                                                    } %}
+                                                {% else %}
+                                                    <select
+                                                            multiple
+                                                            id="{{ relation.vars.name }}"
+                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                            data-types="{{ relation.vars.attr['data-types'] }}"
+                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                            class="relation-items form-control"
+                                                            style="display: none; width: 89%">
+                                                    </select>
+                                                    <span class="input-group-addon" data-add="1"></span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </aside>
+        </div>
+
+{#        <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>#}
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block edit_modal %}
+    <div class="modal fade" id="content-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{% trans %}Unsaved changes{% endtrans %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans %}You have unsaved changes. When you leave this page your changes will be lost.{% endtrans %}</p>
+                    <p>{% trans %}Are you sure you want to leave this page?{% endtrans %}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-dark-green live-page">{% trans %}Leave this page{% endtrans %}</button>
+                    <button type="button" class="btn btn-white"
+                            data-dismiss="modal">{% trans %}Stay on page{% endtrans %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+{% endblock %}

@@ -19,7 +19,14 @@
             {% include '@IntegratedContent/media/partial/menu_component.html.twig' %}
         </aside>
     </div>
-    <div class="media-gallery index-wrapper">
+
+    <div class="aside-filters media-edit-panel" style="order: 2;">
+        <aside>
+            {% include '@IntegratedContent/media/partial/edit_panel.html.twig' %}
+        </aside>
+    </div>
+
+    <div class="media-gallery index-wrapper" style="width: calc(100% - 700px);">
         <div class="page-title">
             {% include '@IntegratedContent/media/partial/header_component.html.twig' %}
         </div>
@@ -74,7 +81,11 @@
             </div>
 
         </section>
+
+
+
     </div>
+
 
 </div>
 

@@ -29,6 +29,10 @@
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
 	</route>
 
+	<route id="integrated_content_content_edit_inline" path="/inline/{id}"  methods="GET">
+		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit_inline</default>
+	</route>
+
 	<route id="integrated_content_content_edit_rest" path="/{id}" methods="PUT">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
 	</route>

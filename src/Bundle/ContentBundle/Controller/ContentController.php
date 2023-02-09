@@ -567,6 +567,12 @@ class ContentController extends AbstractController
         return $taxonomyCats;
     }
 
+    public function edit_inline(Request $request, Content $content) {
+        $this->showAsInlineForm = true;
+
+        return $this->edit($request, $content);
+    }
+
     /**
      * Update a existing document.
      *
@@ -574,6 +580,16 @@ class ContentController extends AbstractController
      */
     public function edit(Request $request, Content $content)
     {
+        if (isset($this->showAsInlineForm) && $this->showAsInlineForm == true) {
+            $showAsInlineForm = true;
+            $renderTo = '@IntegratedContent/content/edit.inline.html.twig';
+            $route = 'integrated_content_content_edit_inline';
+        } else {
+            $showAsInlineForm = false;
+            $renderTo = '@IntegratedContent/content/edit.html.twig';
+            $route = 'integrated_content_content_edit';
+        }
+
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
@@ -582,7 +598,6 @@ class ContentController extends AbstractController
         }
 
         // get a lock on this content resource.
-
         $locking = $this->getLock($content, 15);
         $locking['locked'] = $locking['lock'] ? true : false;
 
@@ -598,7 +613,7 @@ class ContentController extends AbstractController
                         'lock' => $locking['lock']->getId(),
                     ]);
 
-                    return $this->redirectToRoute('integrated_content_content_edit', $parameters);
+                    return $this->redirectToRoute($route, $parameters);
                 }
 
                 $locking['locked'] = false;
@@ -627,7 +642,7 @@ class ContentController extends AbstractController
             }
 
             if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
+                return $this->redirectToRoute($route, ['id' => $content->getId()]);
             }
 
             // this is not rest compatible since a button click is required to save
@@ -659,7 +674,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
+                return $this->redirectToRoute($route, ['id' => $content->getId()]);
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.
@@ -692,7 +707,8 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        return $this->render('@IntegratedContent/content/edit.html.twig', [
+        return $this->render($renderTo, [
+            'showAsInlineForm' => $showAsInlineForm,
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'type' => $contentType,
