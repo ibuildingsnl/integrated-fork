@@ -26,7 +26,7 @@
             <tag name="integrated_content.resolver" priority="10" />
         </service>
 
-        <service id="integrated_content.resolver.xml_file" class="Integrated\Common\ContentType\Resolver\MemoryResolver">
+        <service id="integrated_content.resolver.xml_file" class="MemoryTypeResolver">
             <factory service="integrated_content.resolver.xml_file.builder" method="getResolver" />
 
             <tag name="integrated_content.resolver" priority="0" />

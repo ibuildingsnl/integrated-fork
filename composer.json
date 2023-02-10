@@ -13,10 +13,14 @@
         {
             "name": "e-Active",
             "homepage": "https://www.e-active.nl"
+        },
+        {
+            "name": "Twin Digital",
+            "homepage": "https://www.twindigital.nl"
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.1",
         "ext-intl": "*",
         "ext-json": "*",
         "abraham/twitteroauth": "^2|^3",
@@ -31,14 +35,16 @@
         "doctrine/orm": "^2.13.0",
         "endroid/qr-code-bundle": "^4.0",
         "excelwebzone/recaptcha-bundle": "^1.5",
-        "facebook/graph-sdk": "~5.0",
         "gregwar/image": ">=2.0.25",
         "gregwar/image-bundle": "^v3.0.1",
+        "guzzlehttp/guzzle": "^7.5",
+        "janu-software/facebook-php-sdk": "^0.1.13",
         "knplabs/knp-gaufrette-bundle": "~0.5",
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "~5.0",
         "monolog/monolog": "~1.22",
         "nelmio/alice": "~3.1",
+        "php-http/guzzle7-adapter": "^1.0",
         "psr/simple-cache": "^1.0",
         "ramsey/uuid": "^4.2",
         "scheb/2fa-bundle": "^6.0",
@@ -73,7 +79,7 @@
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",
         "twig/string-extra": "^3.3",
-        "twig/twig": ">=2.12"
+        "twig/twig": ">=3.4"
     },
     "replace": {
         "integrated/asset-bundle": "self.version",
@@ -101,7 +107,7 @@
         "squizlabs/php_codesniffer": "^3.1",
         "phpunit/phpunit": "~9.5.28",
         "friendsofphp/php-cs-fixer": "3.13.1",
-        "phpstan/phpstan": "^1",
+        "phpstan/phpstan": "^1.9.4",
         "phpstan/phpstan-doctrine": "^1",
         "phpstan/phpstan-deprecation-rules": "^1"
     },
@@ -117,7 +123,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "endroid/installer": true,
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "php-http/discovery": true
         }
     },
     "extra": {

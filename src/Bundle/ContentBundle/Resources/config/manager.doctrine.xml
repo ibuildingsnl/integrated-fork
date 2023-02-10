@@ -17,7 +17,6 @@
 
         <service id="integrated_content.content_type.manager.doctrine" class="Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager">
             <argument type="service" id="integrated_content.resolver"/>
-            <argument type="service" id="integrated_content.doctrine.object_manager"/>
             <argument>Integrated\Bundle\ContentBundle\Document\ContentType\ContentType</argument>
         </service>
 

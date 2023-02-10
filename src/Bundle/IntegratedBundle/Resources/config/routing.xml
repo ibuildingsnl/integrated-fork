@@ -15,5 +15,5 @@
     <import resource="@IntegratedUserBundle/Resources/config/routing.xml" type="xml" />
     <import resource="@IntegratedUserBundle/Resources/config/routing.security.xml" type="xml" />
     <import resource="@IntegratedWorkflowBundle/Resources/config/routing.xml" type="xml" />
-
+    <import resource="@IntegratedTaxonomyBundle/Resources/config/routing.xml" type="xml" />
 </routes>

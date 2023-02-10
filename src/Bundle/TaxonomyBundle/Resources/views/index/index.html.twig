@@ -1,0 +1,151 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Taxonomy index{% endtrans %}{% endblock title %}
+{% block content %}
+    <div class="taxonomy-index">
+        <div class="flex flex-wrap">
+            {% block form_start %}
+                {{ form_start(form, { 'style':'horizontal', 'state':'show' }) }}
+            {% endblock %}
+            <div class="taxonomy-list-wrapper">
+                <div class="section-white section-radius taxonomy-list">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>{% trans %}Name{% endtrans %}</th>
+                            <th>{% trans %}Description{% endtrans %}</th>
+                            <th>{% trans %}Slug{% endtrans %}</th>
+                            <th>{% trans %}Count{% endtrans %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in index %}
+                            <tr class="has-options">
+                                <td>
+                                    <strong>
+                                        <a href="{{ path('integrated_content_content_edit', { 'id': item.taxonomyId }) }}">
+                                            {% if item.depth %}
+                                                {% for i in range(0, item.depth-1) %}
+                                                    {% if i == item.depth-1 %}
+                                                        —
+                                                    {% else %}
+                                                        &nbsp;&nbsp;
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                            {{ item.title }}
+                                        </a>
+                                    </strong>
+                                    <div class="row-options">
+                                        <a href="{{ path('integrated_content_content_edit', {'id': item.taxonomyId}) }}"
+                                           title="{% trans %}Edit{% endtrans %}">
+                                            {% trans %}Edit{% endtrans %}
+                                        </a> |
+                                        <a class="color-red"
+                                           href="{{ path('integrated_content_content_delete_rest', {'id': item.taxonomyId}) }}"
+                                           title="{% trans %}Delete{% endtrans %}">
+                                            {% trans %}Delete{% endtrans %}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ item.description|raw }}
+                                </td>
+                                <td>
+                                    {{ item.slug }}
+                                </td>
+                                <td>
+
+                                    {% if item.count %}
+                                        <a href="{{ path('integrated_content_content_index', { (content_type.name): [item.title] }) }}">
+                                            {{ "(%d)"|trans|format(item.count) }}
+                                        </a>
+                                    {% else %}
+                                        {{ "(0)"|trans }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">
+                                    {% trans %}No taxonomies added{% endtrans %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div>
+                        {{ knp_pagination_render(index) }}
+                    </div>
+                </div>
+            </div>
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
+            <div class="taxonomy-create-wrapper">
+                <div class="aside-options">
+                    <aside>
+                        <div class="aside-holder">
+                            {% block sidebar %}
+                                <div class="aside-header">
+                                    <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
+                                            type="button">
+                                        <i class="iconoir-cancel"></i></button>
+                                    <span>{% trans %}Options{% endtrans %}</span>
+                                </div>
+                                <div class="aside-item-wrapper show">
+                                    <div class="aside-item-header">
+                                        <h3 class="aside-item-title">
+                                            <i class="iconoir-info-empty"></i>
+                                            <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
+                                        </h3>
+                                        <i class="iconoir-nav-arrow-up"></i>
+                                    </div>
+                                    <div class="aside-item-list">
+                                        <div class="aside-item-list-container">
+                                            <div class="status-info">
+                                                {% if form.publishTime is defined %}
+                                                    {{ form_row(form.publishTime, {style: 'inline'}) }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="mt-2">
+                                                {% if form.disabled is defined %}
+                                                    {{ form_row(form.disabled) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% block content_meta %}
+                                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                        {{ form_row(child) }}
+                                    {% endfor %}
+                                {% endblock %}
+                            {% endblock %}
+                        </div>
+                    </aside>
+                </div>
+                <div class="editor-wrapper">
+                    <div class="page-title">
+                        <h1 class="heading">{% trans %}Create {% endtrans %} {{ content_type.name }}</h1>
+                    </div>
+                    <section class="editor">
+                        {% block content_form %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                                {{ form_row(child) }}
+                            {% endfor %}
+
+                            {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
+                        {% endblock %}
+                    </section>
+                </div>
+            </div>
+            {% block form_end %}
+                {{ form_end(form) }}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+{% endblock %}
