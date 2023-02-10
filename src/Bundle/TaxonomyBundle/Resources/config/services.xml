@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="integrated_taxonomy.taxonomy.odm.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Taxonomy</argument>
+        </service>
+        <service id="integrated_taxonomy.taxonomy.repository" class="Integrated\Bundle\TaxonomyBundle\Infrastructure\ODMTaxonomyRepository">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_taxonomy.taxonomy.odm.repository" />
+        </service>
+        <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
+            <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
+        </service>
+    </services>
+</container>

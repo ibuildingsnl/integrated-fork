@@ -50,7 +50,7 @@ class Taxonomy extends Content implements RankableInterface
             'state' => 'show',
             'placeholder' => 'Your taxonomy description starts here',
         ],
-    ], location: 'sidebar')]
+    ], location: 'editor')]
     protected $description;
 
     /**
