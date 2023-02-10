@@ -26,7 +26,7 @@ class ExcludeFromNewsletterListener implements EventSubscriberInterface
 
     public function onPostBuild(BuilderEvent $event)
     {
-        if (!in_array($event->getContentType()->getClass(), $this->allowedTypes)) {
+        if (!\in_array($event->getContentType()->getClass(), $this->allowedTypes)) {
             return;
         }
 

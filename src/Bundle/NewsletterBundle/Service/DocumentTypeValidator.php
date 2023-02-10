@@ -20,10 +20,11 @@ final class DocumentTypeValidator implements CombinatorInterface
     public function combine(ContentType ...$types): CombinedContent
     {
         foreach ($types as $type) {
-            if (!in_array($type->getClass(), $this->acceptedTypes)) {
+            if (!\in_array($type->getClass(), $this->acceptedTypes)) {
                 throw UnacceptableContentTypeException::nonWhitelisted($type);
             }
         }
+
         return $this->combinator->combine(...$types);
     }
 }
