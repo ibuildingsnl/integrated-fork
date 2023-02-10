@@ -211,6 +211,9 @@ body div#dropdown_overlay {
         top: 50px;
         border: none;
         transition: top .15s linear, visibility .15s, opacity .15s linear;
+        max-height: calc(100vh - 100px);
+        overflow: auto;
+        overflow-x: hidden;
         @include media(max-md) {
             top: 60px;
             position: fixed;
