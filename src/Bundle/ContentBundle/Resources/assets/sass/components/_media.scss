@@ -552,9 +552,7 @@
     margin-top: 1rem;
 
     .selected_images {
-        width: fit-content;
-
-        &[data-multiple="true"] {
+        &[data-multiple="true"], &[data-multiple="1"] {
             margin: 0 -0.5rem;
 
             li {

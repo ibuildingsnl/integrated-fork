@@ -36,8 +36,7 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface,
-                                  PublishableInterface, ConnectorInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -63,16 +62,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     #[Slug(fields: ['id'])]
     #[Type\Field(options: ['attr' => ['style' => 'sidebar']], location: 'sidebar')]
     protected $slug;
-
-    /**
-     * @var mixed[]
-     */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\ContentOptionsType', options: [
-        'priority' => 510,
-        'label' => 'Content options',
-        'attr' => ['style' => 'sidebar', 'icon' => 'settings']
-    ], location: 'sidebar')]
-    protected $contentOptions = [];
 
     /**
      * @var string the type of the ContentType
@@ -104,6 +93,26 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @var bool
      */
     protected $published = true;
+
+    /**
+     * @var bool
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ], location: 'options')]
+    protected $premium;
+
+    /**
+     * @var bool
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ], location: 'options')]
+    protected $featured;
 
     /**
      * @var bool
@@ -211,71 +220,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->contentType = $contentType;
 
         return $this;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getContentOptions()
-    {
-        return $this->contentOptions;
-    }
-
-    /**
-     * Overrider all the contentOption with a new set of values for this content type.
-     *
-     * @param string[] $contentOptions
-     *
-     * @return $this
-     */
-    public function setContentOptions(array $contentOptions)
-    {
-        $this->contentOptions = [];
-
-        foreach ($contentOptions as $name => $value) {
-            $this->setContentOption($name, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getContentOption($name)
-    {
-        if (isset($this->contentOptions[$name])) {
-            return $this->contentOptions[$name];
-        }
-
-        return null;
-    }
-
-    /**
-     * Set the value of the specified key.
-     *
-     * @param string $name
-     * @param mixed|null $value
-     *
-     * @return $this
-     */
-    public function setContentOption($name, $value = null)
-    {
-        if ($value === null) {
-            unset($this->contentOptions[$name]);
-        } else {
-            $this->contentOptions[$name] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasContentOption($name)
-    {
-        return isset($this->contentOptions[$name]);
     }
 
     /**
@@ -413,7 +357,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      *
      * @return ArrayCollection
      */
@@ -440,7 +384,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      *
      * @return Content|null
      */
@@ -547,6 +491,54 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function setPublished($published)
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    /**
+     * Get the premium status of the document.
+     *
+     * @return bool
+     */
+    public function isPremium()
+    {
+        return $this->premium;
+    }
+
+    /**
+     * Set the premium status of the document.
+     *
+     * @param bool $premium
+     *
+     * @return $this
+     */
+    public function setPremium($premium)
+    {
+        $this->premium = $premium;
+
+        return $this;
+    }
+
+    /**
+     * Get the featured status of the document.
+     *
+     * @return bool
+     */
+    public function isFeatured()
+    {
+        return $this->featured;
+    }
+
+    /**
+     * Set the featured status of the document.
+     *
+     * @param bool $featured
+     *
+     * @return $this
+     */
+    public function setFeatured($featured)
+    {
+        $this->featured = $featured;
 
         return $this;
     }
