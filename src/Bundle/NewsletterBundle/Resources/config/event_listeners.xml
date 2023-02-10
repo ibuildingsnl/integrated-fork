@@ -19,6 +19,10 @@
             <tag name="integrated_content.form.event_subscriber" />
         </service>
 
+
+        <service id="integrated_newsletter.form.listener.form_field" class="Integrated\Bundle\NewsletterBundle\EventListener\ExcludeFromNewsletterListener">
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
     </services>
 
 </container>

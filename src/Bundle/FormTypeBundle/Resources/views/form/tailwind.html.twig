@@ -1069,7 +1069,9 @@
             {% if attr.state is defined %}
                 {% set childAttr = childAttr|merge({ 'state': attr.state }) %}
             {% endif %}
-            {{ form_row(child, childAttr) }}
+            {% if not child.rendered %}
+                {{ form_row(child, childAttr) }}
+            {% endif %}
         {% endfor %}
     {% endapply %}
 {% endblock form_rows %}
