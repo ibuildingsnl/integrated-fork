@@ -11,6 +11,10 @@
 namespace Integrated\Bundle\MenuBundle\Tests\Event;
 
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
+use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -18,7 +22,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ConfigureMenuEventTest extends \PHPUnit\Framework\TestCase
+class ConfigureMenuEventTest extends TestCase
 {
     /**
      * @var ConfigureMenuEvent
@@ -26,12 +30,12 @@ class ConfigureMenuEventTest extends \PHPUnit\Framework\TestCase
     protected $event;
 
     /**
-     * @var \Knp\Menu\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FactoryInterface|MockObject
      */
     protected $factory;
 
     /**
-     * @var \Knp\Menu\ItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ItemInterface|MockObject
      */
     protected $menu;
 
@@ -40,8 +44,8 @@ class ConfigureMenuEventTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->factory = $this->createMock('Knp\Menu\FactoryInterface');
-        $this->menu = $this->createMock('Knp\Menu\ItemInterface');
+        $this->factory = $this->createMock(FactoryInterface::class);
+        $this->menu = $this->createMock(ItemInterface::class);
         $this->event = new ConfigureMenuEvent($this->factory, $this->menu);
     }
 
