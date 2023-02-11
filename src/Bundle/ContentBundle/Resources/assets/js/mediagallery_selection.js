@@ -3,13 +3,13 @@ let form_relation = {}; //these will be placed in form_relations
 let selected_relation = ''; //after a user clicks on a form button, the clicked form element is selected
 const mediagallery_link = '/admin/media/';
 
-document.addEventListener('DOMContentLoaded', function() {
+window.onload = function() {
     addEventListeners();
     populateFormRelations();
     generateSrcAttributeForIframes();
     populateSelectedImages();
     setupFormRelations();
-});
+};
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
