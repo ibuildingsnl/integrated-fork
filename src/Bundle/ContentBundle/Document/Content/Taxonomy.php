@@ -54,6 +54,21 @@ class Taxonomy extends Content implements RankableInterface
     protected $description;
 
     /**
+     * @var Image
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+        'label' => 'Featured Image',
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select featured image',
+            'data-multiple' => false,
+        ],
+    ], location: 'sidebar')]
+    protected $featuredImage;
+
+    /**
      * Get the title of the document.
      *
      * @return string
@@ -123,6 +138,16 @@ class Taxonomy extends Content implements RankableInterface
         $this->description = $description;
 
         return $this;
+    }
+
+    public function getFeaturedImage(): Image|null
+    {
+        return $this->featuredImage;
+    }
+
+    public function setFeaturedImage(Image $featuredImage): void
+    {
+        $this->featuredImage = $featuredImage;
     }
 
     /**
