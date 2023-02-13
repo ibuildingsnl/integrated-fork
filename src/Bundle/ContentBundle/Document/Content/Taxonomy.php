@@ -31,14 +31,14 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    #[Type\Field(options: ['priority' => 999, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    #[Type\Field(options: ['priority' => 500, 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -141,12 +141,24 @@ class Taxonomy extends Content implements RankableInterface
         return $this;
     }
 
-    public function getFeaturedImage(): Image|null
+    /**
+     * Get the Featured Image of the document.
+     *
+     * @return Image|null
+     */
+    public function getFeaturedImage()
     {
         return $this->featuredImage;
     }
 
-    public function setFeaturedImage(Image $featuredImage): void
+    /**
+     * Set the Featured Image of the document.
+     *
+     * @param Image $featuredImage
+     *
+     * @return $this
+     */
+    public function setFeaturedImage($featuredImage)
     {
         $this->featuredImage = $featuredImage;
     }

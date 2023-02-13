@@ -15,10 +15,10 @@ use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Security\PermissionTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -46,7 +46,7 @@ class Channel implements ChannelInterface
     protected $name;
 
     /**
-     * @var StorageInterface
+     * @var Image
      */
     protected $logo;
 
@@ -174,7 +174,9 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @return StorageInterface
+     * Get the Logo of the channel.
+     *
+     * @return Image|null
      */
     public function getLogo()
     {
@@ -182,11 +184,13 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param StorageInterface $logo
+     * Set the logo of the channel.
+     *
+     * @param Image $logo
      *
      * @return $this
      */
-    public function setLogo(StorageInterface $logo = null)
+    public function setLogo($logo)
     {
         $this->logo = $logo;
 

@@ -24,9 +24,9 @@
 
         <field field-name="scope" type="string" />
 
-        <embed-one
+        <reference-one
                 field="logo"
-                target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
+                target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
         <embed-many
@@ -38,7 +38,6 @@
             field="socials"
             target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials"
         />
-
 
         <embed-many
                 field="permissions"
