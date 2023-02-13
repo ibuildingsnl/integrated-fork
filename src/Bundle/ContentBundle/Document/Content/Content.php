@@ -25,7 +25,9 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
 use Integrated\Common\Content\ExtensibleInterface;
 use Integrated\Common\Content\ExtensibleTrait;
+use Integrated\Common\Content\FeaturedInterface;
 use Integrated\Common\Content\MetadataInterface;
+use Integrated\Common\Content\PremiumInterface;
 use Integrated\Common\Content\PublishableInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
@@ -36,7 +38,7 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
