@@ -517,6 +517,9 @@
 
 {% block checkbox_widget %}
     {% apply spaceless %}
+        {% if form.vars.data is null and value is defined and value == 'checked' %}
+            {% set checked = true %}
+        {% endif %}
         <input
             type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
         <span class="checkmark"></span>

@@ -116,7 +116,7 @@ class ContentBlock extends Block
     #[Assert\NotBlank]
     #[Type\Field(options: [
         'priority' => 999,
-        'attr' => ['class' => 'main-title'], 'priority' => 999, ])]
+        'attr' => ['class' => 'main-title'] ])]
     protected $title;
 
     /**

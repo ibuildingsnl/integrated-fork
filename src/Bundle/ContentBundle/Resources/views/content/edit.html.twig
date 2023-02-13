@@ -109,7 +109,7 @@
 
                         {% block content_options %}
                             {% set options = false %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS'))  %}
                                 {% set options = true %}
                             {% endfor %}
                             {% if options == true %}

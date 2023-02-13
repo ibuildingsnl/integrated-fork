@@ -13,6 +13,8 @@ namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
