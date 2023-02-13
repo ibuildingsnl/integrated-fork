@@ -2,6 +2,12 @@
 @import '@uppy/dashboard/dist/style.css';
 @import '@uppy/image-editor/dist/style.css';
 
+.index-wrapper {
+    &.media-library {
+        width: calc(100% - 250px);
+    }
+}
+
 /* MEDIA */
 .media {
     display: flex;
@@ -70,6 +76,12 @@
         order: 0;
         border-right: 1px solid #dee3e9;
         border-left: 0;
+        .aside-header {
+            padding: 0.5rem 1.2rem;
+            .clear-filters {
+                padding: 0 0 0 0.5rem;
+            }
+        }
     }
 
     .media-gallery {
@@ -410,7 +422,7 @@
 
                 .aside-item-search {
                     background-color: transparent;
-                    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+                    padding: 1rem .5rem 0.5rem .5rem;
                 }
 
                 .aside-item-list-container {
@@ -420,7 +432,7 @@
                 }
 
                 ul.aside-filter-menu {
-                    padding: 0rem 1.5rem;
+                    padding: 0rem .5rem;
 
                     li {
                         padding: 0;
@@ -455,12 +467,15 @@
                             margin: 0.5rem 0;
 
                             i {
-                                font-size: 16px;
+                                &:before {
+                                    width: 18px;
+                                    height: 18px;
+                                }
                             }
 
                             span {
-                                margin-left: 1rem;
-                                font-size: 14px;
+                                margin-left: 0.5rem;
+                                font-size: 13px;
                             }
 
                             &.ui-state-highlight {
@@ -477,7 +492,7 @@
                                 position: relative;
 
                                 a {
-                                    padding-left: 40px;
+                                    padding-left: 20px;
                                 }
 
                                 &:before {
@@ -485,19 +500,19 @@
                                     position: absolute;
                                     height: 1px;
                                     background-color: $border-color;
-                                    width: 20px;
+                                    width: 7px;
                                     left: 10px;
                                     top: 15px;
                                 }
 
                                 ul.child-menu {
                                     a {
-                                        padding-left: 74px;
+                                        padding-left: 34px;
                                     }
 
                                     li {
                                         &:before {
-                                            width: 53px;
+                                            width: 21px;
                                         }
                                     }
                                 }
@@ -507,7 +522,7 @@
                 }
 
                 .aside-folder-header {
-                    padding: 1rem 2.25rem;
+                    padding: 1rem 1.25rem;
                     border-bottom: 1px solid $border-color;
 
                     a {
@@ -516,12 +531,15 @@
                         align-items: center;
 
                         i {
-                            font-size: 18px;
+                            &:before {
+                                width:18px;
+                                height: 18px;
+                            }
                         }
 
                         span {
-                            font-size: 14px;
-                            padding-left: 1rem;
+                            font-size: 13px;
+                            padding-left: .5rem;
                         }
                     }
                 }
