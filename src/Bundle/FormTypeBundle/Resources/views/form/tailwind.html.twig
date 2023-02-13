@@ -526,6 +526,9 @@
 
 {% block checkbox_switcher_widget %}
     {% apply spaceless %}
+        {% if form.vars.data is null and value is defined and value == 'checked' %}
+            {% set checked = true %}
+        {% endif %}
         <input class="switch-input"
                type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
         <span class="switch-label" data-on="Yes" data-off="No"></span>

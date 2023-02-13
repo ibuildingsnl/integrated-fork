@@ -244,3 +244,23 @@ if (document.querySelector('section.editor') !== null) {
             }
         });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var filterElements = document.getElementsByClassName('aside-item-list');
+
+    for (var ii = 0; ii < filterElements.length; ii++) {
+        openSelectedOptions(filterElements[ii]);
+    }
+
+    function openSelectedOptions(elem) {
+        var textinputs = elem.querySelectorAll('input[type=checkbox]');
+        if (!elem.parentNode.classList.contains('show')) {
+            var empty = [].filter.call(textinputs, function(elem) {
+                return !elem.checked;
+            });
+            if (textinputs.length != empty.length) {
+                showElement(elem);
+            }
+        }
+    }
+});

@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType\Fields;
 
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentTypeField as ContentTypeFieldTransformer;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Common\Form\Mapping\AttributeInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -37,6 +38,11 @@ class DefaultType extends AbstractType
         ]);
 
         $builder->add('required', CheckboxType::class, ['required' => false]);
+
+        if ($field->getType() === CheckboxSwitcherType::class || $field->getType() === CheckboxType::class ) {
+            $builder->add('value', CheckboxType::class, ['required' => false]);
+        }
+
 
         $builder->addModelTransformer(new ContentTypeFieldTransformer($field));
     }

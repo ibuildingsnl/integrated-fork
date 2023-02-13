@@ -122,7 +122,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
             'align_with_widget' => true,
         ],
     ], location: 'custom')]
-    protected $disabled = false;
+    protected $disabled;
 
     /**
      * @var Metadata
