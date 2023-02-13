@@ -12,10 +12,8 @@
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
-use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Common\Form\Mapping\AttributeInterface;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -46,16 +44,14 @@ class ContentTypeField implements DataTransformerInterface
                 return [
                     'enabled' => true,
                     'required' => !empty($options['required']),
-                    'value' => !empty($options['value'] ? 'checked' : false)
+                    'value' => !empty($options['value'] ? 'checked' : false),
                 ];
             } else {
                 return [
                     'enabled' => true,
-                    'required' => !empty($options['required'])
+                    'required' => !empty($options['required']),
                 ];
             }
-
-
         }
 
         return [];

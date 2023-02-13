@@ -39,10 +39,9 @@ class DefaultType extends AbstractType
 
         $builder->add('required', CheckboxType::class, ['required' => false]);
 
-        if ($field->getType() === CheckboxSwitcherType::class || $field->getType() === CheckboxType::class ) {
+        if ($field->getType() === CheckboxSwitcherType::class || $field->getType() === CheckboxType::class) {
             $builder->add('value', CheckboxType::class, ['required' => false]);
         }
-
 
         $builder->addModelTransformer(new ContentTypeFieldTransformer($field));
     }
