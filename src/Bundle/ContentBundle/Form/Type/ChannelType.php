@@ -11,14 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Vat;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\CompanyID;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Analytics;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -76,7 +71,7 @@ class ChannelType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
-                    'icon' => 'tools',
+                    'icon' => 'droplet',
                 ],
             ])->add(
                 'color',
@@ -84,12 +79,6 @@ class ChannelType extends AbstractType
                 [
                     'label' => 'Primary Color',
                     'required' => false,
-                    'attr' => [
-                        'location' => 'sidebar',
-                        'style' => 'sidebar',
-                        'state' => 'show',
-                        'icon' => 'droplet',
-                    ],
                 ]
             )->add(
                 'secondarycolor',
@@ -97,54 +86,22 @@ class ChannelType extends AbstractType
                 [
                     'label' => 'Secondary Color',
                     'required' => false,
-                    'attr' => [
-                        'location' => 'sidebar',
-                        'style' => 'sidebar',
-                        'state' => 'show',
-                        'icon' => 'droplet',
-                    ],
                 ]
             )
         );
 
         $builder->add(
-            'color',
-            ColorType::class,
-            [
-                'label' => 'Primary Color',
-                'required' => false,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'state' => 'show',
-                    'icon' => 'droplet',
-                ],
-            ]
-        );
-        $builder->add(
-            'secondarycolor',
-            ColorType::class,
-            [
-                'label' => 'Secondary Color',
-                'required' => false,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'state' => 'show',
-                    'icon' => 'droplet',
-                ],
-            ]
-        );
-
-        $builder->add(
             'logo',
-            ImageDropzoneType::class,
+            MediaGalleryImageType::class,
             [
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select logo',
+                    'data-multiple' => false,
                 ],
             ]
         );
@@ -161,7 +118,7 @@ class ChannelType extends AbstractType
 
         $builder->add('primaryDomain', HiddenType::class, [
             'priority' => 500,
-            'attr' => ['class' => 'primary-domain-input']]);
+            'attr' => ['class' => 'primary-domain-input'], ]);
 
         $builder->add('contacts', CollectionType::class, [
             'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\ContactType',
@@ -180,7 +137,7 @@ class ChannelType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add social',
             'label' => 'Socials',
-            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show', 'show_headings' => 'false'],
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
         $builder->add(
@@ -207,12 +164,13 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'icon' => 'key-alt-back',
+                    'icon' => 'city',
                 ],
             ])->add(
-                'companyID',
+                'companyId',
                 TextType::class,
                 [
+                    'label' => 'Company ID',
                     'required' => false,
                 ]
             )->add(
@@ -224,12 +182,12 @@ class ChannelType extends AbstractType
             )
         );
 
-
         $builder->add('analytics', TextType::class, [
+            'label' => 'Analytics ID',
             'attr' => [
                 'location' => 'sidebar',
                 'style' => 'sidebar',
-                'icon' => 'key-alt-back',
+                'icon' => 'graph-up',
             ],
         ]);
 

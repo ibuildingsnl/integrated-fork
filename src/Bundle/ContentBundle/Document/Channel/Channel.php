@@ -91,7 +91,7 @@ class Channel implements ChannelInterface
     /**
      * @var string
      */
-    protected $companyID;
+    protected $companyId;
 
     /**
      * @var string
@@ -306,19 +306,19 @@ class Channel implements ChannelInterface
     /**
      * @return string
      */
-    public function getCompanyID()
+    public function getCompanyId()
     {
-        return $this->companyID;
+        return $this->companyId;
     }
 
     /**
-     * @param string $companyID
+     * @param string $companyId
      *
      * @return $this
      */
-    public function setCompanyID($companyID)
+    public function setCompanyID($companyId)
     {
-        $this->companyID = $companyID;
+        $this->companyId = $companyId;
 
         return $this;
     }

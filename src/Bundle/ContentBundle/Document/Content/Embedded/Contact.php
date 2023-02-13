@@ -333,49 +333,31 @@ class Contact
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     */
     public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPhonenumber(): ?string
     {
         return $this->phonenumber;
     }
 
-    /**
-     * @param string|null $phonenumber
-     */
     public function setPhonenumber(?string $phonenumber): void
     {
         $this->phonenumber = $phonenumber;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMobilenumber(): ?string
     {
         return $this->mobilenumber;
     }
 
-    /**
-     * @param string|null $mobilenumber
-     */
     public function setMobilenumber(?string $mobilenumber): void
     {
         $this->mobilenumber = $mobilenumber;

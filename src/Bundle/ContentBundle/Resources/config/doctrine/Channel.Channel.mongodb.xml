@@ -20,7 +20,7 @@
         <field field-name="createdAt" type="date" />
         <field field-name="analytics" type="string" />
         <field field-name="vat" type="string" />
-        <field field-name="companyID" type="string" />
+        <field field-name="companyId" type="string" />
 
         <field field-name="scope" type="string" />
 

@@ -27,37 +27,24 @@ class Socials
      * @var string
      */
     protected $url;
-    
-    /**
-     * @return string
-     */
+
     public function getIcon(): string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string $icon
-     */
     public function setIcon(string $icon): void
     {
         $this->icon = $icon;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @param string $url
-     */
     public function setUrl(string $url): void
     {
         $this->url = $url;
     }
-
 }

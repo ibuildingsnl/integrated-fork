@@ -133,7 +133,7 @@ class RelatedContentBlock extends Block
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice', options: [
         'priority' => 460,
-        'required' => false])]
+        'required' => false, ])]
     protected $contentTypes;
 
     /**

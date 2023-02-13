@@ -34,7 +34,7 @@ class SocialsType extends AbstractType
                     'Facebook' => 'facebook',
                     'Twitter' => 'twitter',
                     'LinkedIn' => 'linkedin',
-                    'Instagram' => 'instagram'
+                    'Instagram' => 'instagram',
                 ],
             ]);
         }

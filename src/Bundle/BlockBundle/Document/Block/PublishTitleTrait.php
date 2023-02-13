@@ -18,7 +18,7 @@ trait PublishTitleTrait
     /**
      * @var string
      */
-    #[Type\Field(options: ['priority' => 998,'required' => false, 'attr' => ['class' => 'published-title']])]
+    #[Type\Field(options: ['priority' => 998, 'required' => false, 'attr' => ['class' => 'published-title']])]
     protected $publishedTitle = '';
 
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [

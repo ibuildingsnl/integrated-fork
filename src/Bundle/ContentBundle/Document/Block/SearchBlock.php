@@ -29,7 +29,7 @@ class SearchBlock extends Block
         'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock',
         'choice_label' => 'title',
-        'placeholder' => ''])]
+        'placeholder' => '', ])]
     protected $block;
 
     /**
@@ -37,7 +37,7 @@ class SearchBlock extends Block
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
         'priority' => 490,
-        'label' => 'Results page URL'])]
+        'label' => 'Results page URL', ])]
     protected $url;
 
     /**
