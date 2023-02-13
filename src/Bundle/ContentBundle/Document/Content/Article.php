@@ -89,6 +89,7 @@ class Article extends Content implements RankableInterface
      * @var ArrayCollection Embedded\Author[]
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AuthorType', options: [
+        'priority' => 460,
         'label' => 'Authors',
         'attr' => ['style' => 'sidebar', 'icon' => 'user'],
     ], location: 'sidebar')]
@@ -104,6 +105,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
+        'priority' => 440,
         'label' => 'Source URL',
         'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
     ], location: 'sidebar')]
@@ -118,6 +120,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'priority' => 490,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
@@ -129,6 +132,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'priority' => 420,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'message-text',
@@ -140,6 +144,7 @@ class Article extends Content implements RankableInterface
      * @var Embedded\Address
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\AddressType', options: [
+        'priority' => 430,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'pin-alt',

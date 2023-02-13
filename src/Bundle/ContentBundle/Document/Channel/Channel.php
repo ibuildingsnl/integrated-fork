@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -71,6 +72,31 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $primaryDomainRedirect;
+
+    /**
+     * @var Contact[]|Collection
+     */
+    protected $contacts;
+
+    /**
+     * @var Socials[]|Collection
+     */
+    protected $socials;
+
+    /**
+     * @var string
+     */
+    protected $vat;
+
+    /**
+     * @var string
+     */
+    protected $companyID;
+
+    /**
+     * @var string
+     */
+    protected $analytics;
 
     /**
      * @var mixed[]
@@ -161,6 +187,158 @@ class Channel implements ChannelInterface
     public function setLogo(StorageInterface $logo = null)
     {
         $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * Get the Contacts of the document.
+     *
+     * @return Contact[]
+     */
+    public function getContacts()
+    {
+        return $this->contacts;
+    }
+
+    /**
+     * Set the Contacts of the document.
+     *
+     * @return $this
+     */
+    public function setContacts(Collection $contacts)
+    {
+        $this->contacts = $contacts;
+
+        return $this;
+    }
+
+    /**
+     * Add Contact to Contacts collection.
+     *
+     * @param Contact $contact
+     *
+     * @return $this
+     */
+    public function addContact(Contact $contact = null)
+    {
+        if ($contact !== null) {
+            $this->contacts->add($contact);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeContact(Contact $contact)
+    {
+        return $this->contacts->removeElement($contact);
+    }
+
+    /**
+     * Get the Socials of the document.
+     *
+     * @return Socials[]
+     */
+    public function getSocials()
+    {
+        return $this->socials;
+    }
+
+    /**
+     * Set the Socials of the document.
+     *
+     * @return $this
+     */
+    public function setSocials(Collection $socials)
+    {
+        $this->socials = $socials;
+
+        return $this;
+    }
+
+    /**
+     * Add Socials to Socials collection.
+     *
+     * @param Socials $socials
+     *
+     * @return $this
+     */
+    public function addSocials(Socials $socials = null)
+    {
+        if ($socials !== null) {
+            $this->socials->add($socials);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeSocials(Socials $socials)
+    {
+        return $this->socials->removeElement($socials);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVat()
+    {
+        return $this->vat;
+    }
+
+    /**
+     * @param string $vat
+     *
+     * @return $this
+     */
+    public function setVat($vat)
+    {
+        $this->vat = $vat;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompanyID()
+    {
+        return $this->companyID;
+    }
+
+    /**
+     * @param string $companyID
+     *
+     * @return $this
+     */
+    public function setCompanyID($companyID)
+    {
+        $this->companyID = $companyID;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnalytics()
+    {
+        return $this->analytics;
+    }
+
+    /**
+     * @param string $analytics
+     *
+     * @return $this
+     */
+    public function setAnalytics($analytics)
+    {
+        $this->analytics = $analytics;
 
         return $this;
     }

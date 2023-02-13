@@ -27,19 +27,22 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
+    #[Type\Field(options: [
+        'priority' => 999,
+        'attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\AceType')]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\AceType', options: ['priority' => 997])]
     protected $content;
 
     /**
      * @var Relation
      */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
         'choice_label' => 'name',
         'placeholder' => 'Select a relation',
@@ -52,6 +55,7 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
      * @var ArrayCollection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: [
+        'priority' => 490,
         'label' => 'Require relation with',
         'required' => false,
         'allow_clear' => true,

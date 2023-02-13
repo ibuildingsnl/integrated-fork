@@ -18,6 +18,9 @@
         <field field-name="ipProtected" type="bool" />
         <field field-name="options" type="hash" />
         <field field-name="createdAt" type="date" />
+        <field field-name="analytics" type="string" />
+        <field field-name="vat" type="string" />
+        <field field-name="companyID" type="string" />
 
         <field field-name="scope" type="string" />
 
@@ -25,6 +28,17 @@
                 field="logo"
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
         />
+
+        <embed-many
+            field="contacts"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact"
+        />
+
+        <embed-many
+            field="socials"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials"
+        />
+
 
         <embed-many
                 field="permissions"

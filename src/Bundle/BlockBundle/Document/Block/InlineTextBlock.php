@@ -23,7 +23,9 @@ class InlineTextBlock extends Block
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 500,
+        'mode' => 'web'])]
     protected $content;
 
     /**

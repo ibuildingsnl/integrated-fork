@@ -28,7 +28,9 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>You are about to delete "%name%", click the delete button below to confirm the action.</source>
-                <target>U staat op het punt om "%name%" te verwijderen, klik op de verwijder knop hieronder om de actie te voltooien.</target>
+                <target>U staat op het punt om "%name%" te verwijderen, klik op de verwijder knop hieronder om de actie
+                    te voltooien.
+                </target>
             </trans-unit>
             <trans-unit id="8">
                 <source>Back</source>
@@ -239,8 +241,12 @@
                 <target>De wijzigingen in %name% zijn opgeslagen</target>
             </trans-unit>
             <trans-unit id="63">
-                <source>The document is currently locked by your self in a different browser or tab and can not be edited until this lock is released.</source>
-                <target>Het document is op dit moment in gebruik bij u zelf in een ander venster. Sluit het venster af of wacht tot het document weer beschikbaar komt.</target>
+                <source>The document is currently locked by your self in a different browser or tab and can not be
+                    edited until this lock is released.
+                </source>
+                <target>Het document is op dit moment in gebruik bij uzelf in een ander venster. Sluit het venster af
+                    of wacht tot het document weer beschikbaar komt.
+                </target>
             </trans-unit>
             <trans-unit id="64">
                 <source>Reload</source>
@@ -251,7 +257,9 @@
                 <target>Verversen (behoud wijzigingen)</target>
             </trans-unit>
             <trans-unit id="66">
-                <source>The document is currently locked by %s, the document can not be edited until this lock is released.</source>
+                <source>The document is currently locked by %s, the document can not be edited until this lock is
+                    released.
+                </source>
                 <target>Het document is op dit moment in gebruik bij %s en kan daarom niet worden bewerkt.</target>
             </trans-unit>
             <trans-unit id="67">
@@ -364,7 +372,9 @@
             </trans-unit>
             <trans-unit id="94">
                 <source>You have unsaved changes. When you leave this page your changes will be lost.</source>
-                <target>U heeft wijzigingen gemaakt die niet worden opgeslagen. Alle wijzigingen gaan verloren bij het verlaten van deze pagina.</target>
+                <target>U heeft wijzigingen gemaakt die niet worden opgeslagen. Alle wijzigingen gaan verloren bij het
+                    verlaten van deze pagina.
+                </target>
             </trans-unit>
             <trans-unit id="95">
                 <source>Are you sure you want to leave this page?</source>
@@ -607,20 +617,348 @@
                 <target>Bestanden</target>
             </trans-unit>
             <trans-unit id="155">
-                <source>No results with this selection.</source>
-                <target>Geen resultaten met deze selectie.</target>
+                <source>Primary Color</source>
+                <target>Primaire kleur</target>
             </trans-unit>
             <trans-unit id="156">
-                <source>Select multimedia</source>
-                <target>Selecteer multimedia</target>
+                <source>Secondary Color</source>
+                <target>Secundaire kleur</target>
             </trans-unit>
             <trans-unit id="157">
-                <source>Selected</source>
-                <target>Geselecteerd</target>
+                <source>Read access</source>
+                <target>Leestoegang</target>
             </trans-unit>
             <trans-unit id="158">
-                <source>Keep current selection</source>
-                <target>Behoud huidige selectie</target>
+                <source>Write access</source>
+                <target>Schrijftoegang</target>
+            </trans-unit>
+            <trans-unit id="159">
+                <source>Redirect to primary domain</source>
+                <target>Verwijs naar primair domein</target>
+            </trans-unit>
+            <trans-unit id="160">
+                <source>Protect by IP address or logged in user</source>
+                <target>Whitelist IP of vereis inloggen</target>
+            </trans-unit>
+            <trans-unit id="161">
+                <source>Everyone</source>
+                <target>Iedereen</target>
+            </trans-unit>
+            <trans-unit id="162">
+                <source>Permissions</source>
+                <target>Toegankelijkheid</target>
+            </trans-unit>
+            <trans-unit id="163">
+                <source>Primary domain</source>
+                <target>Primair domein</target>
+            </trans-unit>
+            <trans-unit id="164">
+                <source>Domains (example.com)</source>
+                <target>Domeinen (voorbeeld.nl)</target>
+            </trans-unit>
+            <trans-unit id="165">
+                <source>Add domain</source>
+                <target>Domein toevoegen</target>
+            </trans-unit>
+            <trans-unit id="166">
+                <source>Yes</source>
+                <target>Ja</target>
+            </trans-unit>
+            <trans-unit id="167">
+                <source>No</source>
+                <target>Nee</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>No user login allowed</source>
+                <target>Geen gebruikerslogin toegestaan</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>Hello</source>
+                <target>Hallo</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>Bulk change this selection</source>
+                <target>Selectie aanpassen in Bulk</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>Step 1 of 3: Choose Issues</source>
+                <target>Stap 1 van 3: Selecteer content</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>Step 2 of 3: Choose Operation</source>
+                <target>Stap 2 van 3: Kies bewerking</target>
+            </trans-unit>
+            <trans-unit id="173">
+                <source>Step 3 of 3: Confirmation</source>
+                <target>Stap 3 van 3: Bevestigen</target>
+            </trans-unit>
+            <trans-unit id="174">
+                <source>Choose for which of the %count% content items you wish to perform a bulk action.</source>
+                <target>Selecteer voor welke van de %count% items je bulkbewerking wilt uitvoeren</target>
+            </trans-unit>
+            <trans-unit id="175">
+                <source>Choose the operation you wish to perform on the selected content items (%selection%)</source>
+                <target>Kies de bewerking die je wilt uitvoeren op de %selection% geselecteerde items</target>
+            </trans-unit>
+            <trans-unit id="176">
+                <source>Please confirm that you wish to execute the following actions on the selected content items (%selection%)</source>
+                <target>Bevestig dat je de onderstaande bewerking wilt uitvoeren op de %selection% geselecteerde items</target>
+            </trans-unit>
+            <trans-unit id="177">
+                <source>Confirm</source>
+                <target>Bevestigen</target>
+            </trans-unit>
+            <trans-unit id="178">
+                <source>Next</source>
+                <target>Volgende</target>
+            </trans-unit>
+            <trans-unit id="179">
+                <source>Select a channel</source>
+                <target>Selecteer een kanaal</target>
+            </trans-unit>
+            <trans-unit id="180">
+                <source>Add channel</source>
+                <target>Kanaal toevoegen</target>
+            </trans-unit>
+            <trans-unit id="181">
+                <source>Remove channel</source>
+                <target>Kanaal verwijderen</target>
+            </trans-unit>
+            <trans-unit id="182">
+                <source>Change content type</source>
+                <target>Contenttype wijzigen</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>Alle mediafiles</source>
+                <target>Alle mediabestanden</target>
+            </trans-unit>
+            <trans-unit id="184">
+                <source>All dates</source>
+                <target>Alle datums</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>Bulkselection</source>
+                <target>Bulkselectie</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>Image</source>
+                <target>Afbeelding</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>All files</source>
+                <target>Alle bestanden</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>Folders</source>
+                <target>Mappen</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>Publish date</source>
+                <target>Publicatiedatum</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>Remove active filters</source>
+                <target>Verwijder actieve filters</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>PublishTime</source>
+                <target>Publicatie tijdstip</target>
+            </trans-unit>
+            <trans-unit id="192">
+                <source>Source URL</source>
+                <target>Bron url</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>Copyright restrictions</source>
+                <target>Copyright restricties</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>Custom Fields</source>
+                <target>Custom velden</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>Add custom field</source>
+                <target>Custom veld toevoegen</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>Publication</source>
+                <target>Publiceren</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>Publish items on selected channels</source>
+                <target>Publiceer items op geselecteerde kanalen</target>
+            </trans-unit>
+            <trans-unit id="198">
+                <source>Disable for publication</source>
+                <target>Publiceren uitschakelen</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>None</source>
+                <target>Geen</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>Jobs</source>
+                <target>Functies</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>Reference</source>
+                <target>Referentie</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>Price</source>
+                <target>Prijs</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>Stock quantity</source>
+                <target>Voorraad</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>Draft</source>
+                <target>Concept</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>Orderable</source>
+                <target>Sorteerbaar</target>
+            </trans-unit>
+            <trans-unit id="206">
+                <source>Enable channel field</source>
+                <target>Kanaalkeuze toestaan</target>
+            </trans-unit>
+            <trans-unit id="207">
+                <source>Enable but hide channel field</source>
+                <target>Kanaalkeuze toestaan maar veld verbergen</target>
+            </trans-unit>
+            <trans-unit id="208">
+                <source>Disable channel field</source>
+                <target>Kanaalkeuze uitschakelen</target>
+            </trans-unit>
+            <trans-unit id="209">
+                <source>Event start</source>
+                <target>Start event</target>
+            </trans-unit>
+            <trans-unit id="210">
+                <source>Event end</source>
+                <target>Einde event</target>
+            </trans-unit>
+            <trans-unit id="211">
+                <source>Text</source>
+                <target>Tekst</target>
+            </trans-unit>
+            <trans-unit id="212">
+                <source>Textarea</source>
+                <target>Tekstveld</target>
+            </trans-unit>
+            <trans-unit id="213">
+                <source>Yes/No switcher</source>
+                <target>Ja/Nee switcher</target>
+            </trans-unit>
+            <trans-unit id="214">
+                <source>Yes/No switcher</source>
+                <target>Ja/Nee switcher</target>
+            </trans-unit>
+            <trans-unit id="215">
+                <source>JobTitle</source>
+                <target>Functietitel</target>
+            </trans-unit>
+            <trans-unit id="216">
+                <source>Salary</source>
+                <target>Salaris</target>
+            </trans-unit>
+            <trans-unit id="217">
+                <source>ApplyUrl</source>
+                <target>Url voor solliciteren</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>Domains</source>
+                <target>Domeinen</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>Channel</source>
+                <target>Kanaal</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>Add contact</source>
+                <target>Contactgegevens toevoegen</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>Add social</source>
+                <target>Socials toevoegen</target>
+            </trans-unit>
+            <trans-unit id="222">
+                <source>Location</source>
+                <target>Locatie</target>
+            </trans-unit>
+            <trans-unit id="223">
+                <source>Sources</source>
+                <target>Bronnen</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>Targets</source>
+                <target>Doelen</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>Enable login</source>
+                <target>Inloggen toestaan</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>Enable login</source>
+                <target>Inloggen toestaan</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>Roles</source>
+                <target>Rollen</target>
+            </trans-unit>
+            <trans-unit id="228">
+                <source>Username</source>
+                <target>Gebruikersnaam</target>
+            </trans-unit>
+            <trans-unit id="229">
+                <source>Theme</source>
+                <target>Thema</target>
+            </trans-unit>
+            <trans-unit id="230">
+                <source>Options</source>
+                <target>Opties</target>
+            </trans-unit>
+            <trans-unit id="231">
+                <source>New relation</source>
+                <target>Nieuwe relatie</target>
+            </trans-unit>
+            <trans-unit id="232">
+                <source>Template name</source>
+                <target>Naam template</target>
+            </trans-unit>
+            <trans-unit id="233">
+                <source>Scraper page URL</source>
+                <target>Scraper pagina url</target>
+            </trans-unit>
+            <trans-unit id="234">
+                <source>Configuration name</source>
+                <target>Configuratie name</target>
+            </trans-unit>
+            <trans-unit id="235">
+                <source>Options</source>
+                <target>Opties</target>
+            </trans-unit>
+            <trans-unit id="236">
+                <source>Theme</source>
+                <target>Thema</target>
+            </trans-unit>
+            <trans-unit id="237">
+                <source>Copy page</source>
+                <target>Pagina kopiëren</target>
+            </trans-unit>
+            <trans-unit id="238">
+                <source>Select a page type</source>
+                <target>Selecteer een pagina type</target>
+            </trans-unit>
+            <trans-unit id="239">
+                <source>Static pages</source>
+                <target>Statische pagina's</target>
+            </trans-unit>
+            <trans-unit id="240">
+                <source>Content type pages</source>
+                <target>Content type pagina's</target>
             </trans-unit>
         </body>
     </file>

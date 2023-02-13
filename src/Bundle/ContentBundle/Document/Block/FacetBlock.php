@@ -27,6 +27,7 @@ class FacetBlock extends Block
      * @var ContentBlock
      */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock',
         'choice_label' => 'title',
         'placeholder' => '',
@@ -37,6 +38,7 @@ class FacetBlock extends Block
      * @var ArrayCollection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType', options: [
+        'priority' => 490,
         'entry_type' => 'Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType',
         'entry_options' => ['data_class' => 'Integrated\Bundle\ContentBundle\Document\Block\Embedded\FacetField'],
         'allow_add' => true,

@@ -12,7 +12,13 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Vat;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\CompanyID;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Analytics;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -37,6 +43,7 @@ class ChannelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, [
+            'priority' => 999,
             'constraints' => new Length(['max' => 100]),
             'attr' => [
                 'location' => 'editor',
@@ -143,15 +150,38 @@ class ChannelType extends AbstractType
         );
 
         $builder->add('domains', TailwindCollectionType::class, [
+            'priority' => 500,
             'label' => 'Domains (example.com)',
             'allow_add' => true,
             'allow_delete' => true,
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
-            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
+            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false', 'location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
-        $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
+        $builder->add('primaryDomain', HiddenType::class, [
+            'priority' => 500,
+            'attr' => ['class' => 'primary-domain-input']]);
+
+        $builder->add('contacts', CollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\ContactType',
+            'priority' => 490,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'add_button_text' => 'Add contact',
+            'label' => 'Address',
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+        ]);
+
+        $builder->add('socials', TailwindCollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialsType',
+            'priority' => 480,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'add_button_text' => 'Add social',
+            'label' => 'Socials',
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show', 'show_headings' => 'false'],
+        ]);
 
         $builder->add(
             $builder->create('permissions', FormType::class, [
@@ -170,6 +200,38 @@ class ChannelType extends AbstractType
                 ]
             )
         );
+
+        $builder->add(
+            $builder->create('company_data', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'icon' => 'key-alt-back',
+                ],
+            ])->add(
+                'companyID',
+                TextType::class,
+                [
+                    'required' => false,
+                ]
+            )->add(
+                'vat',
+                TextType::class,
+                [
+                    'required' => false,
+                ]
+            )
+        );
+
+
+        $builder->add('analytics', TextType::class, [
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'icon' => 'key-alt-back',
+            ],
+        ]);
 
         $builder->add(
             $builder->create('options', FormType::class, [

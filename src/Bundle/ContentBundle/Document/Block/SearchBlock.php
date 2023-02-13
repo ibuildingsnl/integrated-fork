@@ -26,16 +26,18 @@ class SearchBlock extends Block
      * @var ContentBlock
      */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Block\ContentBlock',
         'choice_label' => 'title',
-        'placeholder' => '',
-    ])]
+        'placeholder' => ''])]
     protected $block;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['label' => 'Results page URL'])]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
+        'priority' => 490,
+        'label' => 'Results page URL'])]
     protected $url;
 
     /**

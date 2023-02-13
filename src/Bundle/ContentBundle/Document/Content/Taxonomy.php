@@ -45,6 +45,7 @@ class Taxonomy extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 998,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
