@@ -161,6 +161,8 @@ class Taxonomy extends Content implements RankableInterface
     public function setFeaturedImage($featuredImage)
     {
         $this->featuredImage = $featuredImage;
+
+        return $this;
     }
 
     /**
