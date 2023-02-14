@@ -29,6 +29,7 @@ final class CombiningContentTest extends TestCase
         $job = $this->contentType('jobposting', JobPosting::class);
         $event = $this->contentType('event', Event::class);
         $article = $this->contentType('article', Article::class);
+        $news = $this->contentType('news', News::class);
 
         $repository = new MemoryContentRepository();
 
@@ -42,6 +43,12 @@ final class CombiningContentTest extends TestCase
         $repository->add($this->content($article, 'article 1', null));
         $repository->add($this->content($article, 'article 2', 22));
         $repository->add($this->content($article, 'article 3', 2));
+
+        $repository->add($this->content($news, 'something happened', 20));
+        $repository->add($c = $this->content($news, 'news item was written', 18));
+        $c->getCustomFields()->set('ExcludeFromNewsletters', false);
+        $repository->add($c = $this->content($news, 'news items can now be excluded!', 16));
+        $c->getCustomFields()->set('ExcludeFromNewsletters', true);
 
         $this->combinator = new DocumentTypeValidator(
             new ContentCombinator($repository),
@@ -111,6 +118,19 @@ final class CombiningContentTest extends TestCase
         $this->expectException(UnacceptableContentTypeException::class);
 
         $this->combinator->combine($article, $article, $image);
+    }
+
+    public function testSkippingContentThatWasMarkedAsExcluded()
+    {
+        $news = $this->contentType('news', News::class);
+
+        $combined = $this->combinator->combine($news, $news);
+
+        self::assertCount(2, $combined->getContent());
+        self::assertInstanceOf(News::class, $combined->getContent()[0]);
+        self::assertEquals('news item was written', $combined->getContent()[0]->getTitle());
+        self::assertInstanceOf(News::class, $combined->getContent()[1]);
+        self::assertEquals('something happened', $combined->getContent()[1]->getTitle());
     }
 
     private function contentType(string $type, string $class): ContentType

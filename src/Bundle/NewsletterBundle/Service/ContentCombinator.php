@@ -18,12 +18,14 @@ final class ContentCombinator implements CombinatorInterface
         $offsets = [];
         $combined = new CombinedContent();
         foreach ($types as $type) {
-            $content = $this->repository->mostRecentlyPublished($type, $offsets[$type->getId()] ?? 0);
+            do {
+                $content = $this->repository->mostRecentlyPublished($type, $offsets[$type->getId()] ?? 0);
+                $offsets[$type->getId()] = ($offsets[$type->getId()] ?? 0) + 1;
+            } while ($content && $content->getCustomFields()->get('ExcludeFromNewsletters'));
             if (!$content) {
                 continue;
             }
             $combined->addContent($content);
-            $offsets[$type->getId()] = ($offsets[$type->getId()] ?? 0) + 1;
         }
 
         return $combined;
