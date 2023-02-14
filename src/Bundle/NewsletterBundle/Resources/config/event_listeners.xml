@@ -19,9 +19,14 @@
             <tag name="integrated_content.form.event_subscriber" />
         </service>
 
-
         <service id="integrated_newsletter.form.listener.form_field" class="Integrated\Bundle\NewsletterBundle\EventListener\ExcludeFromNewsletterListener">
             <tag name="integrated_content.form.event_subscriber"/>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Article</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Event</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\JobPosting</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\News</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Video</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Company</argument>
         </service>
     </services>
 
