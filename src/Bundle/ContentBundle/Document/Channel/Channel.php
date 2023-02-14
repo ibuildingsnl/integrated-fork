@@ -182,8 +182,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param Image $logo
-     *
      * @return $this
      */
     public function setLogo(Image $logo)
@@ -282,8 +280,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $vat
-     *
      * @return $this
      */
     public function setVat(string $vat)
@@ -302,8 +298,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $companyId
-     *
      * @return $this
      */
     public function setCompanyID(string $companyId)
@@ -322,8 +316,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $analytics
-     *
      * @return $this
      */
     public function setAnalytics(string $analytics)
@@ -342,8 +334,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $color
-     *
      * @return $this
      */
     public function setColor(string $color)
@@ -362,8 +352,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $secondarycolor
-     *
      * @return $this
      */
     public function setSecondaryColor(string $secondarycolor)

@@ -488,8 +488,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param bool $premium
-     *
      * @return $this
      */
     public function setPremium(bool $premium)
@@ -508,8 +506,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @param bool $featured
-     *
      * @return $this
      */
     public function setFeatured(bool $featured)

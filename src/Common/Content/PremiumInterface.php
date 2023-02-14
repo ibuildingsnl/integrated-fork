@@ -16,8 +16,6 @@ interface PremiumInterface
     /**
      * Set the premium status of the document.
      *
-     * @param bool $premium
-     *
      * @return $this
      */
     public function setPremium(bool $premium);

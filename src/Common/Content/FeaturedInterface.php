@@ -16,8 +16,6 @@ interface FeaturedInterface
     /**
      * Set the featured status of the document.
      *
-     * @param bool $featured
-     *
      * @return $this
      */
     public function setFeatured(bool $featured);

@@ -40,7 +40,7 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 970,
-        'mode' => 'web'
+        'mode' => 'web',
     ])]
     protected $content;
 

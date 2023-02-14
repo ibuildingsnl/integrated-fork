@@ -154,8 +154,6 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * Set the Featured Image of the document.
      *
-     * @param Image $featuredImage
-     *
      * @return $this
      */
     public function setFeaturedImage(Image $featuredImage)

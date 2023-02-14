@@ -36,25 +36,16 @@ class FormBlock extends Block
     ])]
     protected ContentType $contentType;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 480,
         'mode' => 'web', ])]
     protected string $content;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
         'priority' => 470,
         'required' => false, ])]
     protected string $returnUrl;
 
-    /**
-     * @var string
-     */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'priority' => 460,
         'required' => false, ])]
