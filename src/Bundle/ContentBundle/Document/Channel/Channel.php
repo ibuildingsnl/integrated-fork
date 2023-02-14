@@ -76,12 +76,12 @@ class Channel implements ChannelInterface
     protected $primaryDomainRedirect;
 
     /**
-     * @var Contact[]|Collection
+     * @var Collection<Contact>
      */
     protected $contacts;
 
     /**
-     * @var Social[]|Collection
+     * @var Collection<Social>
      */
     protected $social;
 
