@@ -3,7 +3,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <embedded-document name="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials">
+    <embedded-document name="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social">
 
         <field field-name="icon" type="string" />
         <field field-name="url" type="string" />

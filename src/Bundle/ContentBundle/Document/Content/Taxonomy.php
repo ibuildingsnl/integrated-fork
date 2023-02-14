@@ -31,7 +31,7 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['priority' => 999, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
@@ -45,7 +45,7 @@ class Taxonomy extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
-        'priority' => 998,
+        'priority' => 980,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
@@ -158,7 +158,7 @@ class Taxonomy extends Content implements RankableInterface
      *
      * @return $this
      */
-    public function setFeaturedImage($featuredImage)
+    public function setFeaturedImage(Image $featuredImage)
     {
         $this->featuredImage = $featuredImage;
 

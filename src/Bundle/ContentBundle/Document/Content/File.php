@@ -54,7 +54,7 @@ class File extends Content implements FileInterface
      * @var string
      */
     #[Type\Field(options: [
-        'priority' => 999,
+        'priority' => 990,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
@@ -66,7 +66,7 @@ class File extends Content implements FileInterface
      * @var string
      */
     #[Type\Field(options: [
-        'priority' => 998,
+        'priority' => 980,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',

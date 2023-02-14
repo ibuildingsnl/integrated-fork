@@ -14,7 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Channel;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -81,9 +81,9 @@ class Channel implements ChannelInterface
     protected $contacts;
 
     /**
-     * @var Socials[]|Collection
+     * @var Social[]|Collection
      */
-    protected $socials;
+    protected $social;
 
     /**
      * @var string
@@ -174,8 +174,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Get the Logo of the channel.
-     *
      * @return Image|null
      */
     public function getLogo()
@@ -184,13 +182,11 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Set the logo of the channel.
-     *
      * @param Image $logo
      *
      * @return $this
      */
-    public function setLogo($logo)
+    public function setLogo(Image $logo)
     {
         $this->logo = $logo;
 
@@ -198,8 +194,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Get the Contacts of the document.
-     *
      * @return Contact[]
      */
     public function getContacts()
@@ -208,8 +202,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Set the Contacts of the document.
-     *
      * @return $this
      */
     public function setContacts(Collection $contacts)
@@ -220,8 +212,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Add Contact to Contacts collection.
-     *
      * @param Contact $contact
      *
      * @return $this
@@ -244,38 +234,32 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Get the Socials of the document.
-     *
-     * @return Socials[]
+     * @return Social[]
      */
-    public function getSocials()
+    public function getSocial()
     {
-        return $this->socials;
+        return $this->social;
     }
 
     /**
-     * Set the Socials of the document.
-     *
      * @return $this
      */
-    public function setSocials(Collection $socials)
+    public function setSocial(Collection $social)
     {
-        $this->socials = $socials;
+        $this->social = $social;
 
         return $this;
     }
 
     /**
-     * Add Socials to Socials collection.
-     *
-     * @param Socials $socials
+     * @param Social $social
      *
      * @return $this
      */
-    public function addSocials(Socials $socials = null)
+    public function addSocial(Social $social = null)
     {
-        if ($socials !== null) {
-            $this->socials->add($socials);
+        if ($social !== null) {
+            $this->social->add($social);
         }
 
         return $this;
@@ -284,9 +268,9 @@ class Channel implements ChannelInterface
     /**
      * @return bool
      */
-    public function removeSocials(Socials $socials)
+    public function removeSocial(Social $social)
     {
-        return $this->socials->removeElement($socials);
+        return $this->social->removeElement($social);
     }
 
     /**
@@ -302,7 +286,7 @@ class Channel implements ChannelInterface
      *
      * @return $this
      */
-    public function setVat($vat)
+    public function setVat(string $vat)
     {
         $this->vat = $vat;
 
@@ -322,7 +306,7 @@ class Channel implements ChannelInterface
      *
      * @return $this
      */
-    public function setCompanyID($companyId)
+    public function setCompanyID(string $companyId)
     {
         $this->companyId = $companyId;
 
@@ -342,7 +326,7 @@ class Channel implements ChannelInterface
      *
      * @return $this
      */
-    public function setAnalytics($analytics)
+    public function setAnalytics(string $analytics)
     {
         $this->analytics = $analytics;
 
@@ -362,7 +346,7 @@ class Channel implements ChannelInterface
      *
      * @return $this
      */
-    public function setColor($color)
+    public function setColor(string $color)
     {
         $this->color = $color;
 
@@ -382,7 +366,7 @@ class Channel implements ChannelInterface
      *
      * @return $this
      */
-    public function setSecondaryColor($secondarycolor)
+    public function setSecondaryColor(string $secondarycolor)
     {
         $this->secondarycolor = $secondarycolor;
 
@@ -473,8 +457,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Get the createdAt of the channel.
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -483,8 +465,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Set the createdAt of the channel.
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)

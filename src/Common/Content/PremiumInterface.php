@@ -20,7 +20,7 @@ interface PremiumInterface
      *
      * @return $this
      */
-    public function setPremium($premium);
+    public function setPremium(bool $premium);
 
     /**
      * Get the premium status of the document.

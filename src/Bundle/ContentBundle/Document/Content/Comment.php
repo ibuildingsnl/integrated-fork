@@ -25,7 +25,7 @@ class Comment extends Content
      * @var string
      */
     #[Type\Field(options: [
-        'priority' => 999,
+        'priority' => 990,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',

@@ -133,7 +133,7 @@
             <tag name="form.type"/>
         </service>
 
-        <service id="integrated_content.form.type.socials" class="Integrated\Bundle\ContentBundle\Form\Type\SocialsType">
+        <service id="integrated_content.form.type.social" class="Integrated\Bundle\ContentBundle\Form\Type\SocialType">
             <tag name="form.type"/>
         </service>
 

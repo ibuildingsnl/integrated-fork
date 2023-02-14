@@ -37,7 +37,7 @@ class ChannelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, [
-            'priority' => 999,
+            'priority' => 990,
             'constraints' => new Length(['max' => 100]),
             'attr' => [
                 'location' => 'editor',
@@ -129,8 +129,8 @@ class ChannelType extends AbstractType
             'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
-        $builder->add('socials', TailwindCollectionType::class, [
-            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialsType',
+        $builder->add('social', TailwindCollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialType',
             'priority' => 480,
             'allow_add' => true,
             'allow_delete' => true,

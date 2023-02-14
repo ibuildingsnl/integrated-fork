@@ -32,13 +32,16 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['priority' => 999, 'attr' => ['class' => 'main-title']])]
+    #[Type\Field(options: ['priority' => 990, 'attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['priority' => 997, 'mode' => 'web'])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 970,
+        'mode' => 'web'
+    ])]
     protected $content;
 
     /**
@@ -60,7 +63,8 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: [
         'priority' => 490,
         'label' => 'Require relation with',
-        'required' => false, ])]
+        'required' => false,
+    ])]
     protected $requiredItems;
 
     /**

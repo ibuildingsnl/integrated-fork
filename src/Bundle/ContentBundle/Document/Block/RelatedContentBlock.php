@@ -43,7 +43,7 @@ class RelatedContentBlock extends Block
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['priority' => 998])]
+    #[Type\Field(options: ['priority' => 980])]
     protected $publishedTitle;
 
     /**
@@ -133,7 +133,8 @@ class RelatedContentBlock extends Block
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice', options: [
         'priority' => 460,
-        'required' => false, ])]
+        'required' => false,
+    ])]
     protected $contentTypes;
 
     /**

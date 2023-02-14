@@ -12,11 +12,11 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
 /**
- * Embedded document Socials.
+ * Embedded document Social.
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class Socials
+class Social
 {
     /**
      * @var string

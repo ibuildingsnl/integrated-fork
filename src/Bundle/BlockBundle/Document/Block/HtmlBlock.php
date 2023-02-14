@@ -28,14 +28,14 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
      */
     #[Assert\NotBlank]
     #[Type\Field(options: [
-        'priority' => 999,
+        'priority' => 990,
         'attr' => ['class' => 'main-title'], ])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\AceType', options: ['priority' => 997])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\AceType', options: ['priority' => 970])]
     protected $content;
 
     /**

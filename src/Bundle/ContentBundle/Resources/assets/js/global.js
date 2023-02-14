@@ -18,7 +18,7 @@ $(document).mouseup(function(e) {
 $(document).keyup(function(e) {
     if (e.key === 'Escape') { // escape key maps to keycode `27`
         let closeOutside = $('.close-outside');
-        if (closeOutside.is("#upload_container")) {
+        if (closeOutside.is('#upload_container')) {
             closeOutside.removeClass('close-outside');
         }
         closeOutside.removeClass('show');
@@ -245,7 +245,7 @@ if (document.querySelector('section.editor') !== null) {
         });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+$(document).ready(function() {
     var filterElements = document.getElementsByClassName('aside-item-list');
 
     for (var ii = 0; ii < filterElements.length; ii++) {

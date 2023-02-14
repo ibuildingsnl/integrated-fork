@@ -35,8 +35,8 @@
         />
 
         <embed-many
-            field="socials"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Socials"
+            field="social"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social"
         />
 
         <embed-many

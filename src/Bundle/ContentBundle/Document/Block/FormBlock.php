@@ -42,7 +42,7 @@ class FormBlock extends Block
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
         'priority' => 480,
         'mode' => 'web', ])]
-    protected $content;
+    protected string $content;
 
     /**
      * @var string
@@ -50,7 +50,7 @@ class FormBlock extends Block
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
         'priority' => 470,
         'required' => false, ])]
-    protected $returnUrl;
+    protected string $returnUrl;
 
     /**
      * @var string
@@ -58,7 +58,7 @@ class FormBlock extends Block
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'priority' => 460,
         'required' => false, ])]
-    protected $textAfterSubmit;
+    protected string $textAfterSubmit;
 
     /**
      * @Assert\All({

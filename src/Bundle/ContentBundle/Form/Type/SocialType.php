@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class SocialsType extends AbstractType
+class SocialType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -55,7 +55,7 @@ class SocialsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\Socials',
+            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\Social',
             'fields' => ['icon', 'url'], // @todo validate options (INTEGRATED-627)
             'label_icon' => 'Icon',
             'label_url' => 'URL',

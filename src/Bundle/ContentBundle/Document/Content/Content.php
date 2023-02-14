@@ -159,8 +159,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the id of the document.
-     *
      * @return string
      */
     public function getId()
@@ -169,8 +167,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the id of the document.
-     *
      * @param string $id
      *
      * @return $this
@@ -183,8 +179,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the slug of the document.
-     *
      * @return string
      */
     public function getSlug()
@@ -193,8 +187,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the slug of the document.
-     *
      * @param string $slug
      *
      * @return $this
@@ -400,8 +392,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the createdAt of the document.
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -410,8 +400,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the createdAt of the document.
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -422,8 +410,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the updatedAt of the document.
-     *
      * @return \DateTime
      */
     public function getUpdatedAt()
@@ -432,8 +418,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the updatedAt of the document.
-     *
      * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -462,8 +446,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the published of the document.
-     *
      * @return bool
      *
      * @deprecated
@@ -498,8 +480,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the premium status of the document.
-     *
      * @return bool
      */
     public function isPremium()
@@ -508,13 +488,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the premium status of the document.
-     *
      * @param bool $premium
      *
      * @return $this
      */
-    public function setPremium($premium)
+    public function setPremium(bool $premium)
     {
         $this->premium = $premium;
 
@@ -522,8 +500,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the featured status of the document.
-     *
      * @return bool
      */
     public function isFeatured()
@@ -532,13 +508,11 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the featured status of the document.
-     *
      * @param bool $featured
      *
      * @return $this
      */
-    public function setFeatured($featured)
+    public function setFeatured(bool $featured)
     {
         $this->featured = $featured;
 
@@ -546,8 +520,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the disabled of the document.
-     *
      * @return bool
      */
     public function isDisabled()
@@ -556,8 +528,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the disabled of the document.
-     *
      * @param bool $disabled
      *
      * @return $this

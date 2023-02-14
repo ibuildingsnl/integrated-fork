@@ -35,7 +35,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(options: [
-        'priority' => 999,
+        'priority' => 990,
         'attr' => [
             'state' => 'title_tinymce',
             'class' => 'fancy_tinymce',
@@ -48,7 +48,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
-        'priority' => 998,
+        'priority' => 980,
         'attr' => [
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',

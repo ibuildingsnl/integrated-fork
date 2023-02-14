@@ -39,7 +39,7 @@ abstract class Relation extends Content implements RankableInterface
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
-        'priority' => 998,
+        'priority' => 980,
         'attr' => [
             'state' => 'fancy_tinymce',
             'class' => 'content-edit-form fancy_tinymce',

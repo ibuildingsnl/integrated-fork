@@ -20,7 +20,7 @@ interface FeaturedInterface
      *
      * @return $this
      */
-    public function setFeatured($featured);
+    public function setFeatured(bool $featured);
 
     /**
      * Get the featured status of the document.

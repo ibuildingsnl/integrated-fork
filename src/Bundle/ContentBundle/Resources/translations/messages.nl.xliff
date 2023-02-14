@@ -28,9 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>You are about to delete "%name%", click the delete button below to confirm the action.</source>
-                <target>U staat op het punt om "%name%" te verwijderen, klik op de verwijder knop hieronder om de actie
-                    te voltooien.
-                </target>
+                <target>U staat op het punt om "%name%" te verwijderen, klik op de verwijder knop hieronder om de actie te voltooien.</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>Back</source>
@@ -241,12 +239,8 @@
                 <target>De wijzigingen in %name% zijn opgeslagen</target>
             </trans-unit>
             <trans-unit id="63">
-                <source>The document is currently locked by your self in a different browser or tab and can not be
-                    edited until this lock is released.
-                </source>
-                <target>Het document is op dit moment in gebruik bij uzelf in een ander venster. Sluit het venster af
-                    of wacht tot het document weer beschikbaar komt.
-                </target>
+                <source>The document is currently locked by your self in a different browser or tab and can not be edited until this lock is released.</source>
+                <target>Het document is op dit moment in gebruik bij uzelf in een ander venster. Sluit het venster af of wacht tot het document weer beschikbaar komt.</target>
             </trans-unit>
             <trans-unit id="64">
                 <source>Reload</source>
@@ -257,9 +251,7 @@
                 <target>Verversen (behoud wijzigingen)</target>
             </trans-unit>
             <trans-unit id="66">
-                <source>The document is currently locked by %s, the document can not be edited until this lock is
-                    released.
-                </source>
+                <source>The document is currently locked by %s, the document can not be edited until this lock is released.</source>
                 <target>Het document is op dit moment in gebruik bij %s en kan daarom niet worden bewerkt.</target>
             </trans-unit>
             <trans-unit id="67">
@@ -372,9 +364,7 @@
             </trans-unit>
             <trans-unit id="94">
                 <source>You have unsaved changes. When you leave this page your changes will be lost.</source>
-                <target>U heeft wijzigingen gemaakt die niet worden opgeslagen. Alle wijzigingen gaan verloren bij het
-                    verlaten van deze pagina.
-                </target>
+                <target>U heeft wijzigingen gemaakt die niet worden opgeslagen. Alle wijzigingen gaan verloren bij het verlaten van deze pagina.</target>
             </trans-unit>
             <trans-unit id="95">
                 <source>Are you sure you want to leave this page?</source>

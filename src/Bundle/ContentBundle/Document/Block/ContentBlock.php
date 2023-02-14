@@ -94,7 +94,8 @@ class ContentBlock extends Block
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
         'priority' => 490,
-        'required' => false, ])]
+        'required' => false,
+    ])]
     protected $readMoreUrl;
 
     /**
@@ -115,8 +116,9 @@ class ContentBlock extends Block
      */
     #[Assert\NotBlank]
     #[Type\Field(options: [
-        'priority' => 999,
-        'attr' => ['class' => 'main-title'], ])]
+        'priority' => 990,
+        'attr' => ['class' => 'main-title'],
+    ])]
     protected $title;
 
     /**
