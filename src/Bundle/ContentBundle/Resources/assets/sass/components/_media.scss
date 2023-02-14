@@ -76,8 +76,10 @@
         order: 0;
         border-right: 1px solid #dee3e9;
         border-left: 0;
+
         .aside-header {
             padding: 0.5rem 1.2rem;
+
             .clear-filters {
                 padding: 0 0 0 0.5rem;
             }
@@ -532,7 +534,7 @@
 
                         i {
                             &:before {
-                                width:18px;
+                                width: 18px;
                                 height: 18px;
                             }
                         }
@@ -667,17 +669,17 @@
 
             .media-item {
                 padding: 0 1rem 1rem 1rem;
-                max-width: 25%;
+                width: 25%;
 
                 @include media(max-lg) {
-                    max-width: 33%;
+                    width: 33%;
                 }
 
                 @include media(max-md) {
-                    max-width: 33%;
+                    width: 33%;
                 }
                 @include media(sm) {
-                    max-width: 50%;
+                    width: 50%;
                 }
             }
         }
