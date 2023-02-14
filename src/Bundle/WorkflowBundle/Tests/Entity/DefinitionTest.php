@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Entity;
 
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -19,7 +20,7 @@ use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 class DefinitionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject
      */
     private $state;
 
@@ -59,7 +60,7 @@ class DefinitionTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state */
+        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject $state */
         $state = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
         // First add the state and then remove it with the setDefault function

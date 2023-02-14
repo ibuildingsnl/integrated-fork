@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType\Field;
 
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\Field\CustomTransformer;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -99,7 +100,7 @@ class CustomTransformerTest extends \PHPUnit\Framework\TestCase
             'required' => false,
         ];
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $field */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $field */
         $field = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
         $field
             ->expects($this->once())
