@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -24,7 +25,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     public function testPostWriteMethod()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Integrated\Common\Storage\ResolverInterface $resolver */
+        /** @var MockObject|\Integrated\Common\Storage\ResolverInterface $resolver */
         $resolver = $this->createMock('Integrated\Common\Storage\ResolverInterface');
         $resolver->expects($this->once())
             ->method('resolve')

@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WorkflowBundle\Tests\Extension;
 
 use Integrated\Bundle\WorkflowBundle\Extension\EventListener\ContentSubscriber;
 use Integrated\Bundle\WorkflowBundle\Extension\WorkflowExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Bundle\WorkflowBundle\Extension\WorkflowExtension;
 class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentSubscriber|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentSubscriber|MockObject
      */
     private $subscriber;
 

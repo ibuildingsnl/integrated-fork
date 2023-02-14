@@ -70,7 +70,7 @@ class CollectionSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testloadClassMetadataWithSubclass()
     {
-        $class = $this->getMockClass('stdClass');
+        $class = \get_class($this->createMock(\stdClass::class));
 
         $meta = $this->getMockBuilder('Doctrine\ODM\MongoDB\Mapping\ClassMetadata')->onlyMethods(['setCollection'])->setConstructorArgs([$class])->getMock();
         $meta->expects($this->never())
