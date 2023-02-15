@@ -226,7 +226,7 @@ class Contact
     /**
      * @return int
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
@@ -236,7 +236,7 @@ class Contact
      *
      * @return $this
      */
-    public function setOrder(int $order)
+    public function setOrder(int $order): static
     {
         $this->order = $order;
     }
@@ -244,7 +244,7 @@ class Contact
     /**
      * @return Location
      */
-    public function getLocation()
+    public function getLocation(): Location
     {
         return $this->location;
     }
@@ -254,7 +254,7 @@ class Contact
      *
      * @return $this
      */
-    public function setLocation(Location $location = null)
+    public function setLocation(Location $location = null): static
     {
         $this->location = $location;
 
