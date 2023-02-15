@@ -26,29 +26,30 @@
                 </div>
                 <div class="aside-item-list">
                     <div class="aside-item-list-container">
-                        <div class="w-full">
-                            {% set changeInput %}
-                                <div class="jFiler-input-inner dropzone-empty">
-                                    <div class="jFiler-input-icon">
-                                        <i class="icon-jfi-cloud-up-o"></i>
-                                    </div>
-                                    <div class="jFiler-input-text">
-                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
-                                        <span>{% trans %}or click to browse{% endtrans %}</span>
-                                    </div>
-                                </div>
-                            {% endset %}
+{#                        <div class="w-full">#}
+{#                            {% set changeInput %}#}
+{#                                <div class="jFiler-input-inner dropzone-empty">#}
+{#                                    DROPZONE#}
+{#                                    <div class="jFiler-input-icon">#}
+{#                                        <i class="icon-jfi-cloud-up-o"></i>#}
+{#                                    </div>#}
+{#                                    <div class="jFiler-input-text">#}
+{#                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>#}
+{#                                        <span>{% trans %}or click to browse{% endtrans %}</span>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            {% endset %}#}
 
-                            {% set options = options|merge({'changeInput': changeInput}) %}
+{#                            {% set options = options|merge({'changeInput': changeInput}) %}#}
 
-                            <div class="jFiler-input-dragDrop integrated-dropzone widget{% if required %}required{% endif %}"
-                                 data-options="{{ options|json_encode }}">
-                                {{ form_widget(form.file) }}
-                                {{ form_widget(form.remove) }}
-                            </div>
+{#                            <div class="jFiler-input-dragDrop integrated-dropzone widget{% if required %}required{% endif %}"#}
+{#                                 data-options="{{ options|json_encode }}">#}
+{#                                {{ form_widget(form.file) }}#}
+{#                                {{ form_widget(form.remove) }}#}
+{#                            </div>#}
 
-                            {{ form_errors(form.file) }}
-                        </div>
+{#                            {{ form_errors(form.file) }}#}
+{#                        </div>#}
                     </div>
                 </div>
             </div>
@@ -65,29 +66,34 @@
                 </div>
                 <div class="editor-item-list">
                     <div class="editor-item-list-container">
-                        <div class="w-full">
-                            {% set changeInput %}
-                                <div class="jFiler-input-inner dropzone-empty">
-                                    <div class="jFiler-input-icon">
-                                        <i class="icon-jfi-cloud-up-o"></i>
-                                    </div>
-                                    <div class="jFiler-input-text">
-                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>
-                                        <span>{% trans %}or click to browse{% endtrans %}</span>
-                                    </div>
-                                </div>
-                            {% endset %}
+{#                        <div class="w-full">#}
+{#                            DROPZONE INNER#}
 
-                            {% set options = options|merge({'changeInput': changeInput}) %}
+{#                            {{ dump(form) }}#}
 
-                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"
-                                 data-options="{{ options|json_encode }}">
-                                {{ form_widget(form.file) }}
-                                {{ form_widget(form.remove) }}
-                            </div>
+{#                            {% set changeInput %}#}
+{#                                <div class="jFiler-input-inner dropzone-empty">#}
 
-                            {{ form_errors(form.file) }}
-                        </div>
+{#                                    <div class="jFiler-input-icon">#}
+{#                                        <i class="icon-jfi-cloud-up-o"></i>#}
+{#                                    </div>#}
+{#                                    <div class="jFiler-input-text">#}
+{#                                        <h3>{{ "Drag&Drop " ~ (type|first in ['a', 'e', 'i', 'u', 'o'] ? 'an ' : 'a ')  ~ type ~ " here"|trans }}</h3>#}
+{#                                        <span>{% trans %}or click to browse{% endtrans %}</span>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            {% endset %}#}
+
+{#                            {% set options = options|merge({'changeInput': changeInput}) %}#}
+
+{#                            <div class="jFiler-input-dragDrop integrated-dropzone {% if required %}required{% endif %}"#}
+{#                                 data-options="{{ options|json_encode }}">#}
+{#                                {{ form_widget(form.file) }}#}
+{#                                {{ form_widget(form.remove) }}#}
+{#                            </div>#}
+
+{#                            {{ form_errors(form.file) }}#}
+{#                        </div>#}
                     </div>
                 </div>
             </div>

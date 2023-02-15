@@ -3,26 +3,6 @@
 </div>
 <div class="aside-holder bg-white section-radius">
     <div class="aside-item-wrapper p-2">
-
-        <div>Options...</div>
-        <div id="editpaneloptions"></div>
-
+        <iframe id="editpaneliframe" width="100%" height="1080" src=""></iframe>
     </div>
 </div>
-
-<script>
-    //33224d9969553b8db9912c443063b40d
-    //f475d753bee23dfc8cd09de7e309244d
-    //195ee3d56c523d9386c3ffe00cdbc45b
-    //e07b878e87b330f28ec88cb5a3c6d96e
-    document.addEventListener("DOMContentLoaded", function() {
-        const url = '/admin/content/inline/33224d9969553b8db9912c443063b40d'
-        $.ajax({
-            url: url,
-            success: function(data) {
-                $('#editpaneloptions').html(data);
-            }
-        });
-
-    })
-</script>

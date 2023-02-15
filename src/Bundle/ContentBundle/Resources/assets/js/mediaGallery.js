@@ -16,6 +16,13 @@ $('.input_aside_folder_search').change(function () {
     asideFolderSearch(this)
 });
 
+$(".media-item").on("click", function (event) {
+    handleMediaClick(event)
+    if (bulkSelectionEnabled === true) {
+        handleBulkItemClick(event)
+    }
+});
+
 const modi = {
     'select_one': {
         bulkSelectionEnabled: true,
@@ -83,12 +90,13 @@ $("#bulkselection").on("click", async function () {
     bulkSelectionEnabled = !bulkSelectionEnabled
 });
 
+function handleMediaClick(event) {
+    $('#editpaneliframe').attr('src', '/admin/content/'+event.target.closest('.media-item').dataset.id + '/iframe');
+}
+
 async function enableBulkSelection() {
     $('.bulkselectionbutton').removeClass('bulkselected')
     $('.media-container').addClass('mode-select')
-    $(".media-item").on("click", function (event) {
-        handleBulkItemClick(event);
-    });
 }
 
 function getAdditionalInfo(media_id) {
@@ -123,8 +131,8 @@ function handleBulkItemClick(event) {
                 latestBulkSelectionItemClicked = 1
             }
 
-            const step_from = latestBulkSelectionItemClicked * 1
-            const step_to = event.currentTarget.getAttribute('data-media_id') * 1
+            const step_from = Math.min(latestBulkSelectionItemClicked * 1, event.currentTarget.getAttribute('data-media_id') * 1)
+            const step_to = Math.max(latestBulkSelectionItemClicked * 1, event.currentTarget.getAttribute('data-media_id') * 1)
 
             for (let step = step_from; step <= step_to; step++) {
                 const element = document.querySelector('.media-item[data-media_id="' + step + '"]')
