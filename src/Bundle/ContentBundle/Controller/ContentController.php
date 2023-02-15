@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -534,12 +535,6 @@ class ContentController extends AbstractController
         ]);
     }
 
-    public function edit_inline(Request $request, Content $content) {
-        $this->showAsInlineForm = true;
-
-        return $this->edit($request, $content);
-    }
-
     /**
      * Update a existing document.
      *
@@ -547,12 +542,10 @@ class ContentController extends AbstractController
      */
     public function edit(Request $request, Content $content)
     {
-        if (isset($this->showAsInlineForm) && $this->showAsInlineForm == true) {
-            $showAsInlineForm = true;
-            $renderTo = '@IntegratedContent/content/edit.inline.html.twig';
-            $route = 'integrated_content_content_edit_inline';
+        if ($request->getRequestFormat() == 'iframe.html') {
+            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+            $route = 'integrated_content_content_edit_iframe';
         } else {
-            $showAsInlineForm = false;
             $renderTo = '@IntegratedContent/content/edit.html.twig';
             $route = 'integrated_content_content_edit';
         }
@@ -564,26 +557,29 @@ class ContentController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        // get a lock on this content resource.
         $locking = $this->getLock($content, 15);
-        $locking['locked'] = $locking['lock'] ? true : false;
+        $locking['locked'] = (bool) $locking['lock'];
 
-        if ($locking['lock'] && $locking['owner']) {
-            if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
-                $locking['locked'] = false;
-            }
-
-            if ($locking['new']) {
-                if ($request->isMethod('get')) {
-                    $parameters = array_merge($request->query->all(), [
-                        'id' => $content->getId(),
-                        'lock' => $locking['lock']->getId(),
-                    ]);
-
-                    return $this->redirectToRoute($route, $parameters);
+        if (true === $content instanceof File) {
+            $locking['locked'] = false;
+        } else {
+            if ($locking['lock'] && $locking['owner']) {
+                if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
+                    $locking['locked'] = false;
                 }
 
-                $locking['locked'] = false;
+                if ($locking['new']) {
+                    if ($request->isMethod('get')) {
+                        $parameters = array_merge($request->query->all(), [
+                            'id' => $content->getId(),
+                            'lock' => $locking['lock']->getId(),
+                        ]);
+
+                        return $this->redirectToRoute($route, $parameters);
+                    }
+
+                    $locking['locked'] = false;
+                }
             }
         }
 
@@ -675,7 +671,6 @@ class ContentController extends AbstractController
         }
 
         return $this->render($renderTo, [
-            'showAsInlineForm' => $showAsInlineForm,
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
@@ -1104,9 +1099,15 @@ class ContentController extends AbstractController
             $parameters = array_merge($request->query->all(), $parameters);
         }
 
+        if ($request->getRequestFormat() == 'iframe.html') {
+            $route = 'integrated_content_content_edit_iframe';
+        } else {
+            $route = 'integrated_content_content_edit';
+        }
+
         $options = [
             'action' => $this->generateUrl(
-                'integrated_content_content_edit',
+                $route,
                 $parameters
             ),
             'method' => 'PUT',
