@@ -416,7 +416,7 @@ class ContentController extends AbstractController
         $paginator = $paginator->paginate(
             [$client, $query],
             $request->query->get('page', 1),
-            $request->query->get('limit', 15),
+            $request->query->get('limit', 25),
             ['sortFieldParameterName' => null]
         );
 

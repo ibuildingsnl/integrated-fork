@@ -2,6 +2,12 @@
 @import '@uppy/dashboard/dist/style.css';
 @import '@uppy/image-editor/dist/style.css';
 
+.index-wrapper {
+    &.media-gallery {
+        width: calc(100% - 250px);
+    }
+}
+
 /* MEDIA */
 .media {
     display: flex;
@@ -70,6 +76,15 @@
         order: 0;
         border-right: 1px solid #dee3e9;
         border-left: 0;
+        width:250px;
+
+        .aside-header {
+            padding: 0.5rem 1.2rem;
+
+            .clear-filters {
+                padding: 0 0 0 0.5rem;
+            }
+        }
     }
 
     .media-gallery {
@@ -317,8 +332,10 @@
                 }
             }
 
-            a {
-                pointer-events: none;
+            li.media-item {
+                a {
+                    pointer-events: none;
+                }
             }
         }
     }
@@ -408,7 +425,7 @@
 
                 .aside-item-search {
                     background-color: transparent;
-                    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+                    padding: 1rem .5rem 0.5rem .5rem;
                 }
 
                 .aside-item-list-container {
@@ -418,7 +435,7 @@
                 }
 
                 ul.aside-filter-menu {
-                    padding: 0rem 1.5rem;
+                    padding: 0rem .5rem;
 
                     li {
                         padding: 0;
@@ -453,12 +470,15 @@
                             margin: 0.5rem 0;
 
                             i {
-                                font-size: 16px;
+                                &:before {
+                                    width: 18px;
+                                    height: 18px;
+                                }
                             }
 
                             span {
-                                margin-left: 1rem;
-                                font-size: 14px;
+                                margin-left: 0.5rem;
+                                font-size: 13px;
                             }
 
                             &.ui-state-highlight {
@@ -475,7 +495,7 @@
                                 position: relative;
 
                                 a {
-                                    padding-left: 40px;
+                                    padding-left: 20px;
                                 }
 
                                 &:before {
@@ -483,19 +503,19 @@
                                     position: absolute;
                                     height: 1px;
                                     background-color: $border-color;
-                                    width: 20px;
+                                    width: 7px;
                                     left: 10px;
                                     top: 15px;
                                 }
 
                                 ul.child-menu {
                                     a {
-                                        padding-left: 74px;
+                                        padding-left: 34px;
                                     }
 
                                     li {
                                         &:before {
-                                            width: 53px;
+                                            width: 21px;
                                         }
                                     }
                                 }
@@ -505,7 +525,7 @@
                 }
 
                 .aside-folder-header {
-                    padding: 1rem 2.25rem;
+                    padding: 1rem 1.25rem;
                     border-bottom: 1px solid $border-color;
 
                     a {
@@ -514,12 +534,15 @@
                         align-items: center;
 
                         i {
-                            font-size: 18px;
+                            &:before {
+                                width: 18px;
+                                height: 18px;
+                            }
                         }
 
                         span {
-                            font-size: 14px;
-                            padding-left: 1rem;
+                            font-size: 13px;
+                            padding-left: .5rem;
                         }
                     }
                 }
@@ -550,12 +573,12 @@
     margin-top: 1rem;
 
     .selected_images {
-        width: fit-content;
-
-        &[data-multiple="true"] {
+        &[data-multiple="true"], &[data-multiple="1"] {
             margin: 0 -0.5rem;
+
             li {
                 width: 33%;
+                max-width: 200px;
                 padding: .5rem;
             }
         }
@@ -595,7 +618,7 @@
                 right: .5rem;
                 top: .5rem;
                 @media (hover: none) {
-                    display:flex;
+                    display: flex;
                 }
             }
 
@@ -647,17 +670,17 @@
 
             .media-item {
                 padding: 0 1rem 1rem 1rem;
-                max-width: 25%;
+                width: 25%;
 
                 @include media(max-lg) {
-                    max-width: 33%;
+                    width: 33%;
                 }
 
                 @include media(max-md) {
-                    max-width: 33%;
+                    width: 33%;
                 }
                 @include media(sm) {
-                    max-width: 50%;
+                    width: 50%;
                 }
             }
         }

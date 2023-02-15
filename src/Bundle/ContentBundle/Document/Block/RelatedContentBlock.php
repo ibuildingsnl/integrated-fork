@@ -43,7 +43,7 @@ class RelatedContentBlock extends Block
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field]
+    #[Type\Field(options: ['priority' => 980])]
     protected $publishedTitle;
 
     /**
@@ -51,6 +51,7 @@ class RelatedContentBlock extends Block
      */
     #[Assert\NotBlank]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 500,
         'choices' => [
             'Show items which have the current document linked' => 1,
             'Show items which share linked items with the current document' => 2,
@@ -63,6 +64,7 @@ class RelatedContentBlock extends Block
      * @var Relation
      */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 490,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
         'choice_label' => 'name',
         'placeholder' => 'Select a relation',
@@ -74,6 +76,7 @@ class RelatedContentBlock extends Block
      */
     #[Assert\NotBlank]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 480,
         'choices' => [
             'Publication date' => 'publishTime.startDate',
             'Title' => 'title',
@@ -86,6 +89,7 @@ class RelatedContentBlock extends Block
      * @var string
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+        'priority' => 470,
         'choices' => [
             'Ascending' => 'asc',
             'Descending' => 'desc',
@@ -98,6 +102,7 @@ class RelatedContentBlock extends Block
      */
     #[Assert\Length(min: 0)]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'priority' => 500,
         'attr' => [
             'min' => 0,
             'style' => 'sidebar',
@@ -112,6 +117,7 @@ class RelatedContentBlock extends Block
      */
     #[Assert\Length(min: 0)]
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: [
+        'priority' => 490,
         'required' => false,
         'attr' => [
             'min' => 0,
@@ -125,7 +131,10 @@ class RelatedContentBlock extends Block
     /**
      * @var array
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice', options: ['required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice', options: [
+        'priority' => 460,
+        'required' => false,
+    ])]
     protected $contentTypes;
 
     /**

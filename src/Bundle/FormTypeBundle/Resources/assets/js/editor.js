@@ -23,6 +23,9 @@ import 'tinymce/plugins/template';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/code';
+
+import './tinymce-integrated-browser/plugin';
+
 $('.integrated_tinymce').each(function(key, elem){
     const element = $(elem);
 
@@ -45,7 +48,8 @@ $('.integrated_tinymce').each(function(key, elem){
         plugins:
              "advlist autolink link lists charmap anchor pagebreak " +
              "searchreplace wordcount visualchars fullscreen nonbreaking " +
-             "table directionality template wordcount autoresize code"
+             "table directionality template wordcount autoresize code " +
+             "integratedbrowser"
         ,
         external_plugins: {
             // TODO: update plugin INTEGRATED-1779
@@ -57,7 +61,7 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline | bullist numlist | " +
-            "link anchor integratedImage integratedVideo integratedColumn image media print preview fullpage table | " +
+            "link anchor integratedimage integratedvideo integratedColumn image media print preview fullpage table | " +
             "charmap pagebreak | pastetext searchreplace | code fullscreen",
         toolbar_sticky: false,
         toolbar_location: 'top',
@@ -70,10 +74,8 @@ $('.integrated_tinymce').each(function(key, elem){
         autoresize_bottom_margin: "0px",
         convert_urls: false,
         content_css: element.data('content_css'),
-        integrated_browser_media_types_url: element.data('integrated_browser_media_types_url'),
-        integrated_browser_search_url: element.data('integrated_browser_search_url'),
-        integrated_browser_file_url: element.data('integrated_browser_file_url'),
-        integrated_browser_file_resize_url: element.data('integrated_browser_file_resize_url'),
+        integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),
+        integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats
     });

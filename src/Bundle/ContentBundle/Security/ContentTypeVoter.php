@@ -15,7 +15,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\ContentType\ContentTypeInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,11 +23,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ContentTypeVoter implements VoterInterface
 {
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
     /**
      * @var ObjectRepository
      */
@@ -39,9 +33,8 @@ class ContentTypeVoter implements VoterInterface
      */
     private $permissions;
 
-    public function __construct(ResolverInterface $resolver, ObjectRepository $repository, array $permissions = [])
+    public function __construct(ObjectRepository $repository, array $permissions = [])
     {
-        $this->resolver = $resolver;
         $this->repository = $repository;
         $this->permissions = $this->getOptionsResolver()->resolve($permissions);
     }

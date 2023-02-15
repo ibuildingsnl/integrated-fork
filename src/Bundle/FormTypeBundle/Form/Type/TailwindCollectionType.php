@@ -30,10 +30,6 @@ class TailwindCollectionType extends AbstractType
             ]
         );
 
-        if (false === $view->vars['allow_delete']) {
-            $view->vars['sub_widget_col'] += $view->vars['button_col'];
-        }
-
         if ($form->getConfig()->hasAttribute('prototype')) {
             $view->vars['prototype'] = $form->getConfig()->getAttribute('prototype')->createView($view);
         }

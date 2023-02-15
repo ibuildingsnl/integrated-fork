@@ -31,27 +31,43 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     protected $title;
 
     /**
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    #[Type\Field(options: ['priority' => 500, 'attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
     protected $slug;
 
     /**
      * @var string
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 980,
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
             'placeholder' => 'Your taxonomy description starts here',
         ],
-    ], location: 'sidebar')]
+    ], location: 'editor')]
     protected $description;
+
+    /**
+     * @var Image
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+        'label' => 'Featured Image',
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select featured image',
+            'data-multiple' => false,
+        ],
+    ], location: 'sidebar')]
+    protected $featuredImage;
 
     /**
      * Get the title of the document.
@@ -121,6 +137,28 @@ class Taxonomy extends Content implements RankableInterface
     public function setDescription($description)
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the Featured Image of the document.
+     *
+     * @return Image|null
+     */
+    public function getFeaturedImage()
+    {
+        return $this->featuredImage;
+    }
+
+    /**
+     * Set the Featured Image of the document.
+     *
+     * @return $this
+     */
+    public function setFeaturedImage(Image $featuredImage)
+    {
+        $this->featuredImage = $featuredImage;
 
         return $this;
     }

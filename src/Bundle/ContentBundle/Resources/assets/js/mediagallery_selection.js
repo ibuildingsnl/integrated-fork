@@ -3,13 +3,13 @@ let form_relation = {}; //these will be placed in form_relations
 let selected_relation = ''; //after a user clicks on a form button, the clicked form element is selected
 const mediagallery_link = '/admin/media/';
 
-document.addEventListener('DOMContentLoaded', function() {
+window.onload = function() {
     addEventListeners();
     populateFormRelations();
     generateSrcAttributeForIframes();
     populateSelectedImages();
     setupFormRelations();
-});
+};
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -33,12 +33,12 @@ function populateSelectedImages() {
 function populateFormRelations() {
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
         let inputIdentifier = '';
-        if (item.parentNode.classList.contains('relation')) {
-            inputIdentifier = 'integrated_content[relations]'
-        } else {
-            inputIdentifier = 'integrated_content'
-        }
         const id = item.getAttribute('id');
+        if (item.parentNode.classList.contains('relation')) {
+            inputIdentifier = 'integrated_content[relations]' + '[' + id + ']';
+        } else {
+            inputIdentifier = item.querySelector('.selected_images').getAttribute('data-fieldName');
+        }
         form_relations[id] = {
             modus: item.querySelector(
                 '.select_multimedia_button').dataset.multiple ?
@@ -48,7 +48,7 @@ function populateFormRelations() {
             relationid: id,
             types: JSON.parse(
                 item.querySelector('.select_multimedia_button').dataset.types),
-            input_selector: 'input[name="' + inputIdentifier + '[' + id + ']"]',
+            input_selector: 'input[name="' + inputIdentifier + '"]',
             selected_images_selector: '#' + id + ' .selected_images',
             wrap_selector: '#' + id + ' .wrap',
             iframe_selector: '#' + id + ' iframe',
@@ -124,7 +124,6 @@ function filterImages(selection) {
 }
 
 function addImageIDsToInputField() {
-    console.log(selected_relation.input_selector);
     $(selected_relation.input_selector).
         attr('value', JSON.stringify(
             selected_relation.selected_images.map(item => item.id)).

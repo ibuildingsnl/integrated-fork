@@ -133,7 +133,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
                 $builder->add('channels', ChoiceType::class, [
                     'required' => false,
-                    'priority' => 999,
+                    'priority' => 990,
 
                     'choices' => $choices,
                     'choice_value' => 'id',

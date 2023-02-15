@@ -11,11 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine;
 
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Exception\InvalidArgumentException;
 use Integrated\Common\ContentType\Iterator;
+use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\Resolver\PriorityResolver;
 use Integrated\Common\ContentType\ResolverInterface;
 
@@ -24,59 +23,22 @@ use Integrated\Common\ContentType\ResolverInterface;
  */
 class ContentTypeManager
 {
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
+    private ResolverInterface $resolver;
 
-    /**
-     * @var ObjectManager
-     */
-    private $om;
-
-    /**
-     * @var ObjectRepository
-     */
-    private $repository;
-
-    /**
-     * @var ContentTypeInterface[]
-     */
+    /** @var ContentTypeInterface[] */
     private $contentTypes;
 
-    public function __construct(ResolverInterface $resolver, ObjectManager $om, $class)
+    public function __construct(ResolverInterface $resolver, $class)
     {
         $this->resolver = $resolver;
-        $this->om = $om;
-        $this->repository = $this->om->getRepository($class);
 
-        if (!is_subclass_of($this->repository->getClassName(), ContentTypeInterface::class)) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of %s', $this->repository->getClassName(), ContentTypeInterface::class));
+        if (!is_subclass_of($class, ContentTypeInterface::class)) {
+            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of %s', $class, ContentTypeInterface::class));
         }
     }
 
-    /**
-     * @return ObjectManager
-     */
-    public function getObjectManager()
-    {
-        return $this->om;
-    }
-
-    /**
-     * @return ObjectRepository
-     */
-    public function getRepository()
-    {
-        return $this->repository;
-    }
-
-    /**
-     * @param string $className
-     *
-     * @return ContentTypeInterface[]
-     */
-    public function filterInstanceOf($className)
+    /** @return ContentTypeInterface[] */
+    public function filterInstanceOf(string $className): array
     {
         $contentTypes = [];
 
@@ -89,9 +51,7 @@ class ContentTypeManager
         return $contentTypes;
     }
 
-    /**
-     * @return \Integrated\Common\ContentType\IteratorInterface|ContentTypeInterface[]
-     */
+    /** @return IteratorInterface|ContentTypeInterface[] */
     public function getAll()
     {
         if (!$this->resolver instanceof PriorityResolver) {
@@ -113,22 +73,12 @@ class ContentTypeManager
         return $this->contentTypes;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return ContentTypeInterface
-     */
-    public function getType($type)
+    public function getType(string $type): ContentTypeInterface
     {
         return $this->resolver->getType($type);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function hasType($type)
+    public function hasType(string $type): bool
     {
         return $this->resolver->hasType($type);
     }

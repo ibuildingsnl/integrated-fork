@@ -27,6 +27,7 @@ class FeaturedItemsBlock extends Block
      * @var ArrayCollection
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
+        'priority' => 490,
         'entry_type' => 'Integrated\Bundle\FormTypeBundle\Form\Type\EmbeddedDocumentType',
         'entry_options' => ['data_class' => 'Integrated\Bundle\BlockBundle\Document\Block\Embedded\FeaturedItemsItem'],
         'allow_add' => true,

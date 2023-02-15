@@ -105,21 +105,19 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
-        <div id="{{ id }}_container">
-                        <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
-                                  data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
-                                  data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
-                                  data-integrated_browser_media_types_url="{{ path('integrated_content_content_media_types', {'filter': '__type__'}) }}"
-                                  data-integrated_browser_search_url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                  data-integrated_browser_file_url="{{ path('integrated_storage_file', {'id': '__id__', 'ext': '__ext__'}) }}"
-                                  data-integrated_browser_file_resize_url="{{ path('integrated_storage_file_resize', {'id': '__id__', 'ext': '__ext__', 'width': '150', 'height': '150'}) }}"
-                                  placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
-                                  data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
-                            {% if value is not empty %}
-                                {{ value }}
-                            {% endif %}
-                        </textarea>
-        </div>
+            <div id="{{ id }}_container">
+                <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
+                          data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
+                          data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
+                          data-integrated_browser_image_dialog_url="{{ path('integrated_formtype_media_image') }}"
+                          data-integrated_browser_video_dialog_url="{{ path('integrated_formtype_media_video') }}"
+                          placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
+                          data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">
+                    {% if value is not empty %}
+                        {{ value }}
+                    {% endif %}
+                </textarea>
+            </div>
         {{ block('form_errors') }}
         {% if style == 'editor' %}
             </div>
@@ -522,7 +520,8 @@
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
                  data-relationid="{{ form.vars.name }}"
-                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}">
+                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
+                 data-fieldName="{{ form.vars.full_name }}">
             </div>
 
             <div
@@ -553,7 +552,7 @@
 
         <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
         {{ form_errors(form) }}
-        <input hidden type="text" class="w-full" name="integrated_content[{{ form.vars.name }}]">
+        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}" >
     {% endapply %}
 
 {% endblock %}
