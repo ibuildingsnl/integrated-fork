@@ -183,6 +183,8 @@ class Contact
     public function setOrder(int $order): static
     {
         $this->order = $order;
+
+        return $this;
     }
 
     public function getLocation(): Location
