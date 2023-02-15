@@ -8,6 +8,7 @@
     "devDependencies": {
         "@symfony/webpack-encore": "^3.1.0",
         "file-loader": "^6.2.0",
+        "handlebars-loader": "^1.7.3",
         "node-sass": "^4.14",
         "postcss-loader": "^7.0.1",
         "sass-loader": "^13.0.2",
@@ -16,6 +17,7 @@
     "dependencies": {
         "@melloware/coloris": "^0.16.1",
         "@uppy/locales": "^3.0.4",
+        "ajv": "^8.12.0",
         "bootstrap-sass": "^3.4.1",
         "bootstrap3-wysihtml5-bower": "~0.3",
         "components-jqueryui": "~1.12",
