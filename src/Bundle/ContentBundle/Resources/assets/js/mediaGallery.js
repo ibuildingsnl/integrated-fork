@@ -23,6 +23,10 @@ $(".media-item").on("click", function (event) {
     }
 });
 
+$(".close-media-edit-form").on("click", function (event) {
+    handleMediaEditClose(event)
+});
+
 const modi = {
     'select_one': {
         bulkSelectionEnabled: true,
@@ -91,7 +95,14 @@ $("#bulkselection").on("click", async function () {
 });
 
 function handleMediaClick(event) {
+    $('.media-gallery').addClass('show-edit-form');
+    $('.media-edit-panel').removeClass('hide');
     $('#editpaneliframe').attr('src', '/admin/content/'+event.target.closest('.media-item').dataset.id + '/iframe');
+}
+
+function handleMediaEditClose(event) {
+    $('.media-gallery').removeClass('show-edit-form');
+    $('.media-edit-panel').addClass('hide');
 }
 
 async function enableBulkSelection() {
