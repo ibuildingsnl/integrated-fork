@@ -29,7 +29,8 @@ class HtmlBlock extends Block implements BlockRequiredItemsInterface
     #[Assert\NotBlank]
     #[Type\Field(options: [
         'priority' => 990,
-        'attr' => ['class' => 'main-title'], ])]
+        'attr' => ['class' => 'main-title'],
+    ])]
     protected $title;
 
     /**

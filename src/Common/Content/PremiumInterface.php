@@ -14,15 +14,11 @@ namespace Integrated\Common\Content;
 interface PremiumInterface
 {
     /**
-     * Set the premium status of the document.
-     *
      * @return $this
      */
     public function setPremium(bool $premium);
 
     /**
-     * Get the premium status of the document.
-     *
      * @param bool $premium
      */
     public function isPremium();
