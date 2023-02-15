@@ -65,7 +65,7 @@ class File extends Content implements FileInterface
     /**
      * @var string
      */
-    #[Type\Field(options: [
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'priority' => 980,
         'attr' => [
             'style' => 'editor',

@@ -445,12 +445,12 @@ span.help-block {
     color: #283c53;
     padding: 1rem 1rem .3rem 1rem;
     width: 100%;
-    display: block;
     margin-top: -11px;
     border-radius: 0 0 8px 8px;
     font-size: 12px;
     display: flex;
     align-items: center;
+    max-width: 750px;
 
     i {
         margin-right: 5px;

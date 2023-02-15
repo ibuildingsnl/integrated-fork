@@ -5,6 +5,11 @@
 .index-wrapper {
     &.media-gallery {
         width: calc(100% - 250px);
+        transition: width .3s;
+        &.show-edit-form {
+            width: calc(100% - 600px);
+            transition: width .3s;
+        }
     }
 }
 
