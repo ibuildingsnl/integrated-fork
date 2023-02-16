@@ -520,7 +520,8 @@
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
                  data-relationid="{{ form.vars.name }}"
-                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}">
+                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
+                 data-fieldName="{{ form.vars.full_name }}">
             </div>
 
             <div
@@ -551,7 +552,7 @@
 
         <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
         {{ form_errors(form) }}
-        <input hidden type="text" class="w-full" name="integrated_content[{{ form.vars.name }}]">
+        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}" >
     {% endapply %}
 
 {% endblock %}

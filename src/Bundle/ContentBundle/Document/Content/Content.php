@@ -25,7 +25,9 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
 use Integrated\Common\Content\ExtensibleInterface;
 use Integrated\Common\Content\ExtensibleTrait;
+use Integrated\Common\Content\FeaturedInterface;
 use Integrated\Common\Content\MetadataInterface;
+use Integrated\Common\Content\PremiumInterface;
 use Integrated\Common\Content\PublishableInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
@@ -36,7 +38,7 @@ use Integrated\Common\Form\Mapping\Attributes as Type;
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -101,8 +103,28 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         'attr' => [
             'align_with_widget' => true,
         ],
+    ], location: 'options')]
+    protected $premium;
+
+    /**
+     * @var bool
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
+    ], location: 'options')]
+    protected $featured;
+
+    /**
+     * @var bool
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'attr' => [
+            'align_with_widget' => true,
+        ],
     ], location: 'custom')]
-    protected $disabled = false;
+    protected $disabled;
 
     /**
      * @var Metadata
@@ -137,8 +159,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the id of the document.
-     *
      * @return string
      */
     public function getId()
@@ -147,8 +167,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the id of the document.
-     *
      * @param string $id
      *
      * @return $this
@@ -161,8 +179,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the slug of the document.
-     *
      * @return string
      */
     public function getSlug()
@@ -171,8 +187,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the slug of the document.
-     *
      * @param string $slug
      *
      * @return $this
@@ -378,8 +392,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the createdAt of the document.
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -388,8 +400,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the createdAt of the document.
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -400,8 +410,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the updatedAt of the document.
-     *
      * @return \DateTime
      */
     public function getUpdatedAt()
@@ -410,8 +418,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the updatedAt of the document.
-     *
      * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -440,8 +446,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the published of the document.
-     *
      * @return bool
      *
      * @deprecated
@@ -476,8 +480,42 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Get the disabled of the document.
-     *
+     * @return bool
+     */
+    public function isPremium()
+    {
+        return $this->premium;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPremium(bool $premium)
+    {
+        $this->premium = $premium;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFeatured()
+    {
+        return $this->featured;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setFeatured(bool $featured)
+    {
+        $this->featured = $featured;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isDisabled()
@@ -486,8 +524,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * Set the disabled of the document.
-     *
      * @param bool $disabled
      *
      * @return $this

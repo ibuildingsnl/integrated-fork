@@ -34,7 +34,7 @@ abstract class Block implements BlockInterface
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field]
+    #[Type\Field(options: ['priority' => 990])]
     protected $title;
 
     /**

@@ -40,10 +40,18 @@ class ContentTypeField implements DataTransformerInterface
         if ($field instanceof Field) {
             $options = $field->getOptions();
 
-            return [
-                'enabled' => true,
-                'required' => !empty($options['required']),
-            ];
+            if (!empty($options['value'])) {
+                return [
+                    'enabled' => true,
+                    'required' => !empty($options['required']),
+                    'value' => !empty($options['value'] ? 'checked' : false),
+                ];
+            } else {
+                return [
+                    'enabled' => true,
+                    'required' => !empty($options['required']),
+                ];
+            }
         }
 
         return [];
@@ -61,7 +69,11 @@ class ContentTypeField implements DataTransformerInterface
                 $field = new Field();
 
                 $field->setName($this->field->getName());
-                $field->setOptions(['required' => !empty($value['required'])]);
+                if (!empty($value['value'])) {
+                    $field->setOptions(['required' => !empty($value['required']), 'value' => !empty($value['value']) ? 'checked' : false]);
+                } else {
+                    $field->setOptions(['required' => !empty($value['required'])]);
+                }
 
                 return $field;
             }

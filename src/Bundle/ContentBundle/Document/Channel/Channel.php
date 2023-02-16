@@ -12,10 +12,13 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Security\PermissionTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -43,7 +46,7 @@ class Channel implements ChannelInterface
     protected $name;
 
     /**
-     * @var StorageInterface
+     * @var Image
      */
     protected $logo;
 
@@ -71,6 +74,31 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $primaryDomainRedirect;
+
+    /**
+     * @var Collection<Contact>
+     */
+    protected $contacts;
+
+    /**
+     * @var Collection<Social>
+     */
+    protected $social;
+
+    /**
+     * @var string
+     */
+    protected $vat;
+
+    /**
+     * @var string
+     */
+    protected $companyId;
+
+    /**
+     * @var string
+     */
+    protected $analytics;
 
     /**
      * @var mixed[]
@@ -146,7 +174,7 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @return StorageInterface
+     * @return Image|null
      */
     public function getLogo()
     {
@@ -154,13 +182,145 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param StorageInterface $logo
+     * @return $this
+     */
+    public function setLogo(Image $logo)
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @return Contact[]
+     */
+    public function getContacts()
+    {
+        return $this->contacts;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setContacts(Collection $contacts)
+    {
+        $this->contacts = $contacts;
+
+        return $this;
+    }
+
+    /**
+     * @param Contact $contact
      *
      * @return $this
      */
-    public function setLogo(StorageInterface $logo = null)
+    public function addContact(Contact $contact = null)
     {
-        $this->logo = $logo;
+        if ($contact !== null) {
+            $this->contacts->add($contact);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeContact(Contact $contact)
+    {
+        return $this->contacts->removeElement($contact);
+    }
+
+    /**
+     * @return Social[]
+     */
+    public function getSocial()
+    {
+        return $this->social;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSocial(Collection $social)
+    {
+        $this->social = $social;
+
+        return $this;
+    }
+
+    /**
+     * @param Social $social
+     *
+     * @return $this
+     */
+    public function addSocial(Social $social = null)
+    {
+        if ($social !== null) {
+            $this->social->add($social);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function removeSocial(Social $social)
+    {
+        return $this->social->removeElement($social);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVat()
+    {
+        return $this->vat;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setVat(string $vat)
+    {
+        $this->vat = $vat;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompanyId()
+    {
+        return $this->companyId;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setCompanyID(string $companyId)
+    {
+        $this->companyId = $companyId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnalytics()
+    {
+        return $this->analytics;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setAnalytics(string $analytics)
+    {
+        $this->analytics = $analytics;
 
         return $this;
     }
@@ -174,11 +334,9 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $color
-     *
      * @return $this
      */
-    public function setColor($color)
+    public function setColor(string $color)
     {
         $this->color = $color;
 
@@ -194,11 +352,9 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param string $secondarycolor
-     *
      * @return $this
      */
-    public function setSecondaryColor($secondarycolor)
+    public function setSecondaryColor(string $secondarycolor)
     {
         $this->secondarycolor = $secondarycolor;
 
@@ -289,8 +445,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Get the createdAt of the channel.
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -299,8 +453,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * Set the createdAt of the channel.
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)

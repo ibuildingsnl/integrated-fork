@@ -26,61 +26,34 @@
                     </li>
                 </ul>
             </div>
-            <section class="section-white section-radius">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>{% trans %}Name{% endtrans %}</th>
-                        <th>{% trans %}ID{% endtrans %}</th>
-                        <th>{% trans %}Document type{% endtrans %}</th>
-                        <th>{% trans %}Created{% endtrans %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for document in documents %}
-                        <tr class="has-options">
-                            <td>
-                                <strong>
-                                    <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
-                                        {{ document.name }}
-                                    </a>
-                                </strong>
-                                <div class="row-options">
-                                    <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
-                                       title="{% trans %}Edit{% endtrans %}">
-                                        {% trans %}Edit{% endtrans %}
-                                    </a> |
-                                    <a class="color-red"
-                                       href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}"
-                                       title="{% trans %}Delete{% endtrans %}">
-                                        {% trans %}Delete{% endtrans %}
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                {{ document.id }}
-                            </td>
-                            <td>
-                                {% for type in documentTypes %}
-                                    {% if type.class == document.class %}
-                                        {{ type.type }}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {{ document.createdAt|format_date("medium", "none") }}
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="4">
-                                {% trans %}No content types added{% endtrans %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+
+            <h3 class="mt-8">{% trans %}Content Types{% endtrans %}</h3>
+            {% include '@IntegratedContent/content_type/partial/list.html.twig' with {
+                documents: documents,
+                documentTypes: documentTypes,
+                showDocumentTypes: ["Article", "News", "Product", "Person", "Comment", "JobPosting", "Company", "Form", "Event"]
+            } %}
+
+            <h3 class="mt-8">{% trans %}Taxonomy Types{% endtrans %}</h3>
+            {% include '@IntegratedContent/content_type/partial/list.html.twig' with {
+                documents: documents,
+                documentTypes: documentTypes,
+                showDocumentTypes: ["Taxonomy"]
+            } %}
+
+            <h3 class="mt-8">{% trans %}File Types{% endtrans %}</h3>
+            {% include '@IntegratedContent/content_type/partial/list.html.twig' with {
+                documents: documents,
+                documentTypes: documentTypes,
+                showDocumentTypes: ["Image", "File", "Video"]
+            } %}
+
+            <h3 class="mt-8">{% trans %}Custom Types{% endtrans %}</h3>
+            {% include '@IntegratedContent/content_type/partial/list.html.twig' with {
+                documents: documents,
+                documentTypes: documentTypes,
+                hideDocumentTypes: ["Article", "News", "Product", "Company", "Person", "Comment", "JobPosting", "Form", "Event", "Image", "File", "Video", "Taxonomy"],
+            } %}
         </div>
     </div>
 {% endblock %}
