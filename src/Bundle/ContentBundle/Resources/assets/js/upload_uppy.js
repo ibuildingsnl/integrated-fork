@@ -47,6 +47,7 @@ function inititalizeUppy(uppyOptions) {
         doneButtonHandler: () => {
             $('#upload_container').removeClass('show');
             $('#dropdown_overlay').addClass('hide');
+            window.location.reload();
         },
     });
 
