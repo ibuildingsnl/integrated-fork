@@ -73,11 +73,12 @@ window.enable_x = function(view) {
 window.enable_grid_view = function() {
     disable_x('list')
     enable_x('grid')
+    localStorage.setItem('mediagallery_view', 'grid');
 }
-
 window.enable_list_view = function() {
     disable_x('grid')
     enable_x('list')
+    localStorage.setItem('mediagallery_view', 'list');
 }
 
 $(".uppy-close").on("click", function () {
@@ -93,6 +94,12 @@ $("#bulkselection").on("click", async function () {
     }
     bulkSelectionEnabled = !bulkSelectionEnabled
 });
+
+function handleUserChoice() {
+    if (localStorage.getItem('mediagallery_view') !== null) {
+        window["enable_" + localStorage.getItem('mediagallery_view') + "_view"]()
+    }
+}
 
 function handleMediaClick(event) {
     $('.media-gallery').addClass('show-edit-form');
@@ -197,6 +204,7 @@ window.asideFolderSearch = function (elem) {
 };
 
 $(function () {
+    handleUserChoice()
     const $gallery = $("#gallery")
     const $media_items = $(".media_category");
 
