@@ -13,13 +13,26 @@
                         {% set element = field.enabled %}
                         {{ block('content_type_checkbox_widget') }}
                     </div>
-                    <div class="required">
-                        <div class="checkbox">
-                            <label class="checkbox-container">
-                                {{ form_widget(field.required) }}
-                                <span class="checkbox-label">Required</span>
-                                <span class="checkbox-label-mobile">Req.</span>
-                            </label>
+                    <div class="options">
+                        {% if field.value is defined %}
+                            <div class="default">
+                                <div class="checkbox">
+                                    <label class="checkbox-container">
+                                        {{ form_widget(field.value) }}
+                                        <span class="checkbox-label">Default</span>
+                                        <span class="checkbox-label-mobile">Def.</span>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="required">
+                            <div class="checkbox">
+                                <label class="checkbox-container">
+                                    {{ form_widget(field.required) }}
+                                    <span class="checkbox-label">Required</span>
+                                    <span class="checkbox-label-mobile">Req.</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

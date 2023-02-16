@@ -23,7 +23,7 @@ class Event extends Article
      * @var \DateTime
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
-        'priority' => 150,
+        'priority' => 495,
         'label' => 'Event start',
         'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
     ], location: 'sidebar')]
@@ -33,7 +33,7 @@ class Event extends Article
      * @var \DateTime
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
-        'priority' => 150,
+        'priority' => 494,
         'label' => 'Event end',
         'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
     ], location: 'sidebar')]

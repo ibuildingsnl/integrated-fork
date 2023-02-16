@@ -41,9 +41,6 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
             if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $taxonomyType)) {
                 continue;
             }
-            if (!$taxonomyType->hasField('parent_id')) {
-                continue;
-            }
             $menuAdmin = $menu->getChild(self::MENU_TAXONOMIES);
             if (!$menuAdmin) {
                 $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label-outline');

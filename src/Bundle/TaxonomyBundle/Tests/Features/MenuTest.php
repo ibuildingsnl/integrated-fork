@@ -151,21 +151,6 @@ final class MenuTest extends TestCase
         self::assertCount(2, $section->getChildren());
     }
 
-    public function testNotShowingTaxonomyWithoutParents()
-    {
-        $this->withTaxonomyContentType('tag', false);
-        $this->withTaxonomyContentType('category');
-        $this->tokenStorage->setToken($this->user('tag-access', 'category-access'));
-
-        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
-
-        $section = $this->menu->getChild('Taxonomy');
-
-        self::assertCount(1, $section->getChildren());
-        self::assertInstanceOf(ItemInterface::class, $section->getChild('Category'));
-        self::assertNull($section->getChild('Tag'));
-    }
-
     private function withTaxonomyContentType(string $name = 'taxonomy', bool $hasParent = true): void
     {
         $taxonomy = new ContentType();

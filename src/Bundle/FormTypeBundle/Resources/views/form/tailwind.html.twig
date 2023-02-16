@@ -429,7 +429,10 @@
                 {{ block('checkbox_switcher_widget') }}
                 </label>
             {% else %}
+                <label
+                    class="checkbox-switcher" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
                 {{ block('checkbox_switcher_widget') }}
+                </label>
             {% endif %}
             {{ form_errors(form) }}
         {% endset %}
@@ -514,6 +517,9 @@
 
 {% block checkbox_widget %}
     {% apply spaceless %}
+        {% if form.vars.data is null and value is defined and value == 'checked' %}
+            {% set checked = true %}
+        {% endif %}
         <input
             type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
         <span class="checkmark"></span>
@@ -523,6 +529,9 @@
 
 {% block checkbox_switcher_widget %}
     {% apply spaceless %}
+        {% if form.vars.data is null and value is defined and value == 'checked' %}
+            {% set checked = true %}
+        {% endif %}
         <input class="switch-input"
                type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
         <span class="switch-label" data-on="Yes" data-off="No"></span>

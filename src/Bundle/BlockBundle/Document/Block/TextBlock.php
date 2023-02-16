@@ -32,19 +32,23 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
      * @var string
      */
     #[Assert\NotBlank]
-    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
+    #[Type\Field(options: ['priority' => 990, 'attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 970,
+        'mode' => 'web',
+    ])]
     protected $content;
 
     /**
      * @var Relation
      */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
         'choice_label' => 'name',
         'placeholder' => '',
@@ -56,7 +60,11 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
     /**
      * @var ArrayCollection
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: ['label' => 'Require relation with', 'required' => false])]
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: [
+        'priority' => 490,
+        'label' => 'Require relation with',
+        'required' => false,
+    ])]
     protected $requiredItems;
 
     /**
