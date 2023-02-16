@@ -7,10 +7,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
-use Integrated\Common\Queue\QueueInterface;
+use Integrated\Common\Services\Flusher;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -24,7 +23,7 @@ class TaxonomyRelationManager
     private QueueSubscriber $queueSubscriber;
     private IndexerInterface $indexer;
 
-    public function __construct(DocumentManager $dm, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
+    public function __construct(DocumentManager $dm, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, private Flusher $flusher)
     {
         $this->dm = $dm;
         $this->queueSubscriber = $queueSubscriber;
@@ -42,14 +41,14 @@ class TaxonomyRelationManager
         $this->manageRelations($request);
     }
 
-    public function manageRelations(Request $request): JsonResponse
+    public function manageRelations(Request $request): void
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
         if (false === $taxonomyRelation->isManagableRelation()) {
-            return new JsonResponse('Origin is same as target');
+            return;
         }
 
         $mediaItems = $this->getMediaItems($taxonomyRelation);
@@ -64,20 +63,14 @@ class TaxonomyRelationManager
             $this->removeRelationIfNeeded($relations, $taxonomyRelation, $relationIDs);
 
             $this->addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs);
-
-            $this->queueSubscriber->setPriority(QueueInterface::PRIORITY_HIGH);
-            $this->dm->flush();
         }
 
-        $this->runSolrQueue(\count($mediaItems) * 2);
-
-        return new JsonResponse('Done');
+        $this->runSolrQueue();
     }
 
-    public function runSolrQueue(int $amount): void
+    public function runSolrQueue(): void
     {
-        $this->indexer->setOption('queue.size', $amount);
-        $this->indexer->execute();
+        $this->flusher->flush();
     }
 
     private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
