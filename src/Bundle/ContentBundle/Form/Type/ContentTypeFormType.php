@@ -41,7 +41,8 @@ class ContentTypeFormType extends AbstractType
             ])
             ->add(
                 'fields',
-                FieldsType::class, [
+                FieldsType::class,
+                [
                     'priority' => 980,
                     'metadata' => $metadata,
                     'attr' => [
