@@ -154,9 +154,10 @@ class MediaController extends AbstractController
         ];
     }
 
-    private function removeStardardClasses($contentTypeSelectOptions): array {
+    private function removeStardardClasses($contentTypeSelectOptions): array
+    {
         return array_filter($contentTypeSelectOptions, function ($item) {
-            return !in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name') );
+            return !\in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name'));
         });
     }
 
