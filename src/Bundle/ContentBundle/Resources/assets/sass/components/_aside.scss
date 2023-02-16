@@ -778,3 +778,31 @@ ul {
         }
     }
 }
+
+.integrated_content_history_show_iframe, .integrated_content_history_index_iframe {
+    #wrapper-holder {
+        top: 0;
+        .content-wrapper {
+            .index-wrapper-full {
+                .page-title h1.heading {
+                    margin-right: 0;
+                    font-size: 16px;
+                    line-height: initial;
+                }
+            }
+            #toolbar .back {
+                margin-left: 60px;
+            }
+        }
+    }
+
+}
+.integrated_content_history_index_iframe {
+    #wrapper-holder {
+        .content-wrapper {
+            .index-wrapper-full {
+                padding-top: 60px;
+            }
+        }
+    }
+}

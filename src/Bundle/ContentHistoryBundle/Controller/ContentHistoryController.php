@@ -77,6 +77,29 @@ class ContentHistoryController extends AbstractController
         ]);
     }
 
+    public function indexIframe(Content $content, Request $request): Response
+    {
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+
+        $builder = $this->manager->getRepository(ContentHistory::class)->createQueryBuilder();
+
+        $builder->field('contentId')->equals($content->getId());
+        $builder->sort('date', 'desc');
+
+        $paginator = $this->paginator->paginate(
+            $builder,
+            $request->query->get('page', 1),
+            $request->query->get('limit', 20)
+        );
+
+        return $this->render('@IntegratedContentHistory/content_history/index.iframe.html.twig', [
+            'type' => $contentType,
+            'content' => $content,
+            'paginator' => $paginator,
+        ]);
+    }
+
+
     public function show(ContentHistory $contentHistory): Response
     {
         $content = $this->manager->find(Content::class, $contentHistory->getContentId());
@@ -90,9 +113,35 @@ class ContentHistoryController extends AbstractController
         ]);
     }
 
+    public function showIframe(ContentHistory $contentHistory): Response
+    {
+        $content = $this->manager->find(Content::class, $contentHistory->getContentId());
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+
+        return $this->render('@IntegratedContentHistory/content_history/show.iframe.html.twig', [
+            'type' => $contentType,
+            'content' => $content,
+            'contentHistory' => $contentHistory,
+            'changeSet' => $this->parser->getReadableChangeset($contentHistory),
+        ]);
+    }
+
     public function history(Content $content, int $limit = 3): Response
     {
         return $this->render('@IntegratedContentHistory/content_history/history.html.twig', [
+            'content' => $content,
+            'documents' => $this->manager->getRepository(ContentHistory::class)->findBy(
+                ['contentId' => $content->getId()],
+                ['date' => 'desc'],
+                $limit + 1
+            ),
+            'limit' => $limit,
+        ]);
+    }
+
+    public function historyIframe(Content $content, int $limit = 3): Response
+    {
+        return $this->render('@IntegratedContentHistory/content_history/history.iframe.html.twig', [
             'content' => $content,
             'documents' => $this->manager->getRepository(ContentHistory::class)->findBy(
                 ['contentId' => $content->getId()],
