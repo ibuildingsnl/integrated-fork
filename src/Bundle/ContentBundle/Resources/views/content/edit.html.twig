@@ -18,7 +18,8 @@
                 <div class="aside-holder">
                     {% block sidebar %}
                         <div class="aside-header">
-                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options" type="button">
+                            <button class="toggle-filters toggle-options-sidebar" data-target="aside-options"
+                                    type="button">
                                 <i class="iconoir-cancel"></i></button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
@@ -105,6 +106,33 @@
                             </div>
                         </div>
 
+
+                        {% block content_options %}
+                            {% set options = false %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS'))  %}
+                                {% set options = true %}
+                            {% endfor %}
+                            {% if options == true %}
+                                <div class="aside-item-wrapper">
+                                    <div class="aside-item-header">
+                                        <h3 class="aside-item-title">
+                                            <i class="iconoir-settings"></i>
+                                            <span class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
+                                        </h3>
+                                        <i class="iconoir-nav-arrow-up"></i>
+                                    </div>
+                                    <div class="aside-item-list">
+                                        <div class="aside-item-list-container">
+                                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                {{ form_row(child) }}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endblock %}
+
+
                         <div class="aside-item-wrapper" id="used-by">
 
                         </div>
@@ -116,7 +144,7 @@
                         {% endblock %}
 
                         {% block content_meta %}
-                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR'))  %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
                                 {{ form_row(child) }}
                             {% endfor %}
                         {% endblock %}
@@ -132,8 +160,8 @@
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                                     <label
-                                                            class="aside-item-icon"
-                                                            for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                                        class="aside-item-icon"
+                                                        for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                                 </h3>
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
@@ -145,17 +173,17 @@
                                                             form_relations: formRelations|default(null),
                                                         } %}
                                                     {% else %}
-                                                            <select
-                                                                    multiple
-                                                                    id="{{ relation.vars.name }}"
-                                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                                    data-types="{{ relation.vars.attr['data-types'] }}"
-                                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                                    class="relation-items form-control"
-                                                                    style="display: none; width: 89%">
-                                                            </select>
-                                                            <span class="input-group-addon" data-add="1"></span>
+                                                        <select
+                                                            multiple
+                                                            id="{{ relation.vars.name }}"
+                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                            data-types="{{ relation.vars.attr['data-types'] }}"
+                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                            class="relation-items form-control"
+                                                            style="display: none; width: 89%">
+                                                        </select>
+                                                        <span class="input-group-addon" data-add="1"></span>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -171,7 +199,7 @@
         <div class="editor-wrapper">
             <section class="editor">
                 {% block content_form %}
-                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
+                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
                         {{ form_row(child) }}
                     {% endfor %}
 
@@ -190,33 +218,33 @@
                                                 <i class="iconoir-{{ relation.vars.attr['data-icon'] }}"></i>
                                             {% endif %}
                                             <label
-                                                    class="editor-item-icon"
-                                                    for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                                class="editor-item-icon"
+                                                for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
                                         </h3>
                                         <i class="iconoir-nav-arrow-up"></i>
                                     </div>
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
 
-                                                {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
-                                                    {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
-                                                        relation: relation,
-                                                        form_relations: formRelations|default(null),
-                                                    } %}
+                                            {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                    relation: relation,
+                                                    form_relations: formRelations|default(null),
+                                                } %}
 
-                                                {% else %}
-                                                    <select
-                                                            multiple
-                                                            id="{{ relation.vars.name }}"
-                                                            data-multiple="{{ relation.vars.attr['data-multiple'] }}"
-                                                            data-types="{{ relation.vars.attr['data-types'] }}"
-                                                            data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
-                                                            data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
-                                                            class="relation-items form-control"
-                                                            style="display: none; width: 89%">
-                                                    </select>
-                                                    <span class="input-group-addon" data-add="1"></span>
-                                                {% endif %}
+                                            {% else %}
+                                                <select
+                                                    multiple
+                                                    id="{{ relation.vars.name }}"
+                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                    data-types="{{ relation.vars.attr['data-types'] }}"
+                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                    class="relation-items form-control"
+                                                    style="display: none; width: 89%">
+                                                </select>
+                                                <span class="input-group-addon" data-add="1"></span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

@@ -37,6 +37,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('app_id')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('app_secret')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('default_graph_version')->defaultValue('v2.10')->end()
                     ->end()
                 ->end()
             ->end();

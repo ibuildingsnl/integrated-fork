@@ -13,10 +13,14 @@
         {
             "name": "e-Active",
             "homepage": "https://www.e-active.nl"
+        },
+        {
+            "name": "Twin Digital",
+            "homepage": "https://www.twindigital.nl"
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.1",
         "ext-intl": "*",
         "ext-json": "*",
         "abraham/twitteroauth": "^2|^3",
@@ -75,7 +79,7 @@
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",
         "twig/string-extra": "^3.3",
-        "twig/twig": ">=2.12"
+        "twig/twig": ">=3.4"
     },
     "replace": {
         "integrated/asset-bundle": "self.version",
@@ -103,7 +107,7 @@
         "squizlabs/php_codesniffer": "^3.1",
         "phpunit/phpunit": "~9.5.28",
         "friendsofphp/php-cs-fixer": "3.13.1",
-        "phpstan/phpstan": "^1",
+        "phpstan/phpstan": "^1.9.4",
         "phpstan/phpstan-doctrine": "^1",
         "phpstan/phpstan-deprecation-rules": "^1"
     },
@@ -119,7 +123,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "endroid/installer": true,
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "php-http/discovery": true
         }
     },
     "extra": {

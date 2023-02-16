@@ -10,6 +10,11 @@
         <field field-name="rank" type="string" index="true" />
         <field field-name="parent_id" type="string" index="false" />
 
+        <reference-one
+            field="featuredImage"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+        />
+
     </document>
 
 </doctrine-mongo-mapping>

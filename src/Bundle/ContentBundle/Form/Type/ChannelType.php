@@ -11,9 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
-use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -37,6 +37,7 @@ class ChannelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, [
+            'priority' => 990,
             'constraints' => new Length(['max' => 100]),
             'attr' => [
                 'location' => 'editor',
@@ -63,57 +64,80 @@ class ChannelType extends AbstractType
         );
 
         $builder->add(
-            'color',
-            ColorType::class,
-            [
-                'label' => 'Primary Color',
-                'required' => false,
+            $builder->create('colors', FormType::class, [
+                'inherit_data' => true,
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'droplet',
                 ],
-            ]
-        );
-        $builder->add(
-            'secondarycolor',
-            ColorType::class,
-            [
-                'label' => 'Secondary Color',
-                'required' => false,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'state' => 'show',
-                    'icon' => 'droplet',
-                ],
-            ]
+            ])->add(
+                'color',
+                ColorType::class,
+                [
+                    'label' => 'Primary Color',
+                    'required' => false,
+                ]
+            )->add(
+                'secondarycolor',
+                ColorType::class,
+                [
+                    'label' => 'Secondary Color',
+                    'required' => false,
+                ]
+            )
         );
 
         $builder->add(
             'logo',
-            ImageDropzoneType::class,
+            MediaGalleryImageType::class,
             [
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'state' => 'show',
                     'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select logo',
+                    'data-multiple' => false,
                 ],
             ]
         );
 
         $builder->add('domains', TailwindCollectionType::class, [
+            'priority' => 500,
             'label' => 'Domains (example.com)',
             'allow_add' => true,
             'allow_delete' => true,
             'add_button_text' => 'Add domain',
             'delete_button_text' => 'Delete domain',
-            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false'],
+            'attr' => ['class' => 'channel-domains', 'show_headings' => 'false', 'location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
-        $builder->add('primaryDomain', HiddenType::class, ['attr' => ['class' => 'primary-domain-input']]);
+        $builder->add('primaryDomain', HiddenType::class, [
+            'priority' => 500,
+            'attr' => ['class' => 'primary-domain-input'], ]);
+
+        $builder->add('contacts', CollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\ContactType',
+            'priority' => 490,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'add_button_text' => 'Add contact',
+            'label' => 'Address',
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+        ]);
+
+        $builder->add('social', TailwindCollectionType::class, [
+            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialType',
+            'priority' => 480,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'add_button_text' => 'Add social',
+            'label' => 'Socials',
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+        ]);
 
         $builder->add(
             $builder->create('permissions', FormType::class, [
@@ -132,6 +156,39 @@ class ChannelType extends AbstractType
                 ]
             )
         );
+
+        $builder->add(
+            $builder->create('company_data', FormType::class, [
+                'inherit_data' => true,
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'icon' => 'city',
+                ],
+            ])->add(
+                'companyId',
+                TextType::class,
+                [
+                    'label' => 'Company ID',
+                    'required' => false,
+                ]
+            )->add(
+                'vat',
+                TextType::class,
+                [
+                    'required' => false,
+                ]
+            )
+        );
+
+        $builder->add('analytics', TextType::class, [
+            'label' => 'Analytics ID',
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'icon' => 'graph-up',
+            ],
+        ]);
 
         $builder->add(
             $builder->create('options', FormType::class, [

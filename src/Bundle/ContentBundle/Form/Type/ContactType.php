@@ -1,0 +1,88 @@
+<?php
+
+/*
+ * This file is part of the Integrated package.
+ *
+ * (c) e-Active B.V. <integrated@e-active.nl>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Integrated\Bundle\ContentBundle\Form\Type;
+
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+/**
+ * @author Jurre de Jongh <jurre@e-active.nl>
+ */
+class ContactType extends AbstractType
+{
+    /**
+     * @const array
+     */
+    public const PROPERTIES = ['type', 'name', 'country', 'address1', 'address2', 'zipcode', 'city', 'email', 'phonenumber', 'mobilenumber'];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        foreach ($options['fields'] as $field) {
+            // Variables
+            $type = TextType::class;
+            $default = ['required' => false];
+            $override = isset($options['options'][$field]) ? $options['options'][$field] : [];
+
+            // Spec may vary per field, but not per se
+            switch ($field) {
+                case 'type':
+                    $type = ChoiceType::class;
+                    $default = [
+                        'placeholder' => 'Select address type',
+                        'required' => false,
+                        'choices' => [
+                            'Postal address' => 'postal',
+                            'Visiting address' => 'visiting',
+                            'Mailing address' => 'mailing',
+                        ],
+                    ];
+                    break;
+                case 'country':
+                    $type = CountryType::class;
+                    $default['placeholder'] = 'Select a country';
+                    break;
+            }
+
+            // Add into the form
+            $builder->add($field, $type, array_merge($default, $override));
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        // Set defaults for the resolver
+        $resolver->setDefaults([
+            'data_class' => Contact::class,
+            'options' => [],
+            'fields' => self::PROPERTIES, // @todo validate options (INTEGRATED-627)
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'integrated_contact';
+    }
+}

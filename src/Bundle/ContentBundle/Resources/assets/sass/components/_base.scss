@@ -210,13 +210,13 @@ body {
 }
 
 
-body[class*="edit"], body[class*="new"], body[class*="show"], body[class*="delete"], body[class*="update"], body.bulk_select, body.bulk_configure, body.bulk_confirm, body.profile_index, body.history_index, body.page_copy {
+body[class*="edit"], body[class*="new"], body[class*="show"], body[class*="delete"], body[class*="update"], body.integrated_content_bulk_select, body.integrated_content_bulk_configure, body.integrated_content_bulk_confirm, body.integrated_content_user_profile_index, body.integrated_content_history_index, body.integrated_content_page_copy, body.integrated_taxonomy_index {
     .content-wrapper {
         padding: 50px 0 0;
     }
 }
 
-body.bulk_select, body.bulk_configure, body.bulk_confirm {
+body.integrated_content_bulk_select, body.integrated_content_bulk_configure, body.integrated_content_bulk_confirm {
     .form-wrapper.compound .form-group > div {
         width: 100%;
         margin-bottom: 1rem;

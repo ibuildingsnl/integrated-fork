@@ -153,10 +153,36 @@ body div#dropdown_overlay {
     }
 }
 
+
 .dropdown.top-bar {
     padding: 10px 0;
     display: block;
     position: relative;
+
+
+    &.new-contenttype {
+        @include media(max-2xl) {
+            left: 0;
+            position: fixed;
+            width: 100%;
+            top: 60px;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }
+        @include media(max-xl) {
+            &.list {
+                width: 140px;
+            }
+        }
+        @include media(lg) {
+            .megamenu-content {
+                flex-wrap: wrap;
+            }
+            .dropdown-menu .list {
+                width:100%;
+            }
+        }
+    }
 
     @include media(max-md) {
         &.dropdown-queue {
@@ -211,6 +237,9 @@ body div#dropdown_overlay {
         top: 50px;
         border: none;
         transition: top .15s linear, visibility .15s, opacity .15s linear;
+        max-height: calc(100vh - 100px);
+        overflow: auto;
+        overflow-x: hidden;
         @include media(max-md) {
             top: 60px;
             position: fixed;

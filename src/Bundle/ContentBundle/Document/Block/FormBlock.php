@@ -28,202 +28,143 @@ class FormBlock extends Block
 {
     use PublishTitleTrait;
 
-    /**
-     * @var ContentType
-     */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 500,
         'class' => 'Integrated\Bundle\ContentBundle\Document\ContentType\ContentType',
         'choice_label' => 'name',
         'placeholder' => '',
     ])]
-    protected $contentType;
+    protected ContentType $contentType;
+
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
+        'priority' => 480,
+        'mode' => 'web',
+    ])]
+    protected string $content;
+
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
+        'priority' => 470,
+        'required' => false,
+    ])]
+    protected string $returnUrl;
+
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
+        'priority' => 460,
+        'required' => false,
+    ])]
+    protected string $textAfterSubmit;
 
     /**
-     * @var string
-     */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
-    protected $content;
-
-    /**
-     * @var string
-     */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['required' => false])]
-    protected $returnUrl;
-
-    /**
-     * @var string
-     */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: ['required' => false])]
-    protected $textAfterSubmit;
-
-    /**
-     * @var array
-     *
      * @Assert\All({
      *     @Assert\Email
      * })
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
+        'priority' => 450,
         'label' => 'Sent form to e-mail address(es)',
         'entry_type' => 'Symfony\Component\Form\Extension\Core\Type\EmailType',
         'allow_add' => true,
         'allow_delete' => true,
         'required' => false,
     ])]
-    protected $emailAddresses = [];
+    protected array $emailAddresses = [];
 
-    /**
-     * @var bool
-     */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType', options: [
+        'priority' => 440,
         'label' => 'Enable reCaptcha for this form',
         'required' => false,
         'attr' => ['align_with_widget' => true],
     ])]
-    protected $recaptcha = false;
+    protected bool $recaptcha = false;
 
-    /**
-     * @var Relation
-     */
     #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'priority' => 490,
         'label' => 'Link to content item',
         'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
         'choice_label' => 'name',
         'placeholder' => 'Do not link',
         'required' => false,
     ])]
-    protected $linkRelation;
+    protected Relation $linkRelation;
 
-    /**
-     * @return ContentType
-     */
-    public function getContentType()
+    public function getContentType(): ContentType
     {
         return $this->contentType;
     }
 
-    /**
-     * @return $this
-     */
-    public function setContentType(ContentType $contentType)
+    public function setContentType(ContentType $contentType): self
     {
         $this->contentType = $contentType;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    /**
-     * @param string $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
+    public function setContent(string $content): self
     {
         $this->content = $content;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getReturnUrl()
+    public function getReturnUrl(): string
     {
         return $this->returnUrl;
     }
 
-    /**
-     * @param string $returnUrl
-     *
-     * @return $this
-     */
-    public function setReturnUrl($returnUrl)
+    public function setReturnUrl(string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTextAfterSubmit()
+    public function getTextAfterSubmit(): string
     {
         return $this->textAfterSubmit;
     }
 
-    /**
-     * @param string $textAfterSubmit
-     *
-     * @return $this
-     */
-    public function setTextAfterSubmit($textAfterSubmit)
+    public function setTextAfterSubmit(string $textAfterSubmit): self
     {
         $this->textAfterSubmit = $textAfterSubmit;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getEmailAddresses()
+    public function getEmailAddresses(): array
     {
         return $this->emailAddresses;
     }
 
-    /**
-     * @return $this
-     */
-    public function setEmailAddresses(array $emailAddresses = [])
+    public function setEmailAddresses(array $emailAddresses = []): self
     {
         $this->emailAddresses = $emailAddresses;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRecaptcha()
+    public function isRecaptcha(): bool
     {
         return $this->recaptcha;
     }
 
-    /**
-     * @param bool $recaptcha
-     *
-     * @return $this
-     */
-    public function setRecaptcha($recaptcha)
+    public function setRecaptcha(bool $recaptcha): self
     {
         $this->recaptcha = $recaptcha;
 
         return $this;
     }
 
-    /**
-     * @return Relation
-     */
-    public function getLinkRelation()
+    public function getLinkRelation(): Relation
     {
         return $this->linkRelation;
     }
 
-    /**
-     * @param Relation $linkRelation
-     *
-     * @return $this
-     */
-    public function setLinkRelation($linkRelation)
+    public function setLinkRelation(Relation $linkRelation): self
     {
         $this->linkRelation = $linkRelation;
 

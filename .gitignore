@@ -10,3 +10,4 @@ phpunit.xml
 .phpunit.result.cache
 phpcs.xml
 yarn-error.log
+package-lock.json

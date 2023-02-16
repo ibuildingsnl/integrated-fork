@@ -1,0 +1,102 @@
+<section class="section-white section-radius">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th style="width:25%">{% trans %}Name{% endtrans %}</th>
+            <th style="width:25%">{% trans %}ID{% endtrans %}</th>
+            <th style="width:25%">{% trans %}Document type{% endtrans %}</th>
+            <th style="width:25%">{% trans %}Created{% endtrans %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set documentTypePrinted = false %}
+        {% for document in documents %}
+            {% set documentType = '' %}
+            {% for type in documentTypes %}
+                {% if type.class == document.class %}
+                    {% set documentType = type.type %}
+                {% endif %}
+            {% endfor %}
+            {% if documentType is defined and showDocumentTypes is defined and documentType in showDocumentTypes %}
+                {% set documentTypePrinted = true %}
+                <tr class="has-options">
+                    <td>
+                        <strong>
+                            <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
+                                {{ document.name }}
+                            </a>
+                        </strong>
+                        <div class="row-options">
+                            <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
+                               title="{% trans %}Edit{% endtrans %}">
+                                {% trans %}Edit{% endtrans %}
+                            </a> |
+                            <a class="color-red"
+                               href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}"
+                               title="{% trans %}Delete{% endtrans %}">
+                                {% trans %}Delete{% endtrans %}
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        {{ document.id }}
+                    </td>
+                    <td>
+                        {% for type in documentTypes %}
+                            {% if type.class == document.class %}
+                                {{ type.type }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ document.createdAt|format_date("medium", "none") }}
+                    </td>
+                </tr>
+            {% endif %}
+            {% if documentType is defined and hideDocumentTypes is defined and documentType not in hideDocumentTypes %}
+                {% set documentTypePrinted = true %}
+                <tr class="has-options">
+                    <td>
+                        <strong>
+                            <a href="{{ path('integrated_content_content_type_edit', {id: document.id}) }}">
+                                {{ document.name }}
+                            </a>
+                        </strong>
+                        <div class="row-options">
+                            <a href="{{ path('integrated_content_content_type_edit', {'id': document.id}) }}"
+                               title="{% trans %}Edit{% endtrans %}">
+                                {% trans %}Edit{% endtrans %}
+                            </a> |
+                            <a class="color-red"
+                               href="{{ path('integrated_content_content_type_delete_rest', {'id': document.id}) }}"
+                               title="{% trans %}Delete{% endtrans %}">
+                                {% trans %}Delete{% endtrans %}
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        {{ document.id }}
+                    </td>
+                    <td>
+                        {% for type in documentTypes %}
+                            {% if type.class == document.class %}
+                                {{ type.type }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ document.createdAt|format_date("medium", "none") }}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if documentTypePrinted == false %}
+            <tr>
+                <td colspan="4">
+                    {% trans %}No content types added{% endtrans %}
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</section>

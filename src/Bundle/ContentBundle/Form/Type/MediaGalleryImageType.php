@@ -8,6 +8,8 @@ use Integrated\Bundle\ContentBundle\Form\DataTransformer\ImageTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class MediaGalleryImageType extends AbstractType
 {
@@ -27,6 +29,21 @@ class MediaGalleryImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(new ImageTransformer($this->repository));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if (\array_key_exists('data-multiple', $view->vars['attr'])) {
+            $dataMultiple = $view->vars['attr']['data-multiple'];
+            if ($dataMultiple === false || $dataMultiple === '' || $dataMultiple === 'false') {
+                $view->vars['attr']['data-multiple'] = '';
+            } else {
+                $view->vars['attr']['data-multiple'] = true;
+            }
+        }
     }
 
     /**
