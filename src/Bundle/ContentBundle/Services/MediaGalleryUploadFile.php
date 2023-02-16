@@ -18,9 +18,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
-use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Storage\ManagerInterface;
-use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -37,7 +35,6 @@ class MediaGalleryUploadFile
     public function __construct(
         private DocumentManager $documentManager,
         private ManagerInterface $manager,
-        private QueueSubscriber $queueSubscriber,
     ) {
     }
 
@@ -93,10 +90,7 @@ class MediaGalleryUploadFile
         );
 
         $file->setFile($storage);
-
         $this->documentManager->persist($file);
-        $this->queueSubscriber->setPriority(QueueInterface::PRIORITY_HIGH);
-        $this->documentManager->flush();
 
         return $file;
     }

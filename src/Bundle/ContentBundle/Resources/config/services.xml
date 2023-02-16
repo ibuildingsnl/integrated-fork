@@ -15,7 +15,6 @@
         <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_storage.manager" />
-            <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu">
@@ -27,7 +26,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
             <argument type="service" id="integrated_solr.indexer" />
-            <argument type="service" id="integrated_content.services.flusher" />
+            <argument type="service" id="integrated_content.services.main_flusher" />
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation">
