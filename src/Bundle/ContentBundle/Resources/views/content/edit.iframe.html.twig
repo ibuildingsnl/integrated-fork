@@ -83,7 +83,7 @@
 
                         {% block content_history %}
                             {% if showContentHistory %}
-                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::history', { 'content': content })) }}
+                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::historyIframe', { 'content': content })) }}
                             {% endif %}
                         {% endblock %}
 
