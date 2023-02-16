@@ -211,6 +211,7 @@ $(function () {
     //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
     $('li.media-item', $gallery).draggable({
         helper: "clone",
+        distance: 20,
         cursorAt: {left: 10, top: 10},
         start: function (ev, ui) {
         }
