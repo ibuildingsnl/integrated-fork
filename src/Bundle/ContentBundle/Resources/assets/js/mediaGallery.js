@@ -7,7 +7,13 @@ $('.button_enable_list_view').bind("click", function () {
 });
 
 $('.button_toggle_upload_view').bind("click", function () {
+    document.querySelector('#upload_container').dataset.customContenttype = ''
     toggle_upload_view()
+});
+
+$('.button_toggle_upload_view_with_contenttype').bind("click", function (event) {
+    document.querySelector('#upload_container').dataset.customContenttype = event.target.dataset.id;
+    toggle_upload_view(event.target.dataset.id)
 });
 
 $('.input_aside_folder_search').change(function () {
@@ -55,7 +61,7 @@ let bulkSelection = [] //this keeps track which items are selected
 let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 let draggingAmountOfItems = 1
 
-window.toggle_upload_view = function() {
+window.toggle_upload_view = function(customContentType) {
     $('#upload_container').addClass('show').addClass('close-outside');
     $('#dropdown_overlay').removeClass('hide');
 }

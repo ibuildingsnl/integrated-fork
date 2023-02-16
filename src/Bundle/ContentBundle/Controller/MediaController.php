@@ -142,7 +142,7 @@ class MediaController extends AbstractController
 
         return [
             'paginator' => $this->createPaginator($items, $requestSource),
-            'contentTypeSelectOptions' => $contentTypeSelectOptions,
+            'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
@@ -152,6 +152,12 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ];
+    }
+
+    private function removeStardardClasses($contentTypeSelectOptions): array {
+        return array_filter($contentTypeSelectOptions, function ($item) {
+            return !in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name') );
+        });
     }
 
     public function uploadFile(Request $request)

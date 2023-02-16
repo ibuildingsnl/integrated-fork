@@ -51,20 +51,28 @@ class MediaGalleryUploadFile
         // TODO: perfect these filetypes, maybe put these in a config file?:
         $image_filetypes = ['jpg', 'jpeg', 'png', 'tif', 'webp'];
         $video_filetypes = ['mp4', 'mov', 'avi', 'flv', 'mkv', 'wmv'];
-        $file_filetypes = ['doc', 'docx', 'pdf', 'xls'];
+        $file_filetypes = ['doc', 'docx', 'pdf', 'xls', 'xlsx'];
 
         // Find a matching class with the extension
         if (\in_array($uploadedFileExtension, $image_filetypes)) {
             $file = new Image();
-            $file->setContentType('image');
+            $contenttype = 'image';
         } elseif (\in_array($uploadedFileExtension, $video_filetypes)) {
             $file = new Video();
-            $file->setContentType('video');
+            $contenttype = 'video';
         } elseif (\in_array($uploadedFileExtension, $file_filetypes)) {
             $file = new File();
-            $file->setContentType('file');
+            $contenttype = 'file';
         } else {
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
+        }
+
+        // If a customContenttype is provided we use it, else we fall back on the filetype
+        $customContenttype = $request->get('custom_contenttype');
+        if (null !== $customContenttype) {
+            $file->setContentType($customContenttype);
+        } else {
+            $file->setContentType($contenttype);
         }
 
         // Get file title

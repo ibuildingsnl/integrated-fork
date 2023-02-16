@@ -7,13 +7,11 @@
                     <span>{% trans %}New{% endtrans %}</span>
                     <i class="iconoir-plus"></i>
                 </a>
-                <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                <ul aria-labelledby="drop_1" role="menu" class="p-2 dropdown-menu" id="menu_1">
                     {% for type_key, type in contentTypeSelectOptions %}
                         {% if type %}
                             <li role="presentation">
-                                <a href="{{ path('integrated_content_content_new') }}?type={{ type.getId }}">
-                                    {{ type.getName | title }}
-                                </a>
+                                <div data-id="{{ type.getId }}" class="button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</div>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -86,8 +84,8 @@
                 </ul>
             </li>
         </ul>
-        <button class="btn btn-action mr-2"
-                id="bulkselection">{% trans %} Bulkselection {% endtrans %}
+
+        <button class="btn btn-action mr-2" id="bulkselection">{% trans %} Bulkselection {% endtrans %}
         </button>
 
         <button class="button_toggle_upload_view btn btn-action">

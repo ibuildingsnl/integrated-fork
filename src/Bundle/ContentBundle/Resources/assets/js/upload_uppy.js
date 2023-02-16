@@ -28,10 +28,18 @@ function inititalizeUppy(uppyOptions) {
     let uppy = new Uppy({
         // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
+            // We have 2 entry points: when a user selects a ContentType, and when he clicks on the add button.
+            // We are setting this field via mediaGallery.js, search for: dataset.customContenttype
+            let custom_contenttype = document.querySelector('#upload_container').dataset.customContenttype || ''
+
             let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
-            if (null !== current_category_id && '' !== current_category_id) {
-                for (const [key, file] of Object.entries(files)) {
+
+            for (const [key, file] of Object.entries(files)) {
+                if (null !== current_category_id && '' !== current_category_id) {
                     file.meta.category_id_target = current_category_id;
+                }
+                if (null !== custom_contenttype && '' !== custom_contenttype) {
+                    file.meta.custom_contenttype = custom_contenttype;
                 }
             }
         },
