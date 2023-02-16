@@ -10,21 +10,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ExcludeFromNewsletterListener implements EventSubscriberInterface
 {
-    private readonly array $allowedTypes;
-
-    public function __construct(string ...$allowedTypes)
+    public function __construct(private readonly array $allowedTypes)
     {
-        $this->allowedTypes = $allowedTypes;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::POST_BUILD => 'onPostBuild',
         ];
     }
 
-    public function onPostBuild(BuilderEvent $event)
+    public function onPostBuild(BuilderEvent $event): void
     {
         if (!\in_array($event->getContentType()->getClass(), $this->allowedTypes)) {
             return;

@@ -8,6 +8,15 @@
 
         <parameter key="integrated_newsletter.event_listener.schedule_form_field_subscriber.class">Integrated\Bundle\NewsletterBundle\EventListener\ScheduleFormAssetProvidingSubscriber</parameter>
 
+        <parameter key="integrated_newsletter.document_types.whitelist" type="collection">
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Article</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Event</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\JobPosting</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\News</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Video</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Relation\Company</parameter>
+        </parameter>
+
     </parameters>
 
     <services>
@@ -21,13 +30,15 @@
 
         <service id="integrated_newsletter.form.listener.form_field" class="Integrated\Bundle\NewsletterBundle\EventListener\ExcludeFromNewsletterListener">
             <tag name="integrated_content.form.event_subscriber"/>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Article</argument>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Event</argument>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\JobPosting</argument>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\News</argument>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Video</argument>
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Content\Company</argument>
+            <argument>%integrated_newsletter.document_types.whitelist%</argument>
         </service>
+
+        <service id="Integrated\Bundle\NewsletterBundle\Form\ContentSelectionType">
+            <argument type="service" id="integrated_content.resolver" />
+            <argument>%integrated_newsletter.document_types.whitelist%</argument>
+            <tag name="form.type" />
+        </service>
+
     </services>
 
 </container>

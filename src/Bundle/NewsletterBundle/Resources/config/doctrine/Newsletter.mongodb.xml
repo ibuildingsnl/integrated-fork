@@ -17,6 +17,7 @@
                 />
             </discriminator-map>
         </embed-one>
+        <field field-name="contentSelection" type="hash" />
     </document>
 
 </doctrine-mongo-mapping>

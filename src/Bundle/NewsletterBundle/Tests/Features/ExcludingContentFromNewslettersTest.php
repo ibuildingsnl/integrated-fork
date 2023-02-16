@@ -37,14 +37,14 @@ final class ExcludingContentFromNewslettersTest extends TestCase
             new EventDispatcher(),
             new FormFactory(new FormRegistry([], new ResolvedFormTypeFactory()))
         );
-        $this->listener = new ExcludeFromNewsletterListener(
+        $this->listener = new ExcludeFromNewsletterListener([
             Article::class,
             Event::class,
             JobPosting::class,
             News::class,
             Video::class,
             Company::class,
-        );
+        ]);
         $type = new ContentType();
         $type->setClass(Article::class);
         $this->event = new BuilderEvent($type, new Document(null), $this->builder, []);
