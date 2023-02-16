@@ -1,5 +1,5 @@
 function updateScheduleEntry(frequency) {
-    frequency.closest('.row').querySelectorAll('[data-if-frequency]').forEach(
+    frequency.closest('.frequencyComponent').querySelectorAll('[data-if-frequency]').forEach(
         (el) => el.closest('.form-item').style.display = el.getAttribute('data-if-frequency').indexOf(frequency.value) < 0 ? 'none' : ''
     );
 }

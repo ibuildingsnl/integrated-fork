@@ -47,7 +47,6 @@ class RecurringScheduleEntryPartType extends AbstractType
         ]);
         $builder->add('day', IntegerType::class, [
             'empty_data' => 1,
-//            'label' => 'nth',
             'attr' => [
                 'data-if-frequency' => 'monthly|quarterly|yearly',
             ],

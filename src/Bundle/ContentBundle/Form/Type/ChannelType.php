@@ -129,15 +129,7 @@ class ChannelType extends AbstractType
             'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
-        $builder->add('social', TailwindCollectionType::class, [
-            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\SocialType',
-            'priority' => 480,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'add_button_text' => 'Add social',
-            'label' => 'Socials',
-            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-        ]);
+        $builder->add('social', SocialsType::class);
 
         $builder->add(
             $builder->create('permissions', FormType::class, [
