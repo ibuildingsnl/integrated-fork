@@ -47,8 +47,8 @@ class ContentTypeFormType extends AbstractType
                     'attr' => [
                         'location' => 'editor',
                         'style' => 'editor',
-                        'state' => 'show'
-                    ]
+                        'state' => 'show',
+                    ],
                 ]
             )
             ->add(
@@ -60,8 +60,8 @@ class ContentTypeFormType extends AbstractType
                     'attr' => [
                         'location' => 'editor',
                         'style' => 'editor',
-                        'state' => 'show'
-                    ]
+                        'state' => 'show',
+                    ],
                 ]
             );
 
@@ -77,18 +77,18 @@ class ContentTypeFormType extends AbstractType
         ]);
         foreach ($metadata->getOptions() as $option) {
             $ype = $builder->create(
-                'options_' . $option->getName(),
+                'options_'.$option->getName(),
                 $option->getType(),
                 [
                     'attr' => [
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',
-                        'icon' => 'stackoverflow'
+                        'icon' => 'stackoverflow',
                     ],
                     'label' => ucfirst($option->getName()),
                 ] + $option->getOptions()
-            )->setPropertyPath('options[' . $option->getName() . ']');
+            )->setPropertyPath('options['.$option->getName().']');
 
             $builder->add($ype);
         }
@@ -103,8 +103,8 @@ class ContentTypeFormType extends AbstractType
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show',
-                        'icon' => 'key-alt-back'
-                    ]
+                        'icon' => 'key-alt-back',
+                    ],
                 ]
             )
                     ->add(

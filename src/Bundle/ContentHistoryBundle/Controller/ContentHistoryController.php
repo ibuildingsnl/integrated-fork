@@ -99,7 +99,6 @@ class ContentHistoryController extends AbstractController
         ]);
     }
 
-
     public function show(ContentHistory $contentHistory): Response
     {
         $content = $this->manager->find(Content::class, $contentHistory->getContentId());
