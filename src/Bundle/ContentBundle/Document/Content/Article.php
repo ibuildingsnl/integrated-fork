@@ -259,9 +259,9 @@ class Article extends Content implements RankableInterface
         return $this;
     }
 
-    public function getFeaturedImage(): Image|null
+    public function getFeaturedImage(): StorageInterface|null
     {
-        return $this->featuredImage;
+        return $this->featuredImage->getFile();
     }
 
     public function setFeaturedImage(Image $featuredImage): void
@@ -460,6 +460,12 @@ class Article extends Content implements RankableInterface
      */
     public function getCover()
     {
+        if ($this->getFeaturedImage() instanceof FileInterface) {
+            if ($this->getFeaturedImage()->getFile() instanceof StorageInterface) {
+                return $this->getFeaturedImage()->getFile();
+            }
+        }
+
         $items = $this->getReferencesByRelationTypes(['cover', 'embedded']);
         if ($items) {
             foreach ($items as $item) {
