@@ -19,6 +19,8 @@
             </options>
         </type>
         <type name="integrated.taxonomy" />
+        <type name="integrated.featured" />
+        <type name="integrated.premium" />
 
     </class>
 
@@ -84,6 +86,7 @@
             <options>
 
                 <string key="cover">cover</string>
+                <string key="featuredImage">featuredImage</string>
 
             </options>
 
