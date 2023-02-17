@@ -8,13 +8,10 @@ use Integrated\Bundle\NewsletterBundle\Service\Exception\UnacceptableContentType
 
 final class DocumentTypeValidator implements CombinatorInterface
 {
-    private readonly array $acceptedTypes;
-
     public function __construct(
         private readonly CombinatorInterface $combinator,
-        string ...$acceptedTypes,
+        private readonly array $acceptedTypes,
     ) {
-        $this->acceptedTypes = $acceptedTypes;
     }
 
     public function combine(ContentType ...$types): CombinedContent

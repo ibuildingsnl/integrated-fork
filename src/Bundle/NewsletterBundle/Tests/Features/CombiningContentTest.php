@@ -52,12 +52,14 @@ final class CombiningContentTest extends TestCase
 
         $this->combinator = new DocumentTypeValidator(
             new ContentCombinator($repository),
-            Article::class,
-            Event::class,
-            JobPosting::class,
-            News::class,
-            Video::class,
-            Company::class,
+            [
+                Article::class,
+                Event::class,
+                JobPosting::class,
+                News::class,
+                Video::class,
+                Company::class,
+            ],
         );
     }
 
