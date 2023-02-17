@@ -5,12 +5,18 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SocialsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function getParent(): string
     {
-        $builder->add('social', TailwindCollectionType::class, [
+        return TailwindCollectionType::class;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
             'entry_type' => SocialType::class,
             'priority' => 480,
             'allow_add' => true,

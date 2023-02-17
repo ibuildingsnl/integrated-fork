@@ -10,6 +10,7 @@ use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
 use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
 use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
@@ -30,7 +31,7 @@ class Newsletter extends Content
     public RecurringScheduleEntry $schedule;
 
     #[Type\Field(type: ImageDropzoneType::class)]
-    public Image $logo;
+    public ?StorageInterface $logo;
 
     /** @var string[] */
     #[Type\Field(type: ContentSelectionsType::class)]
