@@ -18,6 +18,8 @@
             </discriminator-map>
         </embed-one>
         <field field-name="contentSelection" type="hash" />
+        <field field-name="socials" type="hash" />
+        <embed-one field="logo" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage" />
     </document>
 
 </doctrine-mongo-mapping>
