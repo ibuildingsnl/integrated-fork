@@ -129,7 +129,7 @@ class ChannelType extends AbstractType
             'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
         ]);
 
-        $builder->add('social', SocialsType::class);
+        $builder->add('social', SocialsType::class, ['priority' => 480]);
 
         $builder->add(
             $builder->create('permissions', FormType::class, [

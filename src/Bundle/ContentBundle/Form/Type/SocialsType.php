@@ -18,7 +18,6 @@ class SocialsType extends AbstractType
     {
         $resolver->setDefaults([
             'entry_type' => SocialType::class,
-            'priority' => 480,
             'allow_add' => true,
             'allow_delete' => true,
             'add_button_text' => 'Add social',
