@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\NewsletterBundle\Document;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Form\Type\SocialsType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
@@ -31,7 +30,7 @@ class Newsletter extends Content
     public RecurringScheduleEntry $schedule;
 
     #[Type\Field(type: ImageDropzoneType::class)]
-    public ?StorageInterface $logo;
+    public ?StorageInterface $logo = null;
 
     /** @var string[] */
     #[Type\Field(type: ContentSelectionsType::class)]
