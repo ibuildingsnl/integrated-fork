@@ -22,8 +22,9 @@ class TestEmailAddressesType extends AbstractType
             'allow_delete' => true,
             'delete_empty' => true,
             'prototype' => true,
+            'add_button_text' => 'Add Address',
             'entry_options' => [
-                'label' => 'Test mail recipient email address',
+                'label' => 'Email address',
             ],
         ]);
     }

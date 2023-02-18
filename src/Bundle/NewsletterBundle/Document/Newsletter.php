@@ -4,39 +4,50 @@ namespace Integrated\Bundle\NewsletterBundle\Document;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType;
 use Integrated\Bundle\ContentBundle\Form\Type\SocialsType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
 use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
-use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 #[Type\Document('Newsletter')]
 class Newsletter extends Content
 {
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
-    public string $title = 'untitled';
+    public string $title;
 
-    /** @var string[] */
-    #[Type\Field(type: TestEmailAddressesType::class, options: [
+    #[Type\Field(options: ['priority' => 980, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    public string $headline;
+
+    #[Type\Field(type: CheckboxSwitcherType::class, options: [
         'priority' => 500,
-        'attr' => ['style' => 'sidebar', 'icon' => 'link', 'show_headings' => 'false']
+        'attr' => [
+            'align_with_widget' => true,
+            'state' => 'show',
+        ],
+    ], location: 'options')]
+    public bool $sendTest;
+
+    #[Type\Field(type: TestEmailAddressesType::class, options: [
+        'priority' => 490,
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'group',
+            'show_headings' => 'false',
+        ]
     ], location: 'sidebar')]
     public array $testAddresses = [];
 
     #[Type\Field(type: IntegerType::class, options: [
         'label' => 'Generation time',
-        'priority' => 490,
+        'priority' => 480,
         'attr' => [
             'style' => 'sidebar',
-            'icon' => 'link',
+            'icon' => 'clock-outline',
             'show_headings' => 'false',
             'help_text' => 'Email is generated the amount of time given before sending.',
         ]
@@ -66,7 +77,6 @@ class Newsletter extends Content
     ], location: 'sidebar')]
     public ?Image $logo = null;
 
-    /** @var string[] */
     #[Type\Field(type: ContentSelectionsType::class, options: [
         'label' => 'Content selection',
         'priority' => 480,
@@ -78,7 +88,6 @@ class Newsletter extends Content
     ], location: 'editor')]
     public array $contentSelection = [];
 
-    /** @var string[] */
     #[Type\Field(type: SocialsType::class, options: [
         'label' => 'Socials',
         'priority' => 470,
