@@ -1,10 +1,10 @@
 function updateScheduleEntry(frequency) {
-    frequency.closest('.frequencyComponent').querySelectorAll('[data-if-frequency]').forEach(
+    frequency.closest('.panel-body').querySelectorAll('[data-if-frequency]').forEach(
         (el) => el.closest('.form-item').style.display = el.getAttribute('data-if-frequency').indexOf(frequency.value) < 0 ? 'none' : ''
     );
 }
 
-const scheduler = document.querySelector('.frequencyComponent');
+const scheduler = document.querySelector('.frequency-component');
 
 scheduler.addEventListener('change', function (ev) {
     let target = ev.target;

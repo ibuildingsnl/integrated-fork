@@ -44,8 +44,9 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('definition-state-collection-widget sortable-collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="definition-state-collection-widget sortable-collection-widget">
+        <div {{ block('widget_container_attributes') }}>
             <ul class="bc-collection panel-group sortable-collection ui-sortable">
                 {% for field in form %}
                     <li class="ui-sortable-handle">
