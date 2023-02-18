@@ -157,14 +157,15 @@
             position: relative;
 
             ul {
+                padding: 0.5rem 0rem;
+                max-height: 182px;
+                overflow-y: auto;
+
                 > li {
                     display: block;
                     margin: 0;
+                    margin-bottom: 5px;
                 }
-
-                padding: 0.5rem 1.5rem;
-                max-height: 180px;
-                overflow-y: auto;
 
                 &.jFiler-items-list {
                     max-height: 100%;
@@ -185,6 +186,10 @@
             .checkbox {
                 label {
                     font-weight: 300;
+                    padding: 0 1.5rem;
+                    &:hover {
+                        background-color:#ecf6ff;
+                    }
 
                     &.is-primary-channel {
                         font-weight: 700;
