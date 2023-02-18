@@ -99,8 +99,10 @@
                 {% set panel_heading = 'true' %}
             {% endif %}
 
+            {% set panel_title = field.vars.value.label|default(form.vars.default_title|default('Item')) %}
+
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ panel_title ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -119,16 +121,17 @@
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
             {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="collection-widget">
+        <div {{ block('widget_container_attributes') }}>
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
                         <div class="panel panel-default">
                             {% if (panel_heading is defined and panel_heading == 'true') %}
+                                {% set panel_title = field.vars.value|first %}
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.label|default(form.vars.default_title|default('Item')) }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i><span class="capitalize">{{ panel_title }}</span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"

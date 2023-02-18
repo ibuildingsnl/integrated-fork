@@ -737,9 +737,6 @@ label {
 
 .channel-domains {
     ul.no-heading {
-        li {
-            margin-bottom:1rem;
-        }
         .panel-body {
             max-width: 750px;
             position: relative;
@@ -752,13 +749,13 @@ label {
             right: 16px;
         }
         input {
-            padding-left: 175px;
+            padding-left: 165px !important;
         }
 
         label {
             position: absolute;
-            top: 0;
-            height: 52px;
+            height: 33px;
+            top: 7px;
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 

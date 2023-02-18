@@ -84,7 +84,6 @@ class Newsletter extends Content
         'priority' => 470,
         'attr' => [
             'style' => 'editor',
-            'show_headings' => 'false',
             'state' => 'show',
         ]
     ], location: 'editor')]

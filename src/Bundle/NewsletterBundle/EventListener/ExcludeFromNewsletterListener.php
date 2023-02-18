@@ -39,7 +39,8 @@ class ExcludeFromNewsletterListener implements EventSubscriberInterface
         }
 
         $builder->get('customFields')->add('ExcludeFromNewsletters', CheckboxSwitcherType::class, [
-            'attr' => ['location' => 'options', 'align_with_widget' => true, 'style' => 'horizontal'],
+            'required' => false,
+            'attr' => ['location' => 'options', 'align_with_widget' => true, 'style' => 'horizontal' ],
         ]);
     }
 }
