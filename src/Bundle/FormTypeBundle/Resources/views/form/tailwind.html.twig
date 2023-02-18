@@ -117,6 +117,7 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
         <div {{ block('widget_container_attributes') }} class="collection-widget">
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
