@@ -23,13 +23,14 @@ class RecurringScheduleEntryType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::TITLE, CollectionType::class, [
+            'label' => false,
             'entry_type' => RecurringScheduleEntryPartType::class,
             'allow_add' => true,
             'allow_delete' => true,
             'prototype' => true,
             'prototype_data' => ['day' => 1],
             'attr' => [
-                'class' => 'frequencyComponent',
+                'class' => 'frequency-component',
             ],
         ]);
         $builder->addModelTransformer(new CallbackTransformer(
