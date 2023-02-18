@@ -32,7 +32,6 @@ class PremiumType implements TypeInterface
             return; // only process content
         }
 
-        // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
         $featured = $data->isPremium();
 
         if ($featured) {
