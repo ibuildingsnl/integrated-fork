@@ -185,7 +185,7 @@
             .checkbox {
                 label {
                     font-weight: 300;
-                    padding: 0 1.5rem;
+                    padding: 0 1rem;
                     &:hover {
                         background-color:#ecf6ff;
                     }
@@ -266,7 +266,8 @@
 
         .aside-item-list-container {
             ul {
-                padding: 10px 10px 0;
+                border: 1px solid #dfe3e9;
+                border-radius: 8px;
             }
         }
     }

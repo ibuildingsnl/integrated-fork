@@ -259,9 +259,9 @@ class Article extends Content implements RankableInterface
         return $this;
     }
 
-    public function getFeaturedImage(): StorageInterface|null
+    public function getFeaturedImage(): Image|null
     {
-        return $this->featuredImage->getFile();
+        return $this->featuredImage;
     }
 
     public function setFeaturedImage(Image $featuredImage): void
