@@ -34,14 +34,22 @@ class HasImageType implements TypeInterface
 
         // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
         $found = false;
-        $items = $data->getReferencesByRelationType('embedded');
-        if ($items) {
-            foreach ($items as $item) {
-                if ($item instanceof Image) {
-                    $found = true;
+
+        $image = $data->getFeaturedImage();
+
+        if (!$image) {
+            $items = $data->getReferencesByRelationType('embedded');
+            if ($items) {
+                foreach ($items as $item) {
+                    if ($item instanceof Image) {
+                        $found = true;
+                    }
                 }
             }
+        } else {
+            $found = true;
         }
+        
         if ($found) {
             $container->add('facet_properties', 'Has image');
         } else {
