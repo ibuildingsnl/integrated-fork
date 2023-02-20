@@ -49,7 +49,7 @@ class HasImageType implements TypeInterface
         } else {
             $found = true;
         }
-        
+
         if ($found) {
             $container->add('facet_properties', 'Has image');
         } else {
