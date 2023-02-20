@@ -6,7 +6,6 @@
     <document name="Integrated\Bundle\NewsletterBundle\Document\Newsletter">
         <field field-name="title" type="string" />
         <field field-name="headline" type="string" />
-        <field field-name="sendTest" type="boolean" />
         <field field-name="testAddresses" type="hash" />
         <embed-one field="schedule">
             <discriminator-field name="type" />

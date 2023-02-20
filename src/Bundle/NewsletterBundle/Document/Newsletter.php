@@ -4,7 +4,6 @@ namespace Integrated\Bundle\NewsletterBundle\Document;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType;
 use Integrated\Bundle\ContentBundle\Form\Type\SocialsType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
@@ -22,15 +21,6 @@ class Newsletter extends Content
 
     #[Type\Field(options: ['priority' => 980, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     public string $headline;
-
-    #[Type\Field(type: CheckboxSwitcherType::class, options: [
-        'priority' => 500,
-        'attr' => [
-            'align_with_widget' => true,
-            'state' => 'show',
-        ],
-    ], location: 'options')]
-    public bool $sendTest;
 
     #[Type\Field(type: TestEmailAddressesType::class, options: [
         'priority' => 490,
