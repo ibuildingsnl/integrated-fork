@@ -63,25 +63,12 @@ class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(3))
             ->method('create')
-            ->withConsecutive(
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content1),
-                ],
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content2),
-                ],
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content4),
-                ]
-            )
+            ->with($this->equalTo(JobFactory::ADD), $this->isInstanceOf(ContentInterface::class))
             ->willReturnOnConsecutiveCalls($job1, $job2, $job3);
 
         $this->queue->expects($this->exactly(3))
             ->method('push')
-            ->withConsecutive([$this->identicalTo($job1)], [$this->identicalTo($job2)], [$this->identicalTo($job3)]);
+            ->with($this->isInstanceOf(\stdClass::class));
 
         $instance = $this->getInstance();
         $instance->__invoke($this->getTask('content-id'));

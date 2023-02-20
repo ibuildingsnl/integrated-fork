@@ -40,8 +40,10 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->repository->expects($this->exactly(2))
             ->method('find')
-            ->withConsecutive([$this->equalTo('config')], [$this->equalTo('this-is-a-config-that-does-not-exist')])
-            ->willReturnOnConsecutiveCalls($this->getConfig('config'), null);
+            ->willReturnMap([
+                ['config', $this->getConfig('config')],
+                ['this-is-a-config-that-does-not-exist', null],
+            ]);
 
         $resolver = $this->getInstance();
 

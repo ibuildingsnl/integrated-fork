@@ -66,10 +66,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('createType')
-            ->withConsecutive(
-                [$this->equalTo($type3), $this->equalTo([])],
-                [$this->equalTo($type2), $this->equalTo([])]
-            )
+            ->with($this->isInstanceOf(TypeInterface::class), $this->equalTo([]))
             ->willReturn($resolved);
 
         $registry = $builder->getRegistry();

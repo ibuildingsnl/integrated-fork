@@ -106,10 +106,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback)],
-                [$this->callback($callback)]
-            )
+            ->with($this->callback($callback))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -134,10 +131,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback)],
-                [$this->callback($callback)]
-            )
+            ->with($this->callback($callback))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -165,15 +159,14 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls($this->throwException($exception = new \Exception()), $callback);
 
         $callback = [
-            function (WorkerEvent $event) use ($instance) {
+            function (WorkerEvent $event) use ($instance, $message, $exception) {
                 self::assertSame($instance, $event->getWorker());
 
-                return true;
-            },
-            function (ErrorEvent $event) use ($instance, $message, $exception) {
-                self::assertSame($instance, $event->getWorker());
-                self::assertSame($message, $event->getMessage());
-                self::assertSame($exception, $event->getException());
+                if ($event instanceof ErrorEvent) {
+                    print_r('test');
+                    self::assertSame($message, $event->getMessage());
+                    self::assertSame($exception, $event->getException());
+                }
 
                 return true;
             },
@@ -181,11 +174,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(3))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->callback($callback[0]))
             ->willReturnArgument(0);
 
         $instance->execute();

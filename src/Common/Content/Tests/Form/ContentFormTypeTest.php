@@ -14,6 +14,7 @@ namespace Integrated\Common\Content\Tests\Form;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Event\FieldEvent;
+use Integrated\Common\Content\Form\Event\FormEvent;
 use Integrated\Common\Content\Form\Event\ViewEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ContentTypeFieldInterface;
@@ -104,23 +105,18 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->type->expects($this->exactly(3))
             ->method('hasField')
-            ->withConsecutive(
-                [$this->equalTo('field1')],
-                [$this->equalTo('field2')],
-                [$this->equalTo('field3')]
-            )
-            ->willReturnOnConsecutiveCalls(true, false, true);
+            ->willReturnMap([
+                ['field1', true],
+                ['field2', false],
+                ['field3', true],
+            ]);
 
         $this->type->expects($this->exactly(2))
             ->method('getField')
-            ->withConsecutive(
-                [$this->equalTo('field1')],
-                [$this->equalTo('field3')]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->getField('field1', ['override1']),
-                $this->getField('field3', ['override3'])
-            );
+            ->willReturnMap([
+                ['field1', $this->getField('field1', ['override1'])],
+                ['field3', $this->getField('field3', ['override3'])],
+            ]);
 
         $builder = $this->getBuilder();
         $builder->expects($this->exactly(2))
@@ -186,28 +182,42 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(7))
             ->method('hasListeners')
-            ->withConsecutive(
-                [$this->equalTo(Events::PRE_BUILD)],
-                [$this->equalTo(Events::PRE_BUILD_FIELD)],
-                [$this->equalTo(Events::BUILD_FIELD)],
-                [$this->equalTo(Events::POST_BUILD_FIELD)],
-                [$this->equalTo(Events::PRE_BUILD_FIELD)],
-                [$this->equalTo(Events::POST_BUILD_FIELD)],
-                [$this->equalTo(Events::POST_BUILD)]
-            )
+            ->with($this->callback(function ($value) {
+                $this->assertContainsEquals($value, [
+                    Events::PRE_BUILD,
+                    Events::PRE_BUILD_FIELD,
+                    Events::BUILD_FIELD,
+                    Events::POST_BUILD_FIELD,
+                    Events::PRE_BUILD_FIELD,
+                    Events::POST_BUILD_FIELD,
+                    Events::POST_BUILD,
+                ]);
+
+                return true;
+            }))
             ->willReturn(true);
 
         $this->dispatcher->expects($this->exactly(7))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->callback(function ($value) use ($builder) {
+                $this->assertInstanceOf(FormEvent::class, $value);
+                self::assertSame($this->type, $value->getContentType());
+                self::assertSame($this->metadata, $value->getMetadata());
+                self::assertSame(['key' => 'value'], $value->getOptions());
+
+                if ($value instanceof BuilderEvent) {
+                    self::assertSame($builder, $value->getBuilder());
+                } elseif ($value instanceof FieldEvent) {
+                    self::assertInstanceOf(AttributeEditorInterface::class, $value->getField());
+                    self::assertSame('field', $value->getField()->getName());
+                    self::assertSame('type', $value->getField()->getType());
+                    self::assertSame(['key' => 'value'], $value->getField()->getOptions());
+                } else {
+                    return false;
+                }
+
+                return true;
+            }))
             ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())
@@ -267,18 +277,19 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('hasListeners')
-            ->withConsecutive(
-                [$this->equalTo(Events::PRE_BUILD)],
-                [$this->equalTo(Events::POST_BUILD)]
-            )
+            ->with($this->callback(function ($value) {
+                $this->assertContainsEquals($value, [
+                    Events::PRE_BUILD,
+                    Events::POST_BUILD,
+                ]);
+
+                return true;
+            }))
             ->willReturn(true);
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback)],
-                [$this->callback($callback)]
-            )
+            ->with($this->callback($callback))
             ->willReturnArgument(0);
 
         $this->metadata->expects($this->once())

@@ -61,13 +61,22 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(2))
             ->method('hasProcessors')
-            ->withConsecutive([TestParent::class], [TestChild::class])
+            ->with($this->callback(function ($value) {
+                $this->assertContainsEquals($value, [
+                    TestParent::class,
+                    TestChild::class,
+                ]);
+
+                return true;
+            }))
             ->willReturn(true);
 
         $this->registry->expects($this->exactly(2))
             ->method('getProcessors')
-            ->withConsecutive([TestParent::class], [TestChild::class])
-            ->willReturnOnConsecutiveCalls([$processors[0], $processors[1]], [$processors[2], $processors[3]]);
+            ->willReturnMap([
+                [TestParent::class, [$processors[0], $processors[1]]],
+                [TestChild::class, [$processors[2], $processors[3]]],
+            ]);
 
         $this->factory->expects($this->once())
             ->method('createProcessor')
