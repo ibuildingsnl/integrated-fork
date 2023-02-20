@@ -47,6 +47,12 @@
             <tag name="monolog.logger" channel="user-activity"/>
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\EventListener\ScopeInjectionSubscriber">
+            <argument type="service" id="Integrated\Bundle\UserBundle\Context\ScopeContext" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+
     </services>
 
 </container>
