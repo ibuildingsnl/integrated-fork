@@ -7,8 +7,7 @@
     <services>
 
         <service id="Integrated\Bundle\NewsletterBundle\Controller\NewsletterController">
-            <argument type="service" id="integrated_newsletter.content.fetcher" />
-            <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="integrated_newsletter.newsletter.renderer" />
             <argument type="service" id="integrated_newsletter.newsletter.repository" />
 
             <tag name="controller.service_arguments" />

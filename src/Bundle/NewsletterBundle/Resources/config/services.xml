@@ -28,5 +28,11 @@
             <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
             <argument type="string">\Integrated\Bundle\NewsletterBundle\Document\Newsletter</argument>
         </service>
+
+        <service id="integrated_newsletter.newsletter.renderer" class="Integrated\Bundle\NewsletterBundle\Infrastructure\TwigRenderer">
+            <argument type="service" id="integrated_newsletter.content.fetcher" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
+            <argument type="service" id="twig" />
+        </service>
     </services>
 </container>
