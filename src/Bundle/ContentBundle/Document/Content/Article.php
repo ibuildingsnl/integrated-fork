@@ -460,7 +460,7 @@ class Article extends Content implements RankableInterface
      */
     public function getCover()
     {
-        if ($this->getFeaturedImage() instanceof FileInterface) {
+        if ($this->getFeaturedImage() instanceof Image) {
             if ($this->getFeaturedImage()->getFile() instanceof StorageInterface) {
                 return $this->getFeaturedImage()->getFile();
             }
