@@ -19,6 +19,8 @@
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="integrated_image.twig_extension" />
             <argument type="service" id="integrated_content.provider.media" />
+            <argument type="service" id="integrated_content.metadata.factory"/>
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

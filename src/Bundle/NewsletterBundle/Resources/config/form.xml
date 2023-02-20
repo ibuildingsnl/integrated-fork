@@ -38,6 +38,10 @@
             <argument>%integrated_newsletter.document_types.whitelist%</argument>
         </service>
 
+        <service id="integrated_newsletter.form.listener.newsletter_change_listener" class="Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener">
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
         <service id="Integrated\Bundle\NewsletterBundle\Form\ContentSelectionType">
             <argument type="service" id="integrated_content.resolver" />
             <argument>%integrated_newsletter.document_types.whitelist%</argument>
