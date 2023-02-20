@@ -32,6 +32,7 @@ class ContentSelectionType extends AbstractType
             }
         }
         $resolver->setDefaults([
+            'placeholder' => 'Select Content Type',
             'choices' => $choices,
             'choice_value' => 'getId',
             'choice_label' => 'getName',

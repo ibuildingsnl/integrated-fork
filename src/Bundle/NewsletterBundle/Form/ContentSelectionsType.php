@@ -19,6 +19,7 @@ class ContentSelectionsType extends AbstractType
             'entry_type' => ContentSelectionType::class,
             'allow_add' => true,
             'allow_delete' => true,
+            'add_button_text' => 'Add content',
         ]);
     }
 }

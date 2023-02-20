@@ -26,6 +26,7 @@ class RecurringScheduleEntryType extends AbstractType
             'label' => false,
             'entry_type' => RecurringScheduleEntryPartType::class,
             'allow_add' => true,
+            'add_button_text' => 'Add schedule',
             'allow_delete' => true,
             'prototype' => true,
             'prototype_data' => ['day' => 1],
