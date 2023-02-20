@@ -159,7 +159,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

@@ -10,24 +10,19 @@ use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
 use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
-use Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType;
-use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 #[Type\Document('Newsletter')]
 class Newsletter extends Content
 {
-    /**
-     * @var string
-     */
     #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     public string $title = 'untitled';
 
     /** @var string[] */
     #[Type\Field(type: TestEmailAddressesType::class, options: [
         'priority' => 500,
-        'attr' => ['style' => 'sidebar', 'icon' => 'link', 'show_headings' => 'false']
+        'attr' => ['style' => 'sidebar', 'icon' => 'link', 'show_headings' => 'false'],
     ], location: 'sidebar')]
     public array $testAddresses = [];
 
@@ -39,7 +34,7 @@ class Newsletter extends Content
             'icon' => 'link',
             'show_headings' => 'false',
             'help_text' => 'Email is generated the amount of time given before sending.',
-        ]
+        ],
     ], location: 'sidebar')]
     public int $hoursBefore;
 
@@ -50,7 +45,7 @@ class Newsletter extends Content
             'style' => 'editor',
             'show_headings' => 'false',
             'state' => 'show',
-        ]
+        ],
     ], location: 'editor')]
     public RecurringScheduleEntry $schedule;
 
@@ -74,7 +69,7 @@ class Newsletter extends Content
             'style' => 'editor',
             'show_headings' => 'false',
             'state' => 'show',
-        ]
+        ],
     ], location: 'editor')]
     public array $contentSelection = [];
 
@@ -85,7 +80,7 @@ class Newsletter extends Content
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
-        ]
+        ],
     ], location: 'editor')]
     public array $socials;
 

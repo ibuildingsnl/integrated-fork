@@ -7,11 +7,10 @@ use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ScheduleFormAssetProvidingSubscriber implements EventSubscriberInterface
+class FrequenciesProvider implements EventSubscriberInterface
 {
     public function __construct(
         private readonly AssetManager $js,
-        private readonly AssetManager $css,
     ) {
     }
 
@@ -28,6 +27,5 @@ class ScheduleFormAssetProvidingSubscriber implements EventSubscriberInterface
             return;
         }
         $this->js->add('bundles/integratednewsletter/js/frequencies.js');
-        $this->css->add('bundles/integratednewsletter/css/frequencies.css');
     }
 }
