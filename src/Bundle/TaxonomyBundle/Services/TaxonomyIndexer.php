@@ -58,7 +58,8 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
             $taxonomy->getDescription(),
             $taxonomy->getSlug(),
             $this->taxonomies->countUsages($taxonomy),
-            $depth
+            $depth,
+            $channels,
         );
     }
 }
