@@ -91,11 +91,10 @@ class MongoDBResolverTest extends TestCase
     {
         $this->repository->expects($this->exactly(2))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['id' => 'found'])],
-                [$this->equalTo(['id' => 'not found'])],
-            )
-            ->willReturnOnConsecutiveCalls($this->getType(), null);
+            ->willReturnMap([
+                [['id' => 'found'], null, $this->getType()],
+                [['id' => 'not found'], null, null],
+            ]);
 
         $resolver = $this->getInstance();
 

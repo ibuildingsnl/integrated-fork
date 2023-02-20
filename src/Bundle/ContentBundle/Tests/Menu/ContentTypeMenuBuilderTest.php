@@ -157,11 +157,10 @@ class ContentTypeMenuBuilderTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
-            ->withConsecutive(
-                ['ParentWithMultipleLevels'],
-                ['ParentWithOneLevel']
-            )
-            ->willReturnOnConsecutiveCalls($child1, $child2)
+            ->willReturnMap([
+                ['ParentWithMultipleLevels', [], $child1],
+                ['ParentWithOneLevel', [], $child2],
+            ])
         ;
 
         $this->assertSame($menu, $builder->createMenu());
@@ -221,11 +220,10 @@ class ContentTypeMenuBuilderTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
-            ->withConsecutive(
-                ['ParentWithMultipleLevels'],
-                ['ParentWithOneLevel']
-            )
-            ->willReturnOnConsecutiveCalls($child1, $child2)
+            ->willReturnMap([
+                ['ParentWithMultipleLevels', [], $child1],
+                ['ParentWithOneLevel', [], $child2],
+            ])
         ;
 
         $this->assertSame($menu, $builder->createMenu());

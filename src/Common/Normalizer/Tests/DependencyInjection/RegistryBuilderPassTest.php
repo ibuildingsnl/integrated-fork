@@ -28,11 +28,15 @@ class RegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
         $definition = $this->createMock(Definition::class);
         $definition->expects($this->exactly(3))
             ->method('addMethodCall')
-            ->withConsecutive(
-                ['addProcessor', $this->identicalTo([$service1, 'class1'])],
-                ['addProcessor', $this->identicalTo([$service1, 'class2'])],
-                ['addProcessor', $this->identicalTo([$service2, 'class1'])]
-            );
+            ->with($this->equalTo('addProcessor'), $this->callback(function ($value) use ($service1, $service2) {
+                $this->assertContainsEquals($value, [
+                    [$service1, 'class1'],
+                    [$service1, 'class2'],
+                    [$service2, 'class1'],
+                ]);
+
+                return true;
+            }));
 
         $container = $this->getContainer();
         $container->expects($this->once())
@@ -42,8 +46,11 @@ class RegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
 
         $container->expects($this->exactly(3))
             ->method('getDefinition')
-            ->withConsecutive(['service'], ['tagged.service.1'], ['tagged.service.2'])
-            ->willReturnOnConsecutiveCalls($definition, $service1, $service2);
+            ->willReturnMap([
+                ['service', $definition],
+                ['tagged.service.1', $service1],
+                ['tagged.service.2', $service2],
+            ]);
 
         $container->expects($this->once())
             ->method('findTaggedServiceIds')

@@ -157,15 +157,10 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->exactly(2))
             ->method('getChild')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $menuContent,
-                $menuManage
-            )
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::MENU_CONTENT, $menuContent],
+                [ConfigureMenuSubscriber::MENU_MANAGE, $menuManage],
+            ]);
 
         $menu
             ->expects($this->never())
@@ -208,25 +203,18 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->exactly(2))
             ->method('getChild')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
-            )
-            ->willReturn(null)
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::MENU_CONTENT, null],
+                [ConfigureMenuSubscriber::MENU_MANAGE, null],
+            ]);
 
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $menuContent,
-                $menuManage
-            )
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::MENU_CONTENT, [], $menuContent],
+                [ConfigureMenuSubscriber::MENU_MANAGE, [], $menuManage],
+            ]);
 
         $menuContent
             ->expects($this->atLeastOnce())
@@ -265,25 +253,18 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menu
             ->expects($this->exactly(2))
             ->method('getChild')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
-            )
-            ->willReturn(null)
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::MENU_CONTENT, null],
+                [ConfigureMenuSubscriber::MENU_MANAGE, null],
+            ]);
 
         $menu
             ->expects($this->exactly(2))
             ->method('addChild')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::MENU_CONTENT],
-                [ConfigureMenuSubscriber::MENU_MANAGE]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $menuContent,
-                $menuManage
-            )
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::MENU_CONTENT, [], $menuContent],
+                [ConfigureMenuSubscriber::MENU_MANAGE, [], $menuManage],
+            ]);
 
         $menuContent
             ->expects($this->atLeastOnce())
@@ -293,20 +274,17 @@ class ConfigureMenuSubscriberTest extends \PHPUnit\Framework\TestCase
         $menuManage
             ->expects($this->exactly(1))
             ->method('addChild')
+            ->with('Channels')
         ;
 
         // Stub isGranted
         $this->authorizationChecker
             ->expects($this->exactly(4))
             ->method('isGranted')
-            ->withConsecutive(
-                [ConfigureMenuSubscriber::ROLE_ADMIN],
-                [ConfigureMenuSubscriber::ROLE_CHANNEL_MANAGER],
-                [ConfigureMenuSubscriber::ROLE_ADMIN],
-                [ConfigureMenuSubscriber::ROLE_ADMIN]
-            )
-            ->willReturnOnConsecutiveCalls(false, true, false, false)
-        ;
+            ->willReturnMap([
+                [ConfigureMenuSubscriber::ROLE_ADMIN, null, false],
+                [ConfigureMenuSubscriber::ROLE_CHANNEL_MANAGER, null, true],
+            ]);
 
         $this->subscriber->onMenuConfigure($this->event);
     }

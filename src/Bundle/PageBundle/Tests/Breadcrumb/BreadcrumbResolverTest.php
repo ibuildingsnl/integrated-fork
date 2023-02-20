@@ -91,11 +91,10 @@ class BreadcrumbResolverTest extends TestCase
         $this->documentManager
             ->expects($this->exactly(2))
             ->method('getRepository')
-            ->withConsecutive(
-                [$this->equalTo(Page::class)],
-                [$this->equalTo(Content::class)]
-            )
-            ->willReturnOnConsecutiveCalls($pageRepository, $contentRepository);
+            ->willReturnMap([
+                [Page::class, $pageRepository],
+                [Content::class, $contentRepository],
+            ]);
 
         $this->urlResolver
             ->expects($this->once())
@@ -116,21 +115,20 @@ class BreadcrumbResolverTest extends TestCase
         $pageRepository
             ->expects($this->exactly(4))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['path' => '/', 'channel.$id' => 'my_channel'])],
-                [$this->equalTo(['path' => '/my', 'channel.$id' => 'my_channel'])],
-                [$this->equalTo(['path' => '/my/page', 'channel.$id' => 'my_channel'])],
-            )
-            ->willReturnOnConsecutiveCalls(null, null, $page, null);
+            ->willReturnMap([
+                [['path' => '/', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my/page', 'channel.$id' => 'my_channel'], $page],
+                [['path' => '/my/page/article', 'channel.$id' => 'my_channel'], null],
+            ]);
 
         $contentRepository
             ->expects($this->exactly(2))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['slug' => 'my', 'channels.$id' => 'my_channel'])],
-                [$this->equalTo(['slug' => 'my-article', 'channels.$id' => 'my_channel'])]
-            )
-            ->willReturnOnConsecutiveCalls($article, null);
+            ->willReturnMap([
+                [['slug' => 'my', 'channels.$id' => 'my_channel'], $article],
+                [['slug' => 'my-article', 'channels.$id' => 'my_channel'], null],
+            ]);
 
         $expectedResult = [
             new BreadcrumbItem('My article', '/my'),

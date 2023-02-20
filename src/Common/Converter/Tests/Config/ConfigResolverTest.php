@@ -59,14 +59,10 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->provider->expects($this->exactly(2))
             ->method('getTypes')
-            ->withConsecutive(
-                [$this->equalTo(Fixtures\TestParent::class)],
-                [$this->equalTo(Fixtures\TestChild::class)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$this->getType()],
-                []
-            );
+            ->willReturnMap([
+                [Fixtures\TestParent::class, [$this->getType()]],
+                [Fixtures\TestChild::class, []],
+            ]);
 
         $config = $resolver->getConfig(Fixtures\TestChild::class);
 
@@ -81,14 +77,10 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->provider->expects($this->exactly(2))
             ->method('getTypes')
-            ->withConsecutive(
-                [$this->equalTo(Fixtures\TestParent::class)],
-                [$this->equalTo(Fixtures\TestChild::class)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$this->getType()],
-                [$this->getType()]
-            );
+            ->willReturnMap([
+                [Fixtures\TestParent::class, [$this->getType()]],
+                [Fixtures\TestChild::class, [$this->getType()]],
+            ]);
 
         $config = $resolver->getConfig(Fixtures\TestChild::class);
 

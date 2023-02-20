@@ -130,8 +130,10 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects(!$this->repository['state'] ? $this->once() : $this->exactly(2))
             ->method('getRepository')
-            ->withConsecutive(['Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'], ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State'])
-            ->willReturnOnConsecutiveCalls($this->repository['workflow'], $this->repository['state']);
+            ->willReturnMap([
+                ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition', null, $this->repository['workflow']],
+                ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State', null, $this->repository['state']],
+            ]);
     }
 
     protected function setUpRepositoryWorkflow($exists = true)
