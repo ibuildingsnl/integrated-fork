@@ -13,6 +13,7 @@ namespace Integrated\MongoDB\Serializer\Tests\Normalizer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\MongoDB\Serializer\Normalizer\DocumentNormalizer;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\MongoDB\Serializer\Normalizer\DocumentNormalizer;
 class DocumentNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DocumentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var DocumentManager|MockObject
      */
     private $manger;
 

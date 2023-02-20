@@ -17,6 +17,7 @@ use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Task\Provider\ContentTypeProviderInterface;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTask;
 use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTaskHandler;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,17 +25,17 @@ use Integrated\Common\Solr\Task\Tasks\ContentTypeQueueTaskHandler;
 class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentTypeProviderInterface|MockObject
      */
     protected $provider;
 
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     protected $queue;
 
     /**
-     * @var JobFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobFactory|MockObject
      */
     protected $factory;
 
@@ -102,7 +103,7 @@ class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ContentTypeQueueTask|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeQueueTask|MockObject
      */
     protected function getTask($id)
     {
@@ -115,7 +116,7 @@ class ContentTypeQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getContent()
     {

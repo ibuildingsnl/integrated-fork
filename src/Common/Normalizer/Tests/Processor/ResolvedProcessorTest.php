@@ -17,6 +17,7 @@ use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessor;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,12 +25,12 @@ use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
 class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerFactoryInterface|MockObject
      */
     private $factory;
 
     /**
-     * @var ProcessorInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @var ProcessorInterface[]|MockObject[]
      */
     protected $processors = [];
 
@@ -110,7 +111,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerInterface|MockObject
      */
     protected function getContainer()
     {
@@ -118,7 +119,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Context|\PHPUnit_Framework_MockObject_MockObject
+     * @return Context|MockObject
      */
     protected function getContext()
     {

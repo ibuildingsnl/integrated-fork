@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @var ResolverInterface[]|MockObject[]
      */
     private $resolvers = [];
 

@@ -18,6 +18,7 @@ use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\EventListener\MongoDBReferencesListener;
 use Integrated\Common\Solr\Task\Tasks\Doctrine\MongoDBReferenceQueueTask;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,7 +26,7 @@ use Integrated\Common\Solr\Task\Tasks\Doctrine\MongoDBReferenceQueueTask;
 class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
@@ -100,7 +101,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getContent($id)
     {
@@ -115,7 +116,7 @@ class MongoDBReferencesListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object$document
      *
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|MockObject
      */
     protected function getEvent($document)
     {

@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Config;
 use Integrated\Common\Converter\Config\ConfigResolver;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\TypeProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +24,7 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     protected $CONFIG_INTERFACE = 'Integrated\\Common\\Converter\\Config\\ConfigInterface';
 
     /**
-     * @var TypeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TypeProviderInterface|MockObject
      */
     protected $provider;
 
@@ -134,7 +135,7 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConfigInterface|MockObject
      */
     protected function getType()
     {

@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Task\Event;
 
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Task\Event\ErrorEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,12 +21,12 @@ use Integrated\Common\Solr\Task\Event\ErrorEvent;
 class ErrorEventTest extends WorkerEventTest
 {
     /**
-     * @var \Exception|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Exception|MockObject
      */
     protected $exception;
 
     /**
-     * @var QueueMessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueMessageInterface|MockObject
      */
     protected $message;
 

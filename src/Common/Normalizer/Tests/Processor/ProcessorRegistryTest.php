@@ -14,6 +14,7 @@ namespace Integrated\Common\Normalizer\Tests\Processor;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistry;
 use Integrated\Common\Normalizer\Processor\RegistryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Integrated\Common\Normalizer\Processor\RegistryInterface;
 class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProcessorInterface[][]|\PHPUnit_Framework_MockObject_MockObject[][]
+     * @var ProcessorInterface[][]|MockObject[][]
      */
     protected $processors = [];
 

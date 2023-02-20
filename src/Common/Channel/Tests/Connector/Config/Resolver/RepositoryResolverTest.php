@@ -15,6 +15,7 @@ use Integrated\Common\Channel\Connector\Config\ConfigRepositoryInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\RepositoryResolver;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Converter\Config\ConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,7 +23,7 @@ use Integrated\Common\Converter\Config\ConfigInterface;
 class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigRepositoryInterface|MockObject
      */
     private $repository;
 
@@ -107,7 +108,7 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($name)
     {
@@ -120,7 +121,7 @@ class RepositoryResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ChannelInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel()
     {
