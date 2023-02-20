@@ -28,7 +28,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * @var UserManagerInterface
      */
-    private $manager;
+    protected $manager;
 
     public function __construct(UserManagerInterface $manager)
     {

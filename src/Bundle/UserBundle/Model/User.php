@@ -294,10 +294,7 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled = true)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = (bool) $enabled;
     }

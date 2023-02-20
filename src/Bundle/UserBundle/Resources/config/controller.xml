@@ -72,6 +72,23 @@
             <tag name="controller.service_arguments" />
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\Controller\Website\SecurityController">
+            <argument type="service" id="integrated_user.user.manager" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <service id="Integrated\Bundle\UserBundle\Controller\Website\RegistrationController">
+            <argument type="service" id="integrated_user.user.manager" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+            <argument type="service" id="Integrated\Bundle\UserBundle\Handler\RegisterHandler" />
+
+            <tag name="controller.service_arguments" />
+        </service>
+
     </services>
 
 </container>
