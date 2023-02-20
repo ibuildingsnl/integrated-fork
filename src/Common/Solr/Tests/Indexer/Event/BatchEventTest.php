@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Solr\Indexer\BatchOperation;
 use Integrated\Common\Solr\Indexer\Event\BatchEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Common\Solr\Indexer\Event\BatchEvent;
 class BatchEventTest extends AbstractEventTest
 {
     /**
-     * @var BatchOperation|\PHPUnit_Framework_MockObject_MockObject
+     * @var BatchOperation|MockObject
      */
     protected $operation;
 

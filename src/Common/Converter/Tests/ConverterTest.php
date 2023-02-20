@@ -18,6 +18,7 @@ use Integrated\Common\Converter\ContainerFactoryInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Converter;
 use Integrated\Common\Converter\Type\RegistryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,17 +26,17 @@ use Integrated\Common\Converter\Type\RegistryInterface;
 class ConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|MockObject
      */
     private $registry;
 
     /**
-     * @var ConfigResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var ContainerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerFactoryInterface|MockObject
      */
     private $factory;
 
@@ -156,7 +157,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerInterface|MockObject
      */
     protected function getContainer()
     {
@@ -170,7 +171,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param TypeConfigInterface[] $types
      *
-     * @return ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig(array $types)
     {
@@ -195,7 +196,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
      * @param string $name
      * @param array  $options
      *
-     * @return TypeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConfigInterface|MockObject
      */
     protected function getType($name, array $options = null)
     {

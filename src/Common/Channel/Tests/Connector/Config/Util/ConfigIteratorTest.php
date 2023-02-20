@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Config\Util;
 
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Util\ConfigIterator;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 
 /**
@@ -167,7 +168,7 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($name)
     {

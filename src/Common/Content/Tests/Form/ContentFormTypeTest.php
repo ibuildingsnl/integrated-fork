@@ -25,6 +25,7 @@ use Integrated\Common\Form\Mapping\AttributeInterface;
 use Integrated\Common\Form\Mapping\Attributes\Field;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -41,27 +42,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentTypeInterface|MockObject
      */
     private $type;
 
     /**
-     * @var MetadataFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MetadataFactoryInterface|MockObject
      */
     private $metadataFactory;
 
     /**
-     * @var MetadataInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MetadataInterface|MockObject
      */
     private $metadata;
 
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|MockObject
      */
     private $dispatcher;
 

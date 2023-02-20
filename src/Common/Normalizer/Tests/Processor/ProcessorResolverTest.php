@@ -20,6 +20,7 @@ use Integrated\Common\Normalizer\Processor\ResolverInterface;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestChild;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestClass;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -27,12 +28,12 @@ use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
 class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|MockObject
      */
     private $registry;
 
     /**
-     * @var ResolvedProcessorFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolvedProcessorFactoryInterface|MockObject
      */
     private $factory;
 
@@ -143,7 +144,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProcessorInterface|MockObject
      */
     protected function getProcessor()
     {
@@ -151,7 +152,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolvedProcessorFactoryTest|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolvedProcessorFactoryTest|MockObject
      */
     protected function getResolvedProcessor()
     {

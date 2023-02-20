@@ -17,6 +17,7 @@ use Integrated\Common\Solr\Task\Event\ErrorEvent;
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
 use Integrated\Common\Solr\Task\Registry;
 use Integrated\Common\Solr\Task\Worker;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -25,17 +26,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class WorkerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|MockObject
      */
     private $registry;
 
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|MockObject
      */
     private $dispatcher;
 
@@ -227,7 +228,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param mixed $task
      *
-     * @return QueueMessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueueMessageInterface|MockObject
      */
     protected function getMessage($task)
     {

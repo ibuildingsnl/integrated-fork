@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Indexer;
 
 use Integrated\Common\Solr\Indexer\Batch;
 use Integrated\Common\Solr\Indexer\BatchOperation;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -96,7 +97,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return BatchOperation|\PHPUnit_Framework_MockObject_MockObject
+     * @return BatchOperation|MockObject
      */
     protected function getOperation()
     {

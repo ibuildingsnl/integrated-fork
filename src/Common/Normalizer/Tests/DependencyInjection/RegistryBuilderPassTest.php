@@ -12,6 +12,7 @@
 namespace Integrated\Common\Normalizer\Tests\DependencyInjection;
 
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -86,7 +87,7 @@ class RegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @return ContainerBuilder|MockObject|ContainerBuilder
      */
     protected function getContainer()
     {

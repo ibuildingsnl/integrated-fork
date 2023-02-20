@@ -12,6 +12,7 @@
 namespace Integrated\Common\Form\Tests\DataTransformer;
 
 use Integrated\Common\Form\DataTransformer\ValuesToChoicesTransformer;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 
 /**
@@ -20,7 +21,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 class ValuesToChoicesTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ChoiceListInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChoiceListInterface|MockObject
      */
     private $choiceList;
 

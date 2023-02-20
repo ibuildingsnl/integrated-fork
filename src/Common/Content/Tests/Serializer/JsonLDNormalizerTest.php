@@ -14,6 +14,7 @@ namespace Integrated\Common\Content\Tests\Serializer;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Serializer\JsonLDNormalizer;
 use Integrated\Common\Normalizer\NormalizerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormalizerInterface;
 
 /**
@@ -22,7 +23,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormal
 class JsonLDNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var NormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var NormalizerInterface|MockObject
      */
     private $normalizer;
 
