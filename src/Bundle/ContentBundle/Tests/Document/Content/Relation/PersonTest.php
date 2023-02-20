@@ -151,7 +151,7 @@ class PersonTest extends RelationTest
     public function testGetAndSetPictureFunction()
     {
         /* @var $picture \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface | \PHPUnit_Framework_MockObject_MockObject */
-        $picture = $this->createMock('Integrated\Common\Content\Document\Storage\Embedded\StorageInterface');
+        $picture = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Image');
         $this->assertSame($picture, $this->person->setPicture($picture)->getPicture());
     }
 
