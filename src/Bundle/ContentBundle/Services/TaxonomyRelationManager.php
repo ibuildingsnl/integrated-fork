@@ -7,9 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
-use Integrated\Common\Services\Flusher;
-use Integrated\Common\Solr\Indexer\IndexerInterface;
-use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use Integrated\Common\Services\MainFlusher;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,14 +18,12 @@ use Symfony\Component\HttpFoundation\Request;
 class TaxonomyRelationManager
 {
     private $dm;
-    private QueueSubscriber $queueSubscriber;
-    private IndexerInterface $indexer;
+    private MainFlusher $flusher;
 
-    public function __construct(DocumentManager $dm, QueueSubscriber $queueSubscriber, IndexerInterface $indexer, private Flusher $flusher)
+    public function __construct(DocumentManager $dm, MainFlusher $flusher)
     {
         $this->dm = $dm;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->indexer = $indexer;
+        $this->flusher = $flusher;
     }
 
     public function manageRelationsWithParams(array $params): void
