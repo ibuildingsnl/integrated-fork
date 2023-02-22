@@ -685,7 +685,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return ?string
+     * @return string
      */
     public function getShortClassname(): string
     {
