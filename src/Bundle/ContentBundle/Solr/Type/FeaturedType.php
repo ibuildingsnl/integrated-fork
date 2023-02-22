@@ -17,7 +17,7 @@ use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 
 /**
- * @author Marijn Otte <marijn@e-active.nl>
+ * @author Bas Hosman <bas@twindigital.nl>
  *
  * @description Add usefull properties for filtering
  */

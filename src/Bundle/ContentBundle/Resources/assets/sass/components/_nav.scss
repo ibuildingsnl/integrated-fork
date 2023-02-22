@@ -163,12 +163,6 @@ body div#dropdown_overlay {
     &.new-contenttype {
         @include media(max-2xl) {
             ul.dropdown-menu {
-                //            left: 0;
-                //            position: fixed;
-                //            width: 100%;
-                //            top: 60px;
-                //            border-top-left-radius: 0px;
-                //            border-top-right-radius: 0px;
                 .list {
                     width: 140px;
                 }
