@@ -30,9 +30,8 @@ final class MainFlusher implements Flusher
             $uow->getScheduledDocumentDeletions(),
         ), fn (object $o) => $o instanceof Content));
 
-        $this->doctrine->flush();
-
         $this->queueSubscriber->setPriority(QueueInterface::PRIORITY_HIGH);
+        $this->doctrine->flush();
         try {
             $this->indexer->setOption('queue.size', $contentChanges * 2);
             $this->indexer->execute(); // @todo make more reliable
