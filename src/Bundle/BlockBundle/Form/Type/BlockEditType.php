@@ -58,11 +58,12 @@ class BlockEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $layouts = $this->layoutLocator->getLayouts($options['type']);
+
         if (\count($layouts) === 1) {
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($layouts) {
                 $data = $event->getData();
                 if ($data instanceof Block) {
-                    $data->setLayout($layouts[0]);
+                    $data->setLayout(current($layouts));
                 }
             });
         } else {
