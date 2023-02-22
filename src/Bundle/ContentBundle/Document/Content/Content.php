@@ -684,9 +684,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getShortClassname(): string
     {
         return (new \ReflectionClass($this))->getShortName();
