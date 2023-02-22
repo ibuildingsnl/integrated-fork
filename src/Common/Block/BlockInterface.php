@@ -38,6 +38,13 @@ interface BlockInterface
     public function getLayout();
 
     /**
+     * Get the CSS Class.
+     *
+     * @return string
+     */
+    public function getCssClass();
+
+    /**
      * Get the block type.
      *
      * @return string
