@@ -21,6 +21,7 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Content\Channel\ChannelContext;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -30,27 +31,27 @@ class BreadcrumbResolverTest extends TestCase
     public const TEMPLATE = 'default';
 
     /**
-     * @var DocumentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var DocumentManager|MockObject
      */
     protected $documentManager;
 
     /**
-     * @var urlResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var urlResolver|MockObject
      */
     protected $urlResolver;
 
     /**
-     * @var ChannelContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChannelContextInterface|MockObject
      */
     protected $channelContext;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|MockObject
      */
     protected $requestStack;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request|MockObject
      */
     protected $request;
 
@@ -90,11 +91,10 @@ class BreadcrumbResolverTest extends TestCase
         $this->documentManager
             ->expects($this->exactly(2))
             ->method('getRepository')
-            ->withConsecutive(
-                [$this->equalTo(Page::class)],
-                [$this->equalTo(Content::class)]
-            )
-            ->willReturnOnConsecutiveCalls($pageRepository, $contentRepository);
+            ->willReturnMap([
+                [Page::class, $pageRepository],
+                [Content::class, $contentRepository],
+            ]);
 
         $this->urlResolver
             ->expects($this->once())
@@ -115,21 +115,20 @@ class BreadcrumbResolverTest extends TestCase
         $pageRepository
             ->expects($this->exactly(4))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['path' => '/', 'channel.$id' => 'my_channel'])],
-                [$this->equalTo(['path' => '/my', 'channel.$id' => 'my_channel'])],
-                [$this->equalTo(['path' => '/my/page', 'channel.$id' => 'my_channel'])],
-            )
-            ->willReturnOnConsecutiveCalls(null, null, $page, null);
+            ->willReturnMap([
+                [['path' => '/', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my/page', 'channel.$id' => 'my_channel'], $page],
+                [['path' => '/my/page/article', 'channel.$id' => 'my_channel'], null],
+            ]);
 
         $contentRepository
             ->expects($this->exactly(2))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['slug' => 'my', 'channels.$id' => 'my_channel'])],
-                [$this->equalTo(['slug' => 'my-article', 'channels.$id' => 'my_channel'])]
-            )
-            ->willReturnOnConsecutiveCalls($article, null);
+            ->willReturnMap([
+                [['slug' => 'my', 'channels.$id' => 'my_channel'], $article],
+                [['slug' => 'my-article', 'channels.$id' => 'my_channel'], null],
+            ]);
 
         $expectedResult = [
             new BreadcrumbItem('My article', '/my'),

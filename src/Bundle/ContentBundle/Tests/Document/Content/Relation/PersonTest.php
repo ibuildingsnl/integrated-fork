@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Relation;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -95,7 +96,7 @@ class PersonTest extends RelationTest
      */
     public function testAddJobFunction()
     {
-        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | MockObject */
         $job = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job');
 
         // Asserts
@@ -108,7 +109,7 @@ class PersonTest extends RelationTest
      */
     public function testAddJobFunctionWithDuplicateJob()
     {
-        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | MockObject */
         $job = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job');
 
         // Add job two times
@@ -123,7 +124,7 @@ class PersonTest extends RelationTest
      */
     public function testRemoveJobFunction()
     {
-        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job | MockObject */
         $job = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job');
 
         // Add author
@@ -138,7 +139,7 @@ class PersonTest extends RelationTest
      */
     public function testRemoveAuthorFunctionWithUnknownAuthor()
     {
-        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $job \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $job = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job');
 
         // Assert
@@ -150,7 +151,7 @@ class PersonTest extends RelationTest
      */
     public function testGetAndSetPictureFunction()
     {
-        /* @var $picture \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $picture \Integrated\Common\Content\Document\Storage\Embedded\StorageInterface | MockObject */
         $picture = $this->createMock('Integrated\Common\Content\Document\Storage\Embedded\StorageInterface');
         $this->assertSame($picture, $this->person->setPicture($picture)->getPicture());
     }

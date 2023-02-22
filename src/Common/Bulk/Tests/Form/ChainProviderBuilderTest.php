@@ -14,6 +14,7 @@ namespace Integrated\Common\Bulk\Tests\Form;
 use Integrated\Common\Bulk\Form\ChainProvider;
 use Integrated\Common\Bulk\Form\ChainProviderBuilder;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -53,7 +54,7 @@ class ChainProviderBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigProviderInterface|MockObject
      */
     protected function getProvider()
     {

@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Location;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -66,7 +67,7 @@ class ArticleTest extends ContentTest
      */
     public function testAddAuthorFunction()
     {
-        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
         // Asserts
@@ -79,7 +80,7 @@ class ArticleTest extends ContentTest
      */
     public function testAddAuthorFunctionWithSameAuthor()
     {
-        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
         // Add author two times
@@ -94,7 +95,7 @@ class ArticleTest extends ContentTest
      */
     public function testRemoveAuthorFunction()
     {
-        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
         // Add author
@@ -109,7 +110,7 @@ class ArticleTest extends ContentTest
      */
     public function testRemoveAuthorFunctionWithUnknownAuthor()
     {
-        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
         // Assert

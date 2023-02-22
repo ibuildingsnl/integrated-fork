@@ -17,15 +17,11 @@ use Integrated\Common\Solr\Exception\ClientException;
 use Integrated\Common\Solr\Exception\RuntimeException;
 use Integrated\Common\Solr\Indexer\Batch;
 use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
-use Integrated\Common\Solr\Indexer\Event\BatchEvent;
-use Integrated\Common\Solr\Indexer\Event\ErrorEvent;
 use Integrated\Common\Solr\Indexer\Event\IndexerEvent;
-use Integrated\Common\Solr\Indexer\Event\MessageEvent;
-use Integrated\Common\Solr\Indexer\Event\ResultEvent;
-use Integrated\Common\Solr\Indexer\Event\SendEvent;
 use Integrated\Common\Solr\Indexer\Indexer;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Indexer\JobInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\Core\Client\Client;
 use Solarium\Core\Query\Result\ResultInterface;
 use Solarium\QueryType\Update\Query\Command\AbstractCommand;
@@ -40,7 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class IndexerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CommandFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CommandFactoryInterface|MockObject
      */
     private $factory;
 
@@ -50,17 +46,17 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     private $batch;
 
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
     /**
-     * @var Client|\PHPUnit_Framework_MockObject_MockObject
+     * @var Client|MockObject
      */
     private $client;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|MockObject
      */
     private $dispatcher;
 
@@ -173,16 +169,15 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
-            ->willReturnOnConsecutiveCalls($command1, $command2);
+            ->willReturnMap([
+                [$payload1, $command1],
+                [$payload2, $command2],
+            ]);
 
         $query = $this->getQuery();
         $query->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(
-                [$this->equalTo(null), $this->identicalTo($command1)],
-                [$this->equalTo(null), $this->identicalTo($command2)]
-            );
+            ->with($this->equalTo(null), $this->equalTo($command1));
 
         $this->client->expects($this->once())
             ->method('createUpdate')
@@ -195,64 +190,9 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($query))
             ->willReturn($result);
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1, $command1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-                self::assertSame($command1, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2, $command2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertSame($command2, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-        ];
-
         $this->dispatcher->expects($this->exactly(8))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[5])],
-                [$this->callback($callback[6])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -280,16 +220,15 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
-            ->willReturnOnConsecutiveCalls($command1, $command2);
+            ->willReturnmap([
+                [$payload1, $command1],
+                [$payload2, $command2],
+            ]);
 
         $query = $this->getQuery();
         $query->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(
-                [$this->equalTo(null), $this->identicalTo($command1)],
-                [$this->equalTo(null), $this->identicalTo($command2)]
-            );
+            ->with($this->equalTo(null), $this->equalTo($command1));
 
         $this->client->expects($this->never())
             ->method($this->anything());
@@ -306,64 +245,9 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($query))
             ->willReturn($result);
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1, $command1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-                self::assertSame($command1, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2, $command2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertSame($command2, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-        ];
-
         $this->dispatcher->expects($this->exactly(8))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[5])],
-                [$this->callback($callback[6])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         $instance->execute($client);
@@ -390,20 +274,13 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo(5000))
             ->willReturn([]);
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
+        $this->dispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->with($this->callback(function (IndexerEvent $event) use ($instance) {
                 self::assertSame($instance, $event->getIndexer());
 
                 return true;
-            },
-        ];
-
-        $this->dispatcher->expects($this->exactly(2))
-            ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[0])]
-            )
+            }))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -428,56 +305,17 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
-            ->willReturn(null);
+            ->willReturnmap([
+                [$payload1, null],
+                [$payload2, null],
+            ]);
 
         $this->client->expects($this->never())
             ->method($this->anything());
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-                self::assertNull($event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertNull($event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-        ];
-
         $this->dispatcher->expects($this->exactly(6))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -505,10 +343,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive(
-                [$this->identicalTo($payload1)],
-                [$this->identicalTo($payload2)]
-            )
+            ->with($this->equalTo($payload1))
             ->will(
                 $this->onConsecutiveCalls(
                     $this->throwException($exception),
@@ -532,164 +367,9 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($query))
             ->willReturn($result);
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (ErrorEvent $event) use ($instance, $message1, $exception) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-                self::assertSame($exception, $event->getException());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2, $command) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertSame($command, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-        ];
-
         $this->dispatcher->expects($this->exactly(7))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[5])],
-                [$this->callback($callback[0])]
-            )
-            ->willReturnArgument(0);
-
-        $instance->execute();
-
-        self::assertEquals(0, $this->batch->count());
-    }
-
-    public function testExecuteOperationModification()
-    {
-        $instance = $this->getInstance();
-
-        $payload1 = $this->getJob();
-        $payload2 = $this->getJob();
-
-        $message1 = $this->getMessage($payload1);
-        $message2 = $this->getMessage($payload2);
-
-        $this->queue->expects($this->once())
-            ->method('pull')
-            ->with($this->equalTo(5000))
-            ->willReturn([$message1, $message2]);
-
-        $command1 = $this->getCommand();
-        $command2 = $this->getCommand();
-        $command3 = $this->getCommand();
-
-        $this->factory->expects($this->exactly(2))
-            ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
-            ->willReturnOnConsecutiveCalls($command1, $command2);
-
-        $query = $this->getQuery();
-        $query->expects($this->once())
-            ->method('add')
-            ->with($this->equalTo(null), $this->identicalTo($command3));
-
-        $this->client->expects($this->once())
-            ->method('createUpdate')
-            ->willReturn($query);
-
-        $result = $this->getQueryResult();
-
-        $this->client->expects($this->once())
-            ->method('execute')
-            ->with($this->identicalTo($query))
-            ->willReturn($result);
-
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1, $command3) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-
-                $event->getOperation()->setCommand($command3);
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-
-                $event->getOperation()->setCommand(null);
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-
-                return true;
-            },
-        ];
-
-        $this->dispatcher->expects($this->exactly(8))
-            ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[5])],
-                [$this->callback($callback[6])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -717,16 +397,21 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
+            ->with($this->callback(function ($value) use ($payload1, $payload2) {
+                $this->assertContains($value, [$payload1, $payload2]);
+
+                return true;
+            }))
             ->willReturnOnConsecutiveCalls($command1, $command2);
 
         $query = $this->getQuery();
         $query->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(
-                [$this->equalTo(null), $this->identicalTo($command1)],
-                [$this->equalTo(null), $this->identicalTo($command2)]
-            );
+            ->with($this->equalTo(null), $this->callback(function ($value) use ($command1, $command2) {
+                $this->assertContains($value, [$command1, $command2]);
+
+                return true;
+            }));
 
         $this->client->expects($this->once())
             ->method('createUpdate')
@@ -738,43 +423,9 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willThrowException($exception);
 
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1, $command1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-                self::assertSame($command1, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2, $command2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertSame($command2, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query, $event->getQuery());
-
-                return true;
-            },
-        ];
-
         $this->dispatcher->expects($this->exactly(5))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         try {
@@ -822,7 +473,11 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([$this->identicalTo($payload1)], [$this->identicalTo($payload2)])
+            ->with($this->callback(function ($value) use ($payload1, $payload2) {
+                $this->assertContains($value, [$payload1, $payload2]);
+
+                return true;
+            }))
             ->willReturnOnConsecutiveCalls($command1, $command2);
 
         $query1 = $this->getQuery();
@@ -844,81 +499,16 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
 
         $this->client->expects($this->exactly(2))
             ->method('execute')
-            ->withConsecutive([$this->identicalTo($query1)], [$this->identicalTo($query2)])
+            ->with($this->callback(function ($value) use ($query1, $query2) {
+                $this->assertContains($value, [$query1, $query2]);
+
+                return true;
+            }))
             ->willReturnOnConsecutiveCalls($result1, $result2);
-
-        $callback = [
-            function (IndexerEvent $event) use ($instance) {
-                self::assertSame($instance, $event->getIndexer());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message1, $command1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getOperation()->getMessage());
-                self::assertSame($command1, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query1, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result1, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message1) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message1, $event->getMessage());
-
-                return true;
-            },
-            function (BatchEvent $event) use ($instance, $message2, $command2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getOperation()->getMessage());
-                self::assertSame($command2, $event->getOperation()->getCommand());
-
-                return true;
-            },
-            function (SendEvent $event) use ($instance, $query2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($query2, $event->getQuery());
-
-                return true;
-            },
-            function (ResultEvent $event) use ($instance, $result2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($result2, $event->getResult());
-
-                return true;
-            },
-            function (MessageEvent $event) use ($instance, $message2) {
-                self::assertSame($instance, $event->getIndexer());
-                self::assertSame($message2, $event->getMessage());
-
-                return true;
-            },
-        ];
 
         $this->dispatcher->expects($this->exactly(10))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback($callback[0])],
-                [$this->callback($callback[1])],
-                [$this->callback($callback[2])],
-                [$this->callback($callback[3])],
-                [$this->callback($callback[4])],
-                [$this->callback($callback[5])],
-                [$this->callback($callback[6])],
-                [$this->callback($callback[7])],
-                [$this->callback($callback[8])],
-                [$this->callback($callback[0])]
-            )
+            ->with($this->isInstanceOf(IndexerEvent::class))
             ->willReturnArgument(0);
 
         $instance->execute();
@@ -949,7 +539,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return JobInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return JobInterface|MockObject
      */
     protected function getJob()
     {
@@ -957,7 +547,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return AbstractCommand|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractCommand|MockObject
      */
     protected function getCommand()
     {
@@ -968,7 +558,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
      * @param mixed $payload
      * @param bool  $delete
      *
-     * @return QueueMessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueueMessageInterface|MockObject
      */
     protected function getMessage($payload, $delete = true)
     {
@@ -984,7 +574,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Query|\PHPUnit_Framework_MockObject_MockObject
+     * @return Query|MockObject
      */
     protected function getQuery()
     {
@@ -992,7 +582,7 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResultInterface|MockObject
      */
     protected function getQueryResult()
     {

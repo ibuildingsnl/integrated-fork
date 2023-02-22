@@ -17,6 +17,7 @@ use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Common\Queue\QueueInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,7 +25,7 @@ use Integrated\Common\Queue\QueueInterface;
 class QueueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     protected $queue;
 
@@ -157,7 +158,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|MockObject
      */
     protected function getEvent($object)
     {
@@ -170,7 +171,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return State|\PHPUnit_Framework_MockObject_MockObject
+     * @return State|MockObject
      */
     protected function getState($id)
     {
@@ -183,7 +184,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @return Definition|MockObject
      */
     protected function getDefinition($id)
     {

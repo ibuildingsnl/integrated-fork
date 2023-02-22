@@ -14,6 +14,7 @@ namespace Integrated\Common\Bulk\Tests\Form;
 use Integrated\Common\Bulk\Form\ActionMatcherInterface;
 use Integrated\Common\Bulk\Form\Config;
 use Integrated\Common\Bulk\Form\ConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Integrated\Common\Bulk\Form\ConfigInterface;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ActionMatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionMatcherInterface|MockObject
      */
     private $matcher;
 

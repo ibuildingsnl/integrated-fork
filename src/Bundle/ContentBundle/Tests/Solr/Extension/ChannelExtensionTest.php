@@ -18,6 +18,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension
@@ -132,7 +133,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
     {

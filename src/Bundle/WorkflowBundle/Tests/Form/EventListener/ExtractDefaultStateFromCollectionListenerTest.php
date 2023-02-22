@@ -13,6 +13,7 @@ namespace Integrated\Bundle\WorkflowBundle\Tests\Form\EventListener;
 
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\ExtractDefaultStateFromCollectionListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormEvents;
 
 /**
@@ -21,17 +22,17 @@ use Symfony\Component\Form\FormEvents;
 class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Symfony\Component\Form\FormInterface|MockObject
      */
     private $form;
 
     /**
-     * @var \Symfony\Component\Form\FormEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Symfony\Component\Form\FormEvent|MockObject
      */
     private $event;
 
     /**
-     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Integrated\Bundle\WorkflowBundle\Entity\Definition|MockObject
      */
     private $definition;
 
@@ -341,13 +342,13 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
 
         $states = $this->getForm();
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state1 */
+        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject $state1 */
         $state1 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state2 */
+        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject $state2 */
         $state2 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
-        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|\PHPUnit_Framework_MockObject_MockObject $state3 */
+        /** @var \Integrated\Bundle\WorkflowBundle\Entity\Definition\State|MockObject $state3 */
         $state3 = $this->createMock('Integrated\Bundle\WorkflowBundle\Entity\Definition\State');
 
         // Get three different form types
@@ -387,11 +388,11 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      * @param null   $withDefaultState
      * @param string $getOrSet
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function getFormChild(State $state = null, $withDefaultState = null, $getOrSet = 'get')
     {
-        /** @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject $child1 */
+        /** @var \Symfony\Component\Form\FormInterface|MockObject $child1 */
         $child = $this->createMock('Symfony\Component\Form\FormInterface');
 
         // Stub getData, returns $state
@@ -431,7 +432,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
                     ->willReturn(true)
                 ;
 
-                /** @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject $default */
+                /** @var \Symfony\Component\Form\FormInterface|MockObject $default */
                 $default = $this->createMock('Symfony\Component\Form\FormInterface');
 
                 // Stub get, returns $default
@@ -473,7 +474,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     /**
      * @param mixed $default
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
+     * @return MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
      */
     protected function getState($default = null)
     {
@@ -493,7 +494,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
     /**
      * @param mixed $data
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject | \Symfony\Component\Form\FormInterface'
+     * @return MockObject | \Symfony\Component\Form\FormInterface'
      */
     protected function getForm($data = null)
     {
@@ -511,7 +512,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      * @param mixed $state
      * @param mixed $default
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
+     * @return MockObject|\Integrated\Bundle\WorkflowBundle\Entity\Definition\State
      */
     protected function getChild($state = null, $default = null)
     {
