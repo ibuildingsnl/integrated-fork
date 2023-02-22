@@ -2,6 +2,256 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
+{#    {{ dump(categories) }}#}
+    <div>GESELECTEERDE CATEGORIEEN</div>
+    <div id="enabled_categories" class="p-2 m-2">
+        <span>test</span>
+    </div>
+
+    <div>PAS SELECTIE AAN</div>
+    <div id="categories_checkboxes">
+        {% for category in categories %}
+            {% if category.depth == 0 %}
+                {% set real_title = category.title %}
+                {% set level0 = category.title %}
+
+                {% set level0channels = category.channels %}
+                {% set parent_channels = category.channels %}
+            {% endif %}
+
+            {% if category.depth == 1 %}
+                {% set real_title = level0 ~ ' > ' ~ category.title %}
+                {% set level1 = category.title %}
+
+                {% set level1channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels) %}
+            {% endif %}
+
+            {% if category.depth == 2 %}
+                {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                {% set level2 = category.title %}
+
+                {% set level2channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
+            {% endif %}
+
+{#            <div>{{ real_title }}</div>#}
+            <div data-fulltitle="{{ real_title }}"
+                 data-title="{{ category.title }}"
+                 data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                 data-taxonomyId="{{ category.taxonomyId }}"
+                 data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                {% for i in range(0, category.depth) %} - {% endfor %}
+                <input type="checkbox" data-id="{{ category.taxonomyId }}">
+                <label>{{ category.title }}</label> - {{ category.taxonomyId }}
+                {% if category.channels|length > 0 %}
+                    (
+                    {% for channel in category.channels %}<span>{{ channel.getId }}, </span> {% endfor %}
+                    )
+                {% endif %}
+{#                {% if parent_channels|length > 0 %}#}
+{#                    ALL: {#}
+{#                    {% for channel in parent_channels %}<span>{{ channel.getId }}, </span> {% endfor %}#}
+{#                    }#}
+{#                {% endif %}#}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div>FORM INPUT:</div>
+        <input type="text" id="new" name="integrated_content[relations][categories]" data-title="CATEGORIES" data-relation="categories" data-multiple="1" data-relationtype="taxonomy" data-icon="fafa" data-location="sidebar" data-types="[{&quot;type&quot;:&quot;newcategories&quot;,&quot;name&quot;:&quot;newcategories&quot;}]" placeholder="Categories" class="form-contro w-full border border-black" value="">
+{#        <input type="text" id="integrated_content_relations_categories" name="integrated_content[relations][categories]" data-title="CATEGORIES" data-relation="categories" data-multiple="1" data-relationtype="taxonomy" data-icon="fafa" data-location="sidebar" data-types="[{&quot;type&quot;:&quot;newcategories&quot;,&quot;name&quot;:&quot;newcategories&quot;}]" placeholder="Categories" class="form-control" value="3ca4108e4ee339c4a3e127d2b728b8ee,ecac5f54b42f3451b5599e9f502c0db8,5164f9651d1e37799993f827c908911b">`#}
+    <div>FULLSCREEN BUTTON:</div>
+    <button onclick="toggle_fullscreen()" class="p-2 border border-black bg-blue-200">Toggle fullscreen</button>
+
+    <div id="category_selection_foldout" class="hidden">
+        <div>FULLSCREEN MODE:</div>
+        <div id="categories_checkboxes_foldout">
+            <div class="">
+                {% for category in categories %}
+                    {% if category.depth == 0 %}
+                        {% set real_title = category.title %}
+                        {% set level0 = category.title %}
+
+                        {% set level0channels = category.channels %}
+                        {% set parent_channels = category.channels %}
+
+                    {% endif %}
+                    {% if category.depth == 1 %}
+                        {% set real_title = level0 ~ ' > ' ~ category.title %}
+                        {% set level1 = category.title %}
+
+                        {% set level1channels = category.channels %}
+                        {% set parent_channels = category.channels|merge(level0channels) %}
+
+                    {% endif %}
+                    {% if category.depth == 2 %}
+                        {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                        {% set level2 = category.title %}
+
+                        {% set level2channels = category.channels %}
+                        {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
+
+                    {% endif %}
+                    <div data-fulltitle="{{ real_title }}"
+                         data-title="{{ category.title }}"
+                         data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                         data-taxonomyId="{{ category.taxonomyId }}"
+                         data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                        {% for i in range(0, category.depth) %} - {% endfor %}
+                        <input type="checkbox" data-id="{{ category.taxonomyId }}">
+                        <label>{{ category.title }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let states = []
+        let enabled_channels = []
+        function setup(checkboxes) {
+            result = {}
+            for (checkbox of checkboxes) {
+                if (checkbox.hasAttribute('checked')) {
+                    result[checkbox.value] = true
+                } else {
+                    result[checkbox.value] = false
+                }
+            }
+            return result
+        }
+
+        function toggle_fullscreen() {
+            console.log("toggle")
+            $('#category_selection_foldout').toggleClass("hidden")
+        }
+
+        function get_enabled_states(checkboxes) {
+            result = []
+            for (checkbox of checkboxes) {
+                if (checkbox.hasAttribute('checked')) {
+                    result.push(checkbox.value)
+                }
+            }
+            return result
+        }
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            const checkboxes = document.querySelectorAll('#integrated_content_channels input[type=checkbox]')
+
+            states = setup(checkboxes)
+
+            enabled_channels = document.querySelector('#enabled_channels').dataset.ids.split(",").filter(n => n)
+
+            enabled_states = get_enabled_states(checkboxes)
+            console.log(enabled_states)
+
+            checkboxes.forEach(item => {
+                item.addEventListener('change', alterState)
+            })
+
+            const categoryCheckboxes = document.querySelectorAll('#categories_checkboxes input[type=checkbox]')
+            categoryCheckboxes.forEach(item => {
+                item.addEventListener('change', handleCategoryClick)
+            })
+
+            showEnabledCategories()
+
+            enableCheckboxes()
+        });
+
+        function handleCategoryClick(event) {
+            const current_value = document.querySelector('#integrated_content_relations_categories').value.split(',').filter(n => n)
+            if (current_value.includes(event.target.dataset.id)) {
+                //here we remove
+                document.querySelector('#new').value = current_value.filter(n => n != event.target.dataset.id).toString()
+                document.querySelector('#integrated_content_relations_categories').value = current_value.filter(n => n != event.target.dataset.id).toString()
+            } else {
+                //here we add
+                document.querySelector('#new').value = document.querySelector('#integrated_content_relations_categories').value + "," + event.target.dataset.id
+                document.querySelector('#integrated_content_relations_categories').value = document.querySelector('#integrated_content_relations_categories').value + "," + event.target.dataset.id
+            }
+            showEnabledCategories()
+        }
+
+        function showEnabledCategories() {
+            const current_value = document.querySelector('#integrated_content_relations_categories').value.split(',').filter(n => n)
+            const categories_checkboxes = document.querySelectorAll('#categories_checkboxes div')
+            document.getElementById('enabled_categories').innerHTML = "";
+            for (checkbox of categories_checkboxes) {
+                if (current_value.includes( checkbox.querySelector('input').dataset.id)) {
+                    appendThisToThat(checkbox.dataset.fulltitle, "enabled_categories")
+                }
+            }
+        }
+
+        function appendThisToThat(thiss, that) {
+            const node = document.createElement("span");
+            node.classList.add('bg-blue-200', 'rounded-full', 'border', 'border-grey', 'p-2', 'm-2', 'text-xl');
+            const textnode = document.createTextNode(thiss);
+            node.appendChild(textnode);
+            document.getElementById(that).appendChild(node);
+        }
+
+        function enableCheckboxes(enabled_channels) {
+            const current_value = document.querySelector('#integrated_content_relations_categories').value.split(',').filter(n => n)
+            const categories_checkboxes = document.querySelectorAll('#categories_checkboxes div input')
+            for (checkbox of categories_checkboxes) {
+                let state = checkbox.value
+                if (current_value.includes( checkbox.dataset.id)) {
+                    checkbox.checked = true
+                }
+            }
+        }
+
+        function alterState(event) {
+            states[event.target.value] = !states[event.target.value]
+
+            if (enabled_states.includes(event.target.value)) {
+                enabled_states = enabled_states.filter(item => item != event.target.value)
+            } else {
+                enabled_states.push(event.target.value)
+            }
+
+            filterCheckboxes()
+        }
+
+        function filterCheckboxes() {
+            const PARENT_OR_CHILD = 'parent'
+            const categories_checkboxes = document.querySelectorAll('#categories_checkboxes div')
+            for (checkbox of categories_checkboxes) {
+                let show_category = enabled_states.length == 0 || false
+
+                if (enabled_states.length != 0) {
+                    if (PARENT_OR_CHILD == 'child') {
+                        for (channel of checkbox.dataset.channels.split(",").filter(n => n)) {
+                            if (enabled_states.includes(channel)) {
+                                show_category = true
+                                break;
+                            }
+                        }
+                    } else if (PARENT_OR_CHILD == 'parent') {
+                        for (channel of checkbox.dataset.parentchannels.split(",").filter(n => n)) {
+                            if (enabled_states.includes(channel)) {
+                                show_category = true
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (show_category == true) {
+                    checkbox.classList.remove('hidden')
+                } else {
+                    checkbox.classList.add('hidden')
+                }
+            }
+
+        }
+    </script>
+
     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
@@ -166,13 +416,32 @@
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
                                             <div class="aside-item-list">
+
+                                                {{ dump(relation.vars.attr['data-title']) }}
+
                                                 <div class="aside-item-list-container relation">
                                                     {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                             relation: relation,
                                                             form_relations: formRelations|default(null),
                                                         } %}
+
+                                                        {#                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy' %}#}
+{#                                                    {% elseif relation.vars.attr['data-title'] == 'CATEGORIES' %}#}
+
+{#                                                        <div id="enabled_channels" data-ids="{{ relation.vars['data'] }}">#}
+
+{#                                                        </div>#}
+
+{#                                                    {{ dump(relation.vars['data']) }}#}
+{#                                                    {{ dump(form.row) }}#}
+
                                                     {% else %}
+                                                        {% if relation.vars.attr['data-title'] == 'CATEGORIES' %}
+                                                            <div id="enabled_channels" data-ids="{{ relation.vars['data'] }}">
+
+                                                            </div>
+                                                        {% endif %}
                                                         <select
                                                             multiple
                                                             id="{{ relation.vars.name }}"
@@ -226,11 +495,18 @@
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
 
+
+
                                             {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                 {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                     relation: relation,
                                                     form_relations: formRelations|default(null),
                                                 } %}
+
+
+                                            {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy' %}
+                                                TAXONOMY
+
 
                                             {% else %}
                                                 <select

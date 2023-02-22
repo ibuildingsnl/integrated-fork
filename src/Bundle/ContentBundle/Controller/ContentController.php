@@ -21,6 +21,7 @@ use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -102,6 +103,11 @@ class ContentController extends AbstractController
      */
     private $mediaProvider;
 
+    /**
+     * @var TaxonomyIndexer
+     */
+    private $taxonomyIndexer;
+
     public function __construct(
         ResolverInterface $resolver,
         ContentTypeManager $contentTypeManager,
@@ -112,7 +118,8 @@ class ContentController extends AbstractController
         Manager $lockManager,
         UserManagerInterface $userManager,
         ImageExtension $imageExtension,
-        MediaProvider $mediaProvider
+        MediaProvider $mediaProvider,
+        TaxonomyIndexer $taxonomyIndexer
     ) {
         $this->resolver = $resolver;
         $this->contentTypeManager = $contentTypeManager;
@@ -124,6 +131,7 @@ class ContentController extends AbstractController
         $this->userManager = $userManager;
         $this->imageExtension = $imageExtension;
         $this->mediaProvider = $mediaProvider;
+        $this->taxonomyIndexer = $taxonomyIndexer;
     }
 
     /**
@@ -525,7 +533,10 @@ class ContentController extends AbstractController
             }
         }
 
+        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('newcategories');
+
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+            'categories' => $categories,
             'editable' => true,
             'type' => $contentType,
             'form' => $form->createView(),
@@ -659,8 +670,11 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
+        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('newcategories');
+
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
+            'categories' => $categories,
             'type' => $contentType,
             'form' => $form->createView(),
             'formRelations' => $this->getFormRelations($form),
