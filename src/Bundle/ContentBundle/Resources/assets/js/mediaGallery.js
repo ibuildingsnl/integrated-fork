@@ -110,7 +110,7 @@ function handleUserChoice() {
 function handleMediaClick(event) {
     $('.media-gallery').addClass('show-edit-form');
     $('.media-edit-panel').removeClass('hide');
-    $('#editpaneliframe').attr('src', '/admin/content/'+event.target.closest('.media-item').dataset.id + '/iframe');
+    $('#editpaneliframe').attr('src', '/admin/content/'+event.target.closest('.media-item').dataset.id + '/iframe.html');
 }
 
 function handleMediaEditClose(event) {
