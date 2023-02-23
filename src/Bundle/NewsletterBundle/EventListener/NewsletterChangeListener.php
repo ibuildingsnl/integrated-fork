@@ -27,7 +27,7 @@ class NewsletterChangeListener implements EventSubscriberInterface
     {
         if ($event->getContent() instanceof Newsletter) {
             // @todo check if in generation window & if so, render & store newsletter
-            dd($event->getContent());
+//            dd($event->getContent());
         }
     }
 }

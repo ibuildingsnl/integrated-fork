@@ -32,7 +32,7 @@ final class GeneratingEmailsTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (glob(__DIR__ . '/Files/') ?: [] as $path) {
+        foreach (glob(__DIR__ . '/Files/*') ?: [] as $path) {
             if (is_file($path)) {
                 unlink($path);
             }
@@ -51,7 +51,7 @@ final class GeneratingEmailsTest extends TestCase
             $newsletter
         ));
 
-        self::assertFileExists(__DIR__ . 'Files/2000/01/01/1200.html');
+        self::assertFileExists(__DIR__ . '/Files/2000/01/01/1200.html');
     }
 
     public function testNotGeneratingWhenOutsideWindow()
@@ -66,8 +66,8 @@ final class GeneratingEmailsTest extends TestCase
             $newsletter
         ));
 
-        self::assertDirectoryDoesNotExist(__DIR__ . 'Files/2000/');
-        self::assertFileDoesNotExist(__DIR__ . 'Files/2000/01/01/1200.html');
+        self::assertDirectoryDoesNotExist(__DIR__ . '/Files/2000/');
+        self::assertFileDoesNotExist(__DIR__ . '/Files/2000/01/01/1200.html');
     }
 
     public function testIgnoreNonNewsletters()
@@ -80,7 +80,7 @@ final class GeneratingEmailsTest extends TestCase
             $article
         ));
 
-        self::assertDirectoryDoesNotExist(__DIR__ . 'Files/2000/');
+        self::assertDirectoryDoesNotExist(__DIR__ . '/Files/2000/');
     }
 
     private function contentType(string $type, string $class): ContentType
