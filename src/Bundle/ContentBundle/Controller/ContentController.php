@@ -641,6 +641,12 @@ class ContentController extends AbstractController
             // not lost and there is a new change to get a lock on the content.
         }
 
+        if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
+            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } else {
+            $renderTo = '@IntegratedContent/content/edit.html.twig';
+        }
+
         if ($locking['locked']) {
             // the document is locked so display display a error message explaining that
             // the user can not edit this page will the lock is there.
