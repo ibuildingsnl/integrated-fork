@@ -1,0 +1,112 @@
+<div id="taxonomy_category_{{ relation.vars.attr['data-title'] }}">
+
+    <div class="enabled_categories_pills" class="p-2 m-2">
+    </div>
+
+    <div class="categories_headers flex flex-wrap">
+        {% for category in categories %}
+            {% if category.depth == 0 %}
+                {% set real_title = category.title %}
+                {% set level0 = category.title %}
+
+                {% set level0channels = category.channels %}
+                {% set parent_channels = category.channels %}
+                <div class="" data-fulltitle="{{ real_title }}"
+                     data-title="{{ category.title }}"
+                     data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                     data-taxonomyId="{{ category.taxonomyId }}"
+                     data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                    <div>{{ category.title }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div id="categories_checkboxes" class="categories_checkboxes">
+        {% for category in categories %}
+            {% if category.depth == 0 %}
+                {% set real_title = category.title %}
+                {% set level0 = category.title %}
+
+                {% set level0channels = category.channels %}
+                {% set parent_channels = category.channels %}
+            {% endif %}
+
+            {% if category.depth == 1 %}
+                {% set real_title = level0 ~ ' > ' ~ category.title %}
+                {% set level1 = category.title %}
+
+                {% set level1channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels) %}
+            {% endif %}
+
+            {% if category.depth == 2 %}
+                {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                {% set level2 = category.title %}
+
+                {% set level2channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
+            {% endif %}
+
+            <div data-fulltitle="{{ real_title }}"
+                 data-title="{{ category.title }}"
+                 data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                 data-taxonomyId="{{ category.taxonomyId }}"
+                 data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                {% for i in range(0, category.depth) %} - {% endfor %}
+                <input type="checkbox" data-id="{{ category.taxonomyId }}">
+                <label>{{ category.title }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div onclick="toggleFullscreen()" class="p-2 border border-black bg-white">Toggle fullscreen</div>
+
+    <div id="categories_checkboxes_foldout" class="categories_checkboxes hidden">
+        {% for category in categories %}
+            {% if category.depth == 0 %}
+                {% set real_title = category.title %}
+                {% set level0 = category.title %}
+
+                {% set level0channels = category.channels %}
+                {% set parent_channels = category.channels %}
+            {% endif %}
+
+            {% if category.depth == 1 %}
+                {% set real_title = level0 ~ ' > ' ~ category.title %}
+                {% set level1 = category.title %}
+
+                {% set level1channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels) %}
+            {% endif %}
+
+            {% if category.depth == 2 %}
+                {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                {% set level2 = category.title %}
+
+                {% set level2channels = category.channels %}
+                {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
+            {% endif %}
+
+            <div
+                    data-fulltitle="{{ real_title }}"
+                    data-title="{{ category.title }}"
+                    data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                    data-taxonomyId="{{ category.taxonomyId }}"
+                    data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                {% for i in range(0, category.depth) %} - {% endfor %}
+                <input type="checkbox" data-id="{{ category.taxonomyId }}">
+                <label>{{ category.title }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+<div id="enabled_categories" data-ids="{{ relation.vars['data'] }}">
+</div>
+
+<script>
+    console.log("LOADING TAXONOMY CATEGORIES")
+</script>
