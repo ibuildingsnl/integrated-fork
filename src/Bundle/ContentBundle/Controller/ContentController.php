@@ -544,10 +544,8 @@ class ContentController extends AbstractController
     {
         if ($request->getRequestFormat() == 'iframe.html') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
-            $route = 'integrated_content_content_edit_iframe';
         } else {
             $renderTo = '@IntegratedContent/content/edit.html.twig';
-            $route = 'integrated_content_content_edit';
         }
 
         /** @var ContentTypeInterface $contentType */
@@ -575,7 +573,7 @@ class ContentController extends AbstractController
                             'lock' => $locking['lock']->getId(),
                         ]);
 
-                        return $this->redirectToRoute($route, $parameters);
+                        return $this->redirectToRoute($request->get('_route'), $parameters);
                     }
 
                     $locking['locked'] = false;
@@ -605,7 +603,7 @@ class ContentController extends AbstractController
             }
 
             if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirectToRoute($route, ['id' => $content->getId()]);
+                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
             }
 
             // this is not rest compatible since a button click is required to save
@@ -637,7 +635,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute($route, ['id' => $content->getId()]);
+                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.
@@ -1099,15 +1097,9 @@ class ContentController extends AbstractController
             $parameters = array_merge($request->query->all(), $parameters);
         }
 
-        if ($request->getRequestFormat() == 'iframe.html') {
-            $route = 'integrated_content_content_edit_iframe';
-        } else {
-            $route = 'integrated_content_content_edit';
-        }
-
         $options = [
             'action' => $this->generateUrl(
-                $route,
+                $request->get('_route'),
                 $parameters
             ),
             'method' => 'PUT',
