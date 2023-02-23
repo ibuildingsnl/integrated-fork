@@ -14,6 +14,8 @@
             <parameter>Integrated\Bundle\ContentBundle\Document\Content\Relation\Company</parameter>
         </parameter>
 
+        <parameter id="integrated_newsletter.storage.directory">/var/newsletters/</parameter>
+
     </parameters>
 
     <services>
@@ -39,6 +41,9 @@
         </service>
 
         <service id="integrated_newsletter.form.listener.newsletter_change_listener" class="Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener">
+            <argument type="service" id="integrated_newsletter.clock" />
+            <argument>%integrated_newsletter.storage.directory%</argument>
+
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 

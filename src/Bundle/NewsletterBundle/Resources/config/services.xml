@@ -34,5 +34,8 @@
             <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument type="service" id="twig" />
         </service>
+
+        <service id="integrated_newsletter.clock" class="Stratadox\Clock\DateTimeClock" />
+
     </services>
 </container>

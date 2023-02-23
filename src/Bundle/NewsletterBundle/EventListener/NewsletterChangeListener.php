@@ -5,10 +5,17 @@ namespace Integrated\Bundle\NewsletterBundle\EventListener;
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
+use Stratadox\Clock\Clock;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NewsletterChangeListener implements EventSubscriberInterface
 {
+    public function __construct(
+        private readonly Clock $clock,
+        private readonly string $storageDirectory,
+    ) {
+    }
+
     public static function getSubscribedEvents()
     {
         return [
