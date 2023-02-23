@@ -25,7 +25,7 @@
 		<default key="filter">null</default>
 	</route>
 
-	<route id="integrated_content_content_edit_iframe" path="/{id}/iframe"  methods="GET, PUT">
+	<route id="integrated_content_content_edit_iframe" path="/{id}/iframe.html"  methods="GET, PUT">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
         <default key="_format">iframe.html</default>
         <requirement key="_format">html|iframe.html</requirement>
