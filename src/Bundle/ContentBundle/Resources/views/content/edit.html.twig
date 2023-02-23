@@ -4,66 +4,22 @@
 {% block content %}
 
 
-    <div class="bg-white rounded-full border border-grey p-2 m-2 text-xl">FORM INPUT:</div>
-        <input type="text" id="new" name="integrated_content[relations][categories]" data-title="CATEGORIES" data-relation="categories" data-multiple="1" data-relationtype="taxonomy" data-icon="fafa" data-location="sidebar" data-types="[{&quot;type&quot;:&quot;newcategories&quot;,&quot;name&quot;:&quot;newcategories&quot;}]" placeholder="Categories" class="form-contro w-full border border-black" value="">
-{#        <input type="text" id="integrated_content_relations_article_category" name="integrated_content[relations][categories]" data-title="CATEGORIES" data-relation="categories" data-multiple="1" data-relationtype="taxonomy" data-icon="fafa" data-location="sidebar" data-types="[{&quot;type&quot;:&quot;newcategories&quot;,&quot;name&quot;:&quot;newcategories&quot;}]" placeholder="Categories" class="form-control" value="3ca4108e4ee339c4a3e127d2b728b8ee,ecac5f54b42f3451b5599e9f502c0db8,5164f9651d1e37799993f827c908911b">`#}
-    <div>FULLSCREEN BUTTON:</div>
-    <button onclick="toggleFullscreen()" class="p-2 border border-black bg-white">Toggle fullscreen</button>
-
-    <div id="categories_checkboxes_foldout" class="categories_checkboxes hidden">
-        {% for category in categories %}
-            {% if category.depth == 0 %}
-                {% set real_title = category.title %}
-                {% set level0 = category.title %}
-
-                {% set level0channels = category.channels %}
-                {% set parent_channels = category.channels %}
-            {% endif %}
-
-            {% if category.depth == 1 %}
-                {% set real_title = level0 ~ ' > ' ~ category.title %}
-                {% set level1 = category.title %}
-
-                {% set level1channels = category.channels %}
-                {% set parent_channels = category.channels|merge(level0channels) %}
-            {% endif %}
-
-            {% if category.depth == 2 %}
-                {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
-                {% set level2 = category.title %}
-
-                {% set level2channels = category.channels %}
-                {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
-            {% endif %}
-
-            <div
-                 data-fulltitle="{{ real_title }}"
-                 data-title="{{ category.title }}"
-                 data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
-                 data-taxonomyId="{{ category.taxonomyId }}"
-                 data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
-                {% for i in range(0, category.depth) %} - {% endfor %}
-                <input type="checkbox" data-id="{{ category.taxonomyId }}">
-                <label>{{ category.title }}</label>
-{#                {% if parent_channels|length > 0 %}#}
-{#                    ALL: {#}
-{#                    {% for channel in parent_channels %}<span>{{ channel.getId }}, </span> {% endfor %}#}
-{#                    }#}
-{#                {% endif %}#}
-            </div>
-        {% endfor %}
-
-
-    </div>
+    {#                {% if parent_channels|length > 0 %}#}
+    {#                    ALL: {#}
+    {#                    {% for channel in parent_channels %}<span>{{ channel.getId }}, </span> {% endfor %}#}
+    {#                    }#}
+    {#                {% endif %}#}
 
     <script>
         let enabled_categories = []
         let enabled_channels = []
         const current_relation_id = '#integrated_content_relations_article_category'
-        const pills_id = 'enabled_categories_pills'
+        const pills_selector = '.enabled_categories_pills'
+        const popup_selector = '#categories_checkboxes_foldout'
+        const channels_selector = '#integrated_content_channels'
 
         function toggleFullscreen() {
-            $('#categories_checkboxes_foldout').toggleClass("hidden")
+            $(popup_selector).toggleClass("hidden")
         }
 
         function addEventListeners(channel_checkboxes, category_checkboxes) {
@@ -82,7 +38,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function(event) {
-            const channel_checkboxes = document.querySelectorAll('#integrated_content_channels input[type=checkbox]')
+            const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
             const category_checkboxes = document.querySelectorAll('.categories_checkboxes input[type=checkbox]')
 
             enabled_categories = document.querySelector('#enabled_categories').dataset.ids.split(",").filter(n => n)
@@ -105,11 +61,9 @@
         function updateFormInputField(current_value, event) {
             if (current_value.includes(event.target.dataset.id)) {
                 //here we remove
-                document.querySelector('#new').value = current_value.filter(n => n != event.target.dataset.id).toString()
                 document.querySelector(current_relation_id).value = current_value.filter(n => n != event.target.dataset.id).toString()
             } else {
                 //here we add
-                document.querySelector('#new').value = document.querySelector(current_relation_id).value + "," + event.target.dataset.id
                 document.querySelector(current_relation_id).value = document.querySelector(current_relation_id).value + "," + event.target.dataset.id
             }
         }
@@ -117,7 +71,7 @@
         function showEnabledCategories() {
             const current_value = document.querySelector(current_relation_id).value.split(',').filter(n => n)
             const categories_checkboxes = document.querySelectorAll('#categories_checkboxes div')
-            document.getElementById(pills_id).innerHTML = "";
+            document.querySelector(pills_selector).innerHTML = "";
             for (checkbox of categories_checkboxes) {
                 if (current_value.includes( checkbox.querySelector('input').dataset.id)) {
                     appendPill(checkbox.dataset.fulltitle)
@@ -130,7 +84,7 @@
             const textnode = document.createTextNode(pillText);
             node.classList.add('bg-white', 'rounded-full', 'border', 'border-black', 'p-2', 'm-2');
             node.appendChild(textnode);
-            document.getElementById(pills_id).appendChild(node);
+            document.querySelector(pills_selector).appendChild(node);
         }
 
         function setCheckboxState(enabled_categories) {
@@ -341,9 +295,6 @@
                                             </div>
                                             <div class="aside-item-list">
 
-                                                {{ dump(relation.vars.attr['data-title']) }}
-                                                {{ dump(relation) }}
-
                                                 <div class="aside-item-list-container relation">
                                                     {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
@@ -351,71 +302,10 @@
                                                             form_relations: formRelations|default(null),
                                                         } %}
 
-                                                        {#                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy' %}#}
-{#                                                    {% elseif relation.vars.attr['data-title'] == 'CATEGORIES' %}#}
-
-{#                                                        <div id="enabled_categories" data-ids="{{ relation.vars['data'] }}">#}
-
-{#                                                        </div>#}
-
-{#                                                    {{ dump(relation.vars['data']) }}#}
-{#                                                    {{ dump(form.row) }}#}
+                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                        {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
 
                                                     {% else %}
-
-                                                        {% if relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
-
-                                                            <div id="taxonomy_category_{{ relation.vars.attr['data-title'] }}">
-
-                                                                <div id="enabled_categories_pills" class="p-2 m-2">
-                                                                </div>
-
-                                                                <div id="categories_checkboxes" class="categories_checkboxes">
-                                                                    {% for category in categories %}
-                                                                        {% if category.depth == 0 %}
-                                                                            {% set real_title = category.title %}
-                                                                            {% set level0 = category.title %}
-
-                                                                            {% set level0channels = category.channels %}
-                                                                            {% set parent_channels = category.channels %}
-                                                                        {% endif %}
-
-                                                                        {% if category.depth == 1 %}
-                                                                            {% set real_title = level0 ~ ' > ' ~ category.title %}
-                                                                            {% set level1 = category.title %}
-
-                                                                            {% set level1channels = category.channels %}
-                                                                            {% set parent_channels = category.channels|merge(level0channels) %}
-                                                                        {% endif %}
-
-                                                                        {% if category.depth == 2 %}
-                                                                            {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
-                                                                            {% set level2 = category.title %}
-
-                                                                            {% set level2channels = category.channels %}
-                                                                            {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
-                                                                        {% endif %}
-
-                                                                        <div data-fulltitle="{{ real_title }}"
-                                                                             data-title="{{ category.title }}"
-                                                                             data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
-                                                                             data-taxonomyId="{{ category.taxonomyId }}"
-                                                                             data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
-                                                                            {% for i in range(0, category.depth) %} - {% endfor %}
-                                                                            <input type="checkbox" data-id="{{ category.taxonomyId }}">
-                                                                            <label>{{ category.title }}</label>{#                - {{ category.taxonomyId }}#}
-    {#                                                                        {% if category.channels|length > 0 %}#}
-    {#                                                                            ({% for channel in category.channels %}<span>{{ channel.getId }}, </span> {% endfor %})#}
-    {#                                                                        {% endif %}#}
-                                                                        </div>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-
-                                                            <div id="enabled_categories" data-ids="{{ relation.vars['data'] }}">
-                                                                {{ dump(relation.vars["data"]) }}
-                                                            </div>
-                                                        {% endif %}
                                                         <select
                                                             multiple
                                                             id="{{ relation.vars.name }}"
