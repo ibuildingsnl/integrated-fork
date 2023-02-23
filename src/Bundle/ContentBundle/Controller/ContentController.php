@@ -670,7 +670,7 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('newcategories');
+        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('category');
 
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
