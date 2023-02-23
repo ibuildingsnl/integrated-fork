@@ -14,7 +14,7 @@ class CombinedRecurringScheduleEntry implements RecurringScheduleEntry
         $this->entries = new ArrayCollection($entries);
     }
 
-    public function firstAfter(\DateTimeInterface $dateTime): \DateTimeInterface
+    public function firstAfter(\DateTimeInterface $dateTime): \DateTimeImmutable
     {
         $first = null;
         foreach ($this->entries as $entry) {

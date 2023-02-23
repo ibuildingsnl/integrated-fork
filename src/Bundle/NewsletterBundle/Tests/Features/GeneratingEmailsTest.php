@@ -7,6 +7,8 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener;
+use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
+use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\FixedRenderer;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Form\Mapping\Metadata\Document;
 use Integrated\Common\Form\Mapping\MetadataInterface;
@@ -21,22 +23,18 @@ final class GeneratingEmailsTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!is_dir(__DIR__ . '/Files/')) {
+            mkdir(__DIR__ . '/Files/');
+        }
         $this->listener = new NewsletterChangeListener(
-            // @todo add renderer or service with renderer
-            UnmovingClock::standingStillAt(new \DateTimeImmutable('1-1-2000 10:30')),
-            __DIR__ . '/Files/',
+            new NewsletterGenerator(
+                UnmovingClock::standingStillAt(new \DateTimeImmutable('1-1-2000 10:30')),
+                new FixedRenderer('<html><body>NEWSLETTER!</body></html>'),
+                __DIR__ . '/Files/',
+            )
         );
         $this->metadata = new Document(Newsletter::class);
         $this->schedule = new ScheduleEntryFactory();
-    }
-
-    protected function tearDown(): void
-    {
-        foreach (glob(__DIR__ . '/Files/*') ?: [] as $path) {
-            if (is_file($path)) {
-                unlink($path);
-            }
-        }
     }
 
     public function testGeneratingWhenWithinWindow()
@@ -91,5 +89,23 @@ final class GeneratingEmailsTest extends TestCase
         $contentType->setClass($class);
 
         return $contentType;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->remove(__DIR__ . '/Files/');
+    }
+
+    private function remove(string $dir): void
+    {
+        foreach (glob($dir . '/*') ?: [] as $path) {
+            if (is_dir($path)) {
+                $this->remove($path);
+            }
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+        rmdir($dir);
     }
 }

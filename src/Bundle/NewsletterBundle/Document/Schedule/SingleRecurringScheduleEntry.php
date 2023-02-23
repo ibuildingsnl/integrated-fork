@@ -13,7 +13,7 @@ class SingleRecurringScheduleEntry implements RecurringScheduleEntry
     ) {
     }
 
-    public function firstAfter(\DateTimeInterface $dateTime): \DateTimeInterface
+    public function firstAfter(\DateTimeInterface $dateTime): \DateTimeImmutable
     {
         if ($dateTime instanceof \DateTime) {
             $dateTime = \DateTimeImmutable::createFromMutable($dateTime);

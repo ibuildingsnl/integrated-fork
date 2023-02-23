@@ -16,25 +16,23 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 #[Type\Document('Newsletter')]
 class Newsletter extends Content
 {
-    #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     public string $title;
 
-    #[Type\Field(options: ['priority' => 980, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
+    #[Type\Field(options: ['attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
     public string $headline;
 
-    #[Type\Field(type: TestEmailAddressesType::class, options: [
-        'priority' => 490,
+    /** @var string[] */
+    #[Type\Field(type: SocialsType::class, options: [
         'attr' => [
-            'style' => 'sidebar',
-            'icon' => 'group',
-            'show_headings' => 'false',
+            'style' => 'editor',
+            'state' => 'show',
         ],
-    ], location: 'sidebar')]
-    public array $testAddresses = [];
+    ], location: 'editor')]
+    public array $socials;
 
     #[Type\Field(type: IntegerType::class, options: [
         'label' => 'Generation time',
-        'priority' => 480,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'clock-outline',
@@ -44,9 +42,27 @@ class Newsletter extends Content
     ], location: 'sidebar')]
     public int $hoursBefore;
 
+    /** @var string[] */
+    #[Type\Field(type: ContentSelectionsType::class, options: [
+        'attr' => [
+            'style' => 'editor',
+            'show_headings' => 'false',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
+    public array $contentSelection = [];
+
+    #[Type\Field(type: TestEmailAddressesType::class, options: [
+        'attr' => [
+            'style' => 'sidebar',
+            'icon' => 'group',
+            'show_headings' => 'false',
+        ],
+    ], location: 'sidebar')]
+    public array $testAddresses = [];
+
     #[Type\Field(type: RecurringScheduleEntryType::class, options: [
         'label' => 'Sending Schedule',
-        'priority' => 490,
         'attr' => [
             'style' => 'editor',
             'show_headings' => 'false',
@@ -67,28 +83,12 @@ class Newsletter extends Content
     ], location: 'sidebar')]
     public ?Image $logo = null;
 
-    /** @var string[] */
-    #[Type\Field(type: ContentSelectionsType::class, options: [
-        'label' => 'Content selection',
-        'priority' => 480,
-        'attr' => [
-            'style' => 'editor',
-            'show_headings' => 'false',
-            'state' => 'show',
-        ],
-    ], location: 'editor')]
-    public array $contentSelection = [];
-
-    /** @var string[] */
-    #[Type\Field(type: SocialsType::class, options: [
-        'label' => 'Socials',
-        'priority' => 470,
-        'attr' => [
-            'style' => 'editor',
-            'state' => 'show',
-        ],
-    ], location: 'editor')]
-    public array $socials;
+    public function isInGenerationWindow(\DateTimeImmutable $now): bool
+    {
+        $nextSend = $this->schedule->firstAfter($now);
+        $prepare = $nextSend->modify(sprintf('-%d hours', $this->hoursBefore));
+        return $now >= $prepare;
+    }
 
     public function __toString()
     {

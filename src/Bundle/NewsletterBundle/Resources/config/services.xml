@@ -4,6 +4,12 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+
+        <parameter key="integrated_newsletter.storage.directory">/var/www/html/var/newsletters/</parameter>
+
+    </parameters>
+
     <services>
 
         <service id="integrated_newsletter.content.repository" class="Integrated\Bundle\NewsletterBundle\Infrastructure\ODMContentRepository">
@@ -36,6 +42,12 @@
         </service>
 
         <service id="integrated_newsletter.clock" class="Stratadox\Clock\DateTimeClock" />
+
+        <service id="integrated_newsletter.generator" class="Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator">
+            <argument type="service" id="integrated_newsletter.clock" />
+            <argument type="service" id="integrated_newsletter.newsletter.renderer" />
+            <argument>%integrated_newsletter.storage.directory%</argument>
+        </service>
 
     </services>
 </container>
