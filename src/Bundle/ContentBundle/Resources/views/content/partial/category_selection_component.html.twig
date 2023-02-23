@@ -1,5 +1,4 @@
-<div id="taxonomy_category_{{ relation.vars.attr['data-title'] }}">
-
+<div class="taxonomy_category" id="taxonomy_category_{{ relation.vars.attr['data-relation'] }}">
     <div class="enabled_categories_pills" class="p-2 m-2">
     </div>
 
@@ -101,11 +100,10 @@
         {% endfor %}
     </div>
 
-
+    <div id="enabled_categories" class="enabled_categories" data-ids="{{ relation.vars['data'] }}">
+    </div>
 </div>
 
-<div id="enabled_categories" data-ids="{{ relation.vars['data'] }}">
-</div>
 
 <script>
     console.log("LOADING TAXONOMY CATEGORIES")

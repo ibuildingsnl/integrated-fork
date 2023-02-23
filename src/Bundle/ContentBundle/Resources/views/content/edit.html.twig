@@ -3,7 +3,6 @@
 
 {% block content %}
 
-
     {#                {% if parent_channels|length > 0 %}#}
     {#                    ALL: {#}
     {#                    {% for channel in parent_channels %}<span>{{ channel.getId }}, </span> {% endfor %}#}
@@ -17,6 +16,14 @@
         const pills_selector = '.enabled_categories_pills'
         const popup_selector = '#categories_checkboxes_foldout'
         const channels_selector = '#integrated_content_channels'
+        let relation = {
+            current_relation_id: "",
+            pills_selector: "",
+            popup_selector: "",
+            category_checkboxes: [],
+            enabled_categories: [],
+        }
+        let relations = []
 
         function toggleFullscreen() {
             $(popup_selector).toggleClass("hidden")
@@ -37,14 +44,31 @@
             }, [])
         }
 
-        document.addEventListener("DOMContentLoaded", function(event) {
-            const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
-            const category_checkboxes = document.querySelectorAll('.categories_checkboxes input[type=checkbox]')
+        function createNewRelation(relation_id) {
+            return {
+                relation_id: relation_id,
+                pills_selector: '#' + relation_id + ' ' + current_relation_id,
+                popup_selector: '#' + relation_id + ' ' + pills_selector,
+                category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
+                enabled_categories: document.querySelector('#' + relation_id + ' .enabled_categories').dataset.ids.split(",").filter(n => n)
+            }
+        }
 
-            enabled_categories = document.querySelector('#enabled_categories').dataset.ids.split(",").filter(n => n)
+        document.addEventListener("DOMContentLoaded", function(event) {
+            const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
+            const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
             enabled_channels = getEnabledChannels(channel_checkboxes)
 
-            addEventListeners(channel_checkboxes, category_checkboxes)
+            for (relation_id of relevant_relations) {
+                let new_relation = createNewRelation(relation_id)
+                relations = [...relations, new_relation]
+                const category_checkboxes = document.querySelectorAll('.categories_checkboxes input[type=checkbox]')
+                enabled_categories = document.querySelector('#enabled_categories').dataset.ids.split(",").filter(n => n)
+                addEventListeners(channel_checkboxes, new_relation.category_checkboxes)
+            }
+
+            console.log(relations)
+
             showEnabledCategories()
             setCheckboxState()
             filterCheckboxesBasedOnChannels()
