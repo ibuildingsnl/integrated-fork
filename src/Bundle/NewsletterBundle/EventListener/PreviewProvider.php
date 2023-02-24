@@ -28,10 +28,6 @@ class PreviewProvider implements EventSubscriberInterface
 
     public function onPostBuild(BuilderEvent $event): void
     {
-        if ($event->getContentType()->getName() !== 'Newsletter') {
-            return;
-        }
-
         $data = $event->getBuilder()->getData();
 
         if ($data instanceof Newsletter && $data->getId()) {

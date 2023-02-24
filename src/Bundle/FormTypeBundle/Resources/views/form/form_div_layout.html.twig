@@ -268,7 +268,7 @@
                     <li>
                         <div class="panel panel-default">
                             {% if (panel_heading is defined and panel_heading == 'true') %}
-                                {% set panel_title = field.vars.value|first %}
+                                {% set panel_title = field.vars.value.name|default(form.vars.default_title|default('Item')) %}
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">

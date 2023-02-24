@@ -23,7 +23,7 @@ class NewsletterGenerator
         $copy = $this->renderer->render($newsletter);
         $when = $newsletter->schedule->firstAfter($this->clock->now());
 
-        $dir = $this->baseDirectory . $when->format('Y/m/d/');
+        $dir = $this->baseDirectory . $newsletter->getId() . $when->format('/Y/m/d/');
 
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);

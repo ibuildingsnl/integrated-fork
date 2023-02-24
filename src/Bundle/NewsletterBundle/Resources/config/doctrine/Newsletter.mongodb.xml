@@ -20,6 +20,7 @@
         </embed-one>
         <field field-name="contentSelection" type="hash" />
         <field field-name="socials" type="hash" />
+        <field field-name="hoursBefore" type="int" />
         <reference-one field="logo" target-document="Integrated\Bundle\ContentBundle\Document\Content\Image" />
     </document>
 

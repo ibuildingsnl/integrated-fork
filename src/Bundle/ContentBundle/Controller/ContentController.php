@@ -525,6 +525,8 @@ class ContentController extends AbstractController
                 $locking['locked'] = false;
             }
         }
+        // @todo find out what's actually going wrong with these locks
+        $locking['locked'] = false;
 
         $form = $this->createEditForm($contentType, $content, $locking, $request);
 
@@ -588,7 +590,17 @@ class ContentController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
+                // @todo streamline, remove duplication
+                return $this->render('@IntegratedContent/content/edit.html.twig', [
+                    'editable' => $this->isGranted(Permissions::EDIT, $content),
+                    'type' => $contentType,
+                    'form' => $form->createView(),
+                    'formRelations' => $this->getFormRelations($form),
+                    'content' => $content,
+                    'locking' => $locking,
+                    'showContentHistory' => true,
+                    'references' => json_encode($this->getReferences($content)),
+                ]);
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.

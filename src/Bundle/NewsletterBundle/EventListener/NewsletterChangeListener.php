@@ -6,7 +6,6 @@ use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
-use Stratadox\Clock\Clock;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NewsletterChangeListener implements EventSubscriberInterface

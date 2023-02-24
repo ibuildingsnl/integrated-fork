@@ -40,6 +40,7 @@ final class GeneratingEmailsTest extends TestCase
     public function testGeneratingWhenWithinWindow()
     {
         $newsletter = new Newsletter();
+        $newsletter->setId('abc123');
         $newsletter->schedule = $this->schedule->daily(12, 0);
         $newsletter->hoursBefore = 2;
 
@@ -49,12 +50,13 @@ final class GeneratingEmailsTest extends TestCase
             $newsletter
         ));
 
-        self::assertFileExists(__DIR__ . '/Files/2000/01/01/1200.html');
+        self::assertFileExists(__DIR__ . '/Files/abc123/2000/01/01/1200.html');
     }
 
     public function testNotGeneratingWhenOutsideWindow()
     {
         $newsletter = new Newsletter();
+        $newsletter->setId('abc123');
         $newsletter->schedule = $this->schedule->daily(12, 0);
         $newsletter->hoursBefore = 1;
 
@@ -65,12 +67,13 @@ final class GeneratingEmailsTest extends TestCase
         ));
 
         self::assertDirectoryDoesNotExist(__DIR__ . '/Files/2000/');
-        self::assertFileDoesNotExist(__DIR__ . '/Files/2000/01/01/1200.html');
+        self::assertFileDoesNotExist(__DIR__ . '/Files/abc123/2000/01/01/1200.html');
     }
 
     public function testIgnoreNonNewsletters()
     {
         $article = new Article();
+        $article->setId('abc123');
 
         $this->listener->onPostValidate(new ValidationEvent(
             $this->contentType('article', Article::class),
@@ -78,7 +81,7 @@ final class GeneratingEmailsTest extends TestCase
             $article
         ));
 
-        self::assertDirectoryDoesNotExist(__DIR__ . '/Files/2000/');
+        self::assertDirectoryDoesNotExist(__DIR__ . '/Files/abc123/');
     }
 
     private function contentType(string $type, string $class): ContentType
