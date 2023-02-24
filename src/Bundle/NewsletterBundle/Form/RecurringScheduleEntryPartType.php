@@ -46,7 +46,8 @@ class RecurringScheduleEntryPartType extends AbstractType
             'widget' => 'single_text',
         ]);
         $builder->add('day', IntegerType::class, [
-            'empty_data' => 1,
+            'required' => false,
+            'empty_data' => '1',
             'attr' => [
                 'data-if-frequency' => 'monthly|quarterly|yearly',
             ],
