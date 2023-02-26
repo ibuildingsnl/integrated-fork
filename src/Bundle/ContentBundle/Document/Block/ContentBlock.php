@@ -99,10 +99,19 @@ class ContentBlock extends Block
     protected $readMoreUrl;
 
     /**
+     * @var string
+     */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: [
+        'priority' => 480,
+        'required' => false,
+    ])]
+    protected $readMoreText;
+
+    /**
      * @var array
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType', options: [
-        'priority' => 480,
+        'priority' => 470,
         'allow_add' => true,
         'add_button_text' => 'Add Facet field',
         'allow_delete' => true,
@@ -217,6 +226,27 @@ class ContentBlock extends Block
     public function setReadMoreUrl($readMoreUrl)
     {
         $this->readMoreUrl = $readMoreUrl;
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getReadMoreText()
+    {
+        return $this->readMoreText;
+    }
+
+    /**
+     * @param string $readMoreText
+     *
+     * @return $this
+     */
+    public function setReadMoreText($readMoreText)
+    {
+        $this->readMoreText = $readMoreText;
 
         return $this;
     }

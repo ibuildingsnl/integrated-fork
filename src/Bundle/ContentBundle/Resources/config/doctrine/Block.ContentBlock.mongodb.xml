@@ -9,6 +9,7 @@
         <field field-name="maxItems" type="int" />
         <field field-name="gridSize" type="int" />
         <field field-name="readMoreUrl" type="string" />
+        <field field-name="readMoreText" type="string" />
         <field field-name="facetFields" type="collection" />
         <field field-name="title" type="string" />
 
