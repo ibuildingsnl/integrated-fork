@@ -18,9 +18,9 @@ class ContentFetcher
     /** @throws UnacceptableContentTypeException */
     public function fetchFor(Newsletter $newsletter): CombinedContent
     {
-        return $this->combinator->combine(...array_map(
+        return $this->combinator->combine(array_map(
             fn (string $type) => $this->types->getType($type),
             $newsletter->contentSelection,
-        ));
+        ), $newsletter->getChannels());
     }
 }

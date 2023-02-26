@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\NewsletterBundle\Service;
 
-use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\NewsletterBundle\Document\CombinedContent;
 use Integrated\Bundle\NewsletterBundle\Service\Exception\UnacceptableContentTypeException;
 
@@ -14,7 +13,7 @@ final class DocumentTypeValidator implements CombinatorInterface
     ) {
     }
 
-    public function combine(ContentType ...$types): CombinedContent
+    public function combine(array $types, array $channels = []): CombinedContent
     {
         foreach ($types as $type) {
             if (!\in_array($type->getClass(), $this->acceptedTypes)) {
@@ -22,6 +21,6 @@ final class DocumentTypeValidator implements CombinatorInterface
             }
         }
 
-        return $this->combinator->combine(...$types);
+        return $this->combinator->combine($types, $channels);
     }
 }

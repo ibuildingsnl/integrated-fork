@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\NewsletterBundle\Tests\Features;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 final class CombiningContentTest extends TestCase
 {
     private CombinatorInterface $combinator;
+    private Channel $channel;
+    private Channel $otherChannel;
 
     protected function setUp(): void
     {
@@ -30,6 +33,9 @@ final class CombiningContentTest extends TestCase
         $event = $this->contentType('event', Event::class);
         $article = $this->contentType('article', Article::class);
         $news = $this->contentType('news', News::class);
+
+        $this->channel = $c = $this->channel('default');
+        $this->otherChannel = $c2 = $this->channel('channel 2');
 
         $repository = new MemoryContentRepository();
 
@@ -44,11 +50,17 @@ final class CombiningContentTest extends TestCase
         $repository->add($this->content($article, 'article 2', 22));
         $repository->add($this->content($article, 'article 3', 2));
 
-        $repository->add($this->content($news, 'something happened', 20));
-        $repository->add($c = $this->content($news, 'news item was written', 18));
-        $c->getCustomFields()->set('ExcludeFromNewsletters', false);
-        $repository->add($c = $this->content($news, 'news items can now be excluded!', 16));
-        $c->getCustomFields()->set('ExcludeFromNewsletters', true);
+        $repository->add($this->content($news, 'something happened', 20, $c));
+        $repository->add($content = $this->content($news, 'news item was written', 18, $c));
+        $content->getCustomFields()->set('ExcludeFromNewsletters', false);
+        $repository->add($content = $this->content($news, 'news items can now be excluded!', 16, $c));
+        $content->getCustomFields()->set('ExcludeFromNewsletters', true);
+
+        $repository->add($this->content($news, 'channel 2 news 1', 34, $c2));
+        $repository->add($this->content($news, 'multi-channel news 1', 33));
+        $repository->add($this->content($news, 'channel 2 news 2', 32, $c2));
+        $repository->add($this->content($news, 'multi-channel news 2', 31, $c, $c2));
+        $repository->add($this->content($news, 'channel 2 news 3', 30, $c2));
 
         $this->combinator = new DocumentTypeValidator(
             new ContentCombinator($repository),
@@ -68,7 +80,7 @@ final class CombiningContentTest extends TestCase
         $job = $this->contentType('jobposting', JobPosting::class);
         $event = $this->contentType('event', Event::class);
 
-        $combined = $this->combinator->combine($job, $event);
+        $combined = $this->combinator->combine([$job, $event]);
 
         self::assertCount(2, $combined->getContent());
         self::assertInstanceOf(JobPosting::class, $combined->getContent()[0]);
@@ -81,7 +93,7 @@ final class CombiningContentTest extends TestCase
     {
         $article = $this->contentType('article', Article::class);
 
-        $combined = $this->combinator->combine($article, $article);
+        $combined = $this->combinator->combine([$article, $article]);
 
         self::assertCount(2, $combined->getContent());
         self::assertInstanceOf(Article::class, $combined->getContent()[0]);
@@ -94,7 +106,7 @@ final class CombiningContentTest extends TestCase
     {
         $article = $this->contentType('article', Article::class);
 
-        $combined = $this->combinator->combine($article, $article, $article);
+        $combined = $this->combinator->combine([$article, $article, $article]);
 
         self::assertCount(2, $combined->getContent());
         self::assertInstanceOf(Article::class, $combined->getContent()[0]);
@@ -109,7 +121,7 @@ final class CombiningContentTest extends TestCase
 
         $this->expectException(UnacceptableContentTypeException::class);
 
-        $this->combinator->combine($image);
+        $this->combinator->combine([$image]);
     }
 
     public function testRefusingUnwantedContentTypesEvenWhenCombinedWithValidOnes()
@@ -119,14 +131,14 @@ final class CombiningContentTest extends TestCase
 
         $this->expectException(UnacceptableContentTypeException::class);
 
-        $this->combinator->combine($article, $article, $image);
+        $this->combinator->combine([$article, $article, $image]);
     }
 
     public function testSkippingContentThatWasMarkedAsExcluded()
     {
         $news = $this->contentType('news', News::class);
 
-        $combined = $this->combinator->combine($news, $news);
+        $combined = $this->combinator->combine([$news, $news]);
 
         self::assertCount(2, $combined->getContent());
         self::assertInstanceOf(News::class, $combined->getContent()[0]);
@@ -134,6 +146,35 @@ final class CombiningContentTest extends TestCase
         self::assertInstanceOf(News::class, $combined->getContent()[1]);
         self::assertEquals('something happened', $combined->getContent()[1]->getTitle());
     }
+
+    public function testLimitingContentToOneChannel()
+    {
+        $news = $this->contentType('news', News::class);
+
+        $combined = $this->combinator->combine([$news, $news, $news, $news, $news, $news], [$this->channel]);
+
+        self::assertCount(4, $combined->getContent());
+        self::assertEquals('news item was written', $combined->getContent()[0]->getTitle());
+        self::assertEquals('something happened', $combined->getContent()[1]->getTitle());
+        self::assertEquals('multi-channel news 2', $combined->getContent()[2]->getTitle());
+        self::assertEquals('multi-channel news 1', $combined->getContent()[3]->getTitle());
+    }
+
+    public function testLimitingContentToAnotherChannel()
+    {
+        $news = $this->contentType('news', News::class);
+
+        $combined = $this->combinator->combine([$news, $news, $news, $news, $news, $news], [$this->otherChannel]);
+
+        self::assertCount(5, $combined->getContent());
+        self::assertEquals('channel 2 news 3', $combined->getContent()[0]->getTitle());
+        self::assertEquals('multi-channel news 2', $combined->getContent()[1]->getTitle());
+        self::assertEquals('channel 2 news 2', $combined->getContent()[2]->getTitle());
+        self::assertEquals('multi-channel news 1', $combined->getContent()[3]->getTitle());
+        self::assertEquals('channel 2 news 1', $combined->getContent()[4]->getTitle());
+    }
+
+    // helpers
 
     private function contentType(string $type, string $class): ContentType
     {
@@ -145,7 +186,7 @@ final class CombiningContentTest extends TestCase
         return $contentType;
     }
 
-    private function content(ContentType $type, string $title, ?int $hoursAgo): Content
+    private function content(ContentType $type, string $title, ?int $hoursAgo, Channel ...$channels): Content
     {
         /** @var Content $content */
         $content = $type->create();
@@ -155,6 +196,11 @@ final class CombiningContentTest extends TestCase
             $t->setEndDate(new \DateTime('next week'));
             $content->setPublishTime($t);
         }
+
+        foreach ($channels as $channel) {
+            $content->addChannel($channel);
+        }
+
         if ($content instanceof Article) {
             $content->setTitle($title);
         }
@@ -166,5 +212,12 @@ final class CombiningContentTest extends TestCase
         }
 
         return $content;
+    }
+
+    private function channel(string $id): Channel
+    {
+        $channel = new Channel();
+        $channel->setId($id);
+        return $channel;
     }
 }

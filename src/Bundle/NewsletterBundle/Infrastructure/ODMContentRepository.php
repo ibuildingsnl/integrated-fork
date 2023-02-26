@@ -18,15 +18,13 @@ final class ODMContentRepository implements ContentRepository
     {
         $result = $this->doctrine->createQueryBuilder(Content::class)
             ->field('contentType')->equals($type->getId())
-            ->field('disabled')->equals(false)
             ->field('publishTime.startDate')->lte(new \DateTime())
             ->field('publishTime.endDate')->gte(new \DateTime())
+            ->sort('publishTime.startDate', 'desc')
             ->skip($offset)
-            ->limit(1)
             ->getQuery()
-            ->execute()
-            ->current();
-        if (!$result) {
+            ->getSingleResult();
+        if (!$result instanceof Content) {
             return null;
         }
         return $result;
