@@ -33,12 +33,8 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
-/**
- * Abstract base class for document types.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface,
+                                  PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -351,21 +347,37 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool   $published
+     * @param bool $published
+     * @param string $channelId
      *
      * @return ArrayCollection
      */
-    public function getReferencesByRelationId($relationId, $published = true)
+    public function getReferencesByRelationId($relationId, $published = true, $channelId = '')
     {
         foreach ($this->getRelations() as $relation) {
             if ($relation instanceof RelationInterface) {
                 if ($relation->getRelationId() == $relationId) {
                     if ($references = $relation->getReferences()) {
-                        if (true !== $published) {
-                            return $references;
+                        if ($channelId) {
+                            $channelReferences = new ArrayCollection();
+
+                            foreach ($references as $reference) {
+                                $channels = $reference->getChannels();
+                                foreach ($channels as $channel) {
+                                    if ($channel->getId() === $channelId) {
+                                        $channelReferences->add($reference);
+                                    }
+                                }
+                            }
+                        } else {
+                            $channelReferences = $references;
                         }
 
-                        return $references->filter(function ($content) {
+                        if (true !== $published) {
+                            return $channelReferences;
+                        }
+
+                        return $channelReferences->filter(function ($content) {
                             return $content instanceof self ? $content->isPublished() : true;
                         });
                     }
@@ -378,7 +390,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool   $published
+     * @param bool $published
      *
      * @return Content|null
      */
