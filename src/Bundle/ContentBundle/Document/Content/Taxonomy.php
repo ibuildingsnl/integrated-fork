@@ -12,6 +12,8 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
+use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
+use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Content\ParentIDTrait;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
@@ -161,6 +163,21 @@ class Taxonomy extends Content implements RankableInterface
         $this->featuredImage = $featuredImage;
 
         return $this;
+    }
+    /**
+     * Get the relative cover image URL for article.
+     *
+     * @return StorageInterface
+     */
+    public function getCover()
+    {
+        if ($this->getFeaturedImage() instanceof Image) {
+            if ($this->getFeaturedImage()->getFile() instanceof StorageInterface) {
+                return $this->getFeaturedImage()->getFile();
+            }
+        }
+
+        return null;
     }
 
     /**
