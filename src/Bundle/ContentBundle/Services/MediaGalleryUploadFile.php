@@ -90,9 +90,7 @@ class MediaGalleryUploadFile
         );
 
         $file->setFile($storage);
-
         $this->documentManager->persist($file);
-        $this->documentManager->flush();
 
         return $file;
     }
