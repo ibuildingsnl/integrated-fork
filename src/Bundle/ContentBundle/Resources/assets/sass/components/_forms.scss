@@ -633,6 +633,11 @@ label {
 .form-item {
     margin-bottom: 1rem;
 
+    .control-label {
+        display: flex;
+        align-items: center;
+    }
+
     &:last-child {
         margin: 0;
     }
@@ -686,10 +691,10 @@ label {
             display: inline-block;
             width: 33.333%;
             padding: .5rem;
-            max-width:171px;
+            max-width: 171px;
             @include media(max-sm) {
                 width: 100%;
-                max-width:100%;
+                max-width: 100%;
             }
 
             .radio {
@@ -744,19 +749,23 @@ label {
 .channel-domains {
     ul.no-heading {
         li {
-            margin-bottom:1rem;
+            margin-bottom: 1rem;
         }
+
         .panel-body {
             max-width: 750px;
             position: relative;
         }
     }
+
     .panel {
         position: relative;
+
         .remove {
             top: 16px;
             right: 16px;
         }
+
         input {
             padding-left: 175px;
         }

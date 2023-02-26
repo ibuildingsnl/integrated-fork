@@ -510,13 +510,15 @@
                     {% set imageArray = form.vars.value|split(',') %}
                     {% if imageArray|length > 0 %}
                         {% for media in imageArray %}
-                            {% set image = integrated_document(media).file %}
-                            {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
-                            <li id="{{ media }}"
-                                data-id="{{ media }}"
-                                data-file="{{ image }}"
-                                data-thumbnail="{{ thumbnail }}">
-                            </li>
+                            {% if integrated_document(media).file is defined %}
+                                {% set image = integrated_document(media).file %}
+                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                <li id="{{ media }}"
+                                    data-id="{{ media }}"
+                                    data-file="{{ image }}"
+                                    data-thumbnail="{{ thumbnail }}">
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endif %}
