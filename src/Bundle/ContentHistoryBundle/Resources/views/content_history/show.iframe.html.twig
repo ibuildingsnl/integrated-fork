@@ -1,8 +1,10 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 
-{% block title %}{% trans %}Show history{% endtrans %}{% endblock title %}
 {% block crumbs %}{% endblock %}
-
+{% block header %}
+{% endblock header %}
+{% block sidebar_menu %}
+{% endblock sidebar_menu %}
 {% block content %}
     <div class="row flex flex-wrap">
         {% block toolbar %}
@@ -10,9 +12,8 @@
                 <div class="options">
                 </div>
                 <div class="back">
-                    <a class="no-icon btn btn-white icon-left"
-                       href="{{ path("integrated_content_history_index", {'id': contentHistory.contentId }) }}"><i
-                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+                    <a class="no-icon btn btn-white icon-left" href="{{ path("integrated_content_content_edit_iframe", {'id': content.id }) }}">
+                        <i class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
                 </div>
             </div>
         {% endblock toolbar %}

@@ -35,11 +35,36 @@ class ContentTypeFormType extends AbstractType
 
         $builder
             ->add('name', TextType::class, [
+                'priority' => 990,
                 'label' => 'Name',
-                'attr' => ['style' => 'inline'],
+                'attr' => ['location' => 'editor', 'style' => 'inline'],
             ])
-            ->add('fields', FieldsType::class, ['metadata' => $metadata])
-            ->add('channels', ContentTypeChannelsType::class, ['property_path' => 'options[channels]']);
+            ->add(
+                'fields',
+                FieldsType::class,
+                [
+                    'priority' => 980,
+                    'metadata' => $metadata,
+                    'attr' => [
+                        'location' => 'editor',
+                        'style' => 'editor',
+                        'state' => 'show',
+                    ],
+                ]
+            )
+            ->add(
+                'channels',
+                ContentTypeChannelsType::class,
+                [
+                    'priority' => 970,
+                    'property_path' => 'options[channels]',
+                    'attr' => [
+                        'location' => 'editor',
+                        'style' => 'editor',
+                        'state' => 'show',
+                    ],
+                ]
+            );
 
         $builder->add('options_publication', ChoiceType::class, [
             'label' => 'Publication',
@@ -56,7 +81,12 @@ class ContentTypeFormType extends AbstractType
                 'options_'.$option->getName(),
                 $option->getType(),
                 [
-                    'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'stackoverflow'],
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'stackoverflow',
+                    ],
                     'label' => ucfirst($option->getName()),
                 ] + $option->getOptions()
             )->setPropertyPath('options['.$option->getName().']');
@@ -65,7 +95,19 @@ class ContentTypeFormType extends AbstractType
         }
 
         $builder->add(
-            $builder->create('permissions', FormType::class, ['inherit_data' => true, 'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'icon' => 'key-alt-back']])
+            $builder->create(
+                'permissions',
+                FormType::class,
+                [
+                    'inherit_data' => true,
+                    'attr' => [
+                        'location' => 'sidebar',
+                        'style' => 'sidebar',
+                        'state' => 'show',
+                        'icon' => 'key-alt-back',
+                    ],
+                ]
+            )
                     ->add(
                         'permissions',
                         PermissionsType::class,

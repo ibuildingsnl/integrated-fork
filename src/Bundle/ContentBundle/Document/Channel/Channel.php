@@ -328,7 +328,7 @@ class Channel implements ChannelInterface
     /**
      * @return string
      */
-    public function getColor()
+    public function getColor(): string|null
     {
         return $this->color;
     }
@@ -336,7 +336,7 @@ class Channel implements ChannelInterface
     /**
      * @return $this
      */
-    public function setColor(string $color)
+    public function setColor(string|null $color)
     {
         $this->color = $color;
 
@@ -354,7 +354,7 @@ class Channel implements ChannelInterface
     /**
      * @return $this
      */
-    public function setSecondaryColor(string $secondarycolor)
+    public function setSecondaryColor(string|null $secondarycolor)
     {
         $this->secondarycolor = $secondarycolor;
 

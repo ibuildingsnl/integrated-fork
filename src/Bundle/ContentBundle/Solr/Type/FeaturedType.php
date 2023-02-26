@@ -17,11 +17,11 @@ use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
 
 /**
- * @author Marijn Otte <marijn@e-active.nl>
+ * @author Bas Hosman <bas@twindigital.nl>
  *
  * @description Add usefull properties for filtering
  */
-class HasImageType implements TypeInterface
+class FeaturedType implements TypeInterface
 {
     /**
      * {@inheritdoc}
@@ -33,27 +33,12 @@ class HasImageType implements TypeInterface
         }
 
         // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
-        $found = false;
+        $featured = $data->isFeatured();
 
-        $image = $data->getFeaturedImage();
-
-        if (!$image) {
-            $items = $data->getReferencesByRelationType('embedded');
-            if ($items) {
-                foreach ($items as $item) {
-                    if ($item instanceof Image) {
-                        $found = true;
-                    }
-                }
-            }
+        if ($featured) {
+            $container->add('facet_properties', 'Featured');
         } else {
-            $found = true;
-        }
-
-        if ($found) {
-            $container->add('facet_properties', 'Has image');
-        } else {
-            $container->add('facet_properties', 'Doesn\'t have images');
+            $container->add('facet_properties', 'Not Featured');
         }
     }
 
@@ -62,6 +47,6 @@ class HasImageType implements TypeInterface
      */
     public function getName()
     {
-        return 'integrated.has_image';
+        return 'integrated.featured';
     }
 }

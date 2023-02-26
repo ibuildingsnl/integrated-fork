@@ -1,0 +1,127 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% block header %}
+{% endblock header %}
+{% block sidebar_menu %}
+{% endblock sidebar_menu %}
+{% block body %}
+    {% block filters %}
+        <div class="filters_row"></div>
+    {% endblock %}
+    <div id="dropdown_overlay" class="hide"></div>
+    <div class="flex flex-wrap sidebar-edit-form">
+        <div class="aside-edit">
+            {% block form_start %}
+                {{ form_start(form, { 'style': 'inline'}) }}
+            {% endblock %}
+
+            {% block toolbar %}
+                {% include '@IntegratedContent/partials/block.toolbar.html.twig' %}
+            {% endblock toolbar %}
+
+            <aside>
+                <div class="aside-holder">
+                    {% block sidebar %}
+                        {% if form.vars.value is defined and form.vars.value is not empty %}
+                            {% set image = integrated_document(form.vars.value.id).file %}
+                            {% set thumbnail = integrated_image(image) %}
+                            <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
+                            </div>
+                        {% endif %}
+
+                        {% block content_editor %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                                {{ form_row(child, { 'style': 'inline'}) }}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% block content_meta %}
+                            {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_SIDEBAR')) %}
+                                {% if child.vars.name is not same as('channels') %}
+                                    {{ form_row(child, { 'style': 'inline'}) }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% block content_relations %}
+                            {% if form.offsetGet('relations').count() %}
+                                <input type="hidden" id="default_references" value="{{ references }}">
+                                {% for relation in form.relations %}
+                                    <div class="form-item ">
+                                        <label class="control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12"
+                                               for="{{ relation.vars.name }}">{{ relation.vars.attr['data-title'] }}</label>
+                                        <div class="w-full widget">
+                                            {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
+                                                {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
+                                                    relation: relation,
+                                                    form_relations: formRelations|default(null),
+                                                } %}
+                                            {% else %}
+                                                <select
+                                                    multiple
+                                                    id="{{ relation.vars.name }}"
+                                                    data-multiple="{{ relation.vars.attr['data-multiple'] }}"
+                                                    data-types="{{ relation.vars.attr['data-types'] }}"
+                                                    data-url="{{ path('integrated_content_content_index', {'_format': 'json'}) }}"
+                                                    data-url-new="{{ path('integrated_content_content_new', {'type': '__type__', 'relation': '__relation__', '_format': 'iframe.html'}) }}"
+                                                    class="relation-items form-control"
+                                                    style="display: none; width: 89%">
+                                                </select>
+                                                <span class="input-group-addon" data-add="1"></span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock %}
+
+                        {% if form.channels is defined %}
+                            {{ form_row(form.channels, { 'style': 'sidebar', 'state': 'search'}) }}
+                        {% endif %}
+
+                        <div class="aside-item-wrapper" id="used-by"></div>
+
+                        {% block content_history %}
+                            {% if showContentHistory %}
+                                {{ render(controller('Integrated\\Bundle\\ContentHistoryBundle\\Controller\\ContentHistoryController::historyIframe', { 'content': content })) }}
+                            {% endif %}
+                        {% endblock %}
+
+                        {% block form_rest %}
+                            {{ form_rest(form) }}
+                        {% endblock %}
+
+                    {% endblock %}
+                </div>
+            </aside>
+        </div>
+        {% block form_end %}
+            {{ form_end(form) }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block edit_modal %}
+{% endblock %}
+
+
+{% block javascript %}
+{{ parent() }}
+{% if content is defined %}
+    <script>
+        usedByUrl = '{{ path('integrated_content_content_used_by', {'id': content.id, '_format': 'json'}) }}';
+    </script>
+{% endif %}
+{% if editable %}
+    <script>
+        var formInvalid = {{ form.vars.valid ? '0' : '1' }};
+    </script>
+{% endif %}
+
+{{ include('@IntegratedContent/content/handlebars/templates.html.twig') }}
+
+{% endblock javascript %}
+
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+{% endblock %}

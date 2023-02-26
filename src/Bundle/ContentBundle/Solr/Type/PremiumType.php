@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
@@ -21,7 +20,7 @@ use Integrated\Common\Converter\Type\TypeInterface;
  *
  * @description Add usefull properties for filtering
  */
-class HasImageType implements TypeInterface
+class PremiumType implements TypeInterface
 {
     /**
      * {@inheritdoc}
@@ -32,28 +31,12 @@ class HasImageType implements TypeInterface
             return; // only process content
         }
 
-        // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
-        $found = false;
+        $featured = $data->isPremium();
 
-        $image = $data->getFeaturedImage();
-
-        if (!$image) {
-            $items = $data->getReferencesByRelationType('embedded');
-            if ($items) {
-                foreach ($items as $item) {
-                    if ($item instanceof Image) {
-                        $found = true;
-                    }
-                }
-            }
+        if ($featured) {
+            $container->add('facet_properties', 'Premium');
         } else {
-            $found = true;
-        }
-
-        if ($found) {
-            $container->add('facet_properties', 'Has image');
-        } else {
-            $container->add('facet_properties', 'Doesn\'t have images');
+            $container->add('facet_properties', 'Not Premium');
         }
     }
 
@@ -62,6 +45,6 @@ class HasImageType implements TypeInterface
      */
     public function getName()
     {
-        return 'integrated.has_image';
+        return 'integrated.premium';
     }
 }
