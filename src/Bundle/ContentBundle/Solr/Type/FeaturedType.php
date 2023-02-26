@@ -37,8 +37,10 @@ class FeaturedType implements TypeInterface
 
         if ($featured) {
             $container->add('facet_properties', 'Featured');
+            $container->set('featured', true);
         } else {
             $container->add('facet_properties', 'Not Featured');
+            $container->set('featured', false);
         }
     }
 
