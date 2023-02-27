@@ -11,6 +11,7 @@
         <field field-name="sortDirection" type="string" />
         <field field-name="itemsPerPage" type="int" />
         <field field-name="maxItems" type="int" />
+        <field field-name="gridSize" type="int" />
         <field field-name="contentTypes" type="collection" />
 
         <reference-one

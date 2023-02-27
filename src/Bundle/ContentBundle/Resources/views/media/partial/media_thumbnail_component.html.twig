@@ -1,8 +1,8 @@
-{% if media.contentType == 'image' %}
+{% if media.getShortClassname == 'Image' %}
     {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
-{% elseif media.contentType == 'video' %}
+{% elseif media.getShortClassname == 'Video' %}
     {% set thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAARVBMVEXy8vSYmZqTlJX19ffX19nU1dbk5ObExMazs7XOztCVlpeRkpPv7/Hm5ujq6uzu7vCkpaacnZ6vr7Cqq6zd3d+8vL7Jyswlu/KyAAABwElEQVR4nO3b63aaQBSAUeGoEQh49/0ftdImjQVWA7Gtxdn7Pyz8MoxGjosFAAAAAAAAAAAAAAAAAAAAAACQktjW61Hq13j0tf4dsT6U+UjZoX7GCrHKy2y0Ml8+X4RYV+MLtPL100WI3YRV8H0lHAcaROvfX/wf0kxcBteF0PROEsUu2xVzjRDLfHKDU+fFRnNsT1JtZhrhuiNObtDZFaMof9xO1Uy3y7sbxPbwfjeV5zQbxCr7uaeWM70Z7msQr5ubw5NsEMv97Rtrgg1icf712PQaxGnf+XSVXIM49z5cpdag7i6C9BpEMXBYcg0G/tPSQAMNNNBAAw000EADDTTQQAMNNNBAg14D36XFcuCRfWINFrHuf7GcWoNFxLl7ZHINBh40Jdig98AxxQbdB89pNmgHED7eIBJt0J6gfF8KyTa4GUjKLzNt8IXZvO742dtgWrl/zEu439RR3Syr6u45ojlWeXXsz27ORExNkA39uaM5NfO8EVpRTFwI1fBM7nwLXMVm0o6Qz3QQ8/fipczLkfJspnv/Z2K7uryMclk964953n5+MMqjrxQAAAAAAAAAAAAAAAAAAAAAAP4L3wDh0x1Y1FGBDwAAAABJRU5ErkJggg==' %}
-{% elseif media.contentType == 'file' %}
+{% elseif media.getShortClassname == 'File' %}
     {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
 {% else %}
     {% set thumbnail = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS4vyXJNiQlY9mOgPqiZJ3Plom1W_vaRavbg&usqp=CAU' %}
@@ -18,7 +18,6 @@
     data-thumbnail="{{ thumbnail }}"
     data-file="{{ media.file }}"
     data-title="{{ media.title  }}">
-    <a href="{{ path('integrated_content_content_edit', {id: media.id}) }}">
         <div class="media-preview">
             <div class="thumbnail">
                 <div class="centered">
@@ -31,7 +30,6 @@
                 </div>
             {% endif %}
         </div>
-    </a>
     <div class="details flex">
         <div class="w-full md:w-1/2">
             <div class="detail-wrap title">

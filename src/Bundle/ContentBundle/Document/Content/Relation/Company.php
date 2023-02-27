@@ -165,8 +165,10 @@ class Company extends Relation
      */
     public function getCover()
     {
-        if ($this->getLogo() instanceof StorageInterface) {
-            return $this->getLogo();
+        if ($this->getLogo() instanceof Image) {
+            if ($this->getLogo()->getFile() instanceof StorageInterface) {
+                return $this->getLogo()->getFile();
+            }
         }
 
         $items = $this->getReferencesByRelationTypes(['cover', 'embedded']);

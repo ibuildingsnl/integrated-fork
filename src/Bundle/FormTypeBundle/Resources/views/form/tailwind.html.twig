@@ -223,9 +223,13 @@
 {% block choice_widget_expanded %}
     {% apply spaceless %}
         {% set state = state|default(tailwind_get_state()) %}
+
         {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
+            {% if state is empty %}
+                {% set state = attr.state %}
+            {% endif %}
         {% endif %}
+
         {% if 'search' in state %}
             <div class="aside-item-search">
                 <i class="iconoir-search"></i>
@@ -295,6 +299,8 @@
 
 {% block checkbox_row %}
     {% apply spaceless %}
+        {% set show_label = show_label|default(tailwind_get_show_label()) %}
+        {% set state = state|default(tailwind_get_state()) %}
 
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
@@ -306,7 +312,9 @@
             {% set style = attr.style %}
         {% endif %}
         {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
+            {% if state is empty %}
+                {% set state = attr.state %}
+            {% endif %}
         {% endif %}
 
         {% set class = '' %}
@@ -316,7 +324,7 @@
             {% set class = 'w-full ' ~ widget_col %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
             {% set label_col = label_col|default(tailwind_get_label_col()) %}
-            {% if style == 'horizontal' %}
+            {% if show_label is not same as ('false') %}
                 <label class="control-label {{ label_col }}">
                     {% if label is defined and label|length > 1 %}
                         {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
@@ -325,7 +333,7 @@
                     {% endif %}
                 </label>
             {% endif %}
-            <div class="w-full widget {{ widget_col }}">
+            <div class="w-full widget {% if style is not same as('inline') %}{{ widget_col }}{% endif %}">
         {% elseif no_form_group is not defined or no_form_group == false %}
             <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
         {% endif %}
@@ -377,6 +385,7 @@
 
 {% block checkbox_switcher_row %}
     {% apply spaceless %}
+        {% set state = state|default(tailwind_get_state()) %}
 
         {% if attr.label_col is defined and attr.label_col is not empty %}
             {% set label_col = attr.label_col %}
@@ -388,7 +397,9 @@
             {% set style = attr.style %}
         {% endif %}
         {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
+            {% if state is empty %}
+                {% set state = attr.state %}
+            {% endif %}
         {% endif %}
 
         {% set class = '' %}
@@ -738,10 +749,10 @@
             {% endif %}
 
             {% set label_attr = label_attr|merge({ 'class': (label_attr.class|default('') ~ ' control-label ')|trim }) %}
-            {% if style == 'horizontal' %}
-                {% set label_attr = label_attr|merge({ 'class': (label_attr.class|default('') ~ ' w-full ' ~ label_col)|trim }) %}
-            {% elseif style == 'inline' %}
+            {% if style == 'inline' %}
                 {% set label_attr = label_attr|merge({ 'class': (label_attr.class|default('') ~ ' sr-only')|trim }) %}
+            {% else %}
+                {% set label_attr = label_attr|merge({ 'class': (label_attr.class|default('') ~ ' w-full ' ~ label_col)|trim }) %}
             {% endif %}
 
             {% if not compound %}
@@ -796,22 +807,25 @@
         {% set widget_col = widget_col|default(tailwind_get_widget_col()) %}
 
         <div class="form-group w-full flex flex-wrap{% if form.vars.errors|length > 0 %} has-error{% endif %}">
-            {% if style == 'horizontal' %}
+            {% if style == 'sidebar' or style == 'editor' %}
+                {{ form_label(form) }}
+                {{ block('form_input_group') }}
+                {{ block('form_help') }}
+                {{ form_errors(form) }}
+            {% else %}
                 {{ form_label(form) }}
                 <div class="w-full {{ widget_col }}">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
                 </div>
-            {% else %}
-                {{ form_label(form) }}
-                {{ block('form_input_group') }}
-                {{ block('form_help') }}
-                {{ form_errors(form) }}
+
             {% endif %}
         </div>
 
-        {% if style == 'inline' %}&nbsp;{% endif %}
+        {% if style == 'inline' %}&nbsp;
+
+        {% endif %}
     {% endapply %}
 {% endblock form_row %}
 
@@ -1037,12 +1051,9 @@
 
 {% block form_rest %}
     {% apply spaceless %}
-        {% set style = style|default(tailwind_get_style()) %}
-        {% set state = state|default(tailwind_get_state()) %}
-        {% set show_label = show_label|default(tailwind_get_show_label()) %}
         {% for child in form %}
             {% if not child.rendered %}
-                {{ form_row(child, {'style': style, 'state': state, 'show_label': show_label}) }}
+                {{ form_row(child) }}
             {% endif %}
         {% endfor %}
         {#        {% endif %} #}

@@ -63,7 +63,7 @@ class SearchSelectionController extends AbstractController
      */
     public function index(Request $request)
     {
-        $paginator = $this->getPaginator()->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 15);
+        $paginator = $this->getPaginator()->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 25);
 
         return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,

@@ -1,15 +1,16 @@
-
 <div class="flex flex-wrap media-library">
     {% if selected_modus != 'media_gallery' %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
                 <div class="options">
                     <div class="form-actions">
-                        <button class="no-icon btn btn-green" onclick="send_message_to_parent()">{% trans %}Select image{% endtrans %}</button>
+                        <button class="no-icon btn btn-green"
+                                onclick="send_message_to_parent()">{% trans %}Select image{% endtrans %}</button>
                     </div>
                 </div>
                 <div class="back">
-                    <button class="icon-left btn btn-white" onclick="send_cancel_to_parent()"><i class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></button>
+                    <button class="icon-left btn btn-white" onclick="send_cancel_to_parent()"><i
+                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></button>
                 </div>
             </div>
         {% endblock toolbar %}
@@ -19,6 +20,13 @@
             {% include '@IntegratedContent/media/partial/menu_component.html.twig' %}
         </aside>
     </div>
+
+    <div class="aside-filters media-edit-panel hide">
+        <aside>
+            {% include '@IntegratedContent/media/partial/edit_panel.html.twig' %}
+        </aside>
+    </div>
+
     <div class="media-gallery index-wrapper">
         <div class="page-title">
             {% include '@IntegratedContent/media/partial/header_component.html.twig' %}
@@ -55,26 +63,19 @@
 
                 <div class="mt-2">
                     {% if paginator.getCustomParameter('amountOfPages') > 1 %}
-                        {% for i in range(1, paginator.getCustomParameter('amountOfPages')) %}
-                            {% if i == paginator.currentPageNumber %}
-                                <a class="text-red-500 bg-red-200 p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
-                            {% else %}
-                                <a class="p-2"
-                                   href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i })) }}"
-                                   tabindex="-1" role="menuitem">{{ i }}</a>
-                            {% endif %}
-                        {% endfor %}
-
-                        <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}.</span>
-                        <span>{% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
+                        {{ knp_pagination_render(paginator) }}
+                        <div class="flex justify-center">
+                            <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}. {% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
+                        </div>
                     {% endif %}
                 </div>
             </div>
 
         </section>
+
+
     </div>
+
 
 </div>
 

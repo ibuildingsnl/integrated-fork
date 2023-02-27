@@ -4,11 +4,11 @@ $(function() {
 
     $domains_collection.on('keyup', 'input[type=text]', refresh_checked_status);
     $domains_collection.on('click', '.primary-domain-radio', function() {
-        var value = $(this).closest('.row').find('input:text').val();
+        var value = $(this).closest('.panel-body').find('input:text').val();
         $primary_domain_input.val(value);
     });
     $domains_collection.on('change', 'input[type=text]', function () {
-        if ($(this).closest('.row').find('.primary-domain-radio').is(":checked")) {
+        if ($(this).closest('.panel-body').find('.primary-domain-radio').is(":checked")) {
             $primary_domain_input.val($(this).val());
         }
     });

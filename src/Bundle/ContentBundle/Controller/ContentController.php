@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -548,27 +549,29 @@ class ContentController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        // get a lock on this content resource.
-
         $locking = $this->getLock($content, 15);
-        $locking['locked'] = $locking['lock'] ? true : false;
+        $locking['locked'] = (bool) $locking['lock'];
 
-        if ($locking['lock'] && $locking['owner']) {
-            if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
-                $locking['locked'] = false;
-            }
-
-            if ($locking['new']) {
-                if ($request->isMethod('get')) {
-                    $parameters = array_merge($request->query->all(), [
-                        'id' => $content->getId(),
-                        'lock' => $locking['lock']->getId(),
-                    ]);
-
-                    return $this->redirectToRoute('integrated_content_content_edit', $parameters);
+        if (true === $content instanceof File) {
+            $locking['locked'] = false;
+        } else {
+            if ($locking['lock'] && $locking['owner']) {
+                if ($request->query->has('lock') && $locking['lock']->getId() == $request->query->get('lock')) {
+                    $locking['locked'] = false;
                 }
 
-                $locking['locked'] = false;
+                if ($locking['new']) {
+                    if ($request->isMethod('get')) {
+                        $parameters = array_merge($request->query->all(), [
+                            'id' => $content->getId(),
+                            'lock' => $locking['lock']->getId(),
+                        ]);
+
+                        return $this->redirectToRoute($request->get('_route'), $parameters);
+                    }
+
+                    $locking['locked'] = false;
+                }
             }
         }
 
@@ -594,7 +597,7 @@ class ContentController extends AbstractController
             }
 
             if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
+                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
             }
 
             // this is not rest compatible since a button click is required to save
@@ -626,7 +629,7 @@ class ContentController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
+                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.
@@ -659,7 +662,13 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        return $this->render('@IntegratedContent/content/edit.html.twig', [
+        if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
+            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } else {
+            $renderTo = '@IntegratedContent/content/edit.html.twig';
+        }
+
+        return $this->render($renderTo, [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
@@ -1090,7 +1099,7 @@ class ContentController extends AbstractController
 
         $options = [
             'action' => $this->generateUrl(
-                'integrated_content_content_edit',
+                $request->get('_route'),
                 $parameters
             ),
             'method' => 'PUT',
