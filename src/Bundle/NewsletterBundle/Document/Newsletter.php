@@ -99,7 +99,7 @@ class Newsletter extends Content
             'state' => 'show',
         ],
     ], location: 'sidebar')]
-    public string $recipientList;
+    public ?string $recipientList;
 
     #[Type\Field(type: SenderChoiceType::class, options: [
         'attr' => [
@@ -107,7 +107,7 @@ class Newsletter extends Content
             'state' => 'show',
         ],
     ], location: 'sidebar')]
-    public string $sender;
+    public ?string $sender;
 
     public function isInGenerationWindow(\DateTimeImmutable $now): bool
     {

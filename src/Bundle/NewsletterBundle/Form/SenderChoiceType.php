@@ -25,6 +25,7 @@ class SenderChoiceType extends AbstractType
             'choices' => isset($this->senders) ?
                 array_flip($this->senders->retrieve()) :
                 ['No newsletter platform connected' => ''],
+            'placeholder' => false,
         ]);
     }
 }
