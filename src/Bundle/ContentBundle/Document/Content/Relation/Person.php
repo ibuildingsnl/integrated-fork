@@ -332,8 +332,10 @@ class Person extends Relation
      */
     public function getCover()
     {
-        if ($this->getPicture() instanceof StorageInterface) {
-            return $this->getPicture();
+        if ($this->getPicture() instanceof Image) {
+            if ($this->getPicture()->getFile() instanceof StorageInterface) {
+                return $this->getPicture()->getFile();
+            }
         }
 
         return null;

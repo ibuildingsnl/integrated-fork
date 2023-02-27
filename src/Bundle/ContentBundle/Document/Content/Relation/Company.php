@@ -53,7 +53,7 @@ class Company extends Relation
             'icon' => 'media-image',
             'data-types' => '[{"type":"image","name":"Image"}]',
             'data-emptytext' => 'Select Logo',
-            'data-multiple' => 'true',
+            'data-multiple' => false,
         ],
     ], location: 'sidebar')]
     protected $logo;
