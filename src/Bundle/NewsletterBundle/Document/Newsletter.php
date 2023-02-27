@@ -8,9 +8,12 @@ use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType;
 use Integrated\Bundle\ContentBundle\Form\Type\SocialsType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
+use Integrated\Bundle\NewsletterBundle\Form\RecipientListChoiceType;
 use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
+use Integrated\Bundle\NewsletterBundle\Form\SenderChoiceType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
 use Integrated\Common\Form\Mapping\Attributes as Type;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 #[Type\Document('Newsletter')]
@@ -89,6 +92,22 @@ class Newsletter extends Content
         ],
     ], location: 'editor')]
     public array $socials;
+
+    #[Type\Field(type: RecipientListChoiceType::class, options: [
+        'attr' => [
+            'style' => 'sidebar',
+            'state' => 'show',
+        ],
+    ], location: 'sidebar')]
+    public string $recipientList;
+
+    #[Type\Field(type: SenderChoiceType::class, options: [
+        'attr' => [
+            'style' => 'sidebar',
+            'state' => 'show',
+        ],
+    ], location: 'sidebar')]
+    public string $sender;
 
     public function isInGenerationWindow(\DateTimeImmutable $now): bool
     {
