@@ -581,12 +581,6 @@ class ContentController extends AbstractController
      */
     public function edit(Request $request, Content $content)
     {
-        if ($request->getRequestFormat() == 'iframe.html') {
-            $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
-        } else {
-            $renderTo = '@IntegratedContent/content/edit.html.twig';
-        }
-
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
