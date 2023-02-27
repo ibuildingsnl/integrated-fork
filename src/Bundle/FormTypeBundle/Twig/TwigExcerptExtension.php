@@ -14,24 +14,25 @@ class TwigExcerptExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('excerpt', array($this, 'excerptFilter'))
+            new TwigFilter('excerpt', [$this, 'excerptFilter']),
         ];
     }
 
     /**
      * @param Environment $twig
-     * @param int $limit
-     * @return null|string
+     * @param int         $limit
+     *
+     * @return string|null
      */
     public function excerptFilter($content, $limit)
     {
         $content = strip_tags($content);
         $excerpt = explode(' ', $content, $limit);
-        if (count($excerpt) >= $limit) {
+        if (\count($excerpt) >= $limit) {
             array_pop($excerpt);
-            $excerpt = implode(" ", $excerpt) . '...';
+            $excerpt = implode(' ', $excerpt).'...';
         } else {
-            $excerpt = implode(" ", $excerpt);
+            $excerpt = implode(' ', $excerpt);
         }
         $excerpt = preg_replace('`[[^]]*]`', '', $excerpt);
 

@@ -42,7 +42,7 @@ class TaxonomyType implements TypeInterface
                     $container->add('facet_'.$relation->getRelationId(), $content->getTitle());
                     $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
                     foreach ($content->getChannels() as $channel) {
-                        $container->add('taxonomy_'.$channel->getId(). '_'.$relation->getRelationId().'_string', $content->getTitle());
+                        $container->add('taxonomy_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                     }
                 }
             }

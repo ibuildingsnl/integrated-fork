@@ -33,8 +33,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface,
-                                  PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -347,7 +346,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      * @param string $channelId
      *
      * @return ArrayCollection
@@ -390,7 +389,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     /**
      * @param string $relationId
-     * @param bool $published
+     * @param bool   $published
      *
      * @return Content|null
      */

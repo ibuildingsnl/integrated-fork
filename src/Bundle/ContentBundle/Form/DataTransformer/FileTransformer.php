@@ -29,6 +29,7 @@ class FileTransformer implements DataTransformerInterface
     {
         $this->repository = $repository;
     }
+
     /**
      * {@inheritdoc}
      */

@@ -230,7 +230,6 @@ class ContentBlock extends Block
         return $this;
     }
 
-
     /**
      * @return string
      */
