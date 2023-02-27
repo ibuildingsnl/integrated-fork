@@ -545,6 +545,30 @@ class ContentController extends AbstractController
         ]);
     }
 
+    private function getTaxonomyCategories($content): array
+    {
+        $taxonomyCategories = [];
+
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+        $dm = $this->getDoctrineODM()->getManager();
+        $relations = $dm->getRepository($this->relationClass)->findAll();
+        foreach ($relations as $relation) {
+            if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
+                array_push($taxonomyCategories, $relation);
+            }
+        }
+
+        $taxonomyCats = [];
+        foreach ($taxonomyCategories as $tx) {
+            foreach ($tx->getTargets() as $target)
+            {
+                $taxonomyCats[$tx->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+            }
+        }
+
+        return $taxonomyCats;
+    }
+
     /**
      * Update a existing document.
      *
@@ -554,6 +578,8 @@ class ContentController extends AbstractController
     {
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
+
+        $taxonomyCategories = $this->getTaxonomyCategories($content);
 
         if (!$this->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
@@ -670,11 +696,9 @@ class ContentController extends AbstractController
             $this->addFlash('danger', $text);
         }
 
-        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('category');
-
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
-            'categories' => $categories,
+            'taxonomyCats' => $taxonomyCategories,
             'type' => $contentType,
             'form' => $form->createView(),
             'formRelations' => $this->getFormRelations($form),
@@ -689,9 +713,15 @@ class ContentController extends AbstractController
     {
         $relations = [];
 
+//        dd($form->children->elements->relations->children->elements);
+
+//        dd($form->getData()->getRelations()->toArray());
+
         foreach ($form->getData()->getRelations()->toArray() as $relation) {
+//            dump($relation);
             $references = [];
             foreach ($relation->getReferences()->toArray() as $imageObject) {
+//                dump($imageObject);
                 $references[$imageObject->getId()] = $imageObject;
             }
             $relations[$relation->getRelationId()] = $references;

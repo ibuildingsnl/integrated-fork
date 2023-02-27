@@ -2,31 +2,28 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-
-    {#                {% if parent_channels|length > 0 %}#}
-    {#                    ALL: {#}
-    {#                    {% for channel in parent_channels %}<span>{{ channel.getId }}, </span> {% endfor %}#}
-    {#                    }#}
-    {#                {% endif %}#}
-
     <script>
-        let enabled_categories = []
-        let enabled_channels = []
-        const current_relation_id = '#integrated_content_relations_article_category'
-        const pills_selector = '.enabled_categories_pills'
-        const popup_selector = '#categories_checkboxes_foldout'
         const channels_selector = '#integrated_content_channels'
+        const pills_selector = '.enabled_categories_pills'
+        const popup_selector = '.categories_checkboxes_foldout'
+        const input_field_prefix = 'integrated_content_relations_'
+
+        let relations = []
         let relation = {
-            current_relation_id: "",
+            relation_id: "",
+            input_selector: '',
             pills_selector: "",
             popup_selector: "",
             category_checkboxes: [],
             enabled_categories: [],
         }
-        let relations = []
+        let enabled_categories = []
+        let enabled_channels = []
+        let current_relation = {}
 
         function toggleFullscreen() {
-            $(popup_selector).toggleClass("hidden")
+            setCurrentRelationId(event.target.closest('.taxonomy_category').id)
+            $(current_relation.popup_selector).toggleClass("hidden")
         }
 
         function addEventListeners(channel_checkboxes, category_checkboxes) {
@@ -35,6 +32,9 @@
             })
             category_checkboxes.forEach(item => {
                 item.addEventListener('change', handleCategoryClick)
+            })
+            document.querySelectorAll('.togglefullscreen').forEach(item => {
+                item.addEventListener('click', toggleFullscreen)
             })
         }
 
@@ -47,11 +47,17 @@
         function createNewRelation(relation_id) {
             return {
                 relation_id: relation_id,
-                pills_selector: '#' + relation_id + ' ' + current_relation_id,
-                popup_selector: '#' + relation_id + ' ' + pills_selector,
-                category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
+                input_selector: input_field_prefix + relation_id.replace("taxonomy_category_", ''),
+                pills_selector: '#' + relation_id + ' ' + pills_selector,
+                popup_selector: '#' + relation_id + ' ' + popup_selector,
+                category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes_basic input[type=checkbox]'),
+                all_category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
                 enabled_categories: document.querySelector('#' + relation_id + ' .enabled_categories').dataset.ids.split(",").filter(n => n)
             }
+        }
+
+        function setCurrentRelationId(relation_id) {
+            current_relation = relations.filter(relation => relation.relation_id == relation_id)[0]
         }
 
         document.addEventListener("DOMContentLoaded", function(event) {
@@ -62,60 +68,61 @@
             for (relation_id of relevant_relations) {
                 let new_relation = createNewRelation(relation_id)
                 relations = [...relations, new_relation]
-                const category_checkboxes = document.querySelectorAll('.categories_checkboxes input[type=checkbox]')
-                enabled_categories = document.querySelector('#enabled_categories').dataset.ids.split(",").filter(n => n)
-                addEventListeners(channel_checkboxes, new_relation.category_checkboxes)
+                current_relation = new_relation
+                addEventListeners(channel_checkboxes, new_relation.all_category_checkboxes)
+                showEnabledCategories()
+                setCheckboxState()
             }
 
-            console.log(relations)
-
-            showEnabledCategories()
-            setCheckboxState()
             filterCheckboxesBasedOnChannels()
         });
 
         function handleCategoryClick(event) {
-            const current_value = document.querySelector(current_relation_id).value.split(',').filter(n => n)
-
-            updateFormInputField(current_value, event)
+            setCurrentRelationId(event.target.closest('.taxonomy_category').id)
+            updateFormInputField(event)
             showEnabledCategories()
             setCheckboxState()
         }
 
-        function updateFormInputField(current_value, event) {
+        function updateFormInputField(event) {
+            const input_id = '#' + current_relation.input_selector
+            const current_value = document.querySelector(input_id).value.split(',').filter(n => n)
             if (current_value.includes(event.target.dataset.id)) {
                 //here we remove
-                document.querySelector(current_relation_id).value = current_value.filter(n => n != event.target.dataset.id).toString()
+                document.querySelector(input_id).value = current_value.filter(n => n != event.target.dataset.id).toString()
             } else {
                 //here we add
-                document.querySelector(current_relation_id).value = document.querySelector(current_relation_id).value + "," + event.target.dataset.id
+                document.querySelector(input_id).value = document.querySelector(input_id).value + "," + event.target.dataset.id
             }
         }
 
+        function emptyCurrentPills() {
+            document.querySelector(current_relation.pills_selector).innerHTML = "";
+        }
+
         function showEnabledCategories() {
-            const current_value = document.querySelector(current_relation_id).value.split(',').filter(n => n)
-            const categories_checkboxes = document.querySelectorAll('#categories_checkboxes div')
-            document.querySelector(pills_selector).innerHTML = "";
+            const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
+            const categories_checkboxes = current_relation.category_checkboxes
+
+            emptyCurrentPills()
             for (checkbox of categories_checkboxes) {
-                if (current_value.includes( checkbox.querySelector('input').dataset.id)) {
-                    appendPill(checkbox.dataset.fulltitle)
+                if (current_value.includes(checkbox.dataset.id)) {
+                    appendPill(checkbox.parentNode.dataset.fulltitle)
                 }
             }
         }
 
         function appendPill(pillText) {
-            const node = document.createElement("span");
+            const node = document.createElement("div");
             const textnode = document.createTextNode(pillText);
-            node.classList.add('bg-white', 'rounded-full', 'border', 'border-black', 'p-2', 'm-2');
+            node.classList.add('w-full', 'bg-blue-200', 'rounded-full', 'border', 'border-black', 'p-1', 'mr-2');
             node.appendChild(textnode);
-            document.querySelector(pills_selector).appendChild(node);
+            document.querySelector(current_relation.pills_selector).appendChild(node);
         }
 
         function setCheckboxState(enabled_categories) {
-            const current_value = document.querySelector(current_relation_id).value.split(',').filter(n => n)
-            const categories_checkboxes = document.querySelectorAll('.categories_checkboxes div input')
-
-            for (checkbox of categories_checkboxes) {
+            const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
+            for (checkbox of current_relation.all_category_checkboxes) {
                 let state = checkbox.value
                 if (current_value.includes( checkbox.dataset.id)) {
                     checkbox.checked = true
@@ -394,7 +401,6 @@
 
                                             {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy' %}
                                                 TAXONOMY
-
 
                                             {% else %}
                                                 <select

@@ -1,28 +1,14 @@
 <div class="taxonomy_category" id="taxonomy_category_{{ relation.vars.attr['data-relation'] }}">
-    <div class="enabled_categories_pills" class="p-2 m-2">
+
+
+    <DIV>ENABLED CATEGORIES:</DIV>
+    <div class="hidden bg-blue-200 rounded-full border border-black p-1 mr-2"></div>
+    <div class="enabled_categories_pills" class="flex flex-row p-2 m-2">
     </div>
 
-    <div class="categories_headers flex flex-wrap">
-        {% for category in categories %}
-            {% if category.depth == 0 %}
-                {% set real_title = category.title %}
-                {% set level0 = category.title %}
-
-                {% set level0channels = category.channels %}
-                {% set parent_channels = category.channels %}
-                <div class="" data-fulltitle="{{ real_title }}"
-                     data-title="{{ category.title }}"
-                     data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
-                     data-taxonomyId="{{ category.taxonomyId }}"
-                     data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
-                    <div>{{ category.title }}</div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-
-    <div id="categories_checkboxes" class="categories_checkboxes">
-        {% for category in categories %}
+    <DIV>BASIC CHECKBOXES:</DIV>
+    <div id="" class="categories_checkboxes categories_checkboxes_basic">
+        {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
             {% if category.depth == 0 %}
                 {% set real_title = category.title %}
                 {% set level0 = category.title %}
@@ -59,10 +45,34 @@
         {% endfor %}
     </div>
 
-    <div onclick="toggleFullscreen()" class="p-2 border border-black bg-white">Toggle fullscreen</div>
+    <DIV>POPUP BUTTON:</DIV>
+    <div class="togglefullscreen p-2 border border-black bg-white">Toggle fullscreen</div>
 
-    <div id="categories_checkboxes_foldout" class="categories_checkboxes hidden">
-        {% for category in categories %}
+    <DIV>POPUP:</DIV>
+    <div id="" class="categories_checkboxes categories_checkboxes_foldout hidden">
+
+        <DIV>HEADERS:</DIV>
+        <div class="categories_headers flex flex-wrap">
+            {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
+                {% if category.depth == 0 %}
+                    {% set real_title = category.title %}
+                    {% set level0 = category.title %}
+
+                    {% set level0channels = category.channels %}
+                    {% set parent_channels = category.channels %}
+                    <div class="flex flex-row bg-blue-200 p-2 m-2 border-left border-black" data-fulltitle="{{ real_title }}"
+                         data-title="{{ category.title }}"
+                         data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                         data-taxonomyId="{{ category.taxonomyId }}"
+                         data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                        <div>{{ category.title }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <DIV>CHECKBOXES:</DIV>
+        {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
             {% if category.depth == 0 %}
                 {% set real_title = category.title %}
                 {% set level0 = category.title %}
@@ -100,11 +110,7 @@
         {% endfor %}
     </div>
 
+    <div>HIDDEN FIELD (REALLY) TO GET OUR DATA</div>
     <div id="enabled_categories" class="enabled_categories" data-ids="{{ relation.vars['data'] }}">
     </div>
 </div>
-
-
-<script>
-    console.log("LOADING TAXONOMY CATEGORIES")
-</script>
