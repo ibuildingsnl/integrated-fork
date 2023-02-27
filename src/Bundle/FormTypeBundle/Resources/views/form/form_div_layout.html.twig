@@ -504,8 +504,6 @@
 
 {% block integrated_media_gallery_image_widget %}
     {% apply spaceless %}
-        {{ dump(form) }}
-
         <div class="mediagallery_selector" id="{{ form.vars.name }}">
             <div class="previously_selected_images hidden">
                 {% if form.vars.value is defined and form.vars.value is not empty %}

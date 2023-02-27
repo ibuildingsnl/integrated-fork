@@ -48,7 +48,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ item.description|raw }}
+                                    {{ item.description|excerpt(25)|raw }}
                                 </td>
                                 <td>
                                     {{ item.slug }}
