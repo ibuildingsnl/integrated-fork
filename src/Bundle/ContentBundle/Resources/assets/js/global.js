@@ -190,7 +190,7 @@ function asideItemsSearch(el) {
     input = el.target;
     filter = input.value.toUpperCase();
     ul = el.target.parentNode.parentNode.querySelector(
-        '.aside-item-list .aside-item-list-container > ul');
+        '.aside-item-list .aside-item-list-container ul');
     li = ul.getElementsByTagName('li');
 
     for (i = 0; i < li.length; i++) {

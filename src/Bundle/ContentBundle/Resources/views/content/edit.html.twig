@@ -5,7 +5,7 @@
     <script>
         const channels_selector = '#integrated_content_channels'
         const pills_selector = '.enabled_categories_pills'
-        const popup_selector = '.categories_checkboxes_foldout'
+        const popup_selector = '.category_wrapper'
         const input_field_prefix = 'integrated_content_relations_'
 
         let relations = []
@@ -69,7 +69,8 @@
 
         function toggleFullscreen() {
             setCurrentRelation(event.target.closest('.taxonomy_category').id)
-            document.querySelector(current_relation.popup_selector).classList.toggle("hidden");
+            document.querySelector(current_relation.popup_selector).classList.toggle("show");
+            $('#dropdown_overlay').removeClass('hide');
         }
 
         function handleChannelClick(event) {
@@ -133,7 +134,7 @@
                 }
 
                 if (current_value.includes(checkbox.dataset.id)) {
-                    appendPill(checkbox.parentNode.dataset.fulltitle)
+                    appendPill(checkbox.closest('li').dataset.fulltitle)
                 }
             }
         }
@@ -141,7 +142,7 @@
         function appendPill(pillText) {
             const node = document.createElement("div");
             const textnode = document.createTextNode(pillText);
-            node.classList.add('w-full', 'bg-blue-200', 'rounded-full', 'border', 'border-black', 'p-1', 'mr-2', 'pl-2');
+            node.classList.add('active_category');
             node.appendChild(textnode);
             document.querySelector(current_relation.pills_selector).appendChild(node);
         }
@@ -150,6 +151,7 @@
             const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
             for (checkbox of current_relation.all_category_checkboxes) {
                 let state = checkbox.value
+
                 if (current_value.includes( checkbox.dataset.id)) {
                     checkbox.checked = true
                 } else {
@@ -159,7 +161,7 @@
         }
 
         function filterCheckboxesBasedOnChannels() {
-            const categories_checkboxes = document.querySelectorAll('.categories_checkboxes div')
+            const categories_checkboxes = document.querySelectorAll('.categories_checkboxes li')
 
             for (checkbox of categories_checkboxes) {
                 let show_category = enabled_channels.length == 0 || false
