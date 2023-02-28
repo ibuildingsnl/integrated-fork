@@ -351,33 +351,16 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      *
      * @return ArrayCollection
      */
-    public function getReferencesByRelationId($relationId, $published = true, $channelId = '')
+    public function getReferencesByRelationId($relationId, $published = true, ChannelInterface $channel = null)
     {
         foreach ($this->getRelations() as $relation) {
             if ($relation instanceof RelationInterface) {
                 if ($relation->getRelationId() == $relationId) {
                     if ($references = $relation->getReferences()) {
-                        if ($channelId) {
-                            $channelReferences = new ArrayCollection();
-
-                            foreach ($references as $reference) {
-                                $channels = $reference->getChannels();
-                                foreach ($channels as $channel) {
-                                    if ($channel->getId() === $channelId) {
-                                        $channelReferences->add($reference);
-                                    }
-                                }
-                            }
-                        } else {
-                            $channelReferences = $references;
-                        }
-
-                        if (true !== $published) {
-                            return $channelReferences;
-                        }
-
-                        return $channelReferences->filter(function ($content) {
-                            return $content instanceof self ? $content->isPublished() : true;
+                        return $references->filter(function (ContentInterface $content) use ($channel, $published) {
+                            return $content instanceof self
+                                   && (!$published || $content->isPublished())
+                                   && ($channel && $content->hasChannel($channel));
                         });
                     }
                 }
