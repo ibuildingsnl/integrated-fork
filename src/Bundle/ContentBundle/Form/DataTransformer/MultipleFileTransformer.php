@@ -11,9 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
-use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
@@ -36,7 +34,7 @@ class MultipleFileTransformer implements DataTransformerInterface
      */
     public function transform($list)
     {
-        if (is_array($list)) {
+        if (\is_array($list)) {
             return implode(',', array_map(fn ($file) => $file->getId(), $list));
         }
     }
@@ -46,11 +44,12 @@ class MultipleFileTransformer implements DataTransformerInterface
      */
     public function reverseTransform($input)
     {
-        $ids = explode(',',$input);
+        $ids = explode(',', $input);
         $files = [];
         foreach ($ids as $id) {
             $files[] = $this->repository->find($id);
         }
+
         return $files;
     }
 }
