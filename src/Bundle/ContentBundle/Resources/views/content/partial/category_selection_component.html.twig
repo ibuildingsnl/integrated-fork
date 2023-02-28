@@ -2,7 +2,6 @@
 
     <div class="category_wrapper close-outside">
         <div class="hidden"></div>
-        <div class="enabled_categories_pills" class="flex flex-row p-2 m-2 pl-2"></div>
 
         <div class="categories_headers flex flex-wrap">
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
@@ -79,10 +78,15 @@
             {% endfor %}
         </ul>
 
-{#        <DIV>POPUP BUTTON:</DIV>#}
-        <div class="togglefullscreen p-2 border border-black bg-white">Toggle fullscreen</div>
+        <div class="current_selection">
+            <span class="heading">{% trans %}Current Selection:{% endtrans %}</span>
+            <div class="enabled_categories_pills">
+            </div>
+        </div>
+        {#        <DIV>POPUP BUTTON:</DIV> #}
+        <div class="togglefullscreen"><i class="iconoir-open-new-window"></i><i class="iconoir-cancel"></i></div>
 
-{#        <div>HIDDEN FIELD (REALLY) TO GET OUR DATA</div>#}
+        {#        <div>HIDDEN FIELD (REALLY) TO GET OUR DATA</div> #}
         <div id="enabled_categories" class="enabled_categories" data-ids="{{ relation.vars['data'] }}"></div>
     </div>
 </div>
