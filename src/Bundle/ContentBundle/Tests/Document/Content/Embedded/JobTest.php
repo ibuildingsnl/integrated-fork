@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -54,7 +55,7 @@ class JobTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAndSetCompanyFunction()
     {
-        /* @var $company \Integrated\Bundle\ContentBundle\Document\Content\Relation\Company | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $company \Integrated\Bundle\ContentBundle\Document\Content\Relation\Company | MockObject */
         $company = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Relation\Company');
         $this->assertSame($company, $this->job->setCompany($company)->getCompany());
     }

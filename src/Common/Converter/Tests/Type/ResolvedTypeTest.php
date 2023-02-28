@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Type;
 use Integrated\Common\Converter\Type\ResolvedType;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Integrated\Common\Converter\Type\TypeInterface;
 class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TypeInterface|MockObject
      */
     private $type;
 
@@ -110,7 +111,7 @@ class ResolvedTypeTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeExtensionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeExtensionInterface|MockObject
      */
     protected function getTypeExtension()
     {

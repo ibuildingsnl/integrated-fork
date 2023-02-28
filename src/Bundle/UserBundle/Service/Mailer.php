@@ -55,7 +55,7 @@ class Mailer
     /**
      * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    public function sendPasswordResetMail(User $user): void
+    public function sendPasswordResetMail(User $user, bool $website = false): void
     {
         $timestamp = time();
         $key = $this->keyGenerator->generateKey($timestamp, $user);
@@ -65,12 +65,35 @@ class Mailer
             'user' => $user,
             'timestamp' => $timestamp,
             'key' => $key,
+            'website' => $website,
         ];
 
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
             ->htmlTemplate('@IntegratedUser/mail/password.reset.html.twig')
+            ->subject($data['subject'])
+            ->context($data);
+
+        $this->mailer->send($message);
+    }
+
+    public function sendActivateMail(User $user)
+    {
+        $timestamp = time();
+        $key = $this->keyGenerator->generateKey($timestamp, $user);
+
+        $data = [
+            'subject' => '[Integrated] '.$this->translator->trans('Registration'),
+            'user' => $user,
+            'timestamp' => $timestamp,
+            'key' => $key,
+        ];
+
+        $message = (new TemplatedEmail())
+            ->from(new Address($this->from, $this->name))
+            ->to($user->getUserIdentifier())
+            ->htmlTemplate('@IntegratedUser/mail/activate.html.twig')
             ->subject($data['subject'])
             ->context($data);
 

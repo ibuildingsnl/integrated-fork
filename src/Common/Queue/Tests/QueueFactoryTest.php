@@ -13,6 +13,7 @@ namespace Integrated\Common\Queue\Tests;
 
 use Integrated\Common\Queue\Provider\QueueProviderInterface;
 use Integrated\Common\Queue\QueueFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,7 +26,7 @@ class QueueFactoryTest extends \PHPUnit\Framework\TestCase
     protected $factory;
 
     /**
-     * @var QueueProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueProviderInterface|MockObject
      */
     protected $provider;
 

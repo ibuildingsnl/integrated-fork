@@ -88,12 +88,11 @@ class RouterTest extends TestCase
 
         $this->router->expects($this->exactly(3))
             ->method('match')
-            ->withConsecutive(
-                [$this->equalTo('path1')],
-                [$this->equalTo('path2')],
-                [$this->equalTo('path3')]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                ['path1', $response[0]],
+                ['path2', $response[1]],
+                ['path3', $response[2]],
+            ]);
 
         $router = $this->getInstance();
 
@@ -126,12 +125,11 @@ class RouterTest extends TestCase
 
         $this->router->expects($this->exactly(3))
             ->method('matchRequest')
-            ->withConsecutive(
-                [$this->identicalTo($request[0])],
-                [$this->identicalTo($request[1])],
-                [$this->identicalTo($request[2])]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                [$request[0], $response[0]],
+                [$request[1], $response[1]],
+                [$request[2], $response[2]],
+            ]);
 
         $router = $this->getInstance();
 
@@ -160,12 +158,11 @@ class RouterTest extends TestCase
 
         $this->router->expects($this->exactly(3))
             ->method('match')
-            ->withConsecutive(
-                [$this->equalTo('path1')],
-                [$this->equalTo('path2')],
-                [$this->equalTo('path3')]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                ['path1', $response[0]],
+                ['path2', $response[1]],
+                ['path3', $response[2]],
+            ]);
 
         $router = $this->getInstance();
 

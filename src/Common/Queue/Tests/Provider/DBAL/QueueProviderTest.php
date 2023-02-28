@@ -13,6 +13,7 @@ namespace Integrated\Common\Queue\Tests\Provider\DBAL;
 
 use Doctrine\DBAL\Connection;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 
 /**
@@ -28,7 +29,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|MockObject
      */
     protected $connection;
 

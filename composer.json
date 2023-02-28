@@ -43,7 +43,7 @@
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "~5.0",
         "monolog/monolog": "~1.22",
-        "nelmio/alice": "~3.1",
+        "nelmio/alice": "~3.11",
         "php-http/guzzle7-adapter": "^1.0",
         "psr/simple-cache": "^1.0",
         "ramsey/uuid": "^4.2",
@@ -105,7 +105,7 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1",
-        "phpunit/phpunit": "~9.5.28",
+        "phpunit/phpunit": "~9.6.3",
         "friendsofphp/php-cs-fixer": "3.13.1",
         "phpstan/phpstan": "^1.9.4",
         "phpstan/phpstan-doctrine": "^1",

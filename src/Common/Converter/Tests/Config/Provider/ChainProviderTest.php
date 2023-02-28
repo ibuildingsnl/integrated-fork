@@ -13,6 +13,7 @@ namespace Integrated\Common\Converter\Tests\Config\Provider;
 
 use Integrated\Common\Converter\Config\Provider\ChainProvider;
 use Integrated\Common\Converter\Config\TypeProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -98,7 +99,7 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypes()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject[] $providers */
+        /** @var MockObject[] $providers */
         $providers = [
             $this->getProvider(),
             $this->getProvider(),
@@ -146,7 +147,7 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeProviderInterface|MockObject
      */
     protected function getProvider()
     {

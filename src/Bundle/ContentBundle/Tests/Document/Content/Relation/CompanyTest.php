@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Relation;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -75,7 +76,7 @@ class CompanyTest extends RelationTest
      */
     public function testGetAndSetLogoFunction()
     {
-        /* @var $logo \Integrated\Bundle\ContentBundle\Document\Content\Image | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $logo \Integrated\Bundle\ContentBundle\Document\Content\Image | MockObject */
         $logo = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Image');
         $this->assertSame($logo, $this->company->setLogo($logo)->getLogo());
     }
