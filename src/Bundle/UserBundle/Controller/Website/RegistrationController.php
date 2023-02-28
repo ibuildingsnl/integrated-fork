@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller\Website;
 
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Form\Type\RegisterType;
 use Integrated\Bundle\UserBundle\Handler\Exception\UniqueUserException;
@@ -44,12 +45,18 @@ class RegistrationController extends AbstractController
      */
     private $handler;
 
-    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, RegisterHandler $handler)
+    /**
+     * @var ThemeManager
+     */
+    private $themeManager;
+
+    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, RegisterHandler $handler, ThemeManager $themeManager)
     {
         $this->userManager = $userManager;
         $this->mailer = $mailer;
         $this->keyGenerator = $keyGenerator;
         $this->handler = $handler;
+        $this->themeManager = $themeManager;
     }
 
     public function register(Request $request)
@@ -77,7 +84,7 @@ class RegistrationController extends AbstractController
             }
         }
 
-        return $this->render('@IntegratedUser/website/registration/register.html.twig', ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('registration/register.html.twig'), ['form' => $form->createView()]);
     }
 
     public function activate(Request $request, int $id, int $timestamp, string $key)
