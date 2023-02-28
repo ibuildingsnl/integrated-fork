@@ -9,39 +9,24 @@
         const input_field_prefix = 'integrated_content_relations_'
 
         let relations = []
-        let relation = {
-            relation_id: "",
-            input_selector: '',
-            pills_selector: "",
-            popup_selector: "",
-            category_checkboxes: [],
-            enabled_categories: [],
-        }
         let enabled_categories = []
         let enabled_channels = []
         let current_relation = {}
 
-        function toggleFullscreen() {
-            setCurrentRelationId(event.target.closest('.taxonomy_category').id)
-            $(current_relation.popup_selector).toggleClass("hidden")
-        }
+        document.addEventListener("DOMContentLoaded", function(event) {
+            setupRelations()
+            channel_checkboxes = setupChannels()
+            addEventListeners(channel_checkboxes)
+            filterCheckboxesBasedOnChannels()
+            updateDOMForAllRelations()
+        });
 
-        function addEventListeners(channel_checkboxes, category_checkboxes) {
-            channel_checkboxes.forEach(item => {
-                item.addEventListener('change', handleChannelClick)
-            })
-            category_checkboxes.forEach(item => {
-                item.addEventListener('change', handleCategoryClick)
-            })
-            document.querySelectorAll('.togglefullscreen').forEach(item => {
-                item.addEventListener('click', toggleFullscreen)
-            })
-        }
-
-        function getEnabledChannels(checkboxes) {
-            return Array.from(checkboxes).reduce((prev, current, arr) => {
-                return current.checked == true ? [...prev, current.value] : prev
-            }, [])
+        function setupRelations() {
+            const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
+            for (relation_id of relevant_relations) {
+                let new_relation = createNewRelation(relation_id)
+                relations = [...relations, new_relation]
+            }
         }
 
         function createNewRelation(relation_id) {
@@ -56,32 +41,68 @@
             }
         }
 
-        function setCurrentRelationId(relation_id) {
-            current_relation = relations.filter(relation => relation.relation_id == relation_id)[0]
-        }
-
-        document.addEventListener("DOMContentLoaded", function(event) {
-            const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
+        function setupChannels() {
             const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
             enabled_channels = getEnabledChannels(channel_checkboxes)
+            return channel_checkboxes
+        }
 
-            for (relation_id of relevant_relations) {
-                let new_relation = createNewRelation(relation_id)
-                relations = [...relations, new_relation]
-                current_relation = new_relation
-                addEventListeners(channel_checkboxes, new_relation.all_category_checkboxes)
-                showEnabledCategories()
-                setCheckboxState()
+        function getEnabledChannels(checkboxes) {
+            return Array.from(checkboxes).reduce((prev, current, arr) => {
+                return current.checked == true ? [...prev, current.value] : prev
+            }, [])
+        }
+
+        function addEventListeners(channel_checkboxes) {
+            for (relation of relations) {
+                relation.all_category_checkboxes.forEach(item => {
+                    item.addEventListener('change', handleCategoryClick)
+                })
+            }
+            channel_checkboxes.forEach(item => {
+                item.addEventListener('change', handleChannelClick)
+            })
+            document.querySelectorAll('.togglefullscreen').forEach(item => {
+                item.addEventListener('click', toggleFullscreen)
+            })
+        }
+
+        function toggleFullscreen() {
+            setCurrentRelation(event.target.closest('.taxonomy_category').id)
+            document.querySelector(current_relation.popup_selector).classList.toggle("hidden");
+        }
+
+        function handleChannelClick(event) {
+            if (enabled_channels.includes(event.target.value)) {
+                enabled_channels = enabled_channels.filter(item => item != event.target.value)
+            } else {
+                enabled_channels.push(event.target.value)
             }
 
             filterCheckboxesBasedOnChannels()
-        });
+            updateDOMForAllRelations()
+        }
 
         function handleCategoryClick(event) {
-            setCurrentRelationId(event.target.closest('.taxonomy_category').id)
+            setCurrentRelation(event.target.closest('.taxonomy_category').id)
             updateFormInputField(event)
-            showEnabledCategories()
+            updateDOMForCurrentRelation()
+        }
+
+        function setCurrentRelation(relation_id) {
+            current_relation = relations.filter(relation => relation.relation_id == relation_id)[0]
+        }
+
+        function updateDOMForCurrentRelation() {
+            showEnabledCategoryPills()
             setCheckboxState()
+        }
+
+        function updateDOMForAllRelations() {
+            for (relation of relations) {
+                current_relation = relation
+                updateDOMForCurrentRelation()
+            }
         }
 
         function updateFormInputField(event) {
@@ -100,12 +121,17 @@
             document.querySelector(current_relation.pills_selector).innerHTML = "";
         }
 
-        function showEnabledCategories() {
+        function showEnabledCategoryPills() {
             const current_value = document.querySelector('#' + current_relation.input_selector).value.split(',').filter(n => n)
             const categories_checkboxes = current_relation.category_checkboxes
 
             emptyCurrentPills()
             for (checkbox of categories_checkboxes) {
+                //Hidden because of selected channels? Dont show
+                if (checkbox.parentNode.classList.contains('hidden')) {
+                    continue
+                }
+
                 if (current_value.includes(checkbox.dataset.id)) {
                     appendPill(checkbox.parentNode.dataset.fulltitle)
                 }
@@ -115,7 +141,7 @@
         function appendPill(pillText) {
             const node = document.createElement("div");
             const textnode = document.createTextNode(pillText);
-            node.classList.add('w-full', 'bg-blue-200', 'rounded-full', 'border', 'border-black', 'p-1', 'mr-2');
+            node.classList.add('w-full', 'bg-blue-200', 'rounded-full', 'border', 'border-black', 'p-1', 'mr-2', 'pl-2');
             node.appendChild(textnode);
             document.querySelector(current_relation.pills_selector).appendChild(node);
         }
@@ -130,16 +156,6 @@
                     checkbox.checked = false
                 }
             }
-        }
-
-        function handleChannelClick(event) {
-            if (enabled_channels.includes(event.target.value)) {
-                enabled_channels = enabled_channels.filter(item => item != event.target.value)
-            } else {
-                enabled_channels.push(event.target.value)
-            }
-
-            filterCheckboxesBasedOnChannels()
         }
 
         function filterCheckboxesBasedOnChannels() {

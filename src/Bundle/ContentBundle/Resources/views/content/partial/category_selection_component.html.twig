@@ -1,14 +1,13 @@
 <div class="taxonomy_category" id="taxonomy_category_{{ relation.vars.attr['data-relation'] }}">
 
-
     <DIV>ENABLED CATEGORIES:</DIV>
     <div class="hidden bg-blue-200 rounded-full border border-black p-1 mr-2"></div>
-    <div class="enabled_categories_pills" class="flex flex-row p-2 m-2">
+    <div class="enabled_categories_pills" class="flex flex-row p-2 m-2 pl-2">
     </div>
 
     <DIV>BASIC CHECKBOXES:</DIV>
     <div id="" class="categories_checkboxes categories_checkboxes_basic">
-        {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
+        {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
             {% if category.depth == 0 %}
                 {% set real_title = category.title %}
                 {% set level0 = category.title %}
@@ -53,7 +52,7 @@
 
         <DIV>HEADERS:</DIV>
         <div class="categories_headers flex flex-wrap">
-            {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
+            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
                 {% if category.depth == 0 %}
                     {% set real_title = category.title %}
                     {% set level0 = category.title %}
@@ -71,8 +70,8 @@
             {% endfor %}
         </div>
 
-        <DIV>CHECKBOXES:</DIV>
-        {% for category in taxonomyCats[relation.vars.attr['data-relation']] %}
+        <DIV>CHECKBOXES POPUP:</DIV>
+        {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
             {% if category.depth == 0 %}
                 {% set real_title = category.title %}
                 {% set level0 = category.title %}

@@ -533,10 +533,8 @@ class ContentController extends AbstractController
             }
         }
 
-        $categories = $this->taxonomyIndexer->buildTaxonomyIndex('newcategories');
-
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
-            'categories' => $categories,
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
             'form' => $form->createView(),
@@ -578,8 +576,6 @@ class ContentController extends AbstractController
     {
         /** @var ContentTypeInterface $contentType */
         $contentType = $this->contentTypeManager->getType($content->getContentType());
-
-        $taxonomyCategories = $this->getTaxonomyCategories($content);
 
         if (!$this->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
@@ -698,7 +694,7 @@ class ContentController extends AbstractController
 
         return $this->render('@IntegratedContent/content/edit.html.twig', [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
-            'taxonomyCats' => $taxonomyCategories,
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'type' => $contentType,
             'form' => $form->createView(),
             'formRelations' => $this->getFormRelations($form),
