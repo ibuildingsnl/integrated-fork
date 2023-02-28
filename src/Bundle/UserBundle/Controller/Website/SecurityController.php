@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\UserBundle\Controller\Website;
 
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\UserBundle\Form\Type\LoginFormType;
 use Integrated\Bundle\UserBundle\Form\Type\PasswordChangeType;
@@ -40,11 +41,17 @@ class SecurityController extends AbstractController
      */
     private $keyGenerator;
 
-    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator)
+    /**
+     * @var ThemeManager
+     */
+    private $themeManager;
+
+    public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, ThemeManager $themeManager)
     {
         $this->userManager = $userManager;
         $this->mailer = $mailer;
         $this->keyGenerator = $keyGenerator;
+        $this->themeManager = $themeManager;
     }
 
     /**
@@ -58,7 +65,7 @@ class SecurityController extends AbstractController
             ['action' => $this->generateUrl('integrated_user_website_security_check')]
         );
 
-        return $this->render('@IntegratedUser/website/security/login.html.twig', ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/login.html.twig'), ['form' => $form->createView()]);
     }
 
     /**
@@ -86,7 +93,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_website_security_login');
         }
 
-        return $this->render('@IntegratedUser/website/security/password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form->createView()]);
     }
 
     /**
@@ -120,6 +127,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_website_security_login');
         }
 
-        return $this->render('@IntegratedUser/website/security/password_reset.html.twig', ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form->createView()]);
     }
 }
