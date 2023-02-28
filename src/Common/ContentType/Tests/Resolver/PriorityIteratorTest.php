@@ -15,6 +15,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Iterator;
 use Integrated\Common\ContentType\Resolver\PriorityIterator;
 use Integrated\Common\ContentType\ResolverInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Common\ContentType\Resolver\PriorityIterator
@@ -136,7 +137,7 @@ class PriorityIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getType($name)
     {
@@ -151,7 +152,7 @@ class PriorityIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param ContentTypeInterface[] $types
      *
-     * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver(array $types = [])
     {

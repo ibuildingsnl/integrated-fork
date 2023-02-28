@@ -21,6 +21,7 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Security\PermissionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension
@@ -30,17 +31,17 @@ use Integrated\Common\Security\PermissionInterface;
 class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectRepository|MockObject
      */
     private $workflow;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectRepository|MockObject
      */
     private $definition;
 

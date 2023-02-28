@@ -14,6 +14,7 @@ namespace Integrated\Common\Bulk\Tests\Action;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistry;
 use Integrated\Common\Bulk\Action\HandlerFactoryRegistryBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -52,7 +53,7 @@ class HandlerFactoryRegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return HandlerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return HandlerFactoryInterface|MockObject
      */
     protected function getFactory()
     {

@@ -16,6 +16,7 @@ use Integrated\Common\Converter\ConverterInterface;
 use Integrated\Common\Solr\Indexer\CommandFactory;
 use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
 use Integrated\Common\Solr\Indexer\JobInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\QueryType\Update\Query\Command\Add;
 use Solarium\QueryType\Update\Query\Command\Commit;
 use Solarium\QueryType\Update\Query\Command\Delete;
@@ -30,12 +31,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConverterInterface|MockObject
      */
     private $converter;
 
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|MockObject
      */
     private $serializer;
 
@@ -386,7 +387,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $action
      *
-     * @return JobInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return JobInterface|MockObject
      */
     protected function getJob($action = null, array $options = [])
     {
@@ -419,7 +420,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerInterface|MockObject
      */
     protected function getContainer(array $data = [])
     {

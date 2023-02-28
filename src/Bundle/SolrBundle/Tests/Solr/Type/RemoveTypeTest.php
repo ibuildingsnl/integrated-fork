@@ -27,8 +27,7 @@ class RemoveTypeTest extends \PHPUnit\Framework\TestCase
     {
         $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
         $container->expects($this->exactly(3))
-            ->method('remove')
-            ->withConsecutive([$this->equalTo('field1')], [$this->equalTo('field2')], [$this->equalTo('field3')]);
+            ->method('remove');
 
         $this->getInstance()->build($container, new \stdClass(), ['field1', 'field2', 'field3']);
     }

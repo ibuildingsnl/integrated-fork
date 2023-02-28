@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Config;
 use Integrated\Common\Converter\Config\ConfigResolver;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\TypeProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +24,7 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     protected $CONFIG_INTERFACE = 'Integrated\\Common\\Converter\\Config\\ConfigInterface';
 
     /**
-     * @var TypeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TypeProviderInterface|MockObject
      */
     protected $provider;
 
@@ -59,14 +60,10 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->provider->expects($this->exactly(2))
             ->method('getTypes')
-            ->withConsecutive(
-                [$this->equalTo(Fixtures\TestParent::class)],
-                [$this->equalTo(Fixtures\TestChild::class)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$this->getType()],
-                []
-            );
+            ->willReturnMap([
+                [Fixtures\TestParent::class, [$this->getType()]],
+                [Fixtures\TestChild::class, []],
+            ]);
 
         $config = $resolver->getConfig(Fixtures\TestChild::class);
 
@@ -81,14 +78,10 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->provider->expects($this->exactly(2))
             ->method('getTypes')
-            ->withConsecutive(
-                [$this->equalTo(Fixtures\TestParent::class)],
-                [$this->equalTo(Fixtures\TestChild::class)]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$this->getType()],
-                [$this->getType()]
-            );
+            ->willReturnMap([
+                [Fixtures\TestParent::class, [$this->getType()]],
+                [Fixtures\TestChild::class, [$this->getType()]],
+            ]);
 
         $config = $resolver->getConfig(Fixtures\TestChild::class);
 
@@ -142,7 +135,7 @@ class ConfigResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConfigInterface|MockObject
      */
     protected function getType()
     {

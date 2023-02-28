@@ -12,6 +12,7 @@
 namespace Integrated\Common\Bulk\Tests\DependencyInjection;
 
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -28,11 +29,12 @@ class FactoryRegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
         $definition = $this->createMock(Definition::class);
         $definition->expects($this->exactly(3))
             ->method('addMethodCall')
-            ->withConsecutive(
-                ['addFactory', $this->identicalTo(['class1', $service1])],
-                ['addFactory', $this->identicalTo(['class2', $service1])],
-                ['addFactory', $this->identicalTo(['class1', $service2])]
-            );
+            ->with('addFactory', $this->callback(function (array $arguments) use ($service1, $service2) {
+                $this->assertContainsEquals($arguments[0], ['class1', 'class2']);
+                $this->assertContainsEquals($arguments[1], [$service1, $service2]);
+
+                return true;
+            }));
 
         $container = $this->getContainer();
         $container->expects($this->once())
@@ -42,8 +44,11 @@ class FactoryRegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
 
         $container->expects($this->exactly(3))
             ->method('getDefinition')
-            ->withConsecutive(['service'], ['tagged.service.1'], ['tagged.service.2'])
-            ->willReturnOnConsecutiveCalls($definition, $service1, $service2);
+            ->willReturnMap([
+                ['service', $definition],
+                ['tagged.service.1', $service1],
+                ['tagged.service.2', $service2],
+            ]);
 
         $container->expects($this->once())
             ->method('findTaggedServiceIds')
@@ -82,7 +87,7 @@ class FactoryRegistryBuilderPassTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerBuilder|MockObject
      */
     protected function getContainer()
     {

@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -72,7 +73,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddReferenceFunction()
     {
-        /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $content \Integrated\Common\Content\ContentInterface | MockObject */
         $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
 
         // Asserts
@@ -85,7 +86,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddReferenceFunctionWithDuplicateReference()
     {
-        /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $content \Integrated\Common\Content\ContentInterface | MockObject */
         $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
 
         // Add content two times
@@ -100,7 +101,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testRemoveReferenceFunction()
     {
-        /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $content \Integrated\Common\Content\ContentInterface | MockObject */
         $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
 
         // Add content
@@ -115,7 +116,7 @@ class RelationTest extends \PHPUnit\Framework\TestCase
      */
     public function testRemoveReferenceFunctionWithInvalidContent()
     {
-        /* @var $content \Integrated\Common\Content\ContentInterface | \PHPUnit_Framework_MockObject_MockObject */
+        /* @var $content \Integrated\Common\Content\ContentInterface | MockObject */
         $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
 
         // Asserts

@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Config\Util;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\Util\ConfigIterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Integrated\Common\Converter\Config\Util\ConfigIterator;
 class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigInterface|MockObject
      */
     private $config;
 
@@ -118,7 +119,7 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConfigInterface|MockObject
      */
     protected function getType()
     {

@@ -13,6 +13,7 @@ namespace Integrated\Common\ContentType\Tests\Resolver;
 
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MemoryResolver;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -85,7 +86,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getType()
     {

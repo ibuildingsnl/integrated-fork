@@ -8,6 +8,9 @@
 
         <defaults autowire="true" autoconfigure="true" />
 
+        <prototype namespace="Integrated\Bundle\UserBundle\Controller\" resource="../../Controller/*">
+        </prototype>
+
         <service id="Integrated\Bundle\UserBundle\Controller\SecurityController">
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\Mailer" />
