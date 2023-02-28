@@ -13,6 +13,8 @@
                     {% set level0channels = category.channels %}
                     {% set parent_channels = category.channels %}
                     <div class="category_tab"
+                         data-level0="{{ level0 }}"
+                         onclick="filterTab()"
                          data-fulltitle="{{ real_title }}"
                          data-title="{{ category.title }}"
                          data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
@@ -60,6 +62,7 @@
                 {% endif %}
 
                 <li class="inline-block mr-2 {{ className }}" data-fulltitle="{{ real_title }}"
+                     data-level0="{{ level0 }}"
                      data-title="{{ category.title }}"
                      data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
                      data-taxonomyId="{{ category.taxonomyId }}"

@@ -12,6 +12,7 @@
         let enabled_categories = []
         let enabled_channels = []
         let current_relation = {}
+        let selected_tab = ''
 
         document.addEventListener("DOMContentLoaded", function(event) {
             setupRelations()
@@ -20,6 +21,42 @@
             filterCheckboxesBasedOnChannels()
             updateDOMForAllRelations()
         });
+
+        function filterTab() {
+            selected_tab = event.target.parentNode.dataset.level0
+            setCurrentRelation(event.target.closest('.taxonomy_category').id)
+            filterCheckboxes()
+        }
+
+        function filterCheckboxes(level_zero) {
+            const categories_checkboxes = document.querySelectorAll('#' + current_relation.relation_id + ' .categories_checkboxes li')
+
+            for (checkbox of categories_checkboxes) {
+                //if no channels are selected, the default is true
+                let show_category = enabled_channels.length == 0 || false
+
+                //if some channels are selected, show_category is based on the intersection
+                if (enabled_channels.length != 0) {
+                    show_category = checkbox.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+                }
+
+                //should a category be shown based on tab selection
+                if (selected_tab != '' && show_category == true) {
+                    if (checkbox.dataset.level0 == selected_tab) {
+                        show_category = true
+                    } else {
+                        show_category = false
+                    }
+                }
+
+                //apply outcome
+                if (show_category == true) {
+                    checkbox.classList.remove('hidden')
+                } else {
+                    checkbox.classList.add('hidden')
+                }
+            }
+        }
 
         function setupRelations() {
             const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
