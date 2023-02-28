@@ -49,12 +49,12 @@
             <tag name="form.type"/>
         </service>
 
-        <service id="integrated_content.form.type.media_gallery_image" class="Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType">
+        <service id="integrated_content.form.type.media_gallery_image" class="Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType">
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <tag name="form.type" />
         </service>
 
-        <service id="integrated_content.form.type.media_gallery_file" class="Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryFileType">
+        <service id="integrated_content.form.type.media_gallery_multiple" class="Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryMultipleType">
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <tag name="form.type" />
         </service>

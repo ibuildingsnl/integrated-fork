@@ -58,7 +58,7 @@ class Taxonomy extends Content implements RankableInterface
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
         'label' => 'Featured Image',
         'attr' => [
             'style' => 'sidebar',

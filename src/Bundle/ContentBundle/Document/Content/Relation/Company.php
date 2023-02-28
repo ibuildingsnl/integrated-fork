@@ -47,7 +47,7 @@ class Company extends Relation
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',

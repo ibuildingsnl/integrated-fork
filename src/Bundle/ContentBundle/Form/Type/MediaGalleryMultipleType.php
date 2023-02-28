@@ -4,14 +4,15 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Form\DataTransformer\FileTransformer;
+use Integrated\Bundle\ContentBundle\Form\DataTransformer\MultipleFileTransformer;
+use Integrated\Bundle\ContentBundle\Form\DataTransformer\ImageTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class MediaGalleryFileType extends AbstractType
+class MediaGalleryMultipleType extends AbstractType
 {
     /**
      * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
@@ -28,7 +29,7 @@ class MediaGalleryFileType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new FileTransformer($this->repository));
+        $builder->addModelTransformer(new MultipleFileTransformer($this->repository));
     }
 
     /**
@@ -59,6 +60,6 @@ class MediaGalleryFileType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'integrated_media_gallery_file';
+        return 'integrated_media_gallery_image';
     }
 }
