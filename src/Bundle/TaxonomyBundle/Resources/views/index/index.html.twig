@@ -48,7 +48,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ item.description|excerpt(25)|raw }}
+                                    {{ item.description|striptags|u.wordwrap(10)|raw }}
                                 </td>
                                 <td>
                                     {{ item.slug }}
