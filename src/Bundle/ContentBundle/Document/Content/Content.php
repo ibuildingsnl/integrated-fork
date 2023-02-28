@@ -360,7 +360,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
                         return $references->filter(function (ContentInterface $content) use ($channel, $published) {
                             return $content instanceof self
                                    && (!$published || $content->isPublished())
-                                   && ($channel && $content->hasChannel($channel));
+                                   && (!$channel || $content->hasChannel($channel));
                         });
                     }
                 }
