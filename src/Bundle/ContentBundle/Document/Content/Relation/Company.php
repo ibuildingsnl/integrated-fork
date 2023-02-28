@@ -48,6 +48,7 @@ class Company extends Relation
      * @var Image
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
+        'priority' => 500,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
