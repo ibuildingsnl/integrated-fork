@@ -18,8 +18,8 @@
             setupRelations()
             channel_checkboxes = setupChannels()
             addEventListeners(channel_checkboxes)
-            filterCheckboxesBasedOnChannels()
             updateDOMForAllRelations()
+            filterBasedOnChannels()
         });
 
         function filterTab() {
@@ -28,7 +28,7 @@
             filterCheckboxes()
         }
 
-        function filterCheckboxes(level_zero) {
+        function filterCheckboxes() {
             const categories_checkboxes = document.querySelectorAll('#' + current_relation.relation_id + ' .categories_checkboxes li')
 
             for (checkbox of categories_checkboxes) {
@@ -102,6 +102,16 @@
             document.querySelectorAll('.togglefullscreen').forEach(item => {
                 item.addEventListener('click', toggleFullscreen)
             })
+            //listen to the closing of the popup. The event will be sent from global.js
+            document.addEventListener("cancelEvent", function(e) {
+                handleClosePopup()
+                console.log(e.detail); // Prints "Example of an event"
+            });
+        }
+
+        function handleClosePopup() {
+            selected_tab = ''
+            filterCheckboxes()
         }
 
         function toggleFullscreen() {
@@ -117,7 +127,7 @@
                 enabled_channels.push(event.target.value)
             }
 
-            filterCheckboxesBasedOnChannels()
+            filterBasedOnChannels()
             updateDOMForAllRelations()
         }
 
@@ -197,20 +207,21 @@
             }
         }
 
-        function filterCheckboxesBasedOnChannels() {
+        function filterBasedOnChannels() {
             const categories_checkboxes = document.querySelectorAll('.categories_checkboxes li')
+            const categories_headers = document.querySelectorAll('.categories_headers .category_tab')
 
-            for (checkbox of categories_checkboxes) {
+            for (category_item of [...categories_checkboxes, ...categories_headers]) {
                 let show_category = enabled_channels.length == 0 || false
 
                 if (enabled_channels.length != 0) {
-                    show_category = checkbox.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
+                    show_category = category_item.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
                 }
 
                 if (show_category == true) {
-                    checkbox.classList.remove('hidden')
+                    category_item.classList.remove('hidden')
                 } else {
-                    checkbox.classList.add('hidden')
+                    category_item.classList.add('hidden')
                 }
             }
         }

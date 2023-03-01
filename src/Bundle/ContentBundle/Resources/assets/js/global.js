@@ -12,7 +12,7 @@ $(document).mouseup(function(e) {
         closeOutside.removeClass('show');
         hideDropDownBackGround();
     }
-
+    sendCancelEvent()
 });
 
 $(document).keyup(function(e) {
@@ -24,7 +24,12 @@ $(document).keyup(function(e) {
         closeOutside.removeClass('show');
         hideDropDownBackGround();
     }
+    sendCancelEvent()
 });
+
+function sendCancelEvent() {
+    document.dispatchEvent(new CustomEvent("cancelEvent", { "detail": "Example of an event" }));
+}
 
 $('.search-form .form-control').focus(function() {
     showDropDownBackGround();
