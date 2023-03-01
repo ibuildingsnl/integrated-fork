@@ -11,8 +11,8 @@ $(document).mouseup(function(e) {
     ) {
         closeOutside.removeClass('show');
         hideDropDownBackGround();
+        sendCancelEvent()
     }
-    sendCancelEvent()
 });
 
 $(document).keyup(function(e) {
@@ -23,12 +23,12 @@ $(document).keyup(function(e) {
         }
         closeOutside.removeClass('show');
         hideDropDownBackGround();
+        sendCancelEvent()
     }
-    sendCancelEvent()
 });
 
 function sendCancelEvent() {
-    document.dispatchEvent(new CustomEvent("cancelEvent", { "detail": "Example of an event" }));
+    document.dispatchEvent(new CustomEvent("cancelPopupEvent"));
 }
 
 $('.search-form .form-control').focus(function() {

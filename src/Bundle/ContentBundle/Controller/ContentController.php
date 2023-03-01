@@ -545,26 +545,25 @@ class ContentController extends AbstractController
 
     private function getTaxonomyCategories($content): array
     {
-        $taxonomyCategories = [];
-
+        $contentRelations = [];
         $contentType = $this->contentTypeManager->getType($content->getContentType());
         $dm = $this->getDoctrineODM()->getManager();
         $relations = $dm->getRepository($this->relationClass)->findAll();
         foreach ($relations as $relation) {
             if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
-                array_push($taxonomyCategories, $relation);
+                array_push($contentRelations, $relation);
             }
         }
 
-        $taxonomyCats = [];
-        foreach ($taxonomyCategories as $tx) {
-            foreach ($tx->getTargets() as $target)
+        $taxonomyCategoriess = [];
+        foreach ($contentRelations as $contentRelation) {
+            foreach ($contentRelation->getTargets() as $target)
             {
-                $taxonomyCats[$tx->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+                $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
             }
         }
 
-        return $taxonomyCats;
+        return $taxonomyCategoriess;
     }
 
     /**

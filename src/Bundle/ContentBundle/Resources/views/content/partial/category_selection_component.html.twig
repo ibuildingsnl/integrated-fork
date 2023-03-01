@@ -13,13 +13,12 @@
                     {% set parent_channels = category.channels %}
                     <div class="category_tab"
                          data-level0="{{ level0 }}"
-                         onclick="filterTab()"
                          data-fulltitle="{{ real_title }}"
                          data-title="{{ category.title }}"
                          data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
                          data-taxonomyId="{{ category.taxonomyId }}"
                          data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
-                        <div>{{ category.title }}</div>
+                        {{ category.title }}
                     </div>
                 {% endif %}
             {% endfor %}
@@ -70,7 +69,7 @@
                                 <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
                                 <span class="checkmark"></span>
                                 <div class="background"></div>
-                                {{ category.title }}
+                                {{ category.title }} - {% for channel in category.channels %}{{ channel.getId }},{% endfor %}
                             </label>
                         </div>
                     </li>
@@ -82,7 +81,7 @@
             <div class="enabled_categories_pills">
             </div>
         </div>
-        
+
         {#        <DIV>POPUP BUTTON:</DIV> #}
         <div class="togglefullscreen"><i class="iconoir-open-new-window"></i><i class="iconoir-cancel"></i></div>
 
