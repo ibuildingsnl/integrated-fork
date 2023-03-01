@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+
+        <parameter key="integrated_newsletter.document_types.whitelist" type="collection">
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Article</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Event</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\JobPosting</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\News</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Video</parameter>
+            <parameter>Integrated\Bundle\ContentBundle\Document\Content\Relation\Company</parameter>
+        </parameter>
+
+    </parameters>
+
+    <services>
+
+        <service id="integrated_newsletter.event_listener.schedule_form_field_subscriber" class="Integrated\Bundle\NewsletterBundle\EventListener\FrequenciesProvider">
+            <argument type="service" id="integrated_asset.manager.javascript_manager" />
+            <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
+
+            <tag name="integrated_content.form.event_subscriber" />
+        </service>
+
+        <service id="integrated_newsletter.event_listener.preview_provider" class="Integrated\Bundle\NewsletterBundle\EventListener\PreviewProvider">
+            <argument type="service" id="integrated_asset.manager.javascript_manager" />
+            <argument type="service" id="integrated_asset.manager.stylesheet_manager" />
+            <argument type="service" id="router.default" />
+
+            <tag name="integrated_content.form.event_subscriber" />
+        </service>
+
+        <service id="integrated_newsletter.form.listener.form_field" class="Integrated\Bundle\NewsletterBundle\EventListener\ExcludeFromNewsletterListener">
+            <tag name="integrated_content.form.event_subscriber"/>
+            <argument>%integrated_newsletter.document_types.whitelist%</argument>
+        </service>
+
+        <service id="integrated_newsletter.form.listener.newsletter_change_listener" class="Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener">
+            <argument type="service" id="integrated_newsletter.generator" />
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+        <service id="Integrated\Bundle\NewsletterBundle\Form\ContentSelectionType">
+            <argument type="service" id="integrated_content.resolver" />
+            <argument>%integrated_newsletter.document_types.whitelist%</argument>
+            <tag name="form.type" />
+        </service>
+
+    </services>
+
+</container>

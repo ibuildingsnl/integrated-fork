@@ -154,7 +154,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -458,16 +458,6 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         }
 
         return $published && !$this->disabled;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPublished($published)
-    {
-        $this->published = $published;
-
-        return $this;
     }
 
     /**

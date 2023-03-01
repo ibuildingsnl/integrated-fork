@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="Integrated\Bundle\NewsletterBundle\Form\RecipientListChoiceType">
+            <argument type="service" id="integrated_newsletter.fetcher.recipient_lists" />
+            <tag name="form.type" />
+        </service>
+
+        <service id="Integrated\Bundle\NewsletterBundle\Form\SenderChoiceType">
+            <argument type="service" id="integrated_newsletter.fetcher.senders" />
+            <tag name="form.type" />
+        </service>
+
+        <service id="integrated_newsletter.fetcher.recipient_lists" class="Integrated\Bundle\SendInBlueBundle\Service\SendInBlueRecipientListFetcher">
+            <argument type="service" id="integrated_sendinblue.api.contacts" />
+        </service>
+
+        <service id="integrated_newsletter.fetcher.senders" class="Integrated\Bundle\SendInBlueBundle\Service\SendInBlueSenderFetcher">
+            <argument type="service" id="integrated_sendinblue.api.senders" />
+        </service>
+
+        <service id="integrated_sendinblue.api.contacts" class="SendinBlue\Client\Api\ContactsApi">
+            <argument type="service" id="guzzle" />
+            <argument type="service" id="integrated_sendinblue.config" />
+        </service>
+
+        <service id="integrated_sendinblue.api.senders" class="SendinBlue\Client\Api\SendersApi">
+            <argument type="service" id="guzzle" />
+            <argument type="service" id="integrated_sendinblue.config" />
+        </service>
+
+        <service id="guzzle" class="GuzzleHttp\Client" />
+
+        <service id="integrated_sendinblue.config" class="SendinBlue\Client\Configuration">
+            <call method="setApiKey">
+                <argument>api-key</argument>
+                <argument>%env(resolve:SENDINBLUE_KEY)%</argument>
+            </call>
+        </service>
+
+    </services>
+</container>

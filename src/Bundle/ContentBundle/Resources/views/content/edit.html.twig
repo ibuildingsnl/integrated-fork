@@ -451,6 +451,14 @@
                                 {% endfor %}
                             {% endif %}
                         {% endblock %}
+
+                        {% block custom_sidebar_fields %}
+                            {% if form.children.customFields is defined %}
+                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                    {{ form_row(field) }}
+                                {% endfor %}
+                            {% endif %}
+                        {% endblock %}
                     {% endblock %}
                 </div>
             </aside>

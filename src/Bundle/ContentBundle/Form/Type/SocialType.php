@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -40,7 +41,8 @@ class SocialType extends AbstractType
         }
 
         if (\in_array('url', $options['fields'])) {
-            $builder->add('url', TextType::class, [
+            $builder->add('url', UrlType::class, [
+                'default_protocol' => 'https',
                 'label' => $options['label_url'],
                 'constraints' => [
                     new NotBlank(),
@@ -55,7 +57,6 @@ class SocialType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Embedded\\Social',
             'fields' => ['icon', 'url'], // @todo validate options (INTEGRATED-627)
             'label_icon' => 'Icon',
             'label_url' => 'URL',

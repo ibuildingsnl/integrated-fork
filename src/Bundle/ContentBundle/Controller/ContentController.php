@@ -27,8 +27,11 @@ use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
+use Integrated\Common\Content\Form\Event\ValidationEvent;
+use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
@@ -36,6 +39,7 @@ use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -55,84 +59,20 @@ class ContentController extends AbstractController
      */
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var ContentTypeManager
-     */
-    private $contentTypeManager;
-
-    /**
-     * @var QueueSubscriber
-     */
-    private $queueSubscriber;
-
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
-
-    /**
-     * @var IndexerInterface
-     */
-    private $indexer;
-    /**
-     * @var SearchContentReferenced
-     */
-    private $contentReferenced;
-
-    /**
-     * @var Manager
-     */
-    private $lockManager;
-
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    /**
-     * @var ImageExtension
-     */
-    private $imageExtension;
-
-    /**
-     * @var MediaProvider
-     */
-    private $mediaProvider;
-
-    /**
-     * @var TaxonomyIndexer
-     */
-    private $taxonomyIndexer;
-
     public function __construct(
-        ResolverInterface $resolver,
-        ContentTypeManager $contentTypeManager,
-        QueueSubscriber $queueSubscriber,
-        LockFactory $lockFactory,
-        IndexerInterface $indexer,
-        SearchContentReferenced $contentReferenced,
-        Manager $lockManager,
-        UserManagerInterface $userManager,
-        ImageExtension $imageExtension,
-        MediaProvider $mediaProvider,
-        TaxonomyIndexer $taxonomyIndexer
+        private readonly ResolverInterface $resolver,
+        private readonly ContentTypeManager $contentTypeManager,
+        private readonly QueueSubscriber $queueSubscriber,
+        private readonly LockFactory $lockFactory,
+        private readonly IndexerInterface $indexer,
+        private readonly SearchContentReferenced $contentReferenced,
+        private readonly Manager $lockManager,
+        private readonly UserManagerInterface $userManager,
+        private readonly ImageExtension $imageExtension,
+        private readonly MediaProvider $mediaProvider,
+        private readonly MetadataFactoryInterface $metadataFactory,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
-        $this->resolver = $resolver;
-        $this->contentTypeManager = $contentTypeManager;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->lockFactory = $lockFactory;
-        $this->indexer = $indexer;
-        $this->contentReferenced = $contentReferenced;
-        $this->lockManager = $lockManager;
-        $this->userManager = $userManager;
-        $this->imageExtension = $imageExtension;
-        $this->mediaProvider = $mediaProvider;
-        $this->taxonomyIndexer = $taxonomyIndexer;
     }
 
     /**
@@ -495,6 +435,13 @@ class ContentController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
+                    $this->dispatcher->dispatch(new ValidationEvent(
+                        $contentType,
+                        $this->metadataFactory->getMetadata($contentType->getClass()),
+                        $content,
+                    ), Events::POST_VALIDATE);
+                }
                 // higher priority for content edited in Integrated
                 $queue = $this->queueSubscriber->getQueue();
                 $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
@@ -612,6 +559,8 @@ class ContentController extends AbstractController
                 }
             }
         }
+        // @todo find out what's actually going wrong with these locks
+        $locking['locked'] = false;
 
         $form = $this->createEditForm($contentType, $content, $locking, $request);
 
@@ -641,6 +590,14 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
+                    if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
+                        $this->dispatcher->dispatch(new ValidationEvent(
+                            $contentType,
+                            $this->metadataFactory->getMetadata($contentType->getClass()),
+                            $content,
+                        ), Events::POST_VALIDATE);
+                    }
+
                     // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
@@ -667,7 +624,17 @@ class ContentController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute($request->get('_route'), ['id' => $content->getId()]);
+                // @todo streamline, remove duplication
+                return $this->render('@IntegratedContent/content/edit.html.twig', [
+                    'editable' => $this->isGranted(Permissions::EDIT, $content),
+                    'type' => $contentType,
+                    'form' => $form->createView(),
+                    'formRelations' => $this->getFormRelations($form),
+                    'content' => $content,
+                    'locking' => $locking,
+                    'showContentHistory' => true,
+                    'references' => json_encode($this->getReferences($content)),
+                ]);
             }
             // reload_changed is just submitting without saving so the changes made are
             // not lost and there is a new change to get a lock on the content.

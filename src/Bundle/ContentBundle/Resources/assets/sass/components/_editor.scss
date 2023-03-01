@@ -275,9 +275,9 @@ body[class*="edit"], body[class*="new"] {
                     display: none;
                     border-bottom: 1px solid #dee3e9;
 
-                    input[type=text], select {
+                    input[type=text], input[type=time], input[type=number], input[type=email], select {
                         height: 33px;
-                        padding: 0 1rem !important;
+                        padding: 0 1rem;
                         border-radius: 8px !important;
 
                     }
