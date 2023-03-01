@@ -854,3 +854,21 @@ label {
         }
     }
 }
+
+ul#integrated_content_User_groups li {
+    width: 100%;
+    margin: 0 !important;
+    padding: 5px;
+    box-sizing: border-box;
+    @include media(xl) {
+        width:50%;
+    }
+    @include media(2xl) {
+        width:33%;
+    }
+}
+
+ul#integrated_content_User_groups {
+    max-width: calc(750px + 1rem);
+    margin: 0 -.5rem;
+}
