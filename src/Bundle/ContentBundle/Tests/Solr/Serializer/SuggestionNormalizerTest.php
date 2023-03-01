@@ -15,6 +15,7 @@ use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ContentBundle\Solr\Serializer\SuggestionNormalizer;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\Component\Result\Facet\Field;
 use Solarium\Component\Result\FacetSet;
 use Solarium\QueryType\Select\Result\Document;
@@ -31,12 +32,12 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     public const ROUTE = 'this-is-the-route';
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|MockObject
      */
     protected $generator;
 
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     protected $resolver;
 
@@ -264,7 +265,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object|null $query
      *
-     * @return Result|\PHPUnit_Framework_MockObject_MockObject
+     * @return Result|MockObject
      */
     protected function getQueryResult($query = null)
     {
@@ -280,7 +281,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string|null $query
      *
-     * @return SuggestionQuery|\PHPUnit_Framework_MockObject_MockObject
+     * @return SuggestionQuery|MockObject
      */
     protected function getQuery($query = null)
     {
@@ -297,7 +298,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $facets
      *
-     * @return FacetSet|\PHPUnit_Framework_MockObject_MockObject
+     * @return FacetSet|MockObject
      */
     protected function getFacetSet($facets = null)
     {
@@ -314,7 +315,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getContentType($name)
     {

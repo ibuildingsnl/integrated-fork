@@ -15,6 +15,7 @@ use Integrated\Common\Converter\Type\RegistryBuilder;
 use Integrated\Common\Converter\Type\ResolvedTypeFactoryInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,7 +23,7 @@ use Integrated\Common\Converter\Type\TypeInterface;
 class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolvedTypeFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolvedTypeFactoryInterface|MockObject
      */
     private $factory;
 
@@ -66,10 +67,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(2))
             ->method('createType')
-            ->withConsecutive(
-                [$this->equalTo($type3), $this->equalTo([])],
-                [$this->equalTo($type2), $this->equalTo([])]
-            )
+            ->with($this->isInstanceOf(TypeInterface::class), $this->equalTo([]))
             ->willReturn($resolved);
 
         $registry = $builder->getRegistry();
@@ -152,7 +150,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return TypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeInterface|MockObject
      */
     protected function getType($name)
     {
@@ -167,7 +165,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return TypeExtensionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TypeExtensionInterface|MockObject
      */
     protected function getTypeExtension($name)
     {

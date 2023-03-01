@@ -460,6 +460,12 @@ class Article extends Content implements RankableInterface
      */
     public function getCover()
     {
+        if ($this->getFeaturedImage() instanceof Image) {
+            if ($this->getFeaturedImage()->getFile() instanceof StorageInterface) {
+                return $this->getFeaturedImage()->getFile();
+            }
+        }
+
         $items = $this->getReferencesByRelationTypes(['cover', 'embedded']);
         if ($items) {
             foreach ($items as $item) {

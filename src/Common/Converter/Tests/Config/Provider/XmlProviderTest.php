@@ -13,6 +13,7 @@ namespace Integrated\Common\Converter\Tests\Config\Provider;
 
 use Integrated\Common\Converter\Config\Provider\XmlProvider;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -28,7 +29,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testFinderFileExtension()
     {
-        /** @var Finder|\PHPUnit_Framework_MockObject_MockObject $finder */
+        /** @var Finder|MockObject $finder */
         $finder = $this->getMockBuilder('Symfony\Component\Finder\Finder')->disableOriginalConstructor()->getMock();
 
         $finder->expects($this->atLeastOnce())
@@ -144,7 +145,7 @@ class XmlProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * Return a Finder which will return a predefined iterator.
      *
-     * @return Finder|\PHPUnit_Framework_MockObject_MockObject
+     * @return Finder|MockObject
      */
     protected function getFinder(array $files = [])
     {

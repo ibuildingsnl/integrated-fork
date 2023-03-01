@@ -19,7 +19,6 @@
             </options>
         </type>
         <type name="integrated.taxonomy" />
-
     </class>
 
     <class name="Integrated\Bundle\ContentBundle\Document\Content\Article">
@@ -84,6 +83,7 @@
             <options>
 
                 <string key="cover">cover</string>
+                <string key="featuredImage">featuredImage</string>
 
             </options>
 
@@ -107,6 +107,8 @@
         </type>
 
         <type name="integrated.has_image" />
+        <type name="integrated.featured" />
+        <type name="integrated.premium" />
 
     </class>
 
@@ -179,6 +181,9 @@
             </options>
         </type>
 
+        <type name="integrated.featured" />
+        <type name="integrated.premium" />
+
     </class>
 
     <class name="Integrated\Bundle\ContentBundle\Document\Content\Event">
@@ -204,6 +209,9 @@
 
             </options>
         </type>
+
+        <type name="integrated.featured" />
+        <type name="integrated.premium" />
 
     </class>
 
@@ -238,6 +246,9 @@
 
             </options>
         </type>
+
+        <type name="integrated.featured" />
+        <type name="integrated.premium" />
 
     </class>
 

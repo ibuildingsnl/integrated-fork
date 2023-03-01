@@ -13,6 +13,7 @@ namespace Integrated\Common\Content\Tests\Form\Event;
 
 use Integrated\Common\Content\Form\Event\FieldEvent;
 use Integrated\Common\Form\Mapping\AttributeEditorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Common\Form\Mapping\AttributeEditorInterface;
 class FieldEventTest extends FormEventTest
 {
     /**
-     * @var AttributeEditorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AttributeEditorInterface|MockObject
      */
     protected $field;
 

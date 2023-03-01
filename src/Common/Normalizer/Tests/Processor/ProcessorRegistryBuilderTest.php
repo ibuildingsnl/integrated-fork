@@ -14,6 +14,7 @@ namespace Integrated\Common\Normalizer\Tests\Processor;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistry;
 use Integrated\Common\Normalizer\Processor\ProcessorRegistryBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -62,7 +63,7 @@ class ProcessorRegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProcessorInterface|MockObject
      */
     protected function getProcessor()
     {

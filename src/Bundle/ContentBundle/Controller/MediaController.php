@@ -142,7 +142,7 @@ class MediaController extends AbstractController
 
         return [
             'paginator' => $this->createPaginator($items, $requestSource),
-            'contentTypeSelectOptions' => $contentTypeSelectOptions,
+            'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
@@ -154,6 +154,13 @@ class MediaController extends AbstractController
         ];
     }
 
+    private function removeStardardClasses($contentTypeSelectOptions): array
+    {
+        return array_filter($contentTypeSelectOptions, function ($item) {
+            return !\in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name'));
+        });
+    }
+
     public function uploadFile(Request $request)
     {
         try {
@@ -163,9 +170,11 @@ class MediaController extends AbstractController
 
             $this->taxonomyRelationManager->manageRelations($request);
 
+            $this->taxonomyRelationManager->runSolrQueue();
+
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'This filetype is not allowed.']);
+            return new JsonResponse(['message' => 'This file is not uploaded. Is this filetype allowed?']);
         }
 
         return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
@@ -263,12 +272,12 @@ class MediaController extends AbstractController
             if ($this::DATE_FILTER_ON == '+1MONTH') {
                 if (null != $yearMonthFilter && 'all_dates' !== $yearMonthFilter) {
                     list($year, $month, $day) = explode('-', $yearMonthFilter);
+                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $nextMonth = (int) $month + 1;
                     if ($nextMonth === 13) {
                         $nextMonth = 1;
                         $year = (int) $year + 1;
                     }
-                    $startDate = "{$year}-{$month}-01T00:00:00Z";
                     $endDate = "$year-{$nextMonth}-01T00:00:00Z";
                     $fullDateFilter = $startDate.' TO '.$endDate;
 
@@ -383,6 +392,8 @@ class MediaController extends AbstractController
 
     public function manageRelations(Request $request): Response
     {
-        return $this->taxonomyRelationManager->manageRelations($request);
+        $this->taxonomyRelationManager->manageRelations($request);
+
+        return new JsonResponse(['message' => 'Ok']);
     }
 }

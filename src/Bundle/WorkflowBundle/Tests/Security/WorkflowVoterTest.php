@@ -22,6 +22,7 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Permissions;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
@@ -31,17 +32,17 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|MockObject
      */
     private $manager;
 
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var MetadataFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MetadataFactoryInterface|MockObject
      */
     private $metadata;
 
@@ -129,8 +130,10 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects(!$this->repository['state'] ? $this->once() : $this->exactly(2))
             ->method('getRepository')
-            ->withConsecutive(['Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition'], ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State'])
-            ->willReturnOnConsecutiveCalls($this->repository['workflow'], $this->repository['state']);
+            ->willReturnMap([
+                ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Definition', null, $this->repository['workflow']],
+                ['Integrated\\Bundle\\WorkflowBundle\\Entity\\Workflow\\State', null, $this->repository['state']],
+            ]);
     }
 
     protected function setUpRepositoryWorkflow($exists = true)
@@ -218,8 +221,8 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     {
         $voter = $this->getInstance();
 
-        $class = $this->getMockClass('Integrated\\Bundle\\UserBundle\\Model\\GroupableInterface');
-        $object = $this->createMock('Integrated\\Bundle\\UserBundle\\Model\\GroupableInterface');
+        $object = $this->createMock(GroupableInterface::class);
+        $class = \get_class($object);
 
         $this->assertTrue($voter->supportsClass($class));
         $this->assertTrue($voter->supportsClass($object));
@@ -574,7 +577,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return GroupableInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return GroupableInterface|MockObject
      */
     protected function getUser(array $groups = [])
     {
@@ -605,7 +608,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param mixed $object
      *
-     * @return TokenInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TokenInterface|MockObject
      */
     protected function getToken($object = null)
     {
@@ -623,7 +626,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @return Definition|MockObject
      */
     protected function getWorkflow()
     {
@@ -635,7 +638,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return State|\PHPUnit_Framework_MockObject_MockObject
+     * @return State|MockObject
      */
     protected function getState(array $permissions = [], $never = false)
     {
@@ -655,7 +658,7 @@ class WorkflowVoterTest extends \PHPUnit\Framework\TestCase
      * @param bool   $read
      * @param bool   $write
      *
-     * @return Permission|\PHPUnit_Framework_MockObject_MockObject
+     * @return Permission|MockObject
      */
     protected function getPermission($group, $read, $write)
     {

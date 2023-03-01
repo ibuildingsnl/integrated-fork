@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
@@ -84,12 +85,15 @@ class Person extends Relation
     protected $jobs;
 
     /**
-     * @var StorageInterface|null
+     * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\ImageDropzoneType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
+            'data-types' => '[{"type":"image","name":"Image"}]',
+            'data-emptytext' => 'Select picture',
+            'data-multiple' => 'true',
         ],
     ], location: 'sidebar')]
     protected $picture;
@@ -300,9 +304,9 @@ class Person extends Relation
     }
 
     /**
-     * Get the picture of the document.
+     * Get the file of the document.
      *
-     * @return StorageInterface|null
+     * @return Image
      */
     public function getPicture()
     {
@@ -314,7 +318,7 @@ class Person extends Relation
      *
      * @return $this
      */
-    public function setPicture(StorageInterface $picture = null)
+    public function setPicture(Image $picture = null)
     {
         $this->picture = $picture;
 

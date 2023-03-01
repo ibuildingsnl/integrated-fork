@@ -15,6 +15,7 @@ use Doctrine\Persistence\ObjectManager;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Indexer\JobFactoryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -23,12 +24,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class JobFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|MockObject
      */
     private $serializer;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|MockObject
      */
     private $manager;
 
@@ -167,7 +168,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getContent()
     {

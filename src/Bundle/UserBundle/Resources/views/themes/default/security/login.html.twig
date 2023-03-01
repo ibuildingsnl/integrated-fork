@@ -1,0 +1,11 @@
+{% extends integrated_active_theme('base.html.twig') %}
+
+{% set title = 'Login' %}
+{% block title(title|trans) %}
+
+{% block content %}
+    <h1 class="page-header">{{ title|trans }}</h1>
+    {{ form(form) }}
+    <a href="{{ path('integrated_user_website_security_password_reset') }}">{% trans %}Password reset{% endtrans %}</a>
+    <a href="{{ path('integrated_user_website_registration_register') }}">{% trans %}Register{% endtrans %}</a>
+{% endblock %}

@@ -11,7 +11,6 @@
 namespace Integrated\Bundle\MenuBundle\Tests\Provider;
 
 use Integrated\Bundle\MenuBundle\Provider\MenuProvider;
-use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +32,7 @@ class MenuProviderTest extends TestCase
     protected $provider;
 
     /**
-     * @var FactoryInterface|MockObject
+     * @var \Knp\Menu\FactoryInterface|MockObject
      */
     protected $factory;
 

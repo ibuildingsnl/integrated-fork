@@ -105,7 +105,7 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
-            <div id="{{ id }}_container">
+        <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
                           data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
@@ -117,7 +117,7 @@
                         {{ value }}
                     {% endif %}
                 </textarea>
-            </div>
+        </div>
         {{ block('form_errors') }}
         {% if style == 'editor' %}
             </div>
@@ -425,18 +425,22 @@
             {% endif %}
         {% endif %}
         {% if attr.style is defined and attr.style is not empty %}
-            {% set style = attr.style %}
+            {% if style is empty %}
+                {% set style = attr.style %}
+            {% endif %}
         {% endif %}
         {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
+            {% if state is empty %}
+                {% set state = attr.state %}
+            {% endif %}
         {% endif %}
-        {% if style == 'horizontal' %}
+        {% if style == 'inline' %}
             <div
-                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item {% if form.vars.errors|length > 0 %} has-error{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                <div class="w-full {{ widget_col }} widget">
+                <div class="w-full widget">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
@@ -482,13 +486,16 @@
                 </div>
             </div>
         {% else %}
-            <div class="form-item{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+            <div
+                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                {{ block('form_input_group') }}
-                {{ block('form_help') }}
-                {{ form_errors(form) }}
+                <div class="w-full {{ widget_col }} widget">
+                    {{ block('form_input_group') }}
+                    {{ block('form_help') }}
+                    {{ form_errors(form) }}
+                </div>
             </div>
         {% endif %}
     {% endapply %}
@@ -552,7 +559,7 @@
 
         <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
         {{ form_errors(form) }}
-        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}" >
+        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
     {% endapply %}
 
 {% endblock %}

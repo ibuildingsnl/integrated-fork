@@ -32,6 +32,33 @@
             <constraint name="NotBlank" />
         </property>
 
+        <property name="username">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Register</value>
+                </option>
+            </constraint>
+            <constraint name="Email">
+                <option name="groups">
+                    <value>Register</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="password">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Register</value>
+                </option>
+            </constraint>
+            <constraint name="Length">
+                <option name="min">6</option>
+                <option name="groups">
+                    <value>Register</value>
+                </option>
+            </constraint>
+        </property>
+
     </class>
 
     <class name="Integrated\Bundle\UserBundle\Model\Group">

@@ -251,8 +251,7 @@ if (document.querySelector('section.editor') !== null) {
 }
 
 $(document).ready(function() {
-    if ($("body[class$='_index']")) {
-        console.log('hello');
+    if ($("body").hasClass('integrated_content_content_index')) {
         var filterElements = document.getElementsByClassName('aside-item-list');
 
         for (var ii = 0; ii < filterElements.length; ii++) {

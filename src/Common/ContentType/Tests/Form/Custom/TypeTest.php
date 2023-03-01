@@ -12,6 +12,7 @@
 namespace Integrated\Common\ContentType\Tests\Form\Custom;
 
 use Integrated\Common\ContentType\Form\Custom\Type;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -19,7 +20,7 @@ use Integrated\Common\ContentType\Form\Custom\Type;
 class TypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Type|\PHPUnit_Framework_MockObject_MockObject
+     * @var Type|MockObject
      */
     protected $type;
 

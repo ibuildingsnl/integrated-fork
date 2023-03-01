@@ -40,6 +40,12 @@ abstract class Block implements BlockInterface
     /**
      * @var string
      */
+    #[Type\Field(options: ['required' => false])]
+    protected $cssClass;
+
+    /**
+     * @var string
+     */
     protected $layout;
 
     /**
@@ -119,6 +125,26 @@ abstract class Block implements BlockInterface
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCssClass()
+    {
+        return $this->cssClass;
+    }
+
+    /**
+     * @param string $cssClass
+     *
+     * @return $this
+     */
+    public function setCssClass($cssClass)
+    {
+        $this->cssClass = $cssClass;
 
         return $this;
     }

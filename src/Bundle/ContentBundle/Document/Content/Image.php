@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Document type Image.
@@ -26,13 +25,5 @@ class Image extends File
     /**
      * @var StorageInterface
      */
-    #[Assert\File(mimeTypes: ['image/*', 'application/postscript'])]
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
-        'priority' => 500,
-        'attr' => [
-            'style' => 'editor',
-            'state' => 'show',
-        ],
-    ], location: 'editor')]
     protected $file;
 }

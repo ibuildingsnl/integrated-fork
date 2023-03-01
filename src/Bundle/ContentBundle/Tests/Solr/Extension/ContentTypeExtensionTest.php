@@ -18,6 +18,7 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeExtensionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ContentTypeExtension
@@ -66,7 +67,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildNoContent()
     {
-        /* @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject $container */
+        /* @var ContainerInterface | MockObject $container */
         $container = $this->createMock('Integrated\\Common\\Converter\\ContainerInterface');
         $container->expects($this->never())
             ->method($this->anything());
@@ -99,7 +100,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Content|\PHPUnit_Framework_MockObject_MockObject
+     * @return Content|MockObject
      */
     protected function getContent(string $type)
     {
@@ -112,7 +113,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getContentType(string $name)
     {
@@ -125,7 +126,7 @@ class ContentTypeExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
     {

@@ -11,6 +11,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Form\DataTransformer\ContentType;
 
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -112,7 +113,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function getValidTransformData()
     {
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $default1 */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $default1 */
         $default1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
         $default1
             ->expects($this->once())
@@ -120,7 +121,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
             ->willReturn('name')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $default2 */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $default2 */
         $default2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
         $default2
             ->expects($this->once())
@@ -128,7 +129,7 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
             ->willReturn('name2')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|\PHPUnit_Framework_MockObject_MockObject $duplicateDefault */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field|MockObject $duplicateDefault */
         $duplicateDefault = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field');
         $duplicateDefault
             ->expects($this->once())
@@ -136,10 +137,10 @@ class FieldsTransformerTest extends \PHPUnit\Framework\TestCase
             ->willReturn('name')
         ;
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $custom1 */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $custom1 */
         $custom1 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
 
-        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|\PHPUnit_Framework_MockObject_MockObject $custom2 */
+        /** @var \Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField|MockObject $custom2 */
         $custom2 = $this->createMock('Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField');
 
         return [

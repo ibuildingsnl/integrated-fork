@@ -14,20 +14,22 @@ namespace Integrated\Common\ContentType\Tests\Resolver;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MongoDBResolver;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
+class MongoDBResolverTest extends TestCase
 {
     /**
-     * @var DocumentRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var DocumentRepository|MockObject
      */
     private $repository;
 
     protected function setUp(): void
     {
-        $class = $this->getMockClass('Integrated\\Common\\ContentType\\ContentTypeInterface');
+        $class = ContentTypeInterface::class;
 
         $this->repository = $this->getMockBuilder('Doctrine\\ODM\\MongoDB\\Repository\\DocumentRepository')->disableOriginalConstructor()->getMock();
         $this->repository->expects($this->any())
@@ -89,11 +91,10 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->repository->expects($this->exactly(2))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['id' => 'found'])],
-                [$this->equalTo(['id' => 'not found'])],
-            )
-            ->willReturnOnConsecutiveCalls($this->getType(), null);
+            ->willReturnMap([
+                [['id' => 'found'], null, $this->getType()],
+                [['id' => 'not found'], null, null],
+            ]);
 
         $resolver = $this->getInstance();
 
@@ -135,7 +136,7 @@ class MongoDBResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getType($name = null)
     {

@@ -12,6 +12,8 @@
             <argument type="service" id="integrated_user.user.manager"/>
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\Security\UserScopeProvider" parent="integrated_user.security.provider" />
+
         <service id="Integrated\Bundle\UserBundle\Security\Firewall\ScopeListener" public="false">
             <argument type="service" id="security.token_storage"/>
             <argument/>

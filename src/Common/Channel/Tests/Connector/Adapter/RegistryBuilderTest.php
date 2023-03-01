@@ -14,6 +14,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Adapter;
 use Integrated\Common\Channel\Connector\Adapter\ManifestInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryBuilder;
 use Integrated\Common\Channel\Connector\AdapterInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -73,7 +74,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AdapterInterface|MockObject
      */
     protected function getAdapter(ManifestInterface $manifest)
     {
@@ -86,7 +87,7 @@ class RegistryBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ManifestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ManifestInterface|MockObject
      */
     protected function getManifest($name)
     {

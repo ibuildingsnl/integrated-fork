@@ -14,6 +14,7 @@ namespace Integrated\Common\Content\Tests\Form\Event;
 use Integrated\Common\Content\Form\Event\FormEvent;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -22,7 +23,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class FormEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentTypeInterface|MockObject
      */
     protected $type;
 
