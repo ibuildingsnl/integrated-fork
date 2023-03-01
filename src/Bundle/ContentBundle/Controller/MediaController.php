@@ -390,6 +390,8 @@ class MediaController extends AbstractController
 
     public function manageRelations(Request $request): Response
     {
-        return $this->taxonomyRelationManager->manageRelations($request);
+        $this->taxonomyRelationManager->manageRelations($request);
+
+        return new JsonResponse(['message' => 'Ok']);
     }
 }
