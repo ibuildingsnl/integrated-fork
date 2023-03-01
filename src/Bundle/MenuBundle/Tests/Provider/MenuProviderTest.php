@@ -32,7 +32,7 @@ class MenuProviderTest extends TestCase
     protected $provider;
 
     /**
-     * @var FactoryInterface|MockObject
+     * @var \Knp\Menu\FactoryInterface|MockObject
      */
     protected $factory;
 

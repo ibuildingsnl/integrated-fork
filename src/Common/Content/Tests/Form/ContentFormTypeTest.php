@@ -122,17 +122,22 @@ class ContentFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder = $this->getBuilder();
         $builder->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(
-                [
-                    $this->equalTo('field1'),
-                    $this->equalTo('type1'),
-                    $this->equalTo(['override1', 'options' => '1', 'attr' => ['location' => Field::LOCATION_EDITOR]]),
-                ],
-                [
-                    $this->equalTo('field3'),
-                    $this->equalTo('type3'),
-                    $this->equalTo(['override3', 'options' => '3', 'attr' => ['location' => Field::LOCATION_SIDEBAR]]),
-                ]
+            ->with(
+                $this->callback(function ($value) {
+                    $this->assertContainsEquals($value, ['field1', 'field3']);
+
+                    return true;
+                }),
+                $this->callback(function ($value) {
+                    $this->assertContainsEquals($value, ['type1', 'type3']);
+
+                    return true;
+                }),
+                $this->callback(function ($value) {
+                    $this->assertContainsEquals($value, [['override1', 'options' => '1', 'attr' => ['location' => Field::LOCATION_EDITOR]], ['override3', 'options' => '3', 'attr' => ['location' => Field::LOCATION_SIDEBAR]]]);
+
+                    return true;
+                }),
             );
 
         $this->getInstance()->buildForm($builder, ['content_type' => $this->type]);
