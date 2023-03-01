@@ -22,6 +22,7 @@ use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -103,6 +104,11 @@ class ContentController extends AbstractController
      */
     private $mediaProvider;
 
+    /**
+     * @var TaxonomyIndexer
+     */
+    private $taxonomyIndexer;
+
     public function __construct(
         ResolverInterface $resolver,
         ContentTypeManager $contentTypeManager,
@@ -113,7 +119,8 @@ class ContentController extends AbstractController
         Manager $lockManager,
         UserManagerInterface $userManager,
         ImageExtension $imageExtension,
-        MediaProvider $mediaProvider
+        MediaProvider $mediaProvider,
+        TaxonomyIndexer $taxonomyIndexer
     ) {
         $this->resolver = $resolver;
         $this->contentTypeManager = $contentTypeManager;
@@ -125,6 +132,7 @@ class ContentController extends AbstractController
         $this->userManager = $userManager;
         $this->imageExtension = $imageExtension;
         $this->mediaProvider = $mediaProvider;
+        $this->taxonomyIndexer = $taxonomyIndexer;
     }
 
     /**
@@ -527,12 +535,42 @@ class ContentController extends AbstractController
         }
 
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
             'form' => $form->createView(),
             'showContentHistory' => false,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function getTaxonomyCategories($content): array
+    {
+        $contentRelations = [];
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+        $dm = $this->getDoctrineODM()->getManager();
+        $relations = $dm->getRepository($this->relationClass)->findAll();
+        foreach ($relations as $relation) {
+            if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
+                array_push($contentRelations, $relation);
+            }
+        }
+
+        $taxonomyCategoriess = [];
+        foreach ($contentRelations as $contentRelation) {
+            foreach ($contentRelation->getTargets() as $target)
+            {
+                $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+            }
+        }
+
+        return $taxonomyCategoriess;
+    }
+
+    public function edit_inline(Request $request, Content $content) {
+        $this->showAsInlineForm = true;
+
+        return $this->edit($request, $content);
     }
 
     /**
@@ -670,6 +708,7 @@ class ContentController extends AbstractController
 
         return $this->render($renderTo, [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'type' => $contentType,
             'form' => $form->createView(),
             'formRelations' => $this->getFormRelations($form),
@@ -684,9 +723,15 @@ class ContentController extends AbstractController
     {
         $relations = [];
 
+//        dd($form->children->elements->relations->children->elements);
+
+//        dd($form->getData()->getRelations()->toArray());
+
         foreach ($form->getData()->getRelations()->toArray() as $relation) {
+//            dump($relation);
             $references = [];
             foreach ($relation->getReferences()->toArray() as $imageObject) {
+//                dump($imageObject);
                 $references[$imageObject->getId()] = $imageObject;
             }
             $relations[$relation->getRelationId()] = $references;

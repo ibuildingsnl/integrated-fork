@@ -11,8 +11,8 @@ $(document).mouseup(function(e) {
     ) {
         closeOutside.removeClass('show');
         hideDropDownBackGround();
+        sendCancelEvent()
     }
-
 });
 
 $(document).keyup(function(e) {
@@ -23,8 +23,13 @@ $(document).keyup(function(e) {
         }
         closeOutside.removeClass('show');
         hideDropDownBackGround();
+        sendCancelEvent()
     }
 });
+
+function sendCancelEvent() {
+    document.dispatchEvent(new CustomEvent("cancelPopupEvent"));
+}
 
 $('.search-form .form-control').focus(function() {
     showDropDownBackGround();
@@ -190,7 +195,7 @@ function asideItemsSearch(el) {
     input = el.target;
     filter = input.value.toUpperCase();
     ul = el.target.parentNode.parentNode.querySelector(
-        '.aside-item-list .aside-item-list-container > ul');
+        '.aside-item-list .aside-item-list-container ul');
     li = ul.getElementsByTagName('li');
 
     for (i = 0; i < li.length; i++) {
