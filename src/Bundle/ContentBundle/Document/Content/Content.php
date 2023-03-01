@@ -354,15 +354,13 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     public function getReferencesByRelationId($relationId, $published = true, ChannelInterface $channel = null): ArrayCollection|array
     {
         foreach ($this->getRelations() as $relation) {
-            if (
-                $relation instanceof RelationInterface &&
+            if ($relation instanceof RelationInterface &&
                 $relation->getRelationId() == $relationId &&
                 $references = $relation->getReferences()
             ) {
                 return $references->filter(fn (ContentInterface $content) => $content instanceof self &&
                     (!$published || $content->isPublished()) &&
-                    (!$channel || $content->hasChannel($channel))
-                );
+                    (!$channel || $content->hasChannel($channel)));
             }
         }
 
