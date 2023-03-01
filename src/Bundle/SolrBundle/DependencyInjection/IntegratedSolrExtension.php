@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\SolrBundle\DependencyInjection;
 
+use Integrated\Common\Solr\Search\Type\TypeExtensionInterface;
+use Integrated\Common\Solr\Search\Type\TypeInterface;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
 use Solarium\Core\Client\Endpoint;
@@ -39,6 +41,7 @@ class IntegratedSolrExtension extends Extension
         $loader->load('event_listeners.xml');
         $loader->load('command.xml');
         $loader->load('indexer.xml');
+        $loader->load('search.xml');
         $loader->load('lock.xml');
         $loader->load('queue.xml');
         $loader->load('solarium.xml');
@@ -87,5 +90,8 @@ class IntegratedSolrExtension extends Extension
                 ['solarium.client.logger', new Reference('integrated_solr.solarium.data_collector')]
             );
         }
+
+        $container->registerForAutoconfiguration(TypeInterface::class)->addTag('solr_query.type');
+        $container->registerForAutoconfiguration(TypeExtensionInterface::class)->addTag('solr_query.type_extension');
     }
 }

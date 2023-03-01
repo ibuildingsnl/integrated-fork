@@ -16,14 +16,16 @@
             <ul class="list-inline">
 
                 <li class="dropdown">
-                    <a href data-toggle="dropdown" role="button" id="sorting-list">{% trans %}Sort by{% endtrans %}: {{ params.sort.options[params.sort.current].label|trans }} <b class="caret"></b></a>
+                    <a href data-toggle="dropdown" role="button" id="sorting-list">{% trans %}Sort by{% endtrans %}: {{ integrated_search_sorting_option(params.sort).label|trans }} <b class="caret"></b></a>
 
                     <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
 
-                        {% for sort in params.sort.options %}
+                        {% set sort_default = params.q ? 'rel' : 'changed' %}
 
-                            <li {% if sort.name == params.sort.current %}class="active" {% endif %}role="presentation">
-                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == params.sort.default ? null : sort.name })) }}" tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
+                        {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
+
+                            <li {% if sort.name == params.sort %}class="active" {% endif %}role="presentation">
+                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == sort_default ? null : sort.name })) }}" tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                             </li>
 
                         {% endfor %}
@@ -80,11 +82,7 @@
                                     {% if content.workflow_assigned is defined %}
                                         {{ content.workflow_assigned|first|default }} |
                                     {% endif %}
-                                    {% if contentTypes[content.type_name] is defined %}
-                                        {{ contentTypes[content.type_name] }}
-                                    {% else %}
-                                        {{ content.type_name }}
-                                    {% endif %}
+                                    {{ content.type_name|integrated_content_type.name|default(content.type_name) }}
                                     {% if content.pub_time is defined %}
                                         |
                                         {{ content.pub_time|format_date('medium') }}
@@ -127,54 +125,80 @@
             <aside>
                 <div class="aside-holder section-gray section-shadow section-radius">
                     <form>
-                        <input type="hidden" value="{{ app.request.query.get('q') }}" name="q" />
-                        <input type="hidden" value="{{ app.request.query.get('sort') }}" name="sort" />
+                        <input type="hidden" value="{{ params['q'] }}" name="q" />
+                        <input type="hidden" value="{{ params['sort'] }}" name="sort" />
                         {% for key, facet in facets %}
                             {% if facet|length > 0 %}
-                            <div class="aside-item-holder">
-                                <h3 class="font-medium">
-                                    {% if key == 'contenttypes' %}
-                                        {% trans %}Content types{% endtrans %}
-                                    {% elseif facetTitles[key]|default %}
-                                        {{ facetTitles[key]|default|trans }}
-                                    {% else %}
-                                        {{ key|capitalize }}
-                                    {% endif %}
-                                </h3>
-                                <ul class="filters_list">
-                                    {% for title, count in facet %}
-                                    <li class="checkbox{% if (loop.index >= 8) and (not (title in active[key]|default)) %} to_show{% endif %}">
-                                        <label>
-                                            <input {% if title in active[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
-                                            {% if key == 'contenttypes' %}
-                                                {% if contentTypes[title] is defined %}
-                                                    {{ contentTypes[title] }}
-                                                {% else %}
-                                                    {{ title }}
-                                                {% endif %}
-                                            {% elseif key == 'channels' %}
-                                                {% if channels[title] is defined %}
-                                                    {{ channels[title] }}
-                                                {% else %}
-                                                    {{ title }}
-                                                {% endif %}
-                                            {% else %}
-                                                {{ title }}
-                                            {% endif %}
-                                            <span class="value">{{ count }}</span>
-                                        </label>
-                                    </li>
-                                    {% endfor %}
-                                    {% if (facet|length >= 8) %}
-                                        <li><a href="#" class="btn_show_more">{% trans %}More{% endtrans %} <i class="glyphicon"></i></a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                                {% if key starts with 'relation_' %}
+                                    {{ block('relation_facet') }}
+                                {% else %}
+                                    {{ block('facet') }}
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </form>
                 </div>
             </aside>
         </div>
+    </div>
+{% endblock %}
+
+{% block facet %}
+    <div class="aside-item-holder">
+        <h3 class="font-medium">
+            {% if key == 'contenttypes' %}
+                {% trans %}Content types{% endtrans %}
+            {% elseif key == 'workflow_state' %}
+                {% trans %}Workflow status{% endtrans %}
+            {% elseif key == 'workflow_assigned' %}
+                {% trans %}Assigned user{% endtrans %}
+            {% elseif key == 'authors' %}
+                {% trans %}Author{% endtrans %}
+            {% else %}
+                {{ key|capitalize }}
+            {% endif %}
+        </h3>
+        <ul class="filters_list">
+            {% for title, count in facet %}
+                <li class="checkbox{% if (loop.index >= 8) and (not (title in params[key]|default)) %} to_show{% endif %}">
+                    <label>
+                        <input {% if title in params[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
+                        {% if key == 'contenttypes' %}
+                            {{ title|integrated_content_type.name|default(title) }}
+                        {% elseif key == 'channels' %}
+                            {{ title|integrated_channel.name|default(title) }}
+                        {% else %}
+                            {{ title }}
+                        {% endif %}
+                        <span class="value">{{ count }}</span>
+                    </label>
+                </li>
+            {% endfor %}
+            {% if (facet|length >= 8) %}
+                <li><a href="#" class="btn_show_more">{% trans %}More{% endtrans %} <i class="glyphicon"></i></a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block relation_facet %}
+    <div class="aside-item-holder">
+        <h3 class="font-medium">
+            {{ key|integrated_relation.name|default(key|capitalize) }}
+        </h3>
+        <ul class="filters_list">
+            {% for title, count in facet %}
+                <li class="checkbox{% if (loop.index >= 8) and (not (title in params['relation'][key]|default)) %} to_show{% endif %}">
+                    <label>
+                        <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]" value="{{ title }}" />
+                        {{ title }}
+                        <span class="value">{{ count }}</span>
+                    </label>
+                </li>
+            {% endfor %}
+            {% if (facet|length >= 8) %}
+                <li><a href="#" class="btn_show_more">{% trans %}More{% endtrans %} <i class="glyphicon"></i></a></li>
+            {% endif %}
+        </ul>
     </div>
 {% endblock %}
