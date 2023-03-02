@@ -18,11 +18,15 @@
             }
 
             &.first-child {
-                padding-left: 10px;
+                label {
+                    padding-left: 10px;
+                }
             }
 
             &.second-child {
-                padding-left: 20px;
+                label {
+                    padding-left: 20px;
+                }
             }
         }
     }
@@ -33,7 +37,7 @@
     }
 
     ul {
-        padding: 10px 10px 0 !important;
+        padding: 0.5rem 0 0 !important;
         border: 1px solid #dfe3e9;
         border-radius: 8px;
     }
