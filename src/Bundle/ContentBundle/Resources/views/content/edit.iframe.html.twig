@@ -22,11 +22,15 @@
             <aside>
                 <div class="aside-holder">
                     {% block sidebar %}
-                        {% if form.vars.value is defined and form.vars.value is not empty %}
-                            {% set image = integrated_document(form.vars.value.id).file %}
-                            {% set thumbnail = integrated_image(image) %}
-                            <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
-                            </div>
+                        {% if type is defined and
+                            ('Image' in type.class or 'Video' in type.class or 'File' in type.class)
+                            and form.actions.delete is not defined %}
+                            {% if form.vars.value is defined and form.vars.value is not empty %}
+                                {% set image = integrated_document(form.vars.value.id).file %}
+                                {% set thumbnail = integrated_image(image).scaleResize(300) %}
+                                <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
+                                </div>
+                            {% endif %}
                         {% endif %}
 
                         {% block content_editor %}
