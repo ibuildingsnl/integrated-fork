@@ -137,8 +137,8 @@ class MediaController extends AbstractController
         $paginator = $this->getPaginator();
         $paginator = $paginator->paginate(
             new CallbackPagination(
-                fn() => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
-                fn($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
+                fn () => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
+                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
             ),
             $requestCopy->query->get('page', 1),
             $requestCopy->query->get('limit', 40),
