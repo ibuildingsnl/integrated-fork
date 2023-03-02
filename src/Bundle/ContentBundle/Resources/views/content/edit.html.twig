@@ -103,7 +103,6 @@
         //a user clicks outside of the popup
         //a user presses escape
         function handleClosePopup() {
-            console.log("handleClosePopup")
             if (selected_tab != '') {
                 filterBasedOnChannels()
                 showEnabledCategoryPills()
@@ -141,7 +140,6 @@
         }
 
         function toggleFullscreen() {
-            console.log("toggleFullscreen")
             if (selected_tab != '') {
                 selected_tab = ''
             } else {
@@ -237,7 +235,6 @@
         }
 
         function filterCheckboxesInPopup() {
-            console.log("filterCheckboxesInPopup")
             const categories_checkboxes = document.querySelectorAll('#' + current_relation.relation_id + ' .categories_checkboxes li')
 
             for (category_item of categories_checkboxes) {
@@ -262,7 +259,6 @@
         }
 
         function filterBasedOnChannels() {
-            console.log("filterBasedOnChannels")
             const categories_checkboxes = document.querySelectorAll('.categories_checkboxes li')
             const popup_tabs = document.querySelectorAll('.categories_tabs .category_tab')
 
