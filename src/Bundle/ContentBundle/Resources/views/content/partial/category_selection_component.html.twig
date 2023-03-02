@@ -3,7 +3,7 @@
     <div class="category_wrapper close-outside">
         <div class="hidden"></div>
 
-        <div class="categories_headers flex flex-wrap">
+        <div class="categories_tabs flex flex-wrap">
             {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
                 {% if category.depth == 0 %}
                     {% set real_title = category.title %}

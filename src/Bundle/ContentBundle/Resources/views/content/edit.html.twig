@@ -3,6 +3,29 @@
 
 {% block content %}
     <script>
+        //Goal:
+        //This code is to organise taxonomies
+        //The input is a list of taxonomies with a tree structure. But we receive them as flat list with levels
+        //There can be multiple of these in 1 page, for each we save a relation in the relations array
+        //The channels are involved: categories will be shown based on active channels
+
+        //Keywords:
+        //pills = The selected items that are shown to the user
+        //popup = When a user clicks on the fullscreen icon, a popup is shown with all the options
+        //tabs = The tabs in the popup screen, these are tabs. These refer to the level0 items of the input
+        //selected_tab = The selected item of the tabs.
+
+        //Key events:
+        //User clicks channel
+        //User clicks radio button
+        //User enabled fullscreen
+        //User disables fullscreen
+        //User clicks tab
+
+        //Flows:
+        // - One where we setup everything
+        // - One where we handle a specific category event
+
         const channels_selector = '#integrated_content_channels'
         const pills_selector = '.enabled_categories_pills'
         const popup_selector = '.category_wrapper'
@@ -22,20 +45,12 @@
             filterBasedOnChannels()
         });
 
-        function filterTab() {
-            selected_tab = event.target
-            setCurrentRelation(event.target.closest('.taxonomy_category').id)
-            activateHeader(selected_tab)
-            filterCheckboxesInPopup()
-        }
-
         function setupRelations() {
             const relevant_relations = Array.from(document.querySelectorAll('.taxonomy_category')).map(item => item.id)
             for (relation_id of relevant_relations) {
                 let new_relation = createNewRelation(relation_id)
                 relations = [...relations, new_relation]
             }
-            console.log(relations)
         }
 
         function createNewRelation(relation_id) {
@@ -47,7 +62,7 @@
                 category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes_basic input[type=checkbox]'),
                 all_category_checkboxes: document.querySelectorAll('#' + relation_id + ' .categories_checkboxes input[type=checkbox]'),
                 enabled_categories: document.querySelector('#' + relation_id + ' .enabled_categories').dataset.ids.split(",").filter(n => n),
-                headers: document.querySelectorAll('#' + relation_id + ' .category_tab')
+                popup_tabs: document.querySelectorAll('#' + relation_id + ' .category_tab')
             }
         }
 
@@ -69,8 +84,8 @@
                     item.addEventListener('change', handleCategoryClick)
                 })
             }
-            document.querySelectorAll('.categories_headers .category_tab').forEach(item => {
-                item.addEventListener('click', filterTab)
+            document.querySelectorAll('.categories_tabs .category_tab').forEach(item => {
+                item.addEventListener('click', handleTabClick)
             })
             channel_checkboxes.forEach(item => {
                 item.addEventListener('change', handleChannelClick)
@@ -84,22 +99,40 @@
             });
         }
 
+        //this function will run, when:
+        //a user clicks outside of the popup
+        //a user presses escape
         function handleClosePopup() {
+            console.log("handleClosePopup")
+            if (selected_tab != '') {
+                filterBasedOnChannels()
+                showEnabledCategoryPills()
+            }
             selected_tab = ''
-            filterCheckboxesInPopup()
         }
 
         function activateHeader() {
-            for (header of current_relation.headers) {
-                header.classList.remove("active");
-                if (header.dataset.level0 == selected_tab.dataset.level0) {
-                    header.classList.add('active')
+            for (popup_tab of current_relation.popup_tabs) {
+                popup_tab.classList.remove("active");
+                if (popup_tab.dataset.level0 == selected_tab.dataset.level0) {
+                    popup_tab.classList.add('active')
                 }
             }
         }
 
+        function handleTabClick() {
+            selected_tab = event.target
+            setCurrentRelation(event.target.closest('.taxonomy_category').id)
+            activateHeader(selected_tab)
+            filterCheckboxesInPopup()
+        }
+
+        function setCurrentRelation(relation_id) {
+            current_relation = relations.filter(relation => relation.relation_id == relation_id)[0]
+        }
+
         function setActiveTab() {
-            selected_tab = Array.from(current_relation.headers).find(item => item.classList.contains('hidden') == false)
+            selected_tab = Array.from(current_relation.popup_tabs).find(item => item.classList.contains('hidden') == false)
         }
 
         function togglePopup() {
@@ -108,11 +141,17 @@
         }
 
         function toggleFullscreen() {
-            setCurrentRelation(event.target.closest('.taxonomy_category').id)
-            setActiveTab()
-            activateHeader()
+            console.log("toggleFullscreen")
+            if (selected_tab != '') {
+                selected_tab = ''
+            } else {
+                setCurrentRelation(event.target.closest('.taxonomy_category').id)
+                setActiveTab()
+                activateHeader()
+            }
             togglePopup()
             filterCheckboxesInPopup()
+            showEnabledCategoryPills()
         }
 
         function handleChannelClick(event) {
@@ -130,10 +169,6 @@
             setCurrentRelation(event.target.closest('.taxonomy_category').id)
             updateFormInputField(event)
             updateDOMForCurrentRelation()
-        }
-
-        function setCurrentRelation(relation_id) {
-            current_relation = relations.filter(relation => relation.relation_id == relation_id)[0]
         }
 
         function updateDOMForCurrentRelation() {
@@ -181,11 +216,10 @@
             }
         }
 
-        function appendPill(pillText) {
+        function appendPill(pill_text) {
             const node = document.createElement("div");
-            const textnode = document.createTextNode(pillText);
             node.classList.add('active_category');
-            node.appendChild(textnode);
+            node.appendChild(document.createTextNode(pill_text));
             document.querySelector(current_relation.pills_selector).appendChild(node);
         }
 
@@ -203,58 +237,51 @@
         }
 
         function filterCheckboxesInPopup() {
+            console.log("filterCheckboxesInPopup")
             const categories_checkboxes = document.querySelectorAll('#' + current_relation.relation_id + ' .categories_checkboxes li')
 
             for (category_item of categories_checkboxes) {
                 //if no channels are selected, the default is true
-                let show_category = showCategoryBasedOnChannels(category_item)
-
+                let show = showCategoryBasedOnChannels(category_item)
                 //should a category be shown based on tab selection
-                show_category = showCategoryBasedOnTab(category_item, show_category)
-
+                show = showCategoryBasedOnTab(category_item, show)
                 //apply outcome
-                showOrHideCategory(category_item, show_category)
+                showOrHideItem(category_item, show)
             }
+        }
+
+        function showCategoryBasedOnTab(category_item, show) {
+            if (selected_tab != '' && show == true) {
+                if (category_item.dataset.level0 == selected_tab.dataset.level0) {
+                    show = true
+                } else {
+                    show = false
+                }
+            }
+            return show
         }
 
         function filterBasedOnChannels() {
+            console.log("filterBasedOnChannels")
             const categories_checkboxes = document.querySelectorAll('.categories_checkboxes li')
-            const categories_headers = document.querySelectorAll('.categories_headers .category_tab')
+            const popup_tabs = document.querySelectorAll('.categories_tabs .category_tab')
 
-            for (category_item of [...categories_checkboxes, ...categories_headers]) {
-                let show_category = showCategoryBasedOnChannels(category_item)
+            for (category_item of [...categories_checkboxes, ...popup_tabs]) {
+                let show = showCategoryBasedOnChannels(category_item)
 
-                showOrHideCategory(category_item, show_category)
+                showOrHideItem(category_item, show)
             }
         }
 
-        function showOrHideCategory(category_item, show_category) {
-            if (show_category == true) {
-                category_item.classList.remove('hidden')
-            } else {
-                category_item.classList.add('hidden')
-            }
+        function showOrHideItem(item, show) {
+            show == true ? item.classList.remove('hidden') : item.classList.add('hidden')
         }
 
         function showCategoryBasedOnChannels(category_item) {
-            let show_category = false
             if (enabled_channels.length == 0) {
                 return true
-            } else {
-                return category_item.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
             }
-        }
-
-        function showCategoryBasedOnTab(category_item, show_category) {
-            if (selected_tab != '' && show_category == true) {
-                if (category_item.dataset.level0 == selected_tab.dataset.level0) {
-                    show_category = true
-                } else {
-                    show_category = false
-                }
-            }
-
-            return show_category
+            return category_item.dataset.parentchannels?.split(",").filter(n => n).some(channel => enabled_channels.includes(channel))
         }
     </script>
 
