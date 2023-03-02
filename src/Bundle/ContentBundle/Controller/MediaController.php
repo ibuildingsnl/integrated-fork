@@ -113,6 +113,8 @@ class MediaController extends AbstractController
     {
         $contentTypeSelectOptions = $this->getContentTypes();
 
+        $requestSource->query->set('sort', 'created');
+
         $requestCopy = clone $requestSource;
 
         // Todo: Update this code when the contentprovides is updated
@@ -131,11 +133,11 @@ class MediaController extends AbstractController
         $menu = $this->mediaGalleryMenu->createMenu();
 
         $this->setYearMonthFilter($requestCopy);
-        
+
         $paginator = $this->getPaginator();
         $paginator = $paginator->paginate(
             new CallbackPagination(
-                fn() => $this->provider->getContentFromSolr($requestCopy, 100000, 0, true),
+                fn() => $this->provider->getContentFromSolr($requestCopy, 80, 0, true),
                 fn($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
             ),
             $requestCopy->query->get('page', 1),

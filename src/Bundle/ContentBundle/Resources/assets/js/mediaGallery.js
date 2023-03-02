@@ -178,6 +178,8 @@ function handleBulkItemClick(event) {
             }
         }
     }
+    
+    bulkSelection = Array.from(new Set(bulkSelection))
 
     latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
     draggingAmountOfItems = bulkSelection.length
