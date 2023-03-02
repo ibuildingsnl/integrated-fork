@@ -4,7 +4,7 @@ namespace Integrated\Bundle\NewsletterBundle\Document;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Bundle\ContentBundle\Form\Type\SocialsType;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\RecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Form\ContentSelectionsType;
@@ -58,7 +58,7 @@ class Newsletter extends Content
     ], location: 'editor')]
     public RecurringScheduleEntry $schedule;
 
-    #[Type\Field(type: MediaGalleryImageType::class, options: [
+    #[Type\Field(type: MediaGalleryType::class, options: [
         'label' => 'Logo',
         'attr' => [
             'style' => 'sidebar',
