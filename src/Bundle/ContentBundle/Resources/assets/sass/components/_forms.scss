@@ -762,18 +762,20 @@ label {
         position: relative;
 
         .remove {
-            top: 16px;
-            right: 16px;
+            right: 7px;
+            top: 7px;
         }
 
         input {
-            padding-left: 175px;
+            padding-left: 165px !important;
+            height: 33px;
+            margin-bottom: 10px;
         }
 
         label {
             position: absolute;
-            top: 0;
-            height: 52px;
+            height: 33px;
+            top: 0px;
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 
