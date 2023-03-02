@@ -137,10 +137,7 @@ class ContentProvider
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    public function getContentFromSolr(Request $request, $limit)
+    public function getContentFromSolr(Request $request, $limit, $offset = 0, $countResultset = false): array|int
     {
         $query = $this->client->createSelect();
 
@@ -297,7 +294,22 @@ class ContentProvider
 
         $query->addSort($sort_options[$sort]['field'], \in_array($request->query->get('order'), $order_options) ? $request->query->get('order') : $sort_options[$sort]['order']);
 
+        $query->setStart($offset);
+
         $query->setRows($limit);
+
+        if ($countResultset) {
+            return $this->getNumFound($query);
+        } else {
+            return $this->getContents($query);
+        }
+    }
+
+    public function getNumFound($query) {
+        return $this->client->select($query)->getNumFound();
+    }
+
+    private function getContents($query) {
         $iterator = $this->client->select($query)->getIterator();
         $contents = [];
 

@@ -62,12 +62,16 @@
                 </div>
 
                 <div class="mt-2">
-                    {% if paginator.getCustomParameter('amountOfPages') > 1 %}
-                        {{ knp_pagination_render(paginator) }}
-                        <div class="flex justify-center">
-                            <span>{% trans %} Total {% endtrans %} {{ paginator.getTotalItemCount() }} {% trans %} Items {% endtrans %}. {% trans %} Showing {% endtrans %} {{ paginator.getCustomParameter('showingStart') }} {% trans %} till {% endtrans %} {{ paginator.getCustomParameter('showingEnd') }}.</span>
-                        </div>
-                    {% endif %}
+                    {{ knp_pagination_render(paginator) }}
+                    <div class="flex justify-center">
+                        <span>{% trans %} Total {% endtrans %}
+                            {{ paginator.getTotalItemCount() }}
+                            {% trans %} Items {% endtrans %}.
+                            {% trans %} Showing {% endtrans %}
+                            {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() - paginator.getItemNumberPerPage() + 1 }}
+                            {% trans %} till {% endtrans %}
+                            {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() }}.</span>
+                    </div>
                 </div>
             </div>
 
