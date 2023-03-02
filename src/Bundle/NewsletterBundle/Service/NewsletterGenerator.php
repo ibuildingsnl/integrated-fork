@@ -15,11 +15,8 @@ class NewsletterGenerator
         assert(is_dir($this->baseDirectory));
     }
 
-    public function maybeGenerate(Newsletter $newsletter): void
+    public function generate(Newsletter $newsletter): void
     {
-        if (!$newsletter->isInGenerationWindow($this->clock->now())) {
-            return;
-        }
         $copy = $this->renderer->render($newsletter);
         $when = $newsletter->schedule->firstAfter($this->clock->now());
 

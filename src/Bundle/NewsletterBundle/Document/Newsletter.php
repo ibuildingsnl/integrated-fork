@@ -13,7 +13,6 @@ use Integrated\Bundle\NewsletterBundle\Form\RecurringScheduleEntryType;
 use Integrated\Bundle\NewsletterBundle\Form\SenderChoiceType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
 use Integrated\Common\Form\Mapping\Attributes as Type;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 #[Type\Document('Newsletter')]
@@ -109,11 +108,21 @@ class Newsletter extends Content
     ], location: 'sidebar')]
     public ?string $sender;
 
-    public function isInGenerationWindow(\DateTimeImmutable $now): bool
+    public ?\DateTimeImmutable $lastTestMailSentAt = null;
+
+    public function isInGenerationWindow(?\DateTimeImmutable $now): bool
     {
-        $nextSend = $this->schedule->firstAfter($now);
+        if (!$now) {
+            return false;
+        }
+        $nextSend = $this->firstAfter($now);
         $prepare = $nextSend->modify(sprintf('-%d hours', $this->hoursBefore));
         return $now >= $prepare;
+    }
+
+    public function firstAfter(\DateTimeImmutable $now): \DateTimeImmutable
+    {
+        return $this->schedule->firstAfter($now);
     }
 
     public function __toString()
