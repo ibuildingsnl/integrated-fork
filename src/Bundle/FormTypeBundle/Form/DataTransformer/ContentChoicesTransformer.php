@@ -81,7 +81,7 @@ class ContentChoicesTransformer implements DataTransformerInterface
             $qb = $this->repo->createQueryBuilder()
                 ->field('id')->in($ids);
 
-            $result = $qb->getQuery()->getIterator();
+            $result = $qb->getQuery()->getIterator()->toArray();
 
             if (\count($result) !== \count($documents)) {
                 throw new TransformationFailedException('Could not correctly convert all the values');
