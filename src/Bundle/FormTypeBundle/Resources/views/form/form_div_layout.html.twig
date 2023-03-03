@@ -440,19 +440,7 @@
                 {% set state = attr.state %}
             {% endif %}
         {% endif %}
-        {% if style == 'inline' %}
-            <div
-                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
-                {% if show_label is not same as ('false') %}
-                    {{ form_label(form) }}
-                {% endif %}
-                <div class="w-full widget">
-                    {{ block('form_input_group') }}
-                    {{ block('form_help') }}
-                    {{ form_errors(form) }}
-                </div>
-            </div>
-        {% elseif style == 'sidebar' %}
+        {% if style == 'sidebar' %}
             <div
                 class="aside-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
@@ -492,7 +480,8 @@
                 </div>
             </div>
         {% else %}
-            <div class="form-item {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+            <div
+                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}

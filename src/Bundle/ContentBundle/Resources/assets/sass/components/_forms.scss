@@ -751,6 +751,7 @@ label {
         .panel-body {
             max-width: 750px;
             position: relative;
+            padding: 0.5rem;
         }
     }
 
@@ -765,13 +766,12 @@ label {
         input {
             padding-left: 165px !important;
             height: 33px;
-            margin-bottom: 10px;
         }
 
         label {
             position: absolute;
             height: 33px;
-            top: 0px;
+            top: 6px;
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 

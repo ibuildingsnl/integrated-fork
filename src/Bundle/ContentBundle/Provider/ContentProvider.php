@@ -305,11 +305,13 @@ class ContentProvider
         }
     }
 
-    public function getNumFound($query) {
+    public function getNumFound($query)
+    {
         return $this->client->select($query)->getNumFound();
     }
 
-    private function getContents($query) {
+    private function getContents($query)
+    {
         $iterator = $this->client->select($query)->getIterator();
         $contents = [];
 

@@ -76,7 +76,6 @@ class ContentItemsBlock extends Block
         return $this;
     }
 
-
     /**
      * @return int
      */

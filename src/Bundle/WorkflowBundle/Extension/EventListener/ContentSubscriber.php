@@ -166,7 +166,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         }
 
         if (!$data['assigned'] instanceof User && $data['assigned']) {
-            $data['assigned'] = $this->userManager->findOneBy([ 'id' => $data['assigned']]);
+            $data['assigned'] = $this->userManager->findOneBy(['id' => $data['assigned']]);
         }
 
         if ($data['assigned'] && !$this->hasAssignedAccess($data['assigned'], $data['state'], $content)) {
