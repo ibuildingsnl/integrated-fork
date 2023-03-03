@@ -19,7 +19,7 @@ final class SendInBlueCampaignSynchronizer implements CampaignSynchronizer
     ) {
     }
 
-    public function synchronize(Newsletter $newsletter): void
+    public function synchronize(Newsletter $newsletter, \DateTimeImmutable $scheduledAt): void
     {
         if (null === $newsletter->externalId) {
             // create
@@ -27,6 +27,7 @@ final class SendInBlueCampaignSynchronizer implements CampaignSynchronizer
                 'sender' => new CreateEmailCampaignSender(['email' => $newsletter->sender]),
                 'name' => $newsletter->title,
                 'htmlContent' => file_get_contents($this->locator->pathFor($newsletter)),
+                'scheduledAt' => $scheduledAt->format('Y-m-d\TH:i:s\Z'),
             ]));
             $newsletter->externalId = (string) $response->getId();
         } else {
@@ -34,6 +35,7 @@ final class SendInBlueCampaignSynchronizer implements CampaignSynchronizer
                 'sender' => new UpdateEmailCampaignSender(['email' => $newsletter->sender]),
                 'name' => $newsletter->title,
                 'htmlContent' => file_get_contents($this->locator->pathFor($newsletter)),
+                'scheduledAt' => $scheduledAt->format('Y-m-d\TH:i:s\Z'),
             ]));
         }
     }

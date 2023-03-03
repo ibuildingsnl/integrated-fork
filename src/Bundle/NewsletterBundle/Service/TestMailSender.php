@@ -29,7 +29,7 @@ final class TestMailSender
         }
 
         $this->generator->generate($newsletter);
-        $this->campaign->synchronize($newsletter);
+        $this->campaign->synchronize($newsletter, $newsletter->firstAfter($this->clock->now()));
         $this->testMails->send($newsletter);
         $newsletter->lastTestMailSentAt = $this->clock->now();
     }

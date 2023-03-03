@@ -6,5 +6,5 @@ use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 
 interface CampaignSynchronizer
 {
-    public function synchronize(Newsletter $newsletter): void;
+    public function synchronize(Newsletter $newsletter, \DateTimeImmutable $scheduledAt): void;
 }

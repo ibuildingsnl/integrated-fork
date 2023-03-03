@@ -9,7 +9,7 @@ final class SpyingCampaignSynchronizer implements CampaignSynchronizer
 {
     private array $updated = [];
 
-    public function synchronize(Newsletter $newsletter): void
+    public function synchronize(Newsletter $newsletter, \DateTimeImmutable $scheduledAt): void
     {
         $this->updated[$newsletter->getId()] = true;
     }
