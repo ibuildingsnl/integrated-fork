@@ -79,6 +79,11 @@
             <tag name="form.type" />
         </service>
 
+        <service id="Integrated\Bundle\UserBundle\Form\Type\RegisterType">
+            <argument type="service" id="security.password_hasher_factory" />
+            <tag name="form.type" />
+        </service>
+
     </services>
 
 </container>

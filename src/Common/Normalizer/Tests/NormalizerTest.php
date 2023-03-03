@@ -16,6 +16,7 @@ use Integrated\Common\Normalizer\NormalizerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ResolverInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +24,7 @@ use Integrated\Common\Normalizer\Processor\ResolverInterface;
 class NormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 

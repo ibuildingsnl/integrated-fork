@@ -25,6 +25,14 @@
             <tag name="integrated_solr.type" />
         </service>
 
+        <service id="integrated_content.solr.featured.type" class="Integrated\Bundle\ContentBundle\Solr\Type\FeaturedType" public="false">
+            <tag name="integrated_solr.type" />
+        </service>
+
+        <service id="integrated_content.solr.premium.type" class="Integrated\Bundle\ContentBundle\Solr\Type\PremiumType" public="false">
+            <tag name="integrated_solr.type" />
+        </service>
+
         <service id="integrated_content.solr.relation_json.type" class="Integrated\Bundle\ContentBundle\Solr\Type\RelationJsonType" public="false">
             <tag name="integrated_solr.type" />
         </service>

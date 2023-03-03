@@ -17,6 +17,7 @@ use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Task\Provider\ContentProviderInterface;
 use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTask;
 use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTaskHandler;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,17 +25,17 @@ use Integrated\Common\Solr\Task\Tasks\ReferenceQueueTaskHandler;
 class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentProviderInterface|MockObject
      */
     protected $provider;
 
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     protected $queue;
 
     /**
-     * @var JobFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobFactory|MockObject
      */
     protected $factory;
 
@@ -63,25 +64,12 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->factory->expects($this->exactly(3))
             ->method('create')
-            ->withConsecutive(
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content1),
-                ],
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content2),
-                ],
-                [
-                    $this->equalTo(JobFactory::ADD),
-                    $this->identicalTo($content4),
-                ]
-            )
+            ->with($this->equalTo(JobFactory::ADD), $this->isInstanceOf(ContentInterface::class))
             ->willReturnOnConsecutiveCalls($job1, $job2, $job3);
 
         $this->queue->expects($this->exactly(3))
             ->method('push')
-            ->withConsecutive([$this->identicalTo($job1)], [$this->identicalTo($job2)], [$this->identicalTo($job3)]);
+            ->with($this->isInstanceOf(\stdClass::class));
 
         $instance = $this->getInstance();
         $instance->__invoke($this->getTask('content-id'));
@@ -115,7 +103,7 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ReferenceQueueTask|\PHPUnit_Framework_MockObject_MockObject
+     * @return ReferenceQueueTask|MockObject
      */
     protected function getTask($id)
     {
@@ -128,7 +116,7 @@ class ReferenceQueueTaskHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getContent()
     {

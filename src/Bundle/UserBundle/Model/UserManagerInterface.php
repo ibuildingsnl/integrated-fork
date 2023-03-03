@@ -89,6 +89,13 @@ interface UserManagerInterface extends ManagerInterface
     public function findBy(array $criteria);
 
     /**
+     * Finds an user by a set of criteria.
+     *
+     * @return UserInterface
+     */
+    public function findOneBy(array $criteria);
+
+    /**
      * Returns the class name of the user object.
      *
      * @return string

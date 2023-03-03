@@ -41,13 +41,6 @@ class File extends Content implements FileInterface
     /**
      * @var StorageInterface
      */
-    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
-        'priority' => 500,
-        'attr' => [
-            'style' => 'editor',
-            'state' => 'show',
-        ],
-    ], location: 'editor')]
     protected $file;
 
     /**
@@ -65,7 +58,7 @@ class File extends Content implements FileInterface
     /**
      * @var string
      */
-    #[Type\Field(options: [
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextareaType', options: [
         'priority' => 980,
         'attr' => [
             'style' => 'editor',

@@ -153,6 +153,7 @@ function populateDOMWithImages() {
         placeClone(createClone(item));
     });
 }
+
 window.addEventListener('message', function(e) {
     if (e.data == 'cancel') {
         closeMediaGallery();

@@ -7,13 +7,30 @@ $('.button_enable_list_view').bind("click", function () {
 });
 
 $('.button_toggle_upload_view').bind("click", function () {
+    document.querySelector('#upload_container').dataset.customContenttype = ''
     toggle_upload_view()
+});
+
+$('.button_toggle_upload_view_with_contenttype').bind("click", function (event) {
+    document.querySelector('#upload_container').dataset.customContenttype = event.target.dataset.id;
+    toggle_upload_view(event.target.dataset.id)
 });
 
 $('.input_aside_folder_search').change(function () {
     asideFolderSearch(this)
 }).keyup(function () {
     asideFolderSearch(this)
+});
+
+$(".media-item").on("click", function (event) {
+    handleMediaClick(event)
+    if (bulkSelectionEnabled === true) {
+        handleBulkItemClick(event)
+    }
+});
+
+$(".close-media-edit-form").on("click", function (event) {
+    handleMediaEditClose(event)
 });
 
 const modi = {
@@ -44,7 +61,7 @@ let bulkSelection = [] //this keeps track which items are selected
 let latestBulkSelectionItemClicked = null //so we can handle a shift click with a from - to
 let draggingAmountOfItems = 1
 
-window.toggle_upload_view = function() {
+window.toggle_upload_view = function(customContentType) {
     $('#upload_container').addClass('show').addClass('close-outside');
     $('#dropdown_overlay').removeClass('hide');
 }
@@ -62,11 +79,12 @@ window.enable_x = function(view) {
 window.enable_grid_view = function() {
     disable_x('list')
     enable_x('grid')
+    localStorage.setItem('mediagallery_view', 'grid');
 }
-
 window.enable_list_view = function() {
     disable_x('grid')
     enable_x('list')
+    localStorage.setItem('mediagallery_view', 'list');
 }
 
 $(".uppy-close").on("click", function () {
@@ -83,12 +101,26 @@ $("#bulkselection").on("click", async function () {
     bulkSelectionEnabled = !bulkSelectionEnabled
 });
 
+function handleUserChoice() {
+    if (localStorage.getItem('mediagallery_view') !== null) {
+        window["enable_" + localStorage.getItem('mediagallery_view') + "_view"]()
+    }
+}
+
+function handleMediaClick(event) {
+    $('.media-gallery').addClass('show-edit-form');
+    $('.media-edit-panel').removeClass('hide');
+    $('#editpaneliframe').attr('src', '/admin/content/'+event.target.closest('.media-item').dataset.id + '/iframe.html');
+}
+
+function handleMediaEditClose(event) {
+    $('.media-gallery').removeClass('show-edit-form');
+    $('.media-edit-panel').addClass('hide');
+}
+
 async function enableBulkSelection() {
     $('.bulkselectionbutton').removeClass('bulkselected')
     $('.media-container').addClass('mode-select')
-    $(".media-item").on("click", function (event) {
-        handleBulkItemClick(event);
-    });
 }
 
 function getAdditionalInfo(media_id) {
@@ -123,8 +155,8 @@ function handleBulkItemClick(event) {
                 latestBulkSelectionItemClicked = 1
             }
 
-            const step_from = latestBulkSelectionItemClicked * 1
-            const step_to = event.currentTarget.getAttribute('data-media_id') * 1
+            const step_from = Math.min(latestBulkSelectionItemClicked * 1, event.currentTarget.getAttribute('data-media_id') * 1)
+            const step_to = Math.max(latestBulkSelectionItemClicked * 1, event.currentTarget.getAttribute('data-media_id') * 1)
 
             for (let step = step_from; step <= step_to; step++) {
                 const element = document.querySelector('.media-item[data-media_id="' + step + '"]')
@@ -178,12 +210,14 @@ window.asideFolderSearch = function (elem) {
 };
 
 $(function () {
+    handleUserChoice()
     const $gallery = $("#gallery")
     const $media_items = $(".media_category");
 
     //Good example: https://www.htmlgoodies.com/css/mastering-drag-and-drop-with-jquery-ui/
     $('li.media-item', $gallery).draggable({
         helper: "clone",
+        distance: 20,
         cursorAt: {left: 10, top: 10},
         start: function (ev, ui) {
         }

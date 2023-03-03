@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object2;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Type\ContentType
@@ -28,7 +29,7 @@ use Integrated\Common\Converter\ContainerInterface;
 class ContentTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|MockObject
      */
     private $manager;
 

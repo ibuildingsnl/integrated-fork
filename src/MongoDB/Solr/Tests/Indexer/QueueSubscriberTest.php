@@ -16,6 +16,7 @@ use Doctrine\ODM\MongoDB\Events;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -24,12 +25,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|MockObject
      */
     private $serializer;
 
@@ -188,7 +189,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
      * @param string $id
      * @param string $type
      *
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getDocument($id, $type)
     {
@@ -222,7 +223,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @param object $document
      *
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|MockObject
      */
     protected function getEvent($document, $manager = null)
     {

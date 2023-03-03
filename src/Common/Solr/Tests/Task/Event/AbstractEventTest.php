@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Task\Event;
 
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
 use Integrated\Common\Solr\Task\Worker;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -21,7 +22,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 abstract class AbstractEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Worker|\PHPUnit_Framework_MockObject_MockObject
+     * @var Worker|MockObject
      */
     protected $worker;
 

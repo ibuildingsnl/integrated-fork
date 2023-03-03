@@ -162,24 +162,26 @@ body div#dropdown_overlay {
 
     &.new-contenttype {
         @include media(max-2xl) {
-            left: 0;
-            position: fixed;
-            width: 100%;
-            top: 60px;
-            border-top-left-radius: 0px;
-            border-top-right-radius: 0px;
-        }
-        @include media(max-xl) {
-            &.list {
-                width: 140px;
+            ul.dropdown-menu {
+                .list {
+                    width: 140px;
+                }
             }
         }
-        @include media(lg) {
+
+        @include media(max-lg) {
             .megamenu-content {
                 flex-wrap: wrap;
             }
-            .dropdown-menu .list {
-                width:100%;
+            ul.dropdown-menu {
+                left: 0;
+                position: fixed;
+                width: 100%;
+                top: 60px;
+
+                .list {
+                    width: 100%;
+                }
             }
         }
     }
@@ -204,13 +206,6 @@ body div#dropdown_overlay {
                 position: fixed;
                 width: 100%;
                 display: block;
-            }
-        }
-
-        &.new-contenttype {
-            ul.dropdown-menu, ul.dropdown-menu-left, ul.dropdown-menu-right {
-                max-height: calc(100vh - 100px);
-                overflow: auto;
             }
         }
 

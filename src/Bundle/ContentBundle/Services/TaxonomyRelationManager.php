@@ -7,9 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Model\TaxonomyRelationModel;
-use Integrated\Common\Solr\Indexer\IndexerInterface;
-use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Integrated\Common\Services\MainFlusher;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,14 +18,12 @@ use Symfony\Component\HttpFoundation\Request;
 class TaxonomyRelationManager
 {
     private $dm;
-    private QueueSubscriber $queueSubscriber;
-    private IndexerInterface $indexer;
+    private MainFlusher $flusher;
 
-    public function __construct(DocumentManager $dm, QueueSubscriber $queueSubscriber, IndexerInterface $indexer)
+    public function __construct(DocumentManager $dm, MainFlusher $flusher)
     {
         $this->dm = $dm;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->indexer = $indexer;
+        $this->flusher = $flusher;
     }
 
     public function manageRelationsWithParams(array $params): void
@@ -41,20 +37,21 @@ class TaxonomyRelationManager
         $this->manageRelations($request);
     }
 
-    public function manageRelations(Request $request): JsonResponse
+    public function manageRelations(Request $request): void
     {
         $taxonomyRelation = new TaxonomyRelationModel($request);
 
         // Is the user dragging from and to the same folder
         // We are also checking this at the frontend, this is extra
         if (false === $taxonomyRelation->isManagableRelation()) {
-            return new JsonResponse('Origin is same as target');
+            return;
         }
 
-        $taxonomy = $this->getTaxonomy($taxonomyRelation);
         $mediaItems = $this->getMediaItems($taxonomyRelation);
 
         foreach ($mediaItems as $mediaItem) {
+            $taxonomy = $this->getTaxonomy($taxonomyRelation);
+
             $relations = $this->getOrCreateRelation($mediaItem);
 
             $relationIDs = $this->getArrayOfRelationIDs($relations);
@@ -62,11 +59,14 @@ class TaxonomyRelationManager
             $this->removeRelationIfNeeded($relations, $taxonomyRelation, $relationIDs);
 
             $this->addRelationIfNotExists($mediaItem, $relations, $taxonomy, $relationIDs);
-
-            $this->updateQueueToSolr($mediaItem);
         }
 
-        return new JsonResponse('Ok');
+        $this->runSolrQueue();
+    }
+
+    public function runSolrQueue(): void
+    {
+        $this->flusher->flush();
     }
 
     private function getTaxonomy(TaxonomyRelationModel $taxonomyRelation): Taxonomy
@@ -117,15 +117,5 @@ class TaxonomyRelationManager
             $relations->addReference($taxonomy);
             $mediaItem->addRelation($relations);
         }
-    }
-
-    private function updateQueueToSolr(mixed $content): void
-    {
-        $queue = $this->queueSubscriber->getQueue();
-        $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
-        $this->dm->persist($content);
-        $this->dm->flush();
-        $this->indexer->setOption('queue.size', 2); // 1 voor het item, 1 voor de commit message
-        $this->indexer->execute();
     }
 }

@@ -12,6 +12,7 @@
         <id field-name="id" strategy="NONE" />
         <field name="title" type="string" />
         <field name="layout" type="string" />
+        <field name="cssClass" type="string" />
         <field name="createdAt" type="date" />
         <field name="updatedAt" type="date" />
         <field name="publishedAt" type="date" />

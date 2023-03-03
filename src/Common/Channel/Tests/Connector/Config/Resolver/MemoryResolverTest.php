@@ -14,6 +14,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Resolver\MemoryResolver;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -108,7 +109,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($name)
     {
@@ -123,7 +124,7 @@ class MemoryResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ChannelInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel($id)
     {

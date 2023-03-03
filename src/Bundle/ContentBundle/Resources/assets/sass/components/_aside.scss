@@ -80,6 +80,10 @@
     border-radius: 8px;
     overflow: hidden;
 
+    &:empty {
+        display: none;
+    }
+
     &.show {
         border: 1px solid #ecf6ff;
 
@@ -153,18 +157,14 @@
             position: relative;
 
             ul {
+                padding: 0.5rem 0rem;
+                max-height: 182px;
+                overflow-y: auto;
+
                 > li {
                     display: block;
                     margin: 0;
-                }
-
-                padding: 0.5rem 1.5rem;
-                max-height: 180px;
-                overflow-y: auto;
-
-                &.bc-collection {
-                    padding: 0;
-                    max-height: 100%;
+                    margin-bottom: 5px;
                 }
 
                 &.jFiler-items-list {
@@ -186,6 +186,10 @@
             .checkbox {
                 label {
                     font-weight: 300;
+                    padding: 0 1rem;
+                    &:hover {
+                        background-color:#ecf6ff;
+                    }
 
                     &.is-primary-channel {
                         font-weight: 700;
@@ -263,7 +267,8 @@
 
         .aside-item-list-container {
             ul {
-                padding: 10px 10px 0;
+                border: 1px solid #dfe3e9;
+                border-radius: 8px;
             }
         }
     }
@@ -683,3 +688,127 @@ ul {
     }
 }
 
+#editpaneliframe {
+    height: calc(100vh - 60px);
+    width: 100%;
+}
+
+.media-library {
+    .aside-filters {
+        &.media-edit-panel {
+            transform: translateX(0);
+            transition: all .3s;
+            position: absolute;
+            right: 0;
+            order: 2;
+            width: 350px;
+            z-index: 100;
+            border-left: 1px solid #dee3e9;
+            border-right: 0;
+
+            &.hide {
+                transform: translateX(350px);
+                transition: all .3s;
+            }
+
+            .aside-item-wrapper {
+                border: 0;
+                border-radius: 0;
+            }
+
+            button.close-media-edit-form {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-right: 1px solid #dfe3e9;
+
+                i:before {
+                    width: 25px;
+                    height: 25px;
+                }
+            }
+        }
+    }
+}
+
+.sidebar-edit-form {
+    height: 100%;
+    background-color: white;
+
+    .aside-edit {
+        width: 100%;
+
+        #toolbar {
+            .back {
+                display: none;
+            }
+
+            .options {
+                .toggle-settings {
+                    display: none;
+                }
+            }
+        }
+
+        aside {
+            width: 100%;
+            padding: 50px 1rem 1rem;
+            background-color: white;
+            overflow: auto;
+            height: 100vh;
+
+            .aside-holder {
+                padding-top: 1rem;
+                .thumbnail-holder {
+                    height: 200px;
+                    background-size: contain;
+                    margin-bottom: 1rem;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                }
+                .aside-item-wrapper {
+                    margin-bottom: 1rem;
+
+                    .aside-item-list-container {
+                        padding: 0.5rem;
+                    }
+                }
+
+                .form-control {
+                    padding: 0.5rem;
+                }
+            }
+        }
+    }
+}
+
+.integrated_content_history_show_iframe, .integrated_content_history_index_iframe {
+    #wrapper-holder {
+        top: 0;
+        .content-wrapper {
+            .index-wrapper-full {
+                .page-title h1.heading {
+                    margin-right: 0;
+                    font-size: 16px;
+                    line-height: initial;
+                }
+            }
+            #toolbar .back {
+                margin-left: 60px;
+            }
+        }
+    }
+
+}
+.integrated_content_history_index_iframe {
+    #wrapper-holder {
+        .content-wrapper {
+            .index-wrapper-full {
+                padding-top: 60px;
+            }
+        }
+    }
+}

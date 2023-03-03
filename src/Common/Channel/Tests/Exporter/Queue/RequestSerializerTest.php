@@ -15,6 +15,7 @@ use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializer;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -28,12 +29,12 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     public const TEST_STATE = 'TEST';
 
     /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|MockObject
      */
     protected $serializer;
 
     /**
-     * @var ChannelManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChannelManagerInterface|MockObject
      */
     protected $manager;
 
@@ -153,7 +154,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ChannelInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel($id)
     {

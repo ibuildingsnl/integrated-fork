@@ -85,6 +85,7 @@ select.form-control {
         background-color: white;
         border-radius: 8px;
         border: 1px solid #dfe3e9;
+        max-width: 750px;
 
         label {
             margin-bottom: 0;
@@ -362,7 +363,6 @@ label {
     cursor: pointer;
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
     font-size: 13px;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -726,6 +726,12 @@ label {
     background-color: #f2f2f2;
     padding: 2rem;
     border-radius: 8px;
+}
+
+.facet-wrappper {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 26px);
 }
 
 .editor ul.help-block {

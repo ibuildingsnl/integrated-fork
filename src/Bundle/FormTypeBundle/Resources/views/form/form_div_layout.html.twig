@@ -105,7 +105,7 @@
             {% endif %}
             <div class="{{ class }}">
         {% endif %}
-            <div id="{{ id }}_container">
+        <div id="{{ id }}_container">
                 <textarea id="{{ id }}" name="{{ full_name }}" class="form-control integrated_tinymce"
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
                           data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
@@ -117,7 +117,7 @@
                         {{ value }}
                     {% endif %}
                 </textarea>
-            </div>
+        </div>
         {{ block('form_errors') }}
         {% if style == 'editor' %}
             </div>
@@ -170,9 +170,8 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
-            {% set attr = attr|merge({ 'class': ('sortable-collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="">
+        <div {{ block('widget_container_attributes') }} class="sortable-collection-widget">
             <ul class="bc-collection panel-group sortable-collection ui-sortable">
                 {% for field in form %}
 
@@ -239,10 +238,8 @@
                 {% set panel_heading = 'true' %}
             {% endif %}
 
-            {% set panel_title = field.vars.value.label|default(form.vars.default_title|default('Item')) %}
-
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ panel_title ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -259,20 +256,17 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
-            {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
-
         {% endif %}
-        <div {{ block('widget_container_attributes') }}>
+        <div {{ block('widget_container_attributes') }} class="collection-widget">
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
                         <div class="panel panel-default">
                             {% if (panel_heading is defined and panel_heading == 'true') %}
-                                {% set panel_title = field.vars.value.name|default(form.vars.default_title|default('Item')) %}
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span class="capitalize">{{ panel_title }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.name|default(form.vars.default_title|default('Item')) }}</span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"
@@ -431,18 +425,22 @@
             {% endif %}
         {% endif %}
         {% if attr.style is defined and attr.style is not empty %}
-            {% set style = attr.style %}
+            {% if style is empty %}
+                {% set style = attr.style %}
+            {% endif %}
         {% endif %}
         {% if attr.state is defined and attr.state is not empty %}
-            {% set state = attr.state %}
+            {% if state is empty %}
+                {% set state = attr.state %}
+            {% endif %}
         {% endif %}
-        {% if style == 'horizontal' %}
+        {% if style == 'inline' %}
             <div
-                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item {% if form.vars.errors|length > 0 %} has-error{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                <div class="w-full {{ widget_col }} widget">
+                <div class="w-full widget">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
@@ -450,7 +448,7 @@
             </div>
         {% elseif style == 'sidebar' %}
             <div
-                class="aside-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="iconoir-{% if icon is not empty %}{{ icon }}{% else %}folder{% endif %}"></i>
@@ -470,7 +468,7 @@
             </div>
         {% elseif style == 'editor' %}
             <div
-                class="editor-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">
@@ -488,13 +486,16 @@
                 </div>
             </div>
         {% else %}
-            <div class="form-item {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error{% endif %}">
+            <div
+                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                {{ block('form_input_group') }}
-                {{ block('form_help') }}
-                {{ form_errors(form) }}
+                <div class="w-full {{ widget_col }} widget">
+                    {{ block('form_input_group') }}
+                    {{ block('form_help') }}
+                    {{ form_errors(form) }}
+                </div>
             </div>
         {% endif %}
     {% endapply %}
@@ -558,7 +559,7 @@
 
         <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
         {{ form_errors(form) }}
-        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}" >
+        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
     {% endapply %}
 
 {% endblock %}

@@ -13,6 +13,7 @@ namespace Integrated\Common\Converter\Tests\Type;
 
 use Integrated\Common\Converter\Type\Registry;
 use Integrated\Common\Converter\Type\ResolvedTypeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -76,7 +77,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolvedTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolvedTypeInterface|MockObject
      */
     protected function getType()
     {
