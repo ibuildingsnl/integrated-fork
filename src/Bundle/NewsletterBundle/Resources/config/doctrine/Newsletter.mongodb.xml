@@ -19,7 +19,10 @@
             </discriminator-map>
         </embed-one>
         <field field-name="contentSelection" type="hash" />
-        <field field-name="socials" type="hash" />
+        <embed-many
+            field="socials"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social"
+        />
         <field field-name="hoursBefore" type="int" />
         <field field-name="recipientList" type="string" />
         <field field-name="sender" type="string" />

@@ -90,7 +90,7 @@ class Newsletter extends Content
             'state' => 'show',
         ],
     ], location: 'editor')]
-    public array $socials;
+    public iterable $socials;
 
     #[Type\Field(type: RecipientListChoiceType::class, options: [
         'attr' => [
