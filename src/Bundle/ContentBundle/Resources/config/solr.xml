@@ -60,6 +60,73 @@
             <tag name="integrated_solr.type_extension" />
         </service>
 
+        <!-- query -->
+
+        <service id="integrated_content.solr.query.integrated_content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent">
+            <argument type="service" id="integrated_content.solr.query.sorting_options" />
+        </service>
+
+        <service id="integrated_content.solr.query.sorting_options" class="Integrated\Bundle\ContentBundle\Solr\Query\SortOptions">
+            <argument type="collection">
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>rel</argument>
+                        <argument>relevance</argument>
+                        <argument>score</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>changed</argument>
+                        <argument>date modified</argument>
+                        <argument>pub_edited</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>created</argument>
+                        <argument>date created</argument>
+                        <argument>pub_created</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>time</argument>
+                        <argument>publication date</argument>
+                        <argument>pub_time</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>title</argument>
+                        <argument>title</argument>
+                        <argument>title_sort</argument>
+                        <argument>asc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>rank</argument>
+                        <argument>rank</argument>
+                        <argument>rank</argument>
+                        <argument>asc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>random</argument>
+                        <argument>random</argument>
+                        <argument>random_content</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+            </argument>
+        </service>
+
     </services>
 
 </container>

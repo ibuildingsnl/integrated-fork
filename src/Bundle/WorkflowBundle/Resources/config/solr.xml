@@ -16,6 +16,8 @@
             <tag name="integrated_solr.type_extension" />
         </service>
 
+        <service id="integrated_workflow.solr.query.workflow_extension" class="Integrated\Bundle\WorkflowBundle\Solr\Query\WorkflowExtension" />
+
     </services>
 
 </container>
