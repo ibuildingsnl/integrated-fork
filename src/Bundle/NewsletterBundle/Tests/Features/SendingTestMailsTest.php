@@ -5,10 +5,11 @@ namespace Integrated\Bundle\NewsletterBundle\Tests\Features;
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
+use Integrated\Bundle\NewsletterBundle\Service\ArchivingCopyLocator;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
 use Integrated\Bundle\NewsletterBundle\Service\TestMailSender;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\FixedRenderer;
-use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignUpdater;
+use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignSynchronizer;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingTestMailTrigger;
 use PHPUnit\Framework\TestCase;
 use Stratadox\Clock\RewindableDateTimeClock;
@@ -20,7 +21,7 @@ final class SendingTestMailsTest extends TestCase
     private ScheduleEntryFactory $schedule;
     private TestMailSender $testMail;
     private SneakyTestClock $clock;
-    private SpyingCampaignUpdater $campaign;
+    private SpyingCampaignSynchronizer $campaign;
     private SpyingTestMailTrigger $testMailTrigger;
 
     protected function setUp(): void
@@ -32,13 +33,15 @@ final class SendingTestMailsTest extends TestCase
         $this->clock = SneakyTestClock::using(RewindableDateTimeClock::using(
             UnmovingClock::standingStillAt(new \DateTimeImmutable('1-1-2000 10:30'))
         ));
-        $this->campaign = new SpyingCampaignUpdater();
+        $this->campaign = new SpyingCampaignSynchronizer();
         $this->testMailTrigger = new SpyingTestMailTrigger();
         $this->testMail = new TestMailSender(
             new NewsletterGenerator(
-                $this->clock,
                 new FixedRenderer('<html><body>Look mum, it&apos;s a newsetter</body></html>'),
-                __DIR__ . '/Files/',
+                new ArchivingCopyLocator(
+                    __DIR__ . '/Files/',
+                    $this->clock,
+                ),
             ),
             $this->clock,
             $this->campaign,

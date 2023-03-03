@@ -4,7 +4,7 @@ namespace Integrated\Bundle\NewsletterBundle\Service;
 
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 
-interface CampaignUpdater
+interface CopyLocator
 {
-    public function update(Newsletter $newsletter): void;
+    public function pathFor(Newsletter $newsletter): string;
 }

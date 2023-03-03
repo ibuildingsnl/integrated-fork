@@ -3,13 +3,13 @@
 namespace Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles;
 
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
-use Integrated\Bundle\NewsletterBundle\Service\CampaignUpdater;
+use Integrated\Bundle\NewsletterBundle\Service\CampaignSynchronizer;
 
-final class SpyingCampaignUpdater implements CampaignUpdater
+final class SpyingCampaignSynchronizer implements CampaignSynchronizer
 {
     private array $updated = [];
 
-    public function update(Newsletter $newsletter): void
+    public function synchronize(Newsletter $newsletter): void
     {
         $this->updated[$newsletter->getId()] = true;
     }

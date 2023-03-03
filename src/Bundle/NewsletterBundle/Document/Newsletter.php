@@ -110,6 +110,8 @@ class Newsletter extends Content
 
     public ?\DateTimeImmutable $lastTestMailSentAt = null;
 
+    public ?string $externalId = null;
+
     public function isInGenerationWindow(?\DateTimeImmutable $now): bool
     {
         if (!$now) {

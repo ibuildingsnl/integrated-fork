@@ -41,6 +41,7 @@
 
         <service id="integrated_newsletter.form.listener.newsletter_change_listener" class="Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener">
             <argument type="service" id="integrated_newsletter.generator" />
+            <argument type="service" id="integrated_newsletter.clock" />
 
             <tag name="integrated_content.form.event_subscriber"/>
         </service>

@@ -43,10 +43,14 @@
 
         <service id="integrated_newsletter.clock" class="Stratadox\Clock\DateTimeClock" />
 
-        <service id="integrated_newsletter.generator" class="Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator">
-            <argument type="service" id="integrated_newsletter.clock" />
-            <argument type="service" id="integrated_newsletter.newsletter.renderer" />
+        <service id="integrated_newsletter.locator" class="Integrated\Bundle\NewsletterBundle\Service\ArchivingCopyLocator">
             <argument>%integrated_newsletter.storage.directory%</argument>
+            <argument type="service" id="integrated_newsletter.clock" />
+        </service>
+
+        <service id="integrated_newsletter.generator" class="Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator">
+            <argument type="service" id="integrated_newsletter.newsletter.renderer" />
+            <argument type="service" id="integrated_newsletter.locator" />
         </service>
 
     </services>

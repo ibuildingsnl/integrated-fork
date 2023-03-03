@@ -3,7 +3,7 @@
 namespace Integrated\Bundle\NewsletterBundle\EventListener;
 
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
-use Integrated\Bundle\NewsletterBundle\Service\CampaignUpdater;
+use Integrated\Bundle\NewsletterBundle\Service\CampaignSynchronizer;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
@@ -14,8 +14,8 @@ class NewsletterChangeListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly NewsletterGenerator $generator,
-        private readonly CampaignUpdater $campaign,
         private readonly Clock $clock,
+        private readonly ?CampaignSynchronizer $campaign = null,
     ) {
     }
 
@@ -38,6 +38,6 @@ class NewsletterChangeListener implements EventSubscriberInterface
         }
 
         $this->generator->generate($newsletter);
-        $this->campaign->update($newsletter);
+        $this->campaign?->synchronize($newsletter, $newsletter->firstAfter($this->clock->now()));
     }
 }

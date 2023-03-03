@@ -8,10 +8,10 @@ use Stratadox\Clock\Clock;
 final class TestMailSender
 {
     public function __construct(
-        private readonly NewsletterGenerator $generator,
-        private readonly Clock               $clock,
-        private readonly CampaignUpdater     $campaign,
-        private readonly TestMailTrigger     $testMails,
+        private readonly NewsletterGenerator  $generator,
+        private readonly Clock                $clock,
+        private readonly CampaignSynchronizer $campaign,
+        private readonly TestMailTrigger      $testMails,
     ) {
     }
 
@@ -29,7 +29,7 @@ final class TestMailSender
         }
 
         $this->generator->generate($newsletter);
-        $this->campaign->update($newsletter);
+        $this->campaign->synchronize($newsletter);
         $this->testMails->send($newsletter);
         $newsletter->lastTestMailSentAt = $this->clock->now();
     }

@@ -7,10 +7,10 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener;
+use Integrated\Bundle\NewsletterBundle\Service\ArchivingCopyLocator;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\FixedRenderer;
-use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignUpdater;
-use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingTestMailTrigger;
+use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignSynchronizer;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Form\Mapping\Metadata\Document;
 use Integrated\Common\Form\Mapping\MetadataInterface;
@@ -22,7 +22,7 @@ final class GeneratingEmailsTest extends TestCase
     private NewsletterChangeListener $listener;
     private MetadataInterface $metadata;
     private ScheduleEntryFactory $schedule;
-    private SpyingCampaignUpdater $campaign;
+    private SpyingCampaignSynchronizer $campaign;
 
     protected function setUp(): void
     {
@@ -30,15 +30,17 @@ final class GeneratingEmailsTest extends TestCase
             mkdir(__DIR__ . '/Files/');
         }
         $clock = UnmovingClock::standingStillAt(new \DateTimeImmutable('1-1-2000 10:30'));
-        $this->campaign = new SpyingCampaignUpdater();
+        $this->campaign = new SpyingCampaignSynchronizer();
         $this->listener = new NewsletterChangeListener(
             new NewsletterGenerator(
-                $clock,
                 new FixedRenderer('<html><body>NEWSLETTER!</body></html>'),
-                __DIR__ . '/Files/',
+                new ArchivingCopyLocator(
+                    __DIR__ . '/Files/',
+                    $clock,
+                ),
             ),
-            $this->campaign,
             $clock,
+            $this->campaign,
         );
         $this->metadata = new Document(Newsletter::class);
         $this->schedule = new ScheduleEntryFactory();
