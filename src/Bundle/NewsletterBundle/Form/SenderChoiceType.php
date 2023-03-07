@@ -21,9 +21,10 @@ class SenderChoiceType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        $senders = $this->senders->retrieve();
         $resolver->setDefaults([
             'choices' => isset($this->senders) ?
-                array_flip($this->senders->retrieve()) :
+                array_combine($senders, $senders) :
                 ['No newsletter platform connected' => ''],
             'placeholder' => false,
         ]);

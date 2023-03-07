@@ -25,17 +25,21 @@ final class SendInBlueCampaignSynchronizer implements CampaignSynchronizer
             // create
             $response = $this->emailCampaigns->createEmailCampaign(new CreateEmailCampaign([
                 'sender' => new CreateEmailCampaignSender(['email' => $newsletter->sender]),
+                'subject' => '@todo',
                 'name' => $newsletter->title,
                 'htmlContent' => file_get_contents($this->locator->pathFor($newsletter)),
                 'scheduledAt' => $scheduledAt->format('Y-m-d\TH:i:s\Z'),
+                'recipients' => ['listIds' => [(int) $newsletter->recipientList]],
             ]));
             $newsletter->externalId = (string) $response->getId();
         } else {
             $this->emailCampaigns->updateEmailCampaign((int) $newsletter->externalId, new UpdateEmailCampaign([
                 'sender' => new UpdateEmailCampaignSender(['email' => $newsletter->sender]),
+                'subject' => '@todo',
                 'name' => $newsletter->title,
                 'htmlContent' => file_get_contents($this->locator->pathFor($newsletter)),
                 'scheduledAt' => $scheduledAt->format('Y-m-d\TH:i:s\Z'),
+                'recipients' => ['listIds' => [(int) $newsletter->recipientList]],
             ]));
         }
     }

@@ -24,12 +24,22 @@
             <argument type="service" id="integrated_sendinblue.api.senders" />
         </service>
 
+        <service id="integrated_newsletter.synchronizer" class="Integrated\Bundle\SendInBlueBundle\Service\SendInBlueCampaignSynchronizer">
+            <argument type="service" id="integrated_sendinblue.api.campaigns" />
+            <argument type="service" id="integrated_newsletter.locator" />
+        </service>
+
         <service id="integrated_sendinblue.api.contacts" class="SendinBlue\Client\Api\ContactsApi">
             <argument type="service" id="guzzle" />
             <argument type="service" id="integrated_sendinblue.config" />
         </service>
 
         <service id="integrated_sendinblue.api.senders" class="SendinBlue\Client\Api\SendersApi">
+            <argument type="service" id="guzzle" />
+            <argument type="service" id="integrated_sendinblue.config" />
+        </service>
+
+        <service id="integrated_sendinblue.api.campaigns" class="SendinBlue\Client\Api\EmailCampaignsApi">
             <argument type="service" id="guzzle" />
             <argument type="service" id="integrated_sendinblue.config" />
         </service>
