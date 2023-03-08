@@ -45,7 +45,7 @@ body {
 
     .editor-wrapper {
         width: calc(100% - 350px);
-        max-height: calc(100vh - 110px);
+        height: calc(100vh - 110px);
         overflow: auto;
         position: relative;
         background-color: white;

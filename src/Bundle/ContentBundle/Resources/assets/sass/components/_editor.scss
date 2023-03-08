@@ -2,6 +2,10 @@ textarea#integrated_content_content {
     display: none;
 }
 
+.fancy_tinymce {
+    min-height: 500px;
+}
+
 .title_tinymce {
     position: absolute;
     display: flex;
@@ -114,7 +118,9 @@ body[class*="edit"], body[class*="new"] {
             }
 
             li {
-
+                &.ui-sortable-helper {
+                    background-color: white;
+                }
                 &:last-child {
                     .panel {
                         .panel-heading {
@@ -431,10 +437,12 @@ body[class*="edit"], body[class*="new"] {
     }
 }
 
-.definition-state-collection-widget {
-    .bc-collection {
-        li .panel .panel-heading .panel-title span {
-            padding-left: 80px;
+.content-wrapper {
+    .definition-state-collection-widget {
+        .bc-collection {
+            li .panel .panel-heading .panel-title span {
+                padding-left: 80px;
+            }
         }
     }
 }
