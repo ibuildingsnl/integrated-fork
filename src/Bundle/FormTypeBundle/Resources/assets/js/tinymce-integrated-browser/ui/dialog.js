@@ -43,14 +43,8 @@ export const Dialog = (editor, mode) => {
         const dialog = editor.windowManager.openUrl({
             title: mode === 'image' ? 'Browse images' : 'Browse ' + mode,
             url: Options.getDialogUrl(editor, mode),
-            buttons: [
-              {
-                type: 'cancel',
-                name: 'cancel',
-                text: 'Close',
-                primary: true
-              }
-            ],
+            width: window.innerWidth - 60,
+            height: window.innerHeight - 60,
             onMessage: messageHandler,
         });
     }

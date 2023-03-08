@@ -782,7 +782,7 @@
     }
 }
 
-.integrated_content_media_select_one, .integrated_content_media_select_multiple {
+.integrated_content_media_select_one, .integrated_content_media_select_multiple, .integrated_formtype_media_image, .integrated_formtype_media_video {
     #wrapper-holder {
         top: 0;
         width: 100%;
@@ -803,7 +803,6 @@
     div#dropdown_overlay {
         top: 0;
     }
-
 }
 
 @keyframes flash {
