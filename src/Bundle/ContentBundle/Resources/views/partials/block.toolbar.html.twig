@@ -88,9 +88,13 @@
                 {{ form_row(form.actions.cancel) }}
             {% endif %}
         {% endblock %}
-        {% if type is defined %}
+        {% if type is defined and form.actions.create is not defined %}
             <span class="editing-title">
                 {% trans with {'%contentType%': type.name} from 'app' %}Editing %contentType%{% endtrans %}
+            </span>
+        {% elseif type is defined and form.actions.create is defined %}
+            <span class="editing-title">
+                {% trans with {'%contentType%': type.name} from 'app' %}Creating %contentType%{% endtrans %}
             </span>
         {% endif %}
     </div>
