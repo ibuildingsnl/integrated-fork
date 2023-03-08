@@ -522,7 +522,7 @@ class ContentController extends AbstractController
                 $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
                 return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId(), 'remember' => 1]);
-                // TODO: Test if remember works. Expected result; when creating a new article, and move back to content navigator (with the back button) your search should still be intact
+                // TODO: Remember is broken, needs fixin.
             }
         }
 
