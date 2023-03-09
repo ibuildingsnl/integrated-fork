@@ -6,5 +6,5 @@ use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
 
 interface TestMailTrigger
 {
-    public function send(Newsletter $newsletter, string ...$recipients);
+    public function send(Newsletter $newsletter);
 }

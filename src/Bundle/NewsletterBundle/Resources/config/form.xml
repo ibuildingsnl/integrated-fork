@@ -43,6 +43,7 @@
             <argument type="service" id="integrated_newsletter.generator" />
             <argument type="service" id="integrated_newsletter.clock" />
             <argument type="service" id="integrated_newsletter.synchronizer" on-invalid="null" />
+            <argument type="service" id="integrated_newsletter.testmail" on-invalid="null" />
 
             <tag name="integrated_content.form.event_subscriber"/>
         </service>

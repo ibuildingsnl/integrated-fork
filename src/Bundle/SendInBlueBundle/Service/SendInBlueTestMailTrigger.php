@@ -14,11 +14,13 @@ final class SendInBlueTestMailTrigger implements TestMailTrigger
     ) {
     }
 
-    public function send(Newsletter $newsletter, string ...$recipients)
+    public function send(Newsletter $newsletter)
     {
         assert(null !== $newsletter->externalId);
-        $this->emailCampaigns->sendTestEmail((int) $newsletter->externalId, new SendTestEmail([
-            'emailTo' => $recipients,
-        ]));
+        if (!empty($newsletter->testAddresses)) {
+            $this->emailCampaigns->sendTestEmail((int)$newsletter->externalId, new SendTestEmail([
+                'emailTo' => $newsletter->testAddresses,
+            ]));
+        }
     }
 }

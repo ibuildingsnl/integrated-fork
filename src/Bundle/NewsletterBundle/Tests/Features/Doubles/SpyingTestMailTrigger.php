@@ -9,7 +9,7 @@ final class SpyingTestMailTrigger implements TestMailTrigger
 {
     private array $triggered = [];
 
-    public function send(Newsletter $newsletter, string ...$recipients)
+    public function send(Newsletter $newsletter)
     {
         $this->triggered[$newsletter->getId()] = true;
     }
