@@ -26,6 +26,7 @@
         <field field-name="hoursBefore" type="int" />
         <field field-name="recipientList" type="string" />
         <field field-name="sender" type="string" />
+        <field field-name="externalId" type="string" />
         <reference-one field="logo" target-document="Integrated\Bundle\ContentBundle\Document\Content\Image" />
     </document>
 

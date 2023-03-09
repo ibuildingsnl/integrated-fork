@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>{{ newsletter.title }} {{ date().format('d/m/Y') }}</title>
+</head>
 <body>
 
-{{ dump(newsletter) }}
+<h1>
+{{ newsletter.title }}
+</h1>
 
 {% for item in content.content %}
-    {{ dump(item) }}
+    <h3>
+    {{ item.title }}
+    </h3>
+    <div>
+    {{ item }}
+    </div>
 {% endfor %}
 
 </body>
