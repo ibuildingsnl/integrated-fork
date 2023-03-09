@@ -2,7 +2,7 @@
 
 <converter-mapping>
 
-    <class name="Integrated\Bundle\NewsLetterBundle\Document\Newsletter">
+    <class name="Integrated\Bundle\NewsletterBundle\Document\Newsletter">
 
         <type name="integrated.fields">
             <options>
