@@ -702,6 +702,16 @@ ul {
 }
 
 .media-library {
+    #toolbar {
+        .options {
+            .form-actions {
+                margin-right: 10px;
+            }
+        }
+        .back {
+            margin-left:10px;
+        }
+    }
     .aside-filters {
         &.media-edit-panel {
             transform: translateX(0);

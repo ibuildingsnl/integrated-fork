@@ -81,3 +81,8 @@ $('.integrated_tinymce').each(function(key, elem){
     });
 });
 
+$(window).keyup(function(e) {
+    if (e.key === "Escape") {
+        $('.tox-tinymce-aux').empty()
+    }
+});

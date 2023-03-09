@@ -1,31 +1,38 @@
 {% extends '@IntegratedContent/media/select_one.html.twig' %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-        jQuery(function($) {
-            window.send_cancel_to_parent = function() {
+<script>
+    jQuery(function($) {
+        window.send_cancel_to_parent = function() {
+            window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+        };
+
+        $(document).keyup(function(e) {
+            if (e.key === 'Escape') {
                 window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
             }
+        });
 
-            window.send_message_to_parent = function(e) {
-                var media = $('#gallery li.media-item.selected');
+        window.send_message_to_parent = function(e) {
+            var media = $('#gallery li.media-item.selected');
 
-                if (!media.length) {
-                    return;
-                }
+            if (!media.length) {
+                return;
+            }
 
-                window.parent.postMessage({
-                    mceAction: 'insertVideo',
-                    video: {
-                        id: media.data('id'),
-                        poster: media.data('thumbnail'),
-                        uri: media.data('file'),
-                        mine: media.data('mime'),
-                    }
-                }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
-            };
-        })
-    </script>
+            window.parent.postMessage({
+                mceAction: 'insertVideo',
+                video: {
+                    id: media.data('id'),
+                    poster: media.data('thumbnail'),
+                    uri: media.data('file'),
+                    mine: media.data('mime'),
+                },
+            }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+        };
+
+    });
+</script>
 {% endblock %}
