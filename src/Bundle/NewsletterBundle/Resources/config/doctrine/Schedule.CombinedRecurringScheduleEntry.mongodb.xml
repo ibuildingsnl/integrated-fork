@@ -5,7 +5,8 @@
 
     <document name="Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry">
         <id field-name="id" strategy="auto" />
-        <embed-many field="entries">
+        <reference-many field="entries">
+            <cascade><persist/><remove/></cascade>
             <discriminator-field name="subtype" />
             <discriminator-map>
                 <discriminator-mapping value="combined"
@@ -15,7 +16,7 @@
                                        class="Integrated\Bundle\NewsletterBundle\Document\Schedule\SingleRecurringScheduleEntry"
                 />
             </discriminator-map>
-        </embed-many>
+        </reference-many>
     </document>
 
 </doctrine-mongo-mapping>

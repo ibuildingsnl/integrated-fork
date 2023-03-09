@@ -7,7 +7,8 @@
         <field field-name="title" type="string" />
         <field field-name="headline" type="string" />
         <field field-name="testAddresses" type="hash" />
-        <embed-one field="schedule">
+        <reference-one field="schedule">
+            <cascade><persist/><remove/></cascade>
             <discriminator-field name="type" />
             <discriminator-map>
                 <discriminator-mapping value="combined"
@@ -17,7 +18,7 @@
                                        class="Integrated\Bundle\NewsletterBundle\Document\Schedule\SingleRecurringScheduleEntry"
                 />
             </discriminator-map>
-        </embed-one>
+        </reference-one>
         <field field-name="contentSelection" type="hash" />
         <embed-many
             field="socials"

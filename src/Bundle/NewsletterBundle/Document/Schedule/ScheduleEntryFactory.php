@@ -98,7 +98,7 @@ class ScheduleEntryFactory
             self::YEARLY => $this->yearly($entry['hour'], $entry['minute'], $entry['month'], $entry['day']),
         }, $entryData);
         if (\count($entries) === 1) {
-            return $entries[0];
+            return current($entries);
         }
 
         return new CombinedRecurringScheduleEntry(...$entries);
