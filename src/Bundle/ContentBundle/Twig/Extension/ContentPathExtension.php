@@ -5,7 +5,6 @@ namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
-use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Common\Content\ContentInterface;
 use Solarium\QueryType\Select\Result\Document;
 use Twig\Extension\AbstractExtension;
@@ -54,7 +53,7 @@ class ContentPathExtension extends AbstractExtension
                 // circular reference
                 break;
             }
-            $path[$data->getId()] = (string)$relationReferences;
+            $path[$data->getId()] = (string) $relationReferences;
         }
 
         if ($data instanceof Taxonomy) {

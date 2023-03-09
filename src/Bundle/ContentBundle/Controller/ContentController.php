@@ -521,7 +521,7 @@ class ContentController extends AbstractController
                 // Set flash message
                 $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
-                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId(), 'remember' => 1]);
+                return $this->redirectToRoute('integrated_content_content_edit', ['remember' => 1, 'id' => $content->getId()]);
                 // TODO: Remember is broken, needs fixin.
             }
         }
