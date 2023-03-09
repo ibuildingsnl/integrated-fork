@@ -4,9 +4,7 @@ namespace Integrated\Bundle\NewsletterBundle\Controller;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\NewsletterBundle\Document\Newsletter;
-use Integrated\Bundle\NewsletterBundle\Service\ContentFetcher;
 use Integrated\Bundle\NewsletterBundle\Service\Renderer;
-use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
