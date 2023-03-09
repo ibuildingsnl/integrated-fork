@@ -182,6 +182,8 @@
 {% endblock %}
 
 {% block relation_facet %}
+    {% set key = key[9:] %}
+
     <div class="aside-item-holder">
         <h3 class="font-medium">
             {{ key|integrated_relation.name|default(key|capitalize) }}
