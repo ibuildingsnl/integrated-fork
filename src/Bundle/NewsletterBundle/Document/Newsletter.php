@@ -14,15 +14,17 @@ use Integrated\Bundle\NewsletterBundle\Form\SenderChoiceType;
 use Integrated\Bundle\NewsletterBundle\Form\TestEmailAddressesType;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Type\Document('Newsletter')]
 class Newsletter extends Content
 {
     #[Type\Field(options: ['priority' => 990, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
-    public string $title;
+    #[Assert\NotBlank(message: 'Newsletter must have a title')]
+    public ?string $title;
 
     #[Type\Field(options: ['priority' => 980, 'attr' => ['style' => 'editor', 'state' => 'show']], location: 'editor')]
-    public string $headline;
+    public ?string $headline = '';
 
     #[Type\Field(type: TestEmailAddressesType::class, options: [
         'priority' => 490,
@@ -44,6 +46,8 @@ class Newsletter extends Content
             'help_text' => 'Email is generated the amount of time given before sending.',
         ],
     ], location: 'sidebar')]
+    #[Assert\NotBlank(message: 'Newsletter must have a title')]
+    #[Assert\GreaterThan(0, message: 'Newsletter must have a generation window')]
     public int $hoursBefore = 2;
 
     #[Type\Field(type: RecurringScheduleEntryType::class, options: [

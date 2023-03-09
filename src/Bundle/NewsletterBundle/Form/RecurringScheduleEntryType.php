@@ -8,6 +8,7 @@ use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RecurringScheduleEntryType extends AbstractType
 {
@@ -33,6 +34,7 @@ class RecurringScheduleEntryType extends AbstractType
             'attr' => [
                 'class' => 'frequency-component',
             ],
+            'constraints' => [new NotBlank([], 'The newsletter must be scheduled')]
         ]);
         $builder->addModelTransformer(new CallbackTransformer(
             fn (?RecurringScheduleEntry $entry) => [self::TITLE => $entry?->toArray() ?: []],
