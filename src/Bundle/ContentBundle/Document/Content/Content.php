@@ -469,48 +469,33 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $published && !$this->disabled;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPremium()
+    public function isPremium(): bool
     {
-        return $this->premium;
+        return $this->premium ?: false;
     }
 
-    /**
-     * @return $this
-     */
-    public function setPremium(bool $premium)
+    public function setPremium(bool $premium): static
     {
         $this->premium = $premium;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isFeatured()
+    public function isFeatured(): bool
     {
-        return $this->featured;
+        return $this->featured ?: false;
     }
 
-    /**
-     * @return $this
-     */
-    public function setFeatured(bool $featured)
+    public function setFeatured(bool $featured): static
     {
         $this->featured = $featured;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDisabled()
+    public function isDisabled(): bool
     {
-        return $this->disabled;
+        return $this->disabled?: false;
     }
 
     /**

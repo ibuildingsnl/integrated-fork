@@ -14,18 +14,22 @@ use Integrated\Bundle\ContentBundle\Document\Content\News;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
 use Integrated\Bundle\ContentBundle\Document\Content\Video;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\NewsletterBundle\Document\ContentRepository;
 use Integrated\Bundle\NewsletterBundle\Service\CombinatorInterface;
 use Integrated\Bundle\NewsletterBundle\Service\ContentCombinator;
 use Integrated\Bundle\NewsletterBundle\Service\DocumentTypeValidator;
 use Integrated\Bundle\NewsletterBundle\Service\Exception\UnacceptableContentTypeException;
+use Integrated\Bundle\NewsletterBundle\Service\FeaturedFirstCombinator;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\MemoryContentRepository;
 use PHPUnit\Framework\TestCase;
+use Stratadox\Sorting\ObjectSorter;
 
 final class CombiningContentTest extends TestCase
 {
     private CombinatorInterface $combinator;
     private Channel $channel;
     private Channel $otherChannel;
+    private ContentRepository $repository;
 
     protected function setUp(): void
     {
@@ -37,33 +41,33 @@ final class CombiningContentTest extends TestCase
         $this->channel = $c = $this->channel('default');
         $this->otherChannel = $c2 = $this->channel('channel 2');
 
-        $repository = new MemoryContentRepository();
+        $this->repository = new MemoryContentRepository();
 
-        $repository->add($this->content($job, 'global dictator', 1));
-        $repository->add($this->content($job, 'intergalactic time lord', 30));
-        $repository->add($this->content($job, 'dishwasher', 12));
+        $this->repository->add($this->content($job, 'global dictator', 1));
+        $this->repository->add($this->content($job, 'intergalactic time lord', 30));
+        $this->repository->add($this->content($job, 'dishwasher', 12));
 
-        $repository->add($this->content($event, 'event 1', 24));
-        $repository->add($this->content($event, 'event 2', 3));
+        $this->repository->add($this->content($event, 'event 1', 24));
+        $this->repository->add($this->content($event, 'event 2', 3));
 
-        $repository->add($this->content($article, 'article 1', null));
-        $repository->add($this->content($article, 'article 2', 22));
-        $repository->add($this->content($article, 'article 3', 2));
+        $this->repository->add($this->content($article, 'article 1', null));
+        $this->repository->add($this->content($article, 'article 2', 22));
+        $this->repository->add($this->content($article, 'article 3', 2));
 
-        $repository->add($this->content($news, 'something happened', 20, $c));
-        $repository->add($content = $this->content($news, 'news item was written', 18, $c));
+        $this->repository->add($this->content($news, 'something happened', 20, $c));
+        $this->repository->add($content = $this->content($news, 'news item was written', 18, $c));
         $content->getCustomFields()->set('ExcludeFromNewsletters', false);
-        $repository->add($content = $this->content($news, 'news items can now be excluded!', 16, $c));
+        $this->repository->add($content = $this->content($news, 'news items can now be excluded!', 16, $c));
         $content->getCustomFields()->set('ExcludeFromNewsletters', true);
 
-        $repository->add($this->content($news, 'channel 2 news 1', 34, $c2));
-        $repository->add($this->content($news, 'multi-channel news 1', 33));
-        $repository->add($this->content($news, 'channel 2 news 2', 32, $c2));
-        $repository->add($this->content($news, 'multi-channel news 2', 31, $c, $c2));
-        $repository->add($this->content($news, 'channel 2 news 3', 30, $c2));
+        $this->repository->add($this->content($news, 'channel 2 news 1', 36, $c2));
+        $this->repository->add($this->content($news, 'multi-channel news 1', 35));
+        $this->repository->add($this->content($news, 'channel 2 news 2', 34, $c2));
+        $this->repository->add($this->content($news, 'multi-channel news 2', 33, $c, $c2));
+        $this->repository->add($this->content($news, 'channel 2 news 3', 30, $c2));
 
-        $this->combinator = new DocumentTypeValidator(
-            new ContentCombinator($repository),
+        $this->combinator = new FeaturedFirstCombinator(new DocumentTypeValidator(
+            new ContentCombinator($this->repository),
             [
                 Article::class,
                 Event::class,
@@ -72,7 +76,7 @@ final class CombiningContentTest extends TestCase
                 Video::class,
                 Company::class,
             ],
-        );
+        ), new ObjectSorter());
     }
 
     public function testCombiningAJobPostingAndAnEvent()
@@ -172,6 +176,41 @@ final class CombiningContentTest extends TestCase
         self::assertEquals('channel 2 news 2', $combined->getContent()[2]->getTitle());
         self::assertEquals('multi-channel news 1', $combined->getContent()[3]->getTitle());
         self::assertEquals('channel 2 news 1', $combined->getContent()[4]->getTitle());
+    }
+
+    public function testShowingFeaturedContentFirst()
+    {
+        $news = $this->contentType('news', News::class);
+        $featured = $this->content($news, 'featured!', 31);
+        $featured->setFeatured(true);
+        $this->repository->add($featured);
+
+        $combined = $this->combinator->combine([$news, $news, $news, $news]);
+
+        self::assertCount(4, $combined->getContent());
+        self::assertEquals('featured!', $combined->getContent()[0]->getTitle());
+        self::assertEquals('news item was written', $combined->getContent()[1]->getTitle());
+        self::assertEquals('something happened', $combined->getContent()[2]->getTitle());
+        self::assertEquals('channel 2 news 3', $combined->getContent()[3]->getTitle());
+    }
+
+    public function testShowingBothFeaturedContentFirst()
+    {
+        $news = $this->contentType('news', News::class);
+        $featured = $this->content($news, 'featured!', 30);
+        $featured->setFeatured(true);
+        $this->repository->add($featured);
+        $featured = $this->content($news, 'featured 2', 29);
+        $featured->setFeatured(true);
+        $this->repository->add($featured);
+
+        $combined = $this->combinator->combine([$news, $news, $news, $news]);
+
+        self::assertCount(4, $combined->getContent());
+        self::assertEquals('featured 2', $combined->getContent()[0]->getTitle());
+        self::assertEquals('featured!', $combined->getContent()[1]->getTitle());
+        self::assertEquals('news item was written', $combined->getContent()[2]->getTitle());
+        self::assertEquals('something happened', $combined->getContent()[3]->getTitle());
     }
 
     // helpers

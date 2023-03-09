@@ -8,6 +8,15 @@ class CombinedContent extends Content
 {
     private array $content = [];
 
+    public static function fromItems(Content ...$content): self
+    {
+        $self = new self();
+        foreach ($content as $item) {
+            $self->addContent($item);
+        }
+        return $self;
+    }
+
     public function addContent(Content $content)
     {
         $this->content[] = $content;

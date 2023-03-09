@@ -20,7 +20,7 @@ final class ContentCombinator implements CombinatorInterface
 
         foreach ($types as $type) {
             do {
-                $content = $this->repository->mostRecentlyPublished($type, $offsets[$type->getId()] ?? 0, $channels);
+                $content = $this->repository->mostRecentlyPublished($type, $offsets[$type->getId()] ?? 0);
                 $offsets[$type->getId()] = ($offsets[$type->getId()] ?? 0) + 1;
             } while ($content && $this->exclude($content, $channels));
 
