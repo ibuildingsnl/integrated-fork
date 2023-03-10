@@ -9,6 +9,7 @@ use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use Integrated\Bundle\NewsletterBundle\EventListener\NewsletterChangeListener;
 use Integrated\Bundle\NewsletterBundle\Service\ArchivingCopyLocator;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
+use Integrated\Bundle\NewsletterBundle\Service\SynchronizingNewsletterUpdater;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\FixedRenderer;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignSynchronizer;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
@@ -32,15 +33,17 @@ final class GeneratingEmailsTest extends TestCase
         $clock = UnmovingClock::standingStillAt(new \DateTimeImmutable('1-1-2000 10:30'));
         $this->campaign = new SpyingCampaignSynchronizer();
         $this->listener = new NewsletterChangeListener(
-            new NewsletterGenerator(
-                new FixedRenderer('<html><body>NEWSLETTER!</body></html>'),
-                new ArchivingCopyLocator(
-                    __DIR__ . '/Files/',
-                    $clock,
+            new SynchronizingNewsletterUpdater(
+                new NewsletterGenerator(
+                    new FixedRenderer('<html><body>NEWSLETTER!</body></html>'),
+                    new ArchivingCopyLocator(
+                        __DIR__ . '/Files/',
+                        $clock,
+                    ),
                 ),
+                $clock,
+                $this->campaign,
             ),
-            $clock,
-            $this->campaign,
         );
         $this->metadata = new Document(Newsletter::class);
         $this->schedule = new ScheduleEntryFactory();

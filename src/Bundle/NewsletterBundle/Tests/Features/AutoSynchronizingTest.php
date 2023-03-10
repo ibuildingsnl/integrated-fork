@@ -7,7 +7,8 @@ use Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringSchedu
 use Integrated\Bundle\NewsletterBundle\Document\Schedule\ScheduleEntryFactory;
 use Integrated\Bundle\NewsletterBundle\Service\ArchivingCopyLocator;
 use Integrated\Bundle\NewsletterBundle\Service\NewsletterGenerator;
-use Integrated\Bundle\NewsletterBundle\Service\TestMailSender;
+use Integrated\Bundle\NewsletterBundle\Service\SynchronizingNewsletterUpdater;
+use Integrated\Bundle\NewsletterBundle\Service\ConditionalNewsletterUpdater;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\FixedRenderer;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingCampaignSynchronizer;
 use Integrated\Bundle\NewsletterBundle\Tests\Features\Doubles\SpyingTestMailTrigger;
@@ -16,10 +17,10 @@ use Stratadox\Clock\RewindableDateTimeClock;
 use Stratadox\Clock\SneakyTestClock;
 use Stratadox\Clock\UnmovingClock;
 
-final class SendingTestMailsTest extends TestCase
+final class AutoSynchronizingTest extends TestCase
 {
     private ScheduleEntryFactory $schedule;
-    private TestMailSender $testMail;
+    private ConditionalNewsletterUpdater $testMail;
     private SneakyTestClock $clock;
     private SpyingCampaignSynchronizer $campaign;
     private SpyingTestMailTrigger $testMailTrigger;
@@ -35,17 +36,20 @@ final class SendingTestMailsTest extends TestCase
         ));
         $this->campaign = new SpyingCampaignSynchronizer();
         $this->testMailTrigger = new SpyingTestMailTrigger();
-        $this->testMail = new TestMailSender(
-            new NewsletterGenerator(
-                new FixedRenderer('<html><body>Look mum, it&apos;s a newsetter</body></html>'),
-                new ArchivingCopyLocator(
-                    __DIR__ . '/Files/',
-                    $this->clock,
-                ),
-            ),
+        $this->testMail = new ConditionalNewsletterUpdater(
             $this->clock,
-            $this->campaign,
-            $this->testMailTrigger,
+            new SynchronizingNewsletterUpdater(
+                new NewsletterGenerator(
+                    new FixedRenderer('<html><body>Look mum, it&apos;s a newsetter</body></html>'),
+                    new ArchivingCopyLocator(
+                        __DIR__ . '/Files/',
+                        $this->clock,
+                    ),
+                ),
+                $this->clock,
+                $this->campaign,
+                $this->testMailTrigger,
+            )
         );
     }
 
@@ -56,7 +60,7 @@ final class SendingTestMailsTest extends TestCase
         $newsletter->schedule = $this->schedule->daily(12, 0);
         $newsletter->hoursBefore = 2;
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         self::assertFileExists(__DIR__ . '/Files/abc123/2000/01/01/1200.html');
         self::assertTrue($this->campaign->wasUpdated($newsletter));
@@ -70,7 +74,7 @@ final class SendingTestMailsTest extends TestCase
         $newsletter->schedule = $this->schedule->daily(12, 0);
         $newsletter->hoursBefore = 1;
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         self::assertFileDoesNotExist(__DIR__ . '/Files/abc123/2000/01/01/1200.html');
         self::assertFalse($this->campaign->wasUpdated($newsletter));
@@ -84,14 +88,14 @@ final class SendingTestMailsTest extends TestCase
         $newsletter->schedule = $this->schedule->daily(12, 0);
         $newsletter->hoursBefore = 2;
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         $this->campaign->reset($newsletter);
         $this->testMailTrigger->reset($newsletter);
 
         $this->clock->sneakForwards(\DateInterval::createFromDateString('+1 hours'));
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         self::assertFalse($this->campaign->wasUpdated($newsletter));
         self::assertFalse($this->testMailTrigger->wasTriggeredFor($newsletter));
@@ -107,11 +111,11 @@ final class SendingTestMailsTest extends TestCase
         );
         $newsletter->hoursBefore = 2;
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         $this->clock->sneakForwards(\DateInterval::createFromDateString('+1 hours'));
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         self::assertFileExists(__DIR__ . '/Files/abc123/2000/01/01/1100.html');
         self::assertFileExists(__DIR__ . '/Files/abc123/2000/01/01/1200.html');
@@ -127,11 +131,11 @@ final class SendingTestMailsTest extends TestCase
         );
         $newsletter->hoursBefore = 2;
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         $this->clock->sneakForwards(\DateInterval::createFromDateString('+25 minutes'));
 
-        $this->testMail->maybeSend($newsletter);
+        $this->testMail->update($newsletter);
 
         self::assertFileExists(__DIR__ . '/Files/abc123/2000/01/01/1100.html');
         // It's 10:55, technically less than 2h before 12:00, but since we're also sending one at 11h, there's no

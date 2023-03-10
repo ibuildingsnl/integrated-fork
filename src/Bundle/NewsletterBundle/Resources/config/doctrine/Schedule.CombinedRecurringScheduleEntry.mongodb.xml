@@ -4,7 +4,7 @@
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="Integrated\Bundle\NewsletterBundle\Document\Schedule\CombinedRecurringScheduleEntry">
-        <id field-name="id" strategy="auto" />
+        <id field-name="id" strategy="UUID" />
         <reference-many field="entries">
             <cascade><persist/><remove/></cascade>
             <discriminator-field name="subtype" />

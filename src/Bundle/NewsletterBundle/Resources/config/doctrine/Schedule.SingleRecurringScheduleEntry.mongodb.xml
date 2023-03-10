@@ -4,7 +4,7 @@
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="Integrated\Bundle\NewsletterBundle\Document\Schedule\SingleRecurringScheduleEntry">
-        <id field-name="id" strategy="auto" />
+        <id field-name="id" strategy="UUID" />
         <field name="baseModifiers" type="hash" />
         <field name="nextModifier" type="string" />
         <field name="description" type="hash" />

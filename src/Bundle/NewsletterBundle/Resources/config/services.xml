@@ -59,5 +59,16 @@
             <argument type="service" id="integrated_newsletter.locator" />
         </service>
 
+        <service id="integrated_newsletter.updater.sync" class="Integrated\Bundle\NewsletterBundle\Service\SynchronizingNewsletterUpdater">
+            <argument type="service" id="integrated_newsletter.generator" />
+            <argument type="service" id="integrated_newsletter.clock" />
+            <argument type="service" id="integrated_newsletter.synchronizer" on-invalid="null" />
+            <argument type="service" id="integrated_newsletter.testmail" on-invalid="null" />
+        </service>
+
+        <service id="integrated_newsletter.updater.conditional" class="Integrated\Bundle\NewsletterBundle\Service\ConditionalNewsletterUpdater">
+            <argument type="service" id="integrated_newsletter.clock" />
+            <argument type="service" id="integrated_newsletter.updater.sync" />
+        </service>
     </services>
 </container>

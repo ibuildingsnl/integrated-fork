@@ -16,5 +16,6 @@ final class IntegratedNewsletterExtension extends Extension
         $loader->load('form.xml');
         $loader->load('services.xml');
         $loader->load('controller.xml');
+        $loader->load('command.xml');
     }
 }
