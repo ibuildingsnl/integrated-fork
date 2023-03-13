@@ -192,44 +192,46 @@
     {% endif %}
     <div class="aside-item-holder">
         <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
-            <h3 class="aside-item-title">
-                <span class="aside-item-icon">
-                    {{ facetTitle }}
-                </span>
-            </h3>
-            <i class="iconoir-nav-arrow-down"></i>
-        </div>
-        <div class="aside-item-list">
-            <div class="aside-item-list-container">
-                {% if (facet|length >= 6) %}
-                    <div class="aside-item-search">
-                        <i class="iconoir-search"></i>
-                        <input type="text" class="list-search"
-                               placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
-                    </div>
-                {% endif %}
-                <ul class="filters_list">
-                    {% for title, count in facet %}
-                        <li class="checkbox">
-                            <label class="checkbox-container">
-                                <input {% if title in params[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
-                                <span class="checkmark"></span>
-                                <div class="facet-wrappper">
-                                    <span class="facet-title">
-                                        {% if key == 'contenttypes' %}
-                                            {{ title|integrated_content_type.name|default(title) }}
-                                        {% elseif key == 'channels' %}
-                                            {{ title|integrated_channel.name|default(title) }}
-                                        {% else %}
-                                            {{ title }}
-                                        {% endif %}
-                                    </span>
-                                    <span class="facet-count">({{ count }})</span>
-                                </div>
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {% if key == 'contenttypes' %}
+                                                {{ title|integrated_content_type.name|default(title) }}
+                                            {% elseif key == 'channels' %}
+                                                {{ title|integrated_channel.name|default(title) }}
+                                            {% else %}
+                                                {{ title }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -241,38 +243,40 @@
     {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
     <div class="aside-item-holder">
         <div class="aside-item-wrapper">
-            <h3 class="aside-item-title">
-                <span class="aside-item-icon">
-                    {{ facetTitle }}
-                </span>
-            </h3>
-            <i class="iconoir-nav-arrow-down"></i>
-        </div>
-        <div class="aside-item-list">
-            <div class="aside-item-list-container">
-                {% if (facet|length >= 6) %}
-                    <div class="aside-item-search">
-                        <i class="iconoir-search"></i>
-                        <input type="text" class="list-search"
-                               placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
-                    </div>
-                {% endif %}
-                <ul class="filters_list">
-                    {% for title, count in facet %}
-                        <li class="checkbox">
-                            <label class="checkbox-container">
-                                <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]" value="{{ title }}" />
-                                <span class="checkmark"></span>
-                                <div class="facet-wrappper">
-                                    <span class="facet-title">
-                                        {{ title }}
-                                    </span>
-                                    <span class="facet-count">({{ count }})</span>
-                                </div>
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]" value="{{ title }}" />
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {{ title }}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
