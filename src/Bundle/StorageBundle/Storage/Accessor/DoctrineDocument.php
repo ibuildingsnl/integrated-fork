@@ -121,6 +121,7 @@ class DoctrineDocument
         if ($this->hasPublicProperty($propertyName)) {
             ++$this->updates;
             $this->document->$propertyName = $propertyValue;
+
             return null;
         }
 

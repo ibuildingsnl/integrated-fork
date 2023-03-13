@@ -486,7 +486,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function isDisabled(): bool
     {
-        return $this->disabled?: false;
+        return $this->disabled ?: false;
     }
 
     /**
