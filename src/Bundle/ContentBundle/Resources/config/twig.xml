@@ -22,6 +22,11 @@
             <tag name="twig.extension" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Twig\Extension\ContentTypeExtension">
+            <argument type="service" id="integrated_content.resolver" />
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Twig\Extension\ContentPathExtension">
             <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
             <tag name="twig.extension"/>
@@ -35,6 +40,15 @@
         <service id="integrated_content.twig.integrated_content_extension" class="Integrated\Bundle\ContentBundle\Twig\Extension\IntegratedContentExtension">
             <argument type="service" id="event_dispatcher" />
             <tag name="twig.extension" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Twig\Extension\IntegratedSearchExtension">
+            <argument type="service" id="integrated_content.solr.query.sorting_options" />
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Twig\Extension\RelationExtension">
+            <tag name="twig.extension"/>
         </service>
 
         <service id="integrated_content.twig.json_ld_extension" class="Integrated\Bundle\ContentBundle\Twig\Extension\JsonLDExtension">

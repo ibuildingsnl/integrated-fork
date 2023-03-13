@@ -18,13 +18,14 @@
                         <li class="dropdown close-outside" data-underlay="no">
                             <a data-toggle="dropdown" role="button" id="sorting-list"
                                class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
-                                : {{ params.sort.options[params.sort.current].label|trans }}</span>
+                                : {{ integrated_search_sorting_option(params.sort).label|trans }}</span>
                                 <i class="iconoir-nav-arrow-down"></i></a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-                                {% for sort in params.sort.options %}
-                                    <li {% if sort.name == params.sort.current %}class="active"
+                                {% set sort_default = params.q ? 'rel' : 'changed' %}
+                                {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
+                                    <li {% if sort.name == params.sort %}class="active"
                                         {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == params.sort.default ? null : sort.name })) }}"
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
                                            tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                                     </li>
                                 {% endfor %}
@@ -105,11 +106,7 @@
                                 </div>
                             </td>
                             <td class="content-type">
-                                {% if contentTypes[content.type_name] is defined %}
-                                    {{ contentTypes[content.type_name] }}
-                                {% else %}
-                                    {{ content.type_name }}
-                                {% endif %}
+                                {{ content.type_name|integrated_content_type.name|default(content.type_name) }}
                             </td>
                             <td class="pub-date">
                                 {% if content.pub_time is defined %}
@@ -164,74 +161,13 @@
                         </a>
                     </div>
                     <form>
-                        <input type="hidden" value="{{ app.request.query.get('q') }}" name="q"/>
-                        <input type="hidden" value="{{ app.request.query.get('sort') }}" name="sort"/>
+                        <input type="hidden" value="{{ params['q'] }}" name="q"/>
+                        <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
                         {% for key, facet in facets %}
-                            {% if facet|length > 0 %}
-                                <div class="aside-item-holder">
-                                    <div
-                                        class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
-                                        <div class="aside-item-header">
-                                            <h3 class="aside-item-title">
-                                                <span class="aside-item-icon">
-                                                    {% if key == 'contenttypes' %}
-                                                        {% trans %}Content types{% endtrans %}
-                                                    {% elseif facetTitles[key]|default %}
-                                                        {{ facetTitles[key]|default|trans }}
-                                                    {% else %}
-                                                        {{ key|capitalize }}
-                                                    {% endif %}
-                                                </span>
-                                            </h3>
-                                            <i class="iconoir-nav-arrow-down"></i>
-                                        </div>
-                                        <div class="aside-item-list">
-                                            <div class="aside-item-list-container">
-                                                {% if (facet|length >= 6) %}
-                                                    <div class="aside-item-search">
-                                                        <i class="iconoir-search"></i>
-                                                        <input type="text" class="list-search"
-                                                               placeholder="{% trans %}Search in{% endtrans %} {% if key == 'contenttypes' %}{% trans %}Content types{% endtrans %}{% elseif facetTitles[key]|default %}{{ facetTitles[key]|default|trans }}{% else %}{{ key|capitalize }}{% endif %}">
-                                                    </div>
-                                                {% endif %}
-                                                <ul class="filters_list">
-                                                    {% for title, count in facet %}
-                                                        <li class="checkbox">
-                                                            <label class="checkbox-container">
-                                                                <input
-                                                                    {% if title in active[key]|default %}checked="checked"{% endif %}
-                                                                    onclick="form.submit();" type="checkbox"
-                                                                    name="{{ key }}[]"
-                                                                    value="{{ title }}"/>
-                                                                <span class="checkmark"></span>
-                                                                <div class="facet-wrappper">
-                                                                    <span class="facet-title">
-                                                                        {% if key == 'contenttypes' %}
-                                                                            {% if contentTypes[title] is defined %}
-                                                                                {{ contentTypes[title] }}
-                                                                            {% else %}
-                                                                                {{ title }}
-                                                                            {% endif %}
-                                                                        {% elseif key == 'channels' %}
-                                                                            {% if channels[title] is defined %}
-                                                                                {{ channels[title] }}
-                                                                            {% else %}
-                                                                                {{ title }}
-                                                                            {% endif %}
-                                                                        {% else %}
-                                                                            {{ title }}
-                                                                        {% endif %}
-                                                                    </span>
-                                                                    <span class="facet-count">({{ count }})</span>
-                                                                </div>
-                                                            </label>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            {% if key starts with 'relation_' %}
+                                {{ block('relation_facet') }}
+                            {% else %}
+                                {{ block('facet') }}
                             {% endif %}
                         {% endfor %}
                     </form>
@@ -240,6 +176,106 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block facet %}
+    {% if key == 'contenttypes' %}
+        {% set facetTitle = 'Content types'|trans %}
+    {% elseif key == 'workflow_state' %}
+        {% set facetTitle = 'Workflow status'|trans %}
+    {% elseif key == 'workflow_assigned' %}
+        {% set facetTitle = 'Assigned user'|trans %}
+    {% elseif key == 'authors' %}
+        {% set facetTitle = 'Author'|trans %}
+    {% else %}
+        {% set facetTitle = key|capitalize %}
+    {% endif %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+            <h3 class="aside-item-title">
+                <span class="aside-item-icon">
+                    {{ facetTitle }}
+                </span>
+            </h3>
+            <i class="iconoir-nav-arrow-down"></i>
+        </div>
+        <div class="aside-item-list">
+            <div class="aside-item-list-container">
+                {% if (facet|length >= 6) %}
+                    <div class="aside-item-search">
+                        <i class="iconoir-search"></i>
+                        <input type="text" class="list-search"
+                               placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                    </div>
+                {% endif %}
+                <ul class="filters_list">
+                    {% for title, count in facet %}
+                        <li class="checkbox">
+                            <label class="checkbox-container">
+                                <input {% if title in params[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
+                                <span class="checkmark"></span>
+                                <div class="facet-wrappper">
+                                    <span class="facet-title">
+                                        {% if key == 'contenttypes' %}
+                                            {{ title|integrated_content_type.name|default(title) }}
+                                        {% elseif key == 'channels' %}
+                                            {{ title|integrated_channel.name|default(title) }}
+                                        {% else %}
+                                            {{ title }}
+                                        {% endif %}
+                                    </span>
+                                    <span class="facet-count">({{ count }})</span>
+                                </div>
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block relation_facet %}
+    {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper">
+            <h3 class="aside-item-title">
+                <span class="aside-item-icon">
+                    {{ facetTitle }}
+                </span>
+            </h3>
+            <i class="iconoir-nav-arrow-down"></i>
+        </div>
+        <div class="aside-item-list">
+            <div class="aside-item-list-container">
+                {% if (facet|length >= 6) %}
+                    <div class="aside-item-search">
+                        <i class="iconoir-search"></i>
+                        <input type="text" class="list-search"
+                               placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                    </div>
+                {% endif %}
+                <ul class="filters_list">
+                    {% for title, count in facet %}
+                        <li class="checkbox">
+                            <label class="checkbox-container">
+                                <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]" value="{{ title }}" />
+                                <span class="checkmark"></span>
+                                <div class="facet-wrappper">
+                                    <span class="facet-title">
+                                        {{ title }}
+                                    </span>
+                                    <span class="facet-count">({{ count }})</span>
+                                </div>
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block javascript %}
 {{ parent() }}
 {% endblock %}
