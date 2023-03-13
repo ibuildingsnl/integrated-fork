@@ -91,7 +91,7 @@ class ChannelType extends AbstractType
 
         $builder->add(
             'logo',
-            MediaGalleryImageType::class,
+            MediaGalleryType::class,
             [
                 'attr' => [
                     'location' => 'sidebar',

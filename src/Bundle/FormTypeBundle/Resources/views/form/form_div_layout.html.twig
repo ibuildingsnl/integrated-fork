@@ -434,21 +434,9 @@
                 {% set state = attr.state %}
             {% endif %}
         {% endif %}
-        {% if style == 'inline' %}
+        {% if style == 'sidebar' %}
             <div
-                class="form-item {% if form.vars.errors|length > 0 %} has-error{% endif %}">
-                {% if show_label is not same as ('false') %}
-                    {{ form_label(form) }}
-                {% endif %}
-                <div class="w-full widget">
-                    {{ block('form_input_group') }}
-                    {{ block('form_help') }}
-                    {{ form_errors(form) }}
-                </div>
-            </div>
-        {% elseif style == 'sidebar' %}
-            <div
-                class="aside-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="aside-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="iconoir-{% if icon is not empty %}{{ icon }}{% else %}folder{% endif %}"></i>
@@ -487,7 +475,7 @@
             </div>
         {% else %}
             <div
-                class="form-item w-full flex flex-wrap {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
@@ -510,13 +498,80 @@
                     {% set imageArray = form.vars.value|split(',') %}
                     {% if imageArray|length > 0 %}
                         {% for media in imageArray %}
-                            {% set image = integrated_document(media).file %}
-                            {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
-                            <li id="{{ media }}"
-                                data-id="{{ media }}"
-                                data-file="{{ image }}"
-                                data-thumbnail="{{ thumbnail }}">
-                            </li>
+                            {% if integrated_document(media).file is defined %}
+                                {% set image = integrated_document(media).file %}
+                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                <li id="{{ media }}"
+                                    data-id="{{ media }}"
+                                    data-file="{{ image }}"
+                                    data-thumbnail="{{ thumbnail }}">
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="selected_images flex flex-wrap mb-4"
+                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                 data-types="{{ form.vars.attr['data-types'] }}"
+                 data-relationtype="embedded"
+                 data-relationid="{{ form.vars.name }}"
+                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
+                 data-fieldName="{{ form.vars.full_name }}">
+            </div>
+
+            <div
+                data-multiple="{{ form.vars.attr['data-multiple'] }}"
+                data-types="{{ form.vars.attr['data-types'] }}"
+                data-relationtype="embedded"
+                data-relationid="{{ form.vars.name }}"
+                class="select_multimedia_button btn btn-white">
+                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
+            </div>
+
+            <div class="wrap iframe-wrapper close-outside">
+                <iframe class="iframe media-library" src="">
+                </iframe>
+            </div>
+
+            <li id="selected_image" class="hidden media-item">
+                <div class="media-preview">
+                    <div class="thumbnail relative">
+                        <div class="centered">
+                            <img src="">
+                        </div>
+                        <a class="remove_link remove"><i class="iconoir-cancel"></i></a>
+                    </div>
+                </div>
+            </li>
+        </div>
+
+        <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
+        {{ form_errors(form) }}
+        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
+    {% endapply %}
+
+{% endblock %}
+
+
+{% block integrated_media_gallery_file_widget %}
+    {% apply spaceless %}
+        <div class="mediagallery_selector" id="{{ form.vars.name }}">
+            <div class="previously_selected_images hidden">
+                {% if form.vars.value is defined and form.vars.value is not empty %}
+                    {% set imageArray = form.vars.value|split(',') %}
+                    {% if imageArray|length > 0 %}
+                        {% for media in imageArray %}
+                            {% if integrated_document(media).file is defined %}
+                                {% set image = integrated_document(media).file %}
+                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                <li id="{{ media }}"
+                                    data-id="{{ media }}"
+                                    data-file="{{ image }}"
+                                    data-thumbnail="{{ thumbnail }}">
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endif %}

@@ -167,6 +167,11 @@
                     margin-bottom: 5px;
                 }
 
+                &.bc-collection {
+                    padding: 0;
+                    max-height: 100%;
+                }
+
                 &.jFiler-items-list {
                     max-height: 100%;
                     overflow-y: unset;
@@ -351,6 +356,9 @@ body.hide-options {
     overflow: auto;
     order: 1;
     margin-top: -1px;
+    position: absolute;
+    right: 0;
+
     @include media(max-lg) {
         display: none;
         &.show {
@@ -694,6 +702,16 @@ ul {
 }
 
 .media-library {
+    #toolbar {
+        .options {
+            .form-actions {
+                margin-right: 10px;
+            }
+        }
+        .back {
+            margin-left:10px;
+        }
+    }
     .aside-filters {
         &.media-edit-panel {
             transform: translateX(0);

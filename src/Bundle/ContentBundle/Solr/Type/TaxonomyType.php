@@ -36,10 +36,14 @@ class TaxonomyType implements TypeInterface
         );
 
         foreach ($items as $relation) {
+            // check for each reference what the channel is
             foreach ($relation->getReferences()->toArray() as $content) {
                 if (($content instanceof Taxonomy || $content instanceof Article) && $content->getTitle()) {
                     $container->add('facet_'.$relation->getRelationId(), $content->getTitle());
                     $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
+                    foreach ($content->getChannels() as $channel) {
+                        $container->add('taxonomy_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                    }
                 }
             }
         }

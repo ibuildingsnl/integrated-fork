@@ -6,15 +6,22 @@ function initContentChoice() {
     $('select.integrated_content_choice').select2({
         ajax: {
             processResults: function (data) {
-                return {
-                    //todo show result as html with image
-                    results: $.map(data.items, function(obj) {
-                        if (!obj.id || ! obj.title) {
-                            console.log('api should return at least id and title');
+                var items = [];
+
+                if ('items' in data) {
+                    for (var k in data.items) {
+                        var item = data.items[k];
+                        if (!item.text) {
+                            item.text = item.title;
+                            if (item.path) {
+                                item.text = item.path + ' > ' + item.text;
+                            }
                         }
-                        return { id: obj.id, text: obj.title };
-                    })
-                };
+                        items.push(item);
+                    }
+                }
+
+                return { results: items };
             }
         }
     });

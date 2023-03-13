@@ -950,6 +950,14 @@
                 <source>Content type pages</source>
                 <target>Content type pagina's</target>
             </trans-unit>
+            <trans-unit id="241">
+                <source>Creating %contentType%</source>
+                <target>%contentType% aanmaken</target>
+            </trans-unit>
+            <trans-unit id="242">
+                <source>Editing %contentType%</source>
+                <target>%contentType% aanpassen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

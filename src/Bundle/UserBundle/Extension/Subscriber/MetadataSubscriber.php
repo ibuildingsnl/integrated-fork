@@ -60,6 +60,7 @@ class MetadataSubscriber implements MetadataSubscriberInterface
             $field->setType(UserFormType::class);
 
             $field->setOption('mapped', false);
+            $field->setOption('attr', ['style' => 'editor', 'location' => 'editor', 'state' => 'show']);
             $field->setOption('optional', true);
             $field->setOption('constraints', [new Valid()]);
 
