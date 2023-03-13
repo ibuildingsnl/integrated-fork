@@ -236,6 +236,8 @@
 {% endblock %}
 
 {% block relation_facet %}
+    {% set key = key[9:] %}
+
     {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
     <div class="aside-item-holder">
         <div class="aside-item-wrapper">
