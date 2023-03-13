@@ -50,6 +50,6 @@ class MultipleFileTransformer implements DataTransformerInterface
             $files[] = $this->repository->find($id);
         }
 
-        return $files;
+        return array_filter($files);
     }
 }
