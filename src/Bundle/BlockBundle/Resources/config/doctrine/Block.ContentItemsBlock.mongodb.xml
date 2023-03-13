@@ -5,6 +5,8 @@
 
     <document name="Integrated\Bundle\BlockBundle\Document\Block\ContentItemsBlock">
 
+        <field field-name="gridSize" type="int" />
+
         <reference-many field="items" target-document="Integrated\Bundle\ContentBundle\Document\Content\Content" />
 
     </document>

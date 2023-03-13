@@ -7,9 +7,31 @@
     border-color: $border-color;
 }
 
+.tox .tox-dialog-wrap__backdrop {
+    background-color: rgba(0,0,0,0.3) !important;
+}
+
+body:not(.tox-fullscreen) {
+    .tox .tox-dialog-wrap {
+        top: 60px !important;
+    }
+}
+
+.tox-dialog.media_library .tox-dialog__header {
+    display: none;
+}
+
 body.tox-fullscreen {
     .tox-editor-header {
         top: 0 !important;
+        width:100% !important;;
+    }
+    .fancy_tinymce {
+        .tox-tinymce {
+            .tox-edit-area {
+                padding:0 !important;
+            }
+        }
     }
 
     .tox-sidebar-wrap {

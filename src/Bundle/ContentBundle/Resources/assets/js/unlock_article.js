@@ -44,6 +44,11 @@ if (modal.length && form.length) {
     /* ask user before leave page via href links and unlock article */
     $('a:not(form.content-form a), form.content-form button[name*=cancel]').
         on('click', function(e) {
+
+            if (e.ctrlKey || e.metaKey) {
+                return;
+            }
+
             const url = $(this).attr('href');
 
             if (url && url !== '#') {

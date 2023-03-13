@@ -87,7 +87,7 @@ class Person extends Relation
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
@@ -332,8 +332,10 @@ class Person extends Relation
      */
     public function getCover()
     {
-        if ($this->getPicture() instanceof StorageInterface) {
-            return $this->getPicture();
+        if ($this->getPicture() instanceof Image) {
+            if ($this->getPicture()->getFile() instanceof StorageInterface) {
+                return $this->getPicture()->getFile();
+            }
         }
 
         return null;

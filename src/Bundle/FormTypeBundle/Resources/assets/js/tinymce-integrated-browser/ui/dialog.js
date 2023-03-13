@@ -44,9 +44,12 @@ export const Dialog = (editor, mode) => {
             title: mode === 'image' ? 'Browse images' : 'Browse ' + mode,
             url: Options.getDialogUrl(editor, mode),
             width: window.innerWidth - 60,
-            height: window.innerHeight - 60,
+            height: window.innerHeight - 120,
             onMessage: messageHandler,
         });
+
+        document.querySelector('.tox-dialog').classList.add('media_library');
+        document.querySelector('.tox-dialog').focus();
     }
 
     return {

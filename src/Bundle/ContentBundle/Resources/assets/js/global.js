@@ -1,30 +1,66 @@
-$(document).mouseup(function(e) {
-    let closeOutside = $('.close-outside');
-    let toggleButton = $('.toggle-button');
+const targetClassesClosing = '.close-outside.show'
+const openClasses = [
+    '.close-outside',               //dropdown select
+    '.button_toggle_upload_view',   //media gallery button
+    '.mobile-menu-toggle',          //menu when in mobile mode
+    '.toggle-filters',              //filters when in mobile mode
+]
+let popupShown = false
 
-    if (((!closeOutside.is(e.target) && closeOutside.has(e.target).length ===
-                0) &&
-            (!toggleButton.is(e.target) && toggleButton.has(e.target).length ===
-                0)) &&
-        !event.srcElement.classList.contains('tt-input') &&
-        !event.srcElement.classList.contains('dropdown-menu')
-    ) {
-        closeOutside.removeClass('show');
-        hideDropDownBackGround();
+function addPopupEventListeners() {
+    for (let item of openClasses) {
+        $(item).mouseup(() => {
+            openPopup()
+        })
     }
+}
 
-});
+addPopupEventListeners()
 
-$(document).keyup(function(e) {
-    if (e.key === 'Escape') { // escape key maps to keycode `27`
-        let closeOutside = $('.close-outside');
-        if (closeOutside.is('#upload_container')) {
-            closeOutside.removeClass('close-outside');
-        }
-        closeOutside.removeClass('show');
-        hideDropDownBackGround();
+function openPopup() {
+    event.stopPropagation()
+    if (popupShown == false) {
+        enableClosingOfPopup()
+        popupShown = true
     }
-});
+}
+
+function enableClosingOfPopup() {
+    addClickEvent()
+    addEscapeEvent()
+}
+
+function handlePopupClose() {
+    event.stopPropagation()
+    $('.close-outside').removeClass('show');
+    disableEventListeners()
+    hideDropDownBackGround();
+    sendCancelEvent()
+    popupShown = false
+}
+
+function disableEventListeners() {
+    document.body.removeEventListener('mouseup', handlePopupClose)
+    document.removeEventListener('keyup', handleKeyPress)
+}
+
+function addClickEvent() {
+    document.body.addEventListener('mouseup', handlePopupClose, false)
+}
+
+function handleKeyPress() {
+    if (event.key === 'Escape') {
+        handlePopupClose()
+    }
+}
+
+function addEscapeEvent() {
+    document.addEventListener('keyup', handleKeyPress)
+}
+
+function sendCancelEvent() {
+    document.dispatchEvent(new CustomEvent("cancelPopupEvent"));
+}
 
 $('.search-form .form-control').focus(function() {
     showDropDownBackGround();

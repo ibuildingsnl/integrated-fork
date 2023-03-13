@@ -83,8 +83,6 @@
             <options>
 
                 <string key="cover">cover</string>
-                <string key="featuredImage">featuredImage</string>
-
             </options>
 
         </type>
@@ -167,6 +165,8 @@
                 <string key="content">description</string>
                 <string key="description">description</string>
 
+                <string key="parent_id">parent_id</string>
+
                 <array>
                     <string key="name">url</string>
                     <array>
@@ -178,6 +178,12 @@
 
                 <string key="rank">rank</string>
 
+            </options>
+        </type>
+
+        <type name="integrated.storage">
+            <options>
+                <string key="cover">cover</string>
             </options>
         </type>
 

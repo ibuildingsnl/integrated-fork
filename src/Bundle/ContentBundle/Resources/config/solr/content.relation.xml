@@ -20,7 +20,9 @@
                 <array>
                     <string key="name">phonenumber_text</string>
                     <array>
-                        <string key="phonenumbers" />
+                        <array key="phonenumbers">
+                            <string>@number</string>
+                        </array>
                     </array>
                 </array>
 

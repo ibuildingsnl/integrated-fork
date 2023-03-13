@@ -11,9 +11,9 @@
         <field field-name="firstName" type="string" />
         <field field-name="lastName" type="string" />
 
-        <embed-one
+        <reference-one
             field="picture"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
         <embed-many
