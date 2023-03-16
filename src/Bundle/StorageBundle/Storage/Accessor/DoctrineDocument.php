@@ -88,6 +88,9 @@ class DoctrineDocument
         if (method_exists($this->document, $method)) {
             return \call_user_func([$this->document, $method]);
         }
+        if ($this->hasPublicProperty($propertyName)) {
+            return $this->document->$propertyName;
+        }
 
         // Well that did not go as planned
         throw new \LogicException(
@@ -115,6 +118,13 @@ class DoctrineDocument
             return \call_user_func([$this->document, $method], $propertyValue);
         }
 
+        if ($this->hasPublicProperty($propertyName)) {
+            ++$this->updates;
+            $this->document->$propertyName = $propertyValue;
+
+            return null;
+        }
+
         // We need something to set it, seems like we can't
         throw new \LogicException(
             sprintf(
@@ -123,5 +133,11 @@ class DoctrineDocument
                 \get_class($this->document)
             )
         );
+    }
+
+    private function hasPublicProperty(string $propertyName): bool
+    {
+        return property_exists($this->document, $propertyName)
+            && (new \ReflectionProperty($this->document, $propertyName))->isPublic();
     }
 }

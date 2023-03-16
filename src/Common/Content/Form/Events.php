@@ -44,4 +44,6 @@ final class Events
      * finishView method.
      */
     public const POST_VIEW = 'form.post.view';
+
+    public const POST_VALIDATE = 'form.post.validate';
 }

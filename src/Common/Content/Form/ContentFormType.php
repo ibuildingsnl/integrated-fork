@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Content\Form;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Form;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Event\FieldEvent;
 use Integrated\Common\Content\Form\Event\ViewEvent;

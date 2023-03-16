@@ -13,13 +13,7 @@ namespace Integrated\Common\Content;
 
 interface PremiumInterface
 {
-    /**
-     * @return $this
-     */
-    public function setPremium(bool $premium);
+    public function setPremium(bool $premium): static;
 
-    /**
-     * @param bool $premium
-     */
-    public function isPremium();
+    public function isPremium(): bool;
 }
