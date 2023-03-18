@@ -26,8 +26,11 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
+use Integrated\Common\Content\Form\Event\ValidationEvent;
+use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Locks;
 use Integrated\Common\Locks\Filter;
 use Integrated\Common\Locks\Provider\DBAL\Manager;
@@ -37,6 +40,7 @@ use Integrated\Common\Solr\Indexer\IndexerInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -52,83 +56,25 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ContentController extends AbstractController
 {
     /**
-     * @var ResolverInterface
+     * @var string
      */
-    private $resolver;
-
-    /**
-     * @var ContentTypeManager
-     */
-    private $contentTypeManager;
-
-    /**
-     * @var QueueSubscriber
-     */
-    private $queueSubscriber;
-
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
-
-    /**
-     * @var IndexerInterface
-     */
-    private $indexer;
-    /**
-     * @var SearchContentReferenced
-     */
-    private $contentReferenced;
-
-    /**
-     * @var Manager
-     */
-    private $lockManager;
-
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    /**
-     * @var ImageExtension
-     */
-    private $imageExtension;
-
-    /**
-     * @var MediaProvider
-     */
-    private $mediaProvider;
-
-    /**
-     * @var QueryFactoryInterface
-     */
-    private $queryFactory;
+    protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
     public function __construct(
-        ResolverInterface $resolver,
-        ContentTypeManager $contentTypeManager,
-        QueueSubscriber $queueSubscriber,
-        LockFactory $lockFactory,
-        IndexerInterface $indexer,
-        SearchContentReferenced $contentReferenced,
-        Manager $lockManager,
-        UserManagerInterface $userManager,
-        ImageExtension $imageExtension,
-        MediaProvider $mediaProvider,
-        QueryFactoryInterface $queryFactory
+        private readonly ResolverInterface $resolver,
+        private readonly ContentTypeManager $contentTypeManager,
+        private readonly QueueSubscriber $queueSubscriber,
+        private readonly LockFactory $lockFactory,
+        private readonly IndexerInterface $indexer,
+        private readonly SearchContentReferenced $contentReferenced,
+        private readonly Manager $lockManager,
+        private readonly UserManagerInterface $userManager,
+        private readonly ImageExtension $imageExtension,
+        private readonly MediaProvider $mediaProvider,
+        private readonly QueryFactoryInterface $queryFactory,
+        private readonly MetadataFactoryInterface $metadataFactory,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
-        $this->resolver = $resolver;
-        $this->contentTypeManager = $contentTypeManager;
-        $this->queueSubscriber = $queueSubscriber;
-        $this->lockFactory = $lockFactory;
-        $this->indexer = $indexer;
-        $this->contentReferenced = $contentReferenced;
-        $this->lockManager = $lockManager;
-        $this->userManager = $userManager;
-        $this->imageExtension = $imageExtension;
-        $this->mediaProvider = $mediaProvider;
-        $this->queryFactory = $queryFactory;
     }
 
     public function index(Request $request): Response
@@ -224,6 +170,13 @@ class ContentController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
+                    $this->dispatcher->dispatch(new ValidationEvent(
+                        $contentType,
+                        $this->metadataFactory->getMetadata($contentType->getClass()),
+                        $content,
+                    ), Events::POST_VALIDATE);
+                }
                 // higher priority for content edited in Integrated
                 $queue = $this->queueSubscriber->getQueue();
                 $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
@@ -340,6 +293,14 @@ class ContentController extends AbstractController
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
+                    if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
+                        $this->dispatcher->dispatch(new ValidationEvent(
+                            $contentType,
+                            $this->metadataFactory->getMetadata($contentType->getClass()),
+                            $content,
+                        ), Events::POST_VALIDATE);
+                    }
+
                     // higher priority for content edited in Integrated
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);

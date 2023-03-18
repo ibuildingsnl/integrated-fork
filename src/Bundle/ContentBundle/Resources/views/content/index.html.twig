@@ -90,7 +90,6 @@
                                 <strong>
                                     <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
                                         {{ content.title|default }}
-
                                     </a>
                                 </strong>
                                 <div class="row-options">
@@ -164,10 +163,12 @@
                         <input type="hidden" value="{{ params['q'] }}" name="q"/>
                         <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
                         {% for key, facet in facets %}
-                            {% if key starts with 'relation_' %}
-                                {{ block('relation_facet') }}
-                            {% else %}
-                                {{ block('facet') }}
+                            {% if facet|length > 0 %}
+                                {% if key starts with 'relation_' %}
+                                    {{ block('relation_facet') }}
+                                {% else %}
+                                    {{ block('facet') }}
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </form>

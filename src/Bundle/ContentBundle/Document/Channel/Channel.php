@@ -184,7 +184,7 @@ class Channel implements ChannelInterface
     /**
      * @return $this
      */
-    public function setLogo(Image $logo)
+    public function setLogo(?Image $logo)
     {
         $this->logo = $logo;
 
