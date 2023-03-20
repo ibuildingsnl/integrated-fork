@@ -9,7 +9,7 @@
         collection="content"
         inheritance-type="SINGLE_COLLECTION">
 
-        <id field-name="id" strategy="UUID" />
+        <id field-name="id" strategy="NONE" />
         <field field-name="slug" type="string" unique="true" sparse="true" />
         <field field-name="contentType" type="string" index="true" />
         <field field-name="createdAt" type="date" />

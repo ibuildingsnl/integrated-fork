@@ -32,6 +32,7 @@ use Integrated\Common\Content\PublishableInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
+use Ramsey\Uuid\Uuid;
 
 abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
 {
@@ -143,8 +144,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct(?string $id = null)
     {
+        $this->id = $id ?: Uuid::uuid4()->toString();
         $this->createdAt = new \DateTime();
         $this->relations = new ArrayCollection();
         $this->updatedAt = new \DateTime();
