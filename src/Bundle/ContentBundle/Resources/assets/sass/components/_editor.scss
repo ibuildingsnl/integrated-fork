@@ -6,6 +6,10 @@ textarea#integrated_content_content {
     min-height: 500px;
 }
 
+.tinymce-inline {
+    max-width: 750px;
+}
+
 .title_tinymce {
     position: absolute;
     display: flex;
@@ -54,14 +58,14 @@ textarea#integrated_content_content {
 }
 
 body[class*="edit"], body[class*="new"] {
-    .collection-widget, .sortable-collection-widget, .integrated_sortable_collection {
+    .collection-widget, .sortable-collection-widget {
         max-width: 750px;
     }
 }
 
 .content-wrapper {
 
-    .collection-widget, .sortable-collection-widget, .integrated_sortable_collection {
+    .collection-widget, .sortable-collection-widget {
         width: 100%;
 
         .bc-collection {

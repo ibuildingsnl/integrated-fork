@@ -170,8 +170,9 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('sortable-collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="sortable-collection-widget">
+        <div {{ block('widget_container_attributes') }} class="">
             <ul class="bc-collection panel-group sortable-collection ui-sortable">
                 {% for field in form %}
 
@@ -180,7 +181,10 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse">
-                                        <i class="iconoir-line-space"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
+                                        <i class="iconoir-line-space"></i>
+                                        <span>
+                                            {{ field.vars.value.title|default(field.vars.value.label|default(field.vars.value.text|default(form.vars.default_title|default('Item')))) }}
+                                        </span>
                                     </a>
                                     {% if form.vars.allow_delete %}
                                         <a href="javascript:;" class="remove"
@@ -238,8 +242,10 @@
                 {% set panel_heading = 'true' %}
             {% endif %}
 
+            {% set panel_title = field.vars.value.label|default(form.vars.default_title|default('Item')) %}
+
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ panel_title ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -256,8 +262,10 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
+
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="collection-widget">
+        <div {{ block('widget_container_attributes') }}>
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
@@ -266,7 +274,7 @@
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.name|default(form.vars.default_title|default('Item')) }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i><span class="capitalize">{{ panel_title }}</span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"
@@ -456,7 +464,7 @@
             </div>
         {% elseif style == 'editor' %}
             <div
-                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="editor-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">

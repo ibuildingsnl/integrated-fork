@@ -755,7 +755,6 @@ label {
         .panel-body {
             max-width: 750px;
             position: relative;
-            padding: 0.5rem;
         }
     }
 
@@ -775,7 +774,7 @@ label {
         label {
             position: absolute;
             height: 33px;
-            top: 6px;
+            top: 0px;
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 
@@ -857,20 +856,22 @@ label {
     }
 }
 
-ul#integrated_content_User_groups li {
-    width: 100%;
-    margin: 0 !important;
-    padding: 5px;
-    box-sizing: border-box;
-    @include media(xl) {
-        width:50%;
-    }
-    @include media(2xl) {
-        width:33%;
+ul#integrated_content_User_groups, ul#integrated_user_user_form_groups {
+    li {
+        width: 100%;
+        margin: 0 !important;
+        padding: 5px;
+        box-sizing: border-box;
+        @include media(xl) {
+            width: 50%;
+        }
+        @include media(2 xl) {
+            width: 33%;
+        }
     }
 }
 
-ul#integrated_content_User_groups {
+ul#integrated_content_User_groups, ul#integrated_user_user_form_groups {
     max-width: calc(750px + 1rem);
     margin: 0 -.5rem;
 }
