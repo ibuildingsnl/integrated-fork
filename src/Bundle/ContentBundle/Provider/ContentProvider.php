@@ -251,7 +251,7 @@ class ContentProvider
         }
 
         // sorting
-        $sort_default = 'changed';
+        $sort_default = 'time';
         $sort_options = [
             'rel' => ['name' => 'rel', 'field' => 'score', 'label' => 'relevance', 'order' => 'desc'],
             'changed' => ['name' => 'changed', 'field' => 'pub_edited', 'label' => 'date modified', 'order' => 'desc'],
