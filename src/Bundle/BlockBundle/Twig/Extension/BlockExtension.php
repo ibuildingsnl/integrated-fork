@@ -134,6 +134,8 @@ class BlockExtension extends AbstractExtension
             $block = $this->blockManager->getBlock($id);
         }
 
+
+
         try {
             // fatal errors are not catched
             $html = $this->blockManager->render($block, $options);
