@@ -183,7 +183,7 @@ class ChannelType extends AbstractType
         ]);
 
         $builder->add(
-            $builder->create('options', FormType::class, [
+            $builder->create('channel_options', FormType::class, [
                 'inherit_data' => true,
                 'attr' => [
                     'location' => 'sidebar',
