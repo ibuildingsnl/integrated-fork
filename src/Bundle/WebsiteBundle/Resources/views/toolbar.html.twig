@@ -6,17 +6,19 @@
 {% include integrated_active_theme('objects/toolbar-page-js.html.twig') %}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@main/css/iconoir.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <div class="integrated-website-toolbar">
     <div class="toolbar-wrapper" style="">
         <a class="integrated-logo" href="{{ path('integrated_content_content_index') }}">
-            <img src="{{ asset('bundles/integratedintegrated/images/logo_white.svg') }}" alt="">
         </a>
 
         <div class="integrated-website-toolbar-tools">
             <div class="new-contenttype close-outside dropdown top-bar">
-                <a href="#" class="btn btn-green no-icon"
-                   data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}&nbsp;+</span></a>
+                <a href="#" class="btn btn-green icon-right"
+                   data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
                 {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
             </div>
             {% if (message != '') %}
@@ -55,16 +57,19 @@
                             </a>
                             {% if app.request.attributes.get('page').type == 'content_type_page' %}
                                 <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"
-                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                   class="btn btn-green ml-2">{% trans %}Edit page properties{% endtrans %}</a>
                             {% else %}
                                 <a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}"
-                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
+                                   class="btn btn-green ml-2">{% trans %}Edit page properties{% endtrans %}</a>
                             {% endif %}
                             <a href="{{ path('integrated_page_page_index') }}"
-                               class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
+                               class="btn btn-white ml-2">{% trans %}Go to page overview{% endtrans %}</a>
                         </div>
                     {% endif %}
                 {% endif %}
+                <div class="integrated-toolbar-account">
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ContentController::navdropdowns')) }}
+                </div>
             </div>
         </div>
     </div>
