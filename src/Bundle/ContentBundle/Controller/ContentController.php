@@ -250,13 +250,6 @@ class ContentController extends AbstractController
         return $taxonomyCategoriess;
     }
 
-    public function edit_inline(Request $request, Content $content)
-    {
-        $this->showAsInlineForm = true;
-
-        return $this->edit($request, $content);
-    }
-
     /**
      * Update a existing document.
      *
