@@ -19,7 +19,7 @@ addPopupEventListeners()
 
 function openPopup() {
     event.stopPropagation()
-    if (popupShown == false) {
+    if (popupShown === false) {
         enableClosingOfPopup()
         popupShown = true
     }
@@ -259,7 +259,7 @@ function showDropDownBackGround() {
 function isElement(o) {
     return (
         typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
-            o && typeof o === 'object' && o !== null && o.nodeType === 1 &&
+            o && typeof o === 'object' && true && o.nodeType === 1 &&
             typeof o.nodeName === 'string'
     );
 }
@@ -295,7 +295,7 @@ $(document).ready(function() {
                 var empty = [].filter.call(textinputs, function(elem) {
                     return !elem.checked;
                 });
-                if (textinputs.length != empty.length) {
+                if (textinputs.length !== empty.length) {
                     showElement(elem);
                 }
             }

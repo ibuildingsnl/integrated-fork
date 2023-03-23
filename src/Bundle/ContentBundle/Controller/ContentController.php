@@ -24,7 +24,6 @@ use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
-use Integrated\Bundle\UserBundle\Model\GroupableInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -73,6 +72,7 @@ class ContentController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly ImageExtension $imageExtension,
         private readonly MediaProvider $mediaProvider,
+        private readonly TaxonomyIndexer $taxonomyIndexer,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
@@ -236,14 +236,13 @@ class ContentController extends AbstractController
         $relations = $dm->getRepository($this->relationClass)->findAll();
         foreach ($relations as $relation) {
             if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
-                array_push($contentRelations, $relation);
+                $contentRelations[] = $relation;
             }
         }
 
         $taxonomyCategoriess = [];
         foreach ($contentRelations as $contentRelation) {
-            foreach ($contentRelation->getTargets() as $target)
-            {
+            foreach ($contentRelation->getTargets() as $target) {
                 $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
             }
         }
@@ -251,7 +250,8 @@ class ContentController extends AbstractController
         return $taxonomyCategoriess;
     }
 
-    public function edit_inline(Request $request, Content $content) {
+    public function edit_inline(Request $request, Content $content)
+    {
         $this->showAsInlineForm = true;
 
         return $this->edit($request, $content);
