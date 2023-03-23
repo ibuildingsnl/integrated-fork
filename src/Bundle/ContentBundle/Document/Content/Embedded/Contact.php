@@ -152,7 +152,7 @@ class Contact
         $this->city = $city;
     }
 
-    public function getState(): string
+    public function getState(): string|null
     {
         return $this->state;
     }
