@@ -11,6 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\DataTransformer;
 
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
@@ -19,18 +21,30 @@ use Symfony\Component\Form\DataTransformerInterface;
 class FileTransformer implements DataTransformerInterface
 {
     /**
-     * {@inheritdoc}
+     * @var DocumentRepository
      */
-    public function transform($value)
+    private $repository;
+
+    public function __construct(DocumentRepository $repository)
     {
-        return null;
+        $this->repository = $repository;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function transform($file)
     {
-        return $value;
+        if ($file instanceof File) {
+            return $file->getId();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reverseTransform($id)
+    {
+        return $this->repository->find($id);
     }
 }

@@ -23,9 +23,13 @@
                                         <a href="{{ path('integrated_content_content_edit', {id: doc.type_id}) }}">
                                             {% if doc.workflow_color_string is defined %}
                                                 {% set status_color = doc.workflow_color_string|first %}
+                                            {% else %}
+                                                {% set status_color = '#f2f2f2' %}
                                             {% endif %}
                                             {% if doc.workflow_icon_string is defined %}
                                                 {% set status_icon = doc.workflow_icon_string|first %}
+                                            {% else %}
+                                                {% set status_icon = '' %}
                                             {% endif %}
                                             <div class="workflow-status" style="background-color:{{ status_color }};">
                                                 <i class="iconoir-{{ status_icon }}"></i>

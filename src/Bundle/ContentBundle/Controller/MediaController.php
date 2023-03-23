@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -112,6 +113,8 @@ class MediaController extends AbstractController
     {
         $contentTypeSelectOptions = $this->getContentTypes();
 
+        $requestSource->query->set('sort', 'created');
+
         $requestCopy = clone $requestSource;
 
         // Todo: Update this code when the contentprovides is updated
@@ -131,7 +134,16 @@ class MediaController extends AbstractController
 
         $this->setYearMonthFilter($requestCopy);
 
-        $items = $this->provider->getContentFromSolr($requestCopy, 2000);
+        $paginator = $this->getPaginator();
+        $paginator = $paginator->paginate(
+            new CallbackPagination(
+                fn () => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
+                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
+            ),
+            $requestCopy->query->get('page', 1),
+            $requestCopy->query->get('limit', 40),
+            ['sortFieldParameterName' => null]
+        );
 
         $selectedMediaTaxonomy = $this->getSelectedMediaTaxonomy($requestCopy);
 
@@ -141,7 +153,7 @@ class MediaController extends AbstractController
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
         return [
-            'paginator' => $this->createPaginator($items, $requestSource),
+            'paginator' => $paginator,
             'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,

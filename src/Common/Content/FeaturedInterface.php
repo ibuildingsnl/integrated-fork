@@ -15,15 +15,11 @@ interface FeaturedInterface
 {
     /**
      * Set the featured status of the document.
-     *
-     * @return $this
      */
-    public function setFeatured(bool $featured);
+    public function setFeatured(bool $featured): static;
 
     /**
      * Get the featured status of the document.
-     *
-     * @param bool $featured
      */
-    public function isFeatured();
+    public function isFeatured(): bool;
 }

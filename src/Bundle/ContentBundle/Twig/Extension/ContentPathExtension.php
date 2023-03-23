@@ -4,6 +4,7 @@ namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Content\ContentInterface;
 use Solarium\QueryType\Select\Result\Document;
 use Twig\Extension\AbstractExtension;
@@ -47,12 +48,27 @@ class ContentPathExtension extends AbstractExtension
         }
 
         $path = [];
-        while ($data = $data->getReferenceByRelationType('parent')) {
+        while ($relationReferences = $data->getReferenceByRelationType('parent')) {
             if (isset($path[$data->getId()])) {
                 // circular reference
                 break;
             }
-            $path[$data->getId()] = (string) $data;
+            $path[$data->getId()] = (string) $relationReferences;
+        }
+
+        if ($data instanceof Taxonomy) {
+            /** @var Taxonomy $data */
+            if ($taxonomyParent = $data->getParentID()) {
+                /** @var Taxonomy $parent */
+                $parent = $this->documentManager->getRepository(Content::class)->find($taxonomyParent);
+                $parentParent = $this->documentManager->getRepository(Content::class)->find($parent);
+                if ($parent) {
+                    $path[$parent->getId()] = $parent->getTitle();
+                }
+                if ($parentParent) {
+                    $path[$parentParent->getId()] = $parentParent->getTitle();
+                }
+            }
         }
 
         return array_reverse($path, true);

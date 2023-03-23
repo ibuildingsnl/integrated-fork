@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<content-types>
+
+    <content-type id="image" class="Integrated\Bundle\ContentBundle\Document\Content\Image">
+        <name>Image</name>
+    </content-type>
+
+    <content-type id="file" class="Integrated\Bundle\ContentBundle\Document\Content\File">
+        <name>File</name>
+    </content-type>
+
+    <content-type id="video" class="Integrated\Bundle\ContentBundle\Document\Content\Video">
+        <name>Video</name>
+    </content-type>
+
+    <content-type id="media_taxonomy" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy">
+        <name>Media taxonomy</name>
+    </content-type>
+
+</content-types>

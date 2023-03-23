@@ -35,8 +35,10 @@ class PremiumType implements TypeInterface
 
         if ($featured) {
             $container->add('facet_properties', 'Premium');
+            $container->set('premium', true);
         } else {
             $container->add('facet_properties', 'Not Premium');
+            $container->set('premium', false);
         }
     }
 

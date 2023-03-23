@@ -47,13 +47,14 @@ class Company extends Relation
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryImageType', options: [
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
+        'priority' => 500,
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
             'data-types' => '[{"type":"image","name":"Image"}]',
             'data-emptytext' => 'Select Logo',
-            'data-multiple' => 'true',
+            'data-multiple' => false,
         ],
     ], location: 'sidebar')]
     protected $logo;

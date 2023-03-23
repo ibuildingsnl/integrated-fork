@@ -61,7 +61,7 @@ final class IndexController extends AbstractController
 
             $this->addFlash('success', 'Taxonomy item created');
 
-            return $this->redirectToRoute('integrated_taxonomy_index');
+            return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()]);
         }
 
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [

@@ -1,47 +1,38 @@
-{% extends '@IntegratedContent/base.html.twig' %}
-
-{% set selected_modus = 'media_gallery' %}
-
-{% block header %}{% endblock %}
-{% block sidebar_menu %}{% endblock sidebar_menu %}
-
-{% block title %}{% trans %}Media Library{% endtrans %}{% endblock title %}
-{% block content %}
-
-    {% include '@IntegratedFormType/media/partial/index_component.html.twig' with {
-        selected_modus: selected_modus|default('media_gallery'),
-    } %}
-
-{% endblock %}
-
-{% block webpack_js %}
-    <script>
-        const path = '{{ path('integrated_content_media_manage_relations') }}'
-        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
-    </script>
-
-    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
-    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
-{% endblock %}
+{% extends '@IntegratedContent/media/select_one.html.twig' %}
 
 {% block javascript %}
-    {{ parent() }}
+{{ parent() }}
 
-    <script>
-        jQuery(function($) {
-            $('#gallery li').on('click', function(e) {
-                var self = $(this);
+<script>
+    jQuery(function($) {
+        window.send_cancel_to_parent = function() {
+            window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+        };
 
-                window.parent.postMessage({
-                    mceAction: 'insertVideo',
-                    video: {
-                        id: self.data('id'),
-                        poster: self.data('thumbnail'),
-                        uri: self.data('file'),
-                        mine: self.data('mime'),
-                    }
-                }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
-            });
-        })
-    </script>
+        $(document).keyup(function(e) {
+            if (e.key === 'Escape') {
+                window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+            }
+        });
+
+        window.send_message_to_parent = function(e) {
+            var media = $('#gallery li.media-item.selected');
+
+            if (!media.length) {
+                return;
+            }
+
+            window.parent.postMessage({
+                mceAction: 'insertVideo',
+                video: {
+                    id: media.data('id'),
+                    poster: media.data('thumbnail'),
+                    uri: media.data('file'),
+                    mine: media.data('mime'),
+                },
+            }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+        };
+
+    });
+</script>
 {% endblock %}

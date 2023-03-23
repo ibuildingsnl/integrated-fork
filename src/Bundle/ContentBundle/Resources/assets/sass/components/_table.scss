@@ -21,7 +21,9 @@
         line-height: 1.5em;
         padding: .8rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
+        &.domains {
+            max-width: 500px;
+        }
         ol {
             font-size: 13px;
             line-height: 1.5em;

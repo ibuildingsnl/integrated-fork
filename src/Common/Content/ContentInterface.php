@@ -25,7 +25,7 @@ interface ContentInterface
     /**
      * Return the id of the content.
      *
-     * @return string
+     * @return string|null
      */
     public function getId();
 

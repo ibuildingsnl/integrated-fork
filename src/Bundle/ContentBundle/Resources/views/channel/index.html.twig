@@ -20,16 +20,16 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>{% trans %}Name{% endtrans %}</th>
-                        <th>{% trans %}Id{% endtrans %}</th>
-                        <th>{% trans %}Domains{% endtrans %}</th>
-                        <th>{% trans %}Created{% endtrans %}</th>
+                        <th class="name">{% trans %}Name{% endtrans %}</th>
+                        <th class="id">{% trans %}Id{% endtrans %}</th>
+                        <th class="domains">{% trans %}Domains{% endtrans %}</th>
+                        <th class="created">{% trans %}Created{% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for document in documents %}
                         <tr class="has-options">
-                            <td>
+                            <td class="name">
                                 <strong>
                                     <a href="{{ path('integrated_content_channel_edit', {'id': document.id}) }}">
                                         {{ document.name }}
@@ -44,13 +44,13 @@
                                     </a>
                                 </div>
                             </td>
-                            <td>
+                            <td class="id">
                                 {{ document.id }}
                             </td>
-                            <td>
+                            <td class="domains">
                                 {{ document.domains|join(', ') }}
                             </td>
-                            <td>
+                            <td class="created">
                                 {{ document.createdAt|date }}
                             </td>
                         </tr>

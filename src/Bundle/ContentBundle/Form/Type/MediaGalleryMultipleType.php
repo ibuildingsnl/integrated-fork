@@ -3,15 +3,15 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Form\DataTransformer\ImageTransformer;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Form\DataTransformer\MultipleFileTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class MediaGalleryImageType extends AbstractType
+class MediaGalleryMultipleType extends AbstractType
 {
     /**
      * @var \Doctrine\ODM\MongoDB\Repository\DocumentRepository
@@ -20,7 +20,7 @@ class MediaGalleryImageType extends AbstractType
 
     public function __construct(DocumentManager $manager)
     {
-        $this->repository = $manager->getRepository(Image::class);
+        $this->repository = $manager->getRepository(File::class);
     }
 
     /**
@@ -28,7 +28,7 @@ class MediaGalleryImageType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ImageTransformer($this->repository));
+        $builder->addModelTransformer(new MultipleFileTransformer($this->repository));
     }
 
     /**
@@ -36,14 +36,7 @@ class MediaGalleryImageType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (\array_key_exists('data-multiple', $view->vars['attr'])) {
-            $dataMultiple = $view->vars['attr']['data-multiple'];
-            if ($dataMultiple === false || $dataMultiple === '' || $dataMultiple === 'false') {
-                $view->vars['attr']['data-multiple'] = '';
-            } else {
-                $view->vars['attr']['data-multiple'] = true;
-            }
-        }
+        $view->vars['attr']['data-multiple'] = true;
     }
 
     /**

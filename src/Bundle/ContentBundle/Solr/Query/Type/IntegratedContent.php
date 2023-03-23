@@ -1,0 +1,253 @@
+<?php
+
+/*
+ * This file is part of the Integrated package.
+ *
+ * (c) e-Active B.V. <integrated@e-active.nl>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
+
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
+use Integrated\Common\Solr\Search\Type\AbstractType;
+use Solarium\QueryType\Select\Query\Query;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class IntegratedContent extends AbstractType
+{
+    private SortOptions $sorting;
+
+    private DocumentManager $manager;
+
+    public function __construct(SortOptions $sorting, DocumentManager $manager)
+    {
+        $this->sorting = $sorting;
+        $this->manager = $manager;
+    }
+
+    public function build(Query $query, array $options): void
+    {
+        if ($options['q']) {
+            $query->getEDisMax()
+                ->setQueryFields('title content')
+                ->setMinimumMatch('75%');
+
+            $query->setQuery($options['q']);
+        }
+
+        $query->addSort($this->sorting->get($options['sort'])->field, $options['order']);
+
+        if ($options['ids']) {
+            $query->createFilterQuery('ids')
+                ->setQuery('type_id: ("%1%")', [implode('" OR "', $options['ids'])]);
+        }
+
+        // handle facets
+
+        $facet = $query->getFacetSet();
+        $facet->setMinCount(1);
+
+        $facet->createFacetField('contenttypes')
+            ->setField('type_name')
+            ->getLocalParameters()->setExclude('contenttypes');
+
+        $facet->createFacetField('channels')
+            ->setField('facet_channels')
+            ->getLocalParameters()->setExclude('channels');
+
+        $facet->createFacetField('authors')
+            ->setField('facet_authors')
+            ->getLocalParameters()->setExclude('authors');
+
+        $facet->createFacetField('properties')
+            ->setField('facet_properties')
+            ->getLocalParameters()->setExclude('properties');
+
+        $helper = $query->getHelper();
+        $escape = function ($param) use ($helper) {
+            return $helper->escapePhrase($param);
+        };
+
+        if ($options['contenttypes']) {
+            $query->createFilterQuery('contenttypes')
+                ->addTag('contenttypes')
+                ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($escape, $options['contenttypes']))]);
+        }
+
+        if ($options['channels']) {
+            $query->createFilterQuery('channels')
+                ->addTag('channels')
+                ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($escape, $options['channels']))]);
+        }
+
+        if ($options['authors']) {
+            $query->createFilterQuery('authors')
+                ->addTag('authors')
+                ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($escape, $options['authors']))]);
+        }
+
+        if ($options['properties']) {
+            $query->createFilterQuery('properties')
+                ->addTag('properties')
+                ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($escape, $options['properties']))]);
+        }
+
+        // handler filters
+
+        foreach ($options['filter'] as $field => $value) {
+            $query->createFilterQuery($field)->setQuery('%1%:%P2%', [$field, $value]);
+        }
+
+        // handle relations
+
+        foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
+            $facet->createFacetField($name = 'relation_'.$relation->getId())
+                ->setField($field = 'facet_'.$relation->getId())
+                ->getLocalParameters()->setExclude($name);
+
+            if ($options['relation'][$relation->getId()] ?? []) {
+                $query->createFilterQuery($name)
+                    ->addTag($name)
+                    ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
+            }
+        }
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'q' => '',
+            'sort' => '',
+            'order' => '',
+            'ids' => '',
+        ]);
+
+        $resolver->setNormalizer('q', function (Options $options, $value) {
+            return trim($value);
+        });
+
+        $resolver->setNormalizer('sort', function (Options $options, $value) {
+            $value = strtolower(trim($value));
+
+            if ($this->sorting->has($value)) {
+                // rel is only allowed if there is a query
+                if ($value !== 'rel' || $options['q']) {
+                    return $value;
+                }
+            }
+
+            if ($options['q']) {
+                return 'rel';
+            }
+
+            return 'time';
+        });
+
+        $resolver->setNormalizer('order', function (Options $options, $value) {
+            $value = strtolower(trim($value));
+
+            if (\is_string($value) && \in_array($value, ['asc', 'desc'])) {
+                return $value;
+            }
+
+            return $this->sorting->get($options['sort'])->order;
+        });
+
+        $resolver->setNormalizer('ids', function (Options $options, $value) {
+            if (\is_string($value)) {
+                $value = explode(',', $value);
+            }
+
+            $value = array_map('trim', $value);
+
+            return array_filter($value, function (string $value) {
+                return preg_match('/[a-z0-9]{32}/', $value);
+            });
+        });
+
+        $resolver->setDefaults([
+            'contenttypes' => [],
+            'channels' => [],
+            'authors' => [],
+            'properties' => [],
+        ]);
+
+        $arrayNormalizer = function (Options $options, $value) {
+            if (\is_array($value)) {
+                return array_filter(array_map('trim', $value));
+            }
+
+            return [];
+        };
+
+        $resolver->setNormalizer('contenttypes', $arrayNormalizer);
+        $resolver->setNormalizer('channels', $arrayNormalizer);
+        $resolver->setNormalizer('authors', $arrayNormalizer);
+        $resolver->setNormalizer('properties', $arrayNormalizer);
+
+        // handle filters that will be directly inserted into the query base on a key value
+        $resolver->setDefaults([
+            'filter' => [],
+        ]);
+
+        $resolver->setNormalizer('filter', function (Options $options, $values) {
+            $filters = [];
+
+            if (!\is_array($values)) {
+                return $filters;
+            }
+
+            foreach ($values as $key => $value) {
+                $key = trim($key);
+                $value = trim($value);
+
+                if ($key && $value) {
+                    $filters[$key] = $value;
+                }
+            }
+
+            return $filters;
+        });
+
+        // handle relations
+        $resolver->setDefaults([
+            'relation' => [],
+        ]);
+
+        $resolver->setNormalizer('relation', function (Options $options, $values) {
+            $relations = [];
+
+            if (!\is_array($values)) {
+                return $relations;
+            }
+
+            $allowed = [];
+
+            foreach ($this->manager->getRepository(Relation::class)->findAll() as $relation) {
+                $allowed[] = $relation->getId();
+            }
+
+            foreach ($values as $key => $value) {
+                if (!\is_array($value)) {
+                    continue;
+                }
+
+                $key = trim($key);
+
+                if (!\in_array($key, $allowed)) {
+                    continue;
+                }
+
+                $relations[$key] = array_filter(array_map('trim', $value));
+            }
+
+            return array_filter($relations);
+        });
+    }
+}
