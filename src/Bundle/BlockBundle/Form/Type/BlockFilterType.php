@@ -17,6 +17,7 @@ use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -86,6 +87,10 @@ class BlockFilterType extends AbstractType
                 'multiple' => true,
             ]
         );
+
+        $builder->add('submit', SubmitType::class, [
+            'label' => 'Filter',
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -125,7 +130,7 @@ class BlockFilterType extends AbstractType
             $count = \count(array_intersect($blocks, $blockIds));
             if ($count) {
                 if ($channel = $this->blockUsageProvider->getChannel($channelId)) {
-                    $channelChoices[$channel->getName().' ('.$count.')'] = $channelId;
+                    $channelChoices[$channel->getName() . ' (' . $count . ')'] = $channelId;
                 }
             }
         }

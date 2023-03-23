@@ -35,8 +35,6 @@
 				&.active {
 					i {
 						&:before {
-							font-family: 'fontello';
-							@extend .integrate-icon-minus-circled;
 						}
 					}
 				}
@@ -94,8 +92,6 @@
 			font-weight: $font-medium;
 			border-bottom: 1px solid $color-gallery;
 			&:before {
-				font-family: 'fontello';
-				@extend .integrate-icon-right-open;
 				float: right;
 				@include transition(250ms);
 			}
@@ -124,8 +120,6 @@
 			font-weight: $font-medium;
 			background: $color-white;
 			&:before {
-				font-family: 'fontello';
-				@extend .integrate-icon-right-open;
 				float: left;
 				margin-right: 20px;
 			}
