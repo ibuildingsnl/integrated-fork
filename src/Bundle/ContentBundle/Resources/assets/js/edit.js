@@ -4,6 +4,7 @@ import './handlebars.helpers';
 import './relation';
 import './used_by';
 import './unlock_article';
+import './taxonomy_category';
 
 import 'jquery-datetimepicker';
 
