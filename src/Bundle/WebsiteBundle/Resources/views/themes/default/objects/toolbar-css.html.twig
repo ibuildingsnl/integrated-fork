@@ -1,4 +1,76 @@
 <style>
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.eot?#iefix') }}) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBold.ttf') }} ) format('truetype');
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.eot?#iefix') }} ) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.ttf') }} ) format('truetype') }});
+        font-weight: normal;
+        font-style: italic;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.eot?#iefix') }} ) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.ttf') }} ) format('truetype') }});
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.eot?#iefix') }} ) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.ttf') }} ) format('truetype') }});
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.eot?#iefix') }} ) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.ttf') }} ) format('truetype') }});
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.eot') }});
+        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.eot?#iefix') }} ) format('embedded-opentype'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.woff2') }} ) format('woff2'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.woff') }} ) format('woff'),
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.ttf') }} ) format('truetype') }});
+        font-weight: 600;
+        font-style: italic;
+        font-display: swap;
+    }
+
     .integrated-button:hover, .integrated-website-toolbar-button:hover {
         text-decoration: none;
         color: #DEE3E9;

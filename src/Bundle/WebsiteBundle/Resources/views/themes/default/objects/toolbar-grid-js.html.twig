@@ -72,6 +72,7 @@
          * @param element $block
          */
         var refreshBlock = function($block, buttons = true) {
+            console.log($block);
             fetch(
                 '{{ path('integrated_block_block_show', {'id': 'block-id'}) }}'.replace('block-id', $block.dataset.id)).
                 then(response => response.json()).
@@ -753,6 +754,7 @@
                 //update block
 
                 document.querySelectorAll('[data-id="' + e.detail + '"]').forEach(item => {
+                    console.log(item);
                     refreshBlock(item, true);
                 });
             }
