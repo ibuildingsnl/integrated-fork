@@ -59,20 +59,20 @@
                 {% endif %}
 
                 <li class="inline-block mr-2 {{ className }}" data-fulltitle="{{ real_title }}"
-                     data-level0="{{ level0 }}"
-                     data-title="{{ category.title }}"
-                     data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
-                     data-taxonomyId="{{ category.taxonomyId }}"
-                     data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
-                        <div class="checkbox">
-                            <label class="checkbox-container" for="{{ category.taxonomyId }}">
-                                <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
-                                <span class="checkmark"></span>
-                                <div class="background"></div>
-                                {{ category.title }}
-                            </label>
-                        </div>
-                    </li>
+                    data-level0="{{ level0 }}"
+                    data-title="{{ category.title }}"
+                    data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                    data-taxonomyId="{{ category.taxonomyId }}"
+                    data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                    <div class="checkbox">
+                        <label class="checkbox-container" for="{{ category.taxonomyId }}">
+                            <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
+                            <span class="checkmark"></span>
+                            <div class="background"></div>
+                            {{ category.title }}
+                        </label>
+                    </div>
+                </li>
             {% endfor %}
         </ul>
 
@@ -82,10 +82,8 @@
             </div>
         </div>
 
-        {#        <DIV>POPUP BUTTON:</DIV> #}
         <div class="togglefullscreen"><i class="iconoir-open-new-window"></i><i class="iconoir-cancel"></i></div>
 
-        {#        <div>HIDDEN FIELD (REALLY) TO GET OUR DATA</div> #}
         <div id="enabled_categories" class="enabled_categories" data-ids="{{ relation.vars['data'] }}"></div>
     </div>
 </div>
