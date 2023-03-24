@@ -32,6 +32,10 @@
             <argument>%kernel.bundles%</argument>
         </service>
 
+        <service id="Integrated\Bundle\InstallerBundle\Migrator\ImageMigrator">
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+        </service>
+
     </services>
 
 </container>
