@@ -15,44 +15,6 @@ $(document).ready(function () {
         $(this).closest('.nav-form-inner').removeClass('full-width');
     });
 
-    //Expanded hidden watch list items
-    $(".list-watch .watch-item-trigger").click(function (event) {
-        event.preventDefault();
-        if ($(this).hasClass('active')) {
-            $(this).closest('.list-watch').find('.hidden-item').css("display", "none");
-            $(this).removeClass('active');
-        } else {
-            $(this).closest('.list-watch').find('.hidden-item').css("display", "inline-block");
-            $(this).addClass('active');
-        }
-    });
-
-    //Expanded hidden text holder items
-    $(".hidden-text-holder .link-more").click(function (event) {
-        event.preventDefault();
-        if ($(this).hasClass('active')) {
-            $(this).closest('.hidden-text-holder').find('.hidden-item').css("display", "none");
-            $(this).removeClass('active');
-        } else {
-            $(this).closest('.hidden-text-holder').find('.hidden-item').css("display", "block");
-            $(this).addClass('active');
-        }
-    });
-
-    //Expanded list action
-    $(".list-expanded > li > a").click(function (event) {
-        event.preventDefault();
-        $(this).next('.list-sub-expanded').slideToggle(250);
-        $(this).toggleClass('active');
-    });
-
-    if (typeof tinymce !== 'undefined') {
-        //Tinymce initial
-        tinymce.init({
-            selector: "textarea#tinymce-holder"
-        });
-    }
-
     //Select 2 initial
     $(".basic-multiple").select2();
 
@@ -60,12 +22,6 @@ $(document).ready(function () {
         $(this).select2({
             placeholder: $(this).data('placeholder')
         });
-    });
-
-    $('.btn_show_more').on('click', function(e){
-        e.preventDefault();
-        $(this).closest('.filters_list').find('.to_show').slideToggle(200);
-        $(this).hide();
     });
 
     $('button[type="submit"]').click(function() {

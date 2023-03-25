@@ -1,131 +1,79 @@
-/* add select 2 for each relations input */
-$(".relation-items").each(function() {
-    var multiple = $(this).data('multiple');
-    var relation_id = $(this).attr('id');
+function updateSelected(data, relation_id) {
+    const image = data.image || $(data.element).data('image');
+    return $('<div class="select2-selected">' + (image ? `<img src="${image}" />` : '') + data.text + '</div>');
+}
 
-    var $relation = $(this);
-    var defaultValues = $.parseJSON($('#default_references').val());
-    var $addWrapper = $relation.next('[data-add="1"]');
+$(".relation-items").each(function () {
+    const $relation = $(this);
+    const relation_id = $relation.attr('id');
+    const defaultValues = $.parseJSON($('#default_references').val());
+    const $addWrapper = $relation.next('[data-add="1"]');
 
-    if (defaultValues[relation_id] !== undefined && defaultValues[relation_id].length) {
-        $.each(defaultValues[relation_id], function() {
-            $relation.append('<option selected value="'+this.id+'" data-image="' + (this.image ? this.image : '') + '">'+this.title+'</option>');
+    if (defaultValues[relation_id]) {
+        defaultValues[relation_id].forEach(({id, title, image}) => {
+            $relation.append(`<option selected value="${id}" data-image="${image || ''}">${title}</option>`);
         });
     }
 
     $relation.select2({
-        multiple: multiple,
-        allowClear: !multiple,
+        multiple: $relation.data('multiple'),
+        allowClear: !$relation.data('multiple'),
         placeholder: '',
         ajax: {
             type: 'GET',
             url: $relation.data('url'),
             dataType: 'json',
-            data: function(param) {
-                return {
-                    relation: relation_id,
-                    limit: 100,
-                    sort: 'title',
-                    q: typeof param.term != 'undefined' ? param.term + '*' : ''
-                };
-            },
-            processResults: function (data) {
-                var items = [];
-
-                if ('items' in data) {
-                    for (var k in data.items) {
-                        var item = data.items[k];
-                        if (!item.text) {
-                            item.text = item.title;
-                            if (item.path) {
-                                item.text = item.path + ' > ' + item.text;
-                            }
-                        }
-                        items.push(item);
-                    }
-                }
-
-                return { results: items };
-            }
+            data: (param) => ({
+                relation: relation_id,
+                limit: 100,
+                sort: 'title',
+                q: param.term ? param.term + '*' : ''
+            }),
+            processResults: (data) => ({
+                results: data.items.map(item => {
+                    item.text = (item.path ? item.path + ' > ' : '') + item.title;
+                    return item;
+                })
+            })
         },
-        templateResult: function (state) {
-            if (!state.id) {
-                return state.text;
-            }
-
-            var image = state.image ? '<img src="' + state.image + '" class="select2-dropdown-image" />' : '';
-
-            return $('<span>' + image + state.text + '</span>');
+        templateResult: (state) => {
+            if (!state.id) return state.text;
+            const image = state.image ? `<img src="${state.image}" class="select2-dropdown-image" />` : '';
+            return $(`<span>${image}${state.text}</span>`);
         },
-        templateSelection: function (data) {
-            if (!data.id) {
-                return data.text;
-            }
-
-            var image = '';
-            if (data.image) {
-                image = data.image;
-            } else if (data.element && $(data.element).data('image')) {
-                image = $(data.element).data('image');
-            }
-
-            if (image) {
-                image = '<img src="' + image + '"/>'
-            }
-
-            return $('<div class="select2-selected">' + image + data.text + '</div>');
-        }
+        templateSelection: (data) => data.id ? updateSelected(data, relation_id) : data.text
+    }).on('change', function () {
+        $(`[data-relation="${relation_id}"]`).val($(this).val());
     });
 
-    $(this).on('change', function () {
-        $('[data-relation="' + relation_id + '"]').val( $(this).val() );
-    });
+    const template = Handlebars.compile($("#add-template").html());
+    const contentRelation = $relation.data('types').map(({name, type}) => ({
+        name,
+        href: $relation.data('url-new').replace('__type__', type).replace('__relation__', relation_id)
+    }));
 
-    var source = $("#add-template").html();
-    var template = Handlebars.compile(source);
-
-    var contentRelation = [];
-    $.each($relation.data('types'), function() {
-        contentRelation.push({
-            'name': this.name,
-            'href': $relation.data('url-new').replace('__type__', this.type).replace('__relation__', relation_id)
-        });
-    });
-
-    var context = {relations: contentRelation};
-    var html = template(context);
-    $addWrapper.html(html);
+    $addWrapper.html(template({relations: contentRelation}));
 });
 
-$('.relations').on('click', '[data-modal]', function(e){
+$('.relations').on('click', '[data-modal]', function (e) {
     e.preventDefault();
-    if ($(this).parents('.add-relation').length) {
-        var modal = $(this).parents('.add-relation').next('#relation-add-modal');
-    } else {
-        var modal = $(this).next('#relation-add-modal');
-    }
-
-    var iFrame = modal.find('iframe');
+    const modal = $(this).closest('.add-relation').length ? $(this).closest('.add-relation').next('#relation-add-modal') : $(this).next('#relation-add-modal');
+    const iFrame = modal.find('iframe');
 
     modal.find('.modal-title').text($(this).data('title'));
 
-    iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function(e){
-
+    iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function () {
         iFrame.show();
-        modal.show();
-        modal.append('<div class="modal-backdrop fade in"></div>');
+        modal.addClass('close-outside show');
+        $('#dropdown_overlay').removeClass('hide');
 
-        iFrame.contents().find('*[data-dismiss="modal"]').click(function(ev){
-            ev.preventDefault();
-        });
+        iFrame.contents().find('*[data-dismiss="modal"]').click((ev) => ev.preventDefault());
 
         iFrame.unbind('load');
     });
 });
 
-/* handle Closing the modal */
-$('button[data-dismiss="modal"]').on('click', function() {
-    var modal = $(this).closest('#relation-add-modal');
-    modal.hide();
-    $('.modal-backdrop').remove();
+$('button[data-dismiss="modal"]').on('click', function () {
+    $(this).closest('#relation-add-modal').removeClass('show');
+    $('#dropdown_overlay').addClass('hide');
 });
