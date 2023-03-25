@@ -170,6 +170,7 @@ body[class*="edit"], body[class*="new"] {
 
                 .panel {
                     &.in {
+
                         .panel-heading {
                             background: #eaf7fe;
                             border-radius: 0;
@@ -181,11 +182,22 @@ body[class*="edit"], body[class*="new"] {
                             }
                         }
 
+
                         .panel-title {
                             i.iconoir-nav-arrow-down {
                                 transform: rotate(180deg);
                                 border-left: 1px solid #dee3e9;
                                 border-right: 0 !important;
+                            }
+                        }
+                    }
+
+                    &.required {
+                        .panel-heading {
+                            background-color: rgba(255, 32, 32, 0.2);
+                        }
+                        &:hover {
+                            .panel-heading {background-color: rgba(255, 32, 32, 0.2);
                             }
                         }
                     }
@@ -451,6 +463,33 @@ body[class*="edit"], body[class*="new"] {
     }
 }
 
+
+.editor-item-wrapper, .aside-item-wrapper, .form-group {
+    &.required {
+        background-color: rgba(255, 32, 32, 0.2);
+        .editor-item-header, .aside-item-header {
+            background-color: transparent;
+            h3.aside-item-title, h3.editor-item-title {
+                i {
+                    color: #ff2020;
+                }
+            }
+        }
+        .aside-item-list {
+            .added-comment-line {
+                height:33px;
+            }
+        }
+        &.show {
+            .editor-item-header, .aside-item-header {
+                background-color: transparent;
+            }
+        }
+        .form-control:focus {
+            border-color: #ff2020;
+        }
+    }
+}
 
 .colorpicker {
     position: absolute;

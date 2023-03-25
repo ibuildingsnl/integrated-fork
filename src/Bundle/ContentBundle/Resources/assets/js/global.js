@@ -93,6 +93,29 @@ document.querySelectorAll('.list-search').forEach(function(el) {
 
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 
+$(function() {
+    $('button[type=submit]').click(function(e) {
+
+        var form = $(this).closest('form');
+        var inputs = form.find('input, textarea');
+        inputs.each(function() {
+            if ($(this).prop('required') && $(this).val() === '') {
+                //Select the wrapper of the form element
+                var wrapper = $(this).parent().parent()[0];
+                //Select the wrapper of the repeatable field if needed
+                if ($(wrapper).hasClass('form-item') || $(wrapper).hasClass('form-group')) {
+                    $(this).closest('.panel').addClass('required in');
+                    $(this).closest('.form-item').addClass('required');
+                    $(this).closest('.panel-collapse').addClass('in');
+                } else {
+                    $(this).parent().parent().parent().addClass('required');
+                    showElement(wrapper);
+                }
+            }
+        });
+    });
+});
+
 function showElement(el) {
     const getHeight = function() {
         el.style.display = 'block';
