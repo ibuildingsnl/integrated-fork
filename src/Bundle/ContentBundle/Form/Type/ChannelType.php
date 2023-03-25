@@ -180,6 +180,7 @@ class ChannelType extends AbstractType
                 'style' => 'sidebar',
                 'icon' => 'graph-up',
             ],
+            'required' => false,
         ]);
 
         $builder->add(
