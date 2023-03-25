@@ -552,7 +552,7 @@
         {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' switch-input' )}) %}
         <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %}
                value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-        <span class="switch-label" data-on="Yes" data-off="No"></span>
+        <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
         <span class="switch-handle"></span>
     {% endapply %}
 {% endblock checkbox_switcher_widget %}

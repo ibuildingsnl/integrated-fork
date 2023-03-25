@@ -958,6 +958,22 @@
                 <source>Editing %contentType%</source>
                 <target>%contentType% aanpassen</target>
             </trans-unit>
+            <trans-unit id="243">
+                <source>Yes</source>
+                <target>Ja</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>No</source>
+                <target>Nee</target>
+            </trans-unit>
+            <trans-unit id="245">
+                <source>Featured</source>
+                <target>Uitgelicht</target>
+            </trans-unit>
+            <trans-unit id="246">
+                <source>Featured image</source>
+                <target>Uitgelichte afbeelding</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

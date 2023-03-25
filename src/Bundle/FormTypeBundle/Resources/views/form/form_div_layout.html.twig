@@ -508,7 +508,7 @@
                         {% for media in imageArray %}
                             {% if integrated_document(media).file is defined %}
                                 {% set image = integrated_document(media).file %}
-                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                {% set thumbnail = integrated_image(image).resize(200, 200) %}
                                 <li id="{{ media }}"
                                     data-id="{{ media }}"
                                     data-file="{{ image }}"
