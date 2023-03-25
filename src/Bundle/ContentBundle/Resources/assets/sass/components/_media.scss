@@ -9,6 +9,7 @@
         @include media(max-lg) {
             width: 100%;
         }
+
         &.show-edit-form {
             width: calc(100% - 600px);
             transition: width .3s;
@@ -90,7 +91,7 @@
         order: 0;
         border-right: 1px solid #dee3e9;
         border-left: 0;
-        width:250px;
+        width: 250px;
 
         .aside-header {
             padding: 0.5rem 1.2rem;
@@ -588,9 +589,10 @@
 
     .selected_images {
         li {
-            width:100%;
+            width: 100%;
             max-width: 200px;
         }
+
         &[data-multiple="true"], &[data-multiple="1"] {
             margin: 0 -0.5rem;
 
@@ -601,31 +603,10 @@
             }
         }
 
-        &:empty {
-            background-color: #eceeef;
-            height: 90px;
-            color: black;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            max-width: 200px;
-            min-width: 200px;
-            margin: 0.5rem 0;
-
-            &:hover {
-                background-color: #dfe3e9;
-            }
-
-            &::before {
-                content: attr(data-emptytext);
-            }
-        }
-
         .media-item {
             list-style: none;
             cursor: pointer;
+
             .media-preview {
                 position: relative;
                 background: #f2f2f2;
@@ -648,6 +629,7 @@
                     border-top: 1px solid #dfe3e9;
                     color: black;
                 }
+
                 .thumbnail {
                     overflow: hidden;
                     position: absolute;
@@ -697,6 +679,7 @@
                 display: none;
                 right: .5rem;
                 top: .5rem;
+                z-index: 1;
                 @media (hover: none) {
                     display: flex;
                 }
