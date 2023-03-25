@@ -103,6 +103,11 @@
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                 {% set options = true %}
                             {% endfor %}
+                            {% if form.children.customFields is defined %}
+                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                    {% set options = true %}
+                                {% endfor %}
+                            {% endif %}
                             {% if options == true %}
                                 <div class="aside-item-wrapper">
                                     <div class="aside-item-header">
@@ -118,6 +123,13 @@
                                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                                 {{ form_row(child) }}
                                             {% endfor %}
+                                            {% block custom_sidebar_fields %}
+                                                {% if form.children.customFields is defined %}
+                                                    {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                        {{ form_row(field) }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endblock %}
                                         </div>
                                     </div>
                                 </div>
@@ -179,14 +191,6 @@
                                             </div>
                                         </div>
                                     {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endblock %}
-
-                        {% block custom_sidebar_fields %}
-                            {% if form.children.customFields is defined %}
-                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                    {{ form_row(field) }}
                                 {% endfor %}
                             {% endif %}
                         {% endblock %}
