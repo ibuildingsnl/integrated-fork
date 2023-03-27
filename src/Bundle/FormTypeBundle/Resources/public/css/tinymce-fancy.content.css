@@ -40,6 +40,14 @@ img {
     height:auto;
 }
 
+table {
+    table-layout:fixed;
+}
+
+table img {
+    width:100%;
+}
+
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
     left:unset;
 }

@@ -11,7 +11,7 @@
                     {% for type_key, type in contentTypeSelectOptions %}
                         {% if type %}
                             <li role="presentation">
-                                <div data-id="{{ type.getId }}" class="button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</div>
+                                <a data-id="{{ type.getId }}" class="cursor-pointer button_toggle_upload_view_with_contenttype">{{ type.getName | title }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}

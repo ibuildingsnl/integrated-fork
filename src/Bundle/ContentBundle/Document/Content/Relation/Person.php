@@ -42,7 +42,7 @@ class Person extends Relation
     #[Type\Field(options: [
         'label' => 'Last name',
         'attr' => ['style' => 'editor', 'state' => 'show'],
-    ], location: 'sidebar')]
+    ], location: 'editor')]
     protected $lastName;
 
     /**
