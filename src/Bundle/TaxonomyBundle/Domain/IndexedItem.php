@@ -11,6 +11,7 @@ final class IndexedItem
         private readonly string|null $slug,
         private readonly int $count,
         private readonly int $depth,
+        private readonly array $channels,
     ) {
     }
 
@@ -42,5 +43,10 @@ final class IndexedItem
     public function getDepth(): int
     {
         return $this->depth;
+    }
+
+    public function getChannels(): array
+    {
+        return $this->channels;
     }
 }

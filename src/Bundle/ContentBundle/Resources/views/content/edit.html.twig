@@ -2,7 +2,7 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-    {% block filters %}
+     {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
@@ -156,12 +156,17 @@
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
                                             <div class="aside-item-list">
+
                                                 <div class="aside-item-list-container relation">
                                                     {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                         {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                             relation: relation,
                                                             form_relations: formRelations|default(null),
                                                         } %}
+
+                                                    {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                        {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
+
                                                     {% else %}
                                                         <select
                                                             multiple
@@ -221,12 +226,15 @@
                                     <div class="editor-item-list">
                                         <div class="editor-item-list-container relation">
 
+
+
                                             {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                 {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                     relation: relation,
                                                     form_relations: formRelations|default(null),
                                                 } %}
-
+                                            {% elseif relation.vars.attr['data-relationtype'] == 'taxonomy_category' %}
+                                                {% include '@IntegratedContent/content/partial/category_selection_component.html.twig' %}
                                             {% else %}
                                                 <select
                                                     multiple
