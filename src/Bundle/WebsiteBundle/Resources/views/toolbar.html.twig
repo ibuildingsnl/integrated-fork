@@ -73,6 +73,100 @@
 </div>
 
 <script>
+    const body = document.body;
+    const targetClassesClosing = '.close-outside.show';
+    const openClasses = [
+        '.close-outside', //dropdown select
+        '.button_toggle_upload_view', //media gallery button
+        '.mobile-menu-toggle', //menu when in mobile mode
+        '.toggle-filters', //filters when in mobile mode
+    ];
+    let popupShown = false;
+
+    $(document).mouseup(function (e) {
+        const closeOutside = $('.close-outside.show');
+        const toggleButton = $('.toggle-button');
+        const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
+        const isTargetToggleButton = toggleButton.is(e.target) || toggleButton.has(e.target).length > 0;
+        const isTargetInput = $(e.target).hasClass('tt-input') || $(e.target).hasClass('dropdown-menu');
+        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
+
+        if (clickedOutside) {
+            closeOutside.removeClass('show');
+            hideDropDownBackGround();
+            popupShown = false;
+        }
+    });
+
+    $(document).keyup(function (e) {
+        if (e.key === 'Escape') {
+            const closeOutside = $('.close-outside.show');
+            if (closeOutside.is('#upload_container')) {
+                closeOutside.removeClass('close-outside');
+            }
+            closeOutside.removeClass('show');
+            hideDropDownBackGround();
+            popupShown = false;
+        }
+    });
+
+    function addPopupEventListeners() {
+        $(document).on('mouseup', openClasses.join(','), function (event) {
+            event.stopPropagation();
+            openPopup();
+        });
+    }
+
+    addPopupEventListeners();
+
+    function openPopup() {
+        if (!popupShown) {
+            enableClosingOfPopup();
+            popupShown = true;
+        }
+    }
+
+    function enableClosingOfPopup() {
+        $(document).on('mouseup', handlePopupClose);
+        $(document).on('keyup', handleKeyPress);
+    }
+
+    function handlePopupClose(event) {
+        const closeOutside = $(targetClassesClosing);
+        const clickedOutside = !closeOutside.is(event.target) && closeOutside.has(event.target).length === 0;
+
+        if (clickedOutside) {
+            event.stopPropagation();
+            closeOutside.removeClass('show');
+            disableEventListeners();
+            hideDropDownBackGround();
+            sendCancelEvent();
+            popupShown = false;
+        }
+    }
+
+    function disableEventListeners() {
+        $(document).off('mouseup', handlePopupClose);
+        $(document).off('keyup', handleKeyPress);
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Escape') {
+            handlePopupClose(event);
+        }
+    }
+
+    function sendCancelEvent() {
+        document.dispatchEvent(new CustomEvent("cancelPopupEvent"));
+    }
+
+    function hideDropDownBackGround() {
+        const bg = document.getElementById('dropDownBackground');
+        if (bg) {
+            bg.classList.remove('show');
+        }
+    }
+
     document.querySelectorAll('a[data-toggle="dropdown"]').forEach(function(el) {
         el.addEventListener('click', toggleDropdown, false);
     });
@@ -109,6 +203,7 @@
             menuItemDropDownUnderlay.classList.remove('hide');
         }
     }
+    
 </script>
 
 <div id="dropdown_overlay" class="hide"></div>
