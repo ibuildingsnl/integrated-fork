@@ -365,10 +365,17 @@
         'data-allow-clear' : (allow_clear ? 'true' : 'false'),
         'class' : (attr.class|default('') ~ ' form-control integrated_content_choice')|trim,
     }) %}
+    {% set currentData = integrated_document(data) %}
+    {% set parentPath = integrated_content_path(currentData)|join(' > ') %}
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% if data %}
-                <option value="{{ data }}" selected="selected">{% trans %}Keep current selection{% endtrans %}</option>
+                <option value="{{ data }}" selected="selected">
+                    {% if parentPath is defined %}
+                        {{ parentPath }} > 
+                    {% endif %}
+                    {{ currentData.title }}
+                </option>
             {% endif %}
         </select>
     {% endapply %}
@@ -573,7 +580,7 @@
                         {% for media in imageArray %}
                             {% if integrated_document(media).file is defined %}
                                 {% set image = integrated_document(media).file %}
-                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                {% set thumbnail = integrated_image(image).resize(200, 200) %}
                                 <li id="{{ media }}"
                                     data-id="{{ media }}"
                                     data-file="{{ image }}"
