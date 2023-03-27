@@ -108,7 +108,7 @@ function handleClosePopup() {
 function activateHeader() {
     for (popup_tab of current_relation.popup_tabs) {
         popup_tab.classList.remove("active");
-        if (popup_tab.dataset.level0 === selected_tab.dataset.level0) {
+        if (selected_tab !== undefined && popup_tab.dataset.level0 === selected_tab.dataset.level0) {
             popup_tab.classList.add('active')
         }
     }
@@ -238,7 +238,7 @@ function filterCheckboxesInPopup() {
         //should a category be shown based on tab selection
         show = showCategoryBasedOnTab(category_item, show)
         //apply outcome
-        showOrHideItem(category_item, show)
+        toggleItem(category_item, show)
     }
 }
 
@@ -260,11 +260,11 @@ function filterBasedOnChannels() {
     for (category_item of [...categories_checkboxes, ...popup_tabs]) {
         let show = showCategoryBasedOnChannels(category_item)
 
-        showOrHideItem(category_item, show)
+        toggleItem(category_item, show)
     }
 }
 
-function showOrHideItem(item, show) {
+function toggleItem(item, show) {
     show === true ? item.classList.remove('hidden') : item.classList.add('hidden')
 }
 
