@@ -41,8 +41,7 @@
 
                         {% for content_type_key, content_type in contentTypeFilterOptions.options %}
 
-                            <li {% if content_type_key == contentTypeFilterOptions.current %}class="active"
-                                {% endif %}role="presentation">
+                            <li {% if content_type_key == contentTypeFilterOptions.current %} class="active" {% endif %} role="presentation">
                                 <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
                                     merge({'contenttypes': content_type_key == contentTypeFilterOptions.default ? null : content_type_key })|
                                     merge({'page':1})
