@@ -63,18 +63,20 @@ function generateSrcAttributeForIframes() {
 }
 
 function addEventListeners() {
-    const container = document.querySelector('body');
+    const selectButton = document.querySelector('.select_multimedia_button');
+    const selectedImages = document.querySelector('.selected_images');
 
-    container.addEventListener('click', (event) => {
-        const selectButton = event.target.closest('.select_multimedia_button');
-        const imageItem = event.target.closest('.selected_images > li');
+    selectButton.addEventListener('click', (event) => {
+        const { relationid } = event.target.dataset;
+        selected_relation = form_relations[relationid];
+        showMediaGallery(selected_relation);
+    });
+
+    selectedImages.addEventListener('click', (event) => {
+        const imageItem = event.target.closest('li');
         const removeButton = event.target.closest('.remove');
 
-        if (selectButton) {
-            const { relationid } = selectButton.dataset;
-            selected_relation = form_relations[relationid];
-            showMediaGallery(selected_relation);
-        } else if (imageItem && !removeButton) {
+        if (imageItem && !removeButton) {
             const { relationid } = imageItem.closest('.selected_images').dataset;
             selected_relation = form_relations[relationid];
             showMediaGallery(selected_relation);
