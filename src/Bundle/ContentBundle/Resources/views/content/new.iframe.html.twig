@@ -47,6 +47,14 @@
         #wrapper-holder {
             height: 100%;
         }
+        .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header, .show-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+            width: calc(100% - 365px);
+        }
+
+        .hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+            width: 100%;
+        }
+
     </style>
 {% endblock %}
 
@@ -60,9 +68,8 @@
     {{ parent() }}
     <script>
         $('button[data-dismiss="modal"]').click(function() {
-            parent.$('.modal-backdrop').remove();
-            parent.$("#relation-add-modal.modal").hide();
-
+            parent.$('#relation-add-modal.modal').removeClass('show');
+            parent.$('#dropdown_overlay').addClass('hide');
         });
     </script>
 {% endblock %}
