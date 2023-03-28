@@ -103,11 +103,15 @@
             {{ form_end(form) }}
         {% endblock %}
     </div>
+    <style>
+        button[type=submit] {
+            display: none;
+        }
+    </style>
 {% endblock %}
 
 {% block edit_modal %}
 {% endblock %}
-
 
 {% block javascript %}
 {{ parent() }}
@@ -123,9 +127,9 @@
 {% endif %}
 
 {{ include('@IntegratedContent/content/handlebars/templates.html.twig') }}
-
 {% endblock javascript %}
 
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/edit_form_submit_button.js') }}"></script>
 {% endblock %}
