@@ -6,6 +6,16 @@ $('.button_enable_list_view').bind("click", function () {
     enable_list_view()
 });
 
+$('.uppy-close').bind("click", function () {
+    closeUppyWithRefresh()
+});
+
+function closeUppyWithRefresh() {
+    $('#upload_container').removeClass('show');
+    $('#dropdown_overlay').addClass('hide');
+    window.location.reload();
+}
+
 $('.button_toggle_upload_view').bind("click", function () {
     document.querySelector('#upload_container').dataset.customContenttype = ''
     toggle_upload_view()

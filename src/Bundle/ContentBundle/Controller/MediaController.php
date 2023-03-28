@@ -186,10 +186,9 @@ class MediaController extends AbstractController
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'This file is not uploaded. Is this filetype allowed?']);
+            return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
+                ->setStatusCode(409);
         }
-
-        return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
