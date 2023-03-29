@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -178,10 +179,14 @@ class MediaController extends AbstractController
         try {
             $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
+            //save the FILE
+            $this->taxonomyRelationManager->runSolrQueue();
+
             $request->attributes->set('media_id', $file->getId());
 
             $this->taxonomyRelationManager->manageRelations($request);
 
+            //save the RELATION
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
