@@ -556,7 +556,7 @@
             </trans-unit>
             <trans-unit id="142">
                 <source>Media Library</source>
-                <target>Media Bibliotheek</target>
+                <target>Mediabibliotheek</target>
             </trans-unit>
             <trans-unit id="143">
                 <source>Overview</source>
@@ -973,6 +973,18 @@
             <trans-unit id="246">
                 <source>Featured image</source>
                 <target>Uitgelichte afbeelding</target>
+            </trans-unit>
+            <trans-unit id="247">
+                <source>Exclude from newsletters</source>
+                <target>Uitsluiten van Nieuwsbrief</target>
+            </trans-unit>
+            <trans-unit id="248">
+                <source>Select a country</source>
+                <target>Selecteer een land</target>
+            </trans-unit>
+            <trans-unit id="249">
+                <source>No scrapers added</source>
+                <target>Er zijn nog geen scrapers toegevoegd</target>
             </trans-unit>
         </body>
     </file>

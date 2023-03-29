@@ -45,19 +45,16 @@ $('.integrated_tinymce').each(function(key, elem){
         plugins:
              "advlist autolink link lists charmap anchor pagebreak " +
              "searchreplace wordcount visualchars fullscreen nonbreaking " +
-             "table directionality wordcount autoresize code "
+             "table directionality wordcount autoresize code " +
+             "integratedbrowser"
         ,
-        external_plugins: {
-            // TODO: update plugin INTEGRATED-1779
-            //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
-        },
         add_unload_trigger: false,
         schema: "html5",
         menubar: 'edit view insert format tools table',
         branding: false,
         toolbar:
             "styles | undo redo | bold italic underline subscript superscript | bullist numlist | " +
-            "link anchor table charmap | integratedimage integratedvideo | print | " +
+            "link anchor table charmap | integratedimage integratedvideo image media | print | " +
             "pastetext searchreplace | fullscreen",
         toolbar_sticky: false,
         toolbar_location: 'top',

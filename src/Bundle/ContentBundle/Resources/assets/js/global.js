@@ -114,8 +114,6 @@ const init = () => {
         el.addEventListener('keyup', asideItemsSearch);
     });
 
-    document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
-
     const filterElements = document.querySelectorAll('.aside-item-list');
     if (body.classList.contains('integrated_content_content_index')) {
         filterElements.forEach(openSelectedOptions);
@@ -211,18 +209,16 @@ function toggleElement(el) {
 }
 
 function hideButtonIfNoOptions() {
-    const hideToggleIfEmpty = (
-        toggleSelector, containerSelector, minChildren = 0) => {
-        const toggle = document.querySelector(toggleSelector);
-        const container = document.querySelector(containerSelector);
-
-        if (container && container.childNodes.length <= minChildren) {
-            toggle.classList.add('hidden');
-        }
-    };
-
-    hideToggleIfEmpty('.toggle-settings', '.aside-options');
-    hideToggleIfEmpty('.form-actions-extra-toggle', '.form-actions-extra', 1);
+    const optionsToggle = document.querySelector('.toggle-settings');
+    const optionsDiv = document.querySelector('.aside-options');
+    if (optionsDiv && (optionsDiv.childNodes.length === 0)) {
+        optionsToggle.classList.add('hidden');
+    }
+    const actionsToggle = document.querySelector('.form-actions-extra-toggle');
+    const actionsDiv = document.querySelector('.form-actions-extra');
+    if (actionsDiv && (actionsDiv.childNodes.length < 2)) {
+        actionsToggle.classList.add('hidden');
+    }
 }
 
 function toggleOptionsSidebar() {
@@ -324,4 +320,6 @@ function showDropDownBackGround() {
 }
 
 // Initialization
+
+document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
