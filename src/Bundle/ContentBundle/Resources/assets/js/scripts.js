@@ -102,9 +102,25 @@ $(document).ready(function () {
                 '{{#if type.suggestion }}' +
                     '<div class="tt-suggestion-term"><div class="tt-suggestion-head">{{data}}</div></div>' +
                 '{{/if}}' +
+                '{{#if type.media_gallery }}' +
+                    '<div class="tt-suggestion-term">' +
+                        '<a href="{{data.url}}">Show result in media gallery: {{data.query}}</a>' +
+                    '</div>' +
+                '{{/if}}' +
                 '{{#if type.result }}' +
                     '<div class="tt-suggestion-result">' +
-                        '<div><a href="{{data.url}}">{{data.title}}</a></div>' +
+                        '{{#if data.open_in_media_gallery }}' +
+                            '<div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' +
+                            '<div class="media-preview">\n' +
+                                '<div class="thumbnail relative">\n' +
+                                    '<div class="centered">\n' +
+                                        '<img src="/cache/4/2/9/f/5/429f5b3d2a155f47bce12e4a428493be3f8a1b29.jpeg">\n' +
+                                    '</div>\n' +
+                                '</div>\n' +
+                            '</div>' +
+                        '{{else}}' +
+                            '<div><a href="{{data.url}}">{{data.title}}</a></div>' +
+                        '{{/if}}' +
                         '<ul>' +
                             '<li>{{data.type}}</li>' +
                             '<li>{{data.published}}</li>' +
@@ -136,9 +152,27 @@ $(document).ready(function () {
     function transform(response) {
         var results = [];
 
+        let media_item_in_results = false
+
         if ($.isArray(response.results)) {
             $.each(response.results, function () {
                 var data = this;
+
+                if (data.type === 'Image' || data.type === 'Video' || data.type === 'File') {
+                    if (media_item_in_results == false) {
+                        results.unshift({
+                            type: { suggestion: false, result: false, media_gallery: true },
+                            data: {
+                                url: '/admin/media?q=' + response.query,
+                                query: response.query
+                            }
+                        });
+                        media_item_in_results = true
+                    }
+
+                    data.open_in_media_gallery = true
+                    data.media_gallery_url = '/admin/media?q=' + response.query
+                }
 
                 if (data.published) {
                     data.published = moment(data.published).format('lll');
