@@ -67,10 +67,13 @@
                         <span>{% trans %} Total {% endtrans %}
                             {{ paginator.getTotalItemCount() }}
                             {% trans %} Items {% endtrans %}.
-                            {% trans %} Showing {% endtrans %}
-                            {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() - paginator.getItemNumberPerPage() + 1 }}
-                            {% trans %} till {% endtrans %}
-                            {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() }}.</span>
+                            {% if paginator.getItemNumberPerPage() < paginator.getTotalItemCount() %}
+                                {% trans %} Showing {% endtrans %}
+                                {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() - paginator.getItemNumberPerPage() + 1 }}
+                                {% trans %} till {% endtrans %}
+                                {{ paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() }}.
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
             </div>

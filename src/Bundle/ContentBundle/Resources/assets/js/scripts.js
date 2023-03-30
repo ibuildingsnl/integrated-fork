@@ -110,18 +110,18 @@ $(document).ready(function () {
                 '{{#if type.result }}' +
                     '<div class="tt-suggestion-result">' +
                         '{{#if data.open_in_media_gallery }}' +
-                            '<div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' +
                             '<div class="media-preview">\n' +
-                                 '<img src="">\n' +
+                            '<img src="{{data.image_string}}">\n' +
                             '</div>' +
+                            '<div class="tt-result-wrapper"><div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' +
                         '{{else}}' +
-                            '<div><a href="{{data.url}}">{{data.title}}</a></div>' +
+                            '<div class="tt-result-wrapper"><div><a href="{{data.url}}">{{data.title}}</a></div>' +
                         '{{/if}}' +
                         '<ul>' +
                             '<li>{{data.type}}</li>' +
                             '<li>{{data.published}}</li>' +
                         '</ul>' +
-                    '</div>' +
+                    '</div></div>' +
                 '{{/if}}'
             )
         }
@@ -154,7 +154,9 @@ $(document).ready(function () {
             $.each(response.results, function () {
                 var data = this;
 
-                if (data.type === 'Image' || data.type === 'Video' || data.type === 'File') {
+                console.log(data);
+
+                if (data.class === 'Image' || data.class === 'Video' || data.class === 'File') {
                     if (media_item_in_results == false) {
                         results.unshift({
                             type: { suggestion: false, result: false, media_gallery: true },
