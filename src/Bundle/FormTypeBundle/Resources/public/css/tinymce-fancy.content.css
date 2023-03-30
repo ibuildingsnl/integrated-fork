@@ -9,7 +9,7 @@ body {
 }
 
 body#tinymce {
-    padding-top: 70px;
+    padding: 70px 0 0 0 !important;
 }
 
 @media only screen and (max-width: 640px) {
@@ -47,6 +47,61 @@ table {
 table img {
     width:100%;
 }
+
+figure {
+    position: relative;
+    margin: 0px auto 2rem;
+}
+
+figure span.credit {
+    backdrop-filter: blur(10px);
+    -webkit-box-align: center;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    font-weight: 500;
+    font-size: 0.75rem;
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    display: block;
+}
+
+figure figcaption.caption {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-top: 0.5rem;
+    color: rgb(102, 102, 102);
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+figure img {
+    object-fit: contain;
+    position: absolute;
+    inset: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(243, 243, 240);
+}
+
+span.content-image {
+    position: absolute;
+    inset: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+div.image-wrapper {
+    position: relative;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding-top: 56.5%;
+}
+
 
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
     left:unset;

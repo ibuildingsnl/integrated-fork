@@ -113,7 +113,7 @@ class Person extends Relation
     }
 
 
-    public function getGender(): string
+    public function getGender(): ?string
     {
         return $this->gender;
     }
@@ -125,7 +125,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getPrefix(): string
+    public function getPrefix(): ?string
     {
         return $this->prefix;
     }
@@ -137,7 +137,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getNickname(): string
+    public function getNickname(): ?string
     {
         return $this->nickname;
     }
@@ -149,7 +149,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
@@ -161,7 +161,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }

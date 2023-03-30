@@ -10,7 +10,9 @@ const validate = ajv.compile({
                     properties: {
                         id: {type: "string"},
                         uri: {type: "string"},
-                        title: {type: "string"}
+                        title: {type: "string"},
+                        description: {type: "string"},
+                        credits: {type: "string"},
                     }
                 }
             }

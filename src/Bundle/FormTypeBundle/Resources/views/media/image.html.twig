@@ -28,6 +28,8 @@
                         id: media.data('id'),
                         uri: media.data('file'),
                         title: media.data('title'),
+                        description: media.data('description'),
+                        credits: media.data('credits'),
                     }
                 }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
             };

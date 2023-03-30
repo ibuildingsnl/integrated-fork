@@ -435,6 +435,7 @@ body.hide-options {
         border: 0;
         border-top: 1px solid $border-color;
         background-color: white;
+        position:relative;
 
         &.show {
             .aside-item-header {

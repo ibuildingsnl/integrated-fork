@@ -246,7 +246,7 @@
         <ul {{ block('widget_container_attributes') }}>
             {% for child in form %}
                 {% if multiple %}
-                    <li class="inline-block mr-2">
+                    <li class="inline-block">
                         {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
                     </li>
                 {% else %}
@@ -806,6 +806,7 @@
                 {% set widget_col = widget_col + label_col %}
             {% endif %}
         {% endif %}
+
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
@@ -1060,10 +1061,14 @@
     {% apply spaceless %}
         {% for child in form %}
             {% if not child.rendered %}
-                {{ form_row(child) }}
+                {% set style = style|default(tailwind_get_style()) %}
+                {% set state = state|default(tailwind_get_state()) %}
+{#                {{ dump(child) }}#}
+{#                {{ style }}#}
+                {{ form_row(child, {style}) }}
+{#                {{ dump(style) }}#}
             {% endif %}
         {% endfor %}
-        {#        {% endif %} #}
     {% endapply %}
 {% endblock form_rest %}
 

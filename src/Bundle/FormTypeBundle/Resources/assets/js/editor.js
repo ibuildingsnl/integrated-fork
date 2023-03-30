@@ -53,7 +53,7 @@ $('.integrated_tinymce').each(function(key, elem){
         menubar: 'edit view insert format tools table',
         branding: false,
         toolbar:
-            "styles | undo redo | bold italic underline subscript superscript | bullist numlist | " +
+            "styles | bold italic underline subscript superscript | bullist numlist | " +
             "link anchor table charmap | integratedimage integratedvideo image media | print | " +
             "pastetext searchreplace | fullscreen",
         toolbar_sticky: false,
