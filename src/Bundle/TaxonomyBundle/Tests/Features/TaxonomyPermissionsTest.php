@@ -24,11 +24,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 final class TaxonomyPermissionsTest extends TestCase
 {
-    private readonly TaxonomyIndexerInterface $indexer;
-    private readonly TaxonomyRepositoryInterface $taxonomies;
-    private readonly TokenStorageInterface $tokenStorage;
-    private readonly array $users;
-    private readonly array $channels;
+    private TaxonomyIndexerInterface $indexer;
+    private TaxonomyRepositoryInterface $taxonomies;
+    private TokenStorageInterface $tokenStorage;
+    private array $users;
+    private array $channels;
 
     protected function setUp(): void
     {
