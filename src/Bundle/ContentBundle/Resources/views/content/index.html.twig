@@ -49,6 +49,7 @@
                 </div>
             </div>
             <section class="section-white section-radius">
+                {% set media_gallery_classes = ["Image", "Video", "File"] %}
                 <table class="table">
                     <thead>
                     <tr>
@@ -68,6 +69,7 @@
                     </thead>
                     <tbody id="post-list">
                     {% for content in pager %}
+                        {% set class_name = content.type_class|split('\\')|last %}
                         <tr class="has-options">
                             <td class="title">
                                 {% if locks[content.type_id] is defined %}
@@ -87,16 +89,30 @@
                                         </div>
                                     {% endif %}
                                 {% endif %}
-                                <strong>
-                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
-                                        {{ content.title|default }}
-                                    </a>
-                                </strong>
+                                <div>
+                                    <strong>
+                                        {% if class_name in media_gallery_classes  %}
+                                            <a href="{{ path('integrated_content_media_index', {ids: content.type_id}) }}">
+                                                {{ content.title|default }}
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
+                                                {{ content.title|default }}
+                                            </a>
+                                        {% endif %}
+                                    </strong>
+                                </div>
                                 <div class="row-options">
-                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"
-                                       role="option">
-                                        {% trans %}Edit{% endtrans %}
-                                    </a> |
+                                    {% if class_name in media_gallery_classes  %}
+                                        <a href="{{ path('integrated_content_media_index', {ids: content.type_id}) }}">
+                                            Edit
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"
+                                           role="option">
+                                            {% trans %}Edit{% endtrans %}
+                                        </a>
+                                    {% endif %}
                                     <a class="color-red"
                                        href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
                                        tabindex="-1" role="option">

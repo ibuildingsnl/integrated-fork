@@ -171,7 +171,7 @@ $(document).ready(function () {
                     }
 
                     data.open_in_media_gallery = true
-                    data.media_gallery_url = '/admin/media?q=' + response.query
+                    data.media_gallery_url = '/admin/media?ids=' + data.id
                 }
 
                 if (data.published) {

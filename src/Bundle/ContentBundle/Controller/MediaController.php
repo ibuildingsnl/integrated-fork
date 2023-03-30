@@ -115,6 +115,7 @@ class MediaController extends AbstractController
         $contentTypeSelectOptions = $this->getContentTypes();
 
         $requestSource->query->set('sort', 'created');
+        $requestSource->query->set('id', $requestSource->get('id'));
 
         $requestCopy = clone $requestSource;
 
@@ -153,6 +154,8 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
+        $requestSource = $this->removeIdsFromRequest($requestSource);
+
         return [
             'paginator' => $paginator,
             'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
@@ -165,6 +168,12 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ];
+    }
+
+    private function removeIdsFromRequest(Request $request): Request {
+        $request->query->remove('ids');
+
+        return $request;
     }
 
     private function removeStardardClasses($contentTypeSelectOptions): array
