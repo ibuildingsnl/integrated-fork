@@ -112,7 +112,7 @@ $(document).ready(function () {
                         '{{#if data.open_in_media_gallery }}' +
                             '<div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' +
                             '<div class="media-preview">\n' +
-                                 '<img src="/cache/4/2/9/f/5/429f5b3d2a155f47bce12e4a428493be3f8a1b29.jpeg">\n' +
+                                 '<img src="">\n' +
                             '</div>' +
                         '{{else}}' +
                             '<div><a href="{{data.url}}">{{data.title}}</a></div>' +
