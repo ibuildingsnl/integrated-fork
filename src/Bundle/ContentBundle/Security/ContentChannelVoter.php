@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Security;
 
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Content\ChannelableInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Permissions;
 use Symfony\Component\OptionsResolver\OptionsResolver;
