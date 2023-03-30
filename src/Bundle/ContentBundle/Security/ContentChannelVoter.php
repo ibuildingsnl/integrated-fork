@@ -24,11 +24,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class ContentChannelVoter implements VoterInterface
 {
     /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
      * @var AccessDecisionManagerInterface
      */
     private $decisionManager;
@@ -39,11 +34,9 @@ class ContentChannelVoter implements VoterInterface
     private $permissions;
 
     public function __construct(
-        ResolverInterface $resolver,
         AccessDecisionManagerInterface $decisionManager,
         array $permissions = []
     ) {
-        $this->resolver = $resolver;
         $this->decisionManager = $decisionManager;
         $this->permissions = $this->getOptionsResolver()->resolve($permissions);
     }
