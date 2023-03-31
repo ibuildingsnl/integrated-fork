@@ -8,35 +8,45 @@ const openClasses = [
 ];
 let popupShown = false;
 
-$(document).mouseup(function (e) {
-    const closeOutside = $('.close-outside.show');
-    const toggleButton = $('.toggle-button');
-    const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
-    const isTargetToggleButton = toggleButton.is(e.target) || toggleButton.has(e.target).length > 0;
-    const isTargetInput = $(e.target).hasClass('tt-input') || $(e.target).hasClass('dropdown-menu');
-    const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
+$(document).mouseup(function(e) {
+    if (popupShown) {
+        const closeOutside = $('.close-outside.show');
+        const toggleButton = $('.toggle-button');
+        const isTargetCloseOutside = closeOutside.is(e.target) ||
+            closeOutside.has(e.target).length > 0;
+        const isTargetToggleButton = toggleButton.is(e.target) ||
+            toggleButton.has(e.target).length > 0;
+        const isTargetInput = $(e.target).hasClass('tt-input') ||
+            $(e.target).hasClass('dropdown-menu');
+        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton &&
+            !isTargetInput;
 
-    if (clickedOutside) {
-        closeOutside.removeClass('show');
-        hideDropDownBackGround();
-        popupShown = false;
+        if (clickedOutside) {
+            closeOutside.removeClass('show');
+            hideDropDownBackGround();
+            disableEventListeners();
+            sendCancelEvent();
+            popupShown = false;
+        }
     }
 });
 
-$(document).keyup(function (e) {
-    if (e.key === 'Escape') {
+$(document).keyup(function(e) {
+    if (popupShown && e.key === 'Escape') {
         const closeOutside = $('.close-outside.show');
         if (closeOutside.is('#upload_container')) {
             closeOutside.removeClass('close-outside');
         }
         closeOutside.removeClass('show');
         hideDropDownBackGround();
+        disableEventListeners();
+        sendCancelEvent();
         popupShown = false;
     }
 });
 
 function addPopupEventListeners() {
-    $(document).on('mouseup', openClasses.join(','), function (event) {
+    $(document).on('mouseup', openClasses.join(','), function(event) {
         event.stopPropagation();
         openPopup();
     });
@@ -58,13 +68,14 @@ function enableClosingOfPopup() {
 
 function handlePopupClose(event) {
     const closeOutside = $(targetClassesClosing);
-    const clickedOutside = !closeOutside.is(event.target) && closeOutside.has(event.target).length === 0;
+    const clickedOutside = !closeOutside.is(event.target) &&
+        closeOutside.has(event.target).length === 0;
 
     if (clickedOutside) {
         event.stopPropagation();
         closeOutside.removeClass('show');
-        disableEventListeners();
         hideDropDownBackGround();
+        disableEventListeners();
         sendCancelEvent();
         popupShown = false;
     }
@@ -76,13 +87,13 @@ function disableEventListeners() {
 }
 
 function handleKeyPress(event) {
-    if (event.key === 'Escape') {
+    if (popupShown && event.key === 'Escape') {
         handlePopupClose(event);
     }
 }
 
 function sendCancelEvent() {
-    document.dispatchEvent(new CustomEvent("cancelPopupEvent"));
+    document.dispatchEvent(new CustomEvent('cancelPopupEvent'));
 }
 
 function hideDropDownBackGround() {
@@ -93,7 +104,8 @@ function hideDropDownBackGround() {
 }
 
 const init = () => {
-    const searchFormControl = document.querySelector('.search-form .form-control');
+    const searchFormControl = document.querySelector(
+        '.search-form .form-control');
     if (searchFormControl) {
         searchFormControl.addEventListener('focus', showDropDownBackGround);
         searchFormControl.addEventListener('blur', hideDropDownBackGround);
@@ -152,7 +164,8 @@ function onSubmitButtonClick(e) {
                 input.closest('.form-item').classList.add('required');
                 panelCollapse && panelCollapse.classList.add('in');
             } else {
-                const parentList = input.closest('.aside-item-list, .editor-item-list');
+                const parentList = input.closest(
+                    '.aside-item-list, .editor-item-list');
                 parentList.parentNode.classList.add('required');
                 showElement(parentList);
             }

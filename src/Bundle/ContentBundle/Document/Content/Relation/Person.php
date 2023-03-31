@@ -109,9 +109,8 @@ class Person extends Relation
 
     public function getTitle(): string
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->firstName.' '.$this->lastName;
     }
-
 
     public function getGender(): ?string
     {
@@ -241,6 +240,6 @@ class Person extends Relation
      */
     public function __toString()
     {
-        return trim($this->firstName . ' ' . $this->lastName);
+        return trim($this->firstName.' '.$this->lastName);
     }
 }

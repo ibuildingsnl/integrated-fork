@@ -65,7 +65,6 @@ class Company extends Relation
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www']], location: 'sidebar')]
     protected $website;
 
-
     public function getTitle(): string
     {
         return $this->name;
@@ -106,7 +105,6 @@ class Company extends Relation
 
         return $this;
     }
-
 
     public function getWebsite(): string
     {
