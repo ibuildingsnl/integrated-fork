@@ -16,7 +16,6 @@ $(document).mouseup(function(e) {
         const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
 
         if (clickedOutside) {
-            console.log('clicked Outside: ' + clickedOutside);
             closeOutside.removeClass('show');
             hideDropDownBackGround();
             sendCancelEvent();
