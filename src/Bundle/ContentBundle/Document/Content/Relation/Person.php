@@ -172,7 +172,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
@@ -224,7 +224,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getCover(): ?string
+    public function getCover()
     {
         if ($this->getPicture() instanceof Image) {
             if ($this->getPicture()->getFile() instanceof StorageInterface) {

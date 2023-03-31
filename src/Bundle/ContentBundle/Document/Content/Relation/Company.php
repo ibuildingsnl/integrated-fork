@@ -82,7 +82,7 @@ class Company extends Relation
         return $this;
     }
 
-    public function getSlug(): string
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
@@ -99,14 +99,12 @@ class Company extends Relation
         return $this->logo;
     }
 
-    public function setLogo(Image $logo = null): static
+    public function setLogo(?Image $logo): void
     {
         $this->logo = $logo;
-
-        return $this;
     }
 
-    public function getWebsite(): string
+    public function getWebsite(): ?string
     {
         return $this->website;
     }
@@ -118,7 +116,7 @@ class Company extends Relation
         return $this;
     }
 
-    public function getCover(): ?string
+    public function getCover()
     {
         if ($this->getLogo() instanceof Image) {
             if ($this->getLogo()->getFile() instanceof StorageInterface) {
