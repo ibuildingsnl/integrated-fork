@@ -12,7 +12,8 @@ final class TaxonomyChannelInheritanceListener implements EventSubscriberInterfa
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
