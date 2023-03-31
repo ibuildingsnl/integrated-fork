@@ -12,14 +12,10 @@ $(document).mouseup(function(e) {
     if (popupShown) {
         const closeOutside = $('.close-outside.show');
         const toggleButton = $('.toggle-button');
-        const isTargetCloseOutside = closeOutside.is(e.target) ||
-            closeOutside.has(e.target).length > 0;
-        const isTargetToggleButton = toggleButton.is(e.target) ||
-            toggleButton.has(e.target).length > 0;
-        const isTargetInput = $(e.target).hasClass('tt-input') ||
-            $(e.target).hasClass('dropdown-menu');
-        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton &&
-            !isTargetInput;
+        const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
+        const isTargetToggleButton = toggleButton.is(e.target) || toggleButton.has(e.target).length > 0;
+        const isTargetInput = $(e.target).hasClass('tt-input') || $(e.target).hasClass('dropdown-menu');
+        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
 
         if (clickedOutside) {
             closeOutside.removeClass('show');
@@ -95,13 +91,6 @@ function handleKeyPress(event) {
 
 function sendCancelEvent() {
     document.dispatchEvent(new CustomEvent('cancelPopupEvent'));
-}
-
-function hideDropDownBackGround() {
-    const bg = document.getElementById('dropDownBackground');
-    if (bg) {
-        bg.classList.remove('show');
-    }
 }
 
 const init = () => {
@@ -334,6 +323,10 @@ function isElement(o) {
     );
 }
 
+function hideDropDownBackGround() {
+    toggleDropDownBackGround(true);
+}
+
 function showDropDownBackGround() {
     toggleDropDownBackGround(false);
 }
@@ -343,16 +336,4 @@ function showDropDownBackGround() {
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
 
-        function openSelectedOptions(elem) {
-            var textinputs = elem.querySelectorAll('input[type=checkbox]');
-            if (!elem.parentNode.classList.contains('show')) {
-                var empty = [].filter.call(textinputs, function(elem) {
-                    return !elem.checked;
-                });
-                if (textinputs.length !== empty.length) {
-                    showElement(elem);
-                }
-            }
-        }
-    }
-});
+
