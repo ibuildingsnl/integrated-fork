@@ -6,10 +6,8 @@ const openClasses = [
     '.mobile-menu-toggle', //menu when in mobile mode
     '.toggle-filters', //filters when in mobile mode
 ];
-let popupShown = false;
 
 $(document).mouseup(function(e) {
-    if (popupShown) {
         const closeOutside = $('.close-outside.show');
         const toggleButton = $('.toggle-button');
         const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
@@ -18,76 +16,24 @@ $(document).mouseup(function(e) {
         const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
 
         if (clickedOutside) {
+            console.log('clicked Outside: ' + clickedOutside);
             closeOutside.removeClass('show');
             hideDropDownBackGround();
-            disableEventListeners();
             sendCancelEvent();
-            popupShown = false;
         }
-    }
 });
 
 $(document).keyup(function(e) {
-    if (popupShown && e.key === 'Escape') {
+    if (e.key === 'Escape') {
         const closeOutside = $('.close-outside.show');
         if (closeOutside.is('#upload_container')) {
             closeOutside.removeClass('close-outside');
         }
         closeOutside.removeClass('show');
         hideDropDownBackGround();
-        disableEventListeners();
         sendCancelEvent();
-        popupShown = false;
     }
 });
-
-function addPopupEventListeners() {
-    $(document).on('mouseup', openClasses.join(','), function(event) {
-        event.stopPropagation();
-        openPopup();
-    });
-}
-
-addPopupEventListeners();
-
-function openPopup() {
-    event.stopPropagation()
-    if (popupShown === false) {
-        enableClosingOfPopup()
-        popupShown = true
-    }
-}
-
-function enableClosingOfPopup() {
-    $(document).on('mouseup', handlePopupClose);
-    $(document).on('keyup', handleKeyPress);
-}
-
-function handlePopupClose(event) {
-    const closeOutside = $(targetClassesClosing);
-    const clickedOutside = !closeOutside.is(event.target) &&
-        closeOutside.has(event.target).length === 0;
-
-    if (clickedOutside) {
-        event.stopPropagation();
-        closeOutside.removeClass('show');
-        hideDropDownBackGround();
-        disableEventListeners();
-        sendCancelEvent();
-        popupShown = false;
-    }
-}
-
-function disableEventListeners() {
-    $(document).off('mouseup', handlePopupClose);
-    $(document).off('keyup', handleKeyPress);
-}
-
-function handleKeyPress(event) {
-    if (popupShown && event.key === 'Escape') {
-        handlePopupClose(event);
-    }
-}
 
 function sendCancelEvent() {
     document.dispatchEvent(new CustomEvent('cancelPopupEvent'));

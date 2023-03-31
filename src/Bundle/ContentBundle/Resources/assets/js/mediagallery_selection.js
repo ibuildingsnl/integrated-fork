@@ -63,24 +63,28 @@ function generateSrcAttributeForIframes() {
 }
 
 function addEventListeners() {
-    const selectButton = document.querySelector('.select_multimedia_button');
-    const selectedImages = document.querySelector('.selected_images');
+    const selectButtons = document.querySelectorAll('.select_multimedia_button');
+    const selectedImages = document.querySelectorAll('.selected_images');
 
-    selectButton.addEventListener('click', (event) => {
-        const { relationid } = event.target.dataset;
-        selected_relation = form_relations[relationid];
-        showMediaGallery(selected_relation);
-    });
-
-    selectedImages.addEventListener('click', (event) => {
-        const imageItem = event.target.closest('li');
-        const removeButton = event.target.closest('.remove');
-
-        if (imageItem && !removeButton) {
-            const { relationid } = imageItem.closest('.selected_images').dataset;
+    selectButtons.forEach((selectButton) => {
+        selectButton.addEventListener('click', (event) => {
+            const { relationid } = event.target.dataset;
             selected_relation = form_relations[relationid];
             showMediaGallery(selected_relation);
-        }
+        });
+    });
+
+    selectedImages.forEach((selectButton) => {
+        selectedImage.addEventListener('click', (event) => {
+            const imageItem = event.target.closest('li');
+            const removeButton = event.target.closest('.remove');
+
+            if (imageItem && !removeButton) {
+                const { relationid } = imageItem.closest('.selected_images').dataset;
+                selected_relation = form_relations[relationid];
+                showMediaGallery(selected_relation);
+            }
+        });
     });
 }
 
@@ -179,6 +183,7 @@ function reloadMediaLibrary() {
 }
 
 function showMediaGallery(selected_relation) {
+    console.log(selected_relation);
     document.querySelector(selected_relation.wrap_selector).classList.add('show');
     document.querySelector('#dropdown_overlay').classList.remove('hide');
 }
