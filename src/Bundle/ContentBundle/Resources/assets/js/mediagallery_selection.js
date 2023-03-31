@@ -74,7 +74,7 @@ function addEventListeners() {
         });
     });
 
-    selectedImages.forEach((selectButton) => {
+    selectedImages.forEach((selectedImage) => {
         selectedImage.addEventListener('click', (event) => {
             const imageItem = event.target.closest('li');
             const removeButton = event.target.closest('.remove');
