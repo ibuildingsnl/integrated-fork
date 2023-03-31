@@ -24,6 +24,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
                 return $taxonomy;
             }
         }
+
         return null;
     }
 

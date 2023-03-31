@@ -96,6 +96,7 @@ final class TaxonomyChannelInheritanceTest extends TestCase
         foreach ($channels as $channel) {
             $taxonomy->addChannel($this->channels[$channel]);
         }
+
         return $taxonomy;
     }
 
