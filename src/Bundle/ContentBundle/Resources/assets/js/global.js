@@ -55,9 +55,10 @@ function addPopupEventListeners() {
 addPopupEventListeners();
 
 function openPopup() {
-    if (!popupShown) {
-        enableClosingOfPopup();
-        popupShown = true;
+    event.stopPropagation()
+    if (popupShown === false) {
+        enableClosingOfPopup()
+        popupShown = true
     }
 }
 
@@ -292,12 +293,13 @@ function toggleSidebarElement(event) {
     }
 }
 
-function asideItemsSearch(event) {
-    const input = event.target;
-    const filter = input.value.toUpperCase();
-    const ul = input.parentNode.parentNode.querySelector(
-        '.aside-item-list .aside-item-list-container > ul');
-    const li = ul.getElementsByTagName('li');
+function asideItemsSearch(el) {
+    let input, filter, ul, li, a, i, txtValue;
+    input = el.target;
+    filter = input.value.toUpperCase();
+    ul = el.target.parentNode.parentNode.querySelector(
+        '.aside-item-list .aside-item-list-container ul');
+    li = ul.getElementsByTagName('li');
 
     for (const item of li) {
         const label = item.getElementsByTagName('label')[0];
@@ -324,8 +326,12 @@ function toggleDropDownBackGround(hidden) {
     menuItemDropDownUnderlay.classList.toggle('hide', hidden);
 }
 
-function hideDropDownBackGround() {
-    toggleDropDownBackGround(true);
+function isElement(o) {
+    return (
+        typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
+            o && typeof o === 'object' && o.nodeType === 1 &&
+            typeof o.nodeName === 'string'
+    );
 }
 
 function showDropDownBackGround() {
@@ -336,3 +342,17 @@ function showDropDownBackGround() {
 
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
+
+        function openSelectedOptions(elem) {
+            var textinputs = elem.querySelectorAll('input[type=checkbox]');
+            if (!elem.parentNode.classList.contains('show')) {
+                var empty = [].filter.call(textinputs, function(elem) {
+                    return !elem.checked;
+                });
+                if (textinputs.length !== empty.length) {
+                    showElement(elem);
+                }
+            }
+        }
+    }
+});
