@@ -49,6 +49,11 @@ class BlockSize
     protected $sizeLg;
 
     /**
+     * @var int
+     */
+    protected $order;
+
+    /**
      * @return Block
      */
     public function getBlock()
@@ -167,4 +172,25 @@ class BlockSize
 
         return $sizes;
     }
+
+    /**
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param int $order
+     *
+     * @return $this
+     */
+    public function setOrder($order)
+    {
+        $this->order = (int) $order;
+
+        return $this;
+    }
+
 }
