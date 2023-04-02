@@ -160,7 +160,7 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
             {% if form.vars.allow_delete %}
                 {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
             {% endif %}
@@ -183,7 +183,12 @@
                                     <a data-toggle="collapse">
                                         <i class="iconoir-line-space"></i>
                                         <span>
-                                            {{ field.vars.value.title|default(field.vars.value.label|default(field.vars.value.text|default(form.vars.default_title|default('Item')))) }}
+                                            {{ field.vars.value.title|
+                                            default(field.vars.value.label|
+                                            default(field.vars.value.block|
+                                            default(field.vars.value.text|
+                                            default(form.vars.default_title|
+                                            default('Item'))))) }}
                                         </span>
                                     </a>
                                     {% if form.vars.allow_delete %}
@@ -242,10 +247,8 @@
                 {% set panel_heading = 'true' %}
             {% endif %}
 
-            {% set panel_title = field.vars.value.label|default(form.vars.default_title|default('Item')) %}
-
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ panel_title ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -274,7 +277,15 @@
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span class="capitalize">{{ panel_title }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i>
+                                            <span class="capitalize">
+                                                {{ field.vars.value.title|
+                                                default(field.vars.value.label|
+                                                default(field.vars.value.block|
+                                                default(field.vars.value.text|
+                                                default(form.vars.default_title|
+                                                default('Item'))))) }}
+                                            </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"
@@ -372,7 +383,7 @@
             {% if data %}
                 <option value="{{ data }}" selected="selected">
                     {% if parentPath is defined %}
-                        {{ parentPath }} > 
+                        {{ parentPath }} >
                     {% endif %}
                     {{ currentData.title }}
                 </option>
