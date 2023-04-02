@@ -103,6 +103,7 @@ function handleClosePopup() {
         showEnabledCategoryPills()
     }
     selected_tab = ''
+    window.popupShown = false;
 }
 
 function activateHeader() {
@@ -145,6 +146,7 @@ function toggleFullscreen() {
     togglePopup()
     filterCheckboxesInPopup()
     showEnabledCategoryPills()
+    window.popupShown = true;
 }
 
 function handleChannelClick(event) {

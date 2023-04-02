@@ -6,31 +6,39 @@ const openClasses = [
     '.mobile-menu-toggle', //menu when in mobile mode
     '.toggle-filters', //filters when in mobile mode
 ];
+window.iframeWindow = '';
+window.popupShown = false;
 
 $(document).mouseup(function(e) {
+    console.log(popupShown);
+    if (popupShown) {
         const closeOutside = $('.close-outside.show');
         const toggleButton = $('.toggle-button');
-        const isTargetCloseOutside = closeOutside.is(e.target) || closeOutside.has(e.target).length > 0;
-        const isTargetToggleButton = toggleButton.is(e.target) || toggleButton.has(e.target).length > 0;
-        const isTargetInput = $(e.target).hasClass('tt-input') || $(e.target).hasClass('dropdown-menu');
-        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton && !isTargetInput;
+        const isTargetCloseOutside = closeOutside.is(e.target) ||
+            closeOutside.has(e.target).length > 0;
+        const isTargetToggleButton = toggleButton.is(e.target) ||
+            toggleButton.has(e.target).length > 0;
+        const isTargetInput = $(e.target).hasClass('tt-input') ||
+            $(e.target).hasClass('dropdown-menu');
+        const clickedOutside = !isTargetCloseOutside && !isTargetToggleButton &&
+            !isTargetInput;
 
         if (clickedOutside) {
             closeOutside.removeClass('show');
             hideDropDownBackGround();
             sendCancelEvent();
+            popupShown = false;
         }
+    }
 });
 
 $(document).keyup(function(e) {
     if (e.key === 'Escape') {
-        const closeOutside = $('.close-outside.show');
-        if (closeOutside.is('#upload_container')) {
-            closeOutside.removeClass('close-outside');
-        }
+        let closeOutside = $('.close-outside.show');
         closeOutside.removeClass('show');
         hideDropDownBackGround();
         sendCancelEvent();
+        popupShown = false;
     }
 });
 
@@ -195,6 +203,7 @@ function toggleDataTarget(el) {
 }
 
 function toggleDropdown(el) {
+    popupShown = true;
     const dropdown = el.target.closest('.dropdown');
     const shouldShow = !dropdown.classList.contains('show');
 
@@ -211,6 +220,7 @@ function toggleDropdown(el) {
 }
 
 function toggleOptionsElement(el) {
+    popupShown = true;
     const options = el.parentNode.querySelector('.aside-item-list') ||
         el.parentNode.querySelector('.editor-item-list');
     if (options) {
@@ -219,6 +229,7 @@ function toggleOptionsElement(el) {
 }
 
 function toggleSidebarElement(event) {
+    popupShown = true;
     event.preventDefault();
     const menu = event.currentTarget.parentNode.querySelector(
         '.sub-menu-children');
@@ -255,8 +266,7 @@ function openSelectedOptions(elem) {
 }
 
 function toggleDropDownBackGround(hidden) {
-    const menuItemDropDownUnderlay = document.querySelector(
-        '#dropdown_overlay');
+    let menuItemDropDownUnderlay =  document.querySelector('#dropdown_overlay');
     menuItemDropDownUnderlay.classList.toggle('hide', hidden);
 }
 
@@ -269,10 +279,12 @@ function isElement(o) {
 }
 
 function hideDropDownBackGround() {
+    popupShown = false;
     toggleDropDownBackGround(true);
 }
 
 function showDropDownBackGround() {
+    popupShown = true;
     toggleDropDownBackGround(false);
 }
 

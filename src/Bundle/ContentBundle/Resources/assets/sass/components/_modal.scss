@@ -14,6 +14,7 @@
     &.auth {
         background-image: url("../../images/integrated-login-background.jpeg");
         background-size: cover;
+
         .logo img {
             width: 273px;
             margin-bottom: 2rem;
@@ -33,6 +34,7 @@
                 text-align: center;
             }
         }
+
         .modal-dialog {
             height: auto;
             min-height: auto;
@@ -46,6 +48,7 @@
         border-radius: 1rem;
         padding: 2rem;
         position: relative;
+
         &.auth {
             width: 415px;
 
@@ -72,10 +75,12 @@
             }
         }
     }
+
     span.password-reset {
-        margin-top:1rem;
+        margin-top: 1rem;
+
         a {
-            color:white;
+            color: white;
         }
     }
 }
@@ -112,17 +117,21 @@
     z-index: 1070;
     -webkit-overflow-scrolling: touch;
     outline: 0;
+    pointer-events: none;
+
     &.show {
         display: block;
     }
+
     &.add-modal {
         .modal-dialog {
             .modal-content {
                 max-width: 1440px;
-                width:90vw
+                width: 90vw
             }
         }
     }
+
     &.fade {
         .modal-dialog {
             -webkit-transition: -webkit-transform 0.3s ease-out;
@@ -165,6 +174,7 @@
         &:after {
             clear: both
         }
+
         button.close {
             top: 0;
             height: 50px;
@@ -173,10 +183,12 @@
             right: 0;
             align-items: center;
             justify-content: center;
+
             i:before {
                 width: 30px;
                 height: 30px;
             }
+
             span {
                 display: flex;
                 align-items: center;
@@ -207,26 +219,32 @@
         padding: 15px;
         text-align: right;
         border-top: 1px solid #e5e5e5;
+
         &:before, &:after {
             content: " ";
             display: table
         }
+
         &:after {
             clear: both
         }
+
         .btn + .btn {
             margin-left: 5px;
             margin-bottom: 0
         }
+
         .btn-group .btn + .btn {
             margin-left: -1px
         }
+
         .btn-block + .btn-block {
             margin-left: 0
         }
     }
 
 }
+
 .modal-backdrop {
     position: fixed;
     top: 0;

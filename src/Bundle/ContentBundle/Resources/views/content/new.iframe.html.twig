@@ -3,59 +3,7 @@
 {% block style %}
     {{ parent() }}
 
-    <style type="text/css">
-        #wrapper-holder {
-            padding-bottom: 85px;
-            top: 0px;
-        }
-
-        #wrapper-holder > .container {
-            width: auto;
-            background: #fff;
-        }
-
-        #wrapper-holder > .container .section-radius {
-            box-shadow: none;
-        }
-
-        .add-relation {
-            display: none;
-        }
-
-        .prefooter-holder {
-            border-top: 1px solid #e5e5e5;
-            background: #fcfcfc;
-        }
-        .aside-options {
-            height: calc(100vh - 50px);
-        }
-        .aside-options .aside-holder {
-            padding-top:0;
-        }
-        .sidebar {
-            display: none;
-        }
-        .content-wrapper {
-            width: 100%;
-        }
-
-        .content-wrapper .editor-wrapper {
-            height: calc(100vh - 50px);
-            padding-bottom: 50px;
-        }
-
-        #wrapper-holder {
-            height: 100%;
-        }
-        .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header, .show-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
-            width: calc(100% - 365px);
-        }
-
-        .hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
-            width: 100%;
-        }
-
-    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
 {% endblock %}
 
 {% block header %}{% endblock %}

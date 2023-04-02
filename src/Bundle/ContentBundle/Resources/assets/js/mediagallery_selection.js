@@ -173,8 +173,10 @@ function rebuildDOM() {
 
 function closeMediaGallery() {
     reloadMediaLibrary();
+
     document.querySelector(selected_relation.wrap_selector).classList.remove('show');
     document.querySelector('#dropdown_overlay').classList.add('hide');
+    window.popupShown = false;
 }
 
 function reloadMediaLibrary() {
@@ -183,7 +185,8 @@ function reloadMediaLibrary() {
 }
 
 function showMediaGallery(selected_relation) {
-    console.log(selected_relation);
+    window.popupShown = true;
+
     document.querySelector(selected_relation.wrap_selector).classList.add('show');
     document.querySelector('#dropdown_overlay').classList.remove('hide');
 }

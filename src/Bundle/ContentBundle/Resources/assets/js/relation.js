@@ -64,6 +64,9 @@ $('.relations').on('click', '[data-modal]', function (e) {
 
     iFrame.css('display', 'block').attr('src', $(this).data('href')).on('load', function () {
         iFrame.show();
+
+        window.popupShown = true;
+
         modal.addClass('close-outside show');
         $('#dropdown_overlay').removeClass('hide');
 
