@@ -110,7 +110,6 @@
             bottom: 0;
             top: 0;
             height: 100%;
-            margin: 2rem;
             z-index: 1050;
             display: none;
 
@@ -136,8 +135,8 @@
             }
 
             .uppy-Dashboard-inner {
-                height: calc(100vh - (60px + 4rem)) !important;
-                border-radius: 8px;
+                height: 100vh !important;
+                border-radius: 0px;
 
                 .uppy-StatusBar-actionBtn--upload, .uppy-DashboardContent-save, .uppy-StatusBar-actionBtn {
                     font-size: 1.1rem;
