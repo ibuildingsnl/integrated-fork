@@ -80,7 +80,7 @@ class BlockSizeType extends AbstractType
         ]);
 
         $builder->add('order', HiddenType::class, [
-            'attr' => ['data-itemorder' => 'collection']
+            'attr' => ['data-itemorder' => 'collection'],
         ]);
     }
 
