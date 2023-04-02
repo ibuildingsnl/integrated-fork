@@ -204,6 +204,7 @@
         background-clip: padding-box;
         outline: 0;
         overflow: auto;
+        pointer-events: all;
     }
 
     .modal-title {
