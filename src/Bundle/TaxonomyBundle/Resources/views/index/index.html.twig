@@ -4,12 +4,10 @@
     <div class="taxonomy-index">
         <div class="flex flex-wrap">
 
-            <div class="select-options">
-                <div>Select options:</div>
+            <div class="select-options ml-2 mt-2">
                 {% if id_select_options|default([])|length > 0 %}
                     <ul class="mr-2">
                         <li class="dropdown close-outside" data-underlay="no">
-                            {{ dump(id_select_options) }}
                             <a data-toggle="dropdown" role="button" id="filtering-list"
                                class="btn btn-select space-between"><span>{{ id_select_options.options[id_select_options.current].name|trans }}</span>
                                 <i class="iconoir-nav-arrow-down"></i></a>
@@ -35,7 +33,6 @@
                     </ul>
                 {% endif %}
             </div>
-
 
             {% block form_start %}
                 {{ form_start(form) }}
