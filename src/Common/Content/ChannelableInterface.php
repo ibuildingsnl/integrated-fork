@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Content;
 
-use Doctrine\Common\Collections\Collection;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
@@ -35,7 +34,7 @@ interface ChannelableInterface
      *
      * @return $this
      */
-    public function setChannels(Collection $channels);
+    public function setChannels(iterable $channels);
 
     /**
      * Add a channel.

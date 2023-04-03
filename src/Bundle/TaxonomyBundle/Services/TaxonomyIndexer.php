@@ -5,11 +5,13 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class TaxonomyIndexer implements TaxonomyIndexerInterface
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
+        private readonly AuthorizationCheckerInterface $authorization,
     ) {
     }
 
@@ -19,7 +21,9 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
         $byParent = [];
 
         foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
+            if ($this->authorization->isGranted('view', $taxonomy)) {
+                $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
+            }
         }
 
         return $this->toSortedIndex($byParent);

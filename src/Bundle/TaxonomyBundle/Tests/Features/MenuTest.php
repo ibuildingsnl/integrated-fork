@@ -27,12 +27,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Strategy\UnanimousStrategy;
 
 final class MenuTest extends TestCase
 {
-    private AuthorizationCheckerInterface $authorizationChecker;
     private TokenStorageInterface $tokenStorage;
     private ResolverInterface $repository;
     private ItemInterface $menu;
@@ -42,14 +40,14 @@ final class MenuTest extends TestCase
     {
         $this->repository = new MemoryTypeResolver([]);
         $this->tokenStorage = new TokenStorage();
-        $this->authorizationChecker = new AuthorizationChecker(
+        $authorizationChecker = new AuthorizationChecker(
             $this->tokenStorage,
             new AccessDecisionManager(
                 [new ContentTypeVoter($this->createMock(ObjectRepository::class))],
                 new UnanimousStrategy(),
             ),
         );
-        $this->menuSubscriber = new ConfigureMenuSubscriber($this->authorizationChecker, new ContentTypeManager(
+        $this->menuSubscriber = new ConfigureMenuSubscriber($authorizationChecker, new ContentTypeManager(
             $this->repository,
             ContentType::class
         ));

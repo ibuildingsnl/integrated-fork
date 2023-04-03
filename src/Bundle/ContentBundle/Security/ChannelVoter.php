@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Security;
 
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\ChannelInterface;
-use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,26 +21,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ChannelVoter implements VoterInterface
 {
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var array
-     */
-    private $permissions;
-
-    public function __construct(ResolverInterface $resolver, array $permissions = [])
+    public function __construct(private array $permissions = [])
     {
-        $this->resolver = $resolver;
         $this->permissions = $this->getOptionsResolver()->resolve($permissions);
     }
 
-    /**
-     * @return OptionsResolver
-     */
-    protected function getOptionsResolver()
+    protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -52,18 +37,12 @@ class ChannelVoter implements VoterInterface
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsAttribute($attribute)
+    public function supportsAttribute($attribute): bool
     {
         return \in_array($attribute, $this->permissions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function vote(TokenInterface $token, $channel, array $attributes)
+    public function vote(TokenInterface $token, $channel, array $attributes): int
     {
         if (!$channel instanceof ChannelInterface) {
             return VoterInterface::ACCESS_ABSTAIN;
@@ -94,7 +73,7 @@ class ChannelVoter implements VoterInterface
             $result = VoterInterface::ACCESS_GRANTED;
 
             if ($this->permissions['read'] == $attribute) {
-                if (!$permissions['read'] && !$permissions['write']) {
+                if (!$permissions['read']) {
                     return VoterInterface::ACCESS_DENIED;
                 }
             }
