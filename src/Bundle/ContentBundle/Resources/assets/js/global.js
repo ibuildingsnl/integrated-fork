@@ -10,7 +10,6 @@ window.iframeWindow = '';
 window.popupShown = false;
 
 $(document).mouseup(function(e) {
-    console.log(popupShown);
     if (popupShown) {
         const closeOutside = $('.close-outside.show');
         const toggleButton = $('.toggle-button');
