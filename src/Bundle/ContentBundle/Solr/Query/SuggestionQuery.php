@@ -34,7 +34,7 @@ class SuggestionQuery extends Query implements WorkflowMarkerInterface
     public function __construct($options = null)
     {
         $this->setOption('query', '');
-        $this->setOption('fields', 'id type_name type_class type_id title pub_time pub_edited image_string');
+        $this->setOption('fields', 'id type_name type_class type_id title pub_time pub_edited file');
         $this->setOption('rows', 5);
         $this->setOption('start', 0);
 
