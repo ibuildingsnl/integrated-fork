@@ -1,12 +1,13 @@
-<figure>
-    <div class="image-wrapper">
-        <span class="content-image">
-            <picture>
-                <img src="{{ uri }}" class="img-responsive" title="{{ title }}" alt="{{ title }}" data-integrated-id="{{ id }}"/>
-            </picture>
-            {{#if credits}}<span class="credit">&copy; {{ credits }}</span>{{/if}}
-        </span>
-    </div>
-    {{#if description}}<figcaption class="caption">{{ description}}</figcaption>{{/if}}
-</figure>
+<img src="{{ uri }}" class="img-responsive" title="{{ title }}" alt="{{ title }}" data-integrated-id="{{ id }}"/>
+{{#if description}}
+    <span class="img-caption">
+        {{ description}}
+        {{#if credits}}
+            <span class="img-credit">
+                (&copy; {{ credits }})
+            </span>
+        {{/if}}
+    </span>
+{{/if}}
+
 
