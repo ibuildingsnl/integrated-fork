@@ -830,6 +830,7 @@
     .iframe-wrapper {
         position: fixed;
         right: 0;
+        left: 0;
         top: 60px;
         margin: 2rem;
         z-index: 1050;
@@ -845,7 +846,7 @@
 
         .media-library {
             height: calc(100vh - 60px - 4rem);
-            width: calc(100vw - 250px - 4rem);
+            width: calc(100vw - 4rem);
             border-radius: 8px;
             background-color: white;
             @include media(max-xl) {
