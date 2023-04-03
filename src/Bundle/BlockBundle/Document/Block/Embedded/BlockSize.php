@@ -51,7 +51,7 @@ class BlockSize
     /**
      * @var int
      */
-    protected $order;
+    protected $order = 0;
 
     /**
      * @return Block

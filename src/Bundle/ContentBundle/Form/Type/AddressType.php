@@ -77,10 +77,10 @@ class AddressType extends AbstractType
     {
         // Set defaults for the resolver
         $resolver->setDefaults([
-                                   'data_class' => Address::class,
-                                   'options' => [],
-                                   'fields' => self::PROPERTIES, // @todo validate options (INTEGRATED-627)
-                               ]);
+            'data_class' => Address::class,
+            'options' => [],
+            'fields' => self::PROPERTIES, // @todo validate options (INTEGRATED-627)
+        ]);
     }
 
     /**

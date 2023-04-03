@@ -11,14 +11,6 @@
 <div id="toolbar" class="w-full flex justify-between">
     <div class="options">
         <div class="form-actions-extra">
-            {% if content is defined and convert is same as (true) %}
-{#                <div class="convert">#}
-                    {% if (content.isPublished and content.getChannels|length > 0) or (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
-                        <!-- TODO: Make a function for this -->
-{#                        <a>{% trans %}Convert to draft{% endtrans %}</a>#}
-                    {% endif %}
-{#                </div>#}
-            {% endif %}
             {% block content_website_links %}
                 {% if content is defined and preview is same as (true) %}
                     <div class="preview">
