@@ -16,17 +16,51 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType): array
+    public function filterTaxonomiesOnId(string $contentType, string $taxonomyId): array
     {
-        $byParent = [];
+        $taxonomies = [];
 
         foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            if ($this->authorization->isGranted('view', $taxonomy)) {
-                $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
+            if ($taxonomy->getParentID() === $taxonomyId || $taxonomy->getId() === $taxonomyId) {
+                $taxonomies[] = $taxonomy;
             }
         }
 
-        return $this->toSortedIndex($byParent);
+        return $taxonomies;
+    }
+
+    /** @return IndexedItem[] */
+    public function buildTaxonomySelectOptions(string $contentType): array
+    {
+        $taxonomies = [];
+
+        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
+            if ($taxonomy->getParentID() === null) {
+                $taxonomies[$taxonomy->getId()] = [
+                    'id' => $taxonomy->getId(),
+                    'name' => $taxonomy->getTitle()
+                ];
+            }
+        }
+
+        return $taxonomies;
+    }
+
+    public function childrenOf(string $contentType, string $parentId): array
+    {
+        return $this->listByParent($contentType)[$parentId] ?? [];
+    }
+
+    //Are we integrating the filtering into this selection?
+    /** @return IndexedItem[] */
+    public function buildTaxonomyIndex(string $contentType, string $root = 'root', bool $filtered = false): array
+    {
+        return $this->toSortedIndex(
+            $this->listByParent($contentType),
+            $root,
+            $filtered ? 1 : 0,
+            $filtered ? [$this->toIndexed($this->taxonomies->byId($root))] : []
+        );
     }
 
     /**
