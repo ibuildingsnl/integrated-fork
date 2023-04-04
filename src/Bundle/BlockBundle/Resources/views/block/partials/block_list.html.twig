@@ -51,7 +51,9 @@
                                     </h3>
                                     <ul>
                                         {% for channel in integrated_find_channels(block) %}
+                                            {% if channel.name is defined %}
                                             <li>{{ channel.name }}</li>
+                                            {% endif %}
                                         {% endfor %}
                                     </ul>
                                     <h3>
