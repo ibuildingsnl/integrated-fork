@@ -828,6 +828,12 @@ div#authorTypes {
 .editor-item-wrapper .select2-container--default .select2-selection--single {
     padding-left: 2.5rem;
 }
+
+.editor-item-wrapper .select2-container--default .select2-selection--single .select2-selection__clear {
+    top: 16px;
+    left: 8px;
+}
 .editor-item-list-container .input-group-addon {
     display: block;
 }
+

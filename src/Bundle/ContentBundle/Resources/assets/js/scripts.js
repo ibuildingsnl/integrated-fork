@@ -137,4 +137,18 @@ $('.alert.alert-dismissible .close').on('click', function() {
     $(this).parent().remove();
 });
 
+var selectElement = $('#integrated_content_parent_id');
 
+if (selectElement) {
+    if (selectElement.find('option:selected').length > 0) {
+        $('.aside-item-wrapper.channels').hide();
+    }
+
+    selectElement.on('select2:select', function(e) {
+        $('.aside-item-wrapper.channels').hide();
+    });
+
+    selectElement.on('select2:unselect', function(e) {
+        $('.aside-item-wrapper.channels').show();
+    });
+}
