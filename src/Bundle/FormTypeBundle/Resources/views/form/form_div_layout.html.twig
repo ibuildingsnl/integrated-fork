@@ -378,11 +378,12 @@
     }) %}
     {% set currentData = integrated_document(data) %}
     {% set parentPath = integrated_content_path(currentData)|join(' > ') %}
+
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% if data %}
                 <option value="{{ data }}" selected="selected">
-                    {% if parentPath is defined %}
+                    {% if parentPath is defined and parentPath != "" %}
                         {{ parentPath }} >
                     {% endif %}
                     {{ currentData.title }}
