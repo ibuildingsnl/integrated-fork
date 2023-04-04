@@ -16,20 +16,6 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /** @return IndexedItem[] */
-    public function filterTaxonomiesOnId(string $contentType, string $taxonomyId): array
-    {
-        $taxonomies = [];
-
-        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            if ($taxonomy->getParentID() === $taxonomyId || $taxonomy->getId() === $taxonomyId) {
-                $taxonomies[] = $taxonomy;
-            }
-        }
-
-        return $taxonomies;
-    }
-
-    /** @return IndexedItem[] */
     public function buildTaxonomySelectOptions(string $contentType): array
     {
         $taxonomies = [];
@@ -64,7 +50,7 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
 
         return $byParent;
     }
-    
+
     /** @return IndexedItem[] */
     public function buildTaxonomyIndex(string $contentType, string $root = 'root', bool $filtered = false): array
     {
