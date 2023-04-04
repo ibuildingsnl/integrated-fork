@@ -93,6 +93,12 @@ body[class*="edit"], body[class*="new"] {
                                 padding: 0.5rem;
                                 max-width: 750px;
                                 position: relative;
+                                display: flex;
+                                align-items: center;
+
+                                i.iconoir-line-space {
+                                    margin-right: 5px;
+                                }
 
                                 input {
                                     width: 100%;
