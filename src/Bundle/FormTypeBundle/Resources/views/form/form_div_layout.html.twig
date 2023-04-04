@@ -160,6 +160,10 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
+            {% if (form.vars.attr.show_headings is not defined or form.vars.attr.show_headings == 'true') %}
+                {% set panel_heading = 'true' %}
+            {% endif %}
+
             {% if (panel_heading is defined and panel_heading == 'true') %}
                 {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
@@ -214,7 +218,9 @@
                             <div id="{{ field.vars.id }}"
                                  class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
                                 <div class="panel-body">
-                                    <i class="iconoir-line-space"></i>
+                                    {% if (panel_heading is not defined) %}
+                                        <i class="iconoir-line-space"></i>
+                                    {% endif %}
                                     {{ form_widget(field) }}
                                     {{ form_errors(field) }}
                                     {% if (panel_heading is not defined) %}

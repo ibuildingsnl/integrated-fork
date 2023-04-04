@@ -3,17 +3,28 @@ $(function() {
         placeholder: "ui-state-highlight"
     });
 
+    function updateAttributes(index) {
+        var select = $(this).find('select');
+        if (select.length > 0) {
+            var newIndex = select.attr('name').replace(/\[\d+\]/, '[' + index + ']');
+            select.attr('name', newIndex);
+        }
+
+        var hiddenInput = $(this).find('input[data-itemorder="collection"]');
+        if (hiddenInput.length > 0) {
+            hiddenInput.val(index);
+        }
+    }
+
     $('.sortable-collection').closest('form').submit(function() {
-        $('.sortable-collection').find('li').each(function(i, element) {
-            $(element).find('input[data-itemorder="collection"]').val(i);
+        $('ul.ui-sortable li').each(function(index) {
+            updateAttributes.call(this, index);
         });
     });
 
     $('.sortable-collection').on('sortupdate', function() {
-        // Loop through each <select> element and update its "name" attribute
-        $('ul.ui-sortable li select').each(function(index) {
-            var newName = $(this).attr('name').replace(/\[\d+\]/, '[' + index + ']');
-            $(this).attr('name', newName);
+        $('ul.ui-sortable li').each(function(index) {
+            updateAttributes.call(this, index);
         });
     });
 });
