@@ -51,7 +51,20 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
         return $this->listByParent($contentType)[$parentId] ?? [];
     }
 
-    //Are we integrating the filtering into this selection?
+    /** @return IndexedItem[] */
+    public function listByParent(string $contentType): array
+    {
+        $byParent = [];
+
+        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
+            if ($this->authorization->isGranted('view', $taxonomy)) {
+                $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
+            }
+        }
+
+        return $byParent;
+    }
+    
     /** @return IndexedItem[] */
     public function buildTaxonomyIndex(string $contentType, string $root = 'root', bool $filtered = false): array
     {

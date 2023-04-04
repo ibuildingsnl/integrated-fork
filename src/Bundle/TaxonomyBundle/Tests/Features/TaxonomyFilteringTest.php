@@ -30,6 +30,28 @@ final class TaxonomyFilteringTest extends TestCase
         $tokens->setToken(new PreAuthenticatedToken(new User(), 'main', ['foo']));
     }
 
+    public function testCreatingSelectOptions() {
+
+         $this->add(
+             $this->taxonomy('trees', 'Trees', 'trees'),
+             $this->taxonomy('oaks', 'Oaks', 'oaks', null, 'trees'),
+             $this->taxonomy('pear', 'Pear', 'pear', null, 'trees'),
+             $this->taxonomy('rocks', 'Rocks', 'rocks'),
+         );
+
+        $list = $this->indexer-> buildTaxonomySelectOptions('taxonomy');
+
+        self::assertCount(2, $list);
+        self::assertEquals('Trees', $list["trees"]["name"]);
+        self::assertEquals('Rocks', $list["rocks"]["name"]);
+    }
+
+    public function testEmptySelectOptions() {
+        $list = $this->indexer-> buildTaxonomySelectOptions('taxonomy');
+
+        self::assertCount(0, $list);
+    }
+
     public function testViewingTheRegularListWhenNotFiltering()
     {
         $this->add(
