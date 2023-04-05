@@ -1068,12 +1068,7 @@
     {% apply spaceless %}
         {% for child in form %}
             {% if not child.rendered %}
-                {% set style = style|default(tailwind_get_style()) %}
-                {% set state = state|default(tailwind_get_state()) %}
-{#                {{ dump(child) }}#}
-{#                {{ style }}#}
-                {{ form_row(child, {style}) }}
-{#                {{ dump(style) }}#}
+                {{ form_row(child) }}
             {% endif %}
         {% endfor %}
     {% endapply %}
