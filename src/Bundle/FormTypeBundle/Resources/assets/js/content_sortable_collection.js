@@ -13,7 +13,6 @@ $(function() {
                 inputs.each(function() {
                     var newIndex = $(this).attr('name').replace(/\[\d+\]/, '[' + index + ']');
                     $(this).attr('name', newIndex);
-                    console.log($(this).attr('name'))
                 });
             }
         }
