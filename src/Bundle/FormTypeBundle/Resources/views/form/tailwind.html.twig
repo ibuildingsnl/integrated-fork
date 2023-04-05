@@ -1068,7 +1068,7 @@
     {% apply spaceless %}
         {% for child in form %}
             {% if not child.rendered %}
-                {{ form_row(child, {style}) }}
+                {{ form_row(child) }}
             {% endif %}
         {% endfor %}
     {% endapply %}
