@@ -109,7 +109,7 @@
             right: 0;
             bottom: 0;
             top: 0;
-            height: 100%;
+            height: calc(100vh - 60px);
             z-index: 1050;
             display: none;
 
@@ -128,6 +128,7 @@
                 color: black;
                 border-left: 1px solid #eaeaea;
                 border-radius: 0px;
+
                 i:before {
                     width: 30px;
                     height: 30px;
@@ -135,7 +136,7 @@
             }
 
             .uppy-Dashboard-inner {
-                height: 100vh !important;
+                height: calc(100vh - 60px) !important;
                 border-radius: 0px;
 
                 .uppy-StatusBar-actionBtn--upload, .uppy-DashboardContent-save, .uppy-StatusBar-actionBtn {
@@ -905,7 +906,8 @@
     .content-wrapper {
         width: 100%;
         padding: 50px 0 0 0;
-        height:100%;
+        height: 100%;
+
         .index-wrapper {
             max-height: 100%;
         }
@@ -915,6 +917,14 @@
         height: calc(100vh - 50px);
         @include media(max-sm) {
             margin-top: -50px;
+        }
+    }
+
+    .media-library .media-gallery div#upload_container {
+        height: 100vh;
+        .uppy-Dashboard-inner {
+            height: 100vh !important;
+            border-radius: 0px;
         }
     }
 
