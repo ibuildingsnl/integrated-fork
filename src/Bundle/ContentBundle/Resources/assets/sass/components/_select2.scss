@@ -825,8 +825,10 @@ div#authorTypes {
     height: 56px;
     width: 36px;
 }
-.editor-item-wrapper .select2-container--default .select2-selection--single {
-    padding-left: 2.5rem;
+.editor-item-wrapper, .aside-item-wrapper {
+    .select2-container--default .select2-selection--single {
+        padding-left: 2.5rem;
+    }
 }
 
 .editor-item-wrapper .select2-container--default .select2-selection--single .select2-selection__clear {
