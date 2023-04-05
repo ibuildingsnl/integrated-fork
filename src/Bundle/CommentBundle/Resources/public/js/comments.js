@@ -1,5 +1,4 @@
 $(function () {
-
     /**
      * Show add comment button
      * @param {string} fieldName
@@ -8,6 +7,14 @@ $(function () {
      * @param {jQuery} $container
      */
     let showCommentButton = function(fieldName, position, $parent, $container) {
+
+        if (null != $parent) {
+            let isDisabled = $parent.attr('disable-comments')
+            if (1 == isDisabled) {
+                return
+            }
+        }
+
         let $div = $('<div class="add-comment-button btn btn-dark-green hold">Add a Comment</div>');
 
         $div.mousedown(function(e) {
@@ -112,6 +119,8 @@ $(function () {
     let createAddedCommentLine = function($parent) {
         let commentId = $parent.data('comment-id');
 
+        console.log("create comment?")
+        console.log($parent)
 
         let $label = false;
         if ($parent.parent().hasClass("editor-item-list-container")) {
