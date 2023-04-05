@@ -99,7 +99,7 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'megaphone', 'disable-comments' => true]], location: 'sidebar')]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'megaphone']], location: 'sidebar')]
     protected $source;
 
     /**
@@ -108,7 +108,7 @@ class Article extends Content implements RankableInterface
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'priority' => 440,
         'label' => 'Source URL',
-        'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window', 'disable-comments' => true],
+        'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
     ], location: 'sidebar')]
     protected $sourceUrl;
 
