@@ -177,15 +177,21 @@
 
                                 {% block content_options %}
                                     {% set options = false %}
-                                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS'))  %}
+                                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                         {% set options = true %}
                                     {% endfor %}
+                                    {% if form.children.customFields is defined %}
+                                        {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                            {% set options = true %}
+                                        {% endfor %}
+                                    {% endif %}
                                     {% if options == true %}
                                         <div class="aside-item-wrapper">
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-settings"></i>
-                                                    <span class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
+                                                    <span
+                                                        class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
                                                 </h3>
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
@@ -194,6 +200,13 @@
                                                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                                         {{ form_row(child) }}
                                                     {% endfor %}
+                                                    {% block custom_sidebar_fields %}
+                                                        {% if form.children.customFields is defined %}
+                                                            {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                                {{ form_row(field) }}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endblock %}
                                                 </div>
                                             </div>
                                         </div>
@@ -219,7 +232,13 @@
                                 {{ form_row(child) }}
                             {% endfor %}
 
-                            {{ form_rest(form) }}
+                            {% if form.children.customFields is defined %}
+                                {% for field in form.children.customFields %}
+                                    {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                                {% endfor %}
+                            {% endif %}
+
+                            {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                         {% endblock %}
                     </section>
                 </div>
