@@ -123,9 +123,6 @@ $(function () {
     let createAddedCommentLine = function($parent) {
         let commentId = $parent.data('comment-id');
 
-        console.log("create comment?")
-        console.log($parent)
-
         let $label = false;
         if ($parent.parent().hasClass("editor-item-list-container")) {
             $parent.closest('.editor-item-wrapper').addClass('comment-set');
@@ -183,7 +180,7 @@ $(function () {
      * Removes all buttons and modals related to comment bundle
      */
     let removeControls = function() {
-        $('.comment-holder, .add-comment-button, .modal-backdrop').remove();
+        $('.comment-holder, .add-comment-button, .modal-backdrop, .remove-all-comments').remove();
     };
 
     /**
