@@ -212,7 +212,9 @@
 
                     {% if form.children.customFields is defined %}
                         {% for field in form.children.customFields %}
-                            {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                            {% if not field.rendered %}
+                                {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
 

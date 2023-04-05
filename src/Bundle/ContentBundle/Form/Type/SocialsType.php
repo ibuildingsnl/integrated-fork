@@ -21,7 +21,7 @@ class SocialsType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add social',
             'label' => 'Socials',
-            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show', 'show_headings' => 'false'],
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show', 'show_headings' => false],
         ]);
     }
 }

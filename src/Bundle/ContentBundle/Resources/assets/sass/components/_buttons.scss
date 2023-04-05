@@ -148,8 +148,9 @@ button * {
     }
 
     &.btn-blue {
-        color: $color-white;
-        background: $color-azure-radiance;
+        color: $color-azure-radiance;
+        background: white;
+        border-color:$color-azure-radiance;
 
         &:hover, &:focus {
             color: $color-white;

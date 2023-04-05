@@ -54,7 +54,7 @@ class TailwindCollectionType extends AbstractType
             'prototype' => true,
             'prototype_name' => '__name__',
             'add_button_text' => 'Add',
-            'add_button_class' => 'btn',
+            'add_button_class' => 'btn btn-blue',
             'delete_button_text' => '',
             'delete_button_class' => 'remove',
             'options' => [],
