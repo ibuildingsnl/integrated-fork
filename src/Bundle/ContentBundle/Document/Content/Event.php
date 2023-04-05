@@ -25,7 +25,7 @@ class Event extends Article
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
         'priority' => 495,
         'label' => 'Event start',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
+        'attr' => ['style' => 'sidebar', 'icon' => 'calendar' , 'disable-comments' => true],
     ], location: 'sidebar')]
     protected $startDate;
 
@@ -35,7 +35,7 @@ class Event extends Article
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
         'priority' => 494,
         'label' => 'Event end',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
+        'attr' => ['style' => 'sidebar', 'icon' => 'calendar', 'disable-comments' => true],
     ], location: 'sidebar')]
     protected $endDate;
 

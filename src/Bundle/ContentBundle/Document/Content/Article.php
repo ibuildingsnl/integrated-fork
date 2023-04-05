@@ -61,7 +61,7 @@ class Article extends Content implements RankableInterface
      * @var string
      */
     #[Slug(fields: ['title'])]
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link']], location: 'sidebar')]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'link', 'disable-comments' => true]], location: 'sidebar')]
     protected $slug;
 
     /**
@@ -81,6 +81,7 @@ class Article extends Content implements RankableInterface
             'data-types' => '[{"type":"image","name":"Image"}]',
             'data-emptytext' => 'Select featured image',
             'data-multiple' => false,
+            'disable-comments' => true
         ],
     ], location: 'sidebar')]
     protected $featuredImage;
@@ -98,7 +99,7 @@ class Article extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'megaphone']], location: 'sidebar')]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'megaphone', 'disable-comments' => true]], location: 'sidebar')]
     protected $source;
 
     /**
@@ -107,7 +108,7 @@ class Article extends Content implements RankableInterface
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\UrlType', options: [
         'priority' => 440,
         'label' => 'Source URL',
-        'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window'],
+        'attr' => ['style' => 'sidebar', 'icon' => 'open-new-window', 'disable-comments' => true],
     ], location: 'sidebar')]
     protected $sourceUrl;
 
@@ -148,6 +149,7 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'pin-alt',
+            'disable-comments' => true
         ],
     ], location: 'sidebar')]
     protected $address;

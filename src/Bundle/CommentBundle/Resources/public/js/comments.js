@@ -9,8 +9,12 @@ $(function () {
     let showCommentButton = function(fieldName, position, $parent, $container) {
 
         if (null != $parent) {
-            let isDisabled = $parent.attr('disable-comments')
-            if (1 == isDisabled) {
+            let isDisabledOnParent = $parent.attr('disable-comments')
+            if (1 == isDisabledOnParent) {
+                return
+            }
+            let isDisabledOnGrandParent = $parent.parent().parent().parent().parent().attr('disable-comments')
+            if (1 == isDisabledOnGrandParent) {
                 return
             }
         }
