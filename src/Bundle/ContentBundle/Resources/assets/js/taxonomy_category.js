@@ -214,7 +214,7 @@ function showEnabledCategoryPills() {
 function appendPill(pill_text) {
     const node = document.createElement("div");
     node.classList.add('active_category');
-    node.appendChild(document.createTextNode(pill_text));
+    node.innerHTML = pill_text;
     document.querySelector(current_relation.pills_selector).appendChild(node);
 }
 

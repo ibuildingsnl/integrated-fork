@@ -986,6 +986,10 @@
                 <source>No scrapers added</source>
                 <target>Er zijn nog geen scrapers toegevoegd</target>
             </trans-unit>
+            <trans-unit id="250">
+                <source>Current Selection:</source>
+                <target>Huidige Selectie:</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
