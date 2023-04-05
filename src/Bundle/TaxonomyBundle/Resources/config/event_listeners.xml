@@ -18,6 +18,11 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
+        <service id="integrated_taxonomy.event_listener.channel_inheritance" class="\Integrated\Bundle\TaxonomyBundle\EventListener\TaxonomyChannelInheritanceListener">
+            <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
     </services>
 
 </container>

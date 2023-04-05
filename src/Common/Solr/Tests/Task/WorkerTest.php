@@ -164,7 +164,6 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
                 self::assertSame($instance, $event->getWorker());
 
                 if ($event instanceof ErrorEvent) {
-                    print_r('test');
                     self::assertSame($message, $event->getMessage());
                     self::assertSame($exception, $event->getException());
                 }
