@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -10,7 +10,7 @@ class SocialsType extends AbstractType
 {
     public function getParent(): string
     {
-        return TailwindCollectionType::class;
+        return SortableCollectionType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -21,7 +21,7 @@ class SocialsType extends AbstractType
             'allow_delete' => true,
             'add_button_text' => 'Add social',
             'label' => 'Socials',
-            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
+            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show', 'show_headings' => 'false'],
         ]);
     }
 }
