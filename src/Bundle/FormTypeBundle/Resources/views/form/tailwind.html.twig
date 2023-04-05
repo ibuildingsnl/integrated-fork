@@ -172,7 +172,10 @@
             {% if form.vars.allow_add %}
                 <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection"
                    data-collection="{{ form.vars.id }}"
-                   data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
+                   data-prototype-name="{{ prototype_name }}">
+                    <span>{{ add_button_text|trans({}, translation_domain) }}</span>
+                    <i class="iconoir-plus"></i>
+                </a>
             {% endif %}
         </div>
     {% endapply %}
