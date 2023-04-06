@@ -12,10 +12,15 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Bulk\Action\DeleteAction;
+use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
+use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
@@ -190,6 +195,38 @@ class MediaController extends AbstractController
         }
 
         return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
+    }
+
+    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): void
+    {
+        //Get bulkselection ID`s
+        $content = $request->getContent();
+        if ($content) {
+            $jsonContent = json_decode($content);
+            $bulkSelection = $jsonContent->bulkselection;
+
+            $request->query->set('ids', $bulkSelection);
+        }
+
+        //Get content
+        $testid = 'f78eb80adeb13890898336b2924f2d76';
+        $content = $this->documentManager->getRepository(Content::class)->find($testid);
+
+        //Create delete handler? Not sure
+        $searchContentReferenced = new SearchContentReferenced($this->documentManager);
+        $deleteHandler = new DeleteHandler($this->documentManager, $searchContentReferenced, true);
+        $bulkAction = new BulkAction;
+
+//        $
+
+//        dd($deleteHandler);
+
+//        $bulkAction->addSelection($bulkSelection);
+//        $bulkAction->addAction($deleteHandler);
+        $bulkAction->addSelection($content);
+        dd($bulkAction);
+
+
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

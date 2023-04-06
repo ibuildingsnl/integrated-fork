@@ -92,6 +92,24 @@ $(".uppy-close").on("click", function () {
     $('#upload_container').removeClass('show').removeClass('close-outside');
 });
 
+let bulkDeleteEnabled = false
+$("#bulkdelete").on("click", async function() {
+    bulkDeleteEnabled = !bulkDeleteEnabled
+    if (bulkDeleteEnabled) {
+        await enableBulkSelection()
+        bulkSelectionEnabled = true
+    } else {
+        await disableBulkSelection()
+        bulkSelectionEnabled = false
+    }
+})
+
+$("#confirm_delete").on("click", async function() {
+    await askForConfirmation()
+})
+
+console.log("loading mg")
+
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
         await disableBulkSelection()
@@ -181,6 +199,42 @@ function handleBulkItemClick(event) {
 
     latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
     draggingAmountOfItems = bulkSelection.length
+}
+
+async function askForConfirmation() {
+    //TODO
+    //show popup
+    //user can confirm / cancel
+    //cancel = close popup
+    //confirm = send ajax request
+    await confirmDelete()
+}
+
+async function confirmDelete() {
+    console.log("deleting")
+    console.log(bulkSelection)
+    console.log(bulkdelete_path)
+
+    const json_content = JSON.stringify({
+        csrf: document.querySelector('#media_category_csrf').value,
+        bulkselection: bulkSelection,
+    })
+
+    deleteData(bulkdelete_path, json_content)
+
+    async function deleteData(url = '', data = {}) {
+        const response = await fetch(url, {
+            method: 'PUT',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: data
+        });
+
+        return response;
+    }
 }
 
 async function disableBulkSelection() {

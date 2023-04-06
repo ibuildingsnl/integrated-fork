@@ -24,4 +24,8 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::uploadFile</default>
     </route>
 
+    <route id="integrated_content_media_bulkdelete" path="/bulk_delete" methods="GET, PUT">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::bulkDelete</default>
+    </route>
+
 </routes>
