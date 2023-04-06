@@ -182,3 +182,17 @@
     </div>
 
 {% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+
+        $('form[name="page_filter"]').on('change', function () {
+            $(this).trigger('submit');
+        });
+    });
+</script>
+{% endblock %}
