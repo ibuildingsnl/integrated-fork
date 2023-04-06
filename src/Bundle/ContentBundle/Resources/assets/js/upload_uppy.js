@@ -27,6 +27,11 @@ function inititalizeUppy(uppyOptions) {
     }
 
     let uppy = new Uppy({
+        restrictions: {
+            maxFileSize: 50000000, //50 MB
+            allowedFileTypes: ['image/*', 'video/*', 'doc', 'docx', 'pdf', 'xls', 'xlsx'],
+        },
+
         // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
             // We have 2 entry points: when a user selects a ContentType, and when he clicks on the add button.
