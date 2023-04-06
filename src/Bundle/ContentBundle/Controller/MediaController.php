@@ -179,7 +179,7 @@ class MediaController extends AbstractController
         try {
             $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
-            //save the FILE
+            // save the FILE
             $this->taxonomyRelationManager->runSolrQueue();
 
             $request->attributes->set('media_id', $file->getId());
