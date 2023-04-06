@@ -5,29 +5,27 @@
         <div class="flex flex-wrap">
 
             <div class="select-options ml-2 mt-2">
-                {% if id_select_options|default([])|length > 0 %}
+                {% if filter_options|default([])|length > 0 %}
                     <ul class="mr-2">
                         <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" id="filtering-list"
-                               class="btn btn-select space-between"><span>{{ id_select_options.options[id_select_options.current].name|trans }}</span>
-                                <i class="iconoir-nav-arrow-down"></i></a>
+                            <a data-toggle="dropdown" role="button" id="filtering-list" class="btn btn-select space-between">
+                                <span>{{ filter_options[filter]|trans|capitalize }}</span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
                             <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-
-                                {% for content_type_key, content_type in id_select_options.options %}
-
-                                    <li {% if content_type_key == id_select_options.current %}class="active"
-                                        {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                            merge({'filter_id': content_type_key == id_select_options.default ? null : content_type_key })|
-                                            merge({'page':1})
-                                        ) }}"
-                                           tabindex="-1"
-                                           role="menuitem">{{ content_type.name|trans|capitalize }}
+                                {% for filter_id, filter_name in filter_options %}
+                                    <li{% if filter_id == filter %} class="active"{% endif %} role="presentation">
+                                        <a
+                                            href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
+                                                merge({'filter': filter_id })|
+                                                merge({'page':1})
+                                            ) }}"
+                                           role="menuitem"
+                                        >
+                                            {{ filter_name|trans|capitalize }}
                                         </a>
                                     </li>
-
                                 {% endfor %}
-
                             </ul>
                         </li>
                     </ul>

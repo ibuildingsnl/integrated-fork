@@ -15,40 +15,10 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     ) {
     }
 
-    /** @return IndexedItem[] */
-    public function buildTaxonomySelectOptions(string $contentType): array
-    {
-        $taxonomies = [];
-
-        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            if ($taxonomy->getParentID() === null) {
-                $taxonomies[$taxonomy->getId()] = [
-                    'id' => $taxonomy->getId(),
-                    'name' => $taxonomy->getTitle()
-                ];
-            }
-        }
-
-        return $taxonomies;
-    }
-
+    /** @return string[] */
     public function childrenOf(string $contentType, string $parentId): array
     {
-        return $this->listByParent($contentType)[$parentId] ?? [];
-    }
-
-    /** @return IndexedItem[] */
-    public function listByParent(string $contentType): array
-    {
-        $byParent = [];
-
-        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
-            if ($this->authorization->isGranted('view', $taxonomy)) {
-                $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
-            }
-        }
-
-        return $byParent;
+        return array_map(fn(Taxonomy $t) => $t->getTitle(), $this->listByParent($contentType)[$parentId] ?? []);
     }
 
     /** @return IndexedItem[] */
@@ -60,6 +30,20 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
             $filtered ? 1 : 0,
             $filtered ? [$this->toIndexed($this->taxonomies->byId($root))] : []
         );
+    }
+
+    /** @return Taxonomy[][] */
+    private function listByParent(string $contentType): array
+    {
+        $byParent = [];
+
+        foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
+            if ($this->authorization->isGranted('view', $taxonomy)) {
+                $byParent[$taxonomy->getParentID() ?: 'root'][$taxonomy->getId()] = $taxonomy;
+            }
+        }
+
+        return $byParent;
     }
 
     /**

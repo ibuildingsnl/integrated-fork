@@ -32,19 +32,6 @@ final class IndexController extends AbstractController
         $contentType = $this->typeResolver->getType($request->get('type', 'taxonomy'));
         $content = $contentType->create();
 
-        $filterId = $request->get('filter_id', 'root');
-        $idSelectOptions = [
-            'options' => [
-                'root' => [
-                    'id' => '',
-                    'name' => 'all taxonomies',
-                ],
-                ...$this->indexer->buildTaxonomySelectOptions($contentType->getId()),
-            ],
-            'current' => $filterId,
-            'default' => 'root'
-        ];
-
         if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
         }
@@ -76,12 +63,14 @@ final class IndexController extends AbstractController
             return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()]);
         }
 
+        $filter = $request->get('filter', 'root');
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
             'form' => $form->createView(),
-            'id_select_options' => $idSelectOptions,
+            'filter_options' => ['root' => 'Show all'] + $this->indexer->childrenOf($contentType->getId(), 'root'),
+            'filter' => $filter,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
-                $this->indexer->buildTaxonomyIndex($contentType->getId(), $filterId, $filterId === 'root' ? 0 : 1),
+                $this->indexer->buildTaxonomyIndex($contentType->getId(), $filter, $filter !== 'root'),
                 $request->query->getInt('page', 1),
                 15,
             ),
