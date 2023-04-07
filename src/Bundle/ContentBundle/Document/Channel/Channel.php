@@ -376,7 +376,7 @@ class Channel implements ChannelInterface
      */
     public function getDomains()
     {
-        return $this->domains?: [];
+        return $this->domains ?: [];
     }
 
     /**
