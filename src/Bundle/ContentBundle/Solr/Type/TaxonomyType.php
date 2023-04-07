@@ -31,6 +31,7 @@ class TaxonomyType implements TypeInterface
         // Relation field and facet field for taxonomy, commercial and edition relations
         $items = array_merge(
             $data->getRelationsByRelationType('taxonomy')->toArray(),
+            $data->getRelationsByRelationType('taxonomy_category')->toArray(),
             $data->getRelationsByRelationType('commercial')->toArray(),
             $data->getRelationsByRelationType('edition')->toArray()
         );

@@ -70,7 +70,7 @@ class FeaturedItemsItem
      * @var int
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
-    protected $order;
+    protected $order = 0;
 
     /**
      * @return string

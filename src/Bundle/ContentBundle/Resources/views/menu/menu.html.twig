@@ -42,7 +42,7 @@
             {% if 'current_ancestor' in classes %}
                 {% set state = 'sidebar-sub-menu show' %}
             {% else %}
-                {% set state = 'sidebar-sub-menu hide' %}
+                {% set state = 'sidebar-sub-menu show' %}
             {% endif %}
             {%- set classes = classes|merge({'class': state}) %}
         {% endif %}

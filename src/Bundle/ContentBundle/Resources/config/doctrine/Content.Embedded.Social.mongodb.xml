@@ -5,7 +5,6 @@
 
     <embedded-document name="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social">
 
-        <field field-name="icon" type="string" />
         <field field-name="url" type="string" />
 
     </embedded-document>

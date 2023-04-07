@@ -69,7 +69,7 @@
                             <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
                             <span class="checkmark"></span>
                             <div class="background"></div>
-                            {{ category.title }}
+                            {{ category.title|raw }}
                         </label>
                     </div>
                 </li>

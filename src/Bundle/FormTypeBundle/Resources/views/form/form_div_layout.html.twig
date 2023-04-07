@@ -160,27 +160,50 @@
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
 
-            {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ field.vars.value.title|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
-            {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+            {% if (form.vars.attr.show_headings is not defined or form.vars.attr.show_headings == 'true') %}
+                {% set panel_heading = 'true' %}
             {% endif %}
-            {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
-            {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
-            {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
+
+            {% if (panel_heading is defined and panel_heading == 'true') %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-line-space"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+                {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
+                {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
+                {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
+            {% else %}
+                {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body"><i class="iconoir-line-space"></i>' ~ form_widget(prototype, prototype_vars) %}
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                {% endif %}
+                {% set prototype_html = prototype_html ~ '</div></div>' %}
+                {% set prototype_html = '<div class="panel panel-default in">' ~ prototype_html ~ '</div>' %}
+            {% endif %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('sortable-collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="sortable-collection-widget">
-            <ul class="bc-collection panel-group sortable-collection ui-sortable">
+        <div {{ block('widget_container_attributes') }} class="">
+            <ul class="bc-collection panel-group sortable-collection ui-sortable {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
 
                     <li class="ui-sortable-handle">
                         <div class="panel panel-default">
+                            {% if (panel_heading is defined and panel_heading == 'true') %}
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse">
-                                        <i class="iconoir-line-space"></i><span>{{ field.vars.value.title|default(form.vars.default_title|default('Item')) }}</span>
+                                        <i class="iconoir-line-space"></i>
+                                        <span>
+                                            {{ field.vars.value.title|
+                                            default(field.vars.value.label|
+                                            default(field.vars.value.block|
+                                            default(field.vars.value.text|
+                                            default(form.vars.default_title|
+                                            default('Item'))))) }}
+                                        </span>
                                     </a>
                                     {% if form.vars.allow_delete %}
                                         <a href="javascript:;" class="remove"
@@ -191,11 +214,24 @@
                                     {% endif %}
                                 </h4>
                             </div>
+                            {% endif %}
                             <div id="{{ field.vars.id }}"
                                  class="panel-collapse collapse{% if not field.vars.valid %} in{% endif %}">
                                 <div class="panel-body">
+                                    {% if (panel_heading is not defined) %}
+                                        <i class="iconoir-line-space"></i>
+                                    {% endif %}
                                     {{ form_widget(field) }}
                                     {{ form_errors(field) }}
+                                    {% if (panel_heading is not defined) %}
+                                        {% if form.vars.allow_delete %}
+                                            <a href="javascript:;" class="remove"
+                                               title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
+                                               data-removefield="collection" data-field="{{ field.vars.id }}">
+                                                <i class="iconoir-cancel"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -205,7 +241,7 @@
             </ul>
 
             {% if form.vars.allow_add %}
-                <a href="javascript:;" class="btn"
+                <a href="javascript:;" class="btn btn-blue"
                    title="{{ form.vars.add_button_text|trans({}, translation_domain) }}"
                    data-addfield="collection" data-collection="{{ form.vars.id }}"
                    data-prototype-name="{{ prototype_name }}">
@@ -239,7 +275,7 @@
             {% endif %}
 
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -256,8 +292,10 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
+
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="collection-widget">
+        <div {{ block('widget_container_attributes') }}>
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
@@ -266,7 +304,16 @@
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.name|default(form.vars.default_title|default('Item')) }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i>
+                                            <span class="capitalize">
+                                                {{ field.vars.value.title|
+                                                default(field.vars.value.label|
+                                                default(field.vars.value.block|
+                                                default(field.vars.value.text|
+                                                default(field.vars.value.frequency|
+                                                default(form.vars.default_title|
+                                                default('Item')))))) }}
+                                            </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"
@@ -301,7 +348,10 @@
             {% if form.vars.allow_add %}
                 <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection"
                    data-collection="{{ form.vars.id }}"
-                   data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
+                   data-prototype-name="{{ prototype_name }}">
+                    <span>{{ add_button_text|trans({}, translation_domain) }}</span>
+                    <i class="iconoir-plus"></i>
+                </a>
             {% endif %}
         </div>
     {% endapply %}
@@ -357,10 +407,18 @@
         'data-allow-clear' : (allow_clear ? 'true' : 'false'),
         'class' : (attr.class|default('') ~ ' form-control integrated_content_choice')|trim,
     }) %}
+    {% set currentData = integrated_document(data) %}
+    {% set parentPath = integrated_content_path(currentData)|join(' > ') %}
+
     {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% if data %}
-                <option value="{{ data }}" selected="selected">{% trans %}Keep current selection{% endtrans %}</option>
+                <option value="{{ data }}" selected="selected">
+                    {% if parentPath is defined and parentPath != "" %}
+                        {{ parentPath }} >
+                    {% endif %}
+                    {{ currentData.title }}
+                </option>
             {% endif %}
         </select>
     {% endapply %}
@@ -456,7 +514,7 @@
             </div>
         {% elseif style == 'editor' %}
             <div
-                class="editor-item-wrapper{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="editor-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">
@@ -500,7 +558,7 @@
                         {% for media in imageArray %}
                             {% if integrated_document(media).file is defined %}
                                 {% set image = integrated_document(media).file %}
-                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                {% set thumbnail = integrated_image(image).resize(200, 200) %}
                                 <li id="{{ media }}"
                                     data-id="{{ media }}"
                                     data-file="{{ image }}"
@@ -565,7 +623,7 @@
                         {% for media in imageArray %}
                             {% if integrated_document(media).file is defined %}
                                 {% set image = integrated_document(media).file %}
-                                {% set thumbnail = integrated_image(image).zoomCrop(200, 200) %}
+                                {% set thumbnail = integrated_image(image).resize(200, 200) %}
                                 <li id="{{ media }}"
                                     data-id="{{ media }}"
                                     data-file="{{ image }}"

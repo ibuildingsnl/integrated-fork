@@ -35,9 +35,6 @@ $('.integrated_tinymce').each(function(key, elem){
         {title: 'Heading 3', block: 'h3' },
         {title: 'Heading 4', block: 'h4' },
         {title: 'Heading 5', block: 'h5' },
-        {title: 'Preformatted (fixed font)', block: 'pre' },
-        {title: 'Superscript', icon: "superscript", inline: 'sup'},
-        {title: 'Subscript', icon: "subscript", inline: 'sub'}
     ];
 
     style_formats = style_formats.concat(element.data('format_styles'));
@@ -48,21 +45,17 @@ $('.integrated_tinymce').each(function(key, elem){
         plugins:
              "advlist autolink link lists charmap anchor pagebreak " +
              "searchreplace wordcount visualchars fullscreen nonbreaking " +
-             "table directionality template wordcount autoresize code " +
+             "table directionality wordcount autoresize code " +
              "integratedbrowser"
         ,
-        external_plugins: {
-            // TODO: update plugin INTEGRATED-1779
-            //"integratedBrowser": "/bundles/integratedformtype/js/tinymce-plugins/integrated-browser/plugin.js",
-        },
         add_unload_trigger: false,
         schema: "html5",
-        menubar: true,
+        menubar: 'edit view insert format tools table',
         branding: false,
         toolbar:
-            "styles | bold italic underline | bullist numlist | " +
-            "link anchor integratedimage integratedvideo integratedColumn image media print preview fullpage table | " +
-            "charmap pagebreak | pastetext searchreplace | code fullscreen",
+            "styles | bold italic underline subscript superscript | bullist numlist | " +
+            "link anchor table charmap | integratedimage integratedvideo image media | print | " +
+            "pastetext searchreplace | fullscreen",
         toolbar_sticky: false,
         toolbar_location: 'top',
         statusbar: true,

@@ -19,13 +19,13 @@
 
             &.first-child {
                 label {
-                    padding-left: 10px;
+                    padding-left: 24px !important;
                 }
             }
 
-            &.second-child {
+            &.secondary-child {
                 label {
-                    padding-left: 20px;
+                    padding-left: 36px !important;
                 }
             }
         }

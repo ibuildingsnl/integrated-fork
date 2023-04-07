@@ -20,17 +20,17 @@ final class IndexedItem
         return $this->taxonomyId;
     }
 
-    public function getTitle(): string|null
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function getDescription(): string|null
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getSlug(): string|null
+    public function getSlug(): ?string
     {
         return $this->slug;
     }

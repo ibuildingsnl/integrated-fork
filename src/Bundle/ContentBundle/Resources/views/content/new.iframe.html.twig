@@ -3,45 +3,7 @@
 {% block style %}
     {{ parent() }}
 
-    <style type="text/css">
-        #wrapper-holder {
-            padding-bottom: 85px;
-            top: 0px;
-        }
-
-        #wrapper-holder > .container {
-            width: auto;
-            background: #fff;
-        }
-
-        #wrapper-holder > .container .section-radius {
-            box-shadow: none;
-        }
-
-        .add-relation {
-            display: none;
-        }
-
-        .prefooter-holder {
-            border-top: 1px solid #e5e5e5;
-            background: #fcfcfc;
-        }
-        .aside-options {
-            height: calc(100vh - 50px);
-        }
-        .aside-options .aside-holder {
-            padding-top:0;
-        }
-        .sidebar {
-            display: none;
-        }
-        .content-wrapper {
-            width: 100%;
-        }
-        #wrapper-holder {
-            height: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
 {% endblock %}
 
 {% block header %}{% endblock %}
@@ -54,9 +16,8 @@
     {{ parent() }}
     <script>
         $('button[data-dismiss="modal"]').click(function() {
-            parent.$('.modal-backdrop').remove();
-            parent.$("#relation-add-modal.modal").hide();
-
+            parent.$('#relation-add-modal.modal').removeClass('show');
+            parent.$('#dropdown_overlay').addClass('hide');
         });
     </script>
 {% endblock %}

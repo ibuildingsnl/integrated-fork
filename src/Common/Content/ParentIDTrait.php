@@ -23,6 +23,7 @@ trait ParentIDTrait
         'label' => 'Parent',
         'route' => 'integrated_content_parent_id_lookup',
         'attr' => ['style' => 'editor', 'state' => 'show'],
+        'allow_clear' => true,
     ], location: 'editor')]
     protected $parent_id;
 

@@ -35,12 +35,22 @@
 
 .content-wrapper {
     width: 100%;
+    height: 100vh;
+}
+
+.content-wrapper .editor-wrapper {
+    height: calc(100vh - 50px);
+    padding-bottom: 50px;
 }
 
 #wrapper-holder {
     height: 100%;
 }
 
-#toolbar .back .form-group {
-    display: none;
+.fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header, .show-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    width: calc(100% - 365px);
+}
+
+.hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+    width: 100%;
 }

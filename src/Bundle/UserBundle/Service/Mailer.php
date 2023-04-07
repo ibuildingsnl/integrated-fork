@@ -10,6 +10,7 @@
 
 namespace Integrated\Bundle\UserBundle\Service;
 
+use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\UserBundle\Model\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -34,6 +35,11 @@ class Mailer
     private $keyGenerator;
 
     /**
+     * @var ThemeManager
+     */
+    private $themeManager;
+
+    /**
      * @var string|null
      */
     private $from;
@@ -43,11 +49,12 @@ class Mailer
      */
     private $name;
 
-    public function __construct(MailerInterface $mailer, TranslatorInterface $translator, KeyGenerator $keyGenerator, ?string $from, ?string $name)
+    public function __construct(MailerInterface $mailer, TranslatorInterface $translator, KeyGenerator $keyGenerator, ThemeManager $themeManager, ?string $from, ?string $name)
     {
         $this->mailer = $mailer;
         $this->translator = $translator;
         $this->keyGenerator = $keyGenerator;
+        $this->themeManager = $themeManager;
         $this->from = $from;
         $this->name = $name;
     }
@@ -71,7 +78,7 @@ class Mailer
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
-            ->htmlTemplate('@IntegratedUser/mail/password.reset.html.twig')
+            ->htmlTemplate($this->themeManager->locateTemplate('/mail/password.reset.html.twig'))
             ->subject($data['subject'])
             ->context($data);
 
@@ -93,7 +100,29 @@ class Mailer
         $message = (new TemplatedEmail())
             ->from(new Address($this->from, $this->name))
             ->to($user->getUserIdentifier())
-            ->htmlTemplate('@IntegratedUser/mail/activate.html.twig')
+            ->htmlTemplate($this->themeManager->locateTemplate('/mail/activate.html.twig'))
+            ->subject($data['subject'])
+            ->context($data);
+
+        $this->mailer->send($message);
+    }
+
+    public function sendAccountActivatedMail(User $user, bool $website = false)
+    {
+        $timestamp = time();
+        $key = $this->keyGenerator->generateKey($timestamp, $user);
+
+        $data = [
+            'subject' => '[Integrated] '.$this->translator->trans('Activated'),
+            'user' => $user,
+            'timestamp' => $timestamp,
+            'website' => $website,
+        ];
+
+        $message = (new TemplatedEmail())
+            ->from(new Address($this->from, $this->name))
+            ->to($user->getUserIdentifier())
+            ->htmlTemplate($this->themeManager->locateTemplate('/mail/account-activated.html.twig'))
             ->subject($data['subject'])
             ->context($data);
 

@@ -16,6 +16,7 @@
         {% for item in grid.items %}
             {% if item.block %}
                 {% if edit|default %}<div class="integrated-website-sortable" data-block-type="block" data-id="{{ item.block.id }}">{% endif %}
+                <div class="integrated-block">
                 {% if item.attributes|length %}
                     <div{% for key, value in item.attributes %} {{ key }}="{{ value }}"{% endfor %}>
                     {{ integrated_block(item.block, {'gridLevel': level}) }}
@@ -23,6 +24,7 @@
                 {% else %}
                     {{ integrated_block(item.block, {'gridLevel': level}) }}
                 {% endif %}
+                </div>
                 {% if edit|default %}</div>{% endif %}
             {% endif %}
 

@@ -11,9 +11,6 @@
 
 namespace Integrated\Common\Block;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 interface BlockInterface
 {
     /**

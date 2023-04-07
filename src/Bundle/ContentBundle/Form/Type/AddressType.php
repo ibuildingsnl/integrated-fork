@@ -56,7 +56,12 @@ class AddressType extends AbstractType
                     break;
                 case 'country':
                     $type = CountryType::class;
-                    $default['placeholder'] = 'Select a country';
+                    $default = [
+                        'placeholder' => 'Select a country',
+                        'attr' => [
+                            'class' => 'select2',
+                        ],
+                    ];
                     break;
             }
 

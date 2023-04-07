@@ -103,6 +103,7 @@ function handleClosePopup() {
         showEnabledCategoryPills()
     }
     selected_tab = ''
+    window.popupShown = false;
 }
 
 function activateHeader() {
@@ -145,6 +146,7 @@ function toggleFullscreen() {
     togglePopup()
     filterCheckboxesInPopup()
     showEnabledCategoryPills()
+    window.popupShown = true;
 }
 
 function handleChannelClick(event) {
@@ -212,7 +214,7 @@ function showEnabledCategoryPills() {
 function appendPill(pill_text) {
     const node = document.createElement("div");
     node.classList.add('active_category');
-    node.appendChild(document.createTextNode(pill_text));
+    node.innerHTML = pill_text;
     document.querySelector(current_relation.pills_selector).appendChild(node);
 }
 
