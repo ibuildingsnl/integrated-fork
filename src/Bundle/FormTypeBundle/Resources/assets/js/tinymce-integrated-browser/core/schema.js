@@ -17,6 +17,21 @@ const validate = ajv.compile({
                 }
             }
         },
+        insertGallery: {
+            properties: {
+                images: {
+                    elements: {
+                        properties: {
+                            id: {type: "string"},
+                            uri: {type: "string"},
+                            title: {type: "string"},
+                            description: {type: "string"},
+                            credits: {type: "string"},
+                        }
+                    }
+                }
+            }
+        },
         insertVideo: {
             properties: {
                 video: {

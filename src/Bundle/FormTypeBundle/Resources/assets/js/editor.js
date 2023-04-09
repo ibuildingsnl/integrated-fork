@@ -54,7 +54,7 @@ $('.integrated_tinymce').each(function(key, elem){
         branding: false,
         toolbar:
             "styles | bold italic underline subscript superscript | bullist numlist | " +
-            "link anchor table charmap | integratedimage integratedvideo image media | print | " +
+            "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
             "pastetext searchreplace | fullscreen",
         toolbar_sticky: false,
         toolbar_location: 'top',
@@ -68,6 +68,7 @@ $('.integrated_tinymce').each(function(key, elem){
         convert_urls: false,
         content_css: element.data('content_css'),
         integrated_browser_image_dialog_url: element.data('integrated_browser_image_dialog_url'),
+        integrated_browser_gallery_dialog_url: element.data('integrated_browser_gallery_dialog_url'),
         integrated_browser_video_dialog_url: element.data('integrated_browser_video_dialog_url'),
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats
@@ -79,3 +80,5 @@ $(window).keyup(function(e) {
         $('.tox-tinymce-aux').empty()
     }
 });
+
+

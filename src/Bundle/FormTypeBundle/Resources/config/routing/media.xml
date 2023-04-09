@@ -8,6 +8,10 @@
         <default key="_controller">Integrated\Bundle\FormTypeBundle\Controller\MediaController::image</default>
     </route>
 
+    <route id="integrated_formtype_media_gallery" path="/gallery" methods="GET">
+        <default key="_controller">Integrated\Bundle\FormTypeBundle\Controller\MediaController::gallery</default>
+    </route>
+
     <route id="integrated_formtype_media_video" path="/video" methods="GET">
         <default key="_controller">Integrated\Bundle\FormTypeBundle\Controller\MediaController::video</default>
     </route>

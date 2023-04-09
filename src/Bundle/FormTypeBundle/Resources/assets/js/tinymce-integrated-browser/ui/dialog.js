@@ -30,12 +30,28 @@ const videoHandler = (editor, dialog, data) => {
     dialog.close();
 }
 
+const galleryHandler = (editor, dialog, data) => {
+    if (data.mceAction !== 'insertGallery') {
+        return;
+    }
+
+    if (!validate(data)) {
+        throw 'Invalid "insertGallery" message data received';
+    }
+
+    editor.insertContent(Templates.gallery(data.images));
+
+    dialog.close();
+}
+
 export const Dialog = (editor, mode) => {
     const messageHandler = (dialog, data) => {
         if (mode === 'video') {
             videoHandler(editor, dialog, data);
-        } else {
+        } else if (mode === 'image') {
             imageHandler(editor, dialog, data);
+        } else {
+            galleryHandler(editor, dialog, data);
         }
     }
 

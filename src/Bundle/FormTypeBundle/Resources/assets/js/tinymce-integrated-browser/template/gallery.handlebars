@@ -1,0 +1,27 @@
+<div class="swiper article-swiper">
+    <div class="swiper-wrapper">
+        {{#each this}}
+            <div class="swiper-slide">
+                <img src="{{ this.uri }}"
+                     class="img-responsive template-image-gallery"
+                     title="{{ this.title }}"
+                     alt="{{ this.title }}"
+                     data-integrated-id="{{ this.id }}"
+                />
+                {{#if this.description}}
+                    <span class="img-caption">
+                        {{ this.description }}
+                        {{#if this.credits}}
+                            <span class="img-credit">
+                                (&copy; {{ this.credits }})
+                            </span>
+                        {{/if}}
+                    </span>
+                {{/if}}
+            </div>
+        {{/each}}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+

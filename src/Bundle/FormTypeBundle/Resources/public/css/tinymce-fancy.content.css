@@ -70,3 +70,31 @@ span.img-caption {
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
     left:unset;
 }
+
+.swiper-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    padding: .5rem;
+}
+
+.swiper-wrapper .swiper-slide img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.swiper-wrapper .swiper-slide {
+    width: 33.3%;
+    padding: .5rem;
+    box-sizing: border-box;
+}
+
+.swiper-wrapper:before {
+    content: "Slider";
+    width: 100%;
+    padding-left: 0.5rem;
+    font-weight: bold;
+    padding-top: 0.5rem;
+}
