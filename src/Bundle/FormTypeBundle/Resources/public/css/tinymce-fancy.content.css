@@ -89,6 +89,7 @@ span.img-caption {
     width: 33.3%;
     padding: .5rem;
     box-sizing: border-box;
+    position: relative;
 }
 
 .swiper-wrapper:before {
@@ -97,4 +98,32 @@ span.img-caption {
     padding-left: 0.5rem;
     font-weight: bold;
     padding-top: 0.5rem;
+}
+
+span.remove {
+    align-items: center;
+    background-color: #c6422f;
+    border: 2px solid #c6422f;
+    border-radius: 4px;
+    color: #fff;
+    height: 20px;
+    justify-content: center;
+    width: 20px;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    display: none;
+}
+
+.swiper-wrapper .swiper-slide:hover span.slider-append.remove  {
+    display: flex;
+}
+
+.swiper.article-swiper {
+    position: relative;
+}
+
+.swiper.article-swiper > .swiper-append.remove {
+    display: flex;
 }
