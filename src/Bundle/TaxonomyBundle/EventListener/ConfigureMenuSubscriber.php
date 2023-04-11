@@ -23,7 +23,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [ConfigureMenuEvent::CONFIGURE => 'onMenuConfigure'];
     }
@@ -46,7 +46,9 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
                 $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label-outline');
             }
             $menuAdmin->addChild($taxonomyType->getName(), [
-                'route' => 'integrated_taxonomy_index',
+                'route' => $taxonomyType->hasField('parent_id')
+                    ? 'integrated_taxonomy_index'
+                    : 'integrated_taxonomy_list',
                 'routeParameters' => ['type' => $taxonomyType->getId()],
             ]);
         }

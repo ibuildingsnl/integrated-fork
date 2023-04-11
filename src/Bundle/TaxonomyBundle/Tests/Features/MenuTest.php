@@ -10,6 +10,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Security\ContentTypeVoter;
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
 use Integrated\Bundle\TaxonomyBundle\EventListener\ConfigureMenuSubscriber;
+use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\FakeUrlGenerator;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTypeResolver;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\Role;
@@ -17,6 +18,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permission;
 use Integrated\Common\Security\PermissionInterface;
+use Knp\Menu\Integration\Symfony\RoutingExtension;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
@@ -51,7 +53,9 @@ final class MenuTest extends TestCase
             $this->repository,
             ContentType::class
         ));
-        $this->menu = new MenuItem('integrated_menu', new MenuFactory());
+        $menuFactory = new MenuFactory();
+        $menuFactory->addExtension(new RoutingExtension(new FakeUrlGenerator()));
+        $this->menu = new MenuItem('integrated_menu', $menuFactory);
     }
 
     public function testShowingTaxonomyOptionToAdmins()
@@ -147,6 +151,21 @@ final class MenuTest extends TestCase
         $section = $this->menu->getChild('Taxonomy');
 
         self::assertCount(2, $section->getChildren());
+    }
+
+    public function testShowingDifferentRoutesForWithParentAndWithout()
+    {
+        $this->withTaxonomyContentType('category');
+        $this->withTaxonomyContentType('tag', false);
+        $this->tokenStorage->setToken($this->user('tag-access', 'category-access'));
+
+        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
+
+        $section = $this->menu->getChild('Taxonomy');
+
+        self::assertCount(2, $section->getChildren());
+        self::assertEquals('integrated_taxonomy_index', $section->getChild('Category')->getUri());
+        self::assertEquals('integrated_taxonomy_list', $section->getChild('Tag')->getUri());
     }
 
     private function withTaxonomyContentType(string $name = 'taxonomy', bool $hasParent = true): void
