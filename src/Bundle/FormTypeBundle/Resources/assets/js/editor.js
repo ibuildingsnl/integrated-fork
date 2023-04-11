@@ -78,14 +78,21 @@ $('.integrated_tinymce').each(function(key, elem){
                 removeButton.classList.add(className, 'remove');
                 removeButton.innerHTML = '<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-                removeButton.addEventListener('click', function() {
-                    element.parentNode.removeChild(element);
-                });
-
                 element.appendChild(removeButton);
             }
 
-            function addRemoveButtons() {
+            function initRemoveButtons() {
+                const removeButtons = editor.contentDocument.querySelectorAll('.remove');
+
+                removeButtons.forEach(function(removeButton) {
+                    removeButton.addEventListener('click', function() {
+                        const element = this.parentNode;
+                        element.parentNode.removeChild(element);
+                    });
+                });
+            }
+
+            editor.on('init', function() {
                 const swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
                 const articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
 
@@ -96,10 +103,12 @@ $('.integrated_tinymce').each(function(key, elem){
                 swiperSlides.forEach(function(slide) {
                     addRemoveButton(slide, 'slider-append');
                 });
-            }
 
-            editor.on('init', function() {
-                addRemoveButtons();
+                initRemoveButtons();
+            });
+
+            editor.on('change', function() {
+                initRemoveButtons();
             });
         }
     });
