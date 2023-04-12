@@ -15,55 +15,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
-use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\FormInterface;
 
-class FileReferenceMapper implements DataMapperInterface
+class FileReferenceMapper extends StorageReferenceMapper
 {
+    protected const CLASSNAME = File::class;
+    protected const FORM_FIELD = 'file';
+
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly array $channels
     ) {
     }
 
-    public function mapDataToForms($viewData, \Traversable $forms): void
-    {
-        if (!$viewData instanceof File && $viewData !== null) {
-            return;
-        }
-
-        $forms = iterator_to_array($forms);
-
-        $forms['file']->setData($viewData?->getFile());
-    }
-
-    public function mapFormsToData(\Traversable $forms, &$viewData): void
-    {
-        /** @var FormInterface[] $form */
-        $form = iterator_to_array($forms);
-
-        $data = $form['file']->getData();
-
-        if (!$data instanceof StorageInterface) {
-            $viewData = null;
-
-            return;
-        }
-
-        if (!$viewData instanceof File) {
-            $viewData = $this->newFile($data);
-
-            return;
-        }
-
-        if ($data->getIdentifier() === $viewData->getFile()->getIdentifier()) {
-            return;
-        }
-
-        $viewData = $this->newFile($data);
-    }
-
-    private function newFile(StorageInterface $storage): File
+    protected function newFile(StorageInterface $storage): File
     {
         $file = new File();
 
