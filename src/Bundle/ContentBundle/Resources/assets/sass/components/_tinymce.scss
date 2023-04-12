@@ -3,6 +3,10 @@
     border-radius: 0 !important;
 }
 
+.tinymce-inline .tox-tinymce {
+    border-radius: 8px !important;
+}
+
 .tox-tinymce.tox-container.tox-panel {
     border-color: $border-color;
 }

@@ -23,6 +23,7 @@ abstract class Block implements BlockInterface
      * @var string
      */
     #[Slug(fields: ['title'], separator: '_')]
+    #[Type\Field(options: ['priority' => 980, 'required' => false])]
     protected $id;
 
     /**
@@ -99,7 +100,7 @@ abstract class Block implements BlockInterface
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(null | string $id)
     {
         $this->id = $id;
     }
