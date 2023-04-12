@@ -2,9 +2,7 @@
 
 namespace Integrated\Bundle\StorageBundle\Form\Mapper;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Symfony\Component\Form\DataMapperInterface;
@@ -17,7 +15,7 @@ abstract class StorageReferenceMapper implements DataMapperInterface
 
     public function mapDataToForms($viewData, \Traversable $forms): void
     {
-        if ($viewData !== null && !get_class($viewData) == static::CLASSNAME) {
+        if ($viewData !== null && !\get_class($viewData) == static::CLASSNAME) {
             return;
         }
 
@@ -39,7 +37,7 @@ abstract class StorageReferenceMapper implements DataMapperInterface
             return;
         }
 
-        if (!$viewData || get_class($viewData) != static::CLASSNAME) {
+        if (!$viewData || \get_class($viewData) != static::CLASSNAME) {
             $viewData = $this->newFile($data);
 
             return;
@@ -52,5 +50,5 @@ abstract class StorageReferenceMapper implements DataMapperInterface
         $viewData = $this->newFile($data);
     }
 
-    protected abstract function newFile(StorageInterface $storage): FileInterface;
+    abstract protected function newFile(StorageInterface $storage): FileInterface;
 }
