@@ -122,8 +122,13 @@ span.remove {
 
 .swiper.article-swiper {
     position: relative;
+    margin-bottom: 1rem;
 }
 
 .swiper.article-swiper > .swiper-append.remove {
     display: flex;
+}
+
+.swiper-button-next, .swiper-button-prev {
+    display: none;
 }

@@ -8,16 +8,6 @@
                      alt="{{ this.title }}"
                      data-integrated-id="{{ this.id }}"
                 />
-                {{#if this.description}}
-                    <span class="img-caption">
-                        {{ this.description }}
-                        {{#if this.credits}}
-                            <span class="img-credit">
-                                (&copy; {{ this.credits }})
-                            </span>
-                        {{/if}}
-                    </span>
-                {{/if}}
             </div>
         {{/each}}
     </div>
