@@ -18,11 +18,6 @@
                    data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
                 {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
             </div>
-            {% if (message != '') %}
-                <div class="integrated-website-toolbar-message">
-                    {{ message|trans }}
-                </div>
-            {% endif %}
             <div class="integrated-website-toolbar-right">
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}
 
@@ -54,13 +49,13 @@
                             </a>
                             {% if app.request.attributes.get('page').type == 'content_type_page' %}
                                 <a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}"
-                                   class="btn btn-green ml-2">{% trans %}Edit page properties{% endtrans %}</a>
+                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
                             {% else %}
                                 <a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}"
-                                   class="btn btn-green ml-2">{% trans %}Edit page properties{% endtrans %}</a>
+                                   class="btn btn-green">{% trans %}Edit page properties{% endtrans %}</a>
                             {% endif %}
                             <a href="{{ path('integrated_page_page_index') }}"
-                               class="btn btn-white ml-2">{% trans %}Go to page overview{% endtrans %}</a>
+                               class="btn btn-white">{% trans %}Go to page overview{% endtrans %}</a>
                         </div>
                     {% endif %}
                 {% endif %}
@@ -71,6 +66,11 @@
         </div>
     </div>
 </div>
+{% if (message != '') %}
+    <div class="integrated-website-toolbar-message">
+        {{ message|trans }}
+    </div>
+{% endif %}
 
 <script>
     const body = document.body;
@@ -203,7 +203,7 @@
             menuItemDropDownUnderlay.classList.remove('hide');
         }
     }
-    
+
 </script>
 
 <div id="dropdown_overlay" class="hide"></div>

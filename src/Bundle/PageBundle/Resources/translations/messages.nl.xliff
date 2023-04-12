@@ -80,15 +80,15 @@
             </trans-unit>
             <trans-unit id="20">
                 <source>Edit page properties</source>
-                <target>Bewerk pagina eigenschappen</target>
+                <target>Pagina eigenschappen</target>
             </trans-unit>
             <trans-unit id="21">
                 <source>Save page</source>
-                <target>Pagina opslaan</target>
+                <target>Opslaan</target>
             </trans-unit>
             <trans-unit id="22">
                 <source>Go to page overview</source>
-                <target>Naar pagina overzicht</target>
+                <target>Pagina overzicht</target>
             </trans-unit>
             <trans-unit id="23">
                 <source>This item is currently unpublished</source>
