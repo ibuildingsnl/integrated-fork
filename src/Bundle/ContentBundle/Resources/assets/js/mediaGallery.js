@@ -108,6 +108,11 @@ $("#confirm_delete").on("click", async function() {
     await askForConfirmation()
 })
 
+$("#bulkselection_delete").on("click", async function() {
+    await confirmBulkDelete()
+})
+
+
 console.log("loading mg")
 
 $("#bulkselection").on("click", async function () {
@@ -202,22 +207,18 @@ function handleBulkItemClick(event) {
 }
 
 async function askForConfirmation() {
-    //TODO
-    //show popup
-    //user can confirm / cancel
-    //cancel = close popup
-    //confirm = send ajax request
-    await confirmDelete()
+    await confirmDelete(false)
 }
 
-async function confirmDelete() {
-    console.log("deleting")
-    console.log(bulkSelection)
-    console.log(bulkdelete_path)
+async function confirmBulkDelete() {
+    await confirmDelete(true)
+}
 
+async function confirmDelete(confirmed_by_user) {
     const json_content = JSON.stringify({
         csrf: document.querySelector('#media_category_csrf').value,
         bulkselection: bulkSelection,
+        confirmed_by_user: confirmed_by_user
     })
 
     deleteData(bulkdelete_path, json_content)

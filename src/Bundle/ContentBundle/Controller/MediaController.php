@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Bulk\Action\DeleteAction;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
@@ -24,6 +25,7 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
+use Integrated\Common\Services\MainFlusher;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -197,36 +199,63 @@ class MediaController extends AbstractController
         return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
-    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): void
+    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
     {
-        //Get bulkselection ID`s
-        $content = $request->getContent();
-        if ($content) {
-            $jsonContent = json_decode($content);
-            $bulkSelection = $jsonContent->bulkselection;
-
-            $request->query->set('ids', $bulkSelection);
+        //Get bulkselection ID`s from the request:
+        if ($request->getContent()) {
+            $jsonContent = json_decode($request->getContent());
+            $idSelection = $jsonContent->bulkselection;
+            $request->query->set('ids', $idSelection);
         }
 
-        //Get content
-        $testid = 'f78eb80adeb13890898336b2924f2d76';
-        $content = $this->documentManager->getRepository(Content::class)->find($testid);
+        //First part, check if there are usedBy`s and send an fitting message at the front end
+        if (!$jsonContent->confirmed_by_user) {
+            $usesByTitles = [];
+            foreach ($idSelection as $id) {
+                $content = $this->documentManager->getRepository(Content::class)->find($id);
 
-        //Create delete handler? Not sure
-        $searchContentReferenced = new SearchContentReferenced($this->documentManager);
-        $deleteHandler = new DeleteHandler($this->documentManager, $searchContentReferenced, true);
-        $bulkAction = new BulkAction;
+                if ($content) {
+                    //get the usedby, is there an easier way?
+                    $result = $this->documentManager->getRepository(Content::class)
+                        ->getUsedBy(new ArrayCollection([$content]), null, null, false)
+                        ->getQuery()
+                        ->execute();
 
-//        $
+                    //if we have a usedBy, add the title to the array
+                    if (count($result) > 0) {
+                        $usesByTitles[] = $content->getTitle();
+                    }
+                }
+            }
 
-//        dd($deleteHandler);
+            if (count($usesByTitles) > 0) {
+                return new JsonResponse([
+                    'message' => 'There exist some relations. Are you SURE?',
+                    'used_by' => $usesByTitles
+                ]);
+            } else {
+                return new JsonResponse(['message' => 'Ok to delete, go for it!']);
+            }
+        }
 
-//        $bulkAction->addSelection($bulkSelection);
-//        $bulkAction->addAction($deleteHandler);
-        $bulkAction->addSelection($content);
-        dd($bulkAction);
+        //2nd Part: remove relations
+        $deletedIds = [];
+        foreach ($idSelection as $id) {
+            $contentRepository = $this->documentManager->getRepository(Content::class);
+            $toBeDeleted = $contentRepository->find($id);
 
+            if ($toBeDeleted) {
+                $searchReferenced = new SearchContentReferenced($this->documentManager);
+                $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
+                $deleteHandler->execute($toBeDeleted);
+                $deletedIds[] = $id;
+            }
+        }
 
+        return new JsonResponse([
+            'message' => "Removed some items",
+            'ids' => $deletedIds
+        ]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

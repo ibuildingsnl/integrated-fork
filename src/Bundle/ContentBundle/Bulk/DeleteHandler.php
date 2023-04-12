@@ -65,6 +65,13 @@ class DeleteHandler implements HandlerInterface
                 ->field('relations.$.references')->pull(['$id' => $content->getId()])
                 ->getQuery()
                 ->execute();
+
+            $this->documentManager->createQueryBuilder(Content::class)
+                ->updateMany()
+                ->field('featuredImage.$id')->equals($content->getId())
+                ->field('featuredImage')->unsetField()
+                ->getQuery()
+                ->execute();
         }
 
         $referencedItems = $this->searchContentReferenced->getReferenced($content);
