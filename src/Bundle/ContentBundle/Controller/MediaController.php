@@ -144,7 +144,7 @@ class MediaController extends AbstractController
         $paginator = $this->getPaginator();
         $paginator = $paginator->paginate(
             new CallbackPagination(
-                fn () => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
+                fn () => $this->provider->getContentFromSolr($requestCopy, 0, 0, true),
                 fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
             ),
             $requestCopy->query->get('page', 1),
@@ -222,7 +222,9 @@ class MediaController extends AbstractController
                         ->execute();
 
                     //if we have a usedBy, add the title to the array
-                    if (count($result) > 0) {
+
+//                    if (count($result) > 0) { //this worked at my local setup?<!--!-->
+                    if (false !== $result->current()) { //this worked at my local setup>!
                         $usesByTitles[] = $content->getTitle();
                     }
                 }

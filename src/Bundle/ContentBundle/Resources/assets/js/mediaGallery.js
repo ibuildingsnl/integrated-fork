@@ -105,15 +105,17 @@ $("#bulkdelete").on("click", async function() {
 })
 
 $("#confirm_delete").on("click", async function() {
-    await askForConfirmation()
-})
-
-$("#bulkselection_delete").on("click", async function() {
     await confirmBulkDelete()
 })
 
+$("#bulkselection_delete").on("click", async function() {
+    await askForConfirmation()
+})
 
-console.log("loading mg")
+$("#cancel_delete").on("click", async function() {
+    await hideBulkdeletionPopup()
+})
+
 
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
@@ -207,21 +209,47 @@ function handleBulkItemClick(event) {
 }
 
 async function askForConfirmation() {
+    document.querySelector('#bulkdelete_confirm_popup').classList.remove('hidden')
     await confirmDelete(false)
+}
+
+async function hideBulkdeletionPopup() {
+    document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
 }
 
 async function confirmBulkDelete() {
     await confirmDelete(true)
 }
 
+function showUsedImages(json_response) {
+    if (json_response?.used_by?.length > 0) {
+        document.querySelector('#used_images_message').classList.remove('hidden')
+        for (let item of json_response.used_by) {
+            new_item = document.querySelector('.used_images').cloneNode()
+            new_item.textContent = item
+            new_item.classList.add('used_images_copy')
+            document.querySelector('#used_images').appendChild(new_item);
+        }
+    } else {
+        document.querySelector('#used_images_message').classList.add('hidden')
+    }
+}
+
 async function confirmDelete(confirmed_by_user) {
     const json_content = JSON.stringify({
         csrf: document.querySelector('#media_category_csrf').value,
         bulkselection: bulkSelection,
-        confirmed_by_user: confirmed_by_user
+        confirmed_by_user: confirmed_by_user,
     })
 
-    deleteData(bulkdelete_path, json_content)
+    const response = await deleteData(bulkdelete_path, json_content)
+    const json_response = await response.json()
+    document.querySelector('#used_images').innerHTML = ''
+    if (confirmed_by_user === false) {
+        showUsedImages(json_response)
+    } else {
+        document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
+    }
 
     async function deleteData(url = '', data = {}) {
         const response = await fetch(url, {
