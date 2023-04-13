@@ -153,21 +153,6 @@ final class MenuTest extends TestCase
         self::assertCount(2, $section->getChildren());
     }
 
-    public function testShowingDifferentRoutesForWithParentAndWithout()
-    {
-        $this->withTaxonomyContentType('category');
-        $this->withTaxonomyContentType('tag', false);
-        $this->tokenStorage->setToken($this->user('tag-access', 'category-access'));
-
-        $this->menuSubscriber->onMenuConfigure(new ConfigureMenuEvent(new MenuFactory(), $this->menu));
-
-        $section = $this->menu->getChild('Taxonomy');
-
-        self::assertCount(2, $section->getChildren());
-        self::assertEquals('integrated_taxonomy_index', $section->getChild('Category')->getUri());
-        self::assertEquals('integrated_taxonomy_list', $section->getChild('Tag')->getUri());
-    }
-
     private function withTaxonomyContentType(string $name = 'taxonomy', bool $hasParent = true): void
     {
         $taxonomy = new ContentType();

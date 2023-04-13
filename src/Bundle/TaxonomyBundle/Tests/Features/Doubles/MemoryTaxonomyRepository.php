@@ -17,6 +17,18 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->taxonomies;
     }
 
+    public function slice(string $contentType, int $offset, int $limit): array
+    {
+        $items = $this->byType($contentType);
+        usort(
+            $items,
+            fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
+                $a->getRank() <=> $b->getRank() :
+                $a->getTitle() <=> $b->getTitle()
+        );
+        return array_slice($items, $offset, $limit);
+    }
+
     public function byId(string $id): ?Taxonomy
     {
         foreach ($this->taxonomies as $taxonomy) {

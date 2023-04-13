@@ -22,8 +22,10 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType, string $root = 'root', bool $filtered = false): array
+    public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array
     {
+        $root = $options?->root ?: 'root';
+        $filtered = $root !== 'root';
         return $this->toSortedIndex(
             $this->listByParent($contentType),
             $root,
@@ -73,14 +75,6 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
 
     private function toIndexed(Taxonomy $taxonomy, int $depth = 0): IndexedItem
     {
-        return new IndexedItem(
-            $taxonomy->getId(),
-            $taxonomy->getTitle(),
-            $taxonomy->getDescription(),
-            $taxonomy->getSlug(),
-            $this->taxonomies->countUsages($taxonomy),
-            $depth,
-            $taxonomy->getChannels(),
-        );
+        return IndexedItem::basedOn($taxonomy, $this->taxonomies->countUsages($taxonomy), $depth);
     }
 }

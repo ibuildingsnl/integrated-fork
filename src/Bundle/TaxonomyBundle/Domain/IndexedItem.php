@@ -2,6 +2,8 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Domain;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+
 final class IndexedItem
 {
     public function __construct(
@@ -13,6 +15,19 @@ final class IndexedItem
         private readonly int $depth,
         private readonly array $channels,
     ) {
+    }
+
+    public static function basedOn(Taxonomy $taxonomy, int $usageCount, int $depth): self
+    {
+        return new IndexedItem(
+            $taxonomy->getId(),
+            $taxonomy->getTitle(),
+            $taxonomy->getDescription(),
+            $taxonomy->getSlug(),
+            $usageCount,
+            $depth,
+            $taxonomy->getChannels(),
+        );
     }
 
     public function getTaxonomyId(): string

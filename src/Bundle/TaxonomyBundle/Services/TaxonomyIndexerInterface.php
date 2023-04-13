@@ -10,5 +10,5 @@ interface TaxonomyIndexerInterface
     public function childrenOf(string $contentType, string $parentId): array;
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType, string $root = 'root', bool $filtered = false): array;
+    public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array;
 }

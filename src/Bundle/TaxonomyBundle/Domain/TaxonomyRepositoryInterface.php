@@ -9,6 +9,9 @@ interface TaxonomyRepositoryInterface
     /** @return Taxonomy[] */
     public function all(): array;
 
+    /** @return Taxonomy[] */
+    public function slice(string $contentType, int $offset, int $limit): array;
+
     public function byId(string $id): ?Taxonomy;
 
     /** @return Taxonomy[] */

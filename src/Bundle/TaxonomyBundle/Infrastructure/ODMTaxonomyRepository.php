@@ -21,6 +21,16 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->doctrineRepo->findAll();
     }
 
+    public function slice(string $contentType, int $offset, int $limit): array
+    {
+        return $this->doctrineRepo->findBy(
+            ['contentType' => $contentType],
+            ['rank' => 'asc', 'title' => 'asc'],
+            $limit,
+            $offset,
+        );
+    }
+
     public function byId(string $id): ?Taxonomy
     {
         return $this->doctrineRepo->find($id);

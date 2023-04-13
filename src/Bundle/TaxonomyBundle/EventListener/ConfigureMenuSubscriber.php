@@ -46,9 +46,7 @@ final class ConfigureMenuSubscriber implements EventSubscriberInterface
                 $menuAdmin = $menu->addChild(self::MENU_TAXONOMIES)->setExtra('icon', 'iconoir-label-outline');
             }
             $menuAdmin->addChild($taxonomyType->getName(), [
-                'route' => $taxonomyType->hasField('parent_id')
-                    ? 'integrated_taxonomy_index'
-                    : 'integrated_taxonomy_list',
+                'route' => 'integrated_taxonomy_index',
                 'routeParameters' => ['type' => $taxonomyType->getId()],
             ]);
         }
