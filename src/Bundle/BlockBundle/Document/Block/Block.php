@@ -100,7 +100,7 @@ abstract class Block implements BlockInterface
         return $this->id;
     }
 
-    public function setId(null | string $id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
