@@ -4,6 +4,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 {
@@ -12,6 +13,11 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     /** @var int[] */
     private array $usages = [];
 
+    public function __construct(
+        private readonly ?AuthorizationCheckerInterface $authorization = null,
+    ) {
+    }
+
     public function all(): array
     {
         return $this->taxonomies;
@@ -19,7 +25,10 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function slice(string $contentType, int $offset, int $limit): array
     {
-        $items = $this->byType($contentType);
+        $items = array_filter(
+            $this->byType($contentType),
+            fn(Taxonomy $t) => $this->authorization?->isGranted('view', $t) ?? true
+        );
         usort(
             $items,
             fn (Taxonomy $a, Taxonomy $b) => $a->getRank() !== $b->getRank() ?
