@@ -25,6 +25,7 @@ use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -73,7 +74,7 @@ class ContentController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly ImageExtension $imageExtension,
         private readonly MediaProvider $mediaProvider,
-        private readonly TaxonomyIndexer $taxonomyIndexer,
+        private readonly TaxonomyIndexerInterface $taxonomyIndexer,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
@@ -259,7 +260,7 @@ class ContentController extends AbstractController
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
         if (!$this->isGranted(Permissions::VIEW, $content)) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException('Not granteeedddd');
         }
 
         $locking = $this->getLock($content, 15);

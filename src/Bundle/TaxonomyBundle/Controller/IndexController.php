@@ -6,6 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permissions;
@@ -70,7 +71,7 @@ final class IndexController extends AbstractController
             'filter' => $filter,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
-                $this->indexer->buildTaxonomyIndex($contentType->getId(), $filter, $filter !== 'root'),
+                $this->indexer->buildTaxonomyIndex($contentType->getId(), new TaxonomyOptions($filter)),
                 $request->query->getInt('page', 1),
                 15,
             ),

@@ -20,10 +20,10 @@ final class TaxonomyLister implements TaxonomyIndexerInterface
     public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array
     {
         // @todo map to indexed item!
-        return $this->taxonomies->slice(
+        dd($this->taxonomies->slice(
             $contentType,
             (($options?->page ?: 1) - 1) * ($options?->pageSize ?: 50),
             $options?->pageSize ?: 50,
-        );
+        ));
     }
 }

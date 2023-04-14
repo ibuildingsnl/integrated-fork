@@ -12,6 +12,7 @@
         <service id="integrated_taxonomy.taxonomy.repository" class="Integrated\Bundle\TaxonomyBundle\Infrastructure\ODMTaxonomyRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_taxonomy.taxonomy.odm.repository" />
+            <argument type="service" id="security.token_storage" />
         </service>
         <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />

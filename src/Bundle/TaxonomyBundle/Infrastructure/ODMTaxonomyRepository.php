@@ -31,9 +31,13 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         $user = $this->tokenStorage->getToken()->getUser();
         $criteria = ['contentType' => $contentType];
         if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            $criteria['groups.id'] = array_map(fn(GroupInterface $group) => $group->getId(), $user->getGroups());
+            $criteria['channels'] = $user->getGroups();//array_map(fn(GroupInterface $group) => $group->getId(), $user->getGroups());
         }
 
+        $qb = $this->manager->createQueryBuilder(Content::class);
+
+
+        dd($criteria, $user->getGroups());
         return $this->doctrineRepo->findBy(
             $criteria,
             ['rank' => 'asc', 'title' => 'asc'],
