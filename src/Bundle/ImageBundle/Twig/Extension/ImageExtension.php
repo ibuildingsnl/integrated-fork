@@ -141,6 +141,20 @@ class ImageExtension extends AbstractExtension
             return $this->imageJson($image);
         }
 
+        $extension = pathinfo($image, PATHINFO_EXTENSION);
+        if (strtolower($extension) === 'pdf') {
+            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
+        }
+        if (file_exists($image)) {
+            $mime = mime_content_type($image);
+            if (strpos($mime, 'video/') === 0) {
+                return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/video-fallback.jpg');
+            }
+        }
+        if (!file_exists($image) && (strpos($image, '@') === false)) {
+            return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/fallback.jpg');
+        }
+
         return $this->imageHandling->open($image);
     }
 
