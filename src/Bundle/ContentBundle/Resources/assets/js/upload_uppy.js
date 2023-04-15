@@ -16,6 +16,7 @@ global.ImageEditor = ImageEditor
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
     let default_language = '' //defaults to eng
+    let uploaded_files = 0
     if (! ("target" in uppyOptions)) {
         console.log("No target given for the Uppy component")
         return false
@@ -45,6 +46,12 @@ function inititalizeUppy(uppyOptions) {
         },
     })
 
+    uppy.on('complete', (result) => {
+        if (result.failed.length === 0) {
+            closeUppyWithRefresh()
+        }
+    });
+
     uppy.use(Dashboard, {
         inline: true,
         target: uppyOptions.target,
@@ -53,11 +60,15 @@ function inititalizeUppy(uppyOptions) {
         proudlyDisplayPoweredByUppy: false,
         showProgressDetails: true,
         doneButtonHandler: () => {
-            $('#upload_container').removeClass('show');
-            $('#dropdown_overlay').addClass('hide');
-            window.location.reload();
+            closeUppyWithRefresh()
         },
     });
+
+    function closeUppyWithRefresh() {
+        $('#upload_container').removeClass('show');
+        $('#dropdown_overlay').addClass('hide');
+        window.location.reload();
+    }
 
     uppy.use(XHRUpload, {
         endpoint: uppyOptions.endpoint,

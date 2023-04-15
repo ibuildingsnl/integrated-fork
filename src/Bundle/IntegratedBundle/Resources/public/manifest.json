@@ -3,6 +3,7 @@
   "bundles/integratedintegrated/app.js": "/bundles/integratedintegrated/app.js",
   "bundles/integratedintegrated/edit.css": "/bundles/integratedintegrated/edit.css",
   "bundles/integratedintegrated/edit.js": "/bundles/integratedintegrated/edit.js",
+  "bundles/integratedintegrated/edit_form_submit_button.js": "/bundles/integratedintegrated/edit_form_submit_button.js",
   "bundles/integratedintegrated/collection.js": "/bundles/integratedintegrated/collection.js",
   "bundles/integratedintegrated/mediagallery.css": "/bundles/integratedintegrated/mediagallery.css",
   "bundles/integratedintegrated/mediagallery.js": "/bundles/integratedintegrated/mediagallery.js",

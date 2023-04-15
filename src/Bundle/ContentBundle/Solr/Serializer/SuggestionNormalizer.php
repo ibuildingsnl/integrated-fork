@@ -11,7 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Serializer;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\ContentType\ResolverInterface;
 use Solarium\Core\Query\DocumentInterface;
 use Solarium\QueryType\Select\Result\Result;
@@ -40,15 +42,22 @@ class SuggestionNormalizer implements NormalizerInterface
     private $resolver;
 
     /**
+     * @var ImageExtension
+     */
+    private $imageExtension;
+
+    /**
      * Constructor.
      *
      * @param string $route
      */
-    public function __construct(UrlGeneratorInterface $generator, $route, ResolverInterface $resolver)
+    public function __construct(UrlGeneratorInterface $generator, $route, ResolverInterface $resolver, ImageExtension $imageExtension)
     {
         $this->generator = $generator;
         $this->route = $route;
         $this->resolver = $resolver;
+        $this->imageExtension = $imageExtension;
+        //TODO: include twig extension ContentController.php R:868
     }
 
     /**
@@ -83,10 +92,12 @@ class SuggestionNormalizer implements NormalizerInterface
             $data['results'][] = [
                 'id' => (string) $document['type_id'],
                 'type' => $this->getType($document),
+                'class' => $this->getShortClassname($document),
                 'title' => (string) $document['title'],
                 'url' => $this->getUrl($document),
                 'published' => $this->getDate($document, 'pub_time'),
                 'updated' => $this->getDate($document, 'pub_edited'),
+                'image_string' => $this->getImage($document),
             ];
         }
 
@@ -134,4 +145,19 @@ class SuggestionNormalizer implements NormalizerInterface
 
         return $document[$field];
     }
+
+    private function getShortClassname(DocumentInterface $document)
+    {
+        return (new \ReflectionClass($document['type_class']))->getShortName();
+    }
+
+    private function getImage(DocumentInterface $document)
+    {
+        if (isset($document['file'])) {
+            return $this->imageExtension->image($document['file'])->zoomCrop(100, 100)->jpeg();;
+        }
+
+        return null;
+    }
+
 }
