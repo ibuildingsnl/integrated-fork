@@ -6,17 +6,21 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Bundle\UserBundle\Model\GroupInterface;
-use Integrated\Bundle\UserBundle\Model\User;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Integrated\Common\Solr\Search\QueryFactoryInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Solarium\Core\Client\ClientInterface;
+use Solarium\QueryType\Select\Result\Document;
 
 final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
 {
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-        private readonly TokenStorageInterface $tokenStorage,
+        private readonly QueryFactoryInterface $queryFactory,
+        private readonly PaginatorInterface $paginator,
+        private readonly ClientInterface $solrClient,
     ) {
     }
 
@@ -25,25 +29,23 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->doctrineRepo->findAll();
     }
 
-    public function slice(string $contentType, int $offset, int $limit): array
+    public function paged(string $contentType, int $page, int $pageSize): array
     {
-        /** @var User $user */
-        $user = $this->tokenStorage->getToken()->getUser();
-        $criteria = ['contentType' => $contentType];
-        if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            $criteria['channels'] = $user->getGroups();//array_map(fn(GroupInterface $group) => $group->getId(), $user->getGroups());
-        }
+        $this->solrClient->getPlugin('postbigrequest');
 
-        $qb = $this->manager->createQueryBuilder(Content::class);
+        $query = $this->queryFactory->createQuery(IntegratedContent::class, [
+            'contenttypes' => [$contentType],
+        ]);
 
+        /** @var Document[] $items */
+        $items = $this->paginator->paginate(
+            [$this->solrClient, $query->getQuery()],
+            $page,
+            $pageSize,
+            [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
+        )->getItems();
 
-        dd($criteria, $user->getGroups());
-        return $this->doctrineRepo->findBy(
-            $criteria,
-            ['rank' => 'asc', 'title' => 'asc'],
-            $limit,
-            $offset,
-        );
+        return array_map(fn(Document $document) => $this->doctrineRepo->find($document['type_id']), $items);
     }
 
     public function byId(string $id): ?Taxonomy
@@ -54,6 +56,17 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
     public function byType(string $contentType): array
     {
         return $this->doctrineRepo->findBy(['contentType' => $contentType]);
+    }
+
+    public function count(string $contentType): int
+    {
+        return $this->manager->createQueryBuilder(Content::class)
+            ->field('contentType')
+            ->equals($contentType)
+            ->count()
+            ->hydrate(false)
+            ->getQuery()
+            ->execute();
     }
 
     public function add(Taxonomy $taxonomy): void

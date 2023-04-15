@@ -12,9 +12,11 @@
         <service id="integrated_taxonomy.taxonomy.repository" class="Integrated\Bundle\TaxonomyBundle\Infrastructure\ODMTaxonomyRepository">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_taxonomy.taxonomy.odm.repository" />
-            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="integrated_solr.search.query_factory"/>
+            <argument type="service" id="knp_paginator"/>
+            <argument type="service" id="solarium.client"/>
         </service>
-        <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
+        <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister">
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
             <argument type="service" id="security.authorization_checker" />
         </service>

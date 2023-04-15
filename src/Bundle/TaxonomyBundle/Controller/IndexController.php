@@ -11,6 +11,7 @@ use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Services\Flusher;
+use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,14 +66,21 @@ final class IndexController extends AbstractController
         }
 
         $filter = $request->get('filter', 'root');
+        $page = $request->query->getInt('page', 1);
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
             'form' => $form->createView(),
             'filter_options' => ['root' => 'Show all'] + $this->indexer->childrenOf($contentType->getId(), 'root'),
             'filter' => $filter,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
-                $this->indexer->buildTaxonomyIndex($contentType->getId(), new TaxonomyOptions($filter)),
-                $request->query->getInt('page', 1),
+                new CallbackPagination(
+                    fn() => $this->taxonomies->count($contentType->getId()),
+                    fn($p, $s) => $this->indexer->buildTaxonomyIndex(
+                        $contentType->getId(),
+                        new TaxonomyOptions($filter, $p / $s, $s),
+                    ),
+                ),
+                $page,
                 15,
             ),
         ]);

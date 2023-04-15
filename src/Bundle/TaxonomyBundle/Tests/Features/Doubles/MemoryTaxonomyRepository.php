@@ -23,7 +23,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->taxonomies;
     }
 
-    public function slice(string $contentType, int $offset, int $limit): array
+    public function paged(string $contentType, int $page, int $pageSize): array
     {
         $items = array_filter(
             $this->byType($contentType),
@@ -35,7 +35,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
                 $a->getRank() <=> $b->getRank() :
                 $a->getTitle() <=> $b->getTitle()
         );
-        return array_slice($items, $offset, $limit);
+        return array_slice($items, ($page - 1) * $pageSize, $pageSize);
     }
 
     public function byId(string $id): ?Taxonomy
@@ -52,6 +52,11 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     public function byType(string $contentType): array
     {
         return array_filter($this->taxonomies, fn (Taxonomy $t) => $t->getContentType() === $contentType);
+    }
+
+    public function count(string $contentType): int
+    {
+        return count($this->byType($contentType));
     }
 
     public function add(Taxonomy $taxonomy): void
