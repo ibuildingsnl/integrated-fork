@@ -6,7 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\User;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 
 final class TaxonomyIndexingTest extends TestCase
 {
-    private TaxonomyIndexerInterface $indexer;
+    private TaxonomyOverview $indexer;
     private TaxonomyRepositoryInterface $taxonomies;
 
     protected function setUp(): void
@@ -33,7 +33,7 @@ final class TaxonomyIndexingTest extends TestCase
 
     public function testViewingAnEmptyListWhenThereAreNoTaxonomies()
     {
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEmpty($list);
     }
@@ -42,7 +42,7 @@ final class TaxonomyIndexingTest extends TestCase
     {
         $this->add($this->taxonomy('foo', 'One', 'one'));
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertCount(1, $list);
         self::assertInstanceOf(IndexedItem::class, $list[0]);
@@ -55,7 +55,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('bar', 'One', 'one', 'Z'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertCount(2, $list);
         self::assertEquals('One', $list[0]->getTitle());
@@ -71,7 +71,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('qux', 'Last', 'last', 'z'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertCount(4, $list);
         self::assertEquals('First', $list[0]->getTitle());
@@ -87,7 +87,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('foo', 'Parent', 'parent'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEquals('Parent', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -103,7 +103,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('foo', 'Parent', 'parent'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEquals('Parent', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -123,7 +123,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('fred', 'Without Children', 'parent-without-children'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEquals('Parent!', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -145,7 +145,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('bar', 'Many Usages', 'used'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEquals(1001, $list[0]->getCount());
         self::assertEquals(0, $list[1]->getCount());
@@ -170,7 +170,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('zoo', 'Other Grandchild', 'other-grand-child', 'f', 'bar'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy');
+        $list = $this->indexer->overviewFor('taxonomy');
 
         self::assertEquals('Without Children', $list[0]->getTitle());
         self::assertEquals(16, $list[0]->getCount());
@@ -205,7 +205,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('baz', 'baz', 'baz'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('different-content-type');
+        $list = $this->indexer->overviewFor('different-content-type');
 
         self::assertEmpty($list);
     }
@@ -218,7 +218,7 @@ final class TaxonomyIndexingTest extends TestCase
             $this->taxonomy('baz', 'baz', 'baz', null, null, 'category'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('tag');
+        $list = $this->indexer->overviewFor('tag');
 
         self::assertCount(2, $list);
     }

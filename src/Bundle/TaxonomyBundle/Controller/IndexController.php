@@ -5,7 +5,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ResolverInterface;
@@ -21,11 +21,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class IndexController extends AbstractController
 {
     public function __construct(
-        private readonly TaxonomyIndexerInterface $indexer,
-        private readonly ResolverInterface $typeResolver,
+        private readonly TaxonomyOverview            $indexer,
+        private readonly ResolverInterface           $typeResolver,
         private readonly TaxonomyRepositoryInterface $taxonomies,
-        private readonly Flusher $flusher,
-        private readonly PaginatorInterface $paginator,
+        private readonly Flusher                     $flusher,
+        private readonly PaginatorInterface          $paginator,
     ) {
     }
 
@@ -75,7 +75,7 @@ final class IndexController extends AbstractController
             'index' => $this->paginator->paginate(
                 new CallbackPagination(
                     fn() => $this->taxonomies->count($contentType->getId()),
-                    fn($p, $s) => $this->indexer->buildTaxonomyIndex(
+                    fn($p, $s) => $this->indexer->overviewFor(
                         $contentType->getId(),
                         new TaxonomyOptions($filter, $p / $s, $s),
                     ),

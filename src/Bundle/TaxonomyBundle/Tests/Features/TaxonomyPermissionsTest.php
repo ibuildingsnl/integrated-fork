@@ -8,7 +8,7 @@ use Integrated\Bundle\ContentBundle\Security\ChannelVoter;
 use Integrated\Bundle\ContentBundle\Security\ContentChannelVoter;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\Role;
@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 final class TaxonomyPermissionsTest extends TestCase
 {
-    private TaxonomyIndexerInterface $indexer;
+    private TaxonomyOverview $indexer;
     private TaxonomyRepositoryInterface $taxonomies;
     private TokenStorageInterface $tokenStorage;
     private array $users;
@@ -68,21 +68,21 @@ final class TaxonomyPermissionsTest extends TestCase
     {
         $this->loginAs('admin');
 
-        self::assertCount(10, $this->indexer->buildTaxonomyIndex('taxonomy'));
+        self::assertCount(10, $this->indexer->overviewFor('taxonomy'));
     }
 
     public function testUser1SeesOnlyBreadTaxonomies()
     {
         $this->loginAs('user 1');
 
-        self::assertCount(4, $this->indexer->buildTaxonomyIndex('taxonomy'));
+        self::assertCount(4, $this->indexer->overviewFor('taxonomy'));
     }
 
     public function testUser2SeesOnlyFishTaxonomies()
     {
         $this->loginAs('user 2');
 
-        self::assertCount(5, $this->indexer->buildTaxonomyIndex('taxonomy'));
+        self::assertCount(5, $this->indexer->overviewFor('taxonomy'));
     }
 
     private function loginAs(string $user): void

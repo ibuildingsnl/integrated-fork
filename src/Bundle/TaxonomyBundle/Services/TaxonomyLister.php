@@ -6,7 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 
-final class TaxonomyLister implements TaxonomyIndexerInterface
+final class TaxonomyLister implements TaxonomyOverview
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
@@ -18,7 +18,7 @@ final class TaxonomyLister implements TaxonomyIndexerInterface
         return [];
     }
 
-    public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array
+    public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
     {
         return array_map(
             fn(Taxonomy $t) => IndexedItem::basedOn($t, $this->taxonomies->countUsages($t), 0),

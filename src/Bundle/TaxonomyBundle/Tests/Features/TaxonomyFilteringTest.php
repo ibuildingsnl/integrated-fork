@@ -5,7 +5,7 @@ namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\User;
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 
 final class TaxonomyFilteringTest extends TestCase
 {
-    private TaxonomyIndexerInterface $indexer;
+    private TaxonomyOverview $indexer;
     private TaxonomyRepositoryInterface $taxonomies;
 
     protected function setUp(): void
@@ -40,7 +40,7 @@ final class TaxonomyFilteringTest extends TestCase
             $this->taxonomy('rocks', 'Rocks', 'rocks'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy', TaxonomyOptions::filter('root'));
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('root'));
 
         self::assertEquals('Rocks', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -61,7 +61,7 @@ final class TaxonomyFilteringTest extends TestCase
             $this->taxonomy('rocks', 'Rocks', 'rocks'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy', TaxonomyOptions::filter('trees'));
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('trees'));
 
         self::assertEquals('Trees', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -81,7 +81,7 @@ final class TaxonomyFilteringTest extends TestCase
             $this->taxonomy('rocks', 'Rocks', 'rocks'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy', TaxonomyOptions::filter('trees'));
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('trees'));
 
         self::assertEquals('Trees', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());
@@ -103,7 +103,7 @@ final class TaxonomyFilteringTest extends TestCase
             $this->taxonomy('rocks', 'Rocks', 'rocks'),
         );
 
-        $list = $this->indexer->buildTaxonomyIndex('taxonomy', TaxonomyOptions::filter('oaks'));
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::filter('oaks'));
 
         self::assertEquals('Oaks', $list[0]->getTitle());
         self::assertEquals(0, $list[0]->getDepth());

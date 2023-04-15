@@ -7,7 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Security\ChannelVoter;
 use Integrated\Bundle\ContentBundle\Security\ContentChannelVoter;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 final class TaxonomyListTest extends TestCase
 {
-    private TaxonomyIndexerInterface $list;
+    private TaxonomyOverview $list;
     private TaxonomyRepositoryInterface $taxonomies;
     private TokenStorageInterface $tokenStorage;
     private array $users;
@@ -65,7 +65,7 @@ final class TaxonomyListTest extends TestCase
             $this->taxonomy('yolo', 'Yolo'),
         );
 
-        $list = $this->list->buildTaxonomyIndex('tag', TaxonomyOptions::page(1, 3));
+        $list = $this->list->overviewFor('tag', TaxonomyOptions::page(1, 3));
 
         self::assertCount(3, $list);
         self::assertEquals('Bar', $list[0]->getTitle());
@@ -84,7 +84,7 @@ final class TaxonomyListTest extends TestCase
             $this->taxonomy('abc', 'Abc'),
         );
 
-        $list = $this->list->buildTaxonomyIndex('tag', TaxonomyOptions::page(1, 5));
+        $list = $this->list->overviewFor('tag', TaxonomyOptions::page(1, 5));
 
         self::assertCount(5, $list);
         self::assertEquals('Abc', $list[0]->getTitle());
@@ -108,7 +108,7 @@ final class TaxonomyListTest extends TestCase
             $this->taxonomy('def', 'Def', 'brood', 'kip'),
         );
 
-        $list = $this->list->buildTaxonomyIndex('tag', TaxonomyOptions::page(1, 5));
+        $list = $this->list->overviewFor('tag', TaxonomyOptions::page(1, 5));
 
         self::assertCount(5, $list);
         self::assertEquals('Abc', $list[0]->getTitle());

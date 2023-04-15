@@ -4,11 +4,11 @@ namespace Integrated\Bundle\TaxonomyBundle\Services;
 
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 
-interface TaxonomyIndexerInterface
+interface TaxonomyOverview
 {
     /** @return string[] */
     public function childrenOf(string $contentType, string $parentId): array;
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array;
+    public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array;
 }

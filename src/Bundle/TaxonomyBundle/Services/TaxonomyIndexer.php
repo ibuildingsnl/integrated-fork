@@ -7,7 +7,7 @@ use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-final class TaxonomyIndexer implements TaxonomyIndexerInterface
+final class TaxonomyIndexer implements TaxonomyOverview
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
@@ -22,7 +22,7 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     }
 
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType, ?TaxonomyOptions $options = null): array
+    public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
     {
         $root = $options?->root ?: 'root';
         $filtered = $root !== 'root';
