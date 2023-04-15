@@ -19,17 +19,14 @@
 
             &.first-child {
                 label {
-                    padding-left: 20px !important;
+                    padding-left: 24px !important;
                 }
             }
 
-            &.second-child {
+            &.secondary-child {
                 label {
-                    padding-left: 30px !important;
+                    padding-left: 36px !important;
                 }
-            }
-            label {
-                flex-wrap: nowrap;
             }
         }
     }
@@ -108,7 +105,7 @@
         }
 
         ul {
-            max-height: calc(100vh - 222px) !important;
+            max-height: calc(100vh - 100px) !important;
             padding: 1rem 0 !important;
             width: 100%;
             border: none !important;

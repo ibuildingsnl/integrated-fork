@@ -42,7 +42,7 @@ class Person extends Relation
     #[Type\Field(options: [
         'label' => 'Last name',
         'attr' => ['style' => 'editor', 'state' => 'show'],
-    ], location: 'sidebar')]
+    ], location: 'editor')]
     protected $lastName;
 
     /**
@@ -107,180 +107,96 @@ class Person extends Relation
         $this->jobs = new ArrayCollection();
     }
 
-    /**
-     * Get the gender of the document.
-     *
-     * @return string
-     */
-    public function getGender()
+    public function getTitle(): string
+    {
+        return $this->firstName.' '.$this->lastName;
+    }
+
+    public function getGender(): ?string
     {
         return $this->gender;
     }
 
-    /**
-     * Set the gender of the document.
-     *
-     * @param string $gender
-     *
-     * @return $this
-     */
-    public function setGender($gender)
+    public function setGender(string $gender): static
     {
         $this->gender = $gender;
 
         return $this;
     }
 
-    /**
-     * Get the prefix of the document.
-     *
-     * @return string
-     */
-    public function getPrefix()
+    public function getPrefix(): ?string
     {
         return $this->prefix;
     }
 
-    /**
-     * Set the prefix of the document.
-     *
-     * @param string $prefix
-     *
-     * @return $this
-     */
-    public function setPrefix($prefix)
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
         return $this;
     }
 
-    /**
-     * Get the nickname of the document.
-     *
-     * @return string
-     */
-    public function getNickname()
+    public function getNickname(): ?string
     {
         return $this->nickname;
     }
 
-    /**
-     * Set the nickname of the document.
-     *
-     * @param string $nickname
-     *
-     * @return $this
-     */
-    public function setNickname($nickname)
+    public function setNickname(string $nickname): static
     {
         $this->nickname = $nickname;
 
         return $this;
     }
 
-    /**
-     * Get the firstname of the document.
-     *
-     * @return string
-     */
-    public function getFirstName()
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    /**
-     * Set the firstname of the document.
-     *
-     * @param string $firstName
-     *
-     * @return $this
-     */
-    public function setFirstName($firstName)
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
 
         return $this;
     }
 
-    /**
-     * Get the lastName of the document.
-     *
-     * @return string
-     */
-    public function getLastName()
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    /**
-     * Set the lastName of the document.
-     *
-     * @param string $lastName
-     *
-     * @return $this
-     */
-    public function setLastName($lastName)
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    /**
-     * Get the slug of the document.
-     *
-     * @return string
-     */
-    public function getSlug()
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
 
-    /**
-     * Set the slug of the document.
-     *
-     * @param string $slug
-     *
-     * @return $this
-     */
-    public function setSlug($slug)
+    public function setSlug($slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    /**
-     * Get the jobs of the document.
-     *
-     * @return Job[]
-     */
-    public function getJobs()
+    public function getJobs(): Collection
     {
         return $this->jobs;
     }
 
-    /**
-     * Set the jobs of the document.
-     *
-     * @return $this
-     */
-    public function setJobs(Collection $jobs)
+    public function setJobs(Collection $jobs): static
     {
         $this->jobs = $jobs;
 
         return $this;
     }
 
-    /**
-     * Add job to the jobs collection.
-     *
-     * @param mixed $job
-     *
-     * @return $this
-     */
-    public function addJob($job)
+    public function addJob(mixed $job): static
     {
         if ($job instanceof Job) {
             if (!$this->jobs->contains($job)) {
@@ -291,45 +207,23 @@ class Person extends Relation
         return $this;
     }
 
-    /**
-     * Remove job from jobs collection.
-     *
-     * @param mixed $job
-     *
-     * @return bool true if this collection contained the specified element, false otherwise
-     */
-    public function removeJob($job)
+    public function removeJob(mixed $job): bool
     {
         return $this->jobs->removeElement($job);
     }
 
-    /**
-     * Get the file of the document.
-     *
-     * @return Image
-     */
-    public function getPicture()
+    public function getPicture(): ?Image
     {
         return $this->picture;
     }
 
-    /**
-     * Set the picture of the document.
-     *
-     * @return $this
-     */
-    public function setPicture(Image $picture = null)
+    public function setPicture(Image $picture = null): static
     {
         $this->picture = $picture;
 
         return $this;
     }
 
-    /**
-     * Get the relative cover image URL for person (picture).
-     *
-     * @return string|null
-     */
     public function getCover()
     {
         if ($this->getPicture() instanceof Image) {
@@ -346,6 +240,6 @@ class Person extends Relation
      */
     public function __toString()
     {
-        return trim((string) $this->firstName.' '.(string) $this->lastName);
+        return trim($this->firstName.' '.$this->lastName);
     }
 }

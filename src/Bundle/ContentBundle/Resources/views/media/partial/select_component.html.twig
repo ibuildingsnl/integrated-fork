@@ -2,14 +2,16 @@
     <div class="previously_selected_images hidden">
         {% if form_relations[relation.vars.attr['data-relation']]|default(null) %}
             {% for media in form_relations[relation.vars.attr['data-relation']] %}
-                {% set thumbnail = integrated_image(media.file).zoomCrop(200, 200) %}
-                <li id="{{ media.id }}"
-                    data-id="{{ media.id }}"
-                    data-content_type="{{ media.contentType }}"
-                    data-file="{{ media.file }}"
-                    data-thumbnail="{{ thumbnail }}"
-                    data-title="{{ media.title }}">
-                </li>
+                {% if media.file is defined %}
+                    {% set thumbnail = integrated_image(media.file).resize(200, 200) %}
+                    <li id="{{ media.id }}"
+                        data-id="{{ media.id }}"
+                        data-content_type="{{ media.contentType }}"
+                        data-file="{{ media.file }}"
+                        data-thumbnail="{{ thumbnail }}"
+                        data-title="{{ media.title }}">
+                    </li>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>

@@ -27,10 +27,6 @@
     }
 }
 
-.editor-item-list .form-control {
-    max-width: 100%;
-}
-
 select.form-control {
     background-image: url('data:image/svg+xml;utf8,<svg width=\'20px\' height=\'20px\' stroke-width=\'0.95\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\' color=\'%23000000\'><path d=\'M6 9l6 6 6-6\' stroke=\'%23000000\' stroke-width=\'0.95\' stroke-linecap=\'round\' stroke-linejoin=\'round\'></path></svg>') !important;
     background-repeat: no-repeat !important;
@@ -71,8 +67,6 @@ select.form-control {
             position: relative;
 
             &:before {
-                font-family: 'fontello';
-                @extend .integrate-icon-down;
                 position: absolute;
                 right: 15px;
                 top: 50%;
@@ -264,8 +258,6 @@ label {
             }
 
             &:before {
-                font-family: 'fontello';
-                @extend .integrate-icon-cancel-circled;
                 color: $color-white;
                 position: absolute;
                 top: 50%;
@@ -369,7 +361,6 @@ label {
     -ms-user-select: none;
     user-select: none;
     font-weight: 300;
-    flex-wrap: wrap;
     /* Hide the browser's default checkbox */
     input {
         position: absolute;
@@ -631,6 +622,10 @@ label {
 }
 
 .form-item {
+    &.required {
+        background-color: #ffd4d5;
+    }
+
     margin-bottom: 1rem;
 
     .control-label {
@@ -748,14 +743,9 @@ label {
 
 .channel-domains {
     ul.no-heading {
-        li {
-            margin-bottom: 1rem;
-        }
-
         .panel-body {
             max-width: 750px;
             position: relative;
-            padding: 0.5rem;
         }
     }
 
@@ -775,7 +765,7 @@ label {
         label {
             position: absolute;
             height: 33px;
-            top: 6px;
+            top: 7px;
             padding: 0 1rem;
             border-radius: 8px 0 0 8px;
 
@@ -857,20 +847,22 @@ label {
     }
 }
 
-ul#integrated_content_User_groups li {
-    width: 100%;
-    margin: 0 !important;
-    padding: 5px;
-    box-sizing: border-box;
-    @include media(xl) {
-        width:50%;
-    }
-    @include media(2xl) {
-        width:33%;
+ul#integrated_content_User_groups, ul#integrated_user_user_form_groups {
+    li {
+        width: 100%;
+        margin: 0 !important;
+        padding: 5px;
+        box-sizing: border-box;
+        @include media(xl) {
+            width: 50%;
+        }
+        @include media(2 xl) {
+            width: 33%;
+        }
     }
 }
 
-ul#integrated_content_User_groups {
+ul#integrated_content_User_groups, ul#integrated_user_user_form_groups {
     max-width: calc(750px + 1rem);
     margin: 0 -.5rem;
 }

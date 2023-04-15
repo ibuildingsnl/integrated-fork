@@ -28,17 +28,17 @@ class PermissionResolver
         }
 
         $mask = 0;
-        $hasReadPermissions = false;
-        $hasWritePermissions = false;
+        $readPermissionRequired = false;
+        $writePermissionRequired = false;
 
         if ($groups) {
             foreach ($permissions as $permission) {
                 if (PermissionInterface::READ === ($permission->getMask() & PermissionInterface::READ)) {
-                    $hasReadPermissions = true;
+                    $readPermissionRequired = true;
                 }
 
                 if (PermissionInterface::WRITE === ($permission->getMask() & PermissionInterface::WRITE)) {
-                    $hasWritePermissions = true;
+                    $writePermissionRequired = true;
                 }
 
                 if (isset($groups[$permission->getGroup()])) {
@@ -48,8 +48,8 @@ class PermissionResolver
         }
 
         return [
-            'read' => $hasReadPermissions ? (PermissionInterface::READ === ($mask & PermissionInterface::READ)) : true,
-            'write' => $hasWritePermissions ? (PermissionInterface::WRITE === ($mask & PermissionInterface::WRITE)) : true,
+            'read' => !$readPermissionRequired || PermissionInterface::READ === ($mask & PermissionInterface::READ),
+            'write' => !$writePermissionRequired || PermissionInterface::WRITE === ($mask & PermissionInterface::WRITE),
         ];
     }
 }

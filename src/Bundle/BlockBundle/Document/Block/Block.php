@@ -17,11 +17,6 @@ use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Block document.
- *
- * @author Ger Jan van den Bosch <gerjan@e-active.nl
- */
 abstract class Block implements BlockInterface
 {
     /**

@@ -17,6 +17,17 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->taxonomies;
     }
 
+    public function byId(string $id): ?Taxonomy
+    {
+        foreach ($this->taxonomies as $taxonomy) {
+            if ($taxonomy->getId() === $id) {
+                return $taxonomy;
+            }
+        }
+
+        return null;
+    }
+
     public function byType(string $contentType): array
     {
         return array_filter($this->taxonomies, fn (Taxonomy $t) => $t->getContentType() === $contentType);

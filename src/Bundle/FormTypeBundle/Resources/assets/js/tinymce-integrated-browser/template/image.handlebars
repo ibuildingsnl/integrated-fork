@@ -1,1 +1,13 @@
-<img src="{{ uri }}" class="img-responsivet" title="{{ title }}" alt="{{ title }}" data-integrated-id="{{ id }}" />
+<img src="{{ uri }}" class="img-responsive" title="{{ title }}" alt="{{ title }}" data-integrated-id="{{ id }}"/>
+{{#if description}}
+    <span class="img-caption">
+        {{ description}}
+        {{#if credits}}
+            <span class="img-credit">
+                (&copy; {{ credits }})
+            </span>
+        {{/if}}
+    </span>
+{{/if}}
+
+

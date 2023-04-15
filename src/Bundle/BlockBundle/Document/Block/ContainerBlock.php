@@ -46,7 +46,13 @@ class ContainerBlock extends Block
      */
     public function getItems()
     {
-        return $this->items->toArray();
+        $items = $this->items->toArray();
+
+        usort($items, function ($a, $b) {
+            return $a->getOrder() - $b->getOrder();
+        });
+
+        return $items;
     }
 
     /**

@@ -57,12 +57,12 @@ class SecurityController extends AbstractController
     /**
      * @return Response
      */
-    public function login()
+    public function login(Request $request)
     {
         $form = $this->createForm(
             LoginFormType::class,
             null,
-            ['action' => $this->generateUrl('integrated_user_website_security_check')]
+            ['action' => $this->generateUrl('integrated_user_website_security_check', $request->query->all())]
         );
 
         return $this->render($this->themeManager->locateTemplate('security/login.html.twig'), ['form' => $form->createView()]);

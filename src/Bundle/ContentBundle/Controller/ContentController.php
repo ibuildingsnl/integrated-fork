@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -23,6 +24,7 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -71,9 +73,11 @@ class ContentController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly ImageExtension $imageExtension,
         private readonly MediaProvider $mediaProvider,
+        private readonly TaxonomyIndexer $taxonomyIndexer,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
+        private readonly DocumentManager $documentManager
     ) {
     }
 
@@ -93,13 +97,12 @@ class ContentController extends AbstractController
 
         // all this relations stuff is only used on the json response
         $relations = [];
-
         if ($options['relation'] ?? null) {
             $options['contenttypes'] = [];
 
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $options['contenttypes'] = $target->getId();
+                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),
@@ -181,11 +184,8 @@ class ContentController extends AbstractController
                 $queue = $this->queueSubscriber->getQueue();
                 $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                $dm = $this->getDoctrineODM()->getManager();
-
-                $dm->persist($content);
-                $dm->flush();
+                $this->documentManager->persist($content);
+                $this->documentManager->flush();
 
                 $lock = $this->lockFactory->createLock(self::class);
                 $lock->acquire(true);
@@ -217,12 +217,34 @@ class ContentController extends AbstractController
         }
 
         return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'editable' => true,
             'type' => $contentType,
             'form' => $form->createView(),
             'showContentHistory' => false,
             'references' => json_encode($this->getReferences($content)),
         ]);
+    }
+
+    private function getTaxonomyCategories($content): array
+    {
+        $contentRelations = [];
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+        $relations = $this->documentManager->getRepository($this->relationClass)->findAll();
+        foreach ($relations as $relation) {
+            if ($relation->hasSource($contentType) && $relation->getType() == 'taxonomy_category') {
+                $contentRelations[] = $relation;
+            }
+        }
+
+        $taxonomyCategoriess = [];
+        foreach ($contentRelations as $contentRelation) {
+            foreach ($contentRelation->getTargets() as $target) {
+                $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+            }
+        }
+
+        return $taxonomyCategoriess;
     }
 
     /**
@@ -305,9 +327,7 @@ class ContentController extends AbstractController
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                    /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->getDoctrineODM()->getManager();
-                    $dm->flush();
+                    $this->documentManager->flush();
 
                     // Set flash message
                     $this->addFlash('success', $this->getTranslator()->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()]));
@@ -368,6 +388,7 @@ class ContentController extends AbstractController
 
         return $this->render($renderTo, [
             'editable' => $this->isGranted(Permissions::EDIT, $content),
+            'taxonomyCategories' => $this->getTaxonomyCategories($content),
             'type' => $contentType,
             'form' => $form->createView(),
             'formRelations' => $this->getFormRelations($form),
@@ -453,11 +474,8 @@ class ContentController extends AbstractController
                     $queue = $this->queueSubscriber->getQueue();
                     $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
-                    /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->getDoctrineODM()->getManager();
-
-                    $dm->remove($content);
-                    $dm->flush();
+                    $this->documentManager->remove($content);
+                    $this->documentManager->flush();
 
                     // Set flash message
                     $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been deleted', ['%name%' => $type->getName()]));
@@ -718,10 +736,7 @@ class ContentController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
-        /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->getDoctrineODM()->getManager();
-
-        $qb = $dm->createQueryBuilder(Content::class);
+        $qb = $this->documentManager->createQueryBuilder(Content::class);
         $qb->field('relations.references.$id')->equals($content->getId());
 
         $query = $qb->getQuery();

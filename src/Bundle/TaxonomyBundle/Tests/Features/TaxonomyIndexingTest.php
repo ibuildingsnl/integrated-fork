@@ -8,7 +8,13 @@ use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
+use Integrated\Bundle\UserBundle\Model\User;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\Strategy\AffirmativeStrategy;
 
 final class TaxonomyIndexingTest extends TestCase
 {
@@ -18,7 +24,11 @@ final class TaxonomyIndexingTest extends TestCase
     protected function setUp(): void
     {
         $this->taxonomies = new MemoryTaxonomyRepository();
-        $this->indexer = new TaxonomyIndexer($this->taxonomies);
+        $this->indexer = new TaxonomyIndexer($this->taxonomies, new AuthorizationChecker(
+            $tokens = new TokenStorage(),
+            new AccessDecisionManager([], new AffirmativeStrategy(true)),
+        ));
+        $tokens->setToken(new PreAuthenticatedToken(new User(), 'main', ['foo']));
     }
 
     public function testViewingAnEmptyListWhenThereAreNoTaxonomies()

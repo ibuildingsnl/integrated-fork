@@ -13,6 +13,7 @@ namespace Integrated\Bundle\BlockBundle\Form\Type;
 
 use Integrated\Bundle\BlockBundle\Document\Block\Embedded\BlockSize;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -76,6 +77,10 @@ class BlockSizeType extends AbstractType
                 'min' => 1,
                 'max' => 12,
             ]),
+        ]);
+
+        $builder->add('order', HiddenType::class, [
+            'attr' => ['data-itemorder' => 'collection'],
         ]);
     }
 

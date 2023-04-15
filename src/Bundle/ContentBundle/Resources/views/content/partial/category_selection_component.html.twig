@@ -1,0 +1,89 @@
+<div class="taxonomy_category" id="taxonomy_category_{{ relation.vars.attr['data-relation'] }}">
+
+    <div class="category_wrapper close-outside">
+        <div class="hidden"></div>
+
+        <div class="categories_tabs flex flex-wrap">
+            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+                {% if category.depth == 0 %}
+                    {% set real_title = category.title %}
+                    {% set level0 = category.title %}
+
+                    {% set level0channels = category.channels %}
+                    {% set parent_channels = category.channels %}
+                    <div class="category_tab"
+                         data-level0="{{ level0 }}"
+                         data-fulltitle="{{ real_title }}"
+                         data-title="{{ category.title }}"
+                         data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                         data-taxonomyId="{{ category.taxonomyId }}"
+                         data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                        {{ category.title }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="aside-item-search">
+            <i class="iconoir-search"></i>
+            <input type="text" class="list-search" placeholder="{% trans %}Search in{% endtrans %}">
+        </div>
+
+        <ul id="" class="categories_checkboxes categories_checkboxes_basic">
+            {% for category in taxonomyCategories[relation.vars.attr['data-relation']] %}
+                {% if category.depth == 0 %}
+                    {% set real_title = category.title %}
+                    {% set level0 = category.title %}
+                    {% set className = 'parent' %}
+
+                    {% set level0channels = category.channels %}
+                    {% set parent_channels = category.channels %}
+                {% endif %}
+
+                {% if category.depth == 1 %}
+                    {% set real_title = level0 ~ ' > ' ~ category.title %}
+                    {% set level1 = category.title %}
+                    {% set className = 'first-child' %}
+
+                    {% set level1channels = category.channels %}
+                    {% set parent_channels = category.channels|merge(level0channels) %}
+                {% endif %}
+
+                {% if category.depth == 2 %}
+                    {% set real_title = level0 ~ ' > ' ~ level1 ~ ' > ' ~ category.title %}
+                    {% set level2 = category.title %}
+                    {% set className = 'secondary-child' %}
+
+                    {% set level2channels = category.channels %}
+                    {% set parent_channels = category.channels|merge(level0channels)|merge(level1channels) %}
+                {% endif %}
+
+                <li class="inline-block mr-2 {{ className }}" data-fulltitle="{{ real_title }}"
+                    data-level0="{{ level0 }}"
+                    data-title="{{ category.title }}"
+                    data-parentchannels="{% for channel in parent_channels %}{{ channel.getId }},{% endfor %}"
+                    data-taxonomyId="{{ category.taxonomyId }}"
+                    data-channels="{% for channel in category.channels %}{{ channel.getId }},{% endfor %}">
+                    <div class="checkbox">
+                        <label class="checkbox-container" for="{{ category.taxonomyId }}">
+                            <input type="checkbox" data-id="{{ category.taxonomyId }}" id="{{ category.taxonomyId }}">
+                            <span class="checkmark"></span>
+                            <div class="background"></div>
+                            {{ category.title|raw }}
+                        </label>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="current_selection">
+            <span class="heading">{% trans %}Current Selection:{% endtrans %}</span>
+            <div class="enabled_categories_pills">
+            </div>
+        </div>
+
+        <div class="togglefullscreen"><i class="iconoir-open-new-window"></i><i class="iconoir-cancel"></i></div>
+
+        <div id="enabled_categories" class="enabled_categories" data-ids="{{ relation.vars['data'] }}"></div>
+    </div>
+</div>

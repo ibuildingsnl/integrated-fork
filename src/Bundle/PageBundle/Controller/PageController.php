@@ -349,7 +349,7 @@ class PageController extends AbstractController
             $settings = $item->getControllerService().$item->getLayout();
             $key = $item->getChannel()->getId().'-'.$item->getPath();
             if (isset($paths[$key]) && $paths[$key] != $settings) {
-                $this->addFlash('danger', 'Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
+                $this->addFlash('danger', 'Path '.$item->getPath().' is used multiple times with different settings. Only one will be used');
                 continue;
             }
 

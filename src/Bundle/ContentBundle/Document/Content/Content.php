@@ -530,7 +530,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     /**
      * {@inheritdoc}
      */
-    public function setChannels(Collection $channels)
+    public function setChannels(iterable $channels)
     {
         $this->channels->clear();
         $this->channels = new ArrayCollection();

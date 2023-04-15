@@ -11,6 +11,7 @@ final class IndexedItem
         private readonly string|null $slug,
         private readonly int $count,
         private readonly int $depth,
+        private readonly array $channels,
     ) {
     }
 
@@ -19,17 +20,17 @@ final class IndexedItem
         return $this->taxonomyId;
     }
 
-    public function getTitle(): string|null
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function getDescription(): string|null
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getSlug(): string|null
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
@@ -42,5 +43,10 @@ final class IndexedItem
     public function getDepth(): int
     {
         return $this->depth;
+    }
+
+    public function getChannels(): array
+    {
+        return $this->channels;
     }
 }

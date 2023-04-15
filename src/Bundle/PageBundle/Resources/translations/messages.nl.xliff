@@ -43,7 +43,7 @@
                 <target>Annuleren</target>
             </trans-unit>
             <trans-unit id="11">
-                <source>Path %s is used multiple times with diffent settings. Only one will be used</source>
+                <source>Path %s is used multiple times with different settings. Only one will be used</source>
                 <target>URL %s is meerdere keren in gebruik met verschillende instellingen. Slechts één wordt gebruikt</target>
             </trans-unit>
             <trans-unit id="12">

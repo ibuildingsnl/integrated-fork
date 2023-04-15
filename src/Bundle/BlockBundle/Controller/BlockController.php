@@ -233,6 +233,8 @@ class BlockController extends AbstractController
                 }
 
                 $this->addFlash('success', 'Block updated');
+
+                return $this->redirectToRoute('integrated_block_block_edit', ['id' => $block->getId()]);
             }
         }
 

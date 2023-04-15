@@ -85,7 +85,7 @@ class Contact
      * @var int
      */
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
-    protected $order;
+    protected $order = 0;
 
     public function getType(): string
     {
@@ -152,7 +152,7 @@ class Contact
         $this->city = $city;
     }
 
-    public function getState(): string
+    public function getState(): ?string
     {
         return $this->state;
     }
