@@ -131,5 +131,30 @@
 
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
-    <script src="{{ asset('bundles/integratedintegrated/edit_form_submit_button.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.content-form.form-inline');
+            const submitButton = document.getElementById(
+                'integrated_content_actions_save');
+
+            function showSubmitButton() {
+                submitButton.style.display = 'block';
+                form.removeEventListener('change', showSubmitButton);
+                form.removeEventListener('input', showSubmitButton);
+            }
+
+            form.addEventListener('change', showSubmitButton);
+            form.addEventListener('input', showSubmitButton);
+
+        }, false);
+
+        $(document).ready(function() {
+            $('.relation-items').on('select2:open', function() {
+                $('.relation-items').on('change', function() {
+                    $('#integrated_content_actions_save').show();
+                });
+            });
+        });
+
+    </script>
 {% endblock %}

@@ -19,9 +19,6 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         './src/Bundle/FormTypeBundle/Resources/assets/css/tinymce.editor.css',
         './src/Bundle/FormTypeBundle/Resources/assets/js/editor.js',
     ])
-    .addEntry('edit_form_submit_button', [
-        './src/Bundle/ContentBundle/Resources/assets/js/edit_form_submit_button.js',
-    ])
     .addEntry('collection', [
         './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
     ])
