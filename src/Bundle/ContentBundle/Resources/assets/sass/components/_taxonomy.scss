@@ -1,8 +1,7 @@
 .taxonomy-index {
     .taxonomy-list-wrapper {
-        padding: 2rem;
         width: calc(100% - 830px);
-        padding-bottom: 100px;
+        padding: 0 2rem 100px;
         overflow-y: auto;
         height: calc(100vh - 110px);
         @include media(max-3xl) {

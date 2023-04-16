@@ -3,39 +3,40 @@
 {% block content %}
     <div class="taxonomy-index">
         <div class="flex flex-wrap">
-
-            <div class="select-options ml-2 mt-2">
-                {% if filter_options|default([])|length > 0 %}
-                    <ul class="mr-2">
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" id="filtering-list" class="btn btn-select space-between">
-                                <span>{{ filter_options[filter]|trans|capitalize }}</span>
-                                <i class="iconoir-nav-arrow-down"></i>
-                            </a>
-                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-                                {% for filter_id, filter_name in filter_options %}
-                                    <li{% if filter_id == filter %} class="active"{% endif %} role="presentation">
-                                        <a
-                                            href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'filter': filter_id })|
-                                                merge({'page':1})
-                                            ) }}"
-                                           role="menuitem"
-                                        >
-                                            {{ filter_name|trans|capitalize }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    </ul>
-                {% endif %}
-            </div>
-
             {% block form_start %}
                 {{ form_start(form) }}
             {% endblock %}
             <div class="taxonomy-list-wrapper">
+                {% if filter_options|default([])|length > 0 %}
+                    <div class="page-title">
+                        <div class="options">
+                            <ul class="mr-2">
+                                <li class="dropdown close-outside" data-underlay="no">
+                                    <a data-toggle="dropdown" role="button" id="filtering-list" class="btn btn-select space-between">
+                                        <span>{% trans %}Filter by parent{% endtrans %}
+                                : {{ filter_options[filter]|trans|capitalize }}</span>
+                                        <i class="iconoir-nav-arrow-down"></i>
+                                    </a>
+                                    <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                                        {% for filter_id, filter_name in filter_options %}
+                                            <li{% if filter_id == filter %} class="active"{% endif %} role="presentation">
+                                                <a
+                                                    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
+                                                        merge({'filter': filter_id })|
+                                                        merge({'page':1})
+                                                    ) }}"
+                                                    role="menuitem"
+                                                >
+                                                    {{ filter_name|trans|capitalize }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="section-white section-radius taxonomy-list">
                     <table class="table table-hover">
                         <thead>
