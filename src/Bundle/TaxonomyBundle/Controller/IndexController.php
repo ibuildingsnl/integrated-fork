@@ -78,7 +78,7 @@ final class IndexController extends AbstractController
                     fn () => $this->taxonomies->count($contentType->getId()),
                     fn ($p, $s) => $this->indexer->overviewFor(
                         $contentType->getId(),
-                        new TaxonomyOptions($filter, $p / $s, $s),
+                        new TaxonomyOptions($filter, ($p / $s) + 1, $s),
                     ),
                 ),
                 $page,
