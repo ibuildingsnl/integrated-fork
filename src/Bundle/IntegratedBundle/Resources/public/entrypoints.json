@@ -16,11 +16,6 @@
         "/bundles/integratedintegrated/edit.js"
       ]
     },
-    "edit_form_submit_button": {
-      "js": [
-        "/bundles/integratedintegrated/edit_form_submit_button.js"
-      ]
-    },
     "collection": {
       "js": [
         "/bundles/integratedintegrated/collection.js"
