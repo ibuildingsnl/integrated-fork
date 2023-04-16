@@ -45,7 +45,16 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         )->getItems();
 
-        return array_map(fn (Document $document) => $this->doctrineRepo->find($document['type_id']), $items);
+        return array_map(fn (Document $document) => $this->load($document, $contentType), $items);
+    }
+
+    private function load(Document $document, string $type): Taxonomy
+    {
+        try {
+            return $this->byId($document['type_id']);
+        } catch (\TypeError $e) {
+            throw new \RuntimeException("$type item `{$document['type_id']}` not found in database");
+        }
     }
 
     public function byId(string $id): ?Taxonomy
