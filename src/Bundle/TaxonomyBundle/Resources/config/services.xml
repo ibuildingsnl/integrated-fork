@@ -16,9 +16,17 @@
             <argument type="service" id="knp_paginator"/>
             <argument type="service" id="solarium.client"/>
         </service>
-        <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister">
+        <service id="integrated_taxonomy.taxonomy.overview" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyViewer">
+            <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="integrated_taxonomy.taxonomy.indexer" />
+            <argument type="service" id="integrated_taxonomy.taxonomy.lister" />
+        </service>
+        <service id="integrated_taxonomy.taxonomy.indexer" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer">
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
             <argument type="service" id="security.authorization_checker" />
+        </service>
+        <service id="integrated_taxonomy.taxonomy.lister" class="Integrated\Bundle\TaxonomyBundle\Services\TaxonomyLister">
+            <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
         </service>
     </services>
 </container>
