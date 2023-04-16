@@ -1,13 +1,17 @@
 .taxonomy-index {
     .taxonomy-list-wrapper {
         width: calc(100% - 830px);
-        padding: 0 2rem 100px;
+        padding: 2rem 2rem 100px;
         overflow-y: auto;
         height: calc(100vh - 110px);
         @include media(max-3xl) {
             height: unset;
             width:100%;
             order: 1;
+        }
+        
+        .options {
+            margin-top: -1rem;
         }
     }
     .taxonomy-create-wrapper {
