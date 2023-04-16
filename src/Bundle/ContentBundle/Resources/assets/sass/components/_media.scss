@@ -87,6 +87,7 @@
 }
 
 .media-library {
+    height: 100%;
     .aside-filters {
         order: 0;
         border-right: 1px solid #dee3e9;
@@ -401,6 +402,7 @@
                 position: absolute;
                 top: 0;
                 left: 0;
+                max-height: 100%;
             }
 
             .centered {

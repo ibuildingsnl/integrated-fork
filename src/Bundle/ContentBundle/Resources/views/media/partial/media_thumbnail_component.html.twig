@@ -1,4 +1,4 @@
-{% set thumbnail = integrated_image(media.file).scaleResize(200) %}
+{% set thumbnail = integrated_image(media.file).cropResize(200, 200) %}
 {% set description = media.description|default('') %}
 {% set credits = media.credits|default('') %}
 
