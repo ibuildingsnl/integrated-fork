@@ -70,7 +70,7 @@ final class IndexController extends AbstractController
 
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
             'form' => $form->createView(),
-            'filter_options' => ['root' => 'Show all'] + $this->indexer->childrenOf($contentType->getId(), 'root'),
+            'filter_options' => $this->indexer->childrenOf($contentType->getId(), 'root'),
             'filter' => $filter,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
