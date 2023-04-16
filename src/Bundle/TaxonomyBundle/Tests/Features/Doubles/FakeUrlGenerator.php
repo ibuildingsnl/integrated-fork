@@ -11,8 +11,9 @@ final class FakeUrlGenerator implements UrlGeneratorInterface
     {
     }
 
-    public function getContext()
+    public function getContext(): RequestContext
     {
+        return new RequestContext();
     }
 
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
