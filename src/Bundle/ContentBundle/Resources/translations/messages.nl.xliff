@@ -958,6 +958,14 @@
                 <source>Editing %contentType%</source>
                 <target>%contentType% aanpassen</target>
             </trans-unit>
+            <trans-unit id="243">
+                <source>Filter by parent</source>
+                <target>Filter op parent</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>Show all</source>
+                <target>Toon alles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
