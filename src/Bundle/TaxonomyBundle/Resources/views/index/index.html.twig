@@ -89,14 +89,7 @@
                                     {{ item.slug }}
                                 </td>
                                 <td>
-
-                                    {% if item.count %}
-                                        <a href="{{ path('integrated_content_content_index', { 'relation' : {'keywords': [item.title] } }) }}">
-                                            {{ "(%d)"|trans|format(item.count) }}
-                                        </a>
-                                    {% else %}
-                                        {{ "(0)"|trans }}
-                                    {% endif %}
+                                    {{ "(%d)"|trans|format(item.count) }}
                                 </td>
                             </tr>
                         {% else %}
