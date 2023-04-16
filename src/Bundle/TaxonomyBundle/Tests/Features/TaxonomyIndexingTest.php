@@ -6,6 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
 use Integrated\Bundle\UserBundle\Model\User;
@@ -223,6 +224,38 @@ final class TaxonomyIndexingTest extends TestCase
         self::assertCount(2, $list);
     }
 
+    public function testOnlyShowingTaxonomiesThatFitOnTheFirstPage()
+    {
+        $this->add(
+            $this->taxonomy('1'),
+            $this->taxonomy('2'),
+            $this->taxonomy('3'),
+            $this->taxonomy('4'),
+            $this->taxonomy('5'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::page(1, 3));
+
+        self::assertCount(3, $list);
+        self::assertEquals('1', $list[0]->getTitle());
+    }
+
+    public function testOnlyShowingTaxonomiesThatFitOnTheSecondPage()
+    {
+        $this->add(
+            $this->taxonomy('1'),
+            $this->taxonomy('2'),
+            $this->taxonomy('3'),
+            $this->taxonomy('4'),
+            $this->taxonomy('5'),
+        );
+
+        $list = $this->indexer->overviewFor('taxonomy', TaxonomyOptions::page(2, 3));
+
+        self::assertCount(2, $list);
+        self::assertEquals('4', $list[0]->getTitle());
+    }
+
     private function add(Taxonomy ...$taxonomies): void
     {
         foreach ($taxonomies as $taxonomy) {
@@ -242,16 +275,16 @@ final class TaxonomyIndexingTest extends TestCase
 
     private function taxonomy(
         string $id,
-        string $title,
-        string $slug,
+        string $title = null,
+        string $slug = null,
         string $rank = null,
         string $parent = null,
         string $contentType = 'taxonomy'
     ): Taxonomy {
         $taxonomy = new Taxonomy();
         $taxonomy->setId($id);
-        $taxonomy->setTitle($title);
-        $taxonomy->setSlug($slug);
+        $taxonomy->setTitle($title ?? $id);
+        $taxonomy->setSlug($slug ?? $title ?? $id);
         $taxonomy->setRank($rank);
         $taxonomy->setParentID($parent);
         $taxonomy->setContentType($contentType);

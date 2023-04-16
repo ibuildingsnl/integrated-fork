@@ -7,7 +7,7 @@
                 {{ form_start(form) }}
             {% endblock %}
             <div class="taxonomy-list-wrapper">
-                {% if filter_options|default([])|length > 0 %}
+                {% if filter_options|default([])|length > 0 and filter_options[filter] is defined %}
                     <div class="page-title">
                         <div class="options">
                             <ul class="mr-2">
