@@ -91,7 +91,7 @@
                                 <td>
 
                                     {% if item.count %}
-                                        <a href="{{ path('integrated_content_content_index', { (content_type.id): [item.title] }) }}">
+                                        <a href="{{ path('integrated_content_content_index', { 'relation' : {'keywords': [item.title] } }) }}">
                                             {{ "(%d)"|trans|format(item.count) }}
                                         </a>
                                     {% else %}
