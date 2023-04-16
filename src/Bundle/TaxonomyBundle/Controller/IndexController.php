@@ -82,7 +82,7 @@ final class IndexController extends AbstractController
                     ),
                 ),
                 $page,
-                15,
+                50,
             ),
         ]);
     }
