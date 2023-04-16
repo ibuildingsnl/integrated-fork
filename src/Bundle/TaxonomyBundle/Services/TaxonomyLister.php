@@ -21,7 +21,7 @@ final class TaxonomyLister implements TaxonomyOverview
     public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
     {
         return array_map(
-            fn(Taxonomy $t) => IndexedItem::basedOn($t, $this->taxonomies->countUsages($t), 0),
+            fn (Taxonomy $t) => IndexedItem::basedOn($t, $this->taxonomies->countUsages($t), 0),
             $this->taxonomies->paged(
                 $contentType,
                 $options?->page ?: 1,

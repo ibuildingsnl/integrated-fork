@@ -18,7 +18,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
     /** @return string[] */
     public function childrenOf(string $contentType, string $parentId): array
     {
-        return array_map(fn(Taxonomy $t) => $t->getTitle(), $this->listByParent($contentType)[$parentId] ?? []);
+        return array_map(fn (Taxonomy $t) => $t->getTitle(), $this->listByParent($contentType)[$parentId] ?? []);
     }
 
     /** @return IndexedItem[] */
@@ -26,6 +26,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
     {
         $root = $options?->root ?: 'root';
         $filtered = $root !== 'root';
+
         return $this->toSortedIndex(
             $this->listByParent($contentType),
             $root,

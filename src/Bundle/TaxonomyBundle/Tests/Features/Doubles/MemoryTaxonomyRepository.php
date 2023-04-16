@@ -27,7 +27,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
     {
         $items = array_filter(
             $this->byType($contentType),
-            fn(Taxonomy $t) => $this->authorization?->isGranted('view', $t) ?? true
+            fn (Taxonomy $t) => $this->authorization?->isGranted('view', $t) ?? true
         );
         usort(
             $items,
@@ -35,7 +35,8 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
                 $a->getRank() <=> $b->getRank() :
                 $a->getTitle() <=> $b->getTitle()
         );
-        return array_slice($items, ($page - 1) * $pageSize, $pageSize);
+
+        return \array_slice($items, ($page - 1) * $pageSize, $pageSize);
     }
 
     public function byId(string $id): ?Taxonomy
@@ -56,7 +57,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
 
     public function count(string $contentType): int
     {
-        return count($this->byType($contentType));
+        return \count($this->byType($contentType));
     }
 
     public function add(Taxonomy $taxonomy): void

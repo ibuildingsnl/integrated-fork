@@ -19,7 +19,7 @@ final class IndexedItem
 
     public static function basedOn(Taxonomy $taxonomy, int $usageCount, int $depth): self
     {
-        return new IndexedItem(
+        return new self(
             $taxonomy->getId(),
             $taxonomy->getTitle(),
             $taxonomy->getDescription(),

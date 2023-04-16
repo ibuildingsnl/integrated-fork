@@ -24,7 +24,6 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -64,21 +63,21 @@ class ContentController extends AbstractController
     protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
 
     public function __construct(
-        private readonly ResolverInterface        $resolver,
-        private readonly ContentTypeManager       $contentTypeManager,
-        private readonly QueueSubscriber          $queueSubscriber,
-        private readonly LockFactory              $lockFactory,
-        private readonly IndexerInterface         $indexer,
-        private readonly SearchContentReferenced  $contentReferenced,
-        private readonly Manager                  $lockManager,
-        private readonly UserManagerInterface     $userManager,
-        private readonly ImageExtension           $imageExtension,
-        private readonly MediaProvider            $mediaProvider,
-        private readonly TaxonomyOverview         $taxonomyIndexer,
-        private readonly QueryFactoryInterface    $queryFactory,
+        private readonly ResolverInterface $resolver,
+        private readonly ContentTypeManager $contentTypeManager,
+        private readonly QueueSubscriber $queueSubscriber,
+        private readonly LockFactory $lockFactory,
+        private readonly IndexerInterface $indexer,
+        private readonly SearchContentReferenced $contentReferenced,
+        private readonly Manager $lockManager,
+        private readonly UserManagerInterface $userManager,
+        private readonly ImageExtension $imageExtension,
+        private readonly MediaProvider $mediaProvider,
+        private readonly TaxonomyOverview $taxonomyIndexer,
+        private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly DocumentManager          $documentManager
+        private readonly DocumentManager $documentManager
     ) {
     }
 
