@@ -344,7 +344,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
             new Document([
                 'type_id' => 'id_0',
                 'type_name' => 'news',
-                'type_class' => \StdClass::class,
+                'type_class' => \stdClass::class,
                 'title' => 'title_0',
                 'pub_time' => 'invalid',
                 'pub_edited' => 'invalid',
@@ -353,14 +353,14 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
             new Document([
                 'type_id' => 'id_1',
                 'type_name' => 'blog',
-                'type_class' => \StdClass::class,
+                'type_class' => \stdClass::class,
                 'pub_time' => '2012-12-12T12:12:12Z',
                 'image_string' => '',
             ]),
             new Document([
                 'type_id' => 'id_2',
                 'type_name' => 'invalid',
-                'type_class' => \StdClass::class,
+                'type_class' => \stdClass::class,
                 'title' => 'title_2',
                 'pub_edited' => '2012-12-12T12:12:12Z',
                 'image_string' => '',
@@ -368,7 +368,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
             new Document([
                 'type_id' => 'id_3',
                 'type_name' => 'blog',
-                'type_class' => \StdClass::class,
+                'type_class' => \stdClass::class,
                 'title' => 'title_3',
                 'pub_time' => '2012-12-12T12:12:12Z',
                 'pub_edited' => 'invalid',
