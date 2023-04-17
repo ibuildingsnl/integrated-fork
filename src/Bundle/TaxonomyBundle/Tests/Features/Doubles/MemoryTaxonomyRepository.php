@@ -23,7 +23,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->taxonomies;
     }
 
-    public function paged(string $contentType, int $page, int $pageSize): array
+    public function paged(string $contentType, int $offset, int $limit): array
     {
         $items = array_filter(
             $this->byType($contentType),
@@ -36,7 +36,7 @@ final class MemoryTaxonomyRepository implements TaxonomyRepositoryInterface
                 $a->getTitle() <=> $b->getTitle()
         );
 
-        return \array_slice($items, ($page - 1) * $pageSize, $pageSize);
+        return \array_slice($items, $offset, $limit);
     }
 
     public function byId(string $id): ?Taxonomy

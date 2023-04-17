@@ -6,8 +6,8 @@ final class TaxonomyOptions
 {
     public function __construct(
         public readonly string $root = 'root',
-        public readonly int $page = 1,
-        public readonly int $pageSize = 50,
+        public readonly int $offset = 0,
+        public readonly int $limit = 50,
     ) {
     }
 
@@ -18,6 +18,6 @@ final class TaxonomyOptions
 
     public static function page(int $page, int $pageSize): self
     {
-        return new self('root', $page, $pageSize);
+        return new self('root', ($page - 1) * $pageSize, $pageSize);
     }
 }

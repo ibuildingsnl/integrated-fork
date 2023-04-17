@@ -10,7 +10,7 @@ interface TaxonomyRepositoryInterface
     public function all(): array;
 
     /** @return Taxonomy[] */
-    public function paged(string $contentType, int $page, int $pageSize): array;
+    public function paged(string $contentType, int $offset, int $limit): array;
 
     public function byId(string $id): ?Taxonomy;
 

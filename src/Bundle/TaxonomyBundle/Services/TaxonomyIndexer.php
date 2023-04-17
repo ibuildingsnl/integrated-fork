@@ -37,7 +37,7 @@ final class TaxonomyIndexer implements TaxonomyOverview
 
     private function slice(TaxonomyOptions $options, IndexedItem ...$items): array
     {
-        return \array_slice($items, ($options->page - 1) * $options->pageSize, $options->pageSize);
+        return \array_slice($items, $options->offset, $options->limit);
     }
 
     /** @return Taxonomy[][] */

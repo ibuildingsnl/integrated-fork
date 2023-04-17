@@ -19,7 +19,6 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
         private readonly QueryFactoryInterface $queryFactory,
-        private readonly PaginatorInterface $paginator,
         private readonly ClientInterface $solrClient,
     ) {
     }
@@ -29,21 +28,18 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         return $this->doctrineRepo->findAll();
     }
 
-    public function paged(string $contentType, int $page, int $pageSize): array
+    public function paged(string $contentType, int $offset, int $limit): array
     {
         $this->solrClient->getPlugin('postbigrequest');
 
-        $query = $this->queryFactory->createQuery(IntegratedContent::class, [
-            'contenttypes' => [$contentType],
-        ]);
+        $query = $this->queryFactory
+            ->createQuery(IntegratedContent::class, ['contenttypes' => [$contentType]])
+            ->getQuery()
+            ->setStart($offset)
+            ->setRows($limit);
 
         /** @var Document[] $items */
-        $items = $this->paginator->paginate(
-            [$this->solrClient, $query->getQuery()],
-            $page,
-            $pageSize,
-            [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
-        )->getItems();
+        $items = $this->solrClient->select($query)->getDocuments();
 
         return array_map(fn (Document $document) => $this->load($document, $contentType), $items);
     }

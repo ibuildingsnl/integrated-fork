@@ -24,8 +24,8 @@ final class TaxonomyLister implements TaxonomyOverview
             fn (Taxonomy $t) => IndexedItem::basedOn($t, $this->taxonomies->countUsages($t), 0),
             $this->taxonomies->paged(
                 $contentType,
-                $options?->page ?: 1,
-                $options?->pageSize ?: 50,
+                $options?->offset ?: 0,
+                $options?->limit ?: 50,
             ),
         );
     }
