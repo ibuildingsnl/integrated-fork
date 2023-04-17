@@ -203,6 +203,12 @@ function handleBulkItemClick(event) {
         }
     }
 
+    if (bulkSelection.length > 0) {
+        document.querySelector('#bulkselection_delete').style.display = ""
+    } else {
+        document.querySelector('#bulkselection_delete').style.display = "none"
+    }
+
     latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
     draggingAmountOfItems = bulkSelection.length
 }
@@ -275,6 +281,7 @@ async function disableBulkSelection() {
     $('.media-container').removeClass('mode-select')
     $('.media-item').removeClass('selected')
     draggingAmountOfItems = 1
+    document.querySelector('#bulkselection_delete').style.display = "none"
 }
 
 window.asideFolderSearch = function (elem) {
