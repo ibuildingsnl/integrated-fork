@@ -258,7 +258,7 @@ class ContentController extends AbstractController
         $contentType = $this->contentTypeManager->getType($content->getContentType());
 
         if (!$this->isGranted(Permissions::VIEW, $content)) {
-            throw new AccessDeniedException('Not granteeedddd');
+            throw new AccessDeniedException();
         }
 
         $locking = $this->getLock($content, 15);
