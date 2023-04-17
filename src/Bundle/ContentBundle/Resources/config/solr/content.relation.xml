@@ -119,12 +119,6 @@
 
         <type name="integrated.storage">
             <options>
-                <string key="logo">logo</string>
-            </options>
-        </type>
-
-        <type name="integrated.storage">
-            <options>
                 <string key="cover">cover</string>
             </options>
         </type>

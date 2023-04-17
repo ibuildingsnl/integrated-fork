@@ -180,10 +180,11 @@ class ChannelType extends AbstractType
                 'style' => 'sidebar',
                 'icon' => 'graph-up',
             ],
+            'required' => false,
         ]);
 
         $builder->add(
-            $builder->create('options', FormType::class, [
+            $builder->create('channel_options', FormType::class, [
                 'inherit_data' => true,
                 'attr' => [
                     'location' => 'sidebar',

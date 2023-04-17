@@ -1,4 +1,4 @@
-{% extends '@IntegratedContent/base.html.twig'  %}
+{% extends '@IntegratedContent/base.html.twig' %}
 
 {% set selected_modus = 'select_one' %}
 
@@ -16,10 +16,20 @@
 
 {% block webpack_js %}
     <script>
-        const path = '{{ path('integrated_content_media_manage_relations') }}'
-        const selected_modus = '{{ selected_modus|default('select_one') }}'
+        const path = '{{ path('integrated_content_media_manage_relations') }}';
+        const selected_modus = '{{ selected_modus|default('select_one') }}';
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+    <script>
+        $(document).keyup(function(e) {
+            if (e.key === 'Escape') {
+                let closeOutside = parent.$('.close-outside.show');
+                closeOutside.removeClass('show');
+                parent.$('#dropdown_overlay').addClass('hide');
+                window.popupShown = false;
+            }
+        });
+    </script>
 {% endblock %}

@@ -85,7 +85,9 @@
 
 {% block body %}
     <div id="wrapper-holder">
+        {% block dropdown_overlay %}
         <div id="dropdown_overlay" class="modal_overlay hide" style=""></div>
+        {% endblock dropdown_overlay %}
             {% block sidebar_menu %}
                 <div class="sidebar-menu close-outside">
                     {% include '@IntegratedContent/partials/block.navigation.html.twig' %}

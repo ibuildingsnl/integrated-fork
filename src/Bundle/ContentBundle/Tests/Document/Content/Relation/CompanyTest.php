@@ -78,7 +78,8 @@ class CompanyTest extends RelationTest
     {
         /* @var $logo \Integrated\Bundle\ContentBundle\Document\Content\Image | MockObject */
         $logo = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Image');
-        $this->assertSame($logo, $this->company->setLogo($logo)->getLogo());
+        $this->company->setLogo($logo);
+        $this->assertSame($logo, $this->company->getLogo());
     }
 
     /**

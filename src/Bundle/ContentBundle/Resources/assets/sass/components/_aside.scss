@@ -55,6 +55,16 @@
             display: inline-flex;
         }
     }
+    .aside-filters{
+        form[name="page_filter"] {
+            .aside-item-list-container {
+                padding: 1rem;
+                .form-control {
+                    padding: 0.5rem;
+                }
+            }
+        }
+    }
 }
 
 .aside-item-holder {
@@ -180,6 +190,11 @@
                 &.used-by {
                     padding: 10px 10px 0;
                     margin-bottom: 0;
+                }
+                &.bc-collection {
+                    > li {
+                        margin-bottom: 0px;
+                    }
                 }
             }
 
@@ -434,6 +449,7 @@ body.hide-options {
         border: 0;
         border-top: 1px solid $border-color;
         background-color: white;
+        position:relative;
 
         &.show {
             .aside-item-header {

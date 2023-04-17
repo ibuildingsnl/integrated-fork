@@ -17,7 +17,7 @@ body {
     position: relative;
     overflow: hidden;
     width: calc(100vw - 250px);
-    height: 100%;
+    height: calc(100vh - 60px);
     background-color: $bg-gray;
     @include media(max-xl) {
         width: calc(100vw - 50px);
@@ -342,6 +342,7 @@ body.hide-options {
     overflow: hidden;
     border-top: 1px solid $border-color;
     background-color: white;
+    position:relative;
 
     &.show {
         .editor-item-list {

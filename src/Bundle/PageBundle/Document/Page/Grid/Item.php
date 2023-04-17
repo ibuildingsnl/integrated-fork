@@ -23,7 +23,7 @@ class Item
     /**
      * @var int
      */
-    protected $order;
+    protected $order = 0;
 
     /**
      * @var Block

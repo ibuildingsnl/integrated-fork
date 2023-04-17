@@ -100,7 +100,7 @@
             {% endif %}
 
             {% if (panel_heading is defined and panel_heading == 'true') %}
-                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ field.vars.value.label|default(form.vars.default_title|default('Item')) ~ '</span></a>' %}
+                {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
                     {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
                 {% endif %}
@@ -117,8 +117,9 @@
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
+            {% set attr = attr|merge({ 'class': ('collection-widget '~attr.class|default(''))|trim }) %}
         {% endif %}
-        <div {{ block('widget_container_attributes') }} class="collection-widget">
+        <div {{ block('widget_container_attributes') }}>
             <ul class="bc-collection list-table {% if (panel_heading is not defined) %}no-heading{% endif %}">
                 {% for field in form %}
                     <li>
@@ -127,7 +128,16 @@
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse">
-                                            <i class="iconoir-nav-arrow-down"></i><span>{{ field.vars.value.label|default(form.vars.default_title|default('Item')) }}</span>
+                                            <i class="iconoir-nav-arrow-down"></i>
+                                            <span>
+                                                {{ field.vars.value.title|
+                                                default(field.vars.value.label|
+                                                default(field.vars.value.block|
+                                                default(field.vars.value.text|
+                                                default(field.vars.value.frequency|
+                                                default(form.vars.default_title|
+                                                default('Item')))))) }}
+                                            </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
                                             <a href="javascript:;" class="remove"
@@ -162,7 +172,10 @@
             {% if form.vars.allow_add %}
                 <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection"
                    data-collection="{{ form.vars.id }}"
-                   data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
+                   data-prototype-name="{{ prototype_name }}">
+                    <span>{{ add_button_text|trans({}, translation_domain) }}</span>
+                    <i class="iconoir-plus"></i>
+                </a>
             {% endif %}
         </div>
     {% endapply %}
@@ -240,7 +253,7 @@
         <ul {{ block('widget_container_attributes') }}>
             {% for child in form %}
                 {% if multiple %}
-                    <li class="inline-block mr-2">
+                    <li class="inline-block">
                         {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
                     </li>
                 {% else %}
@@ -546,7 +559,7 @@
         {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' switch-input' )}) %}
         <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %}
                value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-        <span class="switch-label" data-on="Yes" data-off="No"></span>
+        <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
         <span class="switch-handle"></span>
     {% endapply %}
 {% endblock checkbox_switcher_widget %}
@@ -800,6 +813,7 @@
                 {% set widget_col = widget_col + label_col %}
             {% endif %}
         {% endif %}
+
         {% if attr.style is defined and attr.style is not empty %}
             {% set style = attr.style %}
         {% endif %}
@@ -1057,7 +1071,6 @@
                 {{ form_row(child) }}
             {% endif %}
         {% endfor %}
-        {#        {% endif %} #}
     {% endapply %}
 {% endblock form_rest %}
 

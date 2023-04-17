@@ -9,6 +9,9 @@
     {# TODO How to handle custom ContentTypes that can be anything? #}
     {# We could check pathname / identifier, but that is not so elegant# #}
 {% endif %}
+{% set description = media.description|default('') %}
+{% set credits = media.credits|default('') %}
+
 
 <li class="media-item ui-widget-content ui-corner-tr grid {{ media.contentType }}"
     id="{{ media.id }}"
@@ -17,36 +20,38 @@
     data-media_id="{{ loop.index }}"
     data-thumbnail="{{ thumbnail }}"
     data-file="{{ media.file }}"
-    data-title="{{ media.title  }}"
-    data-mime="{{ media.file.getMetadata().mimeType }}">
-        <div class="media-preview">
-            <div class="thumbnail">
-                <div class="centered">
-                    <img src="{{ thumbnail }}" alt="{{ media.title }}">
-                </div>
+    data-title="{{ media.title }}"
+    data-mime="{{ media.file.getMetadata().mimeType }}"
+    data-description="{{ description }}"
+    data-credits="{{ credits }}">
+    <div class="media-preview">
+        <div class="thumbnail">
+            <div class="centered">
+                <img src="{{ thumbnail }}" alt="{{ media.title }}">
             </div>
-            {% if media.file|split('.')|last|lower not in not_shown_filetypes %}
-                <div class="filetype">
-                    {{ media.file|split('.')|last|lower }}
-                </div>
-            {% endif %}
         </div>
+        {% if media.file|split('.')|last|lower not in not_shown_filetypes %}
+            <div class="filetype">
+                {{ media.file|split('.')|last|lower }}
+            </div>
+        {% endif %}
+    </div>
     <div class="details flex">
         <div class="w-full md:w-1/2">
             <div class="detail-wrap title">
                 <span class="detail-label">{% trans %}Title{% endtrans %}:</span>
                 <h3>{{ media.title }}</h3>
             </div>
-            {% if media.description %}
+            {% if description %}
                 <div class="detail-wrap description">
                     <span class="detail-label">{% trans %}Description{% endtrans %}:</span>
-                    <p>{{ media.description }}</p>
+                    <p>{{ description }}</p>
                 </div>
             {% endif %}
-            {% if media.credits %}
+            {% if credits %}
                 <div class="detail-wrap credits">
                     <span class="detail-label">{% trans %}Credits{% endtrans %}:</span>
-                    <p>{{ media.credits }}</p>
+                    <p>{{ credits }}</p>
                 </div>
             {% endif %}
         </div>

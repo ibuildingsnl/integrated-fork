@@ -63,7 +63,7 @@ let draggingAmountOfItems = 1
 
 window.toggle_upload_view = function(customContentType) {
     $('#upload_container').addClass('show').addClass('close-outside');
-    $('#dropdown_overlay').removeClass('hide');
+    window.popupShown = true;
 }
 
 window.disable_x = function(view) {
@@ -88,8 +88,8 @@ window.enable_list_view = function() {
 }
 
 $(".uppy-close").on("click", function () {
-    $('#dropdown_overlay').addClass('hide');
     $('#upload_container').removeClass('show').removeClass('close-outside');
+    window.popupShown = true;
 });
 
 $("#bulkselection").on("click", async function () {

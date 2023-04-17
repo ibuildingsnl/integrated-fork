@@ -72,9 +72,9 @@
                                             {% endif %}
                                         {% endif %}
                                         {% if content is defined %}
-                                            {% if locking is defined and locking.lock is defined and locking.locked == false %}
+                                            {% if locking is defined and locking.lock is defined and locking.lock is not null and locking.locked == false %}
                                                 <a class="delete"
-                                                   href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.getId}) }}">
+                                                   href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.id}) }}">
                                                     <i class="iconoir-trash"></i>
                                                 </a>
                                             {% else %}
@@ -103,6 +103,11 @@
                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                 {% set options = true %}
                             {% endfor %}
+                            {% if form.children.customFields is defined %}
+                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                    {% set options = true %}
+                                {% endfor %}
+                            {% endif %}
                             {% if options == true %}
                                 <div class="aside-item-wrapper">
                                     <div class="aside-item-header">
@@ -118,6 +123,13 @@
                                             {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                                 {{ form_row(child) }}
                                             {% endfor %}
+                                            {% block custom_sidebar_fields %}
+                                                {% if form.children.customFields is defined %}
+                                                    {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                        {{ form_row(field) }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endblock %}
                                         </div>
                                     </div>
                                 </div>
@@ -187,14 +199,6 @@
                                 {% endfor %}
                             {% endif %}
                         {% endblock %}
-
-                        {% block custom_sidebar_fields %}
-                            {% if form.children.customFields is defined %}
-                                {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
-                                    {{ form_row(field) }}
-                                {% endfor %}
-                            {% endif %}
-                        {% endblock %}
                     {% endblock %}
                 </div>
             </aside>
@@ -205,6 +209,14 @@
                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
                         {{ form_row(child) }}
                     {% endfor %}
+
+                    {% if form.children.customFields is defined %}
+                        {% for field in form.children.customFields %}
+                            {% if not field.rendered %}
+                                {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                 {% endblock %}
@@ -350,8 +362,9 @@
         autoResize();
 
         function autoResize() {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+            if (textarea.scrollHeight > 0) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            }
         }
 
         setTimeout(function() {
@@ -415,7 +428,7 @@
             width: 100%;
             min-height: 10px;
             border: none;
-            min-height: 50vh;
+            min-height: 80vh;
         }
     </style>
 {% endblock %}

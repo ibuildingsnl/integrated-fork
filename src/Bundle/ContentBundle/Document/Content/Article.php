@@ -74,7 +74,7 @@ class Article extends Content implements RankableInterface
      * @var Image
      */
     #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
-        'label' => 'Featured Image',
+        'label' => 'Featured image',
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
@@ -259,12 +259,12 @@ class Article extends Content implements RankableInterface
         return $this;
     }
 
-    public function getFeaturedImage(): Image|null
+    public function getFeaturedImage(): ?Image
     {
         return $this->featuredImage;
     }
 
-    public function setFeaturedImage(Image $featuredImage): void
+    public function setFeaturedImage(?Image $featuredImage): void
     {
         $this->featuredImage = $featuredImage;
     }

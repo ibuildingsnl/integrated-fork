@@ -611,14 +611,12 @@
                     }
                 }
 
-                element.parentNode.removeChild(element);
-
                 //if there were more columns, remove the last columns
                 while (typeof $oldColumns[i] !== 'undefined') {
                     $oldColumns[i].parentNode.removeChild($oldColumns[i]);
                 }
 
-                $row.insertBefore(createRowButtons(), $row.firstChild);
+                $row.insertBefore($row.firstChild);
             }
 
             if (total === 0) {
