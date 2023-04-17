@@ -13,9 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Bulk\Action\DeleteAction;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
-use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
@@ -25,7 +23,6 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
-use Integrated\Common\Services\MainFlusher;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -201,46 +198,19 @@ class MediaController extends AbstractController
 
     public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
     {
-        //Get bulkselection ID`s from the request:
-        if ($request->getContent()) {
-            $jsonContent = json_decode($request->getContent());
-            $idSelection = $jsonContent->bulkselection;
-            $request->query->set('ids', $idSelection);
-        }
+        $jsonContent = json_decode($request->getContent());
+        $idSelection = $jsonContent->bulkselection;
+        $request->query->set('ids', $idSelection);
 
-        //First part, check if there are usedBy`s and send an fitting message at the front end
         if (!$jsonContent->confirmed_by_user) {
-            $usesByTitles = [];
-            foreach ($idSelection as $id) {
-                $content = $this->documentManager->getRepository(Content::class)->find($id);
-
-                if ($content) {
-                    //get the usedby, is there an easier way?
-                    $result = $this->documentManager->getRepository(Content::class)
-                        ->getUsedBy(new ArrayCollection([$content]), null, null, false)
-                        ->getQuery()
-                        ->execute();
-
-                    //if we have a usedBy, add the title to the array
-
-//                    if (count($result) > 0) { //this worked at my local setup?<!--!-->
-                    if (false !== $result->current()) { //this worked at my local setup>!
-                        $usesByTitles[] = $content->getTitle();
-                    }
-                }
-            }
-
-            if (count($usesByTitles) > 0) {
-                return new JsonResponse([
-                    'message' => 'There exist some relations. Are you SURE?',
-                    'used_by' => $usesByTitles
-                ]);
-            } else {
-                return new JsonResponse(['message' => 'Ok to delete, go for it!']);
-            }
+            return $this->getUsedBy($idSelection);
         }
 
-        //2nd Part: remove relations
+        return $this->removeRelations($idSelection);
+    }
+
+    private function removeRelations(array $idSelection): Response
+    {
         $deletedIds = [];
         foreach ($idSelection as $id) {
             $contentRepository = $this->documentManager->getRepository(Content::class);
@@ -257,9 +227,39 @@ class MediaController extends AbstractController
         $this->taxonomyRelationManager->runSolrQueue();
 
         return new JsonResponse([
-            'message' => "Removed some items",
-            'ids' => $deletedIds
+            'message' => 'Removed some items',
+            'ids' => $deletedIds,
         ]);
+    }
+
+    private function getUsedBy(array $idSelection): Response
+    {
+        $usesByTitles = [];
+        foreach ($idSelection as $id) {
+            $content = $this->documentManager->getRepository(Content::class)->find($id);
+
+            if ($content) {
+                // get the usedby, is there an easier way?
+                $result = $this->documentManager->getRepository(Content::class)
+                    ->getUsedBy(new ArrayCollection([$content]), null, null, false)
+                    ->getQuery()
+                    ->execute();
+
+                // if we have a usedBy, add the title to the array
+                if (false !== $result->current()) {
+                    $usesByTitles[] = $content->getTitle();
+                }
+            }
+        }
+
+        if (\count($usesByTitles) > 0) {
+            return new JsonResponse([
+                'message' => 'There exist some relations. Are you SURE?',
+                'used_by' => $usesByTitles,
+            ]);
+        } else {
+            return new JsonResponse(['message' => 'Ok to delete, go for it!']);
+        }
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
