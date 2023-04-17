@@ -43,21 +43,10 @@ class MongoDBContentTypeListener implements EventSubscriber
     {
         return [
             Events::postUpdate,
-            Events::postRemove,
         ];
     }
 
     public function postUpdate(LifecycleEventArgs $event)
-    {
-        $this->syncDocument($event);
-    }
-
-    public function postRemove(LifecycleEventArgs $event)
-    {
-        $this->syncDocument($event);
-    }
-
-    private function syncDocument(LifecycleEventArgs $event)
     {
         $document = $event->getDocument();
 

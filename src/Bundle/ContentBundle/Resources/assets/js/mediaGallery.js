@@ -116,7 +116,6 @@ $("#cancel_delete").on("click", async function() {
     await hideBulkdeletionPopup()
 })
 
-
 $("#bulkselection").on("click", async function () {
     if (bulkSelectionEnabled) {
         await disableBulkSelection()
@@ -209,6 +208,10 @@ function handleBulkItemClick(event) {
 }
 
 async function askForConfirmation() {
+    if (bulkSelection.length === 0) {
+        return
+    }
+
     document.querySelector('#bulkdelete_confirm_popup').classList.remove('hidden')
     await confirmDelete(false)
 }
@@ -249,6 +252,7 @@ async function confirmDelete(confirmed_by_user) {
         showUsedImages(json_response)
     } else {
         document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
+        window.location.reload();
     }
 
     async function deleteData(url = '', data = {}) {
