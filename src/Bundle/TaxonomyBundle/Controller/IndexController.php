@@ -70,7 +70,7 @@ final class IndexController extends AbstractController
             'index' => $this->paginator->paginate(
                 $this->indexer->buildTaxonomyIndex($contentType->getId()),
                 $request->query->getInt('page', 1),
-                500,
+                50,
             ),
         ]);
     }
