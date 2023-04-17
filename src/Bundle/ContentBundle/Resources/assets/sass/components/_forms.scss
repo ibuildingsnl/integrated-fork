@@ -866,3 +866,8 @@ ul#integrated_content_User_groups, ul#integrated_user_user_form_groups {
     max-width: calc(750px + 1rem);
     margin: 0 -.5rem;
 }
+
+input#block_edit_id.disabled {
+    pointer-events: none;
+    background-color: #dfe3e9;
+}

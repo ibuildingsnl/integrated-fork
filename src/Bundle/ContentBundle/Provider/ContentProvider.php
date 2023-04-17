@@ -96,7 +96,7 @@ class ContentProvider
 
         // Filter on Category
         if ($selectedCategory = $request->query->get('MediaTaxonomy')) {
-            $relation = $this->dm->getRepository(Relation::class)->find('mediataxonomy');
+            $relation = $this->dm->getRepository(Relation::class)->find('media_taxonomy');
 
             // No Results;
             if (null === $relation) {

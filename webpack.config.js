@@ -63,6 +63,10 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
         from: './src/Bundle/ContentBundle/Resources/assets/images',
         to: 'images/[path][name].[ext]',
     })
+    .copyFiles({
+        from: './src/Bundle/ContentBundle/Resources/assets/fonts',
+        to: 'fonts/[path][name].[ext]',
+    })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
     .enableSassLoader()

@@ -37,6 +37,16 @@ class MediaController extends AbstractController
     /**
      * @Template
      */
+    public function gallery(Request $request): array
+    {
+        $request->query->set('contenttypes', 'image');
+
+        return $this->controller->indexComponent($request);
+    }
+
+    /**
+     * @Template
+     */
     public function video(Request $request): array
     {
         $request->query->set('contenttypes', 'video');

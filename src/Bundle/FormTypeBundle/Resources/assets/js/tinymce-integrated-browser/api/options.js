@@ -8,6 +8,11 @@ const register = (editor) => {
         default: ''
     });
 
+    editor.options.register('integrated_browser_gallery_dialog_url', {
+        processor: 'string',
+        default: ''
+    });
+
     editor.options.register('integrated_browser_video_dialog_url', {
         processor: 'string',
         default: ''

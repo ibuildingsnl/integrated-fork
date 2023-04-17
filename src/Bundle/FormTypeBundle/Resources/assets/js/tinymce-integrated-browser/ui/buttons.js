@@ -13,6 +13,12 @@ const register = (editor) => {
         onAction: Dialog(editor, 'video').open
     });
 
+    editor.ui.registry.addButton('integratedgallery', {
+        icon: 'gallery',
+        tooltip: 'Add gallery',
+        onAction: Dialog(editor, 'gallery').open
+    });
+
     editor.ui.registry.addMenuItem('integratedimage', {
         text: 'Add image',
         icon: 'image',
@@ -23,6 +29,12 @@ const register = (editor) => {
         text: 'Add video',
         icon: 'embed',
         onAction: Dialog(editor, 'video').open
+    });
+
+    editor.ui.registry.addMenuItem('integratedgallery', {
+        icon: 'gallery',
+        tooltip: 'Add gallery',
+        onAction: Dialog(editor, 'gallery').open
     });
 }
 

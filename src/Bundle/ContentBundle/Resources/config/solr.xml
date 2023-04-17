@@ -60,6 +60,7 @@
             <argument type="service" id="router" />
             <argument type="string">integrated_content_content_edit</argument>
             <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="integrated_image.twig_extension" />
 
             <tag name="serializer.normalizer" priority="32" />
         </service>

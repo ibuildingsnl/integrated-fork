@@ -13,37 +13,13 @@
 
     @font-face {
         font-family: 'Poppins';
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.eot') }});
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.eot?#iefix') }} ) format('embedded-opentype'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.woff2') }} ) format('woff2'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.woff') }} ) format('woff'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Italic.ttf') }} ) format('truetype') }});
-        font-weight: normal;
-        font-style: italic;
-        font-display: swap;
-    }
-
-    @font-face {
-        font-family: 'Poppins';
         src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.eot') }});
         src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.eot?#iefix') }} ) format('embedded-opentype'),
         url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.woff2') }} ) format('woff2'),
         url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.woff') }} ) format('woff'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.ttf') }} ) format('truetype') }});
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Medium.ttf') }} ) format('truetype');
         font-weight: 500;
         font-style: normal;
-        font-display: swap;
-    }
-
-    @font-face {
-        font-family: 'Poppins';
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.eot') }});
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.eot?#iefix') }} ) format('embedded-opentype'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.woff2') }} ) format('woff2'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.woff') }} ) format('woff'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-MediumItalic.ttf') }} ) format('truetype') }});
-        font-weight: 500;
-        font-style: italic;
         font-display: swap;
     }
 
@@ -53,21 +29,9 @@
         src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.eot?#iefix') }} ) format('embedded-opentype'),
         url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.woff2') }} ) format('woff2'),
         url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.woff') }} ) format('woff'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.ttf') }} ) format('truetype') }});
+        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-Regular.ttf') }} ) format('truetype');
         font-weight: normal;
         font-style: normal;
-        font-display: swap;
-    }
-
-    @font-face {
-        font-family: 'Poppins';
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.eot') }});
-        src: url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.eot?#iefix') }} ) format('embedded-opentype'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.woff2') }} ) format('woff2'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.woff') }} ) format('woff'),
-        url({{ asset('bundles/integratedintegrated/fonts/poppins/Poppins-SemiBoldItalic.ttf') }} ) format('truetype') }});
-        font-weight: 600;
-        font-style: italic;
         font-display: swap;
     }
 
@@ -111,7 +75,7 @@
         left: 0;
         position: fixed;
         right: 0;
-        top: 60px;
+        top: 32px;
         z-index: 1040;
         opacity: 0.3;
         -webkit-transition: opacity .15s linear, visibility .15s linear;
@@ -780,7 +744,7 @@
     }
 
     .integrated-website-body-margin-top {
-        height: 60px;
+        height: 32px;
     }
 
     .integrated-website-col .integrated-website-sortable .integrated-block-buttons {
@@ -961,13 +925,13 @@
         -o-appearance: none;
         appearance: none;
         border: 1px solid;
-        border-radius: 8px;
+        border-radius: 0;
         cursor: pointer;
         display: inline-flex;
         font-size: 14px;
         font-weight: 400;
-        height: 40px;
-        line-height: 40px;
+        height: 32px;
+        line-height: 32px;
         padding: 0 0.8rem;
         text-decoration: none;
     }
@@ -987,14 +951,14 @@
     }
 
     .integrated-website-toolbar .btn.btn-green {
-        background-color: #00ae93;
-        border-color: #00ae93;
+        background-color: transparent;
+        border-color: transparent;
         color: #fff;
     }
 
     .integrated-website-toolbar .btn.btn-green:focus, .integrated-website-toolbar .btn.btn-green:hover {
-        background-color: #00483d;
-        border-color: #00483d;
+        background-color: #00ae93;
+        border-color: #00ae93;
         color: #fff;
     }
 
@@ -1012,7 +976,7 @@
     }
 
     .integrated-website-toolbar .btn.btn-white {
-        background-color: white;
+        background-color: #DEE3E9;
         border-color: #DEE3E9;
         color: #637281;
     }
@@ -1098,7 +1062,7 @@
     .integrated-website-toolbar .dropdown.top-bar.show ul.dropdown-menu {
         visibility: visible;
         opacity: 1;
-        top: 70px;
+        top: 40px;
         position: absolute;
         z-index: 9;
         display: flex;
@@ -1123,11 +1087,12 @@
         background-color: #335767;
         display: flex;
         flex-wrap: wrap;
-        height: 60px;
+        height: 32px;
         position: fixed;
         z-index: 1050;
         width: 100vw;
         font-size: 14px;
+        top:0;
     }
 
     .integrated-website-toolbar {
@@ -1154,7 +1119,7 @@
 
     .integrated-website-toolbar-button-group {
         position: relative;
-        display: inline-block;
+        display: flex;
         vertical-align: middle;
     }
 
@@ -1214,21 +1179,18 @@
     }
 
     .integrated-website-toolbar-message {
-        margin-top: 14px;
-        margin-bottom: 14px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-        padding-left: 8px;
-        padding-right: 8px;
         font-size: 14px;
         background: #ffa620;
         font-weight: bold;
         color: white;
-        border-radius: 8px;
-    }
-
-    .integrated-website-toolbar-right .integrated-website-toolbar-button {
-        margin-left: 10px;
+        position: fixed;
+        width: 100%;
+        height: 30px;
+        top: 32px;
+        z-index: 9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .integrated-website-toolbar-right {
@@ -1244,17 +1206,15 @@
         display: flex;
         justify-content: space-between;
         width: 100%;
-        padding-left: 50px;
         padding-right: 13px;
     }
 
     .toolbar-wrapper {
-        padding-left: 13px;
         padding-right: 13px;
         justify-content: space-between;
         width: 100%;
         display: flex;
-        height: 60px;
+        height: 32px;
     }
 
     #2integrated_block_filter_q {
@@ -1306,8 +1266,8 @@
 
     .integrated-toolbar-account ul.header-nav .dropdown-profile .profile-image {
         border-radius: 50%;
-        height: 40px;
-        width: 40px;
+        height: 24px;
+        width: 24px;
     }
 
     .integrated-toolbar-account ul.header-nav .dropdown-profile > a {
@@ -1315,6 +1275,7 @@
         display: flex;
         align-items: center;
         cursor:pointer;
+        padding:0px 8px;
     }
 
 
@@ -1367,12 +1328,7 @@
     }
 
     .integrated-toolbar-account ul.header-nav li.divider-nav {
-        width: 2px;
-        background-color: white;
-        display: block;
-        margin: 10px 20px 0;
-        height: 40px;
-        margin-top: 10px;
+        display:none;
     }
 
     @media only screen and (max-width: 768px) {
@@ -1390,7 +1346,7 @@
     .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu, .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu-left, .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu-right {
         visibility: visible;
         opacity: 1;
-        top: 70px;
+        top: 40px;
         position: absolute;
         background: white;
         z-index: 9;
@@ -1399,7 +1355,7 @@
 
     @media only screen and (max-width: 768px) {
         .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu, .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu-left, .integrated-toolbar-account .dropdown.top-bar.show ul.dropdown-menu-right {
-            top: 60px;
+            top: 32px;
             position: fixed;
             width: 100%;
             display: block;
@@ -1436,7 +1392,7 @@
 
     @media only screen and (max-width: 768px) {
         .integrated-toolbar-account .dropdown.top-bar ul.dropdown-menu, .integrated-toolbar-account .dropdown.top-bar ul.dropdown-menu-left, .integrated-toolbar-account .dropdown.top-bar ul.dropdown-menu-right {
-            top: 60px;
+            top: 32px;
             position: fixed;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
@@ -1483,7 +1439,7 @@
     }
 
     .integrated-toolbar-account {
-        height: 60px;
+        height: 32px;
         display: flex;
     }
 
@@ -1669,10 +1625,10 @@
     }
 
     .integrated-website-toolbar .integrated-logo {
-        background-image: url({{ asset('bundles/integratedintegrated/images/logo_white.svg') }});
-        flex: 0 0 200px;
+        background-image: url({{ asset('bundles/integratedintegrated/images/logo_white_trademark.svg') }});
+        flex: 0 0 50px;
         padding: 10px 0;
-        background-size: contain;
+        background-size: 24px;
         background-repeat: no-repeat;
         background-position: center;
     }

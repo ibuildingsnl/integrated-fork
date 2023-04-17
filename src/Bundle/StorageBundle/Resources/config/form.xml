@@ -47,6 +47,12 @@
             <tag name="form.type" />
         </service>
 
+        <service id="Integrated\Bundle\StorageBundle\Form\Type\FileReferenceType">
+            <argument id="doctrine_mongodb.odm.document_manager" type="service"/>
+
+            <tag name="form.type" />
+        </service>
+
     </services>
 
 </container>

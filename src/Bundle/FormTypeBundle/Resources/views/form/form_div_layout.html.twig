@@ -110,6 +110,7 @@
                           data-content_css="{{ content_styles.content_css|merge([asset(styles)])|join(',') }}"
                           data-format_styles="{{ content_styles.style_formats|json_encode(true) }}"
                           data-integrated_browser_image_dialog_url="{{ path('integrated_formtype_media_image') }}"
+                          data-integrated_browser_gallery_dialog_url="{{ path('integrated_formtype_media_gallery') }}"
                           data-integrated_browser_video_dialog_url="{{ path('integrated_formtype_media_video') }}"
                           placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}"
                           data-mce-placeholder="{% if attr.placeholder is defined %}{{ attr.placeholder }}{% endif %}">

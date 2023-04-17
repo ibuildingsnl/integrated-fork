@@ -49,6 +49,7 @@
                 </div>
             </div>
             <section class="section-white section-radius">
+                {% set media_gallery_classes = ["Image", "Video", "File"] %}
                 <table class="table">
                     <thead>
                     <tr>
@@ -68,6 +69,7 @@
                     </thead>
                     <tbody id="post-list">
                     {% for content in pager %}
+                        {% set class_name = content.type_class|split('\\')|last %}
                         <tr class="has-options">
                             <td class="title">
                                 {% if locks[content.type_id] is defined %}
@@ -87,16 +89,23 @@
                                         </div>
                                     {% endif %}
                                 {% endif %}
-                                <strong>
-                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}">
-                                        {{ content.title|default }}
-                                    </a>
-                                </strong>
+
+                                {% if class_name in media_gallery_classes %}
+                                    {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
+                                {% else %}
+                                    {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                                {% endif %}
+                                <div>
+                                    <strong>
+                                        <a href="{{ editLink }}">
+                                            {{ content.title|default }}
+                                        </a>
+                                    </strong>
+                                </div>
                                 <div class="row-options">
-                                    <a href="{{ path('integrated_content_content_edit', {id: content.type_id}) }}"
-                                       role="option">
+                                    <a href="{{ editLink }}">
                                         {% trans %}Edit{% endtrans %}
-                                    </a> |
+                                    </a>
                                     <a class="color-red"
                                        href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
                                        tabindex="-1" role="option">
@@ -214,7 +223,9 @@
                         {% for title, count in facet %}
                             <li class="checkbox">
                                 <label class="checkbox-container">
-                                    <input {% if title in params[key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="{{ key }}[]" value="{{ title }}" />
+                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="{{ key }}[]"
+                                           value="{{ title }}"/>
                                     <span class="checkmark"></span>
                                     <div class="facet-wrappper">
                                         <span class="facet-title">
@@ -265,7 +276,9 @@
                         {% for title, count in facet %}
                             <li class="checkbox">
                                 <label class="checkbox-container">
-                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %} onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]" value="{{ title }}" />
+                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]"
+                                           value="{{ title }}"/>
                                     <span class="checkmark"></span>
                                     <div class="facet-wrappper">
                                         <span class="facet-title">

@@ -31,6 +31,23 @@
     box-shadow: 0 0 0 0;
 }
 
+.auth.modal {
+    .alert {
+        position: relative;
+        width: 100%;
+        min-width: 100%;
+        padding: 1rem;
+        right: auto;
+        display: block;
+        bottom: auto;
+        margin-bottom: 1rem;
+        box-shadow: 0 0 0 0;
+        button[type="button"] {
+            display: none;
+        }
+    }
+}
+
 .close {
     cursor: pointer;
     font-size: 1.6rem;

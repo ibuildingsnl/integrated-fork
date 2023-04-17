@@ -1,0 +1,5 @@
+{% block image %}
+    <img src="{{ web_image(document.file).cropResize(768, 600) }}"
+         title="{{ document.description|default }}"
+         class="{{ class|default }} slider-image" />
+{% endblock %}
