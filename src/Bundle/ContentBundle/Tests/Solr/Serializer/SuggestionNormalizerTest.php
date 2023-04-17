@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Solr\Serializer;
 
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ContentBundle\Solr\Serializer\SuggestionNormalizer;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -41,10 +42,16 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolver;
 
+    /**
+     * @var ImageExtension|MockObject
+     */
+    protected $imageExtension;
+
     protected function setUp(): void
     {
         $this->generator = $this->createMock(UrlGeneratorInterface::class);
         $this->resolver = $this->createMock(ResolverInterface::class);
+        $this->imageExtension = $this->createMock(ImageExtension::class);
     }
 
     protected function setUpNormalize()
@@ -259,7 +266,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance()
     {
-        return new SuggestionNormalizer($this->generator, self::ROUTE, $this->resolver);
+        return new SuggestionNormalizer($this->generator, self::ROUTE, $this->resolver, $this->imageExtension);
     }
 
     /**
