@@ -9,7 +9,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Common\Solr\Search\QueryFactoryInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Core\Client\ClientInterface;
 use Solarium\QueryType\Select\Result\Document;
 
