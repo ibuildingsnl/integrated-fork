@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Serializer;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\ContentType\ResolverInterface;
@@ -57,7 +56,7 @@ class SuggestionNormalizer implements NormalizerInterface
         $this->route = $route;
         $this->resolver = $resolver;
         $this->imageExtension = $imageExtension;
-        //TODO: include twig extension ContentController.php R:868
+        // TODO: include twig extension ContentController.php R:868
     }
 
     /**
@@ -154,10 +153,9 @@ class SuggestionNormalizer implements NormalizerInterface
     private function getImage(DocumentInterface $document)
     {
         if (isset($document['file'])) {
-            return $this->imageExtension->image($document['file'])->zoomCrop(100, 100)->jpeg();;
+            return $this->imageExtension->image($document['file'])->zoomCrop(100, 100)->jpeg();
         }
 
         return null;
     }
-
 }

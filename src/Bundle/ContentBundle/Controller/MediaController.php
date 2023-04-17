@@ -170,7 +170,8 @@ class MediaController extends AbstractController
         ];
     }
 
-    private function removeIdsFromRequest(Request $request): Request {
+    private function removeIdsFromRequest(Request $request): Request
+    {
         $request->query->remove('ids');
 
         return $request;
@@ -188,14 +189,14 @@ class MediaController extends AbstractController
         try {
             $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
-            //save the FILE
+            // save the FILE
             $this->taxonomyRelationManager->runSolrQueue();
 
             $request->attributes->set('media_id', $file->getId());
 
             $this->taxonomyRelationManager->manageRelations($request);
 
-            //save the RELATION
+            // save the RELATION
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
