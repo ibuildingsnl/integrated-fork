@@ -23,6 +23,7 @@ abstract class Block implements BlockInterface
      * @var string
      */
     #[Slug(fields: ['title'], separator: '_')]
+    #[Type\Field(options: ['priority' => 980, 'required' => false])]
     protected $id;
 
     /**

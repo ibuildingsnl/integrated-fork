@@ -57,7 +57,8 @@ class FilterQueryProvider
         }
 
         if (isset($data['q'])) {
-            $qb->field('title')->equals(new Regex($data['q'], 'i'));
+            $qb->addOr($qb->expr()->field('title')->equals(new Regex($data['q'], 'i')));
+            $qb->addOr($qb->expr()->field('id')->equals(new Regex($data['q'], 'i')));
         }
 
         $channels = isset($data['channels']) ? array_filter($data['channels']) : null;

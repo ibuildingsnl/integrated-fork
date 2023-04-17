@@ -264,15 +264,6 @@
                         return {
                             results: $.map(data.items, function(item) {
                                 title = item.title;
-                                let typeToName = {
-                                    {% for contentTypeId, contentTypeName in contentTypes %}
-                                    '{{ contentTypeId }}': '{{ contentTypeName|escape('js') }}'{% if not loop.last %},{% endif %}
-                                    {% endfor %}
-                                };
-                                type = typeToName[item.type];
-                                if (this.authorValues[title] > 1) {
-                                    title = title + ' (' + type + ')';
-                                }
                                 return {
                                     text: title,
                                     id: item.id,

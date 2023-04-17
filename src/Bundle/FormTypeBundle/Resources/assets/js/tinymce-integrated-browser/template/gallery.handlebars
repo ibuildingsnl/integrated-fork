@@ -1,0 +1,17 @@
+<div class="swiper article-swiper">
+    <div class="swiper-wrapper">
+        {{#each this}}
+            <div class="swiper-slide">
+                <img src="{{ this.thumbnail }}"
+                     class="img-responsive template-image-gallery"
+                     title="{{ this.title }}"
+                     alt="{{ this.title }}"
+                     data-integrated-id="{{ this.id }}"
+                />
+            </div>
+        {{/each}}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+

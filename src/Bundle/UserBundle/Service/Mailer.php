@@ -110,8 +110,6 @@ class Mailer
     public function sendAccountActivatedMail(User $user, bool $website = false)
     {
         $timestamp = time();
-        $key = $this->keyGenerator->generateKey($timestamp, $user);
-
         $data = [
             'subject' => '[Integrated] '.$this->translator->trans('Activated'),
             'user' => $user,

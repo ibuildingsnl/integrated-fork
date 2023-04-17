@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -114,6 +115,7 @@ class MediaController extends AbstractController
         $contentTypeSelectOptions = $this->getContentTypes();
 
         $requestSource->query->set('sort', 'created');
+        $requestSource->query->set('id', $requestSource->get('id'));
 
         $requestCopy = clone $requestSource;
 
@@ -152,6 +154,8 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
+        $requestSource = $this->removeIdsFromRequest($requestSource);
+
         return [
             'paginator' => $paginator,
             'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
@@ -166,6 +170,13 @@ class MediaController extends AbstractController
         ];
     }
 
+    private function removeIdsFromRequest(Request $request): Request
+    {
+        $request->query->remove('ids');
+
+        return $request;
+    }
+
     private function removeStardardClasses($contentTypeSelectOptions): array
     {
         return array_filter($contentTypeSelectOptions, function ($item) {
@@ -178,18 +189,21 @@ class MediaController extends AbstractController
         try {
             $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
+            // save the FILE
+            $this->taxonomyRelationManager->runSolrQueue();
+
             $request->attributes->set('media_id', $file->getId());
 
             $this->taxonomyRelationManager->manageRelations($request);
 
+            // save the RELATION
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'This file is not uploaded. Is this filetype allowed?']);
+            return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
+                ->setStatusCode(422);
         }
-
-        return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

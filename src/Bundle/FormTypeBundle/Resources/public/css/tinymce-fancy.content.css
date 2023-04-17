@@ -70,3 +70,65 @@ span.img-caption {
 .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
     left:unset;
 }
+
+.swiper-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    padding: .5rem;
+}
+
+.swiper-wrapper .swiper-slide img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.swiper-wrapper .swiper-slide {
+    width: 33.3%;
+    padding: .5rem;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.swiper-wrapper:before {
+    content: "Slider";
+    width: 100%;
+    padding-left: 0.5rem;
+    font-weight: bold;
+    padding-top: 0.5rem;
+}
+
+span.remove {
+    align-items: center;
+    background-color: #c6422f;
+    border: 2px solid #c6422f;
+    border-radius: 4px;
+    color: #fff;
+    height: 20px;
+    justify-content: center;
+    width: 20px;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    display: none;
+}
+
+.swiper-wrapper .swiper-slide:hover span.slider-append.remove  {
+    display: flex;
+}
+
+.swiper.article-swiper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.swiper.article-swiper > .swiper-append.remove {
+    display: flex;
+}
+
+.swiper-button-next, .swiper-button-prev {
+    display: none;
+}

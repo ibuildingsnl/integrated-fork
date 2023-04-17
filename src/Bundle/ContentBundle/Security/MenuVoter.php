@@ -15,6 +15,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\PermissionInterface;
+use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -68,11 +69,6 @@ class MenuVoter implements VoterInterface
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
-        // No channels assignmed means it is visisble for everyone
-        if (0 === \count($menu->getChannels())) {
-            return VoterInterface::ACCESS_GRANTED;
-        }
-
         $user = $token->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -83,29 +79,18 @@ class MenuVoter implements VoterInterface
             return VoterInterface::ACCESS_GRANTED;
         }
 
-        $userChannels = $user->getGroups();
+        foreach ($menu->getChannels() as $channel) {
+            $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
 
-        $userChannelNames = array_map(fn ($item) => $item->getName(), $userChannels);
+            if ($permissions['read'] !== true) {
+                return VoterInterface::ACCESS_DENIED;
+            }
 
-        $menuChannelNames = [];
-        foreach ($menu->getChannels() as $item) {
-            $menuChannelNames[] = $item->getName();
+            if ($permissions['write'] !== true) {
+                return VoterInterface::ACCESS_DENIED;
+            }
         }
 
-        /* We`re checking the following:
-         * $userChannelNames = ["myChannel", "beer", "water"]
-         * $menuChannelNames = ["myChannel", "oranges", "apples"]
-         * $overlap = true, because of myChannel
-         *
-         * $userChannelNames = ["myChannel", "beer", "water"]
-         * $menuChannelNames = ["bananas", "oranges", "apples"]
-         * $overlap = false
-        */
-        $overlap = \count(array_intersect($userChannelNames, $menuChannelNames)) > 0;
-        if (true === $overlap) {
-            return VoterInterface::ACCESS_GRANTED;
-        }
-
-        return VoterInterface::ACCESS_DENIED;
+        return VoterInterface::ACCESS_GRANTED;
     }
 }
