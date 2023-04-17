@@ -91,12 +91,12 @@ class SuggestionNormalizer implements NormalizerInterface
             $data['results'][] = [
                 'id' => (string) $document['type_id'],
                 'type' => $this->getType($document),
-                'class' => $this->getShortClassname($document),
+                'class' => (string) $this->getShortClassname($document),
                 'title' => (string) $document['title'],
                 'url' => $this->getUrl($document),
                 'published' => $this->getDate($document, 'pub_time'),
                 'updated' => $this->getDate($document, 'pub_edited'),
-                'image_string' => $this->getImage($document),
+                'image_string' => (string) $this->getImage($document),
             ];
         }
 
@@ -147,7 +147,11 @@ class SuggestionNormalizer implements NormalizerInterface
 
     private function getShortClassname(DocumentInterface $document)
     {
-        return (new \ReflectionClass($document['type_class']))->getShortName();
+        if (isset($document['type_class'])) {
+            return (new \ReflectionClass($document['type_class']))->getShortName();
+        }
+
+        return null;
     }
 
     private function getImage(DocumentInterface $document)
