@@ -67,6 +67,9 @@
             {% include '@IntegratedContent/partials/block.logo.html.twig' %}
 
             <div class="flex wrap w-full">
+                {% block website_navigation_buttons %}
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                {% endblock website_navigation_buttons %}
                 {% block navbar_content_type %}
 
                     <div class="new-contenttype dropdown close-outside top-bar">

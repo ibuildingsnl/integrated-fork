@@ -16,14 +16,17 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type as Form;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
+use Integrated\Common\Security\Resolver\PermissionResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Controller for CRUD actions Channel document.
@@ -295,5 +298,35 @@ class ChannelController extends AbstractController
         }
 
         return $form->getForm();
+    }
+
+    /**
+     * @return Response
+     */
+    public function getchannels() {
+
+        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+
+        $user = $this->getUser();
+
+        if (!$user instanceof UserInterface) {
+            return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
+                'channels' => [],
+            ]);
+        }
+
+        $allowedChannels = [];
+
+        foreach ($channels as $channel) {
+            $permissions = PermissionResolver::getPermissions($user, $channel->getPermissions());
+
+            if ($permissions['read'] === true || $permissions['write'] === true) {
+                $allowedChannels[] = $channel;
+            }
+        }
+
+        return $this->render('@IntegratedContent/partials/block.websites.html.twig', [
+            'channels' => $allowedChannels,
+        ]);
     }
 }
