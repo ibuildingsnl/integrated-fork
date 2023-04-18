@@ -110,6 +110,17 @@ class ContentController extends AbstractController
         }
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
+        $searchSelectionForm->handleRequest($request);
+        if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
+            $selection->setFilters($options);
+            if (null === $selection->getUserId()) {
+                $selection->setUserId($this->getUser()->getId());
+            }
+            $this->documentManager->persist($selection);
+            $this->documentManager->flush();
+
+            $this->addFlash('success', 'Selection saved');
+        }
 
         // all this relations stuff is only used on the json response
         $relations = [];

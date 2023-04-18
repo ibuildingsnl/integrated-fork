@@ -88,10 +88,10 @@
                         <li style="display: inline-block">
                             <div class="edit-form" style="display: inline-block">
                             {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
-                            {{ form_row(searchSelectionForm.title, { 'attr': { 'size': 10 } }) }}
+                            {{ form_widget(searchSelectionForm.title, { 'attr': { 'size': 10 } }) }}
                             {{ form_row(searchSelectionForm.public) }}
 
-                            <input type="submit" value="{% trans %}Save{% endtrans %}" />
+                            <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
                             {{ form_end(searchSelectionForm) }}
                             </div>
                         </li>

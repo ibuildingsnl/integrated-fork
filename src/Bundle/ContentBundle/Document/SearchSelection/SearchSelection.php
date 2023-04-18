@@ -186,7 +186,7 @@ class SearchSelection
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserId()
     {
