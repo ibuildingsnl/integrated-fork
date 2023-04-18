@@ -90,6 +90,7 @@
                             {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
                             {{ form_widget(searchSelectionForm.title, { 'attr': { 'size': 10 } }) }}
                             {{ form_row(searchSelectionForm.public) }}
+                            {{ form_row(searchSelectionForm.inMenu) }}
 
                             <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
                             {{ form_end(searchSelectionForm) }}
