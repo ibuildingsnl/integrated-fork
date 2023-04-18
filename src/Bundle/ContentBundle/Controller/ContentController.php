@@ -108,10 +108,14 @@ class ContentController extends AbstractController
                 $options += $selection->getFilters();
             }
         }
+        $editableSelection = !$selection->isPublic() || $this->isGranted('ROLE_ADMIN');
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
+            if (!$editableSelection) {
+                throw new AccessDeniedException();
+            }
             $selection->setFilters($options);
             if (null === $selection->getUserId()) {
                 $selection->setUserId($this->getUser()->getId());
@@ -163,6 +167,7 @@ class ContentController extends AbstractController
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
             'selection' => $selection,
+            'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findPublicByUserId($this->getUser()->getId()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
         ]);
