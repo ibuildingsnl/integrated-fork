@@ -92,20 +92,12 @@ $(".uppy-close").on("click", function () {
     $('#upload_container').removeClass('show').removeClass('close-outside');
 });
 
-let bulkDeleteEnabled = false
-$("#bulkdelete").on("click", async function() {
-    bulkDeleteEnabled = !bulkDeleteEnabled
-    if (bulkDeleteEnabled) {
-        await enableBulkSelection()
-        bulkSelectionEnabled = true
-    } else {
-        await disableBulkSelection()
-        bulkSelectionEnabled = false
-    }
-})
-
 $("#confirm_delete").on("click", async function() {
     await confirmBulkDelete()
+})
+
+$(".single_delete").on("click", async function(event) {
+    await singleDelete(event)
 })
 
 $("#bulkselection_delete").on("click", async function() {
@@ -163,6 +155,10 @@ window.send_message_to_parent = function() {
     window.parent.postMessage(JSON.stringify(selection), '*');
 }
 
+window.onlyUnique = function(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
 function handleBulkItemClick(event) {
     if (modi[selected_modus].selectOnlyOneEnabled) {
         const element_id = event.currentTarget.getAttribute('data-id')
@@ -204,9 +200,12 @@ function handleBulkItemClick(event) {
     }
 
     if (bulkSelection.length > 0) {
+        bulkSelection = bulkSelection.filter(onlyUnique);
         document.querySelector('#bulkselection_delete').style.display = ""
+        document.querySelector('#amount_of_files_to_delete').textContent = '('+bulkSelection.length+')'
     } else {
         document.querySelector('#bulkselection_delete').style.display = "none"
+        document.querySelector('#amount_of_files_to_delete').textContent = ''
     }
 
     latestBulkSelectionItemClicked = event.currentTarget.getAttribute('data-media_id')
@@ -220,6 +219,11 @@ async function askForConfirmation() {
 
     document.querySelector('#bulkdelete_confirm_popup').classList.remove('hidden')
     await confirmDelete(false)
+}
+
+async function singleDelete(event) {
+    bulkSelection = [event.target.parentElement.dataset.id]
+    await askForConfirmation()
 }
 
 async function hideBulkdeletionPopup() {
@@ -336,17 +340,12 @@ $(function () {
         }
     });
 
-    function onlyUnique(value, index, self) {
-        return self.indexOf(value) === index;
-    }
-
     function moveImage($item, event, category_id = null) {
         const media_id = $item[0].id || null
 
         //So here we want to send something to the server
         if (bulkSelection.length > 0) {
-            const duplicatesRemoved = bulkSelection.filter(onlyUnique);
-            sendAjaxRequest(category_id, duplicatesRemoved)
+            sendAjaxRequest(category_id, bulkSelection)
         } else {
             sendAjaxRequest(category_id, [media_id])
         }

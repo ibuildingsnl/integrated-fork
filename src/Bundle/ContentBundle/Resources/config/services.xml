@@ -35,6 +35,7 @@
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />
             <argument type="service" id="integrated_solr.indexer" />
+            <argument type="service" id="integrated_solr.queue.indexer" />
         </service>
 
         <service id="integrated_content.services.flusher" class="Integrated\Common\Services\LockingFlusher">
