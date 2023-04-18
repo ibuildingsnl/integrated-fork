@@ -104,7 +104,7 @@ class ContentController extends AbstractController
                 ->getRepository(SearchSelection::class)
                 ->find($options['searchSelection']);
         }
-        if ($selection) {
+        if ($selection && count($options) === 1) {
             $options += $selection->getFilters();
         }
 
