@@ -97,21 +97,29 @@ class ContentController extends AbstractController
         }
 
         $options = $request->query->all();
+        unset($options['searchSelection']);
 
-        $selection = new SearchSelection();
+        /** @var SearchSelection|null $selection */
+        $selection = null;
         if ($searchSelection && $searchSelection !== 'all') {
-            /** @var SearchSelection|null $selection */
             $selection = $this->getDoctrineODM()
                 ->getRepository(SearchSelection::class)
-                ->find($searchSelection) ?: $selection;
-            if (empty($options)) {
+                ->find($searchSelection);
+            if ($selection && empty($options)) {
                 $options = $selection->getFilters();
             }
+        }
+        $newSelection = false;
+        if (!$selection) {
+            $newSelection = true;
+            $selection = new SearchSelection();
         }
         $editableSelection = !$selection->isPublic() || $this->isGranted('ROLE_ADMIN');
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
-        $searchSelectionForm->add('actions', ActionsType::class, ['buttons' => $editableSelection ? ['save', 'create'] : ['create']]);
+        $searchSelectionForm->add('actions', ActionsType::class, [
+            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create']
+        ]);
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
             if ($searchSelectionForm->get('actions')->getData() === 'create') {
