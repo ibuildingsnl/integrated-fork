@@ -84,7 +84,7 @@ class ContentController extends AbstractController
     ) {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, string $searchSelection): Response
     {
         // remember search state
         $session = $request->getSession();
@@ -99,13 +99,13 @@ class ContentController extends AbstractController
         $options = $request->query->all();
 
         $selection = new SearchSelection();
-        if ($options['searchSelection'] ?? null) {
+        if ($searchSelection && $searchSelection !== 'all') {
             /** @var SearchSelection|null $selection */
             $selection = $this->getDoctrineODM()
                 ->getRepository(SearchSelection::class)
-                ->find($options['searchSelection']);
-            if ($selection && count($options) === 1) {
-                $options += $selection->getFilters();
+                ->find($searchSelection);
+            if (empty($options)) {
+                $options = $selection->getFilters();
             }
         }
         $editableSelection = !$selection->isPublic() || $this->isGranted('ROLE_ADMIN');

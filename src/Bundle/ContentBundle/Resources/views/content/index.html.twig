@@ -67,7 +67,7 @@
 
                                 {% for searchSelection in searchSelections %}
 
-                                    {% if searchSelection.id == selected %}
+                                    {% if searchSelection.id == selection.id %}
                                         <li role="presentation" class="active">
                                             <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
                                         </li>
@@ -92,8 +92,8 @@
                         {{ form_rest(searchSelectionForm) }}
 
                         <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
-                        {% if selected %}
-                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selected}) }}" title="{% trans %}Delete{% endtrans %}">
+                        {% if selection.id %}
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
                                 {% trans %}Delete{% endtrans %}
                             </a>
                         {% endif %}

@@ -4,8 +4,9 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-	<route id="integrated_content_content_index" path="/{_format}" methods="GET, POST">
+	<route id="integrated_content_content_index" path="/{searchSelection}/{_format}" methods="GET, POST">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::index</default>
+		<default key="searchSelection">all</default>
 		<default key="_format">html</default>
 		<requirement key="_format">html|json</requirement>
 	</route>
