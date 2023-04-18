@@ -123,6 +123,7 @@ class ContentController extends AbstractController
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
             if ($searchSelectionForm->get('actions')->getData() === 'create') {
+                $newSelection = true;
                 $this->documentManager->detach($selection);
                 $selection = clone $selection;
                 $selection->setId(null);
@@ -134,13 +135,13 @@ class ContentController extends AbstractController
                 throw new AccessDeniedException();
             }
             $selection->setFilters($options);
-            if (null === $selection->getUserId()) {
-                $selection->setUserId($this->getUser()->getId());
-            }
             $this->documentManager->persist($selection);
             $this->documentManager->flush();
 
             $this->addFlash('success', 'Selection saved');
+            if ($newSelection) {
+                return $this->redirectToRoute('integrated_content_content_selection', ['searchSelection' => $selection->getId()]);
+            }
         }
 
         // all this relations stuff is only used on the json response
