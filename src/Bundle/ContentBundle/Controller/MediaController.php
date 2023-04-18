@@ -142,7 +142,7 @@ class MediaController extends AbstractController
         $paginator = $paginator->paginate(
             new CallbackPagination(
                 fn () => $this->provider->getContentFromSolr($requestCopy, 0, 0, true),
-                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
+                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit * 2, $offset),
             ),
             $requestCopy->query->get('page', 1),
             $requestCopy->query->get('limit', 40),
@@ -212,18 +212,14 @@ class MediaController extends AbstractController
     private function removeRelations(array $idSelection): Response
     {
         $deletedIds = [];
-        foreach ($idSelection as $id) {
-            $contentRepository = $this->documentManager->getRepository(Content::class);
-            $toBeDeleted = $contentRepository->find($id);
+        $contentRepository = $this->documentManager->getRepository(Content::class);
+        $toBeDeletedArray = $contentRepository->findBy(['_id' => ['$in' => $idSelection]]);
 
-            if ($toBeDeleted) {
-                $searchReferenced = new SearchContentReferenced($this->documentManager);
-                $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
-                $deleteHandler->execute($toBeDeleted);
-                $deletedIds[] = $id;
-            }
-        }
+        $searchReferenced = new SearchContentReferenced($this->documentManager);
+        $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
 
+        $deleteHandler->multiExecute($toBeDeletedArray, $idSelection);
+        
         $this->taxonomyRelationManager->runSolrQueue();
 
         return new JsonResponse([

@@ -75,7 +75,7 @@
                         </div>
                     {% endif %}
                     <ul class="flex flex-wrap gallery ui-helper-reset ui-helper-clearfix" id="gallery">
-                        {% for media in paginator.items %}
+                        {% for media in paginator.items|slice(0, paginator.getItemNumberPerPage()) %}
                             {% include '@IntegratedContent/media/partial/media_thumbnail_component.html.twig' %}
                         {% endfor %}
                     </ul>
@@ -92,7 +92,8 @@
                             {% trans %} till {% endtrans %}
                             {% set maxAmountOfPages = paginator.getCurrentPageNumber() * paginator.getItemNumberPerPage() %}
                             {% set tillAmount = min(maxAmountOfPages,  paginator.getTotalItemCount()) %}
-                            {{ tillAmount }}.</span>
+                            {{ tillAmount }}.
+                        </span>
                     </div>
                 </div>
             </div>

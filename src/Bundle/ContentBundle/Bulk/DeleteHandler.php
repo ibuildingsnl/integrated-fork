@@ -63,11 +63,6 @@ class DeleteHandler implements HandlerInterface
                 ->updateMany()
                 ->field('relations.references.$id')->equals($content->getId())
                 ->field('relations.$.references')->pull(['$id' => $content->getId()])
-                ->getQuery()
-                ->execute();
-
-            $this->documentManager->createQueryBuilder(Content::class)
-                ->updateMany()
                 ->field('featuredImage.$id')->equals($content->getId())
                 ->field('featuredImage')->unsetField()
                 ->getQuery()
@@ -81,6 +76,26 @@ class DeleteHandler implements HandlerInterface
         }
 
         $this->documentManager->remove($content);
+        $this->documentManager->flush();
+    }
+
+    public function multiExecute(mixed $content, array $ids): void
+    {
+        if ($this->removeReferences === true) {
+            $this->documentManager->createQueryBuilder(Content::class)
+                ->updateMany()
+                ->field('relations.references.$id')->in($ids)
+                ->field('relations.$.references')->pullAll($ids)
+                ->field('featuredImage.$id')->in($ids)
+                ->field('featuredImage')->unsetField()
+                ->getQuery()
+                ->execute();
+        }
+
+        foreach ($content as $item) {
+            $this->documentManager->remove($item);
+        }
+
         $this->documentManager->flush();
     }
 }
