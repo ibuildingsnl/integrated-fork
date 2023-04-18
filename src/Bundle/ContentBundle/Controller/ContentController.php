@@ -103,7 +103,7 @@ class ContentController extends AbstractController
             /** @var SearchSelection|null $selection */
             $selection = $this->getDoctrineODM()
                 ->getRepository(SearchSelection::class)
-                ->find($searchSelection);
+                ->find($searchSelection) ?: $selection;
             if (empty($options)) {
                 $options = $selection->getFilters();
             }
