@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
-use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -168,27 +167,6 @@ class SearchSelectionController extends AbstractController
             'searchSelection' => $searchSelection,
             'form' => $form->createView(),
             'referenced' => $referenced,
-        ]);
-    }
-
-    /**
-     * Shows the menu.
-     *
-     * @return Response
-     */
-    public function menu()
-    {
-        /** @var Request $request */
-        $request = $this->requestStack->getMainRequest();
-
-        /** @var SearchSelectionRepository $repo */
-        $repo = $this->documentManager->getRepository(SearchSelection::class);
-
-        $user = $this->getUser();
-
-        return $this->render('@IntegratedContent/search_selection/menu.html.twig', [
-            'filters' => $request ? $request->query->all() : [],
-            'searchSelections' => $user ? $repo->findPublicByUserId($user->getId()) : [],
         ]);
     }
 

@@ -1,6 +1,8 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% block content %}
+    {% set filters = app.request.query.all|default([]) %}
+    {% set selected = filters.searchSelection|default(null) %}
     <div class="flex flex-wrap ">
 
         <div class="index-wrapper">
@@ -25,13 +27,12 @@
                                 {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
                                     <li {% if sort.name == params.sort %}class="active"
                                         {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
                                            tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
                         </li>
-                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
                         <li class="dropdown close-outside" data-underlay="no">
                             <a data-toggle="dropdown" role="button"
                                class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
@@ -39,12 +40,56 @@
 
                             <ul role="menu" class=" dropdown-menu">
                                 <li role="presentation">
-                                    <a href="{{ path('integrated_content_bulk_select', app.request.query.all) }}"
+                                    <a href="{{ path('integrated_content_bulk_select', filters) }}"
                                        tabindex="-1"
                                        role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
                                 </li>
                             </ul>
                         </li>
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>
+                                    {% if selection %}
+                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
+                                    {% else %}
+                                        {% trans %}Search selections{% endtrans %}
+                                    {% endif %}
+                                </span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
+
+                            <ul role="menu" class="dropdown-menu">
+
+                                {% for searchSelection in searchSelections %}
+
+                                    {% if searchSelection.id == selected %}
+                                        <li role="presentation" class="active">
+                                            <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                        </li>
+                                    {% else %}
+                                        <li role="presentation">
+                                            <a href="{{ path('integrated_content_content_index', { 'searchSelection': searchSelection.id }) }}"
+                                               tabindex="-1" role="menuitem">
+                                                {{ searchSelection.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                <li role="presentation">
+                                    <a href="{{ path('integrated_content_search_selection_new', filters) }}" tabindex="-1" role="menuitem">
+                                        <b>{% trans %}Save current search{% endtrans %}</b>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {% if selection %}
+                            <a href="{{ path('integrated_content_search_selection_edit', {'id': selection.id} + filters) }}" class="btn btn-green update-search">
+                                <b>{% trans %}Update search selection{% endtrans %}</b>
+                            </a>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

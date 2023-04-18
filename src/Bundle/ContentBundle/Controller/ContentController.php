@@ -18,6 +18,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
@@ -139,6 +140,8 @@ class ContentController extends AbstractController
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
+        /** @var SearchSelectionRepository $repo */
+        $repo = $this->documentManager->getRepository(SearchSelection::class);
         return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
@@ -146,6 +149,7 @@ class ContentController extends AbstractController
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
             'selection' => $selection,
+            'searchSelections' => $this->getUser() ? $repo->findPublicByUserId($this->getUser()->getId()) : [],
         ]);
     }
 
