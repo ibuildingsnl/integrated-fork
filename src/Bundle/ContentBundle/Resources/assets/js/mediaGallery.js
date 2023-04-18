@@ -135,6 +135,7 @@ function handleMediaEditClose(event) {
 }
 
 async function enableBulkSelection() {
+    $('.single_delete').addClass('hidden')
     $('.bulkselectionbutton').removeClass('bulkselected')
     $('.media-container').addClass('mode-select')
 }
@@ -283,6 +284,7 @@ async function confirmDelete(confirmed_by_user) {
 async function disableBulkSelection() {
     bulkSelection = []
     $('.media-container').removeClass('mode-select')
+    $('.single_delete').removeClass('hidden')
     $('.media-item').removeClass('selected')
     draggingAmountOfItems = 1
     document.querySelector('#bulkselection_delete').style.display = "none"
