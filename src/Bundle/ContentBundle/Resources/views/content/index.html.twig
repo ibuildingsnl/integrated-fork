@@ -85,11 +85,16 @@
 
                             </ul>
                         </li>
-                        {% if selection %}
-                            <a href="{{ path('integrated_content_search_selection_edit', {'id': selection.id} + filters) }}" class="btn btn-green update-search">
-                                <b>{% trans %}Update search selection{% endtrans %}</b>
-                            </a>
-                        {% endif %}
+                        <li style="display: inline-block">
+                            <div class="edit-form" style="display: inline-block">
+                            {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
+                            {{ form_row(searchSelectionForm.title, { 'attr': { 'size': 10 } }) }}
+                            {{ form_row(searchSelectionForm.public) }}
+
+                            <input type="submit" value="{% trans %}Save{% endtrans %}" />
+                            {{ form_end(searchSelectionForm) }}
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -205,11 +210,12 @@
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
-                                class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                            <i class="iconoir-cancel"></i>
+                        </button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="{{ path('integrated_content_content_index') }}"
-                           class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                            <span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>

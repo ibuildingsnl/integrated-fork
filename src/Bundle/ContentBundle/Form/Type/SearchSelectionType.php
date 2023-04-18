@@ -42,7 +42,7 @@ class SearchSelectionType extends AbstractType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder->add('public', ChoiceType::class, [
                 'label' => 'Available for',
-                'expanded' => true,
+//                'expanded' => true,
                 'choices' => [
                     'Everyone' => 1,
                     'Me only' => 0,

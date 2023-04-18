@@ -21,6 +21,7 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
@@ -97,16 +98,18 @@ class ContentController extends AbstractController
 
         $options = $request->query->all();
 
-        $selection = null;
+        $selection = new SearchSelection();
         if ($options['searchSelection'] ?? null) {
             /** @var SearchSelection|null $selection */
             $selection = $this->getDoctrineODM()
                 ->getRepository(SearchSelection::class)
                 ->find($options['searchSelection']);
+            if ($selection && count($options) === 1) {
+                $options += $selection->getFilters();
+            }
         }
-        if ($selection && count($options) === 1) {
-            $options += $selection->getFilters();
-        }
+
+        $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
 
         // all this relations stuff is only used on the json response
         $relations = [];
@@ -124,7 +127,7 @@ class ContentController extends AbstractController
             }
         }
 
-        if ($request->isMethod('post')) {
+        if ($request->isMethod('post') && $request->get('id')) {
             $options['ids'] = $request->get('id');
         }
 
@@ -150,6 +153,7 @@ class ContentController extends AbstractController
             'relations' => $relations,
             'selection' => $selection,
             'searchSelections' => $this->getUser() ? $repo->findPublicByUserId($this->getUser()->getId()) : [],
+            'searchSelectionForm' => $searchSelectionForm->createView(),
         ]);
     }
 
