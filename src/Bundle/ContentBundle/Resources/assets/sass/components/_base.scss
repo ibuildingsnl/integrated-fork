@@ -328,6 +328,20 @@ body.hide-options {
                 margin-bottom: .5rem;
             }
         }
+        ul.content-navigator-menu {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            li {
+                margin-right: 5px;
+                order: 1;
+            }
+            .update-search {
+                order: 2;
+                margin-left: auto;
+                height: 34px;
+            }
+        }
     }
 
     .options-no-bg {

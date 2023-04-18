@@ -1,7 +1,10 @@
-<li class="dropdown close-outside" data-underlay="no">
-    <a data-toggle="dropdown" role="button" class="btn btn-select space-between"><span>{% trans %}Search selections{% endtrans %}</span> <i class="iconoir-nav-arrow-down"></i></a>
+{% set selected = filters.searchSelection|default(null) %}
 
-    {% set selected = filters.searchSelection|default(null) %}
+<li class="dropdown close-outside" data-underlay="no">
+    <a data-toggle="dropdown" role="button"
+       class="btn btn-select space-between"><span>{% trans %}Search selections{% endtrans %}</span> <i
+            class="iconoir-nav-arrow-down"></i></a>
+
     <ul role="menu" class="dropdown-menu">
 
         {% for searchSelection in searchSelections %}
@@ -12,7 +15,8 @@
                 </li>
             {% else %}
                 <li role="presentation">
-                    <a href="{{ path('integrated_content_content_index', { 'searchSelection': searchSelection.id }) }}" tabindex="-1" role="menuitem">
+                    <a href="{{ path('integrated_content_content_index', { 'searchSelection': searchSelection.id }) }}"
+                       tabindex="-1" role="menuitem">
                         {{ searchSelection.title }}
                     </a>
                 </li>
@@ -21,11 +25,6 @@
         {% endfor %}
 
         <li role="presentation">
-            {% if selected %}
-                <a href="{{ path('integrated_content_search_selection_edit', {'id': selected} + filters) }}" tabindex="-1" role="menuitem">
-                    <b>{% trans %}Update current search{% endtrans %}</b>
-                </a>
-            {% endif %}
             <a href="{{ path('integrated_content_search_selection_new', filters) }}" tabindex="-1" role="menuitem">
                 <b>{% trans %}Save current search{% endtrans %}</b>
             </a>
@@ -33,3 +32,10 @@
 
     </ul>
 </li>
+
+{% if selected %}
+    <a href="{{ path('integrated_content_search_selection_edit', {'id': selected} + filters) }}"
+       class="btn btn-green update-search">
+        {% trans %}Update current search{% endtrans %}
+    </a>
+{% endif %}
