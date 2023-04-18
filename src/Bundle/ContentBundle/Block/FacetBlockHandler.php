@@ -115,6 +115,7 @@ class FacetBlockHandler extends BlockHandler
         $resolver->setDefaults([
             'filters' => [], // add extra filters (overwrites search selection)
             'gridLevel' => 0,
+            'data' => '',
         ]);
 
         $resolver->setAllowedTypes('filters', 'array');
