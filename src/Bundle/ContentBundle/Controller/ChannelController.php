@@ -26,7 +26,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Controller for CRUD actions Channel document.
@@ -303,8 +302,8 @@ class ChannelController extends AbstractController
     /**
      * @return Response
      */
-    public function getchannels() {
-
+    public function getchannels()
+    {
         $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
 
         $user = $this->getUser();
