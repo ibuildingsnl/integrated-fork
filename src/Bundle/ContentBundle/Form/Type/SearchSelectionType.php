@@ -51,7 +51,9 @@ class SearchSelectionType extends AbstractType
             ]);
         }
 
-        $builder->add('inMenu', CheckboxType::class);
+        $builder->add('inMenu', CheckboxType::class, [
+            'required' => false,
+        ]);
     }
 
     /**
