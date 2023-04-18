@@ -990,6 +990,10 @@
                 <source>Current Selection:</source>
                 <target>Huidige Selectie:</target>
             </trans-unit>
+            <trans-unit id="251">
+                <source>Go to</source>
+                <target>Ga naar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
