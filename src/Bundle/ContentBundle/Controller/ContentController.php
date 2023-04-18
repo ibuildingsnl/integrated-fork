@@ -166,6 +166,7 @@ class ContentController extends AbstractController
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
+            'filters' => $options,
             'selection' => $selection,
             'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findPublicByUserId($this->getUser()->getId()) : [],

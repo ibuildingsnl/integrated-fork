@@ -1,8 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% block content %}
-    {% set filters = app.request.query.all|default([]) %}
-    {% set selected = filters.searchSelection|default(null) %}
     <div class="flex flex-wrap ">
 
         <div class="index-wrapper">
