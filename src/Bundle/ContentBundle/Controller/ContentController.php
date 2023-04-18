@@ -111,9 +111,18 @@ class ContentController extends AbstractController
         $editableSelection = !$selection->isPublic() || $this->isGranted('ROLE_ADMIN');
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
+        $searchSelectionForm->add('actions', ActionsType::class, ['buttons' => $editableSelection ? ['save', 'create'] : ['create']]);
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
-            if (!$editableSelection) {
+            if ($searchSelectionForm->get('actions')->getData() === 'create') {
+                $this->documentManager->detach($selection);
+                $selection = clone $selection;
+                $selection->setId(null);
+                $selection->setUserId($this->getUser()->getId());
+                if (!$editableSelection) {
+                    $selection->setPublic(false);
+                }
+            } elseif (!$editableSelection) {
                 throw new AccessDeniedException();
             }
             $selection->setFilters($options);

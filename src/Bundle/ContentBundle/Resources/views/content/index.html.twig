@@ -84,20 +84,17 @@
                         </li>
                     </ul>
                 </div>
-                {% if isSelectionEditable %}
-                    <div class="edit-form options" style="display: inline-block">
-                        {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
-                        {{ form_rest(searchSelectionForm) }}
+                <div class="edit-form options" style="display: inline-block">
+                    {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
+                    {{ form_rest(searchSelectionForm) }}
 
-                        <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
-                        {% if selection.id %}
-                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
-                                {% trans %}Delete{% endtrans %}
-                            </a>
-                        {% endif %}
-                        {{ form_end(searchSelectionForm) }}
-                    </div>
-                {% endif %}
+                    {% if selection.id and isSelectionEditable %}
+                        <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
+                            {% trans %}Delete{% endtrans %}
+                        </a>
+                    {% endif %}
+                    {{ form_end(searchSelectionForm) }}
+                </div>
             </div>
             <section class="section-white section-radius">
                 {% set media_gallery_classes = ["Image", "Video", "File"] %}
