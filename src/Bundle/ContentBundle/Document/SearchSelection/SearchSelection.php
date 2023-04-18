@@ -219,17 +219,11 @@ class SearchSelection
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isInMenu(): bool
     {
         return $this->inMenu;
     }
 
-    /**
-     * @param bool $inMenu
-     */
     public function setInMenu(bool $inMenu): void
     {
         $this->inMenu = $inMenu;

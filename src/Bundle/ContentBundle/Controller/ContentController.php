@@ -118,7 +118,7 @@ class ContentController extends AbstractController
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
         $searchSelectionForm->add('actions', ActionsType::class, [
-            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create']
+            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create'],
         ]);
         $searchSelectionForm->handleRequest($request);
         if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
@@ -178,6 +178,7 @@ class ContentController extends AbstractController
 
         /** @var SearchSelectionRepository $repo */
         $repo = $this->documentManager->getRepository(SearchSelection::class);
+
         return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
