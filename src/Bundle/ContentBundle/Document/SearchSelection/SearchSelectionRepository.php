@@ -23,7 +23,7 @@ class SearchSelectionRepository extends DocumentRepository
     /**
      * @param int $id
      *
-     * @return mixed
+     * @return SearchSelection[]
      *
      * @throws \Doctrine\ODM\MongoDB\MongoDBException
      */
