@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
@@ -95,6 +96,17 @@ class ContentController extends AbstractController
 
         $options = $request->query->all();
 
+        $selection = null;
+        if ($options['searchSelection'] ?? null) {
+            /** @var SearchSelection|null $selection */
+            $selection = $this->getDoctrineODM()
+                ->getRepository(SearchSelection::class)
+                ->find($options['searchSelection']);
+        }
+        if ($selection) {
+            $options += $selection->getFilters();
+        }
+
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
@@ -133,6 +145,7 @@ class ContentController extends AbstractController
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
+            'selection' => $selection,
         ]);
     }
 

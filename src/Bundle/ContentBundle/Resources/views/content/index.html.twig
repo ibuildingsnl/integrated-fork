@@ -171,6 +171,9 @@
                     <form>
                         <input type="hidden" value="{{ params['q'] }}" name="q"/>
                         <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                        {% if selection %}
+                            <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                        {% endif %}
                         {% for key, facet in facets %}
                             {% if facet|length > 0 %}
                                 {% if key starts with 'relation_' %}
