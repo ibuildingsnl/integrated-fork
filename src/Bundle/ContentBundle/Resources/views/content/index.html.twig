@@ -79,20 +79,17 @@
 
                             </ul>
                         </li>
-                        <li style="display: inline-block">
-                        {% if isSelectionEditable %}
-                            <div class="edit-form" style="display: inline-block">
-                                {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
-                                {{ form_widget(searchSelectionForm.title, { 'attr': { 'size': 10 } }) }}
-                                {{ form_rest(searchSelectionForm) }}
-
-                                <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
-                                {{ form_end(searchSelectionForm) }}
-                            </div>
-                        {% endif %}
-                        </li>
                     </ul>
                 </div>
+                {% if isSelectionEditable %}
+                    <div class="edit-form options" style="display: inline-block">
+                        {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
+                        {{ form_rest(searchSelectionForm) }}
+
+                        <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
+                        {{ form_end(searchSelectionForm) }}
+                    </div>
+                {% endif %}
             </div>
             <section class="section-white section-radius">
                 {% set media_gallery_classes = ["Image", "Video", "File"] %}
