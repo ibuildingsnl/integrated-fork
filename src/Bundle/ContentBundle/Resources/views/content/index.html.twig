@@ -92,6 +92,11 @@
                         {{ form_rest(searchSelectionForm) }}
 
                         <input type="submit" value="{% trans %}Save{% endtrans %}" class="btn btn-green" />
+                        {% if selected %}
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selected}) }}" title="{% trans %}Delete{% endtrans %}">
+                                {% trans %}Delete{% endtrans %}
+                            </a>
+                        {% endif %}
                         {{ form_end(searchSelectionForm) }}
                     </div>
                 {% endif %}
