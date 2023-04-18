@@ -84,8 +84,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="edit-form options" style="display: inline-block">
-                    {{ form_start(searchSelectionForm, { 'attr': { 'class': 'inline' }}) }}
+                <div class="edit-form options">
+                    {{ form_start(searchSelectionForm) }}
                     {{ form_rest(searchSelectionForm) }}
 
                     {% if selection.id and isSelectionEditable %}
