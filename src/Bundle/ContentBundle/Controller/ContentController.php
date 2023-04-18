@@ -97,7 +97,7 @@ class ContentController extends AbstractController
         }
 
         $options = $request->query->all();
-        unset($options['searchSelection']);
+        unset($options['searchSelection'], $options['page']);
 
         /** @var SearchSelection|null $selection */
         $selection = null;
