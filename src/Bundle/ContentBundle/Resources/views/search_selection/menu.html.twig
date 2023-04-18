@@ -22,10 +22,9 @@
 
         <li role="presentation">
             {% if selected %}
-{#                @todo#}
-{#                <a href="{{ path('integrated_content_search_selection_update', filters) }}" tabindex="-1" role="menuitem">#}
-{#                    <b>{% trans %}Update current search{% endtrans %}</b>#}
-{#                </a>#}
+                <a href="{{ path('integrated_content_search_selection_edit', {'id': selected} + filters) }}" tabindex="-1" role="menuitem">
+                    <b>{% trans %}Update current search{% endtrans %}</b>
+                </a>
             {% endif %}
             <a href="{{ path('integrated_content_search_selection_new', filters) }}" tabindex="-1" role="menuitem">
                 <b>{% trans %}Save current search{% endtrans %}</b>

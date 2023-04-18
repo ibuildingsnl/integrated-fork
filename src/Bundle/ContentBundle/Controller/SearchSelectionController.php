@@ -117,10 +117,14 @@ class SearchSelectionController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $form = $this->createEditForm($searchSelection);
+        $form = $this->createEditForm($searchSelection, $request);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($request->query->get('searchSelection') === $searchSelection->getId()) {
+                $searchSelection->setFilters($request->query->all());
+            }
+
             $this->documentManager->flush();
 
             $this->addFlash('success', 'Item updated');
@@ -220,7 +224,7 @@ class SearchSelectionController extends AbstractController
      *
      * @return FormInterface
      */
-    protected function createEditForm(SearchSelection $searchSelection)
+    protected function createEditForm(SearchSelection $searchSelection, Request $request)
     {
         $form = $this->createForm(
             SearchSelectionType::class,
@@ -228,7 +232,7 @@ class SearchSelectionController extends AbstractController
             [
                 'action' => $this->generateUrl(
                     'integrated_content_search_selection_edit',
-                    ['id' => $searchSelection->getId()]
+                    ['id' => $searchSelection->getId()] + $request->query->all()
                 ),
                 'method' => 'PUT',
             ]
