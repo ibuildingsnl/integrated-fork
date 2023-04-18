@@ -34,7 +34,7 @@ class SearchSelectionRepository extends DocumentRepository
         $builder->addOr($builder->expr()->field('userId')->equals($id));
         $builder->addOr($builder->expr()->field('public')->equals(true));
 
-        $builder->sort('title');
+        $builder->sort(['public' => 'desc', 'title' => 'asc']);
 
         return $builder->getQuery()->execute();
     }
