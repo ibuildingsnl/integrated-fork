@@ -24,8 +24,8 @@ use Integrated\Bundle\UserBundle\Model\User;
 class SearchSelectionRepository extends DocumentRepository
 {
     /**
-     * @param User $user
      * @return SearchSelection[]
+     *
      * @throws MongoDBException
      */
     public function findForUser(User $user): iterable

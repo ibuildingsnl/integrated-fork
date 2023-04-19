@@ -55,6 +55,7 @@ class AbstractController extends BaseAbstractController
         if ($user && !$user instanceof User) {
             throw new \RuntimeException('Invalid user type');
         }
+
         return $user;
     }
 
