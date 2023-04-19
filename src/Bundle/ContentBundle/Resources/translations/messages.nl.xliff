@@ -990,6 +990,14 @@
                 <source>Current Selection:</source>
                 <target>Huidige Selectie:</target>
             </trans-unit>
+            <trans-unit id="251">
+                <source>Filter by parent</source>
+                <target>Filter op parent</target>
+            </trans-unit>
+            <trans-unit id="252">
+                <source>Show all</source>
+                <target>Toon alles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
