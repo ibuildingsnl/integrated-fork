@@ -8,8 +8,8 @@ class FlushingException extends \Exception
     {
         return new self(
             'Could not flush the content: '.$previous->getMessage(),
-            $previous,
             $previous->getCode(),
+            $previous,
         );
     }
 }

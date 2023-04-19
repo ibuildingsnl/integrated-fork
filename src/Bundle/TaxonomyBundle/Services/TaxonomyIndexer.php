@@ -7,7 +7,7 @@ use Integrated\Bundle\TaxonomyBundle\Domain\IndexedItem;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-final class TaxonomyIndexer implements TaxonomyIndexerInterface
+final class TaxonomyIndexer implements TaxonomyOverview
 {
     public function __construct(
         private readonly TaxonomyRepositoryInterface $taxonomies,
@@ -15,18 +15,43 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
     ) {
     }
 
+    /** @return string[] */
+    public function childrenOf(string $contentType, string $parentId): array
+    {
+        return array_map(fn (Taxonomy $t) => $t->getTitle(), $this->listByParent($contentType)[$parentId] ?? []);
+    }
+
     /** @return IndexedItem[] */
-    public function buildTaxonomyIndex(string $contentType): array
+    public function overviewFor(string $contentType, ?TaxonomyOptions $options = null): array
+    {
+        $root = $options?->root ?: 'root';
+        $filtered = $root !== 'root';
+
+        return $this->slice($options ?: new TaxonomyOptions(), ...$this->toSortedIndex(
+            $this->listByParent($contentType),
+            $root,
+            $filtered ? 1 : 0,
+            $filtered ? [$this->toIndexed($this->taxonomies->byId($root))] : []
+        ));
+    }
+
+    private function slice(TaxonomyOptions $options, IndexedItem ...$items): array
+    {
+        return \array_slice($items, $options->offset, $options->limit);
+    }
+
+    /** @return Taxonomy[][] */
+    private function listByParent(string $contentType): array
     {
         $byParent = [];
 
         foreach ($this->taxonomies->byType($contentType) as $taxonomy) {
             if ($this->authorization->isGranted('view', $taxonomy)) {
-                $byParent[$taxonomy->getParentID() ?: 'root'][] = $taxonomy;
+                $byParent[$taxonomy->getParentID() ?: 'root'][$taxonomy->getId()] = $taxonomy;
             }
         }
 
-        return $this->toSortedIndex($byParent);
+        return $byParent;
     }
 
     /**
@@ -56,14 +81,6 @@ final class TaxonomyIndexer implements TaxonomyIndexerInterface
 
     private function toIndexed(Taxonomy $taxonomy, int $depth = 0): IndexedItem
     {
-        return new IndexedItem(
-            $taxonomy->getId(),
-            $taxonomy->getTitle(),
-            $taxonomy->getDescription(),
-            $taxonomy->getSlug(),
-            $this->taxonomies->countUsages($taxonomy),
-            $depth,
-            $taxonomy->getChannels(),
-        );
+        return IndexedItem::basedOn($taxonomy, $this->taxonomies->countUsages($taxonomy), $depth);
     }
 }

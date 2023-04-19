@@ -5,11 +5,13 @@ namespace Integrated\Bundle\TaxonomyBundle\Controller;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexerInterface;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Services\Flusher;
+use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +21,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class IndexController extends AbstractController
 {
     public function __construct(
-        private readonly TaxonomyIndexerInterface $indexer,
+        private readonly TaxonomyOverview $indexer,
         private readonly ResolverInterface $typeResolver,
         private readonly TaxonomyRepositoryInterface $taxonomies,
         private readonly Flusher $flusher,
@@ -30,7 +32,6 @@ final class IndexController extends AbstractController
     public function index(Request $request): Response
     {
         $contentType = $this->typeResolver->getType($request->get('type', 'taxonomy'));
-
         $content = $contentType->create();
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
@@ -64,12 +65,23 @@ final class IndexController extends AbstractController
             return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()]);
         }
 
+        $filter = $request->get('filter', 'root');
+        $page = $request->query->getInt('page', 1);
+
         return $this->render('@IntegratedTaxonomy/index/index.html.twig', [
             'form' => $form->createView(),
+            'filter_options' => $this->indexer->childrenOf($contentType->getId(), 'root'),
+            'filter' => $filter,
             'content_type' => $contentType,
             'index' => $this->paginator->paginate(
-                $this->indexer->buildTaxonomyIndex($contentType->getId()),
-                $request->query->getInt('page', 1),
+                new CallbackPagination(
+                    fn () => $this->taxonomies->count($contentType->getId()),
+                    fn ($offset, $limit) => $this->indexer->overviewFor(
+                        $contentType->getId(),
+                        new TaxonomyOptions($filter, $offset, $limit),
+                    ),
+                ),
+                $page,
                 50,
             ),
         ]);
