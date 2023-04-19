@@ -57,7 +57,7 @@ class SearchSelectionRepository extends DocumentRepository
             array_map(fn (GroupInterface $g) => $g->getId(), $user->getGroups()))
         );
 
-        $builder->sort(['public' => 'desc', 'title' => 'asc']);
+        $builder->sort(['public' => 'desc', 'groupId' => 'desc', 'title' => 'asc']);
 
         return $builder->getQuery()->execute();
     }
