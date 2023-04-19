@@ -45,7 +45,7 @@ class SearchSelectionType extends AbstractType
                 'expanded' => true,
                 'choices' => [
                     'Everyone' => 1,
-                    'Me only' => 0,
+                    'Restricted' => 0,
                 ],
             ]);
             $builder->add('groupId', GroupType::class, [
