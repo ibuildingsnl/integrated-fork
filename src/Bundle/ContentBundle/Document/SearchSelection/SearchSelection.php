@@ -60,7 +60,7 @@ class SearchSelection
 
     protected bool $inMenu = false;
 
-    protected iterable $groups = [];
+    protected ?string $groupId;
 
     /**
      * @return string
@@ -231,13 +231,13 @@ class SearchSelection
         $this->inMenu = $inMenu;
     }
 
-    public function getGroups(): iterable
+    public function getGroupId(): ?string
     {
-        return $this->groups;
+        return $this->groupId;
     }
 
-    public function setGroups(iterable $groups): void
+    public function setGroupId(?string $group): void
     {
-        $this->groups = $groups;
+        $this->groupId = $group;
     }
 }

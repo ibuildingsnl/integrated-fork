@@ -48,13 +48,12 @@ class SearchSelectionType extends AbstractType
                     'Me only' => 0,
                 ],
             ]);
-            $builder->add('groups', GroupType::class, [
+            $builder->add('groupId', GroupType::class, [
                 'required' => false,
-                'multiple' => true,
             ]);
-            $builder->get('groups')->addModelTransformer(new CallbackTransformer(
-                fn (array $modelData) => array_map(fn (string $id) => $this->groups->find($id), $modelData),
-                fn (array $formData) => array_map(fn (Group $group) => $group->getId(), $formData),
+            $builder->get('groupId')->addModelTransformer(new CallbackTransformer(
+                fn (?string $id) => $id ? $this->groups->find($id) : null,
+                fn (?Group $group) => $group?->getId(),
             ));
         }
 
