@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -48,6 +49,10 @@ class SearchSelectionType extends AbstractType
                     'Everyone' => 1,
                     'Me only' => 0,
                 ],
+            ]);
+            // @todo add repo, make it a (nullable) choice type
+            $builder->add('groupId', IntegerType::class, [
+                'required' => false,
             ]);
         }
 
