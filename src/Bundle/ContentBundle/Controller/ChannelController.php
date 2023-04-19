@@ -58,13 +58,8 @@ class ChannelController extends AbstractController
         $this->documentManager = $documentManager;
         $this->dispatcher = $dispatcher;
     }
-
-    /**
-     * Lists all the Channel documents.
-     *
-     * @return Response
-     */
-    public function index()
+    
+    public function index(): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -77,12 +72,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Finds and displays a Channel document.
-     *
-     * @return Response
-     */
-    public function show(Channel $channel)
+    public function show(Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -93,12 +83,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Displays a form to create a new Channel document.
-     *
-     * @return Response
-     */
-    public function new()
+    public function new(): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -113,12 +98,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Creates a new Channel document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function create(Request $request)
+    public function create(Request $request): Response|RedirectResponse
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -149,12 +129,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Display a form to edit an existing ContentType document.
-     *
-     * @return Response
-     */
-    public function edit(Channel $channel)
+    public function edit(Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -168,12 +143,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Edits an existing Channel document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function update(Request $request, Channel $channel)
+    public function update(Request $request, Channel $channel): Response|RedirectResponse
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -202,12 +172,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Deletes a Channel document.
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Channel $channel)
+    public function delete(Request $request, Channel $channel): RedirectResponse
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -240,12 +205,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Creates a form to create a ContentType document.
-     *
-     * @return FormInterface
-     */
-    protected function createCreateForm(Channel $channel)
+    protected function createCreateForm(Channel $channel): FormInterface
     {
         $form = $this->createForm(
             Form\ChannelType::class,
@@ -261,12 +221,7 @@ class ChannelController extends AbstractController
         return $form;
     }
 
-    /**
-     * Creates a form to edit a ContentType document.
-     *
-     * @return FormInterface
-     */
-    protected function createEditForm(Channel $channel)
+    protected function createEditForm(Channel $channel): FormInterface
     {
         $form = $this->createForm(Form\ChannelType::class, $channel, [
             'action' => $this->generateUrl('integrated_content_channel_update', ['id' => $channel->getId()]),
@@ -279,13 +234,9 @@ class ChannelController extends AbstractController
     }
 
     /**
-     * Creates a form to delete a Channel document by id.
-     *
      * @param mixed $id The document id
-     *
-     * @return FormInterface
      */
-    protected function createDeleteForm($id, bool $deleteAllowed)
+    protected function createDeleteForm($id, bool $deleteAllowed): FormInterface
     {
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))
@@ -299,10 +250,7 @@ class ChannelController extends AbstractController
         return $form->getForm();
     }
 
-    /**
-     * @return Response
-     */
-    public function getchannels()
+    public function getchannels(): Response
     {
         $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
 
