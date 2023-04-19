@@ -1,5 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
     <div class="flex flex-wrap ">
 
@@ -86,13 +87,13 @@
                 </div>
                 <div class="edit-form options">
                     {{ form_start(searchSelectionForm) }}
-                    {{ form_rest(searchSelectionForm) }}
+                        {{ form_rest(searchSelectionForm) }}
 
-                    {% if selection.id and isSelectionEditable %}
-                        <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
-                            {% trans %}Delete{% endtrans %}
-                        </a>
-                    {% endif %}
+                        {% if selection.id and isSelectionEditable %}
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
+                               <i class="iconoir-trash"></i>
+                            </a>
+                        {% endif %}
                     {{ form_end(searchSelectionForm) }}
                 </div>
             </div>

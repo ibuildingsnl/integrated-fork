@@ -56,8 +56,12 @@ class SearchSelectionType extends AbstractType
             ]);
         }
 
-        $builder->add('inMenu', CheckboxType::class, [
+        $builder->add('inMenu', CheckboxSwitcherType::class, [
             'required' => false,
+            'label' => 'Add to menu',
+            'attr' => [
+                'align_with_widget' => true,
+            ],
         ]);
     }
 
