@@ -11,9 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\UserBundle\Form\Type\GroupType;
+use Integrated\Bundle\UserBundle\Model\Group;
+use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -23,14 +26,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class SearchSelectionType extends AbstractType
 {
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $authorizationChecker;
-
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly GroupManagerInterface $groups,
+    ) {
     }
 
     /**
@@ -49,10 +48,14 @@ class SearchSelectionType extends AbstractType
                     'Me only' => 0,
                 ],
             ]);
-            // @todo add repo, make it a (nullable) choice type
-            $builder->add('groupId', IntegerType::class, [
+            $builder->add('groups', GroupType::class, [
                 'required' => false,
+                'multiple' => true,
             ]);
+            $builder->get('groups')->addModelTransformer(new CallbackTransformer(
+                fn (array $modelData) => array_map(fn (string $id) => $this->groups->find($id), $modelData),
+                fn (array $formData) => array_map(fn (Group $group) => $group->getId(), $formData),
+            ));
         }
 
         $builder->add('inMenu', CheckboxSwitcherType::class, [
