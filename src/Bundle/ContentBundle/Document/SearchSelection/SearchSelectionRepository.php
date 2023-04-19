@@ -35,8 +35,8 @@ class SearchSelectionRepository extends DocumentRepository
         $builder->addOr($builder->expr()->field('userId')->equals($user->getId()));
         $builder->addOr($builder->expr()->field('public')->equals(true));
         $builder->addOr($builder->expr()->field('groupId')->in(
-            array_map(fn (GroupInterface $g) => $g->getId(), $user->getGroups()))
-        );
+            array_map(fn (GroupInterface $g) => $g->getId(), $user->getGroups())
+        ));
 
         $builder->sort(['public' => 'desc', 'groupId' => 'desc', 'title' => 'asc']);
 
