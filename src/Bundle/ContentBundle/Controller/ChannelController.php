@@ -58,7 +58,7 @@ class ChannelController extends AbstractController
         $this->documentManager = $documentManager;
         $this->dispatcher = $dispatcher;
     }
-    
+
     public function index(): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
