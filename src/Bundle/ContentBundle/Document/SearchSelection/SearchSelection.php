@@ -60,6 +60,8 @@ class SearchSelection
 
     protected bool $inMenu = false;
 
+    protected ?int $groupId;
+
     /**
      * @return string
      */
@@ -227,5 +229,15 @@ class SearchSelection
     public function setInMenu(bool $inMenu): void
     {
         $this->inMenu = $inMenu;
+    }
+
+    public function getGroupId(): ?int
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?int $group): void
+    {
+        $this->groupId = $group;
     }
 }

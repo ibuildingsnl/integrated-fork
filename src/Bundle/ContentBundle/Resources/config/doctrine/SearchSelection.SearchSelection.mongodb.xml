@@ -16,6 +16,7 @@
         <field field-name="public" type="bool" />
         <field field-name="userId" type="int" />
         <field field-name="inMenu" type="bool" />
+        <field field-name="groupId" type="int" />
 
     </document>
 

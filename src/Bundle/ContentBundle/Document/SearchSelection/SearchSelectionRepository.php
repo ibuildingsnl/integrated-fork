@@ -11,7 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\SearchSelection;
 
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\UserBundle\Model\GroupInterface;
+use Integrated\Bundle\UserBundle\Model\User;
 
 /**
  * Repository for SearchSelection.
@@ -25,7 +28,7 @@ class SearchSelectionRepository extends DocumentRepository
      *
      * @return SearchSelection[]
      *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     public function findPublicByUserId($id)
     {
@@ -33,6 +36,26 @@ class SearchSelectionRepository extends DocumentRepository
 
         $builder->addOr($builder->expr()->field('userId')->equals($id));
         $builder->addOr($builder->expr()->field('public')->equals(true));
+
+        $builder->sort(['public' => 'desc', 'title' => 'asc']);
+
+        return $builder->getQuery()->execute();
+    }
+
+    /**
+     * @param User $user
+     * @return SearchSelection[]
+     * @throws MongoDBException
+     */
+    public function findForUser(User $user): iterable
+    {
+        $builder = $this->createQueryBuilder();
+
+        $builder->addOr($builder->expr()->field('userId')->equals($user->getId()));
+        $builder->addOr($builder->expr()->field('public')->equals(true));
+        $builder->addOr($builder->expr()->field('groupId')->in(
+            array_map(fn (GroupInterface $g) => $g->getId(), $user->getGroups()))
+        );
 
         $builder->sort(['public' => 'desc', 'title' => 'asc']);
 

@@ -46,7 +46,7 @@ final class SearchSelectionsMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        foreach ($this->searchSelections->findPublicByUserId($user->getId()) as $item) {
+        foreach ($this->searchSelections->findForUser($user) as $item) {
             if ($item->isInMenu()) {
                 $menuContent->addChild($item->getTitle(), [
                     'route' => 'integrated_content_content_selection',

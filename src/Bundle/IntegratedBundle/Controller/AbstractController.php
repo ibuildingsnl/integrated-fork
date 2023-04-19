@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\IntegratedBundle\Controller;
 
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Integrated\Bundle\UserBundle\Model\User;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
@@ -46,6 +47,15 @@ class AbstractController extends BaseAbstractController
     public function getTranslator(): TranslatorInterface
     {
         return $this->container->get('translator');
+    }
+
+    protected function getUser(): ?User
+    {
+        $user = parent::getUser();
+        if ($user && !$user instanceof User) {
+            throw new \RuntimeException('Invalid user type');
+        }
+        return $user;
     }
 
     public static function getSubscribedServices()

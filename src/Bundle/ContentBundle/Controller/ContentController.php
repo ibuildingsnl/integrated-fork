@@ -114,7 +114,10 @@ class ContentController extends AbstractController
             $newSelection = true;
             $selection = new SearchSelection();
         }
-        $editableSelection = !$selection->isPublic() || $this->isGranted('ROLE_ADMIN');
+        $editableSelection = $this->isGranted('ROLE_ADMIN') || (
+            !$selection->isPublic() &&
+            $selection->getUserId() === $this->getUser()->getId()
+        );
 
         $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
         $searchSelectionForm->add('actions', ActionsType::class, [
@@ -188,7 +191,7 @@ class ContentController extends AbstractController
             'filters' => $options,
             'selection' => $selection,
             'isSelectionEditable' => $editableSelection,
-            'searchSelections' => $this->getUser() ? $repo->findPublicByUserId($this->getUser()->getId()) : [],
+            'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
         ]);
     }
