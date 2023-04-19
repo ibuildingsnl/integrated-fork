@@ -24,25 +24,6 @@ use Integrated\Bundle\UserBundle\Model\User;
 class SearchSelectionRepository extends DocumentRepository
 {
     /**
-     * @param int $id
-     *
-     * @return SearchSelection[]
-     *
-     * @throws MongoDBException
-     */
-    public function findPublicByUserId($id)
-    {
-        $builder = $this->createQueryBuilder();
-
-        $builder->addOr($builder->expr()->field('userId')->equals($id));
-        $builder->addOr($builder->expr()->field('public')->equals(true));
-
-        $builder->sort(['public' => 'desc', 'title' => 'asc']);
-
-        return $builder->getQuery()->execute();
-    }
-
-    /**
      * @param User $user
      * @return SearchSelection[]
      * @throws MongoDBException
