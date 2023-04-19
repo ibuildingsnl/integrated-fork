@@ -135,7 +135,8 @@ class BlockExtension extends AbstractExtension
         }
 
         try {
-            // fatal errors are not catched
+            $options['data'] = $options['data'] ?? null;
+            // fatal errors are not caught
             $html = $this->blockManager->render($block, $options);
 
             if (!$html) {

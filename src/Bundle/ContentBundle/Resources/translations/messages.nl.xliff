@@ -998,6 +998,10 @@
                 <source>Show all</source>
                 <target>Toon alles</target>
             </trans-unit>
+            <trans-unit id="253">
+                <source>Go to</source>
+                <target>Ga naar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
