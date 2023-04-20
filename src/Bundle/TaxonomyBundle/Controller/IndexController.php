@@ -29,9 +29,9 @@ final class IndexController extends AbstractController
     ) {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, string $type = 'taxonomy'): Response
     {
-        $contentType = $this->typeResolver->getType($request->get('type', 'taxonomy'));
+        $contentType = $this->typeResolver->getType($type);
         $content = $contentType->create();
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
