@@ -11,8 +11,6 @@ const validate = ajv.compile({
                         id: {type: "string"},
                         uri: {type: "string"},
                         title: {type: "string"},
-                        description: {type: "string"},
-                        credits: {type: "string"},
                     }
                 }
             }
@@ -26,8 +24,6 @@ const validate = ajv.compile({
                             uri: {type: "string"},
                             thumbnail: {type: "string"},
                             title: {type: "string"},
-                            description: {type: "string"},
-                            credits: {type: "string"},
                         }
                     }
                 }
