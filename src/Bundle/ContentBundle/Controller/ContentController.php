@@ -86,9 +86,14 @@ class ContentController extends AbstractController
         // remember search state
         $session = $request->getSession();
 
-        if ($request->query->get('remember') && $session->has('content_index_view')) {
-            $request->query->add(unserialize($session->get('content_index_view')));
-            $request->query->remove('remember');
+        if ($request->query->get('remember')) {
+            if ($session->has('content_redirect_route')) {
+                $route = $session->get('content_redirect_route', []);
+                return $this->redirectToRoute($route['route'], $route['params'] ?? []);
+            } elseif ($session->has('content_index_view')) {
+                $request->query->add(unserialize($session->get('content_index_view')));
+                $request->query->remove('remember');
+            }
         } elseif ($request->getRequestFormat() !== 'json') {
             $session->set('content_index_view', serialize($request->query->all()));
         }

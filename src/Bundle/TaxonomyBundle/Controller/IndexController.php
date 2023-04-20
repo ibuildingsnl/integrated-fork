@@ -38,6 +38,15 @@ final class IndexController extends AbstractController
             throw new AccessDeniedException();
         }
 
+        $session = $request->getSession();
+
+        if (!$request->query->get('remember')) {
+            $session->set('content_redirect_route', [
+                'route' => $request->get('_route'),
+                'params' => $request->get('_route_params'),
+            ]);
+        }
+
         $form = $this->createForm(ContentFormType::class, $content, [
             'method' => 'POST',
             'attr' => [
@@ -47,7 +56,7 @@ final class IndexController extends AbstractController
             'content_type' => $contentType,
         ]);
 
-        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create']]);
 
         $form->handleRequest($request);
 
