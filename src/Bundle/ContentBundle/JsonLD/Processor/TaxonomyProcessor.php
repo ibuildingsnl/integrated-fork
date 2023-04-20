@@ -22,10 +22,7 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class TaxonomyProcessor implements ProcessorInterface
 {
-    /**
-     * @var UrlGenerator
-     */
-    protected $generator;
+    protected UrlGenerator $generator;
 
     public function __construct(UrlGenerator $generator)
     {
