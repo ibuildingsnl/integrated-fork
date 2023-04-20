@@ -22,10 +22,7 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class EventProcessor implements ProcessorInterface
 {
-    /**
-     * @var UrlGenerator
-     */
-    protected $generator;
+    protected UrlGenerator $generator;
 
     public function __construct(UrlGenerator $generator)
     {
