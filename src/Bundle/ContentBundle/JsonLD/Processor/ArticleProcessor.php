@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\JsonLD\Processor;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\ContentBundle\JsonLD\UrlGenerator;
 use Integrated\Common\Normalizer\ContainerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
@@ -21,6 +22,13 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class ArticleProcessor implements ProcessorInterface
 {
+    protected UrlGenerator $generator;
+
+    public function __construct(UrlGenerator $generator)
+    {
+        $this->generator = $generator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -34,6 +42,7 @@ class ArticleProcessor implements ProcessorInterface
         $data->set('name', $object->getTitle());
         $data->set('headline', $object->getTitle());
         $data->set('description', $object->getDescription());
+        $data->set('image', $this->generator->generateUrl($object->getCover()));
 
         foreach ($object->getAuthors() as $author) {
             if ($author = $context->normalize($author)) {

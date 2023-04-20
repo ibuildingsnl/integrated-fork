@@ -1010,6 +1010,18 @@
                 <source>Add to menu</source>
                 <target>Toevoegen aan menu</target>
             </trans-unit>
+            <trans-unit id="256">
+                <source>Filter by parent</source>
+                <target>Filter op parent</target>
+            </trans-unit>
+            <trans-unit id="257">
+                <source>Show all</source>
+                <target>Toon alles</target>
+            </trans-unit>
+            <trans-unit id="258">
+                <source>Go to</source>
+                <target>Ga naar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

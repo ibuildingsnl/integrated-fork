@@ -1,0 +1,19 @@
+<li class="website-list dropdown close-outside top-bar">
+    <a data-toggle="dropdown" role="button" id="drop_1"
+       class="btn btn-white">
+        <span>{% trans %}Websites{% endtrans %}</span>
+        <i class="iconoir-nav-arrow-down"></i>
+    </a>
+    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu alt flex-col" id="menu_1">
+        {% for channel in channels %}
+            {% set domain = channel.primaryDomain|default(channel.domains|first)|default("") %}
+            {% if (domain != "") %}
+                {% set url = "//" ~ domain ~ path('integrated_website_enter_session', {'sessionId': app.session.id, 'path': '/'}) %}
+                <li>
+                    <a target="_blank"
+                       href="{{ url }}">{% trans %}Go to{% endtrans %} {{ channel.name }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</li>

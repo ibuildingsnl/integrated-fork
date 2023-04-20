@@ -6,7 +6,7 @@
 
     <services>
         <service id="Integrated\Bundle\TaxonomyBundle\Controller\IndexController">
-            <argument type="service" id="integrated_taxonomy.taxonomy.indexer"/>
+            <argument type="service" id="integrated_taxonomy.taxonomy.overview"/>
             <argument type="service" id="integrated.form.resolver" />
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
             <argument type="service" id="integrated_content.services.flusher"/>

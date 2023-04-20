@@ -142,7 +142,7 @@
             @include media(max-sm) {
                 div.row-options {
                     position: static;
-                    display: none;
+                    display: block;
                 }
             }
         }

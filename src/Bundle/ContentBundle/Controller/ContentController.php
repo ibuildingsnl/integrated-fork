@@ -27,7 +27,7 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -76,7 +76,7 @@ class ContentController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly ImageExtension $imageExtension,
         private readonly MediaProvider $mediaProvider,
-        private readonly TaxonomyIndexer $taxonomyIndexer,
+        private readonly TaxonomyOverview $taxonomyIndexer,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
@@ -297,14 +297,14 @@ class ContentController extends AbstractController
             }
         }
 
-        $taxonomyCategoriess = [];
+        $taxonomyCategories = [];
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
-                $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor($target->getId());
             }
         }
 
-        return $taxonomyCategoriess;
+        return $taxonomyCategories;
     }
 
     /**

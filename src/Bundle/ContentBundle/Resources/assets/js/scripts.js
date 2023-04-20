@@ -110,8 +110,6 @@ $(document).ready(function () {
             $.each(response.results, function () {
                 var data = this;
 
-                console.log(data);
-
                 if (data.class === 'Image' || data.class === 'Video' || data.class === 'File') {
                     if (media_item_in_results == false) {
                         results.unshift({

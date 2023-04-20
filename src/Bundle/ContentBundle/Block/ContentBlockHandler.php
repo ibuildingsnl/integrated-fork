@@ -88,6 +88,7 @@ class ContentBlockHandler extends BlockHandler
             'filters' => [],   // add extra filters (overwrites search selection)
             'exclude' => true, // exclude already shown items
             'gridLevel' => 0,
+            'data' => '',
         ]);
 
         $resolver->setAllowedTypes('filters', 'array');
