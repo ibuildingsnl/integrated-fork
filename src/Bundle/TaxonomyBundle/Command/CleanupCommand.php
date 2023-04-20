@@ -39,7 +39,7 @@ final class CleanupCommand extends Command
             } else {
                 $this->manager->detach($taxonomy);
             }
-            $i++;
+            ++$i;
             if ($i > $batch) {
                 $this->manager->flush();
                 $i = 0;
