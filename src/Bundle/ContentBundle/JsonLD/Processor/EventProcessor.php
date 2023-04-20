@@ -31,6 +31,7 @@ class EventProcessor implements ProcessorInterface
     {
         $this->generator = $generator;
     }
+
     /**
      * {@inheritdoc}
      */

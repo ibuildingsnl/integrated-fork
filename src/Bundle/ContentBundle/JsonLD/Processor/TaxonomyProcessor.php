@@ -31,6 +31,7 @@ class TaxonomyProcessor implements ProcessorInterface
     {
         $this->generator = $generator;
     }
+
     /**
      * {@inheritdoc}
      */

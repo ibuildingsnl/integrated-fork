@@ -31,6 +31,7 @@ class ArticleProcessor implements ProcessorInterface
     {
         $this->generator = $generator;
     }
+
     /**
      * {@inheritdoc}
      */
