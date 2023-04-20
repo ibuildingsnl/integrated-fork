@@ -60,7 +60,7 @@ class SearchSelection
 
     protected bool $inMenu = false;
 
-    protected ?string $groupId;
+    protected ?string $groupId = null;
 
     /**
      * @return string
