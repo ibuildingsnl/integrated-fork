@@ -96,6 +96,7 @@ class ContentController extends AbstractController
             }
         } elseif ($request->getRequestFormat() !== 'json') {
             $session->set('content_index_view', serialize($request->query->all()));
+            $session->remove('content_redirect_route');
         }
 
         $options = $request->query->all();
