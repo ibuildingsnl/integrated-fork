@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\JsonLD\Processor;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Event;
+use Integrated\Bundle\ContentBundle\JsonLD\UrlGenerator;
 use Integrated\Common\Normalizer\ContainerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
@@ -21,6 +22,13 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class EventProcessor implements ProcessorInterface
 {
+    protected UrlGenerator $generator;
+
+    public function __construct(UrlGenerator $generator)
+    {
+        $this->generator = $generator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -31,6 +39,7 @@ class EventProcessor implements ProcessorInterface
         }
 
         $data->set('@type', 'Event');
+        $data->set('image', $this->generator->generateUrl($object->getCover()));
 
         if ($date = $object->getStartDate()) {
             $data->set('startDate', $date->format('c'));

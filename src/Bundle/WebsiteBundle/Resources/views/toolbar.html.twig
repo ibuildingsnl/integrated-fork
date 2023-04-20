@@ -13,10 +13,15 @@
         </a>
 
         <div class="integrated-website-toolbar-tools">
-            <div class="new-contenttype close-outside dropdown top-bar">
-                <a href="#" class="btn btn-green icon-right"
-                   data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
-                {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+            <div class="integrated-website-toolbar-left flex">
+                {% block website_navigation_buttons %}
+                    {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\ChannelController::getchannels')) }}
+                {% endblock website_navigation_buttons %}
+                <div class="new-contenttype close-outside dropdown top-bar">
+                    <a href="#" class="btn btn-green icon-right"
+                       data-toggle="dropdown"><span>{% trans %}Create new {% endtrans %}</span><i class="iconoir-plus"></i></a>
+                    {{ knp_menu_render('content_type', {'template': '@IntegratedContent/menu/content_type.html.twig'}) }}
+                </div>
             </div>
             <div class="integrated-website-toolbar-right">
                 {% set params = app.request.attributes.get('_route_params')|merge(app.request.query.all) %}

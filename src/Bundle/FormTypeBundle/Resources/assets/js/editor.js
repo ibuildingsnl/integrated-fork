@@ -55,7 +55,7 @@ $('.integrated_tinymce').each(function(key, elem){
         toolbar:
             "styles | bold italic underline subscript superscript | bullist numlist | " +
             "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
-            "pastetext searchreplace | fullscreen",
+            "pastetext searchreplace | code fullscreen",
         toolbar_sticky: false,
         toolbar_location: 'top',
         statusbar: true,
