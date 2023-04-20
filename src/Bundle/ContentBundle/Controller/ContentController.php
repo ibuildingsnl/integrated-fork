@@ -89,6 +89,7 @@ class ContentController extends AbstractController
         if ($request->query->get('remember')) {
             if ($session->has('content_redirect_route')) {
                 $route = $session->get('content_redirect_route', []);
+
                 return $this->redirectToRoute($route['route'], $route['params'] ?? []);
             } elseif ($session->has('content_index_view')) {
                 $request->query->add(unserialize($session->get('content_index_view')));
