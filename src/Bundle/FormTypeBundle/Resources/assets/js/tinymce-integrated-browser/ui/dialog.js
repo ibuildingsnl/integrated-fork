@@ -35,6 +35,8 @@ const galleryHandler = (editor, dialog, data) => {
         return;
     }
 
+    console.log(data);
+
     if (!validate(data)) {
         throw 'Invalid "insertGallery" message data received';
     }
