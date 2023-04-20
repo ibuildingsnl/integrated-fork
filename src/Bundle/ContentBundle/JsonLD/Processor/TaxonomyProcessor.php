@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\JsonLD\Processor;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\ContentBundle\JsonLD\UrlGenerator;
 use Integrated\Common\Normalizer\ContainerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
@@ -21,6 +22,15 @@ use Integrated\Common\Normalizer\Processor\ProcessorInterface;
  */
 class TaxonomyProcessor implements ProcessorInterface
 {
+    /**
+     * @var UrlGenerator
+     */
+    protected $generator;
+
+    public function __construct(UrlGenerator $generator)
+    {
+        $this->generator = $generator;
+    }
     /**
      * {@inheritdoc}
      */
@@ -33,5 +43,6 @@ class TaxonomyProcessor implements ProcessorInterface
         $data->set('@type', 'Collection');
         $data->set('name', $object->getTitle());
         $data->set('description', $object->getDescription());
+        $data->set('image', $this->generator->generateUrl($object->getCover()));
     }
 }

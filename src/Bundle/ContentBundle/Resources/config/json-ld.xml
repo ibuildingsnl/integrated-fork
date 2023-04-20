@@ -42,6 +42,8 @@
         </service>
 
         <service id="integrated_content.json_ld.processor.article" class="Integrated\Bundle\ContentBundle\JsonLD\Processor\ArticleProcessor" public="false">
+            <argument type="service" id="integrated_content.json_ld.url_generator" />
+
             <tag name="integrated_content.json_ld.processor" class="Integrated\Bundle\ContentBundle\Document\Content\Article" />
         </service>
 
@@ -58,6 +60,8 @@
         </service>
 
         <service id="integrated_content.json_ld.processor.event" class="Integrated\Bundle\ContentBundle\JsonLD\Processor\EventProcessor" public="false">
+            <argument type="service" id="integrated_content.json_ld.url_generator" />
+
             <tag name="integrated_content.json_ld.processor" class="Integrated\Bundle\ContentBundle\Document\Content\Event" />
         </service>
 
@@ -85,6 +89,8 @@
         </service>
 
         <service id="integrated_content.json_ld.processor.taxonomy" class="Integrated\Bundle\ContentBundle\JsonLD\Processor\TaxonomyProcessor" public="false">
+            <argument type="service" id="integrated_content.json_ld.url_generator" />
+
             <tag name="integrated_content.json_ld.processor" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy" />
         </service>
 
