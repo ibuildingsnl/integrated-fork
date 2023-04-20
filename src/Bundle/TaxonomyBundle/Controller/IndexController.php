@@ -29,13 +29,22 @@ final class IndexController extends AbstractController
     ) {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, string $type = 'taxonomy'): Response
     {
-        $contentType = $this->typeResolver->getType($request->get('type', 'taxonomy'));
+        $contentType = $this->typeResolver->getType($type);
         $content = $contentType->create();
 
         if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
+        }
+
+        $session = $request->getSession();
+
+        if (!$request->query->get('remember')) {
+            $session->set('content_redirect_route', [
+                'route' => $request->get('_route'),
+                'params' => $request->get('_route_params'),
+            ]);
         }
 
         $form = $this->createForm(ContentFormType::class, $content, [
@@ -47,7 +56,7 @@ final class IndexController extends AbstractController
             'content_type' => $contentType,
         ]);
 
-        $form->add('actions', ActionsType::class, ['buttons' => ['create', 'cancel']]);
+        $form->add('actions', ActionsType::class, ['buttons' => ['create']]);
 
         $form->handleRequest($request);
 
