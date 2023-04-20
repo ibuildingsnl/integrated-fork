@@ -45,10 +45,11 @@ class SearchSelectionType extends AbstractType
                 'expanded' => true,
                 'choices' => [
                     'Everyone' => 1,
-                    'Restricted' => 0,
+                    'Myself only' => 0,
                 ],
             ]);
             $builder->add('groupId', GroupType::class, [
+                'placeholder' => 'Select a group',
                 'required' => false,
             ]);
             $builder->get('groupId')->addModelTransformer(new CallbackTransformer(

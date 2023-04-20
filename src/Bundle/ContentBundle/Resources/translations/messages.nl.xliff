@@ -990,6 +990,26 @@
                 <source>Current Selection:</source>
                 <target>Huidige Selectie:</target>
             </trans-unit>
+            <trans-unit id="251">
+                <source>Search selection settings</source>
+                <target>Zoekselectie instellingen</target>
+            </trans-unit>
+            <trans-unit id="252">
+                <source>Available for</source>
+                <target>Beschikbaar voor</target>
+            </trans-unit>
+            <trans-unit id="253">
+                <source>Available for</source>
+                <target>Beschikbaar voor</target>
+            </trans-unit>
+            <trans-unit id="254">
+                <source>Myself only</source>
+                <target>Alleen mijzelf</target>
+            </trans-unit>
+            <trans-unit id="255">
+                <source>Add to menu</source>
+                <target>Toevoegen aan menu</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -45,7 +45,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="dropdown close-outside" data-underlay="no">
+                        <li class="dropdown close-outside searchselection" data-underlay="no">
                             <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
                                 <span>
                                     {% if selection %}
@@ -59,7 +59,8 @@
 
                             <ul role="menu" class="dropdown-menu">
                                 <li role="presentation">
-                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1" role="menuitem">
+                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                       role="menuitem">
                                         All content
                                     </a>
                                 </li>
@@ -80,20 +81,34 @@
                                     {% endif %}
 
                                 {% endfor %}
-
                             </ul>
                         </li>
                     </ul>
+                    <button type="button"
+                            class="toggle-searchselection toggle-data-target btn btn-white" data-target="searchselection-edit-form"><i
+                            class="iconoir-settings"></i></button>
                 </div>
-                <div class="edit-form options">
+                <div class="searchselection-edit-form close-outside">
                     {{ form_start(searchSelectionForm) }}
-                        {{ form_rest(searchSelectionForm) }}
-
+                    <div class="toolbar">
                         {% if selection.id and isSelectionEditable %}
-                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}" title="{% trans %}Delete{% endtrans %}">
-                               <i class="iconoir-trash"></i>
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                               class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                                <i class="iconoir-trash"></i>
                             </a>
                         {% endif %}
+                        <div class="toolbar-right">
+                            {% if searchSelectionForm.actions.save is defined %}
+                                {{ form_row(searchSelectionForm.actions.save) }}
+                            {% endif %}
+                            {% if searchSelectionForm.actions.create is defined %}
+                                {{ form_row(searchSelectionForm.actions.create) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                    {{ form_rest(searchSelectionForm) }}
+
                     {{ form_end(searchSelectionForm) }}
                 </div>
             </div>

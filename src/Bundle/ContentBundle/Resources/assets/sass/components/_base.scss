@@ -286,6 +286,7 @@ body.hide-options {
     margin-bottom: 1rem;
     align-items: center;
     flex-wrap: wrap;
+    position: relative;
     @include media(max-sm) {
         margin-bottom: .5rem;
     }
@@ -314,6 +315,10 @@ body.hide-options {
         width: 100%;
         flex-wrap: wrap;
 
+        button {
+            height: 34px;
+        }
+
         @include media(max-md) {
             height: auto;
             padding: 1rem 1rem 0 1rem;
@@ -331,7 +336,6 @@ body.hide-options {
         ul.content-navigator-menu {
             display: flex;
             align-items: center;
-            width: 100%;
             li {
                 margin-right: 5px;
                 order: 1;
@@ -485,6 +489,76 @@ span.help-block {
         &:before {
             width: 14px;
             height: 14px;
+        }
+    }
+}
+
+.toggle-searchselection {
+    padding-left: 2rem;
+    margin-left: -1.5rem;
+}
+
+li.dropdown.searchselection a {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.searchselection-edit-form {
+    position: absolute;
+    left: 0;
+    top: 110px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    display: none;
+    z-index: 1040;
+    max-width: 750px;
+    width: 100%;
+    &.show {
+        display: block;
+    }
+    .form-item, .form-group {
+        margin-bottom:.5rem;
+        label, .widget {
+            width: 100%;
+        }
+    }
+    h2 {
+        margin-bottom: 0.5rem;
+    }
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        margin: -1rem;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #dfe3e9;
+        margin-bottom: 1rem;
+
+        .toolbar-right {
+            display: flex;
+            div:last-child {
+                margin-left: .5rem;
+            }
+            .form-group {
+                margin-bottom: 0;
+            }
+        }
+        a, button {
+            height: 34px;
+        }
+    }
+
+    .form-item {
+        #integrated_search_selection_public {
+            display: flex;
+            justify-content: space-between;
+        }
+        #integrated_search_selection_public li {
+            width: 49%;
+        }
+        select, input {
+            height: 39px;
+            padding: 0 1rem;
         }
     }
 }
