@@ -7,7 +7,7 @@ final class TaxonomyOptions
     public function __construct(
         public readonly string $root = 'root',
         public readonly int $offset = 0,
-        public readonly int $limit = PHP_INT_MAX,
+        public readonly int $limit = \PHP_INT_MAX,
     ) {
     }
 
