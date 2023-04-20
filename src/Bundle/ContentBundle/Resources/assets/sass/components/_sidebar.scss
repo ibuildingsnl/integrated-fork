@@ -21,6 +21,9 @@
 
         .sidebar-menu-wrapper {
             padding: 1rem;
+            @include media(max-md) {
+                padding-bottom: 100px;
+            }
 
             a {
                 color: white;
