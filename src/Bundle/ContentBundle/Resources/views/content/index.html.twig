@@ -118,13 +118,13 @@
                     <thead>
                     <tr>
                         <th class="title">
-                            <span>Titel</span>
+                            <span>{% trans %}Title{% endtrans %}</span>
                         </th>
                         <th class="content-type">
                             <span>ContentType</span>
                         </th>
                         <th class="pub-date">
-                            <span>Publication Date</span>
+                            <span>{% trans %}Publication date{% endtrans %}</span>
                         </th>
                         <th class="state">
                             <span>Status</span>
@@ -273,7 +273,7 @@
             <div class="aside-item-header">
                 <h3 class="aside-item-title">
                     <span class="aside-item-icon">
-                        {{ facetTitle }}
+                        {{ facetTitle|trans }}
                     </span>
                 </h3>
                 <i class="iconoir-nav-arrow-down"></i>
@@ -284,7 +284,7 @@
                         <div class="aside-item-search">
                             <i class="iconoir-search"></i>
                             <input type="text" class="list-search"
-                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
                         </div>
                     {% endif %}
                     <ul class="filters_list">
@@ -298,11 +298,11 @@
                                     <div class="facet-wrappper">
                                         <span class="facet-title">
                                             {% if key == 'contenttypes' %}
-                                                {{ title|integrated_content_type.name|default(title) }}
+                                                {{ title|integrated_content_type.name|trans|default(title) }}
                                             {% elseif key == 'channels' %}
-                                                {{ title|integrated_channel.name|default(title) }}
+                                                {{ title|integrated_channel.name|trans|default(title) }}
                                             {% else %}
-                                                {{ title }}
+                                                {{ title|trans }}
                                             {% endif %}
                                         </span>
                                         <span class="facet-count">({{ count }})</span>

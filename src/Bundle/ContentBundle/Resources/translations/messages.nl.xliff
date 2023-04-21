@@ -1022,6 +1022,34 @@
                 <source>Go to</source>
                 <target>Ga naar</target>
             </trans-unit>
+            <trans-unit id="259">
+                <source>Search selection</source>
+                <target>Zoek selectie</target>
+            </trans-unit>
+            <trans-unit id="260">
+                <source>Search in</source>
+                <target>Zoek in</target>
+            </trans-unit>
+            <trans-unit id="261">
+                <source>Properties</source>
+                <target>Eigenschappen</target>
+            </trans-unit>
+            <trans-unit id="262">
+                <source>Not Premium</source>
+                <target>Niet premium</target>
+            </trans-unit>
+            <trans-unit id="263">
+                <source>Has image</source>
+                <target>Heeft afbeelding</target>
+            </trans-unit>
+            <trans-unit id="264">
+                <source>Not Featured</source>
+                <target>Niet uitgelicht</target>
+            </trans-unit>
+            <trans-unit id="265">
+                <source>Doesn't have images</source>
+                <target>Heeft geen afbeelding</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
