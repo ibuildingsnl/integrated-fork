@@ -494,6 +494,14 @@ span.help-block {
     }
 }
 
+.favicon {
+    span.help-block {
+        border-radius: 8px;
+        margin-top: 1rem;
+        padding: 0.5rem;
+    }
+}
+
 .toggle-searchselection {
     padding-left: 2rem;
     margin-left: -1.5rem;

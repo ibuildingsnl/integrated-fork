@@ -134,7 +134,6 @@ class SolariumProvider
 
         try {
             $selection = $subject instanceof SearchSelection ? $subject : $subject->getSearchSelection();
-
             if ($selection) {
                 $this->addFacetFilters($query, $subject, (array) $selection->getFilters(), array_merge($options, ['search_selection' => true]));
 
@@ -192,8 +191,8 @@ class SolariumProvider
         }
 
         foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-            $filters = isset($request[$name]) ? $request[$name] : [];
+            $name = strtolower(preg_replace('/[^a-zA-Z]/', '', $relation->getName()));
+            $filters = isset($request['relation'][$name]) ? $request['relation'][$name] : [];
 
             if (\count($filters)) {
                 if (!\in_array('facet_'.$relation->getId(), $facetFields)) {

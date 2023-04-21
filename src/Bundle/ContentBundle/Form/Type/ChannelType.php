@@ -69,7 +69,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'droplet',
                 ],
             ])->add(
@@ -96,11 +95,26 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'media-image',
                     'data-types' => '[{"type":"image","name":"Image"}]',
                     'data-emptytext' => 'Select logo',
                     'data-multiple' => false,
+                ],
+            ]
+        );
+
+        $builder->add(
+            'favicon',
+            MediaGalleryType::class,
+            [
+                'attr' => [
+                    'location' => 'sidebar',
+                    'style' => 'sidebar',
+                    'icon' => 'media-image',
+                    'data-types' => '[{"type":"image","name":"Image"}]',
+                    'data-emptytext' => 'Select Favicon 512x512',
+                    'data-multiple' => false,
+                    'help_text' => '<span>Use a 512x512 sized image for the best result</span>',
                 ],
             ]
         );
@@ -137,7 +151,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'key-alt-back',
                 ],
             ])->add(

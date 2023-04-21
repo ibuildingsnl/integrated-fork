@@ -51,6 +51,11 @@ class Channel implements ChannelInterface
     protected $logo;
 
     /**
+     * @var Image
+     */
+    protected $favicon;
+
+    /**
      * @var string
      */
     protected $color;
@@ -187,6 +192,24 @@ class Channel implements ChannelInterface
     public function setLogo(?Image $logo)
     {
         $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @return Image|null
+     */
+    public function getFavicon()
+    {
+        return $this->favicon;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setFavicon(?Image $favicon)
+    {
+        $this->favicon = $favicon;
 
         return $this;
     }
