@@ -571,6 +571,15 @@
         grid-template-columns: 40% 60%;
     }
 
+    .integrated-form-grid input {
+        width: auto;
+        margin-right: .5rem;
+    }
+
+    .integrated-form-grid input[type=text] {
+        width: 100%;
+    }
+
     .integrated-icon {
         display: inline-block;
         width: 12px;
@@ -591,6 +600,7 @@
         right: 0;
         bottom: 0;
         left: 0;
+        display: flex;
         z-index: 1050;
         background-color: rgba(0, 0, 0, 0.4);
     }
@@ -631,8 +641,7 @@
     .integrated-modal-dialog {
         position: relative;
         width: 1440px;
-        margin: 30px auto;
-
+        margin: auto;
     }
 
     .integrated-modal-header {
@@ -666,14 +675,15 @@
     }
 
     .integrated-pagination li {
-        background-color: #ecf6ff;
+        background-color: #dfe3e9;
         border-radius: 4px;
-        color: #fff;
         display: inline-flex;
         height: 30px;
         padding: 0;
+        color: black;
         width: 30px;
         margin: 0 2px;
+        cursor: pointer;
     }
 
     .integrated-pagination li, .integrated-pagination li a {
@@ -685,9 +695,14 @@
         color: #fff
     }
 
+    .integrated-pagination .integrated-pagination-active {
+        background-color: #2fa3f9;
+        color:white;
+    }
 
     .integrated-pagination li:hover {
-        background-color: #2fa3f9
+        background-color: #2fa3f9;
+        color:white;
     }
 
     .integrated-pagination {
