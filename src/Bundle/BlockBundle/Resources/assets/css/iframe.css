@@ -54,3 +54,7 @@
 .hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
     width: 100%;
 }
+
+body:not(.tox-fullscreen) .tox .tox-dialog-wrap {
+    top:0px !important;
+}

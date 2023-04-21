@@ -1,5 +1,6 @@
 {% extends '@IntegratedContent/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
     <div class="flex flex-wrap ">
 
@@ -14,7 +15,7 @@
                     </button>
                 </div>
                 <div class="options">
-                    <ul class="">
+                    <ul class="content-navigator-menu">
                         <li class="dropdown close-outside" data-underlay="no">
                             <a data-toggle="dropdown" role="button" id="sorting-list"
                                class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
@@ -25,13 +26,12 @@
                                 {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
                                     <li {% if sort.name == params.sort %}class="active"
                                         {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
                                            tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
                         </li>
-                        {{ render(controller('Integrated\\Bundle\\ContentBundle\\Controller\\SearchSelectionController::menu')) }}
                         <li class="dropdown close-outside" data-underlay="no">
                             <a data-toggle="dropdown" role="button"
                                class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
@@ -39,13 +39,77 @@
 
                             <ul role="menu" class=" dropdown-menu">
                                 <li role="presentation">
-                                    <a href="{{ path('integrated_content_bulk_select', app.request.query.all) }}"
+                                    <a href="{{ path('integrated_content_bulk_select', filters) }}"
                                        tabindex="-1"
                                        role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
                                 </li>
                             </ul>
                         </li>
+                        <li class="dropdown close-outside searchselection" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>
+                                    {% if selection %}
+                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
+                                    {% else %}
+                                        {% trans %}Search selections{% endtrans %}
+                                    {% endif %}
+                                </span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
+
+                            <ul role="menu" class="dropdown-menu">
+                                <li role="presentation">
+                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                       role="menuitem">
+                                        All content
+                                    </a>
+                                </li>
+
+                                {% for searchSelection in searchSelections %}
+
+                                    {% if searchSelection.id == selection.id %}
+                                        <li role="presentation" class="active">
+                                            <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                        </li>
+                                    {% else %}
+                                        <li role="presentation">
+                                            <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
+                                               tabindex="-1" role="menuitem">
+                                                {{ searchSelection.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </ul>
+                        </li>
                     </ul>
+                    <button type="button"
+                            class="toggle-searchselection toggle-data-target btn btn-white" data-target="searchselection-edit-form"><i
+                            class="iconoir-settings"></i></button>
+                </div>
+                <div class="searchselection-edit-form close-outside">
+                    {{ form_start(searchSelectionForm) }}
+                    <div class="toolbar">
+                        {% if selection.id and isSelectionEditable %}
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                               class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                                <i class="iconoir-trash"></i>
+                            </a>
+                        {% endif %}
+                        <div class="toolbar-right">
+                            {% if searchSelectionForm.actions.save is defined %}
+                                {{ form_row(searchSelectionForm.actions.save) }}
+                            {% endif %}
+                            {% if searchSelectionForm.actions.create is defined %}
+                                {{ form_row(searchSelectionForm.actions.create) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                    {{ form_rest(searchSelectionForm) }}
+
+                    {{ form_end(searchSelectionForm) }}
                 </div>
             </div>
             <section class="section-white section-radius">
@@ -160,17 +224,21 @@
             <aside>
                 <div class="aside-holder bg-white section-radius">
                     <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target" data-target="aside-filters"><i
-                                class="iconoir-cancel"></i></button>
+                        <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                            <i class="iconoir-cancel"></i>
+                        </button>
                         <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="{{ path('integrated_content_content_index') }}"
-                           class="clear-filters"><span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                            <span>{% trans %}Remove active filters{% endtrans %}</span>
                             <i class="iconoir-cancel"></i>
                         </a>
                     </div>
                     <form>
                         <input type="hidden" value="{{ params['q'] }}" name="q"/>
                         <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                        {% if selection %}
+                            <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                        {% endif %}
                         {% for key, facet in facets %}
                             {% if facet|length > 0 %}
                                 {% if key starts with 'relation_' %}

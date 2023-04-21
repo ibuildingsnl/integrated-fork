@@ -281,4 +281,14 @@ button * {
             background-color: darken(#E5F6F4, 20%);
         }
     }
+    &.btn-red {
+            background: #c6422f;
+            border-color: #c6422f;
+            color: white;
+            &:hover, &:focus {
+                color: white;
+                background: darken(#c6422f, 20%);
+                border-color: darken(#c6422f, 20%);
+            }
+    }
 }
