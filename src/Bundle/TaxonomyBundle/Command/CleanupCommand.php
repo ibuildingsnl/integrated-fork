@@ -28,23 +28,22 @@ final class CleanupCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $max = $input->getArgument('max');
         $batch = $input->getArgument('batch');
+        $type = $input->getArgument('type');
         $i = 0;
-        foreach ($this->taxonomies->byType($input->getArgument('type')) as $taxonomy) {
-            if ($this->taxonomies->countUsages($taxonomy) <= $max) {
-                $this->manager->remove($taxonomy);
-            } else {
-                $this->manager->detach($taxonomy);
+        do {
+            $items = $this->taxonomies->paged($type, $i, $batch);
+            foreach ($items as $taxonomy) {
+                if ($this->taxonomies->countUsages($taxonomy) <= $max) {
+                    $this->manager->remove($taxonomy);
+                }
             }
-            ++$i;
-            if ($i > $batch) {
-                $this->manager->flush();
-                $i = 0;
-            }
-        }
+            $this->manager->flush();
+            $i += $batch;
+        } while (!empty($items));
         $this->manager->flush();
 
         return 0;
