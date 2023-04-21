@@ -11,7 +11,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\UserBundle\Form\Type\GroupType;
+use Integrated\Bundle\UserBundle\Model\Group;
+use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,14 +26,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class SearchSelectionType extends AbstractType
 {
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $authorizationChecker;
-
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly GroupManagerInterface $groups,
+    ) {
     }
 
     /**
@@ -45,10 +45,26 @@ class SearchSelectionType extends AbstractType
                 'expanded' => true,
                 'choices' => [
                     'Everyone' => 1,
-                    'Me only' => 0,
+                    'Myself only' => 0,
                 ],
             ]);
+            $builder->add('groupId', GroupType::class, [
+                'placeholder' => 'Select a group',
+                'required' => false,
+            ]);
+            $builder->get('groupId')->addModelTransformer(new CallbackTransformer(
+                fn (?string $id) => $id ? $this->groups->find($id) : null,
+                fn (?Group $group) => $group?->getId(),
+            ));
         }
+
+        $builder->add('inMenu', CheckboxSwitcherType::class, [
+            'required' => false,
+            'label' => 'Add to menu',
+            'attr' => [
+                'align_with_widget' => true,
+            ],
+        ]);
     }
 
     /**

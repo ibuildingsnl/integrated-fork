@@ -222,6 +222,7 @@ body.integrated_content_user_profile_index,
 body.integrated_content_history_index,
 body.integrated_content_page_copy,
 body.integrated_page_page_copy,
+body.integrated_block_inline_text_block_create,
 body.integrated_taxonomy_index {
     .content-wrapper {
         padding: 50px 0 0;
@@ -286,6 +287,7 @@ body.hide-options {
     margin-bottom: 1rem;
     align-items: center;
     flex-wrap: wrap;
+    position: relative;
     @include media(max-sm) {
         margin-bottom: .5rem;
     }
@@ -314,6 +316,10 @@ body.hide-options {
         width: 100%;
         flex-wrap: wrap;
 
+        button {
+            height: 34px;
+        }
+
         @include media(max-md) {
             height: auto;
             padding: 1rem 1rem 0 1rem;
@@ -326,6 +332,19 @@ body.hide-options {
             margin-top: .5rem;
             li {
                 margin-bottom: .5rem;
+            }
+        }
+        ul.content-navigator-menu {
+            display: flex;
+            align-items: center;
+            li {
+                margin-right: 5px;
+                order: 1;
+            }
+            .update-search {
+                order: 2;
+                margin-left: auto;
+                height: 34px;
             }
         }
     }
@@ -480,5 +499,75 @@ span.help-block {
         border-radius: 8px;
         margin-top: 1rem;
         padding: 0.5rem;
+    }
+}
+
+.toggle-searchselection {
+    padding-left: 2rem;
+    margin-left: -1.5rem;
+}
+
+li.dropdown.searchselection a {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.searchselection-edit-form {
+    position: absolute;
+    left: 0;
+    top: 110px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    display: none;
+    z-index: 1040;
+    max-width: 750px;
+    width: 100%;
+    &.show {
+        display: block;
+    }
+    .form-item, .form-group {
+        margin-bottom:.5rem;
+        label, .widget {
+            width: 100%;
+        }
+    }
+    h2 {
+        margin-bottom: 0.5rem;
+    }
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        margin: -1rem;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #dfe3e9;
+        margin-bottom: 1rem;
+
+        .toolbar-right {
+            display: flex;
+            div:last-child {
+                margin-left: .5rem;
+            }
+            .form-group {
+                margin-bottom: 0;
+            }
+        }
+        a, button {
+            height: 34px;
+        }
+    }
+
+    .form-item {
+        #integrated_search_selection_public {
+            display: flex;
+            justify-content: space-between;
+        }
+        #integrated_search_selection_public li {
+            width: 49%;
+        }
+        select, input {
+            height: 39px;
+            padding: 0 1rem;
+        }
     }
 }

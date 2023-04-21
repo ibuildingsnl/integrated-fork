@@ -47,7 +47,7 @@ class SearchSelectionChoiceType extends AbstractType
     {
         $choices = [];
         if ($user = $this->getUser()) {
-            $choices = $this->repository->findPublicByUserId($user->getId());
+            $choices = $this->repository->findForUser($user);
         }
 
         $resolver->setDefaults([

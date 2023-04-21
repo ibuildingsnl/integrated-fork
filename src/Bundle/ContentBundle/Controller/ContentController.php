@@ -17,8 +17,11 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
@@ -81,7 +84,7 @@ class ContentController extends AbstractController
     ) {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, string $searchSelection = 'all'): Response
     {
         // remember search state
         $session = $request->getSession();
@@ -101,6 +104,55 @@ class ContentController extends AbstractController
         }
 
         $options = $request->query->all();
+        unset($options['searchSelection'], $options['page']);
+
+        /** @var SearchSelection|null $selection */
+        $selection = null;
+        if ($searchSelection && $searchSelection !== 'all') {
+            $selection = $this->getDoctrineODM()
+                ->getRepository(SearchSelection::class)
+                ->find($searchSelection);
+            if ($selection && empty($options)) {
+                $options = $selection->getFilters();
+            }
+        }
+        $newSelection = false;
+        if (!$selection) {
+            $newSelection = true;
+            $selection = new SearchSelection();
+        }
+        $editableSelection = $this->isGranted('ROLE_ADMIN') || (
+            !$selection->isPublic() &&
+            $selection->getUserId() === $this->getUser()->getId()
+        );
+
+        $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
+        $searchSelectionForm->add('actions', ActionsType::class, [
+            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create'],
+        ]);
+        $searchSelectionForm->handleRequest($request);
+        if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
+            if ($searchSelectionForm->get('actions')->getData() === 'create') {
+                $newSelection = true;
+                $this->documentManager->detach($selection);
+                $selection = clone $selection;
+                $selection->setId(null);
+                $selection->setUserId($this->getUser()->getId());
+                if (!$editableSelection) {
+                    $selection->setPublic(false);
+                }
+            } elseif (!$editableSelection) {
+                throw new AccessDeniedException();
+            }
+            $selection->setFilters($options);
+            $this->documentManager->persist($selection);
+            $this->documentManager->flush();
+
+            $this->addFlash('success', 'Selection saved');
+            if ($newSelection) {
+                return $this->redirectToRoute('integrated_content_content_selection', ['searchSelection' => $selection->getId()]);
+            }
+        }
 
         // all this relations stuff is only used on the json response
         $relations = [];
@@ -118,7 +170,7 @@ class ContentController extends AbstractController
             }
         }
 
-        if ($request->isMethod('post')) {
+        if ($request->isMethod('post') && $request->get('id')) {
             $options['ids'] = $request->get('id');
         }
 
@@ -134,12 +186,20 @@ class ContentController extends AbstractController
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
+        /** @var SearchSelectionRepository $repo */
+        $repo = $this->documentManager->getRepository(SearchSelection::class);
+
         return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
+            'filters' => $options,
+            'selection' => $selection,
+            'isSelectionEditable' => $editableSelection,
+            'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
+            'searchSelectionForm' => $searchSelectionForm->createView(),
         ]);
     }
 
