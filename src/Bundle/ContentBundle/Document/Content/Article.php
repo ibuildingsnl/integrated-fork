@@ -100,7 +100,7 @@ class Article extends Content implements RankableInterface
      */
     #[Type\Field(options: [
         'priority' => 450,
-        'attr' => ['style' => 'sidebar', 'icon' => 'megaphone']
+        'attr' => ['style' => 'sidebar', 'icon' => 'megaphone'],
     ], location: 'sidebar')]
     protected $source;
 
@@ -488,6 +488,6 @@ class Article extends Content implements RankableInterface
      */
     public function __toString()
     {
-        return (string)$this->title;
+        return (string) $this->title;
     }
 }
