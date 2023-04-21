@@ -105,7 +105,6 @@ class ChannelType extends AbstractType
             ]
         );
 
-
         $builder->add(
             'favicon',
             MediaGalleryType::class,
