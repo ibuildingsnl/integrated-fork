@@ -69,7 +69,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'droplet',
                 ],
             ])->add(
@@ -96,7 +95,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'media-image',
                     'data-types' => '[{"type":"image","name":"Image"}]',
                     'data-emptytext' => 'Select logo',
@@ -112,7 +110,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'media-image',
                     'data-types' => '[{"type":"image","name":"Image"}]',
                     'data-emptytext' => 'Select Favicon 512x512',
@@ -154,7 +151,6 @@ class ChannelType extends AbstractType
                 'attr' => [
                     'location' => 'sidebar',
                     'style' => 'sidebar',
-                    'state' => 'show',
                     'icon' => 'key-alt-back',
                 ],
             ])->add(
