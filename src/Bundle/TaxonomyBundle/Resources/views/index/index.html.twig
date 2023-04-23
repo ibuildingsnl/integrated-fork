@@ -19,18 +19,18 @@
                                     </a>
                                     <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
                                         <li role="presentation">
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                merge({'filter': 'root' })|
-                                                merge({'page': 1 })
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all
+                                                |merge(app.request.attributes.get('_route_params'))
+                                                |merge({'filter': 'root', 'page': 1 })
                                             ) }}" role="menuitem">
                                                 {{ "Show all"|trans|capitalize }}
                                             </a>
                                         </li>
                                         {% for filter_id, filter_name in filter_options %}
                                             <li{% if filter_id == filter %} class="active"{% endif %} role="presentation">
-                                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|
-                                                    merge({'filter': filter_id })|
-                                                    merge({'page': 1 })
+                                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all
+                                                    |merge(app.request.attributes.get('_route_params'))
+                                                    |merge({'filter': filter_id, 'page': 1 })
                                                 ) }}" role="menuitem">
                                                     {{ filter_name|trans|capitalize }}
                                                 </a>
@@ -83,7 +83,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ item.description|striptags|u.truncate(50, '...')|raw }}
+{#                                    {{ item.description|striptags|u.truncate(50, '...')|raw }}#}
+                                    {{ item.taxonomyId }}
                                 </td>
                                 <td>
                                     {{ item.slug }}

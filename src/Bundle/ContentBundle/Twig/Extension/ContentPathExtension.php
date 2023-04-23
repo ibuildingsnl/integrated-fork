@@ -61,7 +61,7 @@ class ContentPathExtension extends AbstractExtension
             if ($taxonomyParent = $data->getParentID()) {
                 /** @var Taxonomy $parent */
                 $parent = $this->documentManager->getRepository(Content::class)->find($taxonomyParent);
-                $parentParent = $this->documentManager->getRepository(Content::class)->find($parent);
+                $parentParent = $this->documentManager->getRepository(Content::class)->find($parent->getParentID());
                 if ($parent) {
                     $path[$parent->getId()] = $parent->getTitle();
                 }

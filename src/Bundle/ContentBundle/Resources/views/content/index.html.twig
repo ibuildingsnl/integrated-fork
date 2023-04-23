@@ -298,9 +298,9 @@
                                     <div class="facet-wrappper">
                                         <span class="facet-title">
                                             {% if key == 'contenttypes' %}
-                                                {{ title|integrated_content_type.name|trans|default(title) }}
+                                                {{ title|integrated_content_type.name|default(title) }}
                                             {% elseif key == 'channels' %}
-                                                {{ title|integrated_channel.name|trans|default(title) }}
+                                                {{ title|integrated_channel.name|default(title) }}
                                             {% else %}
                                                 {{ title|trans }}
                                             {% endif %}
