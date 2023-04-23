@@ -5,6 +5,13 @@ $(function() {
 function initContentChoice() {
     $('select.integrated_content_choice').select2({
         ajax: {
+            data: function (param) {
+                return {
+                    limit:  100,
+                    sort: 'title',
+                    q: typeof param.term !== 'undefined' ? param.term + '*' : ''
+                };
+            },
             processResults: function (data) {
                 var items = [];
 
