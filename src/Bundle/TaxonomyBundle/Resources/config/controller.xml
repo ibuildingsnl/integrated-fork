@@ -11,6 +11,8 @@
             <argument type="service" id="integrated_taxonomy.taxonomy.repository" />
             <argument type="service" id="integrated_content.services.flusher"/>
             <argument type="service" id="knp_paginator"/>
+            <argument type="service" id="integrated_content.metadata.factory"/>
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
