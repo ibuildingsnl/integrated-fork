@@ -32,7 +32,10 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         $this->solrClient->getPlugin('postbigrequest');
 
         $query = $this->queryFactory
-            ->createQuery(IntegratedContent::class, ['contenttypes' => [$contentType]])
+            ->createQuery(IntegratedContent::class, [
+                'contenttypes' => [$contentType],
+                'sort' => 'title',
+            ])
             ->getQuery()
             ->setStart($offset)
             ->setRows($limit);
