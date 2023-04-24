@@ -34,7 +34,7 @@ final class ODMTaxonomyRepository implements TaxonomyRepositoryInterface
         $query = $this->queryFactory
             ->createQuery(IntegratedContent::class, [
                 'contenttypes' => [$contentType],
-                'sort' => 'title'
+                'sort' => 'title',
             ])
             ->getQuery()
             ->setStart($offset)
