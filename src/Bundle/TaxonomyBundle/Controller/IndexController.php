@@ -71,7 +71,7 @@ final class IndexController extends AbstractController
 
             $this->addFlash('success', 'Taxonomy item created');
 
-            return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()]);
+            return $this->redirectToRoute('integrated_taxonomy_index', ['type' => $contentType->getId()] + $request->query->all());
         }
 
         $filter = $request->get('filter', 'root');
