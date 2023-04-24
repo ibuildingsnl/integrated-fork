@@ -14,7 +14,7 @@
                                 <li class="dropdown close-outside" data-underlay="no">
                                     <a data-toggle="dropdown" role="button" id="filtering-list" class="btn btn-select space-between">
                                         <span>{% trans %}Filter by parent{% endtrans %}
-                                : {{ filter_options[filter]|default('Show all')|trans|capitalize }}</span>
+                                : {{ filter_options[filter]|default('Show all')|trans }}</span>
                                         <i class="iconoir-nav-arrow-down"></i>
                                     </a>
                                     <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
@@ -23,7 +23,7 @@
                                                 |merge(app.request.attributes.get('_route_params'))
                                                 |merge({'filter': 'root', 'page': 1 })
                                             ) }}" role="menuitem">
-                                                {{ "Show all"|trans|capitalize }}
+                                                {{ "Show all"|trans }}
                                             </a>
                                         </li>
                                         {% for filter_id, filter_name in filter_options %}
@@ -32,7 +32,7 @@
                                                     |merge(app.request.attributes.get('_route_params'))
                                                     |merge({'filter': filter_id, 'page': 1 })
                                                 ) }}" role="menuitem">
-                                                    {{ filter_name|trans|capitalize }}
+                                                    {{ filter_name|trans }}
                                                 </a>
                                             </li>
                                         {% endfor %}
@@ -83,8 +83,7 @@
                                     </div>
                                 </td>
                                 <td>
-{#                                    {{ item.description|striptags|u.truncate(50, '...')|raw }}#}
-                                    {{ item.taxonomyId }}
+                                    {{ item.description|striptags|u.truncate(50, '...')|raw }}
                                 </td>
                                 <td>
                                     {{ item.slug }}
