@@ -29,7 +29,7 @@ final class IndexController extends AbstractController
     ) {
     }
 
-    public function index(Request $request, string $type = 'taxonomy'): Response
+    public function index(Request $request, string $type): Response
     {
         $contentType = $this->typeResolver->getType($type);
         $content = $contentType->create();
@@ -43,7 +43,7 @@ final class IndexController extends AbstractController
         if (!$request->query->get('remember')) {
             $session->set('content_redirect_route', [
                 'route' => $request->get('_route'),
-                'params' => $request->get('_route_params'),
+                'params' => $request->get('_route_params') + $request->query->all(),
             ]);
         }
 
