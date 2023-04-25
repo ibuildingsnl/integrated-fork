@@ -8,12 +8,16 @@ use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOptions;
 use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Common\Content\Form\ContentFormType;
+use Integrated\Common\Content\Form\Event\ValidationEvent;
+use Integrated\Common\Content\Form\Events;
 use Integrated\Common\ContentType\ResolverInterface;
+use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Security\Permissions;
 use Integrated\Common\Services\Flusher;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -26,6 +30,8 @@ final class IndexController extends AbstractController
         private readonly TaxonomyRepositoryInterface $taxonomies,
         private readonly Flusher $flusher,
         private readonly PaginatorInterface $paginator,
+        private readonly MetadataFactoryInterface $metadataFactory,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -63,6 +69,14 @@ final class IndexController extends AbstractController
         if ($form->isSubmitted()) {
             if (!$form->isValid() || !$content instanceof Taxonomy) {
                 return $this->redirectToRoute('integrated_content_content_index');
+            }
+
+            if ($this->dispatcher->hasListeners(Events::POST_VALIDATE)) {
+                $this->dispatcher->dispatch(new ValidationEvent(
+                    $contentType,
+                    $this->metadataFactory->getMetadata($contentType->getClass()),
+                    $content,
+                ), Events::POST_VALIDATE);
             }
 
             $this->taxonomies->add($content);
