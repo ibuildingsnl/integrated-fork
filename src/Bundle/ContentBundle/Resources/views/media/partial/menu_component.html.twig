@@ -53,7 +53,7 @@
                                id="{{ menu_item.ID }}">
                                 {% endif %}
                                 <i class="iconoir-folder"></i>
-                                <span>{{ menu_item.title|trans|capitalize }}</span>
+                                <span>{{ menu_item.title|trans }}</span>
                             </a>
                             {% if menu_item.children %}
                                 <ul class="child-menu">
@@ -75,7 +75,7 @@
                                                    id="{{ menu_item_1.ID }}">
                                                     {% endif %}
                                                     <i class="iconoir-folder"></i>
-                                                    <span>{{ menu_item_1.title|trans|capitalize }}</span></a>
+                                                    <span>{{ menu_item_1.title|trans }}</span></a>
                                                 {% if menu_item_1.children %}
                                                     <ul class="child-menu">
                                                         {% for key_2, menu_item_2 in menu_item_1.children %}
@@ -97,7 +97,7 @@
                                                                        id="{{ menu_item_2.ID }}">
                                                                         {% endif %}
                                                                         <i class="iconoir-folder"></i>
-                                                                        <span>{{ menu_item_2.title|trans|capitalize }}</span>
+                                                                        <span>{{ menu_item_2.title|trans }}</span>
                                                                     </a>
                                                             </li>
                                                         {% endfor %}

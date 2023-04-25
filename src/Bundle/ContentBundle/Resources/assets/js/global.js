@@ -237,10 +237,14 @@ function toggleSidebarElement(event) {
     }
 }
 
+function removeDiacritics(str) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function asideItemsSearch(el) {
     let input, filter, ul, li, a, i, txtValue;
     input = el.target;
-    filter = input.value.toUpperCase();
+    filter = removeDiacritics(input.value).toUpperCase();
     ul = el.target.parentNode.parentNode.querySelector(
         '.aside-item-list .aside-item-list-container ul');
     li = ul.getElementsByTagName('li');
@@ -248,7 +252,7 @@ function asideItemsSearch(el) {
     for (const item of li) {
         const label = item.getElementsByTagName('label')[0];
         const txtValue = label.textContent || label.innerText;
-        item.style.display = txtValue.toUpperCase().includes(filter) ?
+        item.style.display = removeDiacritics(txtValue).toUpperCase().includes(filter) ?
             '' :
             'none';
     }
