@@ -3,16 +3,27 @@
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
 <style>
+    .week {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .week.columns {
+        border-left: 1px solid grey;
+        border-right: 1px solid grey;
+    }
     .day {
         width: calc(100% / 7);
-        margin: 7px;
-        padding: 2px;
-        border: 1px solid black;
+        margin: 0;
+        padding: 0;
     }
     .day.title {
         font-weight: bold;
-        border: 0px;
         text-align: center;
+    }
+    .day.column {
+        min-height: 30em;
+        border-left: 1px solid grey;
+        border-right: 1px solid grey;
     }
     .calendar-item {
         padding: 1em 0.2em;
@@ -166,22 +177,22 @@
             </div>
         </div>
 
-        <div style="display: flex; flex-direction: row-reverse">
+        <div class="week title">
             {% for i in range(6, 0) %}
             <div class="day title">
                 {{ filters.start|date_modify('+%d days'|format(i))|date('D d') }}
             </div>
             {% endfor %}
         </div>
-        <div style="display: flex; flex-direction: row-reverse">
-            <div class="day">
+        <div class="week columns">
+            <div class="day column">
             {% set prev_day = 6 %}
             {% for content in pager %}
                 {% set day = filters.start.diff(date(content.pub_time)).days %}
                 {% if day != prev_day %}
                     {% for i in range(prev_day, day + 1) %}
             </div>
-            <div class="day">
+            <div class="day column">
                     {% endfor %}
                     {% set prev_day = day %}
                 {% endif %}
@@ -192,7 +203,7 @@
             {% if prev_day %}
                 {% for i in range(1, prev_day) %}
             </div>
-            <div class="day">
+            <div class="day column">
                 {% endfor %}
             {% endif %}
             </div>
