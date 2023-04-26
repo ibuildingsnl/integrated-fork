@@ -33,16 +33,19 @@
         border-right: 1px solid lightgray;
     }
     .calendar-item {
+        --color: gray;
         display: block;
         padding: 0.25em;
         margin: -1px 0 0 0;
         border-bottom: 1px solid lightgray;
         border-top: 1px solid lightgray;
+        border-left: 4px solid var(--color);
         color: black;
     }
     .calendar-item-heading {
         font-weight: bold;
         font-size: smaller;
+        color: var(--color);
     }
     .calendar-item-heading .icon {
         position: relative;
@@ -233,13 +236,12 @@
                     {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
                 {% endif %}
                 {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
-                <a class="calendar-item" href="{{ editLink }}">
+                <a class="calendar-item" href="{{ editLink }}" style="--color: {{ type.options.color|default('gray') }}">
                     <div class="calendar-item-heading">
                         <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i> {{ date(content.pub_time)|date('H:i') }}
                     </div>
                     <div class="calendar-item-content">
                         {{ content.title|default('untitled') }}
-{#                        {{ dump(type) }}#}
                     </div>
                 </a>
 
@@ -252,7 +254,6 @@
             {% endif %}
             </div>
         </div>
-        {{ dump(contentTypes) }}
     </div>
 
     <div class="aside-filters close-outside">
