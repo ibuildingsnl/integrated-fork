@@ -165,7 +165,7 @@ class ContentController extends AbstractController
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
                     unset($options['week']);
                     $request->query->set('page', 1);
-                    $request->query->set('limit', PHP_INT_MAX);
+                    $request->query->set('limit', 10000);
                     break;
                 case 'month':
                     $view = '_month';
@@ -173,7 +173,7 @@ class ContentController extends AbstractController
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 month'));
                     unset($options['month']);
                     $request->query->set('page', 1);
-                    $request->query->set('limit', PHP_INT_MAX);
+                    $request->query->set('limit', 10000);
                     break;
             }
         }
