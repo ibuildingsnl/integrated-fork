@@ -119,8 +119,14 @@ class IntegratedContent extends AbstractType
         }
 
         // handle start/end dates
-        if ($options['start'] && $options['end']) {
-            // @todo add to query
+        if ($options['start'] instanceof \DateTimeInterface && $options['end'] instanceof \DateTimeInterface) {
+            $query->createFilterQuery('pub_time')
+                ->addTag('pub_time')
+                ->setQuery(sprintf(
+                    'pub_time: [%s TO %s]',
+                    $options['start']->format("Y-m-d\TH:i:s.z\Z"),
+                    $options['end']->format("Y-m-d\TH:i:s.z\Z"),
+                ));
         }
     }
 
