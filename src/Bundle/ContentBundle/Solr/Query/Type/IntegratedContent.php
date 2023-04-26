@@ -117,6 +117,11 @@ class IntegratedContent extends AbstractType
                     ->setQuery($field.': ((%1%))', [implode(') OR (', array_map($escape, $options['relation'][$relation->getId()]))]);
             }
         }
+
+        // handle start/end dates
+        if ($options['start'] && $options['end']) {
+            // @todo add to query
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -249,5 +254,12 @@ class IntegratedContent extends AbstractType
 
             return array_filter($relations);
         });
+
+        // handle start/end dates
+        $resolver->setDefaults([
+            'start' => null,
+            'end' => null,
+        ]);
+
     }
 }
