@@ -48,6 +48,12 @@
             <div class="options">
                 <ul class="content-navigator-menu">
 
+                    <li>
+                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('-1 week')|date('c') })) }}"
+                           tabindex="-1" class="btn btn-select">
+                            &leftarrow;
+                        </a>
+                    </li>
                     <li class="dropdown close-outside" data-underlay="no">
                         <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
                             <span>
@@ -95,6 +101,12 @@
                                 </li>
                             {% endif %}
                         </ul>
+                    </li>
+                    <li>
+                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+1 week')|date('c') })) }}"
+                           tabindex="-1" class="btn btn-select">
+                            &rightarrow;
+                        </a>
                     </li>
                     <li class="dropdown close-outside" data-underlay="no">
                         <a data-toggle="dropdown" role="button"
