@@ -122,6 +122,7 @@ class ContentTypeFormType extends AbstractType
             'attr' => [
                 'location' => 'sidebar',
                 'style' => 'sidebar',
+                'icon' => 'color-picker',
             ],
             'property_path' => 'options[color]',
             'label' => 'Color',
@@ -132,6 +133,7 @@ class ContentTypeFormType extends AbstractType
             'attr' => [
                 'location' => 'sidebar',
                 'style' => 'sidebar',
+                'icon' => 'iconoir',
             ],
             'property_path' => 'options[icon]',
             'label' => 'Icon',
