@@ -166,6 +166,8 @@ class ContentController extends AbstractController
                     unset($options['week']);
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
+                    $options['sort'] = 'time';
+                    $options['order'] = 'asc';
                     break;
                 case 'month':
                     $view = '_month';
@@ -174,6 +176,8 @@ class ContentController extends AbstractController
                     unset($options['month']);
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
+                    $options['sort'] = 'time';
+                    $options['order'] = 'asc';
                     break;
             }
         }

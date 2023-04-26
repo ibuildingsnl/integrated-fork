@@ -5,7 +5,6 @@
 <style>
     .week {
         display: flex;
-        flex-direction: row-reverse;
     }
     .week.title {
         border-top-left-radius: 1em;
@@ -202,7 +201,7 @@
         </div>
 
         <div class="week title">
-            {% for i in range(6, 0) %}
+            {% for i in range(0, 6) %}
                 {% set d = filters.start|date_modify('+%d days'|format(i)) %}
             <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}">
                 {{ d|date('D d') }}
@@ -211,11 +210,11 @@
         </div>
         <div class="week columns">
             <div class="day column">
-            {% set prev_day = 6 %}
+            {% set prev_day = 0 %}
             {% for content in pager %}
                 {% set day = filters.start.diff(date(content.pub_time)).days %}
                 {% if day != prev_day %}
-                    {% for i in range(prev_day, day + 1) %}
+                    {% for i in range(prev_day, day - 1) %}
             </div>
             <div class="day column">
                     {% endfor %}
@@ -232,8 +231,8 @@
                 </div>
 
             {% endfor %}
-            {% if prev_day %}
-                {% for i in range(1, prev_day) %}
+            {% if prev_day < 6 %}
+                {% for i in range(prev_day + 1, 6) %}
             </div>
             <div class="day column">
                 {% endfor %}
