@@ -1,53 +1,300 @@
-<style>
-    .day {
-        width: calc(100% / 7 - 20px);
-        margin: 7px;
-        padding: 2px;
-        border: 1px solid black;
-    }
-    .title {
-        font-weight: bold;
-        border: 1px solid blue;
-    }
-    .item {
-        padding: 1em 0.2em;
-        margin: 0.2em;
-        border: 1px solid #00ccff;
-    }
-</style>
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
+{% block content %}
+    <style>
+        .day {
+            width: calc(100% / 7 - 20px);
+            margin: 7px;
+            padding: 2px;
+            border: 1px solid black;
+        }
+        .day.title {
+            font-weight: bold;
+            border: 1px solid blue;
+        }
+        .calendar-item {
+            padding: 1em 0.2em;
+            margin: 0.2em;
+            border: 1px solid #00ccff;
+        }
+    </style>
 
-<h2>Calendar view: week {{ filters.start|date('W') }}</h2>
 
-{{ filters.start|date('d/m/Y') }} to {{ filters.end|date('d/m/Y') }}
+<div class="flex flex-wrap ">
 
-<div style="display: flex; flex-direction: row-reverse">
-    {% for i in range(6, 0) %}
-    <div class="day title">
-        {{ filters.start|date_modify('+%d days'|format(i))|date('l') }}
-    </div>
-    {% endfor %}
-</div>
-<div style="display: flex; flex-direction: row-reverse">
-    <div class="day">
-    {% set prev_day = 6 %}
-    {% for content in pager %}
-        {% set day = filters.start.diff(date(content.pub_time)).days %}
-        {% if day != prev_day %}
-            {% for i in range(prev_day, day + 1) %}
-    </div>
-    <div class="day">
+    <div class="index-wrapper">
+        <div class="page-title">
+            <div class="heading flex justify-between w-full">
+                <h1 class="heading">{% trans %}Content navigator - week{% endtrans %} {{ filters.start|date('W') }}</h1>
+                <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
+                        data-target="aside-filters">
+                    <i class="iconoir-filter-alt"></i>
+                    <span>{% trans %}Filter{% endtrans %}</span>
+                </button>
+            </div>
+            <div class="options">
+                <ul class="content-navigator-menu">
+
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button"
+                           class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
+                            <i class="iconoir-nav-arrow-down"></i></a>
+
+                        <ul role="menu" class=" dropdown-menu">
+                            <li role="presentation">
+                                <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                   tabindex="-1"
+                                   role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown close-outside searchselection" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>
+                                    {% if selection %}
+                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
+                                    {% else %}
+                                        {% trans %}Search selections{% endtrans %}
+                                    {% endif %}
+                                </span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+
+                        <ul role="menu" class="dropdown-menu">
+                            <li role="presentation">
+                                <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                   role="menuitem">
+                                    All content
+                                </a>
+                            </li>
+
+                            {% for searchSelection in searchSelections %}
+
+                                {% if searchSelection.id == selection.id %}
+                                    <li role="presentation" class="active">
+                                        <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                    </li>
+                                {% else %}
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {{ searchSelection.title }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <button type="button"
+                        class="toggle-searchselection toggle-data-target btn btn-white" data-target="searchselection-edit-form"><i
+                        class="iconoir-settings"></i></button>
+            </div>
+            <div class="searchselection-edit-form close-outside">
+                {{ form_start(searchSelectionForm) }}
+                <div class="toolbar">
+                    {% if selection.id and isSelectionEditable %}
+                        <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                           class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                            <i class="iconoir-trash"></i>
+                        </a>
+                    {% endif %}
+                    <div class="toolbar-right">
+                        {% if searchSelectionForm.actions.save is defined %}
+                            {{ form_row(searchSelectionForm.actions.save) }}
+                        {% endif %}
+                        {% if searchSelectionForm.actions.create is defined %}
+                            {{ form_row(searchSelectionForm.actions.create) }}
+                        {% endif %}
+                    </div>
+                </div>
+                <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                {{ form_rest(searchSelectionForm) }}
+
+                {{ form_end(searchSelectionForm) }}
+            </div>
+        </div>
+
+        {{ filters.start|date('M d') }} t/m {{ filters.end|date('M d') }}
+
+        <div style="display: flex; flex-direction: row-reverse">
+            {% for i in range(6, 0) %}
+            <div class="day title">
+                {{ filters.start|date_modify('+%d days'|format(i))|date('l') }}
+            </div>
             {% endfor %}
-            {% set prev_day = day %}
-        {% endif %}
+        </div>
+        <div style="display: flex; flex-direction: row-reverse">
+            <div class="day">
+            {% set prev_day = 6 %}
+            {% for content in pager %}
+                {% set day = filters.start.diff(date(content.pub_time)).days %}
+                {% if day != prev_day %}
+                    {% for i in range(prev_day, day + 1) %}
+            </div>
+            <div class="day">
+                    {% endfor %}
+                    {% set prev_day = day %}
+                {% endif %}
 
-        <div class="item">{{ content.title }}</div>
+                <div class="calendar-item">{{ content.title }}</div>
 
-    {% endfor %}
-    {% if prev_day %}
-        {% for i in range(1, prev_day) %}
+            {% endfor %}
+            {% if prev_day %}
+                {% for i in range(1, prev_day) %}
+            </div>
+            <div class="day">
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="day">
-        {% endfor %}
-    {% endif %}
+
+    <div class="aside-filters close-outside">
+        <aside>
+            <div class="aside-holder bg-white section-radius">
+                <div class="aside-header">
+                    <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                        <i class="iconoir-cancel"></i>
+                    </button>
+                    <span>{% trans %}Filters{% endtrans %}</span>
+                    <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                        <span>{% trans %}Remove active filters{% endtrans %}</span>
+                        <i class="iconoir-cancel"></i>
+                    </a>
+                </div>
+                <form>
+                    <input type="hidden" value="{{ params['q'] }}" name="q"/>
+                    <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                    {% if selection %}
+                        <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                    {% endif %}
+                    {% for key, facet in facets %}
+                        {% if facet|length > 0 %}
+                            {% if key starts with 'relation_' %}
+                                {{ block('relation_facet') }}
+                            {% else %}
+                                {{ block('facet') }}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </form>
+            </div>
+        </aside>
     </div>
 </div>
+{% endblock %}
+
+{% block facet %}
+    {% if key == 'contenttypes' %}
+        {% set facetTitle = 'Content types'|trans %}
+    {% elseif key == 'workflow_state' %}
+        {% set facetTitle = 'Workflow status'|trans %}
+    {% elseif key == 'workflow_assigned' %}
+        {% set facetTitle = 'Assigned user'|trans %}
+    {% elseif key == 'authors' %}
+        {% set facetTitle = 'Author'|trans %}
+    {% else %}
+        {% set facetTitle = key|capitalize %}
+    {% endif %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle|trans }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="{{ key }}[]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {% if key == 'contenttypes' %}
+                                                {{ title|integrated_content_type.name|default(title) }}
+                                            {% elseif key == 'channels' %}
+                                                {{ title|integrated_channel.name|default(title) }}
+                                            {% else %}
+                                                {{ title|trans }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block relation_facet %}
+    {% set key = key[9:] %}
+
+    {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {{ title }}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+{% endblock %}
