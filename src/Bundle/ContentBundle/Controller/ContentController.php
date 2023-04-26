@@ -154,6 +154,22 @@ class ContentController extends AbstractController
             }
         }
 
+        // view settings (calendar etc)
+
+        $view = '';
+        if (isset($options['view'])) {
+            switch ($options['view']) {
+                case 'week':
+                    $view = '_week';
+                    break;
+                case 'month':
+                    $view = '_month';
+                    break;
+                case 'list':
+                    break;
+            }
+        }
+
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
@@ -189,7 +205,7 @@ class ContentController extends AbstractController
         /** @var SearchSelectionRepository $repo */
         $repo = $this->documentManager->getRepository(SearchSelection::class);
 
-        return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
+        return $this->render('@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
