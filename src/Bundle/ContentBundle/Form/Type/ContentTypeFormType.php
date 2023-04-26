@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Form\Type\ContentType\FieldsType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -116,6 +117,25 @@ class ContentTypeFormType extends AbstractType
                         ]
                     ),
         );
+
+        $builder->add('options_color', ColorType::class, [
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+            ],
+            'property_path' => 'options[color]',
+            'label' => 'Color',
+        ]);
+
+        // @todo icon(oir) type?
+        $builder->add('options_icon', TextType::class, [
+            'attr' => [
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+            ],
+            'property_path' => 'options[icon]',
+            'label' => 'Icon',
+        ]);
     }
 
     /**
