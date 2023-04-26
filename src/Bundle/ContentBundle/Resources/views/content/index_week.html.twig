@@ -19,6 +19,9 @@
         font-weight: bold;
         text-align: center;
     }
+    .day.title.today {
+        color: #046283;
+    }
     .day.column {
         min-height: 30em;
         border-right: 1px solid lightgray;
@@ -190,8 +193,9 @@
 
         <div class="week title">
             {% for i in range(6, 0) %}
-            <div class="day title">
-                {{ filters.start|date_modify('+%d days'|format(i))|date('D d') }}
+                {% set d = filters.start|date_modify('+%d days'|format(i)) %}
+            <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}">
+                {{ d|date('D d') }}
             </div>
             {% endfor %}
         </div>
