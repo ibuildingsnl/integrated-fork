@@ -1,5 +1,53 @@
-Calendar view: per week
+<style>
+    .day {
+        width: calc(100% / 7 - 20px);
+        margin: 7px;
+        padding: 2px;
+        border: 1px solid black;
+    }
+    .title {
+        font-weight: bold;
+        border: 1px solid blue;
+    }
+    .item {
+        padding: 1em 0.2em;
+        margin: 0.2em;
+        border: 1px solid #00ccff;
+    }
+</style>
 
-{% for content in pager %}
-    {{ dump(content) }}
-{% endfor %}
+<h2>Calendar view: week {{ filters.start|date('W') }}</h2>
+
+{{ filters.start|date('d/m/Y') }} to {{ filters.end|date('d/m/Y') }}
+
+<div style="display: flex; flex-direction: row-reverse">
+    {% for i in range(6, 0) %}
+    <div class="day title">
+        {{ filters.start|date_modify('+%d days'|format(i))|date('l') }}
+    </div>
+    {% endfor %}
+</div>
+<div style="display: flex; flex-direction: row-reverse">
+    <div class="day">
+    {% set prev_day = 6 %}
+    {% for content in pager %}
+        {% set day = filters.start.diff(date(content.pub_time)).days %}
+        {% if day != prev_day %}
+            {% for i in range(prev_day, day + 1) %}
+    </div>
+    <div class="day">
+            {% endfor %}
+            {% set prev_day = day %}
+        {% endif %}
+
+        <div class="item">{{ content.title }}</div>
+
+    {% endfor %}
+    {% if prev_day %}
+        {% for i in range(1, prev_day) %}
+    </div>
+    <div class="day">
+        {% endfor %}
+    {% endif %}
+    </div>
+</div>
