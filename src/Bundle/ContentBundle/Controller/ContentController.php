@@ -228,6 +228,7 @@ class ContentController extends AbstractController
             'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
+            'contentTypes' => $this->contentTypeManager->getAll(),
         ]);
     }
 
