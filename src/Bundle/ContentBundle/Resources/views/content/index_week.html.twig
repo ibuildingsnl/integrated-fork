@@ -34,13 +34,16 @@
         border-right: 1px solid lightgray;
     }
     .calendar-item {
-        padding: 1em 0.5em;
+        padding: 0.25em;
         margin: -1px 0 0 0;
         border-bottom: 1px solid lightgray;
         border-top: 1px solid lightgray;
     }
+    .calendar-item-heading {
+        font-weight: bold;
+        font-size: smaller;
+    }
 </style>
-
 
 <div class="flex flex-wrap ">
 
@@ -219,7 +222,14 @@
                     {% set prev_day = day %}
                 {% endif %}
 
-                <div class="calendar-item">{{ content.title }}</div>
+                <div class="calendar-item">
+                    <div class="calendar-item-heading">
+                        {{ date(content.pub_time)|date('H:i') }}
+                    </div>
+                    <div class="calendar-item-content">
+                        {{ content.title }}
+                    </div>
+                </div>
 
             {% endfor %}
             {% if prev_day %}
