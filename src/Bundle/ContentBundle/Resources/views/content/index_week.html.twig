@@ -11,7 +11,8 @@
     }
     .day.title {
         font-weight: bold;
-        border: 1px solid blue;
+        border: 0px;
+        text-align: center;
     }
     .calendar-item {
         padding: 1em 0.2em;
@@ -168,7 +169,7 @@
         <div style="display: flex; flex-direction: row-reverse">
             {% for i in range(6, 0) %}
             <div class="day title">
-                {{ filters.start|date_modify('+%d days'|format(i))|date('l') }}
+                {{ filters.start|date_modify('+%d days'|format(i))|date('D d') }}
             </div>
             {% endfor %}
         </div>
