@@ -232,12 +232,14 @@
                 {% else %}
                     {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
                 {% endif %}
+                {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
                 <a class="calendar-item" href="{{ editLink }}">
                     <div class="calendar-item-heading">
-                        <i class="icon iconoir-3d-add-hole"></i> {{ date(content.pub_time)|date('H:i') }}
+                        <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i> {{ date(content.pub_time)|date('H:i') }}
                     </div>
                     <div class="calendar-item-content">
                         {{ content.title|default('untitled') }}
+{#                        {{ dump(type) }}#}
                     </div>
                 </a>
 
