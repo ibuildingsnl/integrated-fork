@@ -2,23 +2,23 @@
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
-    <style>
-        .day {
-            width: calc(100% / 7 - 20px);
-            margin: 7px;
-            padding: 2px;
-            border: 1px solid black;
-        }
-        .day.title {
-            font-weight: bold;
-            border: 1px solid blue;
-        }
-        .calendar-item {
-            padding: 1em 0.2em;
-            margin: 0.2em;
-            border: 1px solid #00ccff;
-        }
-    </style>
+<style>
+    .day {
+        width: calc(100% / 7 - 20px);
+        margin: 7px;
+        padding: 2px;
+        border: 1px solid black;
+    }
+    .day.title {
+        font-weight: bold;
+        border: 1px solid blue;
+    }
+    .calendar-item {
+        padding: 1em 0.2em;
+        margin: 0.2em;
+        border: 1px solid #00ccff;
+    }
+</style>
 
 
 <div class="flex flex-wrap ">
@@ -36,6 +36,40 @@
             <div class="options">
                 <ul class="content-navigator-menu">
 
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                            <span>
+                                {{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }}
+                            </span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+
+                        <ul role="menu" class="dropdown-menu">
+                            {% for i in range(-3, -1) %}
+                                <li role="presentation">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
+                                       tabindex="-1" role="menuitem">
+                                        {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
+                                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            <li role="presentation" class="active">
+                                <a role="menuitem">
+                                    <b>{{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }}</b>
+                                </a>
+                            </li>
+                            {% for i in range(1, 3) %}
+                                <li role="presentation">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
+                                       tabindex="-1" role="menuitem">
+                                        {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
+                                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                     <li class="dropdown close-outside" data-underlay="no">
                         <a data-toggle="dropdown" role="button"
                            class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
@@ -116,8 +150,6 @@
                 {{ form_end(searchSelectionForm) }}
             </div>
         </div>
-
-        {{ filters.start|date('M d') }} t/m {{ filters.end|date('M d') }}
 
         <div style="display: flex; flex-direction: row-reverse">
             {% for i in range(6, 0) %}
