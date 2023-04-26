@@ -33,10 +33,12 @@
         border-right: 1px solid lightgray;
     }
     .calendar-item {
+        display: block;
         padding: 0.25em;
         margin: -1px 0 0 0;
         border-bottom: 1px solid lightgray;
         border-top: 1px solid lightgray;
+        color: black;
     }
     .calendar-item-heading {
         font-weight: bold;
@@ -221,14 +223,19 @@
                     {% set prev_day = day %}
                 {% endif %}
 
-                <div class="calendar-item">
+                {% if content.type_class|split('\\')|last in ["Image", "Video", "File"] %}
+                    {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
+                {% else %}
+                    {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                {% endif %}
+                <a class="calendar-item" href="{{ editLink }}">
                     <div class="calendar-item-heading">
                         {{ date(content.pub_time)|date('H:i') }}
                     </div>
                     <div class="calendar-item-content">
-                        {{ content.title }}
+                        {{ content.title|default('untitled') }}
                     </div>
-                </div>
+                </a>
 
             {% endfor %}
             {% if prev_day < 6 %}
