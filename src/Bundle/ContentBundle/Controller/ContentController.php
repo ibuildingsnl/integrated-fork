@@ -161,11 +161,15 @@ class ContentController extends AbstractController
             switch ($options['view']) {
                 case 'week':
                     $view = '_week';
+                    $options['start'] = new \DateTimeImmutable($options['week'] ?? 'monday this week');
+                    $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
+                    unset($options['week']);
                     break;
                 case 'month':
                     $view = '_month';
-                    break;
-                case 'list':
+                    $options['start'] = new \DateTimeImmutable($options['month'] ?? 'first day of this month');
+                    $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 month'));
+                    unset($options['month']);
                     break;
             }
         }
