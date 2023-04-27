@@ -21,7 +21,8 @@
         <ul role="menu" class="dropdown-menu">
             {% if filters.start > date('+4 weeks') %}
                 <li role="presentation">
-                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}" tabindex="-1" role="menuitem">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
+                       tabindex="-1" role="menuitem">
                         Current week
                     </a>
                 </li>
@@ -51,7 +52,8 @@
             {% endfor %}
             {% if filters.start < date('4 weeks ago') %}
                 <li role="presentation">
-                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}" tabindex="-1" role="menuitem">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
+                       tabindex="-1" role="menuitem">
                         Current week
                     </a>
                 </li>
@@ -67,104 +69,64 @@
 {% endblock options_start %}
 
 {% block content_items %}
-{# @todo move css to proper location #}
-<style>
-    .week {
-        display: flex;
-    }
-    .week.title {
-        border-top-left-radius: 1em;
-        border-top-right-radius: 1em;
-        background: white;
-    }
-    .week.columns {
-        border-left: 1px solid lightgray;
-        border-top: 1px solid lightgray;
-        background: white;
-    }
-    .day {
-        width: calc(100% / 7);
-        margin: 0;
-        padding: 0;
-    }
-    .day.title {
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 0.6em;
-        margin-top: 0.6em;
-    }
-    .day.title.today {
-        color: #046283;
-    }
-    .day.column {
-        min-height: 30em;
-        border-right: 1px solid lightgray;
-    }
-    .calendar-item {
-        --color: gray;
-        display: block;
-        padding: 0.25em;
-        margin: -1px 0 1px 0;
-        border-bottom: 1px solid lightgray;
-        border-top: 1px solid lightgray;
-        border-left: 4px solid var(--color);
-        color: black;
-        font-size: smaller;
-        max-height: 10em;
-        overflow: hidden;
-    }
-    .calendar-item-heading {
-        font-weight: bold;
-        color: var(--color);
-    }
-    .calendar-item-heading .icon {
-        position: relative;
-        top: 0.5em;
-    }
-</style>
-<div class="week title">
-    {% for i in range(0, 6) %}
-        {% set d = filters.start|date_modify('+%d days'|format(i)) %}
-    <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}">
-        {{ d|date('D d') }}
-    </div>
-    {% endfor %}
-</div>
-<div class="week columns">
-    <div class="day column">
-    {% set prev_day = 0 %}
-    {% for content in pager %}
-        {% set day = filters.start.diff(date(content.pub_time)).days %}
-        {% if day != prev_day %}
-            {% for i in range(prev_day, day - 1) %}
-    </div>
-    <div class="day column">
+    <div class="calendar calendar-week">
+        <div class="week title">
+            {% for i in range(0, 6) %}
+                {% set d = filters.start|date_modify('+%d days'|format(i)) %}
+                <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}">
+                    {{ d|date('D d') }}
+                </div>
             {% endfor %}
-            {% set prev_day = day %}
-        {% endif %}
-
-        {% if content.type_class|split('\\')|last in ["Image", "Video", "File"] %}
-            {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
-        {% else %}
-            {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
-        {% endif %}
-        {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
-        <a class="calendar-item" href="{{ editLink }}" style="--color: {{ type.options.color|default('gray') }}">
-            <div class="calendar-item-heading">
-                <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i> {{ date(content.pub_time)|date('H:i') }}
+        </div>
+        <div class="week columns">
+            <div class="day column">
+                {% set prev_day = 0 %}
+                {% for content in pager %}
+                {% set day = filters.start.diff(date(content.pub_time)).days %}
+                {% if day != prev_day %}
+                {% for i in range(prev_day, day - 1) %}
             </div>
-            <div class="calendar-item-content">
-                {{ content.title|default('untitled') }}
-            </div>
-        </a>
+            <div class="day column">
+                {% endfor %}
+                {% set prev_day = day %}
+                {% endif %}
 
-    {% endfor %}
-    {% if prev_day < 6 %}
-        {% for i in range(prev_day + 1, 6) %}
+                {% if content.type_class|split('\\')|last in ["Image", "Video", "File"] %}
+                    {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
+                {% else %}
+                    {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                {% endif %}
+                {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
+
+                {% set document = integrated_document(content) %}
+
+                <a class="calendar-item" href="#" data-id="{{ content.type_id }}">
+                    <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
+                        <div class="calendar-item-heading">
+                            <div class="heading-left">
+                                <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i><span>{{ date(content.pub_time)|date('H:i') }}</span>
+                                {% for channel in document.channels %}
+                                    <div class="channel-favicon" style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')" alt="{{ channel.name }}"></div>
+                                {% endfor %}
+                            </div>
+                            <div class="heading-right">
+
+                            </div>
+                        </div>
+                        <div class="calendar-item-content">
+                            {{ content.title|default('untitled') }}
+                        </div>
+                    </div>
+                </a>
+
+                {% endfor %}
+                {% if prev_day < 6 %}
+                {% for i in range(prev_day + 1, 6) %}
+            </div>
+            <div class="day column">
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="day column">
-        {% endfor %}
-    {% endif %}
-    </div>
-</div>
 {% endblock content_items %}
