@@ -478,6 +478,8 @@ class ContentController extends AbstractController
 
         if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } elseif ($request->get('_route') == 'integrated_content_content_edit_modal_iframe') {
+            $renderTo = '@IntegratedContent/content/edit.modal.iframe.html.twig';
         } else {
             $renderTo = '@IntegratedContent/content/edit.html.twig';
         }
