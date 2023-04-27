@@ -43,10 +43,12 @@
         border-top: 1px solid lightgray;
         border-left: 4px solid var(--color);
         color: black;
+        font-size: smaller;
+        max-height: 10em;
+        overflow: hidden;
     }
     .calendar-item-heading {
         font-weight: bold;
-        font-size: smaller;
         color: var(--color);
     }
     .calendar-item-heading .icon {
@@ -243,12 +245,7 @@
                         <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i> {{ date(content.pub_time)|date('H:i') }}
                     </div>
                     <div class="calendar-item-content">
-                        {% set title = content.title|default('untitled') %}
-                        {% if title|length > 80 %}
-                            {{ title[:80-3] }}...
-                        {% else %}
-                            {{ title }}
-                        {% endif %}
+                        {{ content.title|default('untitled') }}
                     </div>
                 </a>
 
