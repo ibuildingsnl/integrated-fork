@@ -161,7 +161,8 @@ class ContentController extends AbstractController
             switch ($options['view']) {
                 case 'week':
                     $view = '_week';
-                    $options['start'] = new \DateTimeImmutable($options['week'] ?? 'monday this week');
+                    $options['week'] = $options['week'] ?? 'monday this week';
+                    $options['start'] = new \DateTimeImmutable($options['week']);
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
@@ -170,7 +171,8 @@ class ContentController extends AbstractController
                     break;
                 case 'month':
                     $view = '_month';
-                    $options['start'] = new \DateTimeImmutable($options['month'] ?? 'first day of this month');
+                    $options['month'] = $options['month'] ?? 'first day of this month';
+                    $options['start'] = new \DateTimeImmutable($options['month']);
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 month'));
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
