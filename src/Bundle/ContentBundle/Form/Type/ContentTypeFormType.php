@@ -126,6 +126,7 @@ class ContentTypeFormType extends AbstractType
             ],
             'property_path' => 'options[color]',
             'label' => 'Color',
+            'required' => false,
         ]);
 
         // @todo icon(oir) type?
@@ -137,6 +138,7 @@ class ContentTypeFormType extends AbstractType
             ],
             'property_path' => 'options[icon]',
             'label' => 'Icon',
+            'required' => false,
         ]);
     }
 
