@@ -299,6 +299,8 @@
                     <input type="hidden" value="{{ params['q'] }}" name="q"/>
                     <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
                     <input type="hidden" value="{{ filters['view'] }}" name="view"/>
+                    <input type="hidden" value="{{ filters['week']|default }}" name="week"/>
+                    <input type="hidden" value="{{ filters['month']|default }}" name="month"/>
                     {% if selection %}
                         <input type="hidden" name="searchSelection" value="{{ selection.id }}">
                     {% endif %}
