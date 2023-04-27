@@ -7,7 +7,18 @@
         <div class="index-wrapper">
             <div class="page-title">
                 <div class="heading flex justify-between w-full">
-                    <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
+                    <div class="heading">
+                        <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
+                        <a class="button_list_view list switcher btn btn-select" href="">
+                            <span>{% trans %}Navigator{% endtrans %}</span>
+                            <i class="iconoir-list"></i>
+                        </a>
+                        <a class="button_calendar_view toggle_view calendar switcher btn btn-select" href="">
+                            <span>{% trans %}Planner{% endtrans %}</span>
+                            <i class="iconoir-calendar"></i>
+                        </a>
+                    </div>
+
                     <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
                             data-target="aside-filters">
                         <i class="iconoir-filter-alt"></i>
@@ -18,45 +29,47 @@
                     <ul class="content-navigator-menu">
                         {% block options_start %}{% endblock options_start %}
                         {% block options %}
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button"
-                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
-                                <i class="iconoir-nav-arrow-down"></i></a>
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a data-toggle="dropdown" role="button"
+                                   class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i></a>
 
-                            <ul role="menu" class=" dropdown-menu">
-                                <li role="presentation">
-                                    <a href="{{ path('integrated_content_bulk_select', filters) }}"
-                                       tabindex="-1"
-                                       role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
-                                <span>{% trans %}View{% endtrans %}</span>
-                                <i class="iconoir-nav-arrow-down"></i>
-                            </a>
+                                <ul role="menu" class=" dropdown-menu">
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                           tabindex="-1"
+                                           role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                    <span>{% trans %}View{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
 
-                            <ul role="menu" class=" dropdown-menu">
-                                <li role="presentation" class="active">
-                                    <a tabindex="-1" role="menuitem">
-                                        {% trans %}List{% endtrans %}
-                                    </a>
-                                </li>
-                                <li role="presentation">
-                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}" tabindex="-1" role="menuitem">
-                                        {% trans %}Week{% endtrans %}
-                                    </a>
-                                </li>
-                                <li role="presentation">
-                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}" tabindex="-1" role="menuitem">
-                                        {% trans %}Month{% endtrans %}
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown close-outside searchselection" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <ul role="menu" class=" dropdown-menu">
+                                    <li role="presentation" class="active">
+                                        <a tabindex="-1" role="menuitem">
+                                            {% trans %}List{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Week{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Month{% endtrans %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown close-outside searchselection" data-underlay="no">
+                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
                                 <span>
                                     {% if selection %}
                                         {% trans %}Search selection{% endtrans %}: {{ selection.title }}
@@ -64,72 +77,72 @@
                                         {% trans %}Search selections{% endtrans %}
                                     {% endif %}
                                 </span>
-                                <i class="iconoir-nav-arrow-down"></i>
-                            </a>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
 
-                            <ul role="menu" class="dropdown-menu">
-                                <li role="presentation">
-                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
-                                       role="menuitem">
-                                        All content
-                                    </a>
-                                </li>
+                                <ul role="menu" class="dropdown-menu">
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                           role="menuitem">
+                                            All content
+                                        </a>
+                                    </li>
 
-                                {% for searchSelection in searchSelections %}
+                                    {% for searchSelection in searchSelections %}
 
-                                    {% if searchSelection.id == selection.id %}
-                                        <li role="presentation" class="active">
-                                            <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
-                                        </li>
-                                    {% else %}
-                                        <li role="presentation">
-                                            <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
-                                               tabindex="-1" role="menuitem">
-                                                {{ searchSelection.title }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                        {% if searchSelection.id == selection.id %}
+                                            <li role="presentation" class="active">
+                                                <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                            </li>
+                                        {% else %}
+                                            <li role="presentation">
+                                                <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
+                                                   tabindex="-1" role="menuitem">
+                                                    {{ searchSelection.title }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
 
-                                {% endfor %}
-                            </ul>
-                        </li>
-                        <li>
-                            <button
-                                type="button"
-                                class="toggle-searchselection toggle-data-target btn btn-white"
-                                data-target="searchselection-edit-form"
-                            >
-                                <i class="iconoir-settings"></i>
-                            </button>
-                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li>
+                                <button
+                                    type="button"
+                                    class="toggle-searchselection toggle-data-target btn btn-white"
+                                    data-target="searchselection-edit-form"
+                                >
+                                    <i class="iconoir-settings"></i>
+                                </button>
+                            </li>
                         {% endblock options %}
                         {% block options_end %}{% endblock options_end %}
                     </ul>
                 </div>
                 {% block search_selection_form %}
-                <div class="searchselection-edit-form close-outside">
-                    {{ form_start(searchSelectionForm) }}
-                    <div class="toolbar">
-                        {% if selection.id and isSelectionEditable %}
-                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
-                               class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
-                                <i class="iconoir-trash"></i>
-                            </a>
-                        {% endif %}
-                        <div class="toolbar-right">
-                            {% if searchSelectionForm.actions.save is defined %}
-                                {{ form_row(searchSelectionForm.actions.save) }}
+                    <div class="searchselection-edit-form close-outside">
+                        {{ form_start(searchSelectionForm) }}
+                        <div class="toolbar">
+                            {% if selection.id and isSelectionEditable %}
+                                <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                                   class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                                    <i class="iconoir-trash"></i>
+                                </a>
                             {% endif %}
-                            {% if searchSelectionForm.actions.create is defined %}
-                                {{ form_row(searchSelectionForm.actions.create) }}
-                            {% endif %}
+                            <div class="toolbar-right">
+                                {% if searchSelectionForm.actions.save is defined %}
+                                    {{ form_row(searchSelectionForm.actions.save) }}
+                                {% endif %}
+                                {% if searchSelectionForm.actions.create is defined %}
+                                    {{ form_row(searchSelectionForm.actions.create) }}
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-                    <h2>{% trans %}Search selection settings{% endtrans %}</h2>
-                    {{ form_rest(searchSelectionForm) }}
+                        <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                        {{ form_rest(searchSelectionForm) }}
 
-                    {{ form_end(searchSelectionForm) }}
-                </div>
+                        {{ form_end(searchSelectionForm) }}
+                    </div>
                 {% endblock search_selection_form %}
             </div>
 
@@ -137,39 +150,44 @@
         </div>
 
         {% block filter_sidebar %}
-        <div class="aside-filters close-outside">
-            <aside>
-                <div class="aside-holder bg-white section-radius">
-                    <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target" data-target="aside-filters">
-                            <i class="iconoir-cancel"></i>
-                        </button>
-                        <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
-                            <span>{% trans %}Remove active filters{% endtrans %}</span>
-                            <i class="iconoir-cancel"></i>
-                        </a>
-                    </div>
-                    <form>
-                        <input type="hidden" value="{{ params['q'] }}" name="q"/>
-                        <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
-                        {% if selection %}
-                            <input type="hidden" name="searchSelection" value="{{ selection.id }}">
-                        {% endif %}
-                        {% for key, facet in facets %}
-                            {% if facet|length > 0 %}
-                                {% if key starts with 'relation_' %}
-                                    {{ block('relation_facet') }}
-                                {% else %}
-                                    {{ block('facet') }}
-                                {% endif %}
+            <div class="aside-filters close-outside">
+                <aside>
+                    <div class="aside-holder bg-white section-radius">
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                                <i class="iconoir-cancel"></i>
+                            </button>
+                            <span>{% trans %}Filters{% endtrans %}</span>
+                            <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                                <span>{% trans %}Remove active filters{% endtrans %}</span>
+                                <i class="iconoir-cancel"></i>
+                            </a>
+                        </div>
+                        <form>
+                            <input type="hidden" value="{{ params['q'] }}" name="q"/>
+                            <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                            {% if selection %}
+                                <input type="hidden" name="searchSelection" value="{{ selection.id }}">
                             {% endif %}
-                        {% endfor %}
-                    </form>
-                </div>
-            </aside>
-        </div>
+                            {% for key, facet in facets %}
+                                {% if facet|length > 0 %}
+                                    {% if key starts with 'relation_' %}
+                                        {{ block('relation_facet') }}
+                                    {% else %}
+                                        {{ block('facet') }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </form>
+                    </div>
+                </aside>
+            </div>
         {% endblock filter_sidebar %}
+
+        {% block edit_panel %}
+            {% include '@IntegratedContent/content/partial/edit_modal.html.twig' %}
+        {% endblock %}
+
     </div>
 {% endblock %}
 
@@ -284,4 +302,33 @@
 
 {% block javascript %}
 {{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarItems = document.querySelectorAll('.calendar-item');
+
+    for (var i = 0; i < calendarItems.length; i++) {
+        calendarItems[i].addEventListener('click', function(event) {
+            handleCalendarClick(event);
+        });
+    }
+
+    function handleCalendarClick(event) {
+        var contentEditPanel = document.querySelector('#navigator-edit-modal');
+        contentEditPanel.classList.add('show');
+
+        let menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+        menuItemDropDownUnderlay.classList.remove('hide');
+
+        var editPanelIframe = document.querySelector('#editmodaliframe');
+        var calendarItemId = event.target.closest('.calendar-item').dataset.id;
+        editPanelIframe.setAttribute('src', '/admin/content/' + calendarItemId + '/modal-iframe.html');
+    }
+
+});
+
+$('button[data-dismiss="modal"]').click(function() {
+    parent.$('#navigator-edit-modal.modal').removeClass('show');
+    parent.$('#dropdown_overlay').addClass('hide');
+});
+</script>
 {% endblock %}
