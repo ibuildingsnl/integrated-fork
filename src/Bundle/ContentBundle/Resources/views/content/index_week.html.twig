@@ -155,8 +155,18 @@
 
                         <ul role="menu" class=" dropdown-menu">
                             <li role="presentation">
-                                <a href="{{ path(app.request.attributes.get('_route'), filters) }}" tabindex="-1" role="menuitem">
-                                    {% trans %}Options go here{% endtrans %}
+                                <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'list'})) }}" tabindex="-1" role="menuitem">
+                                    {% trans %}List{% endtrans %}
+                                </a>
+                            </li>
+                            <li role="presentation" class="active">
+                                <a tabindex="-1" role="menuitem">
+                                    {% trans %}Week{% endtrans %}
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}" tabindex="-1" role="menuitem">
+                                    {% trans %}Month{% endtrans %}
                                 </a>
                             </li>
                         </ul>
