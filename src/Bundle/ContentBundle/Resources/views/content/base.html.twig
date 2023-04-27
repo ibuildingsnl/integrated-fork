@@ -1,0 +1,287 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
+{% block content %}
+    <div class="flex flex-wrap ">
+
+        <div class="index-wrapper">
+            <div class="page-title">
+                <div class="heading flex justify-between w-full">
+                    <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
+                            data-target="aside-filters">
+                        <i class="iconoir-filter-alt"></i>
+                        <span>{% trans %}Filter{% endtrans %}</span>
+                    </button>
+                </div>
+                <div class="options">
+                    <ul class="content-navigator-menu">
+                        {% block options_start %}{% endblock options_start %}
+                        {% block options %}
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button"
+                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
+                                <i class="iconoir-nav-arrow-down"></i></a>
+
+                            <ul role="menu" class=" dropdown-menu">
+                                <li role="presentation">
+                                    <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                       tabindex="-1"
+                                       role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown close-outside" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>{% trans %}View{% endtrans %}</span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
+
+                            <ul role="menu" class=" dropdown-menu">
+                                <li role="presentation" class="active">
+                                    <a tabindex="-1" role="menuitem">
+                                        {% trans %}List{% endtrans %}
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}" tabindex="-1" role="menuitem">
+                                        {% trans %}Week{% endtrans %}
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}" tabindex="-1" role="menuitem">
+                                        {% trans %}Month{% endtrans %}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown close-outside searchselection" data-underlay="no">
+                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>
+                                    {% if selection %}
+                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
+                                    {% else %}
+                                        {% trans %}Search selections{% endtrans %}
+                                    {% endif %}
+                                </span>
+                                <i class="iconoir-nav-arrow-down"></i>
+                            </a>
+
+                            <ul role="menu" class="dropdown-menu">
+                                <li role="presentation">
+                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                       role="menuitem">
+                                        All content
+                                    </a>
+                                </li>
+
+                                {% for searchSelection in searchSelections %}
+
+                                    {% if searchSelection.id == selection.id %}
+                                        <li role="presentation" class="active">
+                                            <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                        </li>
+                                    {% else %}
+                                        <li role="presentation">
+                                            <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
+                                               tabindex="-1" role="menuitem">
+                                                {{ searchSelection.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li>
+                            <button
+                                type="button"
+                                class="toggle-searchselection toggle-data-target btn btn-white"
+                                data-target="searchselection-edit-form"
+                            >
+                                <i class="iconoir-settings"></i>
+                            </button>
+                        </li>
+                        {% endblock options %}
+                        {% block options_end %}{% endblock options_end %}
+                    </ul>
+                </div>
+                {% block search_selection_form %}
+                <div class="searchselection-edit-form close-outside">
+                    {{ form_start(searchSelectionForm) }}
+                    <div class="toolbar">
+                        {% if selection.id and isSelectionEditable %}
+                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                               class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                                <i class="iconoir-trash"></i>
+                            </a>
+                        {% endif %}
+                        <div class="toolbar-right">
+                            {% if searchSelectionForm.actions.save is defined %}
+                                {{ form_row(searchSelectionForm.actions.save) }}
+                            {% endif %}
+                            {% if searchSelectionForm.actions.create is defined %}
+                                {{ form_row(searchSelectionForm.actions.create) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                    {{ form_rest(searchSelectionForm) }}
+
+                    {{ form_end(searchSelectionForm) }}
+                </div>
+                {% endblock search_selection_form %}
+            </div>
+
+            {% block content_items %}{% endblock content_items %}
+        </div>
+
+        {% block filter_sidebar %}
+        <div class="aside-filters close-outside">
+            <aside>
+                <div class="aside-holder bg-white section-radius">
+                    <div class="aside-header">
+                        <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                            <i class="iconoir-cancel"></i>
+                        </button>
+                        <span>{% trans %}Filters{% endtrans %}</span>
+                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                            <span>{% trans %}Remove active filters{% endtrans %}</span>
+                            <i class="iconoir-cancel"></i>
+                        </a>
+                    </div>
+                    <form>
+                        <input type="hidden" value="{{ params['q'] }}" name="q"/>
+                        <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                        {% if selection %}
+                            <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                        {% endif %}
+                        {% for key, facet in facets %}
+                            {% if facet|length > 0 %}
+                                {% if key starts with 'relation_' %}
+                                    {{ block('relation_facet') }}
+                                {% else %}
+                                    {{ block('facet') }}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </form>
+                </div>
+            </aside>
+        </div>
+        {% endblock filter_sidebar %}
+    </div>
+{% endblock %}
+
+
+{% block facet %}
+    {% if key == 'contenttypes' %}
+        {% set facetTitle = 'Content types'|trans %}
+    {% elseif key == 'workflow_state' %}
+        {% set facetTitle = 'Workflow status'|trans %}
+    {% elseif key == 'workflow_assigned' %}
+        {% set facetTitle = 'Assigned user'|trans %}
+    {% elseif key == 'authors' %}
+        {% set facetTitle = 'Author'|trans %}
+    {% else %}
+        {% set facetTitle = key|capitalize %}
+    {% endif %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle|trans }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="{{ key }}[]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {% if key == 'contenttypes' %}
+                                                {{ title|integrated_content_type.name|default(title) }}
+                                            {% elseif key == 'channels' %}
+                                                {{ title|integrated_channel.name|default(title) }}
+                                            {% else %}
+                                                {{ title|trans }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block relation_facet %}
+    {% set key = key[9:] %}
+
+    {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {{ title }}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+{% endblock %}
