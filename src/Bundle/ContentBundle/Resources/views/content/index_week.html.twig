@@ -90,7 +90,7 @@
                         <ul role="menu" class="dropdown-menu">
                             {% if filters.start > date('+4 weeks') %}
                                 <li role="presentation">
-                                    <a href="{{ path(app.request.attributes.get('_route'), filters) }}" tabindex="-1" role="menuitem">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}" tabindex="-1" role="menuitem">
                                         Current week
                                     </a>
                                 </li>
@@ -120,7 +120,7 @@
                             {% endfor %}
                             {% if filters.start < date('4 weeks ago') %}
                                 <li role="presentation">
-                                    <a href="{{ path(app.request.attributes.get('_route'), filters) }}" tabindex="-1" role="menuitem">
+                                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}" tabindex="-1" role="menuitem">
                                         Current week
                                     </a>
                                 </li>

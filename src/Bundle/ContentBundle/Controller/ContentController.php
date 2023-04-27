@@ -163,7 +163,6 @@ class ContentController extends AbstractController
                     $view = '_week';
                     $options['start'] = new \DateTimeImmutable($options['week'] ?? 'monday this week');
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
-                    unset($options['week']);
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
                     $options['sort'] = 'time';
@@ -173,7 +172,6 @@ class ContentController extends AbstractController
                     $view = '_month';
                     $options['start'] = new \DateTimeImmutable($options['month'] ?? 'first day of this month');
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 month'));
-                    unset($options['month']);
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
                     $options['sort'] = 'time';
