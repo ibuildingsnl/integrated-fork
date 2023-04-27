@@ -2,6 +2,7 @@
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
+{# @todo move to proper location #}
 <style>
     .week {
         display: flex;
@@ -133,15 +134,30 @@
                         </a>
                     </li>
                     <li class="dropdown close-outside" data-underlay="no">
-                        <a data-toggle="dropdown" role="button"
-                           class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
-                            <i class="iconoir-nav-arrow-down"></i></a>
+                        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                            <span>{% trans %}Tools{% endtrans %}</span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
 
                         <ul role="menu" class=" dropdown-menu">
                             <li role="presentation">
-                                <a href="{{ path('integrated_content_bulk_select', filters) }}"
-                                   tabindex="-1"
-                                   role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                                <a href="{{ path('integrated_content_bulk_select', filters) }}" tabindex="-1" role="menuitem">
+                                    {% trans %}Bulk change this selection{% endtrans %}
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                            <span>{% trans %}Week{% endtrans %}</span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+
+                        <ul role="menu" class=" dropdown-menu">
+                            <li role="presentation">
+                                <a href="{{ path(app.request.attributes.get('_route'), filters) }}" tabindex="-1" role="menuitem">
+                                    {% trans %}Options go here{% endtrans %}
+                                </a>
                             </li>
                         </ul>
                     </li>
@@ -183,10 +199,16 @@
                             {% endfor %}
                         </ul>
                     </li>
+                    <li>
+                        <button
+                            type="button"
+                            class="toggle-searchselection toggle-data-target btn btn-white"
+                            data-target="searchselection-edit-form"
+                        >
+                            <i class="iconoir-settings"></i>
+                        </button>
+                    </li>
                 </ul>
-                <button type="button"
-                        class="toggle-searchselection toggle-data-target btn btn-white" data-target="searchselection-edit-form"><i
-                        class="iconoir-settings"></i></button>
             </div>
             <div class="searchselection-edit-form close-outside">
                 {{ form_start(searchSelectionForm) }}
