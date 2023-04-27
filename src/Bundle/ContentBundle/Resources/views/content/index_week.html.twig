@@ -243,7 +243,12 @@
                         <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"></i> {{ date(content.pub_time)|date('H:i') }}
                     </div>
                     <div class="calendar-item-content">
-                        {{ content.title|default('untitled') }}
+                        {% set title = content.title|default('untitled') %}
+                        {% if title|length > 80 %}
+                            {{ title[:80-3] }}...
+                        {% else %}
+                            {{ title }}
+                        {% endif %}
                     </div>
                 </a>
 
