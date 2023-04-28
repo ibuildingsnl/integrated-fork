@@ -100,7 +100,7 @@
 
                 {% set document = integrated_document(content) %}
 
-                <a class="calendar-item" href="#" data-id="{{ content.type_id }}">
+                <a class="calendar-item" href="#" data-id="{{ content.type_id }}" data-type="{{ type }}">
                     <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
                         <div class="calendar-item-heading">
                             <div class="heading-left">
