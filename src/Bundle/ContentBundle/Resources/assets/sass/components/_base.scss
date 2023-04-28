@@ -74,7 +74,7 @@ body {
         max-height: calc(100vh - 60px);
         overflow: auto;
         position: relative;
-        padding: 2rem 2rem 100px;
+        padding: 2rem 2rem;
 
         &.index-wrapper {
             position: inherit;
@@ -337,6 +337,7 @@ body.hide-options {
         ul.content-navigator-menu {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             li {
                 margin-right: 5px;
                 order: 1;

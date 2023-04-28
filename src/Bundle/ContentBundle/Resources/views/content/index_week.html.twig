@@ -69,7 +69,8 @@
 {% endblock options_start %}
 
 {% block content_items %}
-    <div class="calendar calendar-week">
+    {% set scroll_message = 'Scroll to see more'|trans %}
+    <div class="calendar-view calendar-week">
         <div class="week title">
             {% for i in range(0, 6) %}
                 {% set d = filters.start|date_modify('+%d days'|format(i)) %}
@@ -79,15 +80,16 @@
             {% endfor %}
         </div>
         <div class="week columns">
-            <div class="day column">
+            <div class="day column" draggable="true">
                 {% set prev_day = 0 %}
                 {% for content in pager %}
                 {% set day = filters.start.diff(date(content.pub_time)).days %}
 
                 {% if day != prev_day %}
                 {% for i in range(prev_day, day - 1) %}
+                <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column">
+            <div class="day column" draggable="true">
                 {% endfor %}
                 {% set prev_day = day %}
                 {% endif %}
@@ -145,10 +147,12 @@
                 {% endfor %}
                 {% if prev_day < 6 %}
                 {% for i in range(prev_day + 1, 6) %}
+                <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column">
+            <div class="day column" draggable="true">
                 {% endfor %}
                 {% endif %}
+                <div class="message">{{ scroll_message }}</div>
             </div>
         </div>
     </div>

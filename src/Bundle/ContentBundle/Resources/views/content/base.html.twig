@@ -2,12 +2,13 @@
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
-    <div class="flex flex-wrap ">
+    <div
+        class="flex flex-wrap {% if app.request.query.all.view|default != 'list' and selection.filters.view|default != 'list' %}calendar{% endif %}">
 
         <div class="index-wrapper">
             <div class="page-title">
                 <div class="heading flex justify-between w-full">
-                    <div class="heading">
+                    <div class="heading-switcher">
                         <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
 
                         {% set queryParams = app.request.query.all %}
@@ -18,17 +19,18 @@
 
                         {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
                         {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
-
-                        <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
-                           href="{{ path('integrated_content_content_index', queryParamsList) }}">
-                            <span>{% trans %}Navigator{% endtrans %}</span>
-                            <i class="iconoir-list"></i>
-                        </a>
-                        <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if app.request.query.all.view|default == 'week' or selection.filters.view|default == 'week' %}active{% endif %}"
-                           href="{{ path('integrated_content_content_index', queryParamsCal) }}">
-                            <span>{% trans %}Planner{% endtrans %}</span>
-                            <i class="iconoir-calendar"></i>
-                        </a>
+                        <div class="switcher-buttons">
+                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParamsList) }}">
+                                <span>{% trans %}List{% endtrans %}</span>
+                                <i class="iconoir-list"></i>
+                            </a>
+                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if app.request.query.all.view|default == 'week' or selection.filters.view|default == 'week' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParamsCal) }}">
+                                <span>{% trans %}Calendar{% endtrans %}</span>
+                                <i class="iconoir-calendar"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
@@ -54,32 +56,32 @@
                                     </li>
                                 </ul>
                             </li>
-{#                            <li class="dropdown close-outside" data-underlay="no">#}
-{#                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">#}
-{#                                    <span>{% trans %}View{% endtrans %}</span>#}
-{#                                    <i class="iconoir-nav-arrow-down"></i>#}
-{#                                </a>#}
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                    <span>{% trans %}View{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
 
-{#                                <ul role="menu" class=" dropdown-menu">#}
-{#                                    <li role="presentation" class="active">#}
-{#                                        <a tabindex="-1" role="menuitem">#}
-{#                                            {% trans %}List{% endtrans %}#}
-{#                                        </a>#}
-{#                                    </li>#}
-{#                                    <li role="presentation">#}
-{#                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"#}
-{#                                           tabindex="-1" role="menuitem">#}
-{#                                            {% trans %}Week{% endtrans %}#}
-{#                                        </a>#}
-{#                                    </li>#}
-{#                                    <li role="presentation">#}
-{#                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"#}
-{#                                           tabindex="-1" role="menuitem">#}
-{#                                            {% trans %}Month{% endtrans %}#}
-{#                                        </a>#}
-{#                                    </li>#}
-{#                                </ul>#}
-{#                            </li>#}
+                                <ul role="menu" class=" dropdown-menu">
+                                    <li role="presentation" class="active">
+                                        <a tabindex="-1" role="menuitem">
+                                            {% trans %}List{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Week{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Month{% endtrans %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="dropdown close-outside searchselection" data-underlay="no">
                                 <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
                                 <span>
@@ -184,6 +186,7 @@
                             {% if selection %}
                                 <input type="hidden" name="searchSelection" value="{{ selection.id }}">
                             {% endif %}
+
                             {% for key, facet in facets %}
                                 {% if facet|length > 0 %}
                                     {% if key starts with 'relation_' %}
@@ -359,5 +362,44 @@ $('.modal.show').click(function() {
   $('#dropdown_overlay').addClass('hide').empty();
 });
 
+const columns = document.querySelectorAll('.day.column');
+
+columns.forEach(column => {
+  let isDragging = false;
+  let dragStartY;
+  let scrollTop;
+
+  column.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStartY = e.pageY - column.offsetTop;
+    scrollTop = column.scrollTop;
+  });
+
+  column.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+
+  column.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  column.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const y = e.pageY - column.offsetTop;
+    const walk = (y - dragStartY) * 1.5;
+    column.scrollTop = scrollTop - walk;
+  });
+});
+
+columns.forEach(column => {
+  const message = column.querySelector('.message');
+  console.log(column);
+    if (column.scrollHeight > column.clientHeight) {
+      message.classList.add('show');
+    } else {
+      message.classList.remove('show');
+    }
+});
 </script>
 {% endblock %}
