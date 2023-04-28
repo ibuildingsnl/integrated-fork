@@ -131,6 +131,9 @@ div#dropdown_overlay {
     top: 60px;
     z-index: 1040;
     height: -webkit-fill-available;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 body div#dropdown_overlay {

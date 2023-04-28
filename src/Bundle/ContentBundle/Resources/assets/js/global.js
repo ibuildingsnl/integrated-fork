@@ -295,5 +295,3 @@ function showDropDownBackGround() {
 
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
-
-
