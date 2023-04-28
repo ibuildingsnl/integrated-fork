@@ -21,7 +21,7 @@ div.heading {
     .week {
         display: flex;
         &.columns {
-            border-top: 1px solid lightgray;
+            border-top: 1px solid $border-color;
             background: white;
         }
         &.title {
@@ -57,6 +57,12 @@ div.heading {
         border-bottom: 1px solid $border-color;
         color: black;
         display: block;
+        &.concept {
+            filter: grayscale(100%);
+        }
+        &.published {
+            background-color: rgba(1,174,147, 0.05);
+        }
         .calendar-wrap {
             border-left: 3px solid var(--color);
             display:flex;
@@ -68,6 +74,11 @@ div.heading {
                 .heading-left {
                     display: flex;
                     align-content: center;
+                    position: relative;
+                    .publish-time {
+                        font-family:'Courier';
+                    }
+
                     span {
                         line-height: 18px;
                         margin-right: 0.5rem;
@@ -79,12 +90,43 @@ div.heading {
                             width: 18px;
                         }
                     }
-                    .channel-favicon {
-                        width: 18px;
+                    .favicon-wrapper:hover .channel-favicons.popout {
+                        display:flex;
+                    }
+                    .favicon-wrapper {
+                        position: relative;
+                    }
+                    .channel-popout {
                         height: 18px;
+                        width: 18px;
+                        background-color: var(--color);
+                        color: white;
                         border-radius: 50%;
-                        margin-right: 0.25rem;
-                        background-size: contain;
+                        font-size: 11px;
+                        align-items: center;
+                        justify-content: center;
+                        display: flex;
+                    }
+
+                    .channel-favicons {
+                        display:flex;
+                        .channel-favicon {
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 50%;
+                            margin-right: 0.25rem;
+                            background-size: contain;
+                        }
+                        &.popout {
+                            display: none;
+                            position: absolute;
+                            background-color: white;
+                            padding: 0.5rem;
+                            border: 1px solid #d8d8d8;
+                            border-radius: 8px;
+                            top: -8px;
+                            left: 23px;
+                        }
                     }
                 }
             }
