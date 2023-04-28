@@ -58,3 +58,11 @@
 body:not(.tox-fullscreen) .tox .tox-dialog-wrap {
     top:0px !important;
 }
+
+div#dropdown_overlay {
+    top:0;
+}
+
+.category_wrapper.show {
+    top: 0px;
+}
