@@ -10,6 +10,11 @@ div.heading {
         border-bottom-left-radius: 0;
         margin-left:-1px;
     }
+    .button_list_view, .button_calendar_view {
+        &.active {
+            color: #01ae93;
+        }
+    }
 }
 
 .calendar {

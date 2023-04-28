@@ -157,7 +157,7 @@ class ContentController extends AbstractController
         // view settings (calendar etc)
 
         $view = '';
-        if (isset($options['view'])) {
+        if (isset($options['view']) && $options['view'] != 'list' ) {
             switch ($options['view']) {
                 case 'week':
                     $view = '_week';
