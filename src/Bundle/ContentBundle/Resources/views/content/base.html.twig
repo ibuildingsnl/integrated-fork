@@ -3,7 +3,7 @@
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 {% block content %}
     <div
-        class="flex flex-wrap {% if app.request.query.all.view|default != 'list' and selection.filters.view|default != 'list' %}calendar{% endif %}">
+        class="flex flex-wrap {% if app.request.query.all.view is defined and app.request.query.all.view|default != 'list' and selection.filters.view|default != 'list' %}calendar{% endif %}">
 
         <div class="index-wrapper">
             <div class="page-title">
@@ -180,7 +180,7 @@
                         <form>
                             <input type="hidden" value="{{ params['q'] }}" name="q"/>
                             <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
-                            <input type="hidden" value="{{ filters['view'] }}" name="view"/>
+                            <input type="hidden" value="{{ filters['view']|default }}" name="view"/>
                             <input type="hidden" value="{{ filters['week']|default }}" name="week"/>
                             <input type="hidden" value="{{ filters['month']|default }}" name="month"/>
                             {% if selection %}
@@ -323,20 +323,20 @@
 <script>
 $(document).ready(function() {
 
-  $('.calendar-item').on('click', function(e) {
+  $('.quick-edit-link').on('click', function(e) {
 
     e.preventDefault();
-    var calendarItemId = $(e.target).closest('.calendar-item').data('id');
-    var calendarItemTitle = $(e.target).closest('.calendar-item').data('title');
+    var quickEditItemId = $(e.target).closest('.quick-edit-link').data('id');
+    var quickEditItemTitle = $(e.target).closest('.quick-edit-link').data('title');
     const modal = $('#navigator-edit-modal');
     const iFrame = modal.find('iframe');
 
-    modal.find('.modal-title').text(calendarItemTitle);
+    modal.find('.modal-title').text(quickEditItemTitle);
 
     $('#dropdown_overlay').removeClass('hide');
     $('#dropdown_overlay').append('<div class="loading-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block; shape-rendering: auto;" width="100px" height="100px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><g transform="rotate(0 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9090909090909091s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(32.72727272727273 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8181818181818182s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(65.45454545454545 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.7272727272727273s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(98.18181818181819 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6363636363636364s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(130.9090909090909 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5454545454545454s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(163.63636363636363 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.45454545454545453s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(196.36363636363637 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.36363636363636365s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(229.0909090909091 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.2727272727272727s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(261.8181818181818 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.18181818181818182s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(294.54545454545456 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.09090909090909091s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(327.27272727272725 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate></rect></g><!-- [ldio] generated by https://loading.io/ --></svg></div>');
 
-    iFrame.css('display', 'block').attr('src', '/admin/content/' + calendarItemId + '/modal-iframe.html').on('load', function () {
+    iFrame.css('display', 'block').attr('src', '/admin/content/' + quickEditItemId + '/modal-iframe.html').on('load', function () {
         iFrame.show();
 
         window.popupShown = true;

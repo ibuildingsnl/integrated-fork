@@ -51,6 +51,13 @@
     width: calc(100% - 365px);
 }
 
+@media only screen and (max-width: 1024px) {
+    .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
+        width: 100%;
+    }
+}
+
+
 .hide-options .fancy_tinymce .tox:not(.tox-tinymce-inline) .tox-editor-header {
     width: 100%;
 }
@@ -66,3 +73,5 @@ div#dropdown_overlay {
 .category_wrapper.show {
     top: 0px;
 }
+
+

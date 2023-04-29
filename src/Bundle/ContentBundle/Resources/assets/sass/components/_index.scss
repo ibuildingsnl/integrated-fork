@@ -1,22 +1,26 @@
 div.heading-switcher {
-    display:flex;
+    display: flex;
     align-items: center;
     @include media(max-md) {
         align-items: start;
         flex-direction: column;
     }
+
     .switcher-buttons {
-        display:flex;
+        display: flex;
     }
+
     .button_list_view {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
+
     .button_calendar_view {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-        margin-left:-1px;
+        margin-left: -1px;
     }
+
     .button_list_view, .button_calendar_view {
         &.active {
             color: #01ae93;
@@ -28,8 +32,10 @@ div.heading-switcher {
     overflow: auto;
     border-radius: 1rem;
     background: white;
+
     .week {
         display: flex;
+
         &.columns {
             border-top: 1px solid $border-color;
         }
@@ -40,26 +46,37 @@ div.heading-switcher {
         margin: 0;
         padding: 0;
         min-width: 230px;
+
         &.title {
             text-align: center;
             padding: 0.6rem;
             border-bottom: 1px solid $border-color;
+
             &.today {
                 color: #046283;
                 font-weight: bold;
             }
         }
+
         &.column {
             border-right: 1px solid $border-color;
             max-height: calc(100vh - 270px);
             overflow: auto;
+
+            @include media(max-4xl) {
+                max-height: calc(100vh - 283px);
+            }
+
+            @include media(max-md) {
+                max-height: calc(100vh - 340px);
+            }
 
             &::-webkit-scrollbar-track {
                 background-color: #f5f5f5;
             }
 
             &::-webkit-scrollbar {
-                display:none;
+                display: none;
                 width: 0px;
             }
 
@@ -74,8 +91,10 @@ div.heading-switcher {
             &:last-child {
                 border: 0px;
             }
+
             .message {
                 display: none;
+
                 &.show {
                     display: block;
                     position: sticky;
@@ -93,79 +112,50 @@ div.heading-switcher {
         border-bottom: 1px solid $border-color;
         color: black;
         display: block;
+
         &.concept {
             filter: grayscale(100%);
         }
+
         &.published {
-            background-color: rgba(1,174,147, 0.05);
+            background-color: rgba(1, 174, 147, 0.05);
         }
+
         .calendar-wrap {
             border-left: 3px solid var(--color);
-            display:flex;
+            display: flex;
             flex-direction: column;
             padding: 0.5rem;
+
             .calendar-item-heading {
                 font-weight: bold;
                 color: var(--color);
+
                 .heading-left {
                     display: flex;
                     align-content: center;
                     position: relative;
+
                     .publish-time {
-                        font-family:'Courier';
+                        font-family: 'Courier';
                     }
 
                     span {
                         line-height: 18px;
                         margin-right: 0.5rem;
                     }
+
                     .icon {
-                        margin-right:.5rem;
+                        margin-right: .5rem;
+
                         &:before {
                             height: 18px;
                             width: 18px;
                         }
                     }
-                    .favicon-wrapper:hover .channel-favicons.popout {
-                        display:flex;
-                    }
-                    .favicon-wrapper {
-                        position: relative;
-                    }
-                    .channel-popout {
-                        height: 18px;
-                        width: 18px;
-                        background-color: var(--color);
-                        color: white;
-                        border-radius: 50%;
-                        font-size: 11px;
-                        align-items: center;
-                        justify-content: center;
-                        display: flex;
-                    }
-
-                    .channel-favicons {
-                        display:flex;
-                        .channel-favicon {
-                            width: 18px;
-                            height: 18px;
-                            border-radius: 50%;
-                            margin-right: 0.25rem;
-                            background-size: contain;
-                        }
-                        &.popout {
-                            display: none;
-                            position: absolute;
-                            background-color: white;
-                            padding: 0.5rem;
-                            border: 1px solid #d8d8d8;
-                            border-radius: 8px;
-                            top: -8px;
-                            left: 23px;
-                        }
-                    }
                 }
             }
+
             .calendar-item-content {
                 line-height: 17px;
                 word-break: break-word;
@@ -218,4 +208,80 @@ div.heading-switcher {
     width: 100%;
     border: none;
     min-height: 80vh;
+}
+
+.index-wrapper {
+    table {
+        .state, .pub-date {
+            width: 150px;
+        }
+        .content-type {
+            width: 175px;
+        }
+        .channels {
+            width: 110px;
+        }
+    }
+}
+
+
+.favicon-wrapper {
+    position: relative;
+
+    &:hover .channel-favicons.popout {
+        display: flex;
+    }
+
+    .channel-popout {
+        height: 18px;
+        width: 18px;
+        background-color: var(--color);
+        color: white;
+        border-radius: 50%;
+        font-size: 11px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    .channel-favicons {
+        display: flex;
+
+        .channel-favicon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 0.25rem;
+            background-size: contain;
+        }
+
+        &.popout {
+            display: none;
+            position: absolute;
+            background-color: white;
+            padding: 0.5rem;
+            border: 1px solid #d8d8d8;
+            border-radius: 8px;
+            top: -8px;
+            left: 23px;
+            z-index: 1;
+        }
+    }
+}
+
+table.table {
+    .favicon-wrapper {
+        .channel-popout {
+            width: 25px;
+            height: 25px;
+            font-weight: bold;
+        }
+        .channel-favicons .channel-favicon {
+            width: 25px;
+            height: 25px;
+        }
+        .channel-favicons.popout {
+            left: 33px;
+        }
+    }
 }
