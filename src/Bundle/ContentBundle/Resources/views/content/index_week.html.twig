@@ -13,7 +13,7 @@
     <li class="dropdown close-outside" data-underlay="no">
         <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
             <span>
-                {{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }}
+                {{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }} (Week {{ filters.start|date('W') }})
             </span>
             <i class="iconoir-nav-arrow-down"></i>
         </a>
@@ -23,7 +23,7 @@
                 <li role="presentation">
                     <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
                        tabindex="-1" role="menuitem">
-                        Current week
+                        Current week (Week {{ "now"|date('W') }})
                     </a>
                 </li>
             {% endif %}
@@ -32,13 +32,13 @@
                     <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
                        tabindex="-1" role="menuitem">
                         {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
-                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }}
+                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }} (Week {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('W') }})
                     </a>
                 </li>
             {% endfor %}
             <li role="presentation" class="active">
                 <a role="menuitem">
-                    <b>{{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }}</b>
+                    <b>{{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }} (Week {{ filters.start|date_modify('+6 days')|date('W') }})</b>
                 </a>
             </li>
             {% for i in range(1, 3) %}
@@ -46,7 +46,7 @@
                     <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
                        tabindex="-1" role="menuitem">
                         {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
-                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }}
+                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }} (Week {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('W') }})
                     </a>
                 </li>
             {% endfor %}
@@ -54,7 +54,7 @@
                 <li role="presentation">
                     <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
                        tabindex="-1" role="menuitem">
-                        Current week
+                        Current week (Week {{ "now"|date('W') }})
                     </a>
                 </li>
             {% endif %}

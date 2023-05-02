@@ -29,7 +29,7 @@
                         {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
                         {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
                         <div class="switcher-buttons">
-                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
+                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == '' or app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
                                href="{{ path('integrated_content_content_index', queryParamsList) }}">
                                 <span>{% trans %}List{% endtrans %}</span>
                                 <i class="iconoir-list"></i>
