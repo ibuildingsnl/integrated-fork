@@ -51,7 +51,7 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return self::FORMAT === $format && $data instanceof ContentInterface;
     }

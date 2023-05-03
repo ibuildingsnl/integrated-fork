@@ -7,4 +7,5 @@
     <route id="integrated_website_enter_session" path="/enter-session/{sessionId}" methods="GET">
         <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\SessionController::enterSession</default>
     </route>
+
 </routes>

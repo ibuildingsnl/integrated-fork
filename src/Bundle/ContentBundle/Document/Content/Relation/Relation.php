@@ -42,7 +42,7 @@ abstract class Relation extends Content implements RankableInterface
     protected $description;
 
     /**
-     * @var Phonenumber[]|Collection
+     * @var Collection<Phonenumber>
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
         'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType',
@@ -58,7 +58,7 @@ abstract class Relation extends Content implements RankableInterface
     protected $email;
 
     /**
-     * @var Address[]
+     * @var Collection<Address>
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
         'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\AddressType',
@@ -146,7 +146,7 @@ abstract class Relation extends Content implements RankableInterface
             return $result;
         }
 
-        return $this->phonenumbers;
+        return $this->phonenumbers->toArray();
     }
 
     /**
@@ -156,9 +156,13 @@ abstract class Relation extends Content implements RankableInterface
      *
      * @return $this
      */
-    public function setPhonenumbers(Collection $phonenumbers)
+    public function setPhonenumbers(iterable $phonenumbers)
     {
-        $this->phonenumbers = $phonenumbers;
+        $this->phonenumbers = new ArrayCollection();
+
+        foreach ($phonenumbers as $phonenumber) {
+            $this->addPhonenumber($phonenumber);
+        }
 
         return $this;
     }
@@ -180,9 +184,7 @@ abstract class Relation extends Content implements RankableInterface
         if ($phonenumber instanceof Phonenumber) {
             $obj = $phonenumber;
         } else {
-            $obj = new Phonenumber();
-            $obj->setNumber($phonenumber);
-            $obj->setType($type);
+            $obj = new Phonenumber($phonenumber, $type);
         }
 
         $this->phonenumbers->add($obj);
@@ -246,17 +248,23 @@ abstract class Relation extends Content implements RankableInterface
      */
     public function getAddresses()
     {
-        return $this->addresses;
+        return $this->addresses->toArray();
     }
 
     /**
      * Set the addresses of the document.
      *
+     * @param Address[] $addresses
+     *
      * @return $this
      */
-    public function setAddresses(Collection $addresses)
+    public function setAddresses(iterable $addresses)
     {
-        $this->addresses = $addresses;
+        $this->addresses = new ArrayCollection();
+
+        foreach ($addresses as $address) {
+            $this->addAddress($address);
+        }
 
         return $this;
     }

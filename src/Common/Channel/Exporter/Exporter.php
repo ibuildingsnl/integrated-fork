@@ -56,7 +56,7 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export(object $content, string $state, ChannelInterface $channel): void
     {
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {

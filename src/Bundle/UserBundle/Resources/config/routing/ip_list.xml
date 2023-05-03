@@ -12,23 +12,11 @@
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::new</default>
     </route>
 
-    <route id="integrated_user_iplist_new_rest" path="/" methods="POST">
-        <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::new</default>
-    </route>
-
-    <route id="integrated_user_iplist_edit" path="/{id}" methods="GET">
-        <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController:edit</default>
-    </route>
-
-    <route id="integrated_user_iplist_edit_rest" path="/{id}" methods="PUT">
+    <route id="integrated_user_iplist_edit" path="/{id}">
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::edit</default>
     </route>
 
     <route id="integrated_user_iplist_delete" path="/{id}/delete">
-        <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::delete</default>
-    </route>
-
-    <route id="integrated_user_iplist_delete_rest" path="/{id}" methods="DELETE">
         <default key="_controller">Integrated\Bundle\UserBundle\Controller\IpListController::delete</default>
     </route>
 

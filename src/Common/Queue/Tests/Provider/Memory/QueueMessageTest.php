@@ -12,6 +12,7 @@
 namespace Integrated\Common\Queue\Tests\Provider\Memory;
 
 use Integrated\Common\Queue\Provider\Memory\QueueMessage;
+use Integrated\Common\Queue\QueueMessageInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +24,7 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
         $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () {
         });
 
-        $this->assertInstanceOf('Integrated\Common\Queue\QueueMessageInterface', $message);
+        $this->assertInstanceOf(QueueMessageInterface::class, $message);
     }
 
     public function testGetPayload()
@@ -80,29 +81,29 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
     public function testRelease()
     {
-        $mock = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $mock->expects($this->once())
-            ->method('callback');
+        $count = 0;
 
-        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use ($mock) {
-            $mock->callback();
+        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use (&$count) {
+            ++$count;
         });
 
         $message->release();
         $message->release();
+
+        $this->assertEquals(1, $count, 'Method was not expected to be called more than once');
     }
 
     public function testDelete()
     {
-        $mock = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $mock->expects($this->never())
-            ->method('callback');
+        $count = 0;
 
-        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use ($mock) {
-            $mock->callback();
+        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use (&$count) {
+            ++$count;
         });
 
         $message->delete();
         $message->release();
+
+        $this->assertEquals(0, $count, 'Method was not expected to be called');
     }
 }

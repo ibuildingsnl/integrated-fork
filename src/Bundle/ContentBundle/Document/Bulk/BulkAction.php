@@ -133,13 +133,12 @@ class BulkAction
      *
      * @return $this
      */
-    public function setSelection($contents)
+    public function setSelection(iterable $contents)
     {
         $this->selection->clear();
-        if (\is_array($contents) || $contents instanceof \Traversable) {
-            foreach ($contents as $content) {
-                $this->addSelection($content);
-            }
+
+        foreach ($contents as $content) {
+            $this->addSelection($content);
         }
 
         return $this;
@@ -180,13 +179,12 @@ class BulkAction
      *
      * @return $this
      */
-    public function setActions($actions)
+    public function setActions(iterable $actions)
     {
         $this->actions->clear();
-        if (\is_array($actions) || $actions instanceof \Traversable) {
-            foreach ($actions as $action) {
-                $this->addAction($action);
-            }
+
+        foreach ($actions as $action) {
+            $this->addAction($action);
         }
 
         return $this;

@@ -12,53 +12,42 @@
 namespace Integrated\Bundle\LockingBundle\Command;
 
 use Integrated\Common\Locks\ManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'locking:dbal:clean',
+    description: 'Clean up the expired locks',
+)]
 class LockingDBALCleanUpCommand extends Command
 {
-    /**
-     * @var ManagerInterface
-     */
-    private $manager;
+    private ManagerInterface $manager;
 
-    /**
-     * LockingClearCommand constructor.
-     */
     public function __construct(ManagerInterface $manager)
     {
-        parent::__construct();
-
         $this->manager = $manager;
+
+        parent::__construct();
     }
 
-    /**
-     * @see Command
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('locking:dbal:clean')
-            ->setDescription('Clean up the expired locks')
-            ->setHelp(<<<EOF
+        $this->setHelp(<<<EOF
 The <info>%command.name%</info> removes all the expired locks stored in the database
 
 <info>php %command.full_name%</info>
 EOF
-            );
+        );
     }
 
-    /**
-     * @see Command::execute()
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->manager->clean();
+        if (method_exists($this->manager, 'clean')) {
+            $this->manager->clean();
+        }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

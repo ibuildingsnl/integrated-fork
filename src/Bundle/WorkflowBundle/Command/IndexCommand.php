@@ -16,66 +16,43 @@ use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\LockFactory;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'workflow:index',
+    description: 'Queue the solr indexing of content items of one or more workflow\'s',
+)]
 class IndexCommand extends Command
 {
-    /**
-     * @var StateManager
-     */
-    private $stateManager;
+    use LockableTrait;
 
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
+    private StateManager $stateManager;
+    private ResolverInterface $resolver;
+    private ObjectRepository $workflowRepository;
 
-    /**
-     * @var ObjectRepository
-     */
-    private $workflowRepository;
-
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
-
-    /**
-     * IndexCommand constructor.
-     */
-    public function __construct(StateManager $stateManager, ResolverInterface $resolver, ObjectRepository $workflowRepository, LockFactory $lockFactory)
+    public function __construct(StateManager $stateManager, ResolverInterface $resolver, ObjectRepository $workflowRepository)
     {
         $this->stateManager = $stateManager;
         $this->resolver = $resolver;
         $this->workflowRepository = $workflowRepository;
-        $this->lockFactory = $lockFactory;
 
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('workflow:index')
-
             ->addArgument('id', InputArgument::IS_ARRAY, 'One or more workflow ids that need to be indexed')
 
             ->addOption('full', 'f', InputOption::VALUE_NONE, 'Do a full index of all the workflow, this will override any given workflow ids')
             ->addOption('ignore', 'i', InputOption::VALUE_NONE, 'Ignore workflow ids that do not exist')
-
-            ->setDescription('Queue the solr indexing of content items of one or more workflow\'s')
             ->setHelp('
 The <info>%command.name%</info> command starts a index of all the content from the given workflow.
 
@@ -83,17 +60,13 @@ The <info>%command.name%</info> command starts a index of all the content from t
 ');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$input->getArgument('id') && !$input->getOption('full')) {
             throw new \InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
         }
 
-        $lock = $this->getLock();
-        $lock->acquire(true);
+        $this->lock(self::class.md5(__DIR__.$this->getName()), true);
 
         try {
             // get a list of the workflow ids of which the content needs to be (re)indexed
@@ -140,10 +113,8 @@ The <info>%command.name%</info> command starts a index of all the content from t
             }
 
             if (!$types) {
-                return 0;
+                return self::SUCCESS;
             }
-
-            $command = null;
 
             try {
                 $command = $this->getApplication()->find('solr:indexer:queue');
@@ -160,10 +131,8 @@ The <info>%command.name%</info> command starts a index of all the content from t
                 ), 0, $e);
             }
         } finally {
-            $lock->release();
+            $this->release();
         }
-
-        return 0;
     }
 
     /**
@@ -171,7 +140,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
      *
      * @return Definition[]
      */
-    protected function findDefinition(array $ids = null)
+    private function findDefinition(array $ids = null): iterable
     {
         if (null === $ids) {
             return $this->workflowRepository->findAll();
@@ -185,7 +154,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
      *
      * @return ContentTypeInterface[]
      */
-    protected function findTypes(array $ids)
+    private function findTypes(array $ids): iterable
     {
         $result = [];
 
@@ -196,13 +165,5 @@ The <info>%command.name%</info> command starts a index of all the content from t
         }
 
         return $result;
-    }
-
-    /**
-     * @return LockFactory
-     */
-    protected function getLock()
-    {
-        return $this->lockFactory->createLock(self::class.md5(__DIR__.$this->getName()));
     }
 }

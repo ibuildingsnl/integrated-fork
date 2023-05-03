@@ -620,7 +620,7 @@
             formData.append('name', name);
             formData.append('csrf_token', csrfToken);
 
-            fetch('{{ path('integrated_block_block_new_channel_block') }}', {
+            fetch('{{ path('integrated_block_channel_block_new') }}', {
                 method: 'POST',
                 body: formData
             })
@@ -654,7 +654,7 @@
 
             var pageId = document.querySelector('[data-action="integrated-website-page-save"]').dataset.id;
 
-            createIframe('{{ path('integrated_block_inline_text_block_create', {'id': 'page-id'}) }}'.replace('page-id', pageId), '{% trans %}New block{% endtrans %}');
+            createIframe('{{ path('integrated_block_inline_text_block_new', {'id': 'page-id'}) }}'.replace('page-id', pageId), '{% trans %}New block{% endtrans %}');
 
             hideLoader();
         });

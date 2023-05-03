@@ -18,21 +18,12 @@ use Integrated\Bundle\PageBundle\Grid\GridFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class GridController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var GridFactory
-     */
-    private $gridFactory;
+    private DocumentManager $documentManager;
+    private GridFactory $gridFactory;
 
     public function __construct(DocumentManager $documentManager, GridFactory $gridFactory)
     {
@@ -40,10 +31,7 @@ class GridController extends AbstractController
         $this->gridFactory = $gridFactory;
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function save(Request $request)
+    public function save(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -55,7 +43,6 @@ class GridController extends AbstractController
             return new JsonResponse(['error' => 'No page specified']);
         }
 
-        /** @var AbstractPage $page */
         if (!$page = $this->documentManager->getRepository(AbstractPage::class)->find($data['page'])) {
             return new JsonResponse(['error' => 'Page not found']);
         }

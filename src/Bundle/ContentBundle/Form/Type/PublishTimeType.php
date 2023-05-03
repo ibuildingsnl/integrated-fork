@@ -62,7 +62,7 @@ class PublishTimeType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_publish_time';
     }

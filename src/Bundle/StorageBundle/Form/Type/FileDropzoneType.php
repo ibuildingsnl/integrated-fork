@@ -32,7 +32,7 @@ class FileDropzoneType extends AbstractDropzoneType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_file_dropzone';
     }

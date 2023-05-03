@@ -19,32 +19,15 @@ use Integrated\Bundle\UserBundle\Form\Type\PasswordResetType;
 use Integrated\Bundle\UserBundle\Service\KeyGenerator;
 use Integrated\Bundle\UserBundle\Service\Mailer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Error\Error;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
-
-    /**
-     * @var Mailer
-     */
-    private $mailer;
-
-    /**
-     * @var KeyGenerator
-     */
-    private $keyGenerator;
-
-    /**
-     * @var ThemeManager
-     */
-    private $themeManager;
+    private UserManager $userManager;
+    private Mailer $mailer;
+    private KeyGenerator $keyGenerator;
+    private ThemeManager $themeManager;
 
     public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, ThemeManager $themeManager)
     {
@@ -54,10 +37,7 @@ class SecurityController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return Response
-     */
-    public function login()
+    public function login(): Response
     {
         $form = $this->createForm(
             LoginFormType::class,
@@ -65,13 +45,10 @@ class SecurityController extends AbstractController
             ['action' => $this->generateUrl('integrated_user_website_security_check')]
         );
 
-        return $this->render($this->themeManager->locateTemplate('security/login.html.twig'), ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/login.html.twig'), ['form' => $form]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     */
-    public function passwordReset(Request $request)
+    public function passwordReset(Request $request): Response
     {
         $form = $this->createForm(
             PasswordResetType::class,
@@ -93,15 +70,10 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_website_security_login');
         }
 
-        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form]);
     }
 
-    /**
-     * @return RedirectResponse|Response
-     *
-     * @throws Error
-     */
-    public function passwordChange(Request $request, int $id, int $timestamp, string $key)
+    public function passwordChange(Request $request, int $id, int $timestamp, string $key): Response
     {
         if (!$this->keyGenerator->isValidKey($id, $timestamp, $key)) {
             $this->addFlash('danger', 'Password reset link is invalid or expired');
@@ -127,6 +99,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('integrated_user_website_security_login');
         }
 
-        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('security/password_reset.html.twig'), ['form' => $form]);
     }
 }

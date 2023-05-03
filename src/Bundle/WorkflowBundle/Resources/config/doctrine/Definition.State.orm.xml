@@ -13,9 +13,7 @@
 			<lifecycle-callback type="preFlush" method="doPermissionFix" />
 		</lifecycle-callbacks>
 
-		<id name="id" column="id" type="string" length="36">
-			<generator strategy="UUID" />
-		</id>
+		<id name="id" column="id" type="string" length="36" />
 
 		<field name="name" column="name" type="string" length="255" />
 
@@ -37,13 +35,13 @@
 		</one-to-many>
 
 		<many-to-one field="workflow" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Definition" inversed-by="states">
-			<join-column name="workflow_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" on-update="CASCADE" />
+			<join-column name="workflow_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
 		</many-to-one>
 
 		<many-to-many field="transitions" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Definition\State">
 			<join-table name="workflow_definition_state_transitions">
 				<join-columns>
-					<join-column name="state_id" referenced-column-name="id" on-delete="CASCADE" on-update="CASCADE" />
+					<join-column name="state_id" referenced-column-name="id" on-delete="CASCADE" />
 				</join-columns>
 				<inverse-join-columns>
 					<join-column name="state_transition_id" referenced-column-name="id" />

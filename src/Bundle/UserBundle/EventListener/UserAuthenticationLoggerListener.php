@@ -25,7 +25,7 @@ class UserAuthenticationLoggerListener implements EventSubscriberInterface
         $this->requets = $requets;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LoginSuccessEvent::class => 'onLogin',

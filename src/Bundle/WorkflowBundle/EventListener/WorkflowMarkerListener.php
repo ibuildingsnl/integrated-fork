@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\EventListener;
 
 use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Solarium\Core\Event;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,7 +43,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Event\Events::PRE_EXECUTE => 'preExecute',
@@ -71,21 +72,21 @@ class WorkflowMarkerListener implements EventSubscriberInterface
             $user = $token->getUser();
         }
 
-        $filterWorkflow = [];
-        if ($user instanceof User) {
-            foreach ($user->getGroups() as $group) {
-                $filterWorkflow[] = $group->getId();
-            }
-        }
-
         $fq = $query->createFilterQuery('workflow');
-
-        // allow content without workflow
         $fq
             ->addTag('workflow')
             ->addTag('security')
-            ->setQuery('(*:* -security_workflow_read:[* TO *])')
-        ;
+            ->setQuery('(*:* -security_workflow_read:[* TO *])');
+
+        if (!$user instanceof UserInterface) {
+            return;
+        }
+
+        $filterWorkflow = [];
+
+        foreach ($user->getGroups() as $group) {
+            $filterWorkflow[] = $group->getId();
+        }
 
         // allow content with group access
         if ($filterWorkflow) {

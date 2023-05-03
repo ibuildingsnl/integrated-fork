@@ -10,14 +10,8 @@
 
         <service id="integrated_solr.lock.flock" class="Symfony\Component\Lock\Store\FlockStore" />
 
-        <service id="integrated_solr.lock.store" class="Symfony\Component\Lock\Store\RetryTillSaveStore">
-            <argument type="service" id="integrated_solr.lock.flock" />
-            <argument type="string">200</argument>
-            <argument type="string">25</argument>
-        </service>
-
         <service id="integrated_solr.lock.factory" class="Symfony\Component\Lock\LockFactory" public="true">
-            <argument type="service" id="integrated_solr.lock.store" />
+            <argument type="service" id="integrated_solr.lock.flock" />
 
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />

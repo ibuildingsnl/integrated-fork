@@ -4,7 +4,7 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-	<route id="integrated_content_content_index" path="/{_format}" methods="GET, POST">
+	<route id="integrated_content_content_index" path="/{_format}">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::index</default>
 		<default key="_format">html</default>
 		<requirement key="_format">html|json</requirement>
@@ -16,20 +16,12 @@
 		<requirement key="_format">html|iframe.html</requirement>
 	</route>
 
-	<route id="integrated_content_content_new_rest" path="/" methods="POST">
-		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::new</default>
-	</route>
-
-	<route id="integrated_content_content_media_types" path="/media_types/{filter}"  methods="GET">
+	<route id="integrated_content_content_media_types" path="/media_types/{filter}" methods="GET">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::mediaTypesAction</default>
 		<default key="filter">null</default>
 	</route>
 
-	<route id="integrated_content_content_edit" path="/{id}"  methods="GET">
-		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
-	</route>
-
-	<route id="integrated_content_content_edit_rest" path="/{id}" methods="PUT">
+	<route id="integrated_content_content_edit" path="/{id}">
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::edit</default>
 	</route>
 
@@ -37,17 +29,13 @@
 		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::delete</default>
 	</route>
 
-	<route id="integrated_content_content_delete_rest" path="/{id}" methods="DELETE">
-		<default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::delete</default>
-	</route>
-
-    <route id="integrated_content_content_used_by" path="/{id}/used-by/{_format}"  methods="GET">
+    <route id="integrated_content_content_used_by" path="/{id}/used-by/{_format}" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::usedBy</default>
 		<default key="_format">html</default>
 		<requirement key="_format">html|json</requirement>
     </route>
 
-    <route id="integrated_content_content_show" path="/{id}/show/{_format}"  methods="GET">
+    <route id="integrated_content_content_show" path="/{id}/show/{_format}" methods="GET">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentController::show</default>
 		<default key="_format">html</default>
 		<requirement key="_format">html|json</requirement>

@@ -55,7 +55,7 @@ class AdapterReader implements ReaderInterface
     }
 
     /**
-     * @return {@inheritdoc}
+     * {@inheritdoc}
      */
     public function getMetadata()
     {

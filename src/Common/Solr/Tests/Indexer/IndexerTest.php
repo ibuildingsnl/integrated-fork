@@ -63,11 +63,10 @@ class IndexerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->factory = $this->createMock(CommandFactoryInterface::class);
-//        $this->batch = $this->createMock(Batch::class);
         $this->batch = new Batch();
         $this->queue = $this->createMock(QueueInterface::class);
         $this->client = $this->createMock(Client::class);
-        $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->disableArgumentCloning()->getMock();
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testInterface()

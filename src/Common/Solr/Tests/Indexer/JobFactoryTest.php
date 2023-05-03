@@ -15,6 +15,7 @@ use Doctrine\Persistence\ObjectManager;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Solr\Indexer\JobFactory;
 use Integrated\Common\Solr\Indexer\JobFactoryInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -49,9 +50,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(JobFactoryInterface::class, $this->getInstance());
     }
 
-    /**
-     * @dataProvider createAddProvider
-     */
+    #[DataProvider('createAddProvider')]
     public function testCreateAdd($action, ContentInterface $content, $id, $class, $format)
     {
         $this->format = $format;
@@ -76,7 +75,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createAddProvider()
+    public static function createAddProvider()
     {
         return [
             'lower case' => [
@@ -110,9 +109,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider createDeleteProvider
-     */
+    #[DataProvider('createDeleteProvider')]
     public function testCreateDelete($action, ContentInterface $content, $id)
     {
         $job = $this->getInstance()->create($action, $content);
@@ -124,7 +121,7 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createDeleteProvider()
+    public static function createDeleteProvider()
     {
         return [
             'lower case' => [

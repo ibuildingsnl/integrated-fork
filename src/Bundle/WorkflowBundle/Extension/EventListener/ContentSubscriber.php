@@ -106,7 +106,7 @@ class ContentSubscriber implements ContentSubscriberInterface
         $this->fromEmail = $fromEmail;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::POST_READ => 'read',
@@ -185,7 +185,10 @@ class ContentSubscriber implements ContentSubscriberInterface
             $content->getMetadata()->set('workflow_state', $state->getId());
         }
 
-        $content->setDisabled(!$state->isPublishable()); // hax: setDisabled is not in the interface
+        // hax: setDisabled is not in the interface
+        if (method_exists($content, 'setDisabled')) {
+            $content->setDisabled(!$state->isPublishable());
+        }
     }
 
     public function postUpdate(ContentEvent $event)

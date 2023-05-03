@@ -61,7 +61,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
         $options = $crawler->filter('styles')->children();
 
         foreach ($options as $option) {
-            /** @var $option \DOMElement */
+            /** @var \DOMElement $option */
             $type = $option->getAttribute('type');
             if (!\in_array($type, [self::STYLE_FORMAT, self::CONTENT_CSS])) {
                 throw new FileException("The file $filePath is not valid");

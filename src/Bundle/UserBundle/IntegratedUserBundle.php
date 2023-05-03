@@ -14,7 +14,6 @@ namespace Integrated\Bundle\UserBundle;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\Compiler\RegisterRolesParametersPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\Compiler\ThemeManagerPass;
-use Integrated\Bundle\UserBundle\DependencyInjection\IntegratedUserExtension;
 use Integrated\Bundle\UserBundle\DependencyInjection\Security\IpListFactory;
 use Integrated\Bundle\UserBundle\DependencyInjection\Security\ScopeFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
@@ -32,9 +31,9 @@ class IntegratedUserBundle extends Bundle
             __DIR__.'/Resources/config/mapping/doctrine/' => 'Integrated\\Bundle\\UserBundle\\Model',
         ];
 
-        $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver($mapping, ['integrated_user.mapping.entity_manager'], 'integrated_user.mapping.enabled'));
-        $container->addCompilerPass(new RegisterRolesParametersPass());
-        $container->addCompilerPass(new ThemeManagerPass());
+        $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver($mapping, ['integrated_user.mapping.entity_manager'], 'integrated_user.mapping.enabled'), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new RegisterRolesParametersPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new ThemeManagerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
 
         $security = $container->getExtension('security');
 
@@ -42,13 +41,5 @@ class IntegratedUserBundle extends Bundle
             $security->addAuthenticatorFactory(new ScopeFactory());
             $security->addAuthenticatorFactory(new IpListFactory());
         }
-    }
-
-    /**
-     * @return IntegratedUserExtension
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedUserExtension();
     }
 }

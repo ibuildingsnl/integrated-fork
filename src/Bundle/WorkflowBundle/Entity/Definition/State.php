@@ -17,6 +17,7 @@ use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,9 +25,9 @@ use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 class State
 {
     /**
-     * @var int
+     * @var string
      */
-    protected $id = null;
+    protected $id;
 
     /**
      * @var string
@@ -73,62 +74,16 @@ class State
      */
     protected $deadline = StateVisibleConfig::OPTIONAL;
 
-    /**
-     * @return int
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
-     * @param int $comment
-     */
-    public function setComment($comment)
-    {
-        $this->comment = $comment;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAssignee()
-    {
-        return $this->assignee;
-    }
-
-    /**
-     * @param int $assignee
-     */
-    public function setAssignee($assignee)
-    {
-        $this->assignee = $assignee;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDeadline()
-    {
-        return $this->deadline;
-    }
-
-    /**
-     * @param int $deadline
-     */
-    public function setDeadline($deadline)
-    {
-        $this->deadline = $deadline;
-    }
-
     public function __construct()
     {
+        $this->id = Uuid::uuid4()->toString();
+
         $this->permissions = new ArrayCollection();
         $this->transitions = new ArrayCollection();
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -202,7 +157,7 @@ class State
     }
 
     /**
-     * @param bool $publish
+     * @param bool $publishable
      *
      * @return $this
      */
@@ -226,7 +181,7 @@ class State
      *
      * @return $this
      */
-    public function setPermissions(Collection $permissions)
+    public function setPermissions(iterable $permissions)
     {
         foreach ($this->permissions as $permission) {
             $this->removePermission($permission);
@@ -244,7 +199,7 @@ class State
      */
     public function getPermissions()
     {
-        return $this->permissions;
+        return $this->permissions->toArray();
     }
 
     /**
@@ -279,7 +234,7 @@ class State
     /**
      * @return $this
      */
-    public function setTransitions(Collection $transitions)
+    public function setTransitions(iterable $transitions)
     {
         $this->transitions->clear();
         $this->transitions = new ArrayCollection();
@@ -331,6 +286,54 @@ class State
         }
 
         return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param int $comment
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAssignee()
+    {
+        return $this->assignee;
+    }
+
+    /**
+     * @param int $assignee
+     */
+    public function setAssignee($assignee)
+    {
+        $this->assignee = $assignee;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeadline()
+    {
+        return $this->deadline;
+    }
+
+    /**
+     * @param int $deadline
+     */
+    public function setDeadline($deadline)
+    {
+        $this->deadline = $deadline;
     }
 
     /**

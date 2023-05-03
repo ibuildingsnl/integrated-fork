@@ -15,6 +15,7 @@ use Integrated\Common\Solr\Search\Type\TypeExtensionInterface;
 use Integrated\Common\Solr\Search\Type\TypeInterface;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Curl;
+use Solarium\Core\Client\ClientInterface;
 use Solarium\Core\Client\Endpoint;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -83,6 +84,9 @@ class IntegratedSolrExtension extends Extension
                 ]
             ))->setPublic(true)
         );
+
+        $container->setAlias(Client::class, 'solarium.client');
+        $container->setAlias(ClientInterface::class, 'solarium.client');
 
         if ($container->getParameter('kernel.debug')) {
             $container->getDefinition('solarium.client')->addMethodCall(

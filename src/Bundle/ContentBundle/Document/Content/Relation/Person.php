@@ -81,6 +81,7 @@ class Person extends Relation
     public function __construct()
     {
         parent::__construct();
+
         $this->jobs = new ArrayCollection();
     }
 
@@ -235,17 +236,23 @@ class Person extends Relation
      */
     public function getJobs()
     {
-        return $this->jobs;
+        return $this->jobs->toArray();
     }
 
     /**
      * Set the jobs of the document.
      *
+     * @param Job[] $jobs
+     *
      * @return $this
      */
-    public function setJobs(Collection $jobs)
+    public function setJobs(iterable $jobs)
     {
-        $this->jobs = $jobs;
+        $this->jobs = new ArrayCollection();
+
+        foreach ($jobs as $job) {
+            $this->addJob($job);
+        }
 
         return $this;
     }

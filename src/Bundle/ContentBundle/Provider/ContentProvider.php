@@ -13,9 +13,9 @@ namespace Integrated\Bundle\ContentBundle\Provider;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Bundle\UserBundle\Model\GroupableInterface;
+use Integrated\Bundle\UserBundle\Model\User;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
@@ -247,9 +247,6 @@ class ContentProvider
         return $contents;
     }
 
-    /**
-     * @return \Solarium\QueryType\Select\Query\FilterQuery
-     */
     protected function addWorkflowFilter(Query $query)
     {
         $filterWorkflow = [];
@@ -259,19 +256,21 @@ class ContentProvider
             return;
         }
 
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if ($user instanceof GroupableInterface) {
-            foreach ($user->getGroups() as $group) {
-                $filterWorkflow[] = $group->getId();
-            }
-        }
-
         // allow content without workflow
         $fq = $query->createFilterQuery('workflow')
             ->addTag('workflow')
             ->addTag('security')
             ->setQuery('(*:* -security_workflow_read:[* TO *])');
+
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if (!$user instanceof UserInterface) {
+            return;
+        }
+
+        foreach ($user->getGroups() as $group) {
+            $filterWorkflow[] = $group->getId();
+        }
 
         // allow content with group access
         if ($filterWorkflow) {
@@ -281,11 +280,10 @@ class ContentProvider
         // always allow access to assinged content
         $fq->setQuery($fq->getQuery().' OR facet_workflow_assigned_id: %1%', [$user->getId()]);
 
-        /* @var Person $person */
-        if ($person = $user->getRelation()) {
-            $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
+        if ($user instanceof User) {
+            if ($person = $user->getRelation()) {
+                $fq->setQuery($fq->getQuery().' OR author: %1%*', [$person->getId()]);
+            }
         }
-
-        return $fq;
     }
 }

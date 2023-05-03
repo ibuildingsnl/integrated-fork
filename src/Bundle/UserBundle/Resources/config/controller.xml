@@ -8,8 +8,7 @@
 
         <defaults autowire="true" autoconfigure="true" />
 
-        <prototype namespace="Integrated\Bundle\UserBundle\Controller\" resource="../../Controller/*">
-        </prototype>
+        <prototype namespace="Integrated\Bundle\UserBundle\Controller\" resource="../../Controller/*" />
 
         <service id="Integrated\Bundle\UserBundle\Controller\SecurityController">
             <argument type="service" id="integrated_user.user.manager" />
@@ -17,21 +16,23 @@
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\ProfileController">
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="security.password_hasher_factory" />
-            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\IpListController">
             <argument type="service" id="integrated_user.ip_list.manager" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="knp_paginator" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\TwoFactor\GoogleController">
@@ -41,38 +42,44 @@
             <argument type="service" id="integrated_user.two_factor.handler_factory" />
             <argument type="service" id="integrated_user.two_factor.target_provider" />
             <argument type="service" id="security.http_utils" />
-            <argument type="service" id="service_container" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\TwoFactorController">
             <argument type="service" id="integrated_user.user.manager" />
-            <argument type="service" id="service_container" />
             <argument type="service" id="translator" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\UserController">
             <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="integrated_user.provider.filter_query" />
+            <argument type="service" id="knp_paginator" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\GroupController">
             <argument type="service" id="integrated_user.group.manager"/>
+            <argument type="service" id="knp_paginator" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Controller\ScopeController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="knp_paginator" />
             <argument type="service" id="integrated_user.scope.manager" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
         </service>
 
     </services>

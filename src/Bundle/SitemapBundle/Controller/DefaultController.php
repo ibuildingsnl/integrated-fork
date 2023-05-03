@@ -11,55 +11,31 @@
 
 namespace Integrated\Bundle\SitemapBundle\Controller;
 
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class DefaultController extends AbstractController
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var ChannelContextInterface
-     */
-    private $context;
-
-    /**
-     * @var ContentTypeInformation
-     */
-    private $contentTypeInformation;
+    private DocumentManager $manager;
+    private ChannelContextInterface $context;
+    private ContentTypeInformation $contentTypeInformation;
 
     public function __construct(
-        ManagerRegistry $registry,
+        DocumentManager $manager,
         ChannelContextInterface $context,
-        ContainerInterface $container,
         ContentTypeInformation $contentTypeInformation
     ) {
-        $this->registry = $registry;
+        $this->manager = $manager;
         $this->context = $context;
-        $this->container = $container;
         $this->contentTypeInformation = $contentTypeInformation;
     }
 
-    /**
-     * @return array
-     *
-     * @Template
-     *
-     * @throws \Exception
-     */
-    public function index()
+    public function index(): Response
     {
         $channel = $this->context->getChannel();
 
@@ -69,7 +45,7 @@ class DefaultController extends AbstractController
 
         $now = new \DateTime();
 
-        $queryBuilder = $this->registry->getManagerForClass(Content::class)->createQueryBuilder(Content::class);
+        $queryBuilder = $this->manager->createQueryBuilder(Content::class);
         $count = $queryBuilder
             ->count()
             ->field('channels.$id')->equals($channel->getId())
@@ -79,25 +55,19 @@ class DefaultController extends AbstractController
             ->field('contentType')->in($this->contentTypeInformation->getPublishingAllowedContentTypes($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false))
-            ->getQuery();
+            ->getQuery()
+            ->execute();
 
         if (!$count) {
             throw new NotFoundHttpException();
         }
 
-        return [
+        return $this->render('@IntegratedSitemapBundle/Default/index.html.twig', [
             'count' => min(ceil($count / 50000), 50000),
-        ];
+        ]);
     }
 
-    /**
-     * @return array
-     *
-     * @Template
-     *
-     * @throws \Exception
-     */
-    public function list($page)
+    public function list(int $page): Response
     {
         $channel = $this->context->getChannel();
 
@@ -105,15 +75,13 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException('No channel found');
         }
 
-        $page = (int) $page;
-
         if ($page != min(max($page, 1), 50000)) {
             throw new NotFoundHttpException();
         }
 
         $now = new \DateTime();
 
-        $queryBuilder = $this->registry->getManagerForClass(Content::class)->createQueryBuilder(Content::class);
+        $queryBuilder = $this->manager->createQueryBuilder(Content::class);
 
         $documents = $queryBuilder
             ->select('contentType', 'slug', 'createdAt', 'class')
@@ -130,8 +98,8 @@ class DefaultController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        return [
+        return $this->render('@IntegratedSitemapBundle/Default/list.html.twig', [
             'documents' => $documents,
-        ];
+        ]);
     }
 }

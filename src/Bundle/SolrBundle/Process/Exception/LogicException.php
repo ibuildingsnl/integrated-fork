@@ -17,18 +17,18 @@ namespace Integrated\Bundle\SolrBundle\Process\Exception;
 class LogicException extends \Exception
 {
     /**
-     * @return static
+     * @return self
      */
     public static function invalidMethodCall()
     {
-        return new static('This method should not be called in this context');
+        return new self('This method should not be called in this context');
     }
 
     /**
-     * @return static
+     * @return self
      */
     public static function noProcessesGenerated()
     {
-        return new static('No processes could be generated with given input');
+        return new self('No processes could be generated with given input');
     }
 }

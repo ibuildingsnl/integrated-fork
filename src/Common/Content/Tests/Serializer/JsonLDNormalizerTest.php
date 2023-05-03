@@ -14,6 +14,7 @@ namespace Integrated\Common\Content\Tests\Serializer;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Serializer\JsonLDNormalizer;
 use Integrated\Common\Normalizer\NormalizerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormalizerInterface;
 
@@ -37,42 +38,36 @@ class JsonLDNormalizerTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf(SymfonyNormalizerInterface::class, $this->getInstance());
     }
 
-    /**
-     * @dataProvider createNormalize
-     */
-    public function testNormalize($object, array $options, array $result, $expected)
+    #[DataProvider('createNormalize')]
+    public function testNormalize(array $options, array $result, $expected)
     {
         $this->normalizer->expects($this->once())
             ->method('normalize')
-            ->with($this->identicalTo($object), $options)
+            ->with($this->identicalTo($object = $this->createMock(ContentInterface::class)), $options)
             ->willReturn($result);
 
         self::assertEquals($expected, $this->getInstance()->normalize($object, 'json-ld', $options));
     }
 
-    public function createNormalize()
+    public static function createNormalize()
     {
         return [
             [
-                $this->createMock(ContentInterface::class),
                 [],
                 ['array1'],
                 ['@context' => 'http://schema.org', 'array1'],
             ],
             [
-                $this->createMock(ContentInterface::class),
                 ['key' => 'value'],
                 ['array2'],
                 ['@context' => 'http://schema.org', 'array2'],
             ],
             [
-                $this->createMock(ContentInterface::class),
                 [],
                 ['array3', '@context' => 'http://example.org'],
                 ['@context' => 'http://example.org', 'array3'],
             ],
             [
-                $this->createMock(ContentInterface::class),
                 ['key' => 'value'],
                 [],
                 null,

@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\MenuBundle;
 
-use Integrated\Bundle\MenuBundle\DependencyInjection\IntegratedMenuExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -19,11 +18,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedMenuBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedMenuExtension();
-    }
 }

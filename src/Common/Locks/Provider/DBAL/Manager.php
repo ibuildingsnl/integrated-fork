@@ -238,7 +238,7 @@ class Manager implements ManagerInterface
 
             if (!empty($resources)) {
                 $resources = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $resources);
-                $resources = array_map([$builder->getConnection(), 'quote'], $resources);
+                $resources = array_map([$this->connection, 'quote'], $resources);
 
                 $where[] = $builder->expr()->and($builder->expr()->in('l.resource', $resources));
             }
@@ -248,7 +248,7 @@ class Manager implements ManagerInterface
 
             if (!empty($owners)) {
                 $owners = array_map(['Integrated\\Common\\Locks\\Provider\\DBAL\\Resource', 'serialize'], $owners);
-                $owners = array_map([$builder->getConnection(), 'quote'], $owners);
+                $owners = array_map([$this->connection, 'quote'], $owners);
 
                 $where[] = $builder->expr()->and($builder->expr()->in('l.resource_owner', $owners));
             }
@@ -300,7 +300,7 @@ class Manager implements ManagerInterface
                 ->delete($this->options['lock_table_name'])
                 ->where('expires IS NOT NULL AND expires < '.$builder->createPositionalParameter(time()));
 
-            $builder->execute();
+            $builder->executeStatement();
         } catch (\Exception $e) {
             // probably should raise a error
         }

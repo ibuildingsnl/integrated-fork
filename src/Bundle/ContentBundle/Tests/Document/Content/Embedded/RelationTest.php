@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Embedded;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -34,20 +33,16 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test constructor.
-     */
-    public function testConstructor()
-    {
-        $this->assertInstanceOf('\Doctrine\Common\Collections\Collection', $this->relation->getReferences());
-    }
-
-    /**
      * Test get- and setReferences functions.
      */
     public function testGetAndSetReferencesFunction()
     {
-        $references = new ArrayCollection(['ref1']);
-        $this->assertEquals($references, $this->relation->setReferences($references)->getReferences());
+        $references = [
+            $this->createMock('\Integrated\Common\Content\ContentInterface'),
+            $this->createMock('\Integrated\Common\Content\ContentInterface'),
+        ];
+
+        $this->assertSame($references, $this->relation->setReferences($references)->getReferences());
     }
 
     /**
@@ -56,16 +51,19 @@ class RelationTest extends \PHPUnit\Framework\TestCase
     public function testAddReferencesFunction()
     {
         // Create references and add them
-        $references = new ArrayCollection(
-            [
-                $this->createMock('\Integrated\Common\Content\ContentInterface'),
-            ]
-        );
+        $references = [
+            $this->createMock('\Integrated\Common\Content\ContentInterface'),
+            $this->createMock('\Integrated\Common\Content\ContentInterface'),
+        ];
 
         $this->relation->addReferences($references);
 
+        $references[] = $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
+
+        $this->relation->addReferences([$content]);
+
         // Asserts
-        $this->assertEquals($references, $this->relation->getReferences());
+        $this->assertSame($references, $this->relation->getReferences());
     }
 
     /**
@@ -76,9 +74,10 @@ class RelationTest extends \PHPUnit\Framework\TestCase
         /* @var $content \Integrated\Common\Content\ContentInterface | MockObject */
         $content = $this->createMock('\Integrated\Common\Content\ContentInterface');
 
+        $this->relation->addReference($content);
+
         // Asserts
-        $this->assertEquals($this->relation, $this->relation->addReference($content));
-        $this->assertEquals($content, $this->relation->getReferences()->first());
+        $this->assertSame([$content], $this->relation->getReferences());
     }
 
     /**

@@ -22,7 +22,7 @@ class WysiHtml5xType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextareaType::class;
     }
@@ -30,7 +30,7 @@ class WysiHtml5xType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_wysihtml5x';
     }

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Content\ContentInterface;
@@ -29,11 +29,11 @@ class ContentRepository extends DocumentRepository
      *
      * @param bool $filterPublished
      *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return Builder
      *
      * @throws \Exception
      */
-    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
+    public function getUsedBy(iterable $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
     {
         if ($excludeContent !== null) {
             $excludeContent = $excludeContent->getId();
@@ -50,11 +50,11 @@ class ContentRepository extends DocumentRepository
             }
 
             if ($contentItem instanceof DocumentInterface) {
-                if (!$excludeContent) {
-                    $excludeContent = $contentItem->type_id;
-                }
+                $contentIds[] = $id = ($contentItem->getFields()['type_id'] ?? null);
 
-                $contentIds[] = $contentItem->type_id;
+                if (!$excludeContent) {
+                    $excludeContent = $id;
+                }
             }
         }
 

@@ -25,6 +25,7 @@
         <service id="integrated_website.website_toolbar" class="Integrated\Bundle\WebsiteBundle\EventListener\WebsiteToolbarListener">
             <argument type="service" id="twig" />
             <argument type="service" id="integrated_website.service.editable_checker" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <tag name="kernel.event_subscriber" />
         </service>
 

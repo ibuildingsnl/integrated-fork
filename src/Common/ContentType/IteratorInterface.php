@@ -23,7 +23,7 @@ interface IteratorInterface extends BaseIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.current.php
      *
-     * @return contentTypeInterface
+     * @return ContentTypeInterface
      */
     #[\ReturnTypeWillChange]
     public function current(): mixed;

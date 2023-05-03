@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
+ *
+ * @Annotation
  */
 abstract class ManagerConstraint extends Constraint
 {
@@ -26,7 +28,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return ['manger'];
     }
@@ -34,7 +36,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOption()
+    public function getDefaultOption(): ?string
     {
         return 'manger';
     }
@@ -42,7 +44,7 @@ abstract class ManagerConstraint extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return Constraint::CLASS_CONSTRAINT;
     }

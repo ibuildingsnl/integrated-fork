@@ -66,10 +66,10 @@ class FormActionsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-                'buttons' => [],
-                'options' => [],
-                'mapped' => false,
-            ]);
+            'buttons' => [],
+            'options' => [],
+            'mapped' => false,
+        ]);
     }
 
     /**
@@ -78,15 +78,5 @@ class FormActionsType extends AbstractType
     public function getBlockPrefix()
     {
         return 'form_actions';
-    }
-
-    /**
-     * Backward compatibility for SF < 3.0.
-     *
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 }

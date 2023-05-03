@@ -16,23 +16,11 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::new</default>
     </route>
 
-    <route id="integrated_content_content_type_new_rest" path="/" methods="POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::new</default>
-    </route>
-
-    <route id="integrated_content_content_type_edit" path="/{id}" methods="GET">
+    <route id="integrated_content_content_type_edit" path="/{id}">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::edit</default>
     </route>
 
-    <route id="integrated_content_content_type_edit_rest" path="/{id}" methods="PUT">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::edit</default>
-    </route>
-
-    <route id="integrated_content_content_type_delete" path="/{id}" methods="DELETE">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::delete</default>
-    </route>
-
-    <route id="integrated_content_content_type_delete_rest" path="/{id}/delete">
+    <route id="integrated_content_content_type_delete" path="/{id}/delete">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\ContentTypeController::delete</default>
     </route>
 

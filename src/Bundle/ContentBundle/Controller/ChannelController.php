@@ -13,39 +13,23 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Form\Type as Form;
+use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Controller for CRUD actions Channel document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class ChannelController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    protected $searchContentReferenced;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    private DocumentManager $documentManager;
+    private SearchContentReferenced $searchContentReferenced;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         DocumentManager $documentManager,
@@ -57,12 +41,7 @@ class ChannelController extends AbstractController
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * Lists all the Channel documents.
-     *
-     * @return Response
-     */
-    public function index()
+    public function index(): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -75,12 +54,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Finds and displays a Channel document.
-     *
-     * @return Response
-     */
-    public function show(Channel $channel)
+    public function show(Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -91,32 +65,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Displays a form to create a new Channel document.
-     *
-     * @return Response
-     */
-    public function new()
-    {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $channel = new Channel();
-
-        $form = $this->createCreateForm($channel);
-
-        return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Creates a new Channel document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function create(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -139,35 +88,11 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Display a form to edit an existing ContentType document.
-     *
-     * @return Response
-     */
-    public function edit(Channel $channel)
-    {
-        if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createEditForm($channel);
-
-        return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
-            'channel' => $channel,
-        ]);
-    }
-
-    /**
-     * Edits an existing Channel document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function update(Request $request, Channel $channel)
+    public function edit(Request $request, Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -187,17 +112,12 @@ class ChannelController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/channel/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'channel' => $channel,
         ]);
     }
 
-    /**
-     * Deletes a Channel document.
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Channel $channel)
+    public function delete(Request $request, Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -205,10 +125,11 @@ class ChannelController extends AbstractController
 
         $referenced = $this->searchContentReferenced->getReferenced($channel);
 
+        /** @var Form $form */
         $form = $this->createDeleteForm($channel->getId(), \count($referenced) === 0);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('submit') && $form->get('submit')->isClicked()) {
+        if ($form->isSubmitted() && $form->isValid() && $form->getClickedButton()?->getName() === 'submit') {
             $this->documentManager->remove($channel);
             $this->documentManager->flush();
 
@@ -221,42 +142,15 @@ class ChannelController extends AbstractController
 
         return $this->render('@IntegratedContent/channel/delete.html.twig', [
             'channel' => $channel,
-            'form' => $form->createView(),
+            'form' => $form,
             'referenced' => $referenced,
         ]);
     }
 
-    /**
-     * Creates a form to create a ContentType document.
-     *
-     * @return FormInterface
-     */
-    protected function createCreateForm(Channel $channel)
+    private function createCreateForm(Channel $channel): FormInterface
     {
-        $form = $this->createForm(
-            Form\ChannelType::class,
-            $channel,
-            [
-                'action' => $this->generateUrl('integrated_content_channel_create'),
-                'method' => 'POST',
-            ]
-        );
-
-        $form->add('submit', SubmitType::class, ['label' => 'Save']);
-
-        return $form;
-    }
-
-    /**
-     * Creates a form to edit a ContentType document.
-     *
-     * @return FormInterface
-     */
-    protected function createEditForm(Channel $channel)
-    {
-        $form = $this->createForm(Form\ChannelType::class, $channel, [
-            'action' => $this->generateUrl('integrated_content_channel_update', ['id' => $channel->getId()]),
-            'method' => 'PUT',
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_new'),
         ]);
 
         $form->add('submit', SubmitType::class, ['label' => 'Save']);
@@ -264,18 +158,21 @@ class ChannelController extends AbstractController
         return $form;
     }
 
-    /**
-     * Creates a form to delete a Channel document by id.
-     *
-     * @param mixed $id The document id
-     *
-     * @return FormInterface
-     */
-    protected function createDeleteForm($id, bool $deleteAllowed)
+    private function createEditForm(Channel $channel): FormInterface
+    {
+        $form = $this->createForm(ChannelType::class, $channel, [
+            'action' => $this->generateUrl('integrated_content_channel_edit', ['id' => $channel->getId()]),
+        ]);
+
+        $form->add('submit', SubmitType::class, ['label' => 'Save']);
+
+        return $form;
+    }
+
+    private function createDeleteForm(string $id, bool $deleteAllowed): FormInterface
     {
         $form = $this->createFormBuilder()
-            ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]))
-            ->setMethod('DELETE');
+            ->setAction($this->generateUrl('integrated_content_channel_delete', ['id' => $id]));
 
         if ($deleteAllowed) {
             $form->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);

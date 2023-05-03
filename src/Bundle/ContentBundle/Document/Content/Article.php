@@ -183,21 +183,27 @@ class Article extends Content implements RankableInterface
     /**
      * Get the authors of the document.
      *
-     * @return Collection
+     * @return Embedded\Author[]
      */
     public function getAuthors()
     {
-        return $this->authors;
+        return $this->authors->toArray();
     }
 
     /**
      * Set the authors of the document.
      *
+     * @param Embedded\Author[] $authors
+     *
      * @return $this
      */
-    public function setAuthors(Collection $authors)
+    public function setAuthors(iterable $authors)
     {
-        $this->authors = $authors;
+        $this->authors = new ArrayCollection();
+
+        foreach ($authors as $author) {
+            $this->addAuthor($author);
+        }
 
         return $this;
     }

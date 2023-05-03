@@ -16,8 +16,8 @@ use Integrated\Bundle\UserBundle\Form\Type\ProfileFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,38 +25,29 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 class ProfileController extends AbstractController
 {
-    /**
-     * @var UserManagerInterface
-     */
-    protected $userManager;
+    private UserManagerInterface $userManager;
+    private PasswordHasherFactoryInterface $hasherFactory;
 
-    /**
-     * @var PasswordHasherFactoryInterface
-     */
-    protected $hasherFactory;
-
-    public function __construct(
-        UserManagerInterface $userManager,
-        PasswordHasherFactoryInterface $hasherFactory,
-        ContainerInterface $container
-    ) {
+    public function __construct(UserManagerInterface $userManager, PasswordHasherFactoryInterface $hasherFactory)
+    {
         $this->userManager = $userManager;
         $this->hasherFactory = $hasherFactory;
-        $this->container = $container;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $user = $this->getUser();
 
+        if (!$user instanceof UserInterface) {
+            throw new \LogicException(sprintf('$user is not and instance of %s', UserInterface::class));
+        }
+
+        /** @var Form $form */
         $form = $this->createProfileForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_content_content_index');
             }
 
@@ -73,23 +64,15 @@ class ProfileController extends AbstractController
 
         return $this->render('@IntegratedUser/profile/index.html.twig', [
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createProfileForm(UserInterface $user)
+    protected function createProfileForm(UserInterface $user): FormInterface
     {
-        $form = $this->createForm(
-            ProfileFormType::class,
-            $user,
-            [
-                'action' => $this->generateUrl('integrated_user_profile_index'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(ProfileFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_profile_index'),
+        ]);
 
         $form->add('actions', FormActionsType::class, [
             'buttons' => [

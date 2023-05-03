@@ -36,30 +36,26 @@ class UpdateAuthorRelationListener implements EventSubscriber
 
         foreach (array_merge($uow->getScheduledDocumentInsertions(), $uow->getScheduledDocumentUpdates()) as $document) {
             if ($document instanceof Article) {
-                /** @var $document Article */
                 $authors = [];
+
                 foreach ($document->getAuthors() as $author) {
                     if ($author->getPerson() !== false) {
                         $authors[] = $author->getPerson();
                     }
                 }
+
                 if ($relation = $document->getRelation('__authors')) {
-                    foreach ($relation->getReferences() as $reference) {
-                        if (($key = array_search($reference, $authors)) !== false) {
-                            unset($authors[$key]);
-                        } else {
-                            $relation->getReferences()->removeElement($reference);
-                        }
-                    }
-                } elseif (\count($authors) > 0) {
-                    $relation = new Relation();
-                    $relation->setRelationId('__authors');
-                    $relation->setRelationType('author');
-                    $document->addRelation($relation);
+                    $document->removeRelation($relation);
                 }
 
-                foreach ($authors as $author) {
-                    $document->getRelation('__authors')->addReference($author);
+                if (\count($authors) > 0) {
+                    $relation = new Relation();
+
+                    $relation->setRelationId('__authors');
+                    $relation->setRelationType('author');
+                    $relation->addReferences($authors);
+
+                    $document->addRelation($relation);
                 }
 
                 $class = $dm->getClassMetadata(\get_class($document));

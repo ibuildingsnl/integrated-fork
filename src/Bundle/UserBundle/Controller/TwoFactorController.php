@@ -16,32 +16,25 @@ use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TwoFactorController extends AbstractController
 {
-    /**
-     * @var UserManagerInterface
-     */
-    private $manager;
+    private UserManagerInterface $manager;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(UserManagerInterface $manager, ContainerInterface $container, TranslatorInterface $translator)
+    public function __construct(UserManagerInterface $manager, TranslatorInterface $translator)
     {
         $this->manager = $manager;
         $this->translator = $translator;
-        $this->setContainer($container);
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): Response
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -53,11 +46,12 @@ class TwoFactorController extends AbstractController
             return $this->redirectToRoute('integrated_user_user_index');
         }
 
+        /** @var Form $form */
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_user_user_index');
             }
 
@@ -75,27 +69,19 @@ class TwoFactorController extends AbstractController
 
         return $this->render('@IntegratedUser/two_factor/delete.html.twig', [
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    private function createDeleteForm(UserInterface $user)
+    private function createDeleteForm(UserInterface $user): FormInterface
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $user,
-            [
-                'action' => $this->generateUrl('integrated_user_user_delete_authenticator', ['id' => $user->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $user, [
+            'action' => $this->generateUrl('integrated_user_user_delete_authenticator', ['id' => $user->getId()]),
+        ]);
 
         $form->add('actions', FormActionsType::class, [
             'buttons' => [

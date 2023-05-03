@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Form\Type;
 
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -69,8 +70,8 @@ class ActionsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
-        return 'Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType';
+        return FormActionsType::class;
     }
 }

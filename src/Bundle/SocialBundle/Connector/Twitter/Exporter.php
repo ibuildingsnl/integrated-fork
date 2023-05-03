@@ -48,19 +48,19 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export(object $content, string $state, ChannelInterface $channel): ?ExporterResponse
     {
         if (!$content instanceof Article) {
-            return;
+            return null;
         }
 
         if ($state != self::STATE_ADD) {
-            return;
+            return null;
         }
 
         if ($content->hasConnector($this->config->getId())) {
             // already posted
-            return;
+            return null;
         }
 
         $response = null;
@@ -78,7 +78,7 @@ class Exporter implements ExporterInterface
             );
         } catch (\Exception $e) {
             // @todo probably should log this somewhere INTEGRATED-995
-            return;
+            return null;
         }
 
         if (isset($postResponse->id) && $postResponse->id) {

@@ -25,6 +25,6 @@ class IntegratedImageBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new ImageConverterCompilerPass());
+        $container->addCompilerPass(new ImageConverterCompilerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

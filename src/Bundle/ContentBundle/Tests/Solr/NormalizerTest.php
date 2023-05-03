@@ -12,24 +12,18 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Solr;
 
 use Integrated\Bundle\ContentBundle\Solr\Normalizer;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @author Michael Jongman <michael@e-active.nl>
- */
-class NormalizerTest extends \PHPUnit\Framework\TestCase
+class NormalizerTest extends TestCase
 {
-    /**
-     * @dataProvider normalizeProvider
-     */
+    #[DataProvider('normalizeProvider')]
     public function testNormalize($expected, $actual)
     {
         $this->assertEquals($expected, Normalizer::normalize($actual));
     }
 
-    /**
-     * @return array
-     */
-    public function normalizeProvider()
+    public static function normalizeProvider(): array
     {
         return [
             'strtolower' => [

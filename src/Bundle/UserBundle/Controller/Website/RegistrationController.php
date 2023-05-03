@@ -22,33 +22,15 @@ use Integrated\Bundle\UserBundle\Service\Mailer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegistrationController extends AbstractController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
-
-    /**
-     * @var Mailer
-     */
-    private $mailer;
-
-    /**
-     * @var KeyGenerator
-     */
-    private $keyGenerator;
-
-    /**
-     * @var RegisterHandler
-     */
-    private $handler;
-
-    /**
-     * @var ThemeManager
-     */
-    private $themeManager;
+    private UserManager $userManager;
+    private Mailer $mailer;
+    private KeyGenerator $keyGenerator;
+    private RegisterHandler $handler;
+    private ThemeManager $themeManager;
 
     public function __construct(UserManager $userManager, Mailer $mailer, KeyGenerator $keyGenerator, RegisterHandler $handler, ThemeManager $themeManager)
     {
@@ -59,7 +41,7 @@ class RegistrationController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    public function register(Request $request)
+    public function register(Request $request): Response
     {
         $user = new User();
         $user->setEnabled(false);
@@ -84,10 +66,10 @@ class RegistrationController extends AbstractController
             }
         }
 
-        return $this->render($this->themeManager->locateTemplate('registration/register.html.twig'), ['form' => $form->createView()]);
+        return $this->render($this->themeManager->locateTemplate('registration/register.html.twig'), ['form' => $form]);
     }
 
-    public function activate(Request $request, int $id, int $timestamp, string $key)
+    public function activate(Request $request, int $id, int $timestamp, string $key): Response
     {
         $valid = true;
         if (!$this->keyGenerator->isValidKey($id, $timestamp, $key)) {

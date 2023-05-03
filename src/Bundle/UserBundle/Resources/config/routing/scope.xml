@@ -12,23 +12,11 @@
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::new</default>
 	</route>
 
-	<route id="integrated_user_scope_new_rest" path="/" methods="POST">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::new</default>
-	</route>
-
-	<route id="integrated_user_scope_edit" path="/{id}"  methods="GET">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::edit</default>
-	</route>
-
-	<route id="integrated_user_scope_edit_rest" path="/{id}" methods="PUT">
+	<route id="integrated_user_scope_edit" path="/{id}">
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::edit</default>
 	</route>
 
 	<route id="integrated_user_scope_delete" path="/{id}/delete">
-		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::delete</default>
-	</route>
-
-	<route id="integrated_user_scope_delete_rest" path="/{id}" methods="DELETE">
 		<default key="_controller">Integrated\Bundle\UserBundle\Controller\ScopeController::delete</default>
 	</route>
 

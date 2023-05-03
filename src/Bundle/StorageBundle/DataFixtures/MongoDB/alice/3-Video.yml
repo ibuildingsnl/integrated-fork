@@ -1,6 +1,0 @@
-Integrated\Bundle\ContentBundle\Document\Content\Video:
-  video{1..5}:
-    file: <createVideo()>
-    contentType: video
-    title: <name()>
-    description: <paragraph(1)>

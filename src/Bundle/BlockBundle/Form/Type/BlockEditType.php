@@ -99,15 +99,15 @@ class BlockEditType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $options)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $options->setRequired(['type']);
+        $resolver->setRequired(['type']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return MetadataType::class;
     }

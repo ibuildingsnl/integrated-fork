@@ -24,7 +24,7 @@
 			<tag name="doctrine_mongodb.odm.event_subscriber" connection="default" />
 		</service>
 
-		<service id="integrated_solr.indexer.serializer" class="Symfony\Component\Serializer\Serializer" public="true">
+		<service id="integrated_solr.indexer.serializer" class="Symfony\Component\Serializer\Serializer" public="true" autoconfigure="false">
 			<argument type="collection">
 				<argument type="service" id="integrated_solr.indexer.serializer.normalizer.mongodb" /> <!-- normalizers should be taggable -->
 			</argument>

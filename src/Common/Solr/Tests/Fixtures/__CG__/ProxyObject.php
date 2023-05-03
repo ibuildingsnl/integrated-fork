@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Tests\Fixtures\__CG__;
 
-use Doctrine\Common\Collections\Collection;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
 
@@ -57,7 +56,7 @@ class ProxyObject implements ContentInterface
         throw new \Exception();
     }
 
-    public function setRelations(Collection $relations)
+    public function setRelations(iterable $relations)
     {
         throw new \Exception();
     }

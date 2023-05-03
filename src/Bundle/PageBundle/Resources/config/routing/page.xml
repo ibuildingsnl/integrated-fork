@@ -8,19 +8,19 @@
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::index</default>
     </route>
 
-    <route id="integrated_page_page_new" path="/new" methods="GET|POST">
+    <route id="integrated_page_page_new" path="/new">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::new</default>
     </route>
 
-    <route id="integrated_page_page_edit" path="/{id}/edit" methods="GET|PUT">
+    <route id="integrated_page_page_edit" path="/{id}/edit">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::edit</default>
     </route>
 
-    <route id="integrated_page_page_delete" path="/{id}/delete" methods="GET|DELETE">
+    <route id="integrated_page_page_delete" path="/{id}/delete">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::delete</default>
     </route>
 
-    <route id="integrated_page_page_copy" path="/copy" methods="GET|POST">
+    <route id="integrated_page_page_copy" path="/copy">
         <default key="_controller">Integrated\Bundle\PageBundle\Controller\PageController::copy</default>
     </route>
 </routes>

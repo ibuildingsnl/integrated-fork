@@ -120,9 +120,6 @@ class SearchContentReferenced
      * @param mixed $document
      *
      * @return array
-     *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Exception
      */
     public function getDeletedInfo($document, DocumentManager $documentManager)
     {

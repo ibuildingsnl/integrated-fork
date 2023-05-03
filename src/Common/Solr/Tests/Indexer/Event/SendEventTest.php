@@ -18,7 +18,7 @@ use Solarium\QueryType\Update\Query\Query;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class SendEventTest extends AbstractEventTest
+class SendEventTest extends IndexerEventTest
 {
     /**
      * @var Query|MockObject

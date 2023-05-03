@@ -37,7 +37,7 @@ class IpListFirewallListener implements EventSubscriberInterface
         $this->matcher = $matcher;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onRequest', 16],

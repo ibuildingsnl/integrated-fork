@@ -78,7 +78,7 @@ class BootstrapCollectionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
@@ -86,18 +86,8 @@ class BootstrapCollectionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'bootstrap_collection';
-    }
-
-    /**
-     * Backward compatibility for SF < 3.0.
-     *
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 }

@@ -15,13 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SessionController extends AbstractController
 {
-    /**
-     * @return RedirectResponse
-     */
-    public function enterSession(string $sessionId, Request $request)
+    public function enterSession(string $sessionId, Request $request): Response
     {
         $page = $request->get('path', '/');
 

@@ -58,10 +58,6 @@ class FormBlock extends Block
 
     /**
      * @var array
-     *
-     * @Assert\All({
-     *     @Assert\Email
-     * })
      */
     #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType', options: [
         'label' => 'Sent form to e-mail address(es)',
@@ -70,6 +66,8 @@ class FormBlock extends Block
         'allow_delete' => true,
         'required' => false,
     ])]
+    #[Assert\All([new Assert\Email()])]
+    #[Assert\Email]
     protected $emailAddresses = [];
 
     /**

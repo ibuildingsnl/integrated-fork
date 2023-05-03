@@ -12,47 +12,24 @@
 namespace Integrated\Bundle\UserBundle\Controller\TwoFactor;
 
 use Integrated\Bundle\UserBundle\Handler\TwoFactor\HandlerFactoryInterface;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Bundle\UserBundle\Security\TwoFactor\Http\ContextResolverInterface;
 use Integrated\Bundle\UserBundle\Security\TwoFactor\Http\TargetProvider;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\HttpUtils;
 
 class GoogleController extends AbstractController
 {
-    /**
-     * @var ContextResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var UserManagerInterface
-     */
-    private $manager;
-
-    /**
-     * @var GoogleAuthenticatorInterface
-     */
-    private $authenticator;
-
-    /**
-     * @var HandlerFactoryInterface
-     */
-    private $factory;
-
-    /**
-     * @var TargetProvider
-     */
-    private $provider;
-
-    /**
-     * @var HttpUtils
-     */
-    private $utils;
+    private ContextResolverInterface $resolver;
+    private UserManagerInterface $manager;
+    private GoogleAuthenticatorInterface $authenticator;
+    private HandlerFactoryInterface $factory;
+    private TargetProvider $provider;
+    private HttpUtils $utils;
 
     public function __construct(
         ContextResolverInterface $resolver,
@@ -61,7 +38,6 @@ class GoogleController extends AbstractController
         HandlerFactoryInterface $factory,
         TargetProvider $provider,
         HttpUtils $utils,
-        ContainerInterface $container
     ) {
         $this->resolver = $resolver;
         $this->manager = $manager;
@@ -69,11 +45,9 @@ class GoogleController extends AbstractController
         $this->factory = $factory;
         $this->provider = $provider;
         $this->utils = $utils;
-
-        $this->setContainer($container);
     }
 
-    public function form(Request $request)
+    public function form(Request $request): Response
     {
         $context = $this->resolver->resolve($request);
 
@@ -98,7 +72,7 @@ class GoogleController extends AbstractController
         return new Response($this->factory->create($context)->render());
     }
 
-    public function check(Request $request)
+    public function check(Request $request): Response
     {
         $context = $this->resolver->resolve($request);
 
@@ -108,7 +82,7 @@ class GoogleController extends AbstractController
 
         $user = $this->getUser();
 
-        if (!$user || $user->isGoogleAuthenticatorEnabled()) {
+        if (!$user instanceof UserInterface || $user->isGoogleAuthenticatorEnabled()) {
             return $this->utils->createRedirectResponse($request, $this->provider->getTargetPath($context));
         }
 

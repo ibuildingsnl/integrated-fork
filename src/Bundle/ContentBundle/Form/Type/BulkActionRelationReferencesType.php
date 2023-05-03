@@ -48,10 +48,7 @@ class BulkActionRelationReferencesType extends AbstractType
         ]);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
@@ -59,7 +56,7 @@ class BulkActionRelationReferencesType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_content_bulk_action_relation_references';
     }

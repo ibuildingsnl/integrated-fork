@@ -14,7 +14,6 @@ namespace Integrated\Bundle\SolrBundle;
 use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterConfigFileProviderPass;
 use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterTaskHandlerPass;
 use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterTypePass;
-use Integrated\Bundle\SolrBundle\DependencyInjection\IntegratedSolrExtension;
 use Integrated\Common\Solr\Search\DependencyInjection\RegisterQueryTypePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,22 +28,14 @@ class IntegratedSolrBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new RegisterConfigFileProviderPass());
-        $container->addCompilerPass(new RegisterTypePass());
-        $container->addCompilerPass(new RegisterTaskHandlerPass());
+        $container->addCompilerPass(new RegisterConfigFileProviderPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new RegisterTypePass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
+        $container->addCompilerPass(new RegisterTaskHandlerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
 
         $container->addCompilerPass(new RegisterQueryTypePass(
             'integrated_solr.search.type.dependency_injection_provider',
             'solr_query.type',
             'solr_query.type_extension'
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new IntegratedSolrExtension();
+        ), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
     }
 }

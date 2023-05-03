@@ -65,10 +65,7 @@ class CompanyJobType extends BaseType
         $resolver->setDefault('data_class', Job::class);
     }
 
-    /**
-     * @return string
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_company_job';
     }

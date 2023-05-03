@@ -8,38 +8,26 @@
 
         <defaults autowire="true" autoconfigure="true" />
 
-        <service id="Integrated\Bundle\WebsiteBundle\Controller\ErrorController" public="true">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\ErrorController">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.page" class="Integrated\Bundle\WebsiteBundle\Controller\PageController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\PageController">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.grid" class="Integrated\Bundle\WebsiteBundle\Controller\GridController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.grid.factory" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\MenuController">
@@ -50,121 +38,83 @@
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.menu" class="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\SearchSelectionController">
             <argument type="service" id="integrated_content.provider.solarium" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
         <service id="Integrated\Bundle\WebsiteBundle\Controller\SessionController">
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.article" class="Integrated\Bundle\WebsiteBundle\Controller\Content\ArticleController">
+        <!-- content controllers -->
+
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\ArticleController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Article" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.news" class="Integrated\Bundle\WebsiteBundle\Controller\Content\NewsController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\NewsController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\News" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.company" class="Integrated\Bundle\WebsiteBundle\Controller\Content\CompanyController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\CompanyController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Company" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.event" class="Integrated\Bundle\WebsiteBundle\Controller\Content\EventController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\EventController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Event" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.job_posting" class="Integrated\Bundle\WebsiteBundle\Controller\Content\JobPostingController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\JobPostingController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\JobPosting" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.person" class="Integrated\Bundle\WebsiteBundle\Controller\Content\PersonController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\PersonController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Relation\Person" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
-        <service id="integrated_website.controller.content.taxonomy" class="Integrated\Bundle\WebsiteBundle\Controller\Content\TaxonomyController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\Content\TaxonomyController">
             <argument type="service" id="integrated_website.service.content_service" />
             <argument type="service" id="integrated_theme.templating.theme_manager" />
 
             <tag name="integrated_page.contenttype_controller" class="Integrated\Bundle\ContentBundle\Document\Content\Taxonomy" />
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
-
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
         </service>
 
     </services>

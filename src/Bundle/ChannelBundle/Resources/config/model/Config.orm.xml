@@ -12,9 +12,8 @@
         <field name="name" type="string"  />
 
         <field name="adapter" type="string" />
-        <field name="options" type="object" nullable="true" />
-
-        <field name="channels" type="json_array" />
+        <field name="options" type="json" />
+        <field name="channels" type="json" />
 
         <field name="publicationStartDate" column="publication_start_date" type="datetime" />
         <field name="created" type="datetime" />

@@ -11,17 +11,20 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Location;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ArticleTest extends ContentTest
+class ArticleTest extends TestCase
 {
+    use ContentTestTrait;
+
     /**
      * @var Article
      */
@@ -58,7 +61,7 @@ class ArticleTest extends ContentTest
      */
     public function testGetAndSetAuthorsFunction()
     {
-        $authors = new ArrayCollection(['key' => 'value']);
+        $authors = [new Author(), new Author()];
         $this->assertSame($authors, $this->article->setAuthors($authors)->getAuthors());
     }
 

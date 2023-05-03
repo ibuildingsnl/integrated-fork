@@ -63,7 +63,7 @@ class ChannelVoter implements VoterInterface
     /**
      * {@inheritdoc}
      */
-    public function vote(TokenInterface $token, $channel, array $attributes)
+    public function vote(TokenInterface $token, $channel, array $attributes): int
     {
         if (!$channel instanceof ChannelInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

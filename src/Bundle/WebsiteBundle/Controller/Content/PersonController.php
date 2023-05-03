@@ -13,24 +13,15 @@ namespace Integrated\Bundle\WebsiteBundle\Controller\Content;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
-use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Error\Error;
 
 class PersonController extends AbstractController
 {
-    /**
-     * @var ContentService
-     */
-    private $contentService;
-
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ContentService $contentService;
+    private ThemeManager $themeManager;
 
     public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
@@ -38,22 +29,13 @@ class PersonController extends AbstractController
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * @return Response
-     *
-     * @throws CircularFallbackException
-     * @throws Error
-     */
-    public function showAction(ContentTypePage $page, Person $person)
+    public function show(ContentTypePage $page, Person $person): Response
     {
         $this->contentService->prepare($person);
 
-        return $this->render(
-            $this->themeManager->locateTemplate('content/person/show/'.$page->getLayout()),
-            [
-                'person' => $person,
-                'page' => $page,
-            ]
-        );
+        return $this->render($this->themeManager->locateTemplate('content/person/show/'.$page->getLayout()), [
+            'person' => $person,
+            'page' => $page,
+        ]);
     }
 }

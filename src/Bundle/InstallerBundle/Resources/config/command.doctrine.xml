@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <!-- all the doctrine migrations command but hidden with a different name -->
+
+        <service id="integrated_installer.command.diff_command" class="Doctrine\Migrations\Tools\Console\Command\DiffCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:diff</argument>
+
+            <tag name="console.command" command="|integrated:install:database:diff" />
+        </service>
+
+        <service id="integrated_installer.command.sync_metadata_command" class="Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:sync-metadata-storage</argument>
+
+            <tag name="console.command" command="|integrated:install:database:sync-metadata-storage" />
+        </service>
+
+        <service id="integrated_installer.command.versions_command" class="Doctrine\Migrations\Tools\Console\Command\ListCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:versions</argument>
+
+            <tag name="console.command" command="|integrated:install:database:list" />
+        </service>
+
+        <service id="integrated_installer.command.current_command" class="Doctrine\Migrations\Tools\Console\Command\CurrentCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:current</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:current"/>
+        </service>
+
+        <service id="integrated_installer.command.dump_schema_command" class="Doctrine\Migrations\Tools\Console\Command\DumpSchemaCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:dump-schema</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:dump-schema"/>
+        </service>
+
+        <service id="integrated_installer.command.execute_command" class="Doctrine\Migrations\Tools\Console\Command\ExecuteCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:execute</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:execute"/>
+        </service>
+
+        <service id="integrated_installer.command.generate_command" class="Doctrine\Migrations\Tools\Console\Command\GenerateCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:generate</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:generate"/>
+        </service>
+
+        <service id="integrated_installer.command.latest_command" class="Doctrine\Migrations\Tools\Console\Command\LatestCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:latest</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:latest"/>
+        </service>
+
+        <service id="integrated_installer.command.migrate_command" class="Doctrine\Migrations\Tools\Console\Command\MigrateCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:migrate</argument>
+
+            <tag name="console.command"  command="|integrated:install:database:migrate" />
+        </service>
+
+        <service id="integrated_installer.command.rollup_command" class="Doctrine\Migrations\Tools\Console\Command\RollupCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:rollup</argument>
+
+            <tag name="console.command" command="|integrated:install:database:rollup" />
+        </service>
+
+        <service id="integrated_installer.command.status_command" class="Doctrine\Migrations\Tools\Console\Command\StatusCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:status</argument>
+
+            <tag name="console.command" command="|integrated:install:database:status" />
+        </service>
+
+        <service id="integrated_installer.command.up_to_date_command" class="Doctrine\Migrations\Tools\Console\Command\UpToDateCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:up-to-date</argument>
+
+            <tag name="console.command" command="|integrated:install:database:up-to-date" />
+        </service>
+
+        <service id="integrated_installer.command.version_command" class="Doctrine\Migrations\Tools\Console\Command\VersionCommand">
+            <argument type="service" id="integrated_installer.doctrine.migrations.dependency_factory"/>
+            <argument>integrated:install:database:version</argument>
+
+            <tag name="console.command" command="|integrated:install:database:version" />
+        </service>
+
+    </services>
+
+</container>

@@ -19,13 +19,12 @@ use Integrated\Common\Solr\Search\Type\AbstractTypeExtension;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class WorkflowExtension extends AbstractTypeExtension
 {
-    private Security $security;
+    private \Symfony\Bundle\SecurityBundle\Security $security;
 
-    public function __construct(Security $security)
+    public function __construct(\Symfony\Bundle\SecurityBundle\Security $security)
     {
         $this->security = $security;
     }

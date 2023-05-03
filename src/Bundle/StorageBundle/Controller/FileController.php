@@ -21,25 +21,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Johnny Borg <johnny@e-active.nl>
- */
 class FileController
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadata;
-
-    /**
-     * @var WebFormatConverter
-     */
-    private $webFormatConverter;
-
-    /**
-     * @var ImageHandling
-     */
-    private $imageHandling;
+    private MetadataFactoryInterface $metadata;
+    private WebFormatConverter $webFormatConverter;
+    private ImageHandling $imageHandling;
 
     public function __construct(MetadataFactoryInterface $metadata, WebFormatConverter $webFormatConverter, ImageHandling $imageHandling)
     {
@@ -48,10 +34,7 @@ class FileController
         $this->imageHandling = $imageHandling;
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    public function file(Content $document, int $width = null, int $height = null)
+    public function file(Content $document, int $width = null, int $height = null): Response
     {
         // Read properties in the document containing a storage object
         foreach ($this->metadata->getMetadata(\get_class($document))->getProperties() as $property) {

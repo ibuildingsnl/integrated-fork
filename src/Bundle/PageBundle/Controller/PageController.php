@@ -12,11 +12,8 @@
 namespace Integrated\Bundle\PageBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\MappingException;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -25,48 +22,35 @@ use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
+use Knp\Component\Pager\PaginatorInterface;
 use MongoDB\BSON\Regex;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class PageController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
+    private DocumentManager $documentManager;
+    private PaginatorInterface $paginator;
+    private PageCopyService $pageCopyService;
+    private RouteCache $routeCache;
 
-    /**
-     * @var PageCopyService
-     */
-    private $pageCopyService;
-
-    /**
-     * @var RouteCache
-     */
-    private $routeCache;
-
-    /**
-     * PageController constructor.
-     */
-    public function __construct(DocumentManager $documentManager, PageCopyService $pageCopyService, RouteCache $routeCache)
-    {
+    public function __construct(
+        DocumentManager $documentManager,
+        PaginatorInterface $paginator,
+        PageCopyService $pageCopyService,
+        RouteCache $routeCache
+    ) {
         $this->documentManager = $documentManager;
+        $this->paginator = $paginator;
         $this->pageCopyService = $pageCopyService;
         $this->routeCache = $routeCache;
     }
 
-    /**
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -110,7 +94,7 @@ class PageController extends AbstractController
             $request->getSession()->set('page_filterform_data', $filterForm->getData());
         }
 
-        $pagination = $this->getPaginator()->paginate(
+        $pagination = $this->paginator->paginate(
             $builder,
             $request->query->get('page', 1),
             25
@@ -118,17 +102,14 @@ class PageController extends AbstractController
 
         $response = $this->render('@IntegratedPage/page/index.html.twig', [
             'pages' => $pagination,
-            'filterForm' => $filterForm->createView(),
+            'filterForm' => $filterForm,
             'lastPage' => $this->getLastEditPage($request->getSession()),
         ]);
 
         return $response;
     }
 
-    /**
-     * @return Response|RedirectResponse
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -153,14 +134,11 @@ class PageController extends AbstractController
         }
 
         return $this->render('@IntegratedPage/page/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response|RedirectResponse
-     */
-    public function edit(Request $request, Page $page)
+    public function edit(Request $request, Page $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -183,14 +161,11 @@ class PageController extends AbstractController
 
         return $this->render('@IntegratedPage/page/edit.html.twig', [
             'page' => $page,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response|RedirectResponse
-     */
-    public function delete(Request $request, Page $page)
+    public function delete(Request $request, Page $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -216,17 +191,11 @@ class PageController extends AbstractController
 
         return $this->render('@IntegratedPage/page/delete.html.twig', [
             'page' => $page,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return Response
-     *
-     * @throws MappingException
-     * @throws MongoDBException
-     */
-    public function copy(Request $request)
+    public function copy(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -247,7 +216,6 @@ class PageController extends AbstractController
                 'sourceChannel' => $sourceChannel,
                 'targetChannel' => $targetChannel,
                 'action' => $this->generateUrl('integrated_page_page_copy'),
-                'method' => 'POST',
             ]
         );
 
@@ -266,23 +234,15 @@ class PageController extends AbstractController
         }
 
         return $this->render('@IntegratedPage/page/copy.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createCreateForm(Page $page)
+    private function createCreateForm(Page $page): FormInterface
     {
-        $form = $this->createForm(
-            PageType::class,
-            $page,
-            [
-                'action' => $this->generateUrl('integrated_page_page_new'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(PageType::class, $page, [
+            'action' => $this->generateUrl('integrated_page_page_new'),
+        ]);
 
         $form->add('actions', SaveCancelType::class, [
             'cancel_route' => 'integrated_page_page_index',
@@ -293,22 +253,11 @@ class PageController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(Page $page)
+    private function createEditForm(Page $page): FormInterface
     {
-        $form = $this->createForm(
-            PageType::class,
-            $page,
-            [
-                'action' => $this->generateUrl(
-                    'integrated_page_page_edit',
-                    ['id' => $page->getId()]
-                ),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(PageType::class, $page, [
+            'action' => $this->generateUrl('integrated_page_page_edit', ['id' => $page->getId()]),
+        ]);
 
         $form->add('actions', SaveCancelType::class, [
             'cancel_route' => 'integrated_page_page_index',
@@ -317,26 +266,17 @@ class PageController extends AbstractController
         return $form;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return FormInterface
-     */
-    protected function createDeleteForm($id)
+    private function createDeleteForm(string $id): FormInterface
     {
         $builder = $this->createFormBuilder();
 
         $builder->setAction($this->generateUrl('integrated_page_page_delete', ['id' => $id]));
-        $builder->setMethod('DELETE');
         $builder->add('submit', SubmitType::class, ['label' => 'Delete', 'attr' => ['class' => 'btn-danger']]);
 
         return $builder->getForm();
     }
 
-    /**
-     * @throws MongoDBException
-     */
-    protected function displayPathErrors(Builder $builder)
+    private function displayPathErrors(Builder $builder): void
     {
         $paths = [];
         foreach ($builder->getQuery()->execute() as $item) {
@@ -355,18 +295,17 @@ class PageController extends AbstractController
         }
     }
 
-    private function setLastEditPage(SessionInterface $session, Page $page)
+    private function setLastEditPage(SessionInterface $session, Page $page): void
     {
         $session->set('page_lastedit_id', $page->getId());
     }
 
-    /**
-     * @return Page|null
-     */
-    private function getLastEditPage(SessionInterface $session)
+    private function getLastEditPage(SessionInterface $session): ?Page
     {
         if ($pageId = $session->get('page_lastedit_id')) {
             return $this->documentManager->getRepository(Page::class)->find($pageId);
         }
+
+        return null;
     }
 }

@@ -17,6 +17,7 @@ use Integrated\Common\Solr\Task\Event\ErrorEvent;
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
 use Integrated\Common\Solr\Task\Registry;
 use Integrated\Common\Solr\Task\Worker;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -44,7 +45,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     {
         $this->registry = $this->getMockBuilder(Registry::class)->disableOriginalConstructor()->getMock();
         $this->queue = $this->createMock(QueueInterface::class);
-        $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->disableArgumentCloning()->getMock();
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testOptions()
@@ -164,7 +165,6 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
                 self::assertSame($instance, $event->getWorker());
 
                 if ($event instanceof ErrorEvent) {
-                    print_r('test');
                     self::assertSame($message, $event->getMessage());
                     self::assertSame($exception, $event->getException());
                 }
@@ -181,9 +181,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $instance->execute();
     }
 
-    /**
-     * @dataProvider executeTasksSizeProvider
-     */
+    #[DataProvider('executeTasksSizeProvider')]
     public function testExecuteTasksSize($count)
     {
         $instance = $this->getInstance();
@@ -202,7 +200,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $instance->execute();
     }
 
-    public function executeTasksSizeProvider()
+    public static function executeTasksSizeProvider()
     {
         return [
             'zero' => [0],

@@ -124,7 +124,7 @@ class RoleManager implements RoleManagerInterface
      */
     public function clear()
     {
-        $this->om->clear($this->repository->getClassName());
+        $this->om->clear();
     }
 
     /**

@@ -21,24 +21,33 @@ trait PermissionTrait
      */
     protected $permissions;
 
-    /**
-     * @return ArrayCollection
-     */
-    public function getPermissions()
+    private function initPermissions(): void
     {
         if (!$this->permissions instanceof Collection) {
             $this->permissions = new ArrayCollection();
         }
+    }
 
-        return $this->permissions;
+    /**
+     * @return Permission[]
+     */
+    public function getPermissions()
+    {
+        $this->initPermissions();
+
+        return $this->permissions->toArray();
     }
 
     /**
      * @return $this
      */
-    public function setPermission(Collection $permissions)
+    public function setPermission(iterable $permissions)
     {
-        $this->permissions = $permissions;
+        $this->permissions = new ArrayCollection();
+
+        foreach ($permissions as $permission) {
+            $this->addPermission($permission);
+        }
 
         return $this;
     }
@@ -48,11 +57,12 @@ trait PermissionTrait
      */
     public function addPermission(Permission $permission)
     {
-        /** @var Permission $exist */
+        $this->initPermissions();
+
         if ($exist = $this->getPermission($permission->getGroup())) {
             $exist->setMask($permission->getMask());
         } else {
-            $this->getPermissions()->add($permission);
+            $this->permissions->add($permission);
         }
 
         return $this;
@@ -63,7 +73,8 @@ trait PermissionTrait
      */
     public function removePermission(Permission $permission)
     {
-        $this->getPermissions()->removeElement($permission);
+        $this->initPermissions();
+        $this->permissions->removeElement($permission);
 
         return $this;
     }
@@ -75,7 +86,9 @@ trait PermissionTrait
      */
     public function getPermission($groupId)
     {
-        return $this->getPermissions()->filter(function ($permission) use ($groupId) {
+        $this->initPermissions();
+
+        return $this->permissions->filter(function ($permission) use ($groupId) {
             if ($permission instanceof Permission) {
                 if ($permission->getGroup() == $groupId) {
                     return true;

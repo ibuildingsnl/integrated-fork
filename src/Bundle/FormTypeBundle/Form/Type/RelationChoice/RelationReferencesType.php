@@ -114,7 +114,7 @@ class RelationReferencesType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'integrated_relation_references';
     }

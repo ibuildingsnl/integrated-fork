@@ -24,7 +24,7 @@ use Twig\Environment;
 class BlockHandler implements BlockHandlerInterface
 {
     /**
-     * @var \Twig_Environment
+     * @var \Twig\Environment
      */
     private $twig;
 

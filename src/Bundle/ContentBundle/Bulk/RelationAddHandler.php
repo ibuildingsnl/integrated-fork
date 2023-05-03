@@ -72,8 +72,8 @@ class RelationAddHandler implements HandlerInterface
             $content->addRelation($embedded);
         }
 
-        foreach ($this->references as $reference) {
-            $embedded->addReference($reference);
+        if ($embedded instanceof Relation) {
+            $embedded->addReferences($this->references);
         }
     }
 }

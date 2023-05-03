@@ -55,6 +55,7 @@ class ContentTypePage extends AbstractPage
         $this->setContentType($contentType);
         $this->setChannel($channel);
         $this->setLayout($layout);
+
         if ($path) {
             $this->setPath($path);
         } else {

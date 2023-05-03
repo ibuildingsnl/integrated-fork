@@ -237,11 +237,11 @@ class State
     }
 
     /**
-     * @param log[] $logs
+     * @param Log[] $logs
      *
      * @return $this
      */
-    public function setLogs(Collection $logs)
+    public function setLogs(iterable $logs)
     {
         foreach ($this->logs as $log) {
             $this->removeLog($log);

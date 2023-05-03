@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <routes xmlns="http://symfony.com/schema/routing"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="integrated_website_menu_render" path="/render" methods="POST">
         <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\MenuController::renderMenu</default>
@@ -13,4 +13,5 @@
         <default key="_controller">Integrated\Bundle\WebsiteBundle\Controller\MenuController::save</default>
         <default key="_format">json</default>
     </route>
+
 </routes>

@@ -27,15 +27,11 @@ interface ChannelManagerInterface
 
     /**
      * Change or add the channel to the manager.
-     *
-     * @param ChannelInterface $channel
      */
     public function persist(ContentChannelInterface $channel);
 
     /**
      * Remove the channel from the manager.
-     *
-     * @param ChannelInterface $channel
      */
     public function remove(ContentChannelInterface $channel);
 

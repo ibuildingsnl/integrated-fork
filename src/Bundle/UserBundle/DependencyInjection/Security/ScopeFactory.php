@@ -23,7 +23,7 @@ class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFac
     /**
      * {@inheritdoc}
      */
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId)
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string|array
     {
         return [];
     }
@@ -56,7 +56,7 @@ class ScopeFactory implements AuthenticatorFactoryInterface, FirewallListenerFac
     /**
      * {@inheritdoc}
      */
-    public function getKey()
+    public function getKey(): string
     {
         return 'scope';
     }

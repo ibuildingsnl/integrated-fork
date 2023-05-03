@@ -9,9 +9,8 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_user.extension" class="Integrated\Bundle\UserBundle\Extension\UserExtension">
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
+            <argument type="service" id="integrated_user.user.manager" />
+
             <tag name="integrated_content.extension"/>
         </service>
 

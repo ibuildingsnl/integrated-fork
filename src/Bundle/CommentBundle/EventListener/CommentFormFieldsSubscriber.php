@@ -74,10 +74,7 @@ class CommentFormFieldsSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::BUILD_FIELD => 'onBuildField',

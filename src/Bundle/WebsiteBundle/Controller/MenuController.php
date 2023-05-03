@@ -20,30 +20,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class MenuController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var IntegratedMenuProvider
-     */
-    private $menuProvider;
-
-    /**
-     * @var DatabaseMenuFactory
-     */
-    private $menuFactory;
-
-    /**
-     * @var ChannelContextInterface
-     */
-    private $channelContext;
+    private DocumentManager $documentManager;
+    private IntegratedMenuProvider $menuProvider;
+    private DatabaseMenuFactory $menuFactory;
+    private ChannelContextInterface $channelContext;
 
     public function __construct(
         DocumentManager $documentManager,
@@ -57,10 +39,7 @@ class MenuController extends AbstractController
         $this->channelContext = $channelContext;
     }
 
-    /**
-     * @return Response
-     */
-    public function renderMenu(Request $request)
+    public function renderMenu(Request $request): Response
     {
         $data = (array) json_decode($request->getContent(), true);
         $menu = null;
@@ -75,10 +54,7 @@ class MenuController extends AbstractController
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function save(Request $request)
+    public function save(Request $request): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

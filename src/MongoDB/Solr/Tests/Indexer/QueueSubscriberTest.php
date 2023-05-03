@@ -11,10 +11,14 @@
 
 namespace Integrated\MongoDB\Solr\Tests\Indexer;
 
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Queue\QueueInterface;
+use Integrated\Common\Solr\Indexer\JobInterface;
 use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -41,24 +45,22 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->queue = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
-        $this->serializer = $this->createMock('Symfony\\Component\\Serializer\\SerializerInterface');
+        $this->queue = $this->createMock(QueueInterface::class);
+        $this->serializer = $this->createMock(SerializerInterface::class);
 
         $this->subscriber = new QueueSubscriber($this->queue, $this->serializer);
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Doctrine\\Common\\EventSubscriber', $this->subscriber);
-        $this->assertInstanceOf('Integrated\\Common\\Queue\\QueueAwareInterface', $this->subscriber);
-        $this->assertInstanceOf('Symfony\\Component\\Serializer\\SerializerAwareInterface', $this->subscriber);
+        $this->assertInstanceOf(EventSubscriber::class, $this->subscriber);
     }
 
     public function testSetAndGetQueue()
     {
         $this->assertSame($this->queue, $this->subscriber->getQueue());
 
-        $mock = $this->createMock('Integrated\\Common\\Queue\\QueueInterface');
+        $mock = $this->createMock(QueueInterface::class);
         $this->subscriber->setQueue($mock);
 
         $this->assertSame($mock, $this->subscriber->getQueue());
@@ -68,7 +70,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame($this->serializer, $this->subscriber->getSerializer());
 
-        $mock = $this->createMock('Symfony\\Component\\Serializer\\SerializerInterface');
+        $mock = $this->createMock(SerializerInterface::class);
         $this->subscriber->setSerializer($mock);
 
         $this->assertSame($mock, $this->subscriber->getSerializer());
@@ -114,7 +116,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
             ->willReturn('this-is-the-data');
 
         $callback = function ($value) use ($document) {
-            return $value instanceof \Integrated\Common\Solr\Indexer\JobInterface
+            return $value instanceof JobInterface
                 && strtolower($value->getAction()) === 'add'
                 && $value->getOption('document.id') === 'this-is-the-type-this-is-the-id'
                 && $value->getOption('document.data') === 'this-is-the-data'
@@ -141,7 +143,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
             ->willReturn('this-is-the-data');
 
         $callback = function ($value) use ($document) {
-            return $value instanceof \Integrated\Common\Solr\Indexer\JobInterface
+            return $value instanceof JobInterface
                 && strtolower($value->getAction()) === 'add'
                 && $value->getOption('document.id') === 'this-is-the-type-this-is-the-id'
                 && $value->getOption('document.data') === 'this-is-the-data'
@@ -161,7 +163,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
         $event = $this->getEvent($this->getDocument('this-is-the-id', 'this-is-the-type'));
 
         $callback = function ($value) {
-            return $value instanceof \Integrated\Common\Solr\Indexer\JobInterface
+            return $value instanceof JobInterface
                 && strtolower($value->getAction()) === 'delete'
                 && $value->getOption('id') === 'this-is-the-type-this-is-the-id';
         };
@@ -193,7 +195,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected function getDocument($id, $type)
     {
-        $mock = $this->createMock('Integrated\\Common\\Content\\ContentInterface');
+        $mock = $this->createMock(ContentInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);
@@ -207,12 +209,12 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
 
     protected function getManager($content)
     {
-        $mockMeta = $this->createMock('Doctrine\\ODM\\MongoDB\\Mapping\\ClassMetadata');
+        $mockMeta = $this->createMock(ClassMetadata::class);
         $mockMeta->expects($this->once())
             ->method('getName')
             ->willReturn(\get_class($content));
 
-        $mock = $this->createMock('Doctrine\\ODM\MongoDB\\DocumentManager');
+        $mock = $this->createMock(DocumentManager::class);
         $mock->expects($this->once())
             ->method('getClassMetadata')
             ->willReturn($mockMeta);
@@ -227,7 +229,7 @@ class QueueSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected function getEvent($document, $manager = null)
     {
-        $mock = $this->getMockBuilder('Doctrine\\ODM\MongoDB\\Event\\LifecycleEventArgs')
+        $mock = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
 

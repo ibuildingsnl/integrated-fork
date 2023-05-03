@@ -20,10 +20,7 @@ use Integrated\Bundle\SolrBundle\Solr\Type\CopyAppendType;
  */
 class CopyAppendTypeTest extends CopyTypeTest
 {
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public static function buildProvider(): array
     {
         $data = parent::buildProvider();
 

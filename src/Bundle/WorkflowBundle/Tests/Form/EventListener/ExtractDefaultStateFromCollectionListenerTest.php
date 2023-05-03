@@ -392,7 +392,7 @@ class ExtractDefaultStateFromCollectionListenerTest extends \PHPUnit\Framework\T
      */
     protected function getFormChild(State $state = null, $withDefaultState = null, $getOrSet = 'get')
     {
-        /** @var \Symfony\Component\Form\FormInterface|MockObject $child1 */
+        /** @var \Symfony\Component\Form\FormInterface|MockObject $child */
         $child = $this->createMock('Symfony\Component\Form\FormInterface');
 
         // Stub getData, returns $state

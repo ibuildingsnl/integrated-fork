@@ -75,7 +75,7 @@ class ContentChannelVoter implements VoterInterface
     /**
      * {@inheritdoc}
      */
-    public function vote(TokenInterface $token, $content, array $attributes)
+    public function vote(TokenInterface $token, $content, array $attributes): int
     {
         if (!$content instanceof ChannelableInterface) {
             return VoterInterface::ACCESS_ABSTAIN;

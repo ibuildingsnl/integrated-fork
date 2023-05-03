@@ -23,8 +23,8 @@
 
             {% if app.request.query.get('integrated_website_edit') and layoutEditable %}
                 <a href="javascript:;" class="integrated-website-toolbar-button" data-action="integrated-website-page-save"
-                   {% if app.request.attributes.get('page').id|default %}data-id="{{ app.request.attributes.get('page').id }}" {% endif %}
-                   data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
+                    {% if page %}data-id="{{ page.id }}" {% endif %}
+                    data-target="{{ path(app.request.attributes.get('_route'), params|merge({'integrated_website_edit': 0})) }}">
                     {% trans %}Save page{% endtrans %}
                 </a>
 
@@ -45,10 +45,12 @@
                     </a>
                     <div data-integrated-dropdown="integrated-page-button-dropdown" class="integrated-website-toolbar-button integrated-website-toolbar-button-dropdown"></div>
                     <ul id="integrated-page-button-dropdown" class="integrated-website-toolbar-dropdown">
-                        {% if app.request.attributes.get('page').type == 'content_type_page' %}
-                            <li><a href="{{ path('integrated_page_content_type_page_edit', {'id': app.request.attributes.get('page').id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
-                        {% else %}
-                            <li><a href="{{ path('integrated_page_page_edit', {'id': app.request.attributes.get('page').id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
+                        {% if (page) %}
+                            {% if page.type == 'content_type_page' %}
+                                <li><a href="{{ path('integrated_page_content_type_page_edit', {'id': page.id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
+                            {% else %}
+                                <li><a href="{{ path('integrated_page_page_edit', {'id': page.id}) }}">{% trans %}Edit page properties{% endtrans %}</a></li>
+                            {% endif %}
                         {% endif %}
                         <li><a href="{{ path('integrated_page_page_index') }}">{% trans %}Go to page overview{% endtrans %}</a></li>
                     </ul>

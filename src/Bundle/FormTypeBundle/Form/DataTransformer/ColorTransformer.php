@@ -24,7 +24,7 @@ class ColorTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        $value = strtolower(trim($value));
+        $value = strtolower(trim((string) $value));
 
         if ($value && $value[0] === '#') {
             $value = substr($value, 1);

@@ -25,7 +25,7 @@ class UniqueEntry extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return ['fields'];
     }
@@ -33,7 +33,7 @@ class UniqueEntry extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOption()
+    public function getDefaultOption(): ?string
     {
         return 'fields';
     }
@@ -41,7 +41,7 @@ class UniqueEntry extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return Constraint::PROPERTY_CONSTRAINT;
     }

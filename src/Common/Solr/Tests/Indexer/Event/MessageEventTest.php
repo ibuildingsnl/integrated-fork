@@ -18,7 +18,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class MessageEventTest extends AbstractEventTest
+class MessageEventTest extends IndexerEventTest
 {
     /**
      * @var QueueMessageInterface|MockObject

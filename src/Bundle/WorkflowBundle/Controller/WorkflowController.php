@@ -13,12 +13,9 @@ namespace Integrated\Bundle\WorkflowBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\Group;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
@@ -27,50 +24,35 @@ use Integrated\Bundle\WorkflowBundle\Form\Type\DefinitionFormType;
 use Integrated\Bundle\WorkflowBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\WorkflowBundle\Utils\StateVisibleConfig;
 use Integrated\Common\Security\PermissionInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class WorkflowController extends AbstractController
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private EntityManager $entityManager;
+    private DocumentManager $documentManager;
+    private PaginatorInterface $paginator;
+    private UserManagerInterface $userManager;
 
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var UserManagerInterface
-     */
-    private $userManager;
-
-    public function __construct(EntityManager $entityManager, DocumentManager $documentManager, UserManagerInterface $userManager)
+    public function __construct(EntityManager $entityManager, DocumentManager $documentManager, PaginatorInterface $paginator, UserManagerInterface $userManager)
     {
         $this->entityManager = $entityManager;
         $this->documentManager = $documentManager;
+        $this->paginator = $paginator;
         $this->userManager = $userManager;
     }
 
-    /**
-     * Generate a list of workflow definitions.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $pager = $this->getPaginator()->paginate(
+        $pager = $this->paginator->paginate(
             $this->entityManager->getRepository('Integrated\Bundle\WorkflowBundle\Entity\Definition')->createQueryBuilder('item'),
             $request->query->get('page', 1),
             15
@@ -79,20 +61,16 @@ class WorkflowController extends AbstractController
         return $this->render('@IntegratedWorkflow/workflow/index.html.twig', ['pager' => $pager]);
     }
 
-    /**
-     * Create a new workflow definition.
-     *
-     * @return Response
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        /** @var Form $form */
         $form = $this->createNewForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -106,17 +84,10 @@ class WorkflowController extends AbstractController
             }
         }
 
-        return $this->render('@IntegratedWorkflow/workflow/new.html.twig', ['form' => $form->createView()]);
+        return $this->render('@IntegratedWorkflow/workflow/new.html.twig', ['form' => $form]);
     }
 
-    /**
-     * Edit a workflow definition.
-     *
-     * @return Response
-     *
-     * @throws NotFoundHttpException
-     */
-    public function edit(Request $request)
+    public function edit(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -129,11 +100,12 @@ class WorkflowController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        /** @var Form $form */
         $form = $this->createEditForm($workflow);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -148,16 +120,11 @@ class WorkflowController extends AbstractController
 
         return $this->render('@IntegratedWorkflow/workflow/edit.html.twig', [
             'workflow' => $workflow,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Delete a workflow definition.
-     *
-     * @return Response
-     */
-    public function delete(Request $request)
+    public function delete(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -168,11 +135,12 @@ class WorkflowController extends AbstractController
             return $this->redirectToRoute('integrated_workflow_index'); // workflow is already gone
         }
 
+        /** @var Form $form */
         $form = $this->createDeleteForm($workflow);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('actions')->get('cancel')->isClicked()) {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('integrated_workflow_index');
             }
 
@@ -188,14 +156,11 @@ class WorkflowController extends AbstractController
 
         return $this->render('@IntegratedWorkflow/workflow/delete.html.twig', [
             'workflow' => $workflow,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function changeState(Request $request)
+    public function changeState(Request $request): Response
     {
         $stateId = $request->get('state');
 
@@ -254,10 +219,7 @@ class WorkflowController extends AbstractController
             }
         }
 
-        /** @var EntityRepository $userRepository */
-        $userRepository = $this->userManager->getRepository();
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $userRepository->createQueryBuilder('u');
+        $queryBuilder = $this->entityManager->getRepository($this->userManager->getClassName())->createQueryBuilder('u');
 
         $queryBuilder->join('u.scope', 'us');
         $queryBuilder->where('us.admin = 1');
@@ -305,19 +267,11 @@ class WorkflowController extends AbstractController
         return new JsonResponse(['users' => $users, 'fields' => $fieldsCodes]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createNewForm()
+    private function createNewForm(): FormInterface
     {
-        $form = $this->createForm(
-            DefinitionFormType::class,
-            null,
-            [
-                'action' => $this->generateUrl('integrated_workflow_new'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(DefinitionFormType::class, null, [
+            'action' => $this->generateUrl('integrated_workflow_new'),
+        ]);
 
         $form->add('actions', FormActionsType::class, [
             'buttons' => [
@@ -329,19 +283,11 @@ class WorkflowController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(Definition $workflow)
+    private function createEditForm(Definition $workflow): FormInterface
     {
-        $form = $this->createForm(
-            DefinitionFormType::class,
-            $workflow,
-            [
-                'action' => $this->generateUrl('integrated_workflow_edit', ['id' => $workflow->getId()]),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(DefinitionFormType::class, $workflow, [
+            'action' => $this->generateUrl('integrated_workflow_edit', ['id' => $workflow->getId()]),
+        ]);
 
         $form->add('actions', FormActionsType::class, [
             'buttons' => [
@@ -353,19 +299,11 @@ class WorkflowController extends AbstractController
         return $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createDeleteForm(Definition $workflow)
+    private function createDeleteForm(Definition $workflow): FormInterface
     {
-        $form = $this->createForm(
-            DeleteFormType::class,
-            $workflow,
-            [
-                'action' => $this->generateUrl('integrated_workflow_delete', ['id' => $workflow->getId()]),
-                'method' => 'DELETE',
-            ]
-        );
+        $form = $this->createForm(DeleteFormType::class, $workflow, [
+            'action' => $this->generateUrl('integrated_workflow_delete', ['id' => $workflow->getId()]),
+        ]);
 
         $form->add('actions', FormActionsType::class, [
             'buttons' => [

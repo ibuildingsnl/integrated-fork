@@ -1,6 +1,0 @@
-Integrated\Bundle\ContentBundle\Document\Content\File:
-  logo{1..5}:
-    file: <createImage(300, 400, 'city')>
-    contentType: file
-    title: <name()>
-    description: <paragraph(1)>

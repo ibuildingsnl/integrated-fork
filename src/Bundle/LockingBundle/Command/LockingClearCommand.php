@@ -12,53 +12,40 @@
 namespace Integrated\Bundle\LockingBundle\Command;
 
 use Integrated\Common\Locks\ManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
+#[AsCommand(
+    name: 'locking:clear',
+    description: 'Clear up all locks',
+)]
 class LockingClearCommand extends Command
 {
-    /**
-     * @var ManagerInterface
-     */
-    private $manager;
+    private ManagerInterface $manager;
 
-    /**
-     * LockingClearCommand constructor.
-     */
     public function __construct(ManagerInterface $manager)
     {
-        parent::__construct();
-
         $this->manager = $manager;
+
+        parent::__construct();
     }
 
-    /**
-     * @see Command
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('locking:clear')
-            ->setDescription('Clear up all locks')
-            ->setHelp(<<<EOF
+        $this->setHelp(<<<EOF
 The <info>%command.name%</info> removes all the locks that are set
 
 <info>php %command.full_name%</info>
 EOF
-            );
+        );
     }
 
-    /**
-     * @see Command::execute()
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->manager->clear();
 
-        return 0;
+        return self::SUCCESS;
     }
 }

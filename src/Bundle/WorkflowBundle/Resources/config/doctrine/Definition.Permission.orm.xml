@@ -15,7 +15,7 @@
 		<field name="mask" column="mask" type="integer" />
 
 		<many-to-one field="state" target-entity="Integrated\Bundle\WorkflowBundle\Entity\Definition\State" inversed-by="permissions">
-			<join-column name="state_id" referenced-column-name="id" on-delete="CASCADE" on-update="CASCADE" />
+			<join-column name="state_id" referenced-column-name="id" on-delete="CASCADE" />
 		</many-to-one>
 
     </entity>

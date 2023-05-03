@@ -15,6 +15,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\CustomField;
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
 use Integrated\Bundle\ContentBundle\Form\Type\CustomFieldsType;
 use Integrated\Common\ContentType\ContentTypeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,16 +24,9 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class CustomFieldsTypeTest extends TypeTestCase
 {
-    /**
-     * @dataProvider getValidData
-     *
-     * @see http://symfony.com/doc/current/cookbook/form/unit_testing.html
-     */
+    #[DataProvider('getValidData')]
     public function testSubmitValidData(array $data)
     {
         $form = $this->factory->create(CustomFieldsType::class, [], ['contentType' => $this->getContentType()]);
@@ -47,10 +41,7 @@ class CustomFieldsTypeTest extends TypeTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getValidData()
+    public static function getValidData(): array
     {
         return [
             [
@@ -142,9 +133,6 @@ class CustomFieldsTypeTest extends TypeTestCase
         return $contentType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getExtensions()
     {
         $validator = $this->createMock('\Symfony\Component\Validator\Validator\ValidatorInterface');

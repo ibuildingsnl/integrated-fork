@@ -20,11 +20,11 @@ class RevertException extends \ErrorException
      * @param string $filesystem
      * @param string $identifier
      *
-     * @return static
+     * @return self
      */
     public static function writeFailed($filesystem, $identifier)
     {
-        return new static(
+        return new self(
             sprintf(
                 'The filesystem %s denied writing for key %s',
                 $filesystem,

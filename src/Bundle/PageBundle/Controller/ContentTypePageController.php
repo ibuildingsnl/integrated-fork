@@ -18,38 +18,21 @@ use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Johan Liefers <johan@e-active.nl>
- */
 class ContentTypePageController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
+    private DocumentManager $documentManager;
+    private RouteCache $routeCache;
 
-    /**
-     * @var RouteCache
-     */
-    private $routeCache;
-
-    /**
-     * PageController constructor.
-     */
     public function __construct(DocumentManager $documentManager, RouteCache $routeCache)
     {
         $this->documentManager = $documentManager;
         $this->routeCache = $routeCache;
     }
 
-    /**
-     * @return Response|RedirectResponse
-     */
-    public function edit(Request $request, ContentTypePage $page)
+    public function edit(Request $request, ContentTypePage $page): Response
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -70,24 +53,13 @@ class ContentTypePageController extends AbstractController
 
         return $this->render('@IntegratedPage/content_type_page/edit.html.twig', [
             'page' => $page,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @return FormInterface
-     */
-    protected function createEditForm(ContentTypePage $page)
+    private function createEditForm(ContentTypePage $page): FormInterface
     {
-        $form = $this->createForm(
-            ContentTypePageType::class,
-            $page,
-            [
-                'method' => 'PUT',
-                'controller' => $this->container->get($page->getControllerService()),
-            ]
-        );
-
+        $form = $this->createForm(ContentTypePageType::class, $page);
         $form->add('submit', SubmitType::class, ['label' => 'Save']);
 
         return $form;

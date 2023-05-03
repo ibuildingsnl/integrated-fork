@@ -23,6 +23,6 @@ class SortOption
 
     public static function create(string $name, string $label, string $field, string $oder): static
     {
-        return new static($name, $label, $field, $oder);
+        return new self($name, $label, $field, $oder);
     }
 }

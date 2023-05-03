@@ -18,62 +18,45 @@ use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepo
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
-use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Bundle\UserBundle\Model\UserInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class SearchSelectionController extends AbstractController
 {
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private RequestStack $requestStack;
+    private DocumentManager $documentManager;
+    private PaginatorInterface $paginator;
+    private SearchContentReferenced $searchContentReferenced;
 
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    private $searchContentReferenced;
-
-    public function __construct(RequestStack $requestStack, DocumentManager $documentManager, SearchContentReferenced $searchContentReferenced)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        DocumentManager $documentManager,
+        PaginatorInterface $paginator,
+        SearchContentReferenced $searchContentReferenced
+    ) {
         $this->requestStack = $requestStack;
         $this->documentManager = $documentManager;
+        $this->paginator = $paginator;
         $this->searchContentReferenced = $searchContentReferenced;
     }
 
-    /**
-     * Lists all the SearchSelection documents.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $paginator = $this->getPaginator()->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 15);
+        $paginator = $this->paginator->paginate($this->getQueryBuilder(), $request->query->get('page', 1), 15);
 
         return $this->render('@IntegratedContent/search_selection/index.html.twig', [
             'searchSelections' => $paginator,
         ]);
     }
 
-    /**
-     * Creates a new SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
         $searchSelection = new SearchSelection();
 
@@ -93,16 +76,11 @@ class SearchSelectionController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/search_selection/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Edits an existing SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function edit(Request $request, SearchSelection $searchSelection)
+    public function edit(Request $request, SearchSelection $searchSelection): Response
     {
         // TODO: security check
 
@@ -122,16 +100,11 @@ class SearchSelectionController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/search_selection/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Deletes a SearchSelection document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function delete(Request $request, SearchSelection $searchSelection)
+    public function delete(Request $request, SearchSelection $searchSelection): Response
     {
         // TODO: security check
 
@@ -155,17 +128,12 @@ class SearchSelectionController extends AbstractController
 
         return $this->render('@IntegratedContent/search_selection/delete.html.twig', [
             'searchSelection' => $searchSelection,
-            'form' => $form->createView(),
+            'form' => $form,
             'referenced' => $referenced,
         ]);
     }
 
-    /**
-     * Shows the menu.
-     *
-     * @return Response
-     */
-    public function menu()
+    public function menu(): Response
     {
         /** @var Request $request */
         $request = $this->requestStack->getMainRequest();
@@ -181,24 +149,14 @@ class SearchSelectionController extends AbstractController
         ]);
     }
 
-    /**
-     * Creates a form to create a SearchSelection document.
-     *
-     * @return FormInterface
-     */
-    protected function createCreateForm(SearchSelection $searchSelection)
+    private function createCreateForm(SearchSelection $searchSelection): FormInterface
     {
         /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
 
-        $form = $this->createForm(
-            SearchSelectionType::class,
-            $searchSelection,
-            [
-                'action' => $this->generateUrl('integrated_content_search_selection_new', $request ? $request->query->all() : []),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(SearchSelectionType::class, $searchSelection, [
+            'action' => $this->generateUrl('integrated_content_search_selection_new', $request ? $request->query->all() : []),
+        ]);
 
         $form->add('actions', SaveCancelType::class, [
             'cancel_route' => 'integrated_content_search_selection_index',
@@ -209,40 +167,21 @@ class SearchSelectionController extends AbstractController
         return $form;
     }
 
-    /**
-     * Creates a form to edit a SearchSelection document.
-     *
-     * @return FormInterface
-     */
-    protected function createEditForm(SearchSelection $searchSelection)
+    private function createEditForm(SearchSelection $searchSelection): FormInterface
     {
-        $form = $this->createForm(
-            SearchSelectionType::class,
-            $searchSelection,
-            [
-                'action' => $this->generateUrl('integrated_content_search_selection_edit', ['id' => $searchSelection->getId()]),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(SearchSelectionType::class, $searchSelection, [
+            'action' => $this->generateUrl('integrated_content_search_selection_edit', ['id' => $searchSelection->getId()]),
+        ]);
 
         $form->add('actions', SaveCancelType::class, ['cancel_route' => 'integrated_content_search_selection_index']);
 
         return $form;
     }
 
-    /**
-     * Creates a form to delete a SearchSelection document by id.
-     *
-     * @param bool|false $notDelete
-     *
-     * @return FormInterface
-     */
-    protected function createDeleteForm($id, $notDelete = false)
+    private function createDeleteForm(string $id, bool $notDelete = false): FormInterface
     {
-        $form = $this
-            ->createFormBuilder()
-            ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]))
-            ->setMethod('DELETE');
+        $form = $this->createFormBuilder()
+            ->setAction($this->generateUrl('integrated_content_search_selection_delete', ['id' => $id]));
 
         if ($notDelete) {
             $form->add('reload', SubmitType::class, ['label' => 'Reload', 'attr' => ['class' => 'btn-default']]);
@@ -253,10 +192,7 @@ class SearchSelectionController extends AbstractController
         return $form->getForm();
     }
 
-    /**
-     * @return Builder
-     */
-    protected function getQueryBuilder()
+    private function getQueryBuilder(): Builder
     {
         $builder = $this->documentManager->createQueryBuilder(SearchSelection::class);
 
@@ -265,5 +201,16 @@ class SearchSelectionController extends AbstractController
         }
 
         return $builder;
+    }
+
+    protected function getUser(): ?UserInterface
+    {
+        $user = parent::getUser();
+
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        return $user;
     }
 }

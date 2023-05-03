@@ -17,37 +17,23 @@ use Integrated\Bundle\ContentBundle\Form\Type\RelationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- */
 class RelationController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
-
-    private $documentManager;
+    private DocumentManager $documentManager;
 
     public function __construct(DocumentManager $documentManager)
     {
         $this->documentManager = $documentManager;
     }
 
-    /**
-     * Lists all the Relation documents.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->documentManager->createQueryBuilder($this->relationClass)
+        $qb = $this->documentManager->createQueryBuilder(Relation::class)
             ->sort('name');
 
         if ($contentType = $request->get('contentType')) {
@@ -59,45 +45,19 @@ class RelationController extends AbstractController
         return $this->render(sprintf('@IntegratedContent/relation/index.%s.twig', $request->getRequestFormat()), ['documents' => $documents]);
     }
 
-    /**
-     * Finds and displays a Relation document.
-     *
-     * @return Response
-     */
-    public function show(Relation $relation)
+    public function show(Relation $relation): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createDeleteForm($relation);
 
         return $this->render('@IntegratedContent/relation/show.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'relation' => $relation,
         ]);
     }
 
-    /**
-     * Displays a form to create a new Relation document.
-     *
-     * @return Response
-     */
-    public function new()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createNewForm(new Relation());
-
-        return $this->render('@IntegratedContent/relation/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Creates a new Relation document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function create(Request $request)
+    public function new(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -116,32 +76,11 @@ class RelationController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/relation/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Display a form to edit an existing Relation document.
-     *
-     * @return Response
-     */
-    public function edit(Relation $relation)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createEditForm($relation);
-
-        return $this->render('@IntegratedContent/relation/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Edits an existing Relation document.
-     *
-     * @return Response|RedirectResponse
-     */
-    public function update(Request $request, Relation $relation)
+    public function edit(Request $request, Relation $relation): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -157,16 +96,11 @@ class RelationController extends AbstractController
         }
 
         return $this->render('@IntegratedContent/relation/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * Deletes a Relation document.
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Relation $relation)
+    public function delete(Request $request, Relation $relation): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -183,58 +117,32 @@ class RelationController extends AbstractController
         return $this->redirectToRoute('integrated_content_relation_index');
     }
 
-    /**
-     * Creates a form to create a Relation document.
-     *
-     * @return FormInterface
-     */
-    protected function createNewForm(Relation $relation)
+    private function createNewForm(Relation $relation): FormInterface
     {
-        $form = $this->createForm(
-            RelationType::class,
-            $relation,
-            [
-                'action' => $this->generateUrl('integrated_content_relation_create'),
-                'method' => 'POST',
-            ]
-        );
+        $form = $this->createForm(RelationType::class, $relation, [
+            'action' => $this->generateUrl('integrated_content_relation_new'),
+        ]);
 
         $form->add('submit', SubmitType::class, ['label' => 'Create']);
 
         return $form;
     }
 
-    /**
-     * Creates a form to edit a ContentType document.
-     *
-     * @return FormInterface
-     */
-    protected function createEditForm(Relation $relation)
+    private function createEditForm(Relation $relation): FormInterface
     {
-        $form = $this->createForm(
-            RelationType::class,
-            $relation,
-            [
-                'action' => $this->generateUrl('integrated_content_relation_update', ['id' => $relation->getId()]),
-                'method' => 'PUT',
-            ]
-        );
+        $form = $this->createForm(RelationType::class, $relation, [
+            'action' => $this->generateUrl('integrated_content_relation_edit', ['id' => $relation->getId()]),
+        ]);
 
         $form->add('submit', SubmitType::class, ['label' => 'Update']);
 
         return $form;
     }
 
-    /**
-     * Creates a form to delete a Relation document.
-     *
-     * @return FormInterface
-     */
-    protected function createDeleteForm(Relation $relation)
+    private function createDeleteForm(Relation $relation): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('integrated_content_relation_delete', ['id' => $relation->getId()]))
-            ->setMethod('DELETE')
             ->add('submit', SubmitType::class, [
                 'label' => 'Delete',
                 'attr' => [

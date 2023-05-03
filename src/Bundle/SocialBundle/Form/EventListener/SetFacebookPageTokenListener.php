@@ -19,10 +19,7 @@ class SetFacebookPageTokenListener implements EventSubscriberInterface
         $this->facebook = $facebook;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::SUBMIT => 'onSubmit',

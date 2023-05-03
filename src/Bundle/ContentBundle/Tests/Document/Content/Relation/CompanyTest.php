@@ -11,15 +11,19 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Content\Relation;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Company;
+use Integrated\Bundle\ContentBundle\Tests\Document\Content\ContentTestTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class CompanyTest extends RelationTest
+class CompanyTest extends TestCase
 {
+    use ContentTestTrait;
+    use RelationTestTrait;
+
     /**
      * @var Company
      */
@@ -56,9 +60,11 @@ class CompanyTest extends RelationTest
      */
     public function testGetAndSetAddressesFunction()
     {
-        $addresses = new ArrayCollection([
+        $addresses = [
             $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
-        ]);
+            $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
+        ];
+
         $this->assertSame($addresses, $this->company->setAddresses($addresses)->getAddresses());
     }
 

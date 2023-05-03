@@ -99,6 +99,8 @@ class Storage implements StorageInterface, \ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @return Storage\Metadata
      */
     public function getMetadata()
     {

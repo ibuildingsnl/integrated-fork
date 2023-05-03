@@ -16,27 +16,19 @@ use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 
-/**
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ErrorController extends AbstractController
 {
-    /**
-     * @var ThemeManager
-     */
-    protected $themeManager;
+    private ThemeManager $themeManager;
 
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function show(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
+    public function show(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null): Response
     {
         try {
             if ($template = $this->themeManager->locateTemplate(sprintf('error/%s.%s.twig', $exception->getStatusCode(), $request->getPreferredFormat()))) {
