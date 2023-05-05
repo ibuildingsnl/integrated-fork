@@ -3,7 +3,6 @@
 {% block title %}{% trans %}Content navigator - week{% endtrans %} {{ filters.start|date('W') }}{% endblock title %}
 
 {% block options_start %}
-
     <li>
         <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('-1 week')|date('c') })) }}"
            tabindex="-1" class="btn btn-select">

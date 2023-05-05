@@ -13,12 +13,16 @@
 {% block main_title %}{% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script>
-        $('button[data-dismiss="modal"]').click(function() {
-            parent.$('#navigator-edit-modal.modal').removeClass('show');
-            parent.$('#dropdown_overlay').addClass('hide');
-            parent.$('#editmodaliframe').attr('src', '').empty();
-        });
-    </script>
+{{ parent() }}
+<script>
+$(document).ready(function () {
+    $('button[data-dismiss="modal"]').click(function() {
+        parent.$('#navigator-edit-modal.modal').removeClass('show');
+        parent.$('#dropdown_overlay').addClass('hide');
+        parent.$('#editmodaliframe').attr('src', '').empty();
+    });
+});
+
+
+</script>
 {% endblock %}
