@@ -163,6 +163,12 @@ class ContentController extends AbstractController
                     $view = '_week';
                     $options['week'] = $options['week'] ?? 'monday this week';
                     $options['start'] = new \DateTimeImmutable($options['week']);
+                    // Summer/winter time fix, @todo better fix
+                    if ($options['start']->format('H') > 12) {
+                        $options['start'] = $options['start']->modify('+1 day 0:00');
+                    } else {
+                        $options['start'] = $options['start']->modify('0:00');
+                    }
                     $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
                     $request->query->set('page', 1);
                     $request->query->set('limit', 10000);
