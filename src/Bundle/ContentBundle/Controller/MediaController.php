@@ -219,7 +219,7 @@ class MediaController extends AbstractController
         $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
 
         $deleteHandler->multiExecute($toBeDeletedArray, $idSelection);
-        
+
         $this->taxonomyRelationManager->runSolrQueue();
 
         return new JsonResponse([
