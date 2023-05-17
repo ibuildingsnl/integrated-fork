@@ -117,7 +117,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "endroid/installer": true,
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "phpstan/extension-installer": false
         }
     },
     "extra": {
