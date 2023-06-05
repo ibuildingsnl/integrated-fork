@@ -30,7 +30,7 @@
             </call>
         </service>
 
-        <service id="integrated_website.controller.grid" class="Integrated\Bundle\WebsiteBundle\Controller\GridController">
+        <service id="Integrated\Bundle\WebsiteBundle\Controller\GridController">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_page.grid.factory" />
 
