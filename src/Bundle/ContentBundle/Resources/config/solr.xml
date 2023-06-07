@@ -131,9 +131,7 @@
 
         <service id="Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock" />
 
-        <service id="Integrated\Bundle\ContentBundle\Solr\Query\PublishedExtension" >
-            <tag name="integrated_solr.type_extension" />
-        </service>
+        <service id="Integrated\Bundle\ContentBundle\Solr\Query\PublishedExtension" />
 
     </services>
 
