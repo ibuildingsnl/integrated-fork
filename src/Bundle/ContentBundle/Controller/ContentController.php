@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
+use Integrated\Bundle\ContentBundle\Event\CalendarEvent;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
@@ -174,6 +175,9 @@ class ContentController extends AbstractController
                     $request->query->set('limit', 10000);
                     $options['sort'] = 'time';
                     $options['order'] = 'asc';
+                    if ($this->dispatcher->hasListeners(CalendarEvent::PREPARED_WEEK_OPTIONS)) {
+                        $this->dispatcher->dispatch(new CalendarEvent($options), CalendarEvent::PREPARED_WEEK_OPTIONS);
+                    }
                     break;
                 case 'month':
                     $view = '_month';
@@ -184,6 +188,9 @@ class ContentController extends AbstractController
                     $request->query->set('limit', 10000);
                     $options['sort'] = 'time';
                     $options['order'] = 'asc';
+                    if ($this->dispatcher->hasListeners(CalendarEvent::PREPARED_MONTH_OPTIONS)) {
+                        $this->dispatcher->dispatch(new CalendarEvent($options), CalendarEvent::PREPARED_MONTH_OPTIONS);
+                    }
                     break;
             }
         }
