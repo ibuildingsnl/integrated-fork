@@ -266,6 +266,5 @@ class IntegratedContent extends AbstractType
             'start' => null,
             'end' => null,
         ]);
-
     }
 }
