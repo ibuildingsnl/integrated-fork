@@ -14,6 +14,7 @@ class CalendarOptions
 
     public function prepare(array $options): array
     {
+        unset($options['_view']);
         switch ($options['view']) {
             case 'week':
                 $options['_view'] = '_week';
