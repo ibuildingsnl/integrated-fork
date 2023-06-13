@@ -44,6 +44,7 @@ class CalendarOptions
                 }
                 break;
         }
+
         return $options;
     }
 }
