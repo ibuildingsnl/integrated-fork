@@ -24,6 +24,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
@@ -81,7 +82,8 @@ class ContentController extends AbstractController
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
+        private readonly CalendarOptions $calendarOptions,
     ) {
     }
 
@@ -159,40 +161,10 @@ class ContentController extends AbstractController
 
         $view = '';
         if (isset($options['view']) && $options['view'] != 'list') {
-            switch ($options['view']) {
-                case 'week':
-                    $view = '_week';
-                    $options['week'] = $options['week'] ?? 'monday this week';
-                    $options['start'] = new \DateTimeImmutable($options['week']);
-                    // Summer/winter time fix, @todo better fix
-                    if ($options['start']->format('H') > 12) {
-                        $options['start'] = $options['start']->modify('+1 day 0:00');
-                    } else {
-                        $options['start'] = $options['start']->modify('0:00');
-                    }
-                    $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 week'));
-                    $request->query->set('page', 1);
-                    $request->query->set('limit', 10000);
-                    $options['sort'] = 'time';
-                    $options['order'] = 'asc';
-                    if ($this->dispatcher->hasListeners(CalendarEvent::PREPARED_WEEK_OPTIONS)) {
-                        $this->dispatcher->dispatch(new CalendarEvent($options), CalendarEvent::PREPARED_WEEK_OPTIONS);
-                    }
-                    break;
-                case 'month':
-                    $view = '_month';
-                    $options['month'] = $options['month'] ?? 'first day of this month';
-                    $options['start'] = new \DateTimeImmutable($options['month']);
-                    $options['end'] = $options['start']->add(\DateInterval::createFromDateString('1 month'));
-                    $request->query->set('page', 1);
-                    $request->query->set('limit', 10000);
-                    $options['sort'] = 'time';
-                    $options['order'] = 'asc';
-                    if ($this->dispatcher->hasListeners(CalendarEvent::PREPARED_MONTH_OPTIONS)) {
-                        $this->dispatcher->dispatch(new CalendarEvent($options), CalendarEvent::PREPARED_MONTH_OPTIONS);
-                    }
-                    break;
-            }
+            $request->query->set('page', 1);
+            $request->query->set('limit', 10000);
+            $options = $this->calendarOptions->prepare($options);
+            $view = $options['_view'] ?? '';
         }
 
         // all this relations stuff is only used on the json response

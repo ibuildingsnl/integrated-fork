@@ -24,6 +24,7 @@
             <argument type="service" id="integrated_content.metadata.factory"/>
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
