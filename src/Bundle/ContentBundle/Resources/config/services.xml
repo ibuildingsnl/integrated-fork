@@ -32,7 +32,7 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Services\CalendarOptions">
-            <argument type="service" id="integrated_content.metadata.factory.event_dispatcher" />
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
         </service>
 
         <service id="integrated_content.services.main_flusher" class="Integrated\Common\Services\MainFlusher">
