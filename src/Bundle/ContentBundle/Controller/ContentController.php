@@ -164,6 +164,7 @@ class ContentController extends AbstractController
             $request->query->set('limit', 10000);
             $options = $this->calendarOptions->prepare($options);
             $view = $options['_view'] ?? '';
+            unset($options['_view']);
         }
 
         // all this relations stuff is only used on the json response
