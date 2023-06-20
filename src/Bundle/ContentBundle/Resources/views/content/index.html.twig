@@ -1,369 +1,170 @@
-{% extends '@IntegratedContent/base.html.twig' %}
+{% extends '@IntegratedContent/content/base.html.twig' %}
 {% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
-{% block content %}
-    <div class="flex flex-wrap ">
-
-        <div class="index-wrapper">
-            <div class="page-title">
-                <div class="heading flex justify-between w-full">
-                    <h1 class="heading">{% trans %}Content navigator{% endtrans %}</h1>
-                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
-                            data-target="aside-filters">
-                        <i class="iconoir-filter-alt"></i>
-                        <span>{% trans %}Filter{% endtrans %}</span>
-                    </button>
-                </div>
-                <div class="options">
-                    <ul class="content-navigator-menu">
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" id="sorting-list"
-                               class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
+{% block options_start %}
+    <li class="dropdown close-outside" data-underlay="no">
+        <a data-toggle="dropdown" role="button" id="sorting-list"
+           class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
                                 : {{ integrated_search_sorting_option(params.sort).label|trans }}</span>
-                                <i class="iconoir-nav-arrow-down"></i></a>
-                            <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
-                                {% set sort_default = params.q ? 'rel' : 'time' %}
-                                {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
-                                    <li {% if sort.name == params.sort %}class="active"
-                                        {% endif %}role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
-                                           tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                        <li class="dropdown close-outside" data-underlay="no">
-                            <a data-toggle="dropdown" role="button"
-                               class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
-                                <i class="iconoir-nav-arrow-down"></i></a>
-
-                            <ul role="menu" class=" dropdown-menu">
-                                <li role="presentation">
-                                    <a href="{{ path('integrated_content_bulk_select', filters) }}"
-                                       tabindex="-1"
-                                       role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown close-outside searchselection" data-underlay="no">
-                            <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
-                                <span>
-                                    {% if selection %}
-                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
-                                    {% else %}
-                                        {% trans %}Search selections{% endtrans %}
-                                    {% endif %}
-                                </span>
-                                <i class="iconoir-nav-arrow-down"></i>
-                            </a>
-
-                            <ul role="menu" class="dropdown-menu">
-                                <li role="presentation">
-                                    <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
-                                       role="menuitem">
-                                        All content
-                                    </a>
-                                </li>
-
-                                {% for searchSelection in searchSelections %}
-
-                                    {% if searchSelection.id == selection.id %}
-                                        <li role="presentation" class="active">
-                                            <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
-                                        </li>
-                                    {% else %}
-                                        <li role="presentation">
-                                            <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
-                                               tabindex="-1" role="menuitem">
-                                                {{ searchSelection.title }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    </ul>
-                    <button type="button"
-                            class="toggle-searchselection toggle-data-target btn btn-white" data-target="searchselection-edit-form"><i
-                            class="iconoir-settings"></i></button>
-                </div>
-                <div class="searchselection-edit-form close-outside">
-                    {{ form_start(searchSelectionForm) }}
-                    <div class="toolbar">
-                        {% if selection.id and isSelectionEditable %}
-                            <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
-                               class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
-                                <i class="iconoir-trash"></i>
-                            </a>
-                        {% endif %}
-                        <div class="toolbar-right">
-                            {% if searchSelectionForm.actions.save is defined %}
-                                {{ form_row(searchSelectionForm.actions.save) }}
-                            {% endif %}
-                            {% if searchSelectionForm.actions.create is defined %}
-                                {{ form_row(searchSelectionForm.actions.create) }}
-                            {% endif %}
-                        </div>
-                    </div>
-                    <h2>{% trans %}Search selection settings{% endtrans %}</h2>
-                    {{ form_rest(searchSelectionForm) }}
-
-                    {{ form_end(searchSelectionForm) }}
-                </div>
-            </div>
-            <section class="section-white section-radius">
-                {% set media_gallery_classes = ["Image", "Video", "File"] %}
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th class="title">
-                            <span>{% trans %}Title{% endtrans %}</span>
-                        </th>
-                        <th class="content-type">
-                            <span>ContentType</span>
-                        </th>
-                        <th class="pub-date">
-                            <span>{% trans %}Publication date{% endtrans %}</span>
-                        </th>
-                        <th class="state">
-                            <span>Status</span>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody id="post-list">
-                    {% for content in pager %}
-                        {% set class_name = content.type_class|split('\\')|last %}
-                        <tr class="has-options">
-                            <td class="title">
-                                {% if locks[content.type_id] is defined %}
-                                    {% if locks[content.type_id].user is defined %}
-                                        <div class="locked-info">
+            <i class="iconoir-nav-arrow-down"></i></a>
+        <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+            {% set sort_default = params.q ? 'rel' : 'time' %}
+            {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
+                <li {% if sort.name == params.sort %}class="active"
+                    {% endif %}role="presentation">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
+                       tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+{% endblock options_start %}
+{% block content_items %}
+    <section class="section-white section-radius">
+        {% set media_gallery_classes = ["Image", "Video", "File"] %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="title">
+                    <span>{% trans %}Title{% endtrans %}</span>
+                </th>
+                <th class="channels">
+                    <span>Channels</span>
+                </th>
+                <th class="content-type">
+                    <span>ContentType</span>
+                </th>
+                <th class="pub-date">
+                    <span>{% trans %}Publication date{% endtrans %}</span>
+                </th>
+                <th class="state">
+                    <span>Status</span>
+                </th>
+            </tr>
+            </thead>
+            <tbody id="post-list">
+            {% for content in pager %}
+                {% set class_name = content.type_class|split('\\')|last %}
+                <tr class="has-options">
+                    <td class="title">
+                        {% if locks[content.type_id] is defined %}
+                            {% if locks[content.type_id].user is defined %}
+                                <div class="locked-info">
                                             <span class="locked-text">
                                                 <i class="iconoir-lock"></i>&nbsp;
                                                 {% trans %}This item is locked by{% endtrans %} {{ locks[content.type_id].user }}
                                             </span>
-                                        </div>
-                                    {% else %}
-                                        <div class="locked-info">
+                                </div>
+                            {% else %}
+                                <div class="locked-info">
                                             <span class="locked-text">
                                                 <i class="iconoir-lock"></i>&nbsp;
                                                 {% trans %}This item is locked{% endtrans %}
                                             </span>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
 
-                                {% if class_name in media_gallery_classes %}
-                                    {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
-                                {% else %}
-                                    {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
-                                {% endif %}
-                                <div>
-                                    <strong>
-                                        <a href="{{ editLink }}">
-                                            {{ content.title|default }}
-                                        </a>
-                                    </strong>
-                                </div>
-                                <div class="row-options">
-                                    <a href="{{ editLink }}">
-                                        {% trans %}Edit{% endtrans %}
-                                    </a> |
-                                    <a class="color-red"
-                                       href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
-                                       tabindex="-1" role="option">
-                                        {% trans %}Delete{% endtrans %}
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="content-type">
-                                {{ content.type_name|integrated_content_type.name|default(content.type_name) }}
-                            </td>
-                            <td class="pub-date">
-                                {% if content.pub_time is defined %}
-                                    {{ content.pub_time|format_date('long') }}
-                                {% endif %}
-                            </td>
-                            <td class="state">
-                                {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
-                                    {% if content.workflow_color_string is defined %}
-                                        {% set status_color = content.workflow_color_string|first %}
-                                        <div class="workflow-status" style="background-color:{{ status_color }};">
-                                            {{ content.workflow_state|default }}
+                        {% if class_name in media_gallery_classes %}
+                            {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
+                        {% else %}
+                            {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                        {% endif %}
+
+                        {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
+                        <div>
+                            <strong>
+                                <a href="{{ editLink }}">
+                                    {{ content.title|default }}
+                                </a>
+                            </strong>
+                        </div>
+                        <div class="row-options">
+                            <a class="quick-edit-link" href="#" data-id="{{ content.type_id }}"
+                               data-title="Edit {{ type }}">
+                                {% trans %}Quick edit{% endtrans %}
+                            </a> |
+                            <a href="{{ editLink }}">
+                                {% trans %}Edit{% endtrans %}
+                            </a> |
+                            <a class="color-red"
+                               href="{{ path('integrated_content_content_delete', {'id': content.type_id}) }}"
+                               tabindex="-1" role="option">
+                                {% trans %}Delete{% endtrans %}
+                            </a>
+                        </div>
+                    </td>
+
+                    {% set document = integrated_document(content) %}
+
+                    {% if document.channels is defined and document.channels is not null %}
+                    <td class="channels">
+                        <div
+                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }})">
+                            {% if document.channels|length > 3 %}
+                                <span class="channel-popout">3+</span>
+                            {% endif %}
+                            <div
+                                class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
+                                {% for channel in document.channels %}
+                                    {% if channel.favicon.file is defined %}
+                                        <div class="channel-favicon"
+                                         style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')"
+                                         title="{{ channel.name }}">
+
                                         </div>
                                     {% else %}
-                                        <div class="workflow-status" style="background-color:#d8d8d8;">
-                                            {{ content.workflow_state|default }}
+                                        <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel.color|default('gray') }}">
+                                            {{ channel.name|first }}
                                         </div>
                                     {% endif %}
-                                    {% set status_color = '' %}
-                                {% elseif content.workflow_state is defined %}
-                                    <div class="workflow-status" style="background-color:#5f84db;">
-                                        {% trans %}Planned{% endtrans %}
-                                    </div>
-                                {% endif %}
-
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td class="title">{% trans %}No items found{% endtrans %}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="flex flex-wrap ">
-                    {{ knp_pagination_render(pager) }}
-                </div>
-            </section>
-        </div>
-
-        <div class="aside-filters close-outside">
-            <aside>
-                <div class="aside-holder bg-white section-radius">
-                    <div class="aside-header">
-                        <button class="toggle-filters toggle-data-target" data-target="aside-filters">
-                            <i class="iconoir-cancel"></i>
-                        </button>
-                        <span>{% trans %}Filters{% endtrans %}</span>
-                        <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
-                            <span>{% trans %}Remove active filters{% endtrans %}</span>
-                            <i class="iconoir-cancel"></i>
-                        </a>
-                    </div>
-                    <form>
-                        <input type="hidden" value="{{ params['q'] }}" name="q"/>
-                        <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
-                        {% if selection %}
-                            <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </td>
+                    {% endif %}
+                    <td class="content-type">
+                        <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">
+                            <i class="icon mr-2  iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
+                            <span>{{ content.type_name|integrated_content_type.name|default(content.type_name) }}</span>
+                        </div>
+                    </td>
+                    <td class="pub-date">
+                        {% if content.pub_time is defined %}
+                            {{ content.pub_time|format_date('long') }}
                         {% endif %}
-                        {% for key, facet in facets %}
-                            {% if facet|length > 0 %}
-                                {% if key starts with 'relation_' %}
-                                    {{ block('relation_facet') }}
-                                {% else %}
-                                    {{ block('facet') }}
-                                {% endif %}
+                    </td>
+                    <td class="state">
+                        {% if content.workflow_state is defined and ('now'|date('U') > content.pub_time |date('U')) %}
+                            {% if content.workflow_color_string is defined %}
+                                {% set status_color = content.workflow_color_string|first %}
+                                <div class="workflow-status" style="background-color:{{ status_color }};">
+                                    {{ content.workflow_state|default }}
+                                </div>
+                            {% else %}
+                                <div class="workflow-status" style="background-color:#d8d8d8;">
+                                    {{ content.workflow_state|default }}
+                                </div>
                             {% endif %}
-                        {% endfor %}
-                    </form>
-                </div>
-            </aside>
+                            {% set status_color = '' %}
+                        {% elseif content.workflow_state is defined %}
+                            <div class="workflow-status" style="background-color:#5f84db;">
+                                {% trans %}Planned{% endtrans %}
+                            </div>
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td class="title">{% trans %}No items found{% endtrans %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="flex flex-wrap ">
+            {{ knp_pagination_render(pager) }}
         </div>
-    </div>
-{% endblock %}
-
-
-{% block facet %}
-    {% if key == 'contenttypes' %}
-        {% set facetTitle = 'Content types'|trans %}
-    {% elseif key == 'workflow_state' %}
-        {% set facetTitle = 'Workflow status'|trans %}
-    {% elseif key == 'workflow_assigned' %}
-        {% set facetTitle = 'Assigned user'|trans %}
-    {% elseif key == 'authors' %}
-        {% set facetTitle = 'Author'|trans %}
-    {% else %}
-        {% set facetTitle = key|capitalize %}
-    {% endif %}
-    <div class="aside-item-holder">
-        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
-            <div class="aside-item-header">
-                <h3 class="aside-item-title">
-                    <span class="aside-item-icon">
-                        {{ facetTitle|trans }}
-                    </span>
-                </h3>
-                <i class="iconoir-nav-arrow-down"></i>
-            </div>
-            <div class="aside-item-list">
-                <div class="aside-item-list-container">
-                    {% if (facet|length >= 6) %}
-                        <div class="aside-item-search">
-                            <i class="iconoir-search"></i>
-                            <input type="text" class="list-search"
-                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
-                        </div>
-                    {% endif %}
-                    <ul class="filters_list">
-                        {% for title, count in facet %}
-                            <li class="checkbox">
-                                <label class="checkbox-container">
-                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
-                                           onclick="form.submit();" type="checkbox" name="{{ key }}[]"
-                                           value="{{ title }}"/>
-                                    <span class="checkmark"></span>
-                                    <div class="facet-wrappper">
-                                        <span class="facet-title">
-                                            {% if key == 'contenttypes' %}
-                                                {{ title|integrated_content_type.name|default(title) }}
-                                            {% elseif key == 'channels' %}
-                                                {{ title|integrated_channel.name|default(title) }}
-                                            {% else %}
-                                                {{ title|trans }}
-                                            {% endif %}
-                                        </span>
-                                        <span class="facet-count">({{ count }})</span>
-                                    </div>
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block relation_facet %}
-    {% set key = key[9:] %}
-
-    {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
-    <div class="aside-item-holder">
-        <div class="aside-item-wrapper">
-            <div class="aside-item-header">
-                <h3 class="aside-item-title">
-                    <span class="aside-item-icon">
-                        {{ facetTitle }}
-                    </span>
-                </h3>
-                <i class="iconoir-nav-arrow-down"></i>
-            </div>
-            <div class="aside-item-list">
-                <div class="aside-item-list-container">
-                    {% if (facet|length >= 6) %}
-                        <div class="aside-item-search">
-                            <i class="iconoir-search"></i>
-                            <input type="text" class="list-search"
-                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
-                        </div>
-                    {% endif %}
-                    <ul class="filters_list">
-                        {% for title, count in facet %}
-                            <li class="checkbox">
-                                <label class="checkbox-container">
-                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
-                                           onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]"
-                                           value="{{ title }}"/>
-                                    <span class="checkmark"></span>
-                                    <div class="facet-wrappper">
-                                        <span class="facet-title">
-                                            {{ title }}
-                                        </span>
-                                        <span class="facet-count">({{ count }})</span>
-                                    </div>
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block javascript %}
-{{ parent() }}
-{% endblock %}
+    </section>
+{% endblock content_items %}

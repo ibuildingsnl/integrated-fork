@@ -1,0 +1,10 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
+{% block content %}
+To do: calendar month view
+
+{% for content in pager %}
+{#    {{ dump(content) }}#}
+{% endfor %}
+{% endblock %}

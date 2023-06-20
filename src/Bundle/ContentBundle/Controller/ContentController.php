@@ -23,6 +23,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
@@ -80,7 +81,8 @@ class ContentController extends AbstractController
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
+        private readonly CalendarOptions $calendarOptions,
     ) {
     }
 
@@ -154,6 +156,17 @@ class ContentController extends AbstractController
             }
         }
 
+        // view settings (calendar etc)
+
+        $view = '';
+        if (isset($options['view']) && $options['view'] != 'list') {
+            $request->query->set('page', 1);
+            $request->query->set('limit', 10000);
+            $options = $this->calendarOptions->prepare($options);
+            $view = $options['_view'] ?? '';
+            unset($options['_view']);
+        }
+
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
@@ -189,7 +202,7 @@ class ContentController extends AbstractController
         /** @var SearchSelectionRepository $repo */
         $repo = $this->documentManager->getRepository(SearchSelection::class);
 
-        return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
+        return $this->render('@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
@@ -200,6 +213,7 @@ class ContentController extends AbstractController
             'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
+            'contentTypes' => $this->contentTypeManager->getAll(),
         ]);
     }
 
@@ -449,6 +463,8 @@ class ContentController extends AbstractController
 
         if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } elseif ($request->get('_route') == 'integrated_content_content_edit_modal_iframe') {
+            $renderTo = '@IntegratedContent/content/edit.modal.iframe.html.twig';
         } else {
             $renderTo = '@IntegratedContent/content/edit.html.twig';
         }

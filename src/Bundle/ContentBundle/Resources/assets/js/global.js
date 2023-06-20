@@ -271,6 +271,7 @@ function openSelectedOptions(elem) {
 function toggleDropDownBackGround(hidden) {
     let menuItemDropDownUnderlay =  document.querySelector('#dropdown_overlay');
     menuItemDropDownUnderlay.classList.toggle('hide', hidden);
+    menuItemDropDownUnderlay.innerHTML = '';
 }
 
 function isElement(o) {
@@ -295,5 +296,3 @@ function showDropDownBackGround() {
 
 document.addEventListener('DOMContentLoaded', hideButtonIfNoOptions);
 document.addEventListener('DOMContentLoaded', init);
-
-

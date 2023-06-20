@@ -1,0 +1,420 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+{% block title %}{% trans %}Content navigator{% endtrans %}{% endblock title %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
+
+{% block content %}
+    {% set pageClass = 'list' %}
+    {% if app.request.query.all.view is defined and
+        app.request.query.all.view != '' or
+        selection.filters.view is defined and
+        app.request.query.all.view|default != 'list' and
+        selection.filters.view|default != 'list' %}
+        {% set pageClass = 'calendar' %}
+    {% endif %}
+    <div
+        class="flex flex-wrap {{ pageClass }}">
+
+        <div class="index-wrapper">
+            <div class="page-title">
+                <div class="heading flex justify-between w-full">
+                    <div class="heading-switcher">
+                        <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
+
+                        {% set queryParams = app.request.query.all %}
+
+                        {% if selection %}
+                            {% set queryParams = queryParams|merge(selection.filters) %}
+                        {% endif %}
+
+                        {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
+                        {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
+                        <div class="switcher-buttons">
+                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == '' or app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParamsList) }}">
+                                <span>{% trans %}List{% endtrans %}</span>
+                                <i class="iconoir-list"></i>
+                            </a>
+                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if app.request.query.all.view|default == 'week' or selection.filters.view|default == 'week' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParamsCal) }}">
+                                <span>{% trans %}Calendar{% endtrans %}</span>
+                                <i class="iconoir-calendar"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <button class="toggle-filters toggle-data-target btn btn-orange icon-left"
+                            data-target="aside-filters">
+                        <i class="iconoir-filter-alt"></i>
+                        <span>{% trans %}Filter{% endtrans %}</span>
+                    </button>
+                </div>
+                <div class="options">
+                    <ul class="content-navigator-menu">
+                        {% block options_start %}{% endblock options_start %}
+                        {% block options %}
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a data-toggle="dropdown" role="button"
+                                   class="btn btn-select space-between"><span>{% trans %}Tools{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i></a>
+
+                                <ul role="menu" class=" dropdown-menu">
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                           tabindex="-1"
+                                           role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown close-outside" data-underlay="no">
+                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                    <span>{% trans %}View{% endtrans %}</span>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
+
+                                <ul role="menu" class=" dropdown-menu">
+                                    <li role="presentation" class="active">
+                                        <a tabindex="-1" role="menuitem">
+                                            {% trans %}List{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Week{% endtrans %}
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"
+                                           tabindex="-1" role="menuitem">
+                                            {% trans %}Month{% endtrans %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown close-outside searchselection" data-underlay="no">
+                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+                                <span>
+                                    {% if selection %}
+                                        {% trans %}Search selection{% endtrans %}: {{ selection.title }}
+                                    {% else %}
+                                        {% trans %}Search selections{% endtrans %}
+                                    {% endif %}
+                                </span>
+                                    <i class="iconoir-nav-arrow-down"></i>
+                                </a>
+
+                                <ul role="menu" class="dropdown-menu">
+                                    <li role="presentation">
+                                        <a href="{{ path('integrated_content_content_index') }}" tabindex="-1"
+                                           role="menuitem">
+                                            All content
+                                        </a>
+                                    </li>
+
+                                    {% for searchSelection in searchSelections %}
+
+                                        {% if searchSelection.id == selection.id %}
+                                            <li role="presentation" class="active">
+                                                <a role="menuitem"><b>{{ searchSelection.title }}</b></a>
+                                            </li>
+                                        {% else %}
+                                            <li role="presentation">
+                                                <a href="{{ path('integrated_content_content_selection', { 'searchSelection': searchSelection.id }) }}"
+                                                   tabindex="-1" role="menuitem">
+                                                    {{ searchSelection.title }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li>
+                                <button
+                                    type="button"
+                                    class="toggle-searchselection toggle-data-target btn btn-white"
+                                    data-target="searchselection-edit-form"
+                                >
+                                    <i class="iconoir-settings"></i>
+                                </button>
+                            </li>
+                        {% endblock options %}
+                        {% block options_end %}{% endblock options_end %}
+                    </ul>
+                </div>
+                {% block search_selection_form %}
+                    <div class="searchselection-edit-form close-outside">
+                        {{ form_start(searchSelectionForm) }}
+                        <div class="toolbar">
+                            {% if selection.id and isSelectionEditable %}
+                                <a href="{{ path('integrated_content_search_selection_delete', {'id': selection.id}) }}"
+                                   class="btn btn-red" title="{% trans %}Delete{% endtrans %}">
+                                    <i class="iconoir-trash"></i>
+                                </a>
+                            {% endif %}
+                            <div class="toolbar-right">
+                                {% if searchSelectionForm.actions.save is defined %}
+                                    {{ form_row(searchSelectionForm.actions.save) }}
+                                {% endif %}
+                                {% if searchSelectionForm.actions.create is defined %}
+                                    {{ form_row(searchSelectionForm.actions.create) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <h2>{% trans %}Search selection settings{% endtrans %}</h2>
+                        {{ form_rest(searchSelectionForm) }}
+
+                        {{ form_end(searchSelectionForm) }}
+                    </div>
+                {% endblock search_selection_form %}
+            </div>
+
+            {% block content_items %}{% endblock content_items %}
+        </div>
+
+        {% block filter_sidebar %}
+            <div class="aside-filters close-outside">
+                <aside>
+                    <div class="aside-holder bg-white section-radius">
+                        <div class="aside-header">
+                            <button class="toggle-filters toggle-data-target" data-target="aside-filters">
+                                <i class="iconoir-cancel"></i>
+                            </button>
+                            <span>{% trans %}Filters{% endtrans %}</span>
+                            <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                                <span>{% trans %}Remove active filters{% endtrans %}</span>
+                                <i class="iconoir-cancel"></i>
+                            </a>
+                        </div>
+                        <form>
+                            <input type="hidden" value="{{ params['q'] }}" name="q"/>
+                            <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
+                            <input type="hidden" value="{{ filters['view']|default }}" name="view"/>
+                            <input type="hidden" value="{{ filters['week']|default }}" name="week"/>
+                            <input type="hidden" value="{{ filters['month']|default }}" name="month"/>
+                            {% if selection %}
+                                <input type="hidden" name="searchSelection" value="{{ selection.id }}">
+                            {% endif %}
+
+                            {% for key, facet in facets %}
+                                {% if facet|length > 0 %}
+                                    {% if key starts with 'relation_' %}
+                                        {{ block('relation_facet') }}
+                                    {% else %}
+                                        {{ block('facet') }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        {% endblock filter_sidebar %}
+
+        {% block edit_panel %}
+            {% include '@IntegratedContent/content/partial/edit_modal.html.twig' %}
+        {% endblock %}
+
+    </div>
+{% endblock %}
+
+
+{% block facet %}
+    {% if key == 'contenttypes' %}
+        {% set facetTitle = 'Content types'|trans %}
+    {% elseif key == 'workflow_state' %}
+        {% set facetTitle = 'Workflow status'|trans %}
+    {% elseif key == 'workflow_assigned' %}
+        {% set facetTitle = 'Assigned user'|trans %}
+    {% elseif key == 'authors' %}
+        {% set facetTitle = 'Author'|trans %}
+    {% else %}
+        {% set facetTitle = key|capitalize %}
+    {% endif %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle|trans }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle|trans }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params[key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="{{ key }}[]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {% if key == 'contenttypes' %}
+                                                {{ title|integrated_content_type.name|default(title) }}
+                                            {% elseif key == 'channels' %}
+                                                {{ title|integrated_channel.name|default(title) }}
+                                            {% else %}
+                                                {{ title|trans }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block relation_facet %}
+    {% set key = key[9:] %}
+
+    {% set facetTitle = key|integrated_relation.name|default(key|capitalize) %}
+    <div class="aside-item-holder">
+        <div class="aside-item-wrapper">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        {{ facetTitle }}
+                    </span>
+                </h3>
+                <i class="iconoir-nav-arrow-down"></i>
+            </div>
+            <div class="aside-item-list">
+                <div class="aside-item-list-container">
+                    {% if (facet|length >= 6) %}
+                        <div class="aside-item-search">
+                            <i class="iconoir-search"></i>
+                            <input type="text" class="list-search"
+                                   placeholder="{% trans %}Search in{% endtrans %} {{ facetTitle }}">
+                        </div>
+                    {% endif %}
+                    <ul class="filters_list">
+                        {% for title, count in facet %}
+                            <li class="checkbox">
+                                <label class="checkbox-container">
+                                    <input {% if title in params['relation'][key]|default %}checked="checked"{% endif %}
+                                           onclick="form.submit();" type="checkbox" name="relation[{{ key }}][]"
+                                           value="{{ title }}"/>
+                                    <span class="checkmark"></span>
+                                    <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            {{ title }}
+                                        </span>
+                                        <span class="facet-count">({{ count }})</span>
+                                    </div>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script>
+$(document).ready(function() {
+
+  $('.quick-edit-link').on('click', function(e) {
+
+    e.preventDefault();
+    var quickEditItemId = $(e.target).closest('.quick-edit-link').data('id');
+    var quickEditItemTitle = $(e.target).closest('.quick-edit-link').data('title');
+    const modal = $('#navigator-edit-modal');
+    const iFrame = modal.find('iframe');
+
+    modal.find('.modal-title').text(quickEditItemTitle);
+
+    $('#dropdown_overlay').removeClass('hide');
+    $('#dropdown_overlay').append('<div class="loading-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block; shape-rendering: auto;" width="100px" height="100px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><g transform="rotate(0 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9090909090909091s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(32.72727272727273 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8181818181818182s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(65.45454545454545 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.7272727272727273s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(98.18181818181819 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6363636363636364s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(130.9090909090909 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5454545454545454s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(163.63636363636363 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.45454545454545453s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(196.36363636363637 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.36363636363636365s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(229.0909090909091 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.2727272727272727s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(261.8181818181818 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.18181818181818182s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(294.54545454545456 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.09090909090909091s" repeatCount="indefinite"></animate></rect></g><g transform="rotate(327.27272727272725 50 50)"><rect x="48.5" y="31.5" rx="1.5" ry="1.8" width="3" height="9" fill="#ffffff"><animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate></rect></g><!-- [ldio] generated by https://loading.io/ --></svg></div>');
+
+    iFrame.css('display', 'block').attr('src', '/admin/content/' + quickEditItemId + '/modal-iframe.html').on('load', function () {
+        iFrame.show();
+
+        window.popupShown = true;
+
+        modal.addClass('close-outside show');
+
+        iFrame.contents().find('*[data-dismiss="modal"]').click((ev) => ev.preventDefault());
+
+        iFrame.unbind('load');
+    });
+  });
+});
+
+$('button[data-dismiss="modal"]').click(function() {
+    const modal = $('#navigator-edit-modal');
+    const iFrame = modal.find('iframe');
+
+    $('[name*=cancel]', iFrame.contents()).trigger('click');
+    $('#navigator-edit-modal.modal').removeClass('show');
+    $('#editmodaliframe').attr('src', '');
+    $('#dropdown_overlay').addClass('hide').empty();
+});
+
+$('.modal.show').click(function() {
+    const modal = $('#navigator-edit-modal');
+    const iFrame = modal.find('iframe');
+    $('[name*=cancel]', iFrame.contents()).trigger('click');
+    $('#navigator-edit-modal.modal').removeClass('show');
+    $('#editmodaliframe').attr('src', '');
+    $('#dropdown_overlay').addClass('hide').empty();
+});
+
+const columns = document.querySelectorAll('.day.column');
+
+columns.forEach(column => {
+  let isDragging = false;
+  let dragStartY;
+  let scrollTop;
+
+  column.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStartY = e.pageY - column.offsetTop;
+    scrollTop = column.scrollTop;
+  });
+
+  column.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+
+  column.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  column.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const y = e.pageY - column.offsetTop;
+    const walk = (y - dragStartY) * 1.5;
+    column.scrollTop = scrollTop - walk;
+  });
+});
+
+columns.forEach(column => {
+  const message = column.querySelector('.message');
+    if (column.scrollHeight > column.clientHeight) {
+      message.classList.add('show');
+    } else {
+      message.classList.remove('show');
+    }
+});
+</script>
+{% endblock %}

@@ -124,7 +124,8 @@
         "allow-plugins": {
             "endroid/installer": true,
             "composer/package-versions-deprecated": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {

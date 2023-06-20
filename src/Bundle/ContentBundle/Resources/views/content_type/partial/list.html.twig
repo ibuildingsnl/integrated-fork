@@ -5,7 +5,7 @@
             <th style="width:25%">{% trans %}Name{% endtrans %}</th>
             <th style="width:25%">{% trans %}ID{% endtrans %}</th>
             <th style="width:25%">{% trans %}Document type{% endtrans %}</th>
-            <th style="width:25%">{% trans %}Created{% endtrans %}</th>
+            <th style="width:25%">{% trans %}Visuals{% endtrans %}</th>
         </tr>
         </thead>
         <tbody>
@@ -49,7 +49,10 @@
                         {% endfor %}
                     </td>
                     <td>
-                        {{ document.createdAt|format_date("medium", "none") }}
+                        <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
+                            <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
+                            {{ document.name }}
+                        </span>
                     </td>
                 </tr>
             {% endif %}
@@ -85,7 +88,10 @@
                         {% endfor %}
                     </td>
                     <td>
-                        {{ document.createdAt|format_date("medium", "none") }}
+                        <span class="flex font-bold" style="color: {{ document.options.color|default('gray') }}">
+                            <i class="mr-2 icon iconoir-{{ document.options.icon|default('empty-page') }}"></i>
+                            {{ document.name }}
+                        </span>
                     </td>
                 </tr>
             {% endif %}
