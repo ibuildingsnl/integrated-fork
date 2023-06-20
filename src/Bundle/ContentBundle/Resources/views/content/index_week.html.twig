@@ -116,10 +116,11 @@
                         <div class="calendar-item-heading">
                             <div class="heading-left">
                                 <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"
-                                   title="{{ type }}"></i><span
-                                    class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
-                                <div
-                                    class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}">
+                                   title="{{ type }}"></i>
+                                <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
+
+                                {% if document.channels is defined and document.channels is not null %}
+                                <div class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}">
                                     {% if document.channels|length > 3 %}
                                         <span class="channel-popout">3+</span>
                                     {% endif %}
@@ -140,6 +141,7 @@
                                         {% endfor %}
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                             <div class="heading-right">
 

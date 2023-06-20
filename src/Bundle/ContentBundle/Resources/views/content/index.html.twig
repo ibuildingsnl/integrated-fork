@@ -97,6 +97,7 @@
 
                     {% set document = integrated_document(content) %}
 
+                    {% if document.channels is defined and document.channels is not null %}
                     <td class="channels">
                         <div
                             class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }})">
@@ -121,6 +122,7 @@
                             </div>
                         </div>
                     </td>
+                    {% endif %}
                     <td class="content-type">
                         <div class="flex font-bold" style="color: {{ type.options.color|default('gray') }}">
                             <i class="icon mr-2  iconoir-{{ type.options.icon|default('empty-page') }}" title="{{ type }}"></i>
