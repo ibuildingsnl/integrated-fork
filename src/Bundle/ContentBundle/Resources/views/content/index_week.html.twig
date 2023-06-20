@@ -73,7 +73,8 @@
         <div class="week title">
             {% for i in range(0, 6) %}
                 {% set d = filters.start|date_modify('+%d days'|format(i)) %}
-                <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}">
+                <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}"
+                     data-date="{{ d|date('Y/m/d') }}">
                     {{ d|date('D d') }}
                 </div>
             {% endfor %}
