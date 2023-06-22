@@ -159,7 +159,7 @@ class ContentController extends AbstractController
         // view settings (calendar etc)
 
         $view = '';
-        if (isset($options['view']) && $options['view'] != 'list') {
+        if (!empty($options['view']) && $options['view'] != 'list') {
             $request->query->set('page', 1);
             $request->query->set('limit', 10000);
             $options = $this->calendarOptions->prepare($options);
