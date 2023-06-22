@@ -80,6 +80,7 @@
             {% endfor %}
         </div>
         <div class="week columns">
+            {% set dayN = 0 %}
             <div class="day column" draggable="true" data-date="{{ filters.start|date('Y/m/d') }}">
                 {% set prev_day = 0 %}
                 {% for content in pager %}
@@ -87,9 +88,10 @@
 
                 {% if day != prev_day %}
                 {% for i in range(prev_day, day - 1) %}
+                {% set dayN = dayN + 1 %}
                 <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column" draggable="true" data-date="{{ filters.start|date_modify('+%d days'|format(day))|date('Y/m/d') }}">
+            <div class="day column" draggable="true" data-date="{{ filters.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
                 {% endfor %}
                 {% set prev_day = day %}
                 {% endif %}
@@ -157,9 +159,10 @@
                 {% endfor %}
                 {% if prev_day < 6 %}
                 {% for i in range(prev_day + 1, 6) %}
+                {% set dayN = dayN + 1 %}
                 <div class="message">{{ scroll_message }}</div>
             </div>
-            <div class="day column" draggable="true">
+            <div class="day column" draggable="true" data-date="{{ filters.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
                 {% endfor %}
                 {% endif %}
                 <div class="message">{{ scroll_message }}</div>
