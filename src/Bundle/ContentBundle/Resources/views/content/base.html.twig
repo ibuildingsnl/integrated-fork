@@ -4,11 +4,8 @@
 
 {% block content %}
     {% set pageClass = 'list' %}
-    {% if app.request.query.all.view is defined and
-        app.request.query.all.view != '' or
-        selection.filters.view is defined and
-        app.request.query.all.view|default != 'list' and
-        selection.filters.view|default != 'list' %}
+    {% if app.request.query.all.view is defined and app.request.query.all.view == 'week'
+        or selection.filters.view is defined and selection.filters.view == 'week' %}
         {% set pageClass = 'calendar' %}
     {% endif %}
     <div
