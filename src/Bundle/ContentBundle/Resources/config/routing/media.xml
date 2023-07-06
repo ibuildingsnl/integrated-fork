@@ -8,6 +8,10 @@
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::index</default>
     </route>
 
+    <route id="integrated_content_media_edit_image" path="/edit_image/{id}" methods="GET, POST">
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::editImage</default>
+    </route>
+
     <route id="integrated_content_media_select_one" path="/select_one" methods="GET, POST">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::selectOne</default>
     </route>

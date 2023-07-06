@@ -29,7 +29,7 @@ function inititalizeUppy(uppyOptions) {
     let uppy = new Uppy({
         restrictions: {
             maxFileSize: 50000000, //50 MB
-            allowedFileTypes: ['image/*', 'video/*', 'doc', 'docx', 'pdf', 'xls', 'xlsx'],
+            allowedFileTypes: ['image/*', 'video/*', '.doc', '.docx', '.pdf', '.xls', '.xlsx'],
         },
 
         // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,

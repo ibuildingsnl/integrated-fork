@@ -1,0 +1,31 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% set selected_modus = 'media_gallery' %}
+
+{% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
+{% block content %}
+
+    <div>Edit image: {{ id }}</div>
+
+    <div class="drag-drop-area"
+         data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"
+         data-language="{{ language|default('nl') }}"
+         data-height="{{ height|default('750px') }}"
+         data-image-editor-enabled="{{ imageEditorEnabled|default(true) }}"
+         data-target="{{ target|default('.drag-drop-area') }}"
+         data-imageurlexample="{{ imageurlexample|default("") }}">
+    </div>
+
+    <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
+
+{% endblock %}
+
+{% block webpack_js %}
+    <script>
+        const path = '{{ path('integrated_content_media_manage_relations') }}'
+        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
+    </script>
+
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}

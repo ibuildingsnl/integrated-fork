@@ -22,6 +22,7 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
+use PHP_CodeSniffer\Reports\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -168,6 +169,20 @@ class MediaController extends AbstractController
                 $this::NOT_SHOWN_FILETYPES
             ),
         ];
+    }
+
+    public function editImage(string $id, Request $request): Response
+    {
+        $data = [];
+        $data["id"] = $id;
+        $data["message"] = "ok";
+        $data["imageidexample"] = "8ae292f0fd9f345780a81c7086d875e3";
+        $data["imageurlexample"] = "https://integrated.localhost.e-active.nl/files/f02d22f20659002e9918adb09c3d2954.png";
+
+        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
+            'selected_modus' => 'media_gallery',
+            ...$data
+        ]);
     }
 
     private function removeIdsFromRequest(Request $request): Request
