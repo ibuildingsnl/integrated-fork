@@ -21,6 +21,7 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Storage\ManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage as StorageItem;
 
 /**
  * Class MediaGalleryUploadFile.
@@ -93,5 +94,24 @@ class MediaGalleryUploadFile
         $this->documentManager->persist($file);
 
         return $file;
+    }
+
+    public function getContentFromUploadedFile(Request $request): StorageItem {
+
+        $uploadedFile = $request->files->get('file');
+        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
+        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
+
+        return $this->manager->write(
+            new MemoryReader(
+                file_get_contents($uploadedFile),
+                new Metadata(
+                    $uploadedFileExtension,
+                    $uploadedFileMimetype,
+                    new ArrayCollection(),
+                    new ArrayCollection()
+                )
+            )
+        );
     }
 }

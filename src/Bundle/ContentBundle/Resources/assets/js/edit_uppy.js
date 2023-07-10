@@ -13,11 +13,13 @@ global.ImageEditor = ImageEditor
 async function urlToBlob(url) {
     try {
         const response = await fetch(url);
+        console.log(response)
         if (!response.ok) {
             throw new Error('Failed to convert URL to blob');
         }
-        // console.log(response)
+        console.log(response)
         const blob = await response.blob();
+        console.log(blob)
         return blob;
     } catch (error) {
         throw new Error('Failed to convert URL to blob');
@@ -25,7 +27,6 @@ async function urlToBlob(url) {
 }
 
 async function inititalizeUppy(uppyOptions) {
-    console.log("rawr")
     console.log(uppyOptions)
     console.log(uppyOptions.imageurlexample)
 
@@ -41,34 +42,37 @@ async function inititalizeUppy(uppyOptions) {
         return false
     }
 
+    console.log("hi there")
+
     let uppy = new Uppy({
         restrictions: {
-            maxFileSize: 50000000, //50 MB
+            maxFileSize: 50*1000*1000, //50 MB
             allowedFileTypes: ['image/*', 'video/*', 'doc', 'docx', 'pdf', 'xls', 'xlsx'],
         },
 
         // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
+            console.log("before upload")
             // We have 2 entry points: when a user selects a ContentType, and when he clicks on the add button.
             // We are setting this field via mediaGallery.js, search for: dataset.customContenttype
-            let custom_contenttype = document.querySelector('#upload_container').dataset.customContenttype || ''
+            // let custom_contenttype = document.querySelector('#upload_container').dataset.customContenttype || ''
 
-            let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
+            // let current_category_id = new URL(location.href).searchParams.get('media_taxonomy_id') || '';
 
-            for (const [key, file] of Object.entries(files)) {
-                if (null !== current_category_id && '' !== current_category_id) {
-                    file.meta.category_id_target = current_category_id;
-                }
-                if (null !== custom_contenttype && '' !== custom_contenttype) {
-                    file.meta.custom_contenttype = custom_contenttype;
-                }
-            }
+            // for (const [key, file] of Object.entries(files)) {
+            //     if (null !== current_category_id && '' !== current_category_id) {
+            //         file.meta.category_id_target = current_category_id;
+            //     }
+            //     if (null !== custom_contenttype && '' !== custom_contenttype) {
+            //         file.meta.custom_contenttype = custom_contenttype;
+            //     }
+            // }
         },
     })
 
     uppy.on('complete', (result) => {
         if (result.failed.length === 0) {
-            closeUppyWithRefresh()
+            // closeUppyWithRefresh()
         }
     });
 
@@ -120,6 +124,26 @@ async function inititalizeUppy(uppyOptions) {
     uppy.on('file-editor:complete', file => {
         console.log("file editor complete")
         console.log(file)
+        console.log("upload to server")
+        // let result = uppy.upload()
+        // console.log(result)
+
+        file.replace = true
+        file.meta.replace = true;
+        file.user_approved_overwrite = true
+        file.meta.user_approved_overwrite = true;
+
+        uppy.upload().then((result) => {
+            console.info('uploads:', result);
+            console.info('Successful uploads:', result.successful);
+
+            if (result.failed.length > 0) {
+                console.error('Errors:');
+                result.failed.forEach((file) => {
+                    console.error(file.error);
+                });
+            }
+        });
         // if (hasNewFiles) {
         //     const dashboard = uppy.getPlugin('Dashboard')
         //     const files = uppy.getFiles()
@@ -133,7 +157,22 @@ async function inititalizeUppy(uppyOptions) {
         // }
     })
 
+    function uploadToServer() {
+        console.log("upload to server")
+        let result = uppy.upload()
+        console.log(result)
 
+        uppy.upload().then((result) => {
+            console.info('Successful uploads:', result.successful);
+
+            if (result.failed.length > 0) {
+                console.error('Errors:');
+                result.failed.forEach((file) => {
+                    console.error(file.error);
+                });
+            }
+        });
+    }
 
     // uppy.on('files-added', async () => {
     //     hasNewFiles = true // This could be a react component's state for example
@@ -160,8 +199,12 @@ async function inititalizeUppy(uppyOptions) {
         uppy.getPlugin('Dashboard').openFileEditor(file)
     })
 
+    console.log("whhut")
+    console.log(uppyOptions.imageurlexample)
     try {
         const blob = await urlToBlob(uppyOptions.imageurlexample);
+        console.log("blob")
+        console.log(blob)
         uppy.addFile({
             name: 'my-file.jpg', // file name
             type: 'image/jpeg', // file type

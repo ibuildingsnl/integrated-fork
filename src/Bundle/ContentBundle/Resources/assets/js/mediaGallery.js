@@ -132,6 +132,8 @@ function handleMediaClick(event) {
         attr('src',
             '/admin/content/' + event.target.closest('.media-item').dataset.id +
             '/iframe.html');
+    $('#editpaneliframe').attr('data-media_id', event.target.closest('.media-item').dataset.id);
+    $('#editpaneliframe').attr('data-file', event.target.closest('.media-item').dataset.file);
 }
 
 function handleMediaEditClose(event) {

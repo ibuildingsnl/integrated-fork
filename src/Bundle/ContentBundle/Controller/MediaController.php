@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -174,10 +175,21 @@ class MediaController extends AbstractController
     public function editImage(string $id, Request $request): Response
     {
         $data = [];
+
+        $file =  $this->documentManager->createQueryBuilder(File::class)
+            ->field('id')
+            ->in([
+                'id' => $id
+            ])
+            ->getQuery()
+            ->execute()->toArray()[0];
+
+        $source = $file->getFile()->getPathName();
+
         $data["id"] = $id;
         $data["message"] = "ok";
-        $data["imageidexample"] = "8ae292f0fd9f345780a81c7086d875e3";
-        $data["imageurlexample"] = "https://integrated.localhost.e-active.nl/files/f02d22f20659002e9918adb09c3d2954.png";
+        $data["imageidexample"] = $id;
+        $data["imageurlexample"] = "https://integrated.localhost.e-active.nl" . $file->getFile()->getPathName();
 
         return $this->render('@IntegratedContent/media/edit_image.html.twig', [
             'selected_modus' => 'media_gallery',
@@ -202,15 +214,36 @@ class MediaController extends AbstractController
     public function uploadFile(Request $request)
     {
         try {
-            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+            $approvedOverwriteByEditor =  $request->get('user_approved_overwrite');
 
-            // save the FILE
-            $this->taxonomyRelationManager->runSolrQueue();
+            //we are replacing the file
+            if ($approvedOverwriteByEditor) {
+                //find image by ud
+                $file =  $this->documentManager->createQueryBuilder(File::class)
+                    ->field('id')
+                    ->in([
+                        'id' => '8ae292f0fd9f345780a81c7086d875e3'
+                    ])
+                    ->getQuery()
+                    ->execute()->toArray()[0];
 
-            $request->attributes->set('media_id', $file->getId());
+                //overwrite the file part
+                $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
+                $file->setFile($storage);
 
-            $this->taxonomyRelationManager->manageRelations($request);
+                //save
+                $this->documentManager->persist($file);
 
+            } else { //we are creating a new
+                $file = $this->mediaGalleryUploadFile->handleUpload($request);
+
+                // save the FILE
+                $this->taxonomyRelationManager->runSolrQueue();
+
+                $request->attributes->set('media_id', $file->getId());
+
+                $this->taxonomyRelationManager->manageRelations($request);
+            }
             // save the RELATION
             $this->taxonomyRelationManager->runSolrQueue();
 

@@ -14,6 +14,8 @@ global.ImageEditor = ImageEditor
 // global.UppyDutch = UppyDutch
 
 function inititalizeUppy(uppyOptions) {
+    console.log("uppyOptions")
+    console.log(uppyOptions)
     let default_height = '750px'
     let default_language = '' //defaults to eng
     let uploaded_files = 0
