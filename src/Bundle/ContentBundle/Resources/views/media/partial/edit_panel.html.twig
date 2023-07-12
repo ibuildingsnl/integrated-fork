@@ -1,10 +1,7 @@
 <div class="aside-edit-holder bg-white hide">
     <div class="aside-item-wrapper">
         <!-- THIS IS WHILE IN THE MEDIA GALLERY, AFTER A CLICK ON BELOW BUTTON, WE CAN EDIT THE IMAGE -->
-{#        <a href="/admin/media/edit_image/12345">EDIT IMAGE</a>#}
         <button id="go_to_editor">EDIT IMAGE</button>
-
-        {{dump(app.request)}}
 
         <button class="close-media-edit-form"><i
                 class="iconoir-cancel"></i></button>
@@ -13,24 +10,14 @@
 </div>
 
 <script>
-
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelector('#go_to_editor').addEventListener('click', (event) => {
             handleMediaClick(event);
         })
     });
-    //
+
     function handleMediaClick(event) {
-        console.log("bye")
         const media_id = event.target.parentElement.querySelector('iframe').dataset.media_id
-        // const file = event.target.parentElement.querySelector('iframe').dataset.file
-        // console.log(window.location.href + '/edit_image/' + media_id)
         window.location.href = window.location.href + 'edit_image/' + media_id;
-        // $('.media-gallery').addClass('show-edit-form');
-        // $('.media-edit-panel').removeClass('hide');
-        // $('#editpaneliframe').
-        // attr('src',
-        //     '/admin/content/' + event.target.closest('.media-item').dataset.id +
-        //     '/iframe.html');
     }
 </script>

@@ -14,8 +14,6 @@ global.ImageEditor = ImageEditor
 // global.UppyDutch = UppyDutch
 
 function inititalizeUppy(uppyOptions) {
-    console.log("uppyOptions")
-    console.log(uppyOptions)
     let default_height = '750px'
     let default_language = '' //defaults to eng
     let uploaded_files = 0
@@ -69,6 +67,14 @@ function inititalizeUppy(uppyOptions) {
         doneButtonHandler: () => {
             closeUppyWithRefresh()
         },
+
+        trigger: '#pick-files',
+        metaFields: [
+            { id: 'title', name: 'Title', placeholder: 'File name' },
+            { id: 'description', name: 'Description', placeholder: '' },
+            { id: 'copyright', name: 'Copyright restrictions', placeholder: '' },
+            { id: 'credits', name: 'Credits', placeholder: '' },
+        ],
     });
 
     function closeUppyWithRefresh() {

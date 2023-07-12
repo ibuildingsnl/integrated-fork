@@ -184,11 +184,17 @@ class MediaController extends AbstractController
             ->getQuery()
             ->execute()->toArray()[0];
 
-        $source = $file->getFile()->getPathName();
+        $meta = [
+            'title' => $file->getTitle(),
+            'description' => $file->getDescription(),
+            'copyright' => $file->getCopyrightRestrictions(),
+            'credits' => $file->getCredits(),
+        ];
 
         $data["id"] = $id;
         $data["message"] = "ok";
-        $data["imageidexample"] = $id;
+        $data["file"] = $file;
+        $data["meta"] = json_encode($meta);
         $data["imageurlexample"] = "https://integrated.localhost.e-active.nl" . $file->getFile()->getPathName();
 
         return $this->render('@IntegratedContent/media/edit_image.html.twig', [
@@ -216,6 +222,8 @@ class MediaController extends AbstractController
         try {
             $approvedOverwriteByEditor = $request->get('user_approved_overwrite');
             $id =  $request->get('id');
+
+            dd($request);
 
             //we are replacing the file
             if ($approvedOverwriteByEditor === "true") {

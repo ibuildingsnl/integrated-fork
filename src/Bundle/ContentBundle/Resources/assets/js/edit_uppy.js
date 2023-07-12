@@ -10,7 +10,7 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-function addButton() {
+function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
 
     let button = document.createElement('button');
@@ -54,25 +54,16 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
-        // $('#upload_container').removeClass('show');
-        // $('#dropdown_overlay').addClass('hide');
-        console.log("reloading")
         window.location.href = 'https://integrated.localhost.e-active.nl/admin/media'
         // window.location.reload();
     }
 
     uppy.on('file-editor:start', (file) => {
         console.log('fiile editor start')
-        // remove cancel buttons
-        // const items = document.querySelectorAll('.uppy-DashboardContent-back')
-        // console.log(items)
-        // items.forEach(item => console.log(item))
-        // items.forEach(item => item.style.display = "none")
     })
 
     uppy.on('file-editor:cancel', (file) => {
         console.log('fiile editor cancel')
-        console.log(fiile)
     })
 
     uppy.use(XHRUpload, {
@@ -90,14 +81,8 @@ async function inititalizeUppy(uppyOptions) {
     uppy.on('file-editor:complete', file => {
         console.log("file editor complete")
 
-        console.log("checked")
-        console.log(document.querySelector('#overwriteImage').checked)
-
-        file.meta.replace = true;
         file.meta.id = uppyOptions.id;
         file.meta.user_approved_overwrite = document.querySelector('#overwriteImage').checked
-
-        console.log(file.meta)
 
         const modal = document.getElementById("myModal");
         modal.style.display = "block";
@@ -122,15 +107,11 @@ async function inititalizeUppy(uppyOptions) {
 
     await loadCurrentFile(uppy, uppyOptions)
 
-    addButton()
+    addShowPopupButton()
 
     function uploadThisToServer() {
         const modal = document.getElementById("myModal");
         modal.style.display = "block";
-
-        file.meta.replace = true;
-        file.meta.id = uppyOptions.id;
-        file.meta.user_approved_overwrite = true;
 
         $('.content-wrapper').hide()
 
@@ -141,7 +122,7 @@ async function inititalizeUppy(uppyOptions) {
                     console.error(file.error);
                 });
             }
-            // closeUppyWithRefresh()
+            closeUppyWithRefresh()
         });
     }
 
@@ -155,10 +136,7 @@ async function loadCurrentFile(uppy, uppyOptions) {
             name: 'my-file.jpg', // file name
             type: 'image/jpeg', // file type
             data: blob, // file blob
-            meta: {
-                // optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
-                // relativePath: webkitFileSystemEntry.relativePath,
-            },
+            meta: uppyOptions.meta,
             source: 'Local', // optional, determines the source of the file, for example, Instagram.
             isRemote: false,
         })
@@ -181,7 +159,8 @@ async function urlToBlob(url) {
 }
 
 $('.drag-drop-area').each(function() {
-    let uppyOptions = $(this)[0].dataset
+    let uppyOptions = { ...$(this)[0].dataset }
+    uppyOptions.meta = JSON.parse(uppyOptions.meta)
     let uppy = inititalizeUppy(uppyOptions)
 })
 

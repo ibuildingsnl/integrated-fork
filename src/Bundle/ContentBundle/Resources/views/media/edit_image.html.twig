@@ -16,15 +16,16 @@
             <button class="rawr">&times;</button>
             <fieldset>
 
-                <legend>Choose your monster's features:</legend>
+                <legend>If you want to replace the image, you can check this checkbox:</legend>
+                <legend>CAREFUL!: If you do this, images in articles will be replaced!</legend>
 
                 <div>
-                    <input type="checkbox" id="overwriteImage" name="scales" checked>
+                    <input type="checkbox" id="overwriteImage" name="scales">
                     <label for="scales">Overwrite image</label>
                 </div>
 
             </fieldset>
-            <button id="saveEditedImage">Save this mongrol</button>
+            <button id="saveEditedImage">Save image</button>
         </div>
 
     </div>
@@ -36,6 +37,7 @@
          data-image-editor-enabled="{{ imageEditorEnabled|default(true) }}"
          data-target="{{ target|default('.drag-drop-area') }}"
          data-id="{{ id }}"
+         data-meta="{{ meta }}"
          data-imageurlexample="{{ imageurlexample|default("") }}">
     </div>
 
