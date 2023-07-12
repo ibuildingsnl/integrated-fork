@@ -7,23 +7,91 @@
 
     <div>Edit image: {{ id }}</div>
 
+    <!-- The Modal -->
+    <!-- @BAS FIX THIS ;-) !-->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <button class="rawr">&times;</button>
+            <fieldset>
+
+                <legend>Choose your monster's features:</legend>
+
+                <div>
+                    <input type="checkbox" id="overwriteImage" name="scales" checked>
+                    <label for="scales">Overwrite image</label>
+                </div>
+
+            </fieldset>
+            <button id="saveEditedImage">Save this mongrol</button>
+        </div>
+
+    </div>
+
     <div class="drag-drop-area"
          data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"
          data-language="{{ language|default('nl') }}"
          data-height="{{ height|default('750px') }}"
          data-image-editor-enabled="{{ imageEditorEnabled|default(true) }}"
          data-target="{{ target|default('.drag-drop-area') }}"
+         data-id="{{ id }}"
          data-imageurlexample="{{ imageurlexample|default("") }}">
     </div>
 
     <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
 
+    <!-- @BAS FIX THIS ;-) !-->
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 99999; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .rawr {
+            font-size: 22px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}
 
 {% block webpack_js %}
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
+
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("rawr")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
     </script>
 
     <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
