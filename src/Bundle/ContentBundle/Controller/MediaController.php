@@ -220,18 +220,13 @@ class MediaController extends AbstractController
     public function uploadFile(Request $request)
     {
         try {
-            $approvedOverwriteByEditor = $request->get('user_approved_overwrite');
-            $id =  $request->get('id');
-
-            dd($request);
-
-            //we are replacing the file
-            if ($approvedOverwriteByEditor === "true") {
+            if ($request->get('user_approved_overwrite') === "true") {
+                //we are replacing the file
 
                 //find image by id
                 $file =  $this->documentManager->createQueryBuilder(File::class)
                     ->field('id')
-                    ->in(['id' => $id])
+                    ->in(['id' => $request->get('id')])
                     ->getQuery()
                     ->execute()->toArray()[0];
 
@@ -241,8 +236,9 @@ class MediaController extends AbstractController
 
                 //save
                 $this->documentManager->persist($file);
-
-            } else { //we are creating a new image
+            } else {
+                // we are creating a new image
+                // Todo: if we are copying a file, create a file from an existing file.
                 $file = $this->mediaGalleryUploadFile->handleUpload($request);
 
                 // save the file

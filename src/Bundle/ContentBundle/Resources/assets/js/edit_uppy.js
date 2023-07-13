@@ -10,12 +10,20 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
+/* Todo:
+ Fix buttons on the top
+ When a copy is made, take the copy as base instead of send parameters
+ replace urls with twig paths
+ UI:
+  - Fix edit button
+  - Fix popup show/hide and content
+  - Fix editing of meta data and save button (of uppy/9
+ */
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
 
     let button = document.createElement('button');
-    button.id = 'SaveButton';
-    button.innerHTML = 'RAWR 🚀';
+    button.innerHTML = 'Save image 🚀';
     button.addEventListener('click', () => {
         const modal = document.getElementById("myModal");
         modal.style.display = "block";
@@ -54,17 +62,9 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
+        // Todo
         window.location.href = 'https://integrated.localhost.e-active.nl/admin/media'
-        // window.location.reload();
     }
-
-    uppy.on('file-editor:start', (file) => {
-        console.log('fiile editor start')
-    })
-
-    uppy.on('file-editor:cancel', (file) => {
-        console.log('fiile editor cancel')
-    })
 
     uppy.use(XHRUpload, {
         endpoint: uppyOptions.endpoint,
@@ -79,13 +79,8 @@ async function inititalizeUppy(uppyOptions) {
     }
 
     uppy.on('file-editor:complete', file => {
-        console.log("file editor complete")
-
         file.meta.id = uppyOptions.id;
         file.meta.user_approved_overwrite = document.querySelector('#overwriteImage').checked
-
-        const modal = document.getElementById("myModal");
-        modal.style.display = "block";
 
         $('.content-wrapper').hide()
 
@@ -96,7 +91,8 @@ async function inititalizeUppy(uppyOptions) {
                     console.error(file.error);
                 });
             }
-            // closeUppyWithRefresh()
+
+            closeUppyWithRefresh()
         });
     })
 
@@ -108,23 +104,6 @@ async function inititalizeUppy(uppyOptions) {
     await loadCurrentFile(uppy, uppyOptions)
 
     addShowPopupButton()
-
-    function uploadThisToServer() {
-        const modal = document.getElementById("myModal");
-        modal.style.display = "block";
-
-        $('.content-wrapper').hide()
-
-        uppy.upload().then((result) => {
-            if (result.failed.length > 0) {
-                console.error('Errors:');
-                result.failed.forEach((file) => {
-                    console.error(file.error);
-                });
-            }
-            closeUppyWithRefresh()
-        });
-    }
 
     return uppy;
 }
@@ -151,8 +130,7 @@ async function urlToBlob(url) {
         if (!response.ok) {
             throw new Error('Failed to convert URL to blob');
         }
-        const blob = await response.blob();
-        return blob;
+        return await response.blob();
     } catch (error) {
         throw new Error('Failed to convert URL to blob');
     }
