@@ -197,7 +197,14 @@ class MediaController extends AbstractController
         $data["meta"] = json_encode($meta);
         $data["imageurlexample"] = "https://integrated.localhost.e-active.nl" . $file->getFile()->getPathName();
 
-        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
+        $editors = [
+            'standard' => 'edit_image',
+            'pintura' => 'edit_image_pintura',
+        ];
+
+        $choice = $editors['pintura'];
+
+        return $this->render('@IntegratedContent/media/'.$choice.'.html.twig', [
             'selected_modus' => 'media_gallery',
             ...$data
         ]);
@@ -219,6 +226,8 @@ class MediaController extends AbstractController
 
     public function uploadFile(Request $request)
     {
+//        dump($request->files->get('file'));
+//        dd($request);
         try {
             if ($request->get('user_approved_overwrite') === "true") {
                 //we are replacing the file
