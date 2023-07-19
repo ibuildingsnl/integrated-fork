@@ -1,7 +1,7 @@
 <div class="aside-edit-holder bg-white hide">
     <div class="aside-item-wrapper">
         <!-- THIS IS WHILE IN THE MEDIA GALLERY, AFTER A CLICK ON BELOW BUTTON, WE CAN EDIT THE IMAGE -->
-        <button id="go_to_editor">EDIT IMAGE</button>
+        <button id="go_to_editor">Edit image</button>
 
         <button class="close-media-edit-form"><i
                 class="iconoir-cancel"></i></button>
@@ -18,6 +18,6 @@
 
     function handleMediaClick(event) {
         const media_id = event.target.parentElement.querySelector('iframe').dataset.media_id
-        window.location.href = window.location.href + 'edit_image/' + media_id;
+        window.location.href = '/admin/media/edit_image/' + media_id;
     }
 </script>

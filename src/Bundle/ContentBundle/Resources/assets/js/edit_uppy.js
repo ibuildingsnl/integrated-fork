@@ -11,18 +11,14 @@ import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
 /* Todo:
- Fix buttons on the top
  When a copy is made, take the copy as base instead of send parameters
  replace urls with twig paths
  UI:
-  - Fix edit button
-  - Fix popup show/hide and content
   - Fix editing of meta data and save button (of uppy/9
  */
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
-
-    let button = document.createElement('button');
+    const button = document.createElement('button');
     button.innerHTML = 'Save image 🚀';
     button.addEventListener('click', () => {
         const modal = document.getElementById("myModal");
@@ -30,6 +26,10 @@ function addShowPopupButton() {
     });
 
     statusBar.append(button);
+}
+
+function hideDefaultButtons() {
+    document.querySelector('.uppy-DashboardContent-save').hidden = true
 }
 
 async function inititalizeUppy(uppyOptions) {
@@ -103,14 +103,25 @@ async function inititalizeUppy(uppyOptions) {
 
     await loadCurrentFile(uppy, uppyOptions)
 
+    hideDefaultButtons()
+
     addShowPopupButton()
+
+    //I cant hook on the file-editor:cancel event, but this works as well:
+    //Most likely this is because of an open issue: https://github.com/transloadit/uppy/issues/4045
+    document.querySelectorAll('.uppy-DashboardContent-back').forEach((button) => {
+        button.addEventListener('click', () => {
+            document.querySelector('.uppy-Root').hidden = true
+            window.location.href = previous_url
+        });
+    })
 
     return uppy;
 }
 
 async function loadCurrentFile(uppy, uppyOptions) {
     try {
-        const blob = await urlToBlob(uppyOptions.imageurlexample);
+        const blob = await urlToBlob(uppyOptions.file_url);
         uppy.addFile({
             name: 'my-file.jpg', // file name
             type: 'image/jpeg', // file type

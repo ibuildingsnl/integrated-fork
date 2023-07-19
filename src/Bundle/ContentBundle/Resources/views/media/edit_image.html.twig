@@ -5,13 +5,9 @@
 {% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
 {% block content %}
 
-    <div>Edit image: {{ id }}</div>
-
-    <!-- The Modal -->
     <!-- @BAS FIX THIS ;-) !-->
     <div id="myModal" class="modal">
 
-        <!-- Modal content -->
         <div class="modal-content">
             <button class="rawr">&times;</button>
             <fieldset>
@@ -38,7 +34,7 @@
          data-target="{{ target|default('.drag-drop-area') }}"
          data-id="{{ id }}"
          data-meta="{{ meta }}"
-         data-imageurlexample="{{ imageurlexample|default("") }}">
+         data-file_url="{{ file_url|default("") }}">
     </div>
 
     <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
@@ -87,8 +83,10 @@
 {% block webpack_js %}
     <script>
         const path = '{{ path('integrated_content_media_manage_relations') }}'
+        const previous_url = '{{ previous_url }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
 
+        //modal
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("rawr")[0];
         span.onclick = function() {

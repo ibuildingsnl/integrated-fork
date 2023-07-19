@@ -50,7 +50,7 @@ function setupPintura(options) {
     const pintura = appendDefaultEditor('.my-editor', {
         // The source image to load
         // src: 'https://integrated.localhost.e-active.nl/files/42391b88848896082aa56c092ab4eb38.jpg',
-        src: options.imageurlexample,
+        src: options.file_url,
 
         // This will set a square crop aspect ratio
         imageWriter: {

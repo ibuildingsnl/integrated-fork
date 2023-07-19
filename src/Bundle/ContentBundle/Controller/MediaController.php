@@ -174,35 +174,32 @@ class MediaController extends AbstractController
 
     public function editImage(string $id, Request $request): Response
     {
-        $data = [];
+        $file = $this->documentManager->getRepository(File::class)->find($id);
 
-        $file =  $this->documentManager->createQueryBuilder(File::class)
-            ->field('id')
-            ->in([
-                'id' => $id
-            ])
-            ->getQuery()
-            ->execute()->toArray()[0];
+        if (!$file) {
+            throw $this->createNotFoundException('File not found.');
+        }
 
-        $meta = [
-            'title' => $file->getTitle(),
-            'description' => $file->getDescription(),
-            'copyright' => $file->getCopyrightRestrictions(),
-            'credits' => $file->getCredits(),
+        $data = [
+            'id' => $id,
+            'file' => $file,
+            'meta' => json_encode([
+                'title' => $file->getTitle(),
+                'description' => $file->getDescription(),
+                'copyright' => $file->getCopyrightRestrictions(),
+                'credits' => $file->getCredits(),
+            ]),
+            'previous_url' => $request->headers->get('referer'),
+            'file_url' => 'https://integrated.localhost.e-active.nl' . $file->getFile()->getPathName(),
         ];
 
-        $data["id"] = $id;
-        $data["message"] = "ok";
-        $data["file"] = $file;
-        $data["meta"] = json_encode($meta);
-        $data["imageurlexample"] = "https://integrated.localhost.e-active.nl" . $file->getFile()->getPathName();
 
         $editors = [
             'standard' => 'edit_image',
             'pintura' => 'edit_image_pintura',
         ];
 
-        $choice = $editors['pintura'];
+        $choice = $editors['standard'];
 
         return $this->render('@IntegratedContent/media/'.$choice.'.html.twig', [
             'selected_modus' => 'media_gallery',
