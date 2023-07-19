@@ -107,6 +107,8 @@ async function inititalizeUppy(uppyOptions) {
 
     addShowPopupButton()
 
+    await loadUsedBy(uppyOptions)
+
     //I cant hook on the file-editor:cancel event, but this works as well:
     //Most likely this is because of an open issue: https://github.com/transloadit/uppy/issues/4045
     document.querySelectorAll('.uppy-DashboardContent-back').forEach((button) => {
@@ -117,6 +119,30 @@ async function inititalizeUppy(uppyOptions) {
     })
 
     return uppy;
+}
+
+async function loadUsedBy(uppyOptions) {
+    try {
+        const response = await fetch('https://integrated.localhost.e-active.nl/admin/content/' +uppyOptions.id+ '/used-by/json?limit=10');
+        const usedBy = await response.json();
+        if (usedBy?.items.length > 0) {
+            applyUsedBy(usedBy)
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function applyUsedBy(usedBy) {
+    document.querySelector('#used-by-list').hidden = false
+    document.querySelector('#not-used-by').hidden = true
+
+    const targetElement = document.getElementById('used-by-list'); // Replace 'target' with the ID of the element you want to append to
+    usedBy?.items.forEach((item) => {
+        const newLink = document.createElement('li');
+        newLink.innerHTML = `<a href="${item.href}">${item.title}</a>`;
+        targetElement.appendChild(newLink);
+    })
 }
 
 async function loadCurrentFile(uppy, uppyOptions) {
