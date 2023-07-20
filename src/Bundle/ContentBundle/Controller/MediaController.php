@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -182,17 +183,14 @@ class MediaController extends AbstractController
 
         $data = [
             'id' => $id,
-            'file' => $file,
+            'title' => $file->getTitle(),
             'meta' => json_encode([
-                'title' => $file->getTitle(),
-                'description' => $file->getDescription(),
-                'copyright' => $file->getCopyrightRestrictions(),
-                'credits' => $file->getCredits(),
+                'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
+                'extension' => $file->getFile()->getMetadata()->getExtension(),
             ]),
             'previous_url' => $request->headers->get('referer'),
             'file_url' => 'https://integrated.localhost.e-active.nl' . $file->getFile()->getPathName(),
         ];
-
 
         $editors = [
             'standard' => 'edit_image',
@@ -221,31 +219,39 @@ class MediaController extends AbstractController
         });
     }
 
+    private function replaceImage($request, $file)
+    {
+        // Overwrite the file part
+        $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
+        $file->setFile($storage);
+        $this->documentManager->persist($file);
+        return $file;
+    }
+
+    private function createNewCopy($request)
+    {
+        $original = $this->documentManager->getRepository(File::class)->find($request->get('id'));
+        $file = $this->copyImage($original);
+        $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
+        $file->setFile($storage);
+        $this->documentManager->persist($file);
+        return $file;
+    }
+
+
     public function uploadFile(Request $request)
     {
-//        dump($request->files->get('file'));
-//        dd($request);
         try {
             if ($request->get('user_approved_overwrite') === "true") {
-                //we are replacing the file
-
-                //find image by id
-                $file =  $this->documentManager->createQueryBuilder(File::class)
-                    ->field('id')
-                    ->in(['id' => $request->get('id')])
-                    ->getQuery()
-                    ->execute()->toArray()[0];
-
-                //overwrite the file part
-                $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
-                $file->setFile($storage);
-
-                //save
-                $this->documentManager->persist($file);
+                $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
+                $file = $this->replaceImage($request, $file);
             } else {
-                // we are creating a new image
-                // Todo: if we are copying a file, create a file from an existing file.
-                $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                if ($request->get('user_approved_overwrite') === "false") {
+                    $file = $this->createNewCopy($request);
+                } else { //new upload
+                    // we are creating a new image
+                    $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                }
 
                 // save the file
                 $this->taxonomyRelationManager->runSolrQueue();
@@ -254,7 +260,7 @@ class MediaController extends AbstractController
 
                 $this->taxonomyRelationManager->manageRelations($request);
             }
-            // save the RELATION
+            // save the relation
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
@@ -262,6 +268,28 @@ class MediaController extends AbstractController
             return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
                 ->setStatusCode(422);
         }
+    }
+
+    private function copyImage($object) {
+        $class = new \ReflectionClass($object);
+        $copy = new Image();
+        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $excludedSetters = ['setUpdatedAt', 'setCreatedAt', 'setId', 'setFile'];
+
+        foreach ($methods as $method) {
+            $methodName = $method->name;
+
+            // Check if it's a setter and not excluded
+            if (strncasecmp($methodName, 'set', 3) === 0 && !in_array($methodName, $excludedSetters, true)) {
+                $getterName = 'get' . substr($methodName, 3);
+
+                if ($class->hasMethod($getterName)) {
+                    $copy->{$methodName}($object->{$getterName}());
+                }
+            }
+        }
+
+        return $copy;
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array

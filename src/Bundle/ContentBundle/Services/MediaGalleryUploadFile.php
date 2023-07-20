@@ -41,7 +41,7 @@ class MediaGalleryUploadFile
 
     public function handleUpload(Request $request)
     {
-        // check filetype
+        // check filetype, this will be retrieved from the name parameter
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         // QUESTION: What do you guys think about using this as whitelist:
         // https://gist.github.com/tylerlee/53609bff1346cebf8f0a85b6be29a88e

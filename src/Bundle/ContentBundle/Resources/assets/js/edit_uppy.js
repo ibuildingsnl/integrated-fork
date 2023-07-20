@@ -11,10 +11,7 @@ import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
 /* Todo:
- When a copy is made, take the copy as base instead of send parameters
  replace urls with twig paths
- UI:
-  - Fix editing of meta data and save button (of uppy/9
  */
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
@@ -149,10 +146,10 @@ async function loadCurrentFile(uppy, uppyOptions) {
     try {
         const blob = await urlToBlob(uppyOptions.file_url);
         uppy.addFile({
-            name: 'my-file.jpg', // file name
-            type: 'image/jpeg', // file type
+            name: uppyOptions.title + '.' + uppyOptions.meta.extension, // this Must have an extension or the uploading wont work
+            title: uppyOptions.title, // file name
+            type: uppyOptions.meta.mimetype ?? 'image/jpg', // file type
             data: blob, // file blob
-            meta: uppyOptions.meta,
             source: 'Local', // optional, determines the source of the file, for example, Instagram.
             isRemote: false,
         })
