@@ -1,8 +1,5 @@
 <div class="aside-edit-holder bg-white hide">
     <div class="aside-item-wrapper">
-        <!-- THIS IS WHILE IN THE MEDIA GALLERY, AFTER A CLICK ON BELOW BUTTON, WE CAN EDIT THE IMAGE -->
-        <button id="go_to_editor">Edit image</button>
-
         <button class="close-media-edit-form"><i
                 class="iconoir-cancel"></i></button>
         <iframe id="editpaneliframe" src=""></iframe>
@@ -10,14 +7,10 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelector('#go_to_editor').addEventListener('click', (event) => {
-            handleMediaClick(event);
-        })
-    });
-
-    function handleMediaClick(event) {
-        const media_id = event.target.parentElement.querySelector('iframe').dataset.media_id
+    window.document.addEventListener('editImageClick', handleEvent, false)
+    
+    function handleEvent(e) {
+        const media_id = document.querySelector('iframe').dataset.media_id
         window.location.href = '/admin/media/edit_image/' + media_id;
     }
 </script>
