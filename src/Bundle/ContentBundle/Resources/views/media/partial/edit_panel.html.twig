@@ -8,9 +8,11 @@
 
 <script>
     window.document.addEventListener('editImageClick', handleEvent, false)
-    
+
+    const edit_image_path = '{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}'
+
     function handleEvent(e) {
         const media_id = document.querySelector('iframe').dataset.media_id
-        window.location.href = '/admin/media/edit_image/' + media_id;
+        window.location.href = edit_image_path.replace('REPLACE', media_id)
     }
 </script>
