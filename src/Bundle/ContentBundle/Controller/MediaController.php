@@ -228,7 +228,7 @@ class MediaController extends AbstractController
         return $file;
     }
 
-    private function createNewCopy($request)
+    private function createCopy($request)
     {
         $original = $this->documentManager->getRepository(File::class)->find($request->get('id'));
         $file = $this->copyImage($original);
@@ -247,7 +247,7 @@ class MediaController extends AbstractController
                 $file = $this->replaceImage($request, $file);
             } else {
                 if ($request->get('user_approved_overwrite') === "false") {
-                    $file = $this->createNewCopy($request);
+                    $file = $this->createCopy($request);
                 } else { //new upload
                     // we are creating a new image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);

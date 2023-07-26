@@ -65,6 +65,17 @@ class MediaGalleryUploadFile
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
+        //Process meta fields:
+        if ($request->get('description') && $request->get('description') != "") {
+            $file->setDescription($request->get('description'));
+        }
+        if ($request->get('credits') && $request->get('credits') != "") {
+            $file->setCredits($request->get('credits'));
+        }
+        if ($request->get('copyright_restrictions') && $request->get('copyright_restrictions') != "") {
+            $file->setCopyrightRestrictions($request->get('copyright_restrictions'));
+        }
+
         // If a customContenttype is provided we use it, else we fall back on the filetype
         $customContenttype = $request->get('custom_contenttype');
         if (null !== $customContenttype) {
@@ -72,11 +83,15 @@ class MediaGalleryUploadFile
         } else {
             $file->setContentType($contenttype);
         }
-
-        // Get file title
+        
+        // Get and set file title
         $uploadedFile = $request->files->get('file');
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
-        $file->setTitle($originalFilename);
+        if ($request->get('title') && $request->get('title') != "") {
+            $file->setTitle($request->get('title'));
+        } else {
+            $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
+            $file->setTitle($originalFilename);
+        }
 
         $storage = $this->manager->write(
             new MemoryReader(
@@ -97,7 +112,6 @@ class MediaGalleryUploadFile
     }
 
     public function getContentFromUploadedFile(Request $request): StorageItem {
-
         $uploadedFile = $request->files->get('file');
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         $uploadedFileMimetype = $request->files->get('file')->getMimeType();
