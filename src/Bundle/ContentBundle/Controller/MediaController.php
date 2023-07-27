@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -24,7 +23,6 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
-use PHP_CodeSniffer\Reports\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -189,7 +187,7 @@ class MediaController extends AbstractController
                 'extension' => $file->getFile()->getMetadata()->getExtension(),
             ]),
             'previous_url' => $request->headers->get('referer'),
-            'file_url' => 'https://integrated.localhost.e-active.nl' . $file->getFile()->getPathName(),
+            'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
         ];
 
         $editors = [
@@ -201,7 +199,7 @@ class MediaController extends AbstractController
 
         return $this->render('@IntegratedContent/media/'.$choice.'.html.twig', [
             'selected_modus' => 'media_gallery',
-            ...$data
+            ...$data,
         ]);
     }
 
@@ -225,6 +223,7 @@ class MediaController extends AbstractController
         $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
         $file->setFile($storage);
         $this->documentManager->persist($file);
+
         return $file;
     }
 
@@ -235,20 +234,20 @@ class MediaController extends AbstractController
         $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
         $file->setFile($storage);
         $this->documentManager->persist($file);
+
         return $file;
     }
-
 
     public function uploadFile(Request $request)
     {
         try {
-            if ($request->get('user_approved_overwrite') === "true") {
+            if ($request->get('user_approved_overwrite') === 'true') {
                 $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
                 $file = $this->replaceImage($request, $file);
             } else {
-                if ($request->get('user_approved_overwrite') === "false") {
+                if ($request->get('user_approved_overwrite') === 'false') {
                     $file = $this->createCopy($request);
-                } else { //new upload
+                } else { // new upload
                     // we are creating a new image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);
                 }
@@ -270,7 +269,8 @@ class MediaController extends AbstractController
         }
     }
 
-    private function copyImage($object) {
+    private function copyImage($object)
+    {
         $class = new \ReflectionClass($object);
         $copy = new Image();
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -280,8 +280,8 @@ class MediaController extends AbstractController
             $methodName = $method->name;
 
             // Check if it's a setter and not excluded
-            if (strncasecmp($methodName, 'set', 3) === 0 && !in_array($methodName, $excludedSetters, true)) {
-                $getterName = 'get' . substr($methodName, 3);
+            if (strncasecmp($methodName, 'set', 3) === 0 && !\in_array($methodName, $excludedSetters, true)) {
+                $getterName = 'get'.substr($methodName, 3);
 
                 if ($class->hasMethod($getterName)) {
                     $copy->{$methodName}($object->{$getterName}());

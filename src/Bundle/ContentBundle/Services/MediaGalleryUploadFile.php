@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage as StorageItem;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -21,7 +22,6 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Storage\ManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage as StorageItem;
 
 /**
  * Class MediaGalleryUploadFile.
@@ -65,14 +65,14 @@ class MediaGalleryUploadFile
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
-        //Process meta fields:
-        if ($request->get('description') && $request->get('description') != "") {
+        // Process meta fields:
+        if ($request->get('description') && $request->get('description') != '') {
             $file->setDescription($request->get('description'));
         }
-        if ($request->get('credits') && $request->get('credits') != "") {
+        if ($request->get('credits') && $request->get('credits') != '') {
             $file->setCredits($request->get('credits'));
         }
-        if ($request->get('copyright_restrictions') && $request->get('copyright_restrictions') != "") {
+        if ($request->get('copyright_restrictions') && $request->get('copyright_restrictions') != '') {
             $file->setCopyrightRestrictions($request->get('copyright_restrictions'));
         }
 
@@ -83,10 +83,10 @@ class MediaGalleryUploadFile
         } else {
             $file->setContentType($contenttype);
         }
-        
+
         // Get and set file title
         $uploadedFile = $request->files->get('file');
-        if ($request->get('title') && $request->get('title') != "") {
+        if ($request->get('title') && $request->get('title') != '') {
             $file->setTitle($request->get('title'));
         } else {
             $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
@@ -111,7 +111,8 @@ class MediaGalleryUploadFile
         return $file;
     }
 
-    public function getContentFromUploadedFile(Request $request): StorageItem {
+    public function getContentFromUploadedFile(Request $request): StorageItem
+    {
         $uploadedFile = $request->files->get('file');
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         $uploadedFileMimetype = $request->files->get('file')->getMimeType();
