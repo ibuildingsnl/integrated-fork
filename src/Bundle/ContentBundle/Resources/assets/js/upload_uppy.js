@@ -49,12 +49,6 @@ function inititalizeUppy(uppyOptions) {
                 if (null !== custom_contenttype && '' !== custom_contenttype) {
                     file.meta.custom_contenttype = custom_contenttype;
                 }
-
-                if (file.id in userMetaData) {
-                    for (let key of Object.keys(userMetaData[file.id]) ) {
-                        file.meta[key] = userMetaData[file.id][key]
-                    }
-                }
             }
         },
     })
@@ -70,15 +64,11 @@ function inititalizeUppy(uppyOptions) {
 
     function processEvent(event = null) {
         const inputs = document.querySelectorAll('.uppy-Dashboard-FileCard-info input')
-        let newUserMetaDataItem = {}
-        newUserMetaDataItem.uppy_id = currentEditingId
 
         for (const input of inputs) {
             const id = input.id.replace("uppy-Dashboard-FileCard-input-", "")
-            newUserMetaDataItem[id] = input.value
+            uppy.setFileMeta(currentEditingId, {[id]: input.value });
         }
-        userMetaData[currentEditingId] = newUserMetaDataItem
-        currentEditingId = '' //
     }
 
     uppy.use(Dashboard, {
@@ -102,19 +92,18 @@ function inititalizeUppy(uppyOptions) {
     });
 
     uppy.on('dashboard:modal-open', () => {
-        console.log('Modal is open');
     });
 
     uppy.on('dashboard:modal-close', () => {
-        console.log('Modal is closed');
     });
 
     uppy.on('file-added', (file) => {
-
     });
 
-    uppy.on('dashboard:file-edit-start', (file) => {
+    uppy.on('dashboard:file-edit-start', async (file) => {
         currentEditingId = file.id
+        const saveButton = await waitForElement('.uppy-Dashboard-FileCard-actions button.uppy-c-btn-primary');
+        saveButton.classList.remove('uppy-c-btn-primary')
     });
 
     uppy.on('dashboard:file-edit-complete', (file) => {
@@ -139,6 +128,27 @@ function inititalizeUppy(uppyOptions) {
     }
 
     return uppy;
+}
+
+//Needed to show savebutton
+function waitForElement(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                resolve(document.querySelector(selector));
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
 }
 
 $('.drag-drop-area').each(function() {
