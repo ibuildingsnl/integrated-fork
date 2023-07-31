@@ -11,9 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -23,6 +26,7 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -217,14 +221,27 @@ class MediaController extends AbstractController
         });
     }
 
-    private function replaceImage($request, $file)
+    private function replaceImage($request, $image)
     {
-        // Overwrite the file part
-        $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
-        $file->setFile($storage);
-        $this->documentManager->persist($file);
+        $oldImageFile = $image->getFile();
+        $newFileStorage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
+        $this->changeImageLinksInContent($oldImageFile, $image, $newFileStorage);
+        $image->setFile($newFileStorage);
+        $this->documentManager->persist($image);
+        return $image;
+    }
 
-        return $file;
+    private function changeImageLinksInContent($oldImageFile, $image, $newFileStorage) {
+        $linkedItemsQuery = $this->documentManager->getRepository(Content::class)->getUsedBy(new ArrayCollection([$image]), null, null, false);
+        foreach ($linkedItemsQuery->getQuery()->execute() as $item) {
+            $relatedArticleContent = $item->getContent();
+            foreach ($item->getReferencesByRelationType('embedded') as $embeddedImage) {
+                if ($embeddedImage instanceof Image) {
+                    $relatedArticleContent = str_replace($oldImageFile->getPathname(), $newFileStorage->getPathname(), $relatedArticleContent);
+                }
+            }
+            $item->setContent($relatedArticleContent);
+        }
     }
 
     private function createCopy($request)
@@ -269,9 +286,9 @@ class MediaController extends AbstractController
         }
     }
 
-    private function copyImage($object)
+    private function copyImage($originalImage)
     {
-        $class = new \ReflectionClass($object);
+        $class = new \ReflectionClass($originalImage);
         $copy = new Image();
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
         $excludedSetters = ['setUpdatedAt', 'setCreatedAt', 'setId', 'setFile'];
@@ -284,7 +301,7 @@ class MediaController extends AbstractController
                 $getterName = 'get'.substr($methodName, 3);
 
                 if ($class->hasMethod($getterName)) {
-                    $copy->{$methodName}($object->{$getterName}());
+                    $copy->{$methodName}($originalImage->{$getterName}());
                 }
             }
         }
