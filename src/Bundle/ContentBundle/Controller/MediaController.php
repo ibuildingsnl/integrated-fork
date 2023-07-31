@@ -194,14 +194,7 @@ class MediaController extends AbstractController
             'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
         ];
 
-        $editors = [
-            'standard' => 'edit_image',
-            'pintura' => 'edit_image_pintura',
-        ];
-
-        $choice = $editors['standard'];
-
-        return $this->render('@IntegratedContent/media/'.$choice.'.html.twig', [
+        return $this->render('@IntegratedContent/media/'. "edit_image" .'.html.twig', [
             'selected_modus' => 'media_gallery',
             ...$data,
         ]);
