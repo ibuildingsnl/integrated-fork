@@ -16,7 +16,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
@@ -26,7 +25,6 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -194,7 +192,7 @@ class MediaController extends AbstractController
             'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
         ];
 
-        return $this->render('@IntegratedContent/media/'. "edit_image" .'.html.twig', [
+        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
             'selected_modus' => 'media_gallery',
             ...$data,
         ]);
@@ -221,10 +219,12 @@ class MediaController extends AbstractController
         $this->changeImageLinksInContent($oldImageFile, $image, $newFileStorage);
         $image->setFile($newFileStorage);
         $this->documentManager->persist($image);
+
         return $image;
     }
 
-    private function changeImageLinksInContent($oldImageFile, $image, $newFileStorage) {
+    private function changeImageLinksInContent($oldImageFile, $image, $newFileStorage)
+    {
         $linkedItemsQuery = $this->documentManager->getRepository(Content::class)->getUsedBy(new ArrayCollection([$image]), null, null, false);
         foreach ($linkedItemsQuery->getQuery()->execute() as $item) {
             $relatedArticleContent = $item->getContent();
@@ -248,22 +248,22 @@ class MediaController extends AbstractController
         return $file;
     }
 
+    // There is a class File -> Image that has a file. The file references to a file on the hard drive.
     public function uploadFile(Request $request)
     {
         try {
             if ($request->get('user_approved_overwrite') === 'true') {
+                // Creating a new file, replacing the class Image
                 $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
                 $file = $this->replaceImage($request, $file);
             } else {
                 if ($request->get('user_approved_overwrite') === 'false') {
+                    // Creating a new file, creating a new class Image
                     $file = $this->createCopy($request);
                 } else { // new upload
-                    // we are creating a new image
+                    // Creating a new file, creating a new class Image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);
                 }
-
-                // save the file
-                $this->taxonomyRelationManager->runSolrQueue();
 
                 $request->attributes->set('media_id', $file->getId());
 

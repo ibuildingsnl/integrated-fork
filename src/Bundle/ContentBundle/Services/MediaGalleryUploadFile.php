@@ -93,17 +93,7 @@ class MediaGalleryUploadFile
             $file->setTitle($originalFilename);
         }
 
-        $storage = $this->manager->write(
-            new MemoryReader(
-                file_get_contents($uploadedFile),
-                new Metadata(
-                    $uploadedFileExtension,
-                    $uploadedFileMimetype,
-                    new ArrayCollection(),
-                    new ArrayCollection()
-                )
-            )
-        );
+        $storage = $this->writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype);
 
         $file->setFile($storage);
         $this->documentManager->persist($file);
@@ -111,12 +101,8 @@ class MediaGalleryUploadFile
         return $file;
     }
 
-    public function getContentFromUploadedFile(Request $request): StorageItem
+    private function writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype)
     {
-        $uploadedFile = $request->files->get('file');
-        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
-        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
-
         return $this->manager->write(
             new MemoryReader(
                 file_get_contents($uploadedFile),
@@ -128,5 +114,14 @@ class MediaGalleryUploadFile
                 )
             )
         );
+    }
+
+    public function getContentFromUploadedFile(Request $request): StorageItem
+    {
+        $uploadedFile = $request->files->get('file');
+        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
+        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
+
+        return $this->writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype);
     }
 }
