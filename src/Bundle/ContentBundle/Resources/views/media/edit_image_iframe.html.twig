@@ -1,0 +1,112 @@
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% set selected_modus = 'media_gallery' %}
+
+{% block sidebar_menu %}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
+{% block content %}
+
+    <!-- @BAS FIX THIS ;-) !-->
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <button class="rawr">&times;</button>
+            <fieldset>
+
+                <legend>If you want to replace the image, you can check this checkbox. Else it will be saved as a copy.</legend>
+                <legend id="not-used-by">Currently the image is not in use.</legend>
+
+                <li class="used-by-item" hidden>
+                    <a href=""></a>
+                </li>
+
+                <ul id="used-by-list" hidden></ul>
+
+                <div>
+                    <input type="checkbox" id="overwriteImage" name="overwriteImage">
+                    <label for="overwriteImage">Overwrite image</label>
+                </div>
+
+            </fieldset>
+            <button id="saveEditedImage">Save image</button>
+        </div>
+
+    </div>
+
+    <div class="drag-drop-area"
+         data-endpoint="{{ endpoint|default( path('integrated_content_media_upload_file') ) }}"
+         data-language="{{ language|default('nl') }}"
+         data-height="{{ height|default('750px') }}"
+         data-image-editor-enabled="{{ imageEditorEnabled|default(true) }}"
+         data-target="{{ target|default('.drag-drop-area') }}"
+         data-id="{{ id }}"
+         data-used-by-path="{{ path('integrated_content_content_used_by', {'id' : 'REPLACE'}) }}"
+         data-media-gallery-path="{{ path('integrated_content_media_index') }}"
+         data-meta="{{ meta }}"
+         data-title="{{ title }}"
+         data-file_url="{{ file_url|default("") }}">
+    </div>
+
+    <script src="{{ asset('bundles/integratedintegrated/edit_uppy.js') }}"></script>
+
+    <!-- @BAS FIX THIS ;-) !-->
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 99999; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .rawr {
+            font-size: 22px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block webpack_js %}
+    <script>
+        const path = '{{ path('integrated_content_media_manage_relations') }}'
+        const previous_url = '{{ previous_url }}'
+        const selected_modus = '{{ selected_modus|default('media_gallery') }}'
+
+        //modal
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("rawr")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    </script>
+
+    <script src="{{ asset('bundles/integratedintegrated/mediagallery.js') }}"></script>
+    <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
+{% endblock %}

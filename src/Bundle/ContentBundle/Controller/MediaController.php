@@ -175,13 +175,26 @@ class MediaController extends AbstractController
 
     public function editImage(string $id, Request $request): Response
     {
+        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
+            ...$this->editImageData($id, $request)
+        ]);
+    }
+
+    public function editImageIframe(string $id, Request $request): Response
+    {
+        return $this->render('@IntegratedContent/media/edit_image_iframe.html.twig', [
+            ...$this->editImageData($id, $request)
+        ]);
+    }
+
+    private function editImageData(string $id, Request $request) {
         $file = $this->documentManager->getRepository(File::class)->find($id);
 
         if (!$file) {
             throw $this->createNotFoundException('File not found.');
         }
 
-        $data = [
+        return [
             'id' => $id,
             'title' => $file->getTitle(),
             'meta' => json_encode([
@@ -191,11 +204,6 @@ class MediaController extends AbstractController
             'previous_url' => $request->headers->get('referer'),
             'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
         ];
-
-        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
-            'selected_modus' => 'media_gallery',
-            ...$data,
-        ]);
     }
 
     private function removeIdsFromRequest(Request $request): Request

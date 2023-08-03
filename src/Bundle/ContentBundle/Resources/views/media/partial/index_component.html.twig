@@ -1,4 +1,4 @@
-<div class="flex flex-wrap media-library">
+<div class="flex flex-wrap media-library" data-selected-modus="{{ selected_modus }}">
     {% if selected_modus != 'media_gallery' %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -33,7 +33,6 @@
         </div>
 
         <section class="section-white section-radius sm:p-4">
-
             <div id="upload_container" class="close-outside">
                 <a class="uppy-close remove"><i class="iconoir-cancel"></i></a>
                 {% include '@IntegratedContent/media/upload.html.twig'

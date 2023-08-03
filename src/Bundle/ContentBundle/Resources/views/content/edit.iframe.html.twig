@@ -139,6 +139,7 @@
             })
         });
 
+        // This loads the edit image screen. This can be a full redirect, or an iframe (without
         function dispatchEvent() {
             let event = new CustomEvent('editImageClick')
             window.parent.document.dispatchEvent(event)

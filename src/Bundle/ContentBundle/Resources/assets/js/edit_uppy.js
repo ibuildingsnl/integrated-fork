@@ -10,9 +10,6 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-/* Todo:
- replace urls with twig paths
- */
 function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
     const button = document.createElement('button');
@@ -60,7 +57,7 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
-        window.location.href = uppyOptions.mediaGalleryPath
+        window.location.href = previous_url
     }
 
     uppy.use(XHRUpload, {
@@ -162,7 +159,7 @@ async function urlToBlob(url) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('Failed to convert URL to blob');
+            throw new Error('Failed to get a correct response');
         }
         return await response.blob();
     } catch (error) {
