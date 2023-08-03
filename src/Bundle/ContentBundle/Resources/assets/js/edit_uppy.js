@@ -46,7 +46,7 @@ async function inititalizeUppy(uppyOptions) {
     let uppy = new Uppy({
         restrictions: {
             maxFileSize: 50*1000*1000, //50 MB
-            allowedFileTypes: ['image/*', 'video/*', 'doc', 'docx', 'pdf', 'xls', 'xlsx'],
+            allowedFileTypes: ['image/*'],
         },
     })
 
@@ -121,7 +121,7 @@ async function inititalizeUppy(uppyOptions) {
 
 async function loadUsedBy(uppyOptions) {
     try {
-        const response = await fetch('https://integrated.localhost.e-active.nl/admin/content/' +uppyOptions.id+ '/used-by/json?limit=10');
+        const response = await fetch(uppyOptions.usedByPath.replace("REPLACE", uppyOptions.id) + '/json?limit=10');
         const usedBy = await response.json();
         if (usedBy?.items.length > 0) {
             applyUsedBy(usedBy)
