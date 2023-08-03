@@ -176,18 +176,19 @@ class MediaController extends AbstractController
     public function editImage(string $id, Request $request): Response
     {
         return $this->render('@IntegratedContent/media/edit_image.html.twig', [
-            ...$this->editImageData($id, $request)
+            ...$this->editImageData($id, $request),
         ]);
     }
 
     public function editImageIframe(string $id, Request $request): Response
     {
         return $this->render('@IntegratedContent/media/edit_image_iframe.html.twig', [
-            ...$this->editImageData($id, $request)
+            ...$this->editImageData($id, $request),
         ]);
     }
 
-    private function editImageData(string $id, Request $request) {
+    private function editImageData(string $id, Request $request)
+    {
         $file = $this->documentManager->getRepository(File::class)->find($id);
 
         if (!$file) {

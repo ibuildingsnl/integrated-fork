@@ -5,28 +5,6 @@
 {% block title %} {% trans %}Media Library{% endtrans %} - Edit image{% endblock title %}
 {% block content %}
 
-{#    <!-- @BAS FIX THIS ;-) !-->#}
-{#    <div id="myModal" class="modal">#}
-
-{#        <div class="modal-content">#}
-{#            <button class="rawr">&times;</button>#}
-{#            <fieldset>#}
-
-{#                <legend>If you want to replace the image, you can check this checkbox. Else it will be saved as a copy.</legend>#}
-{#                <legend id="not-used-by">Currently the image is not in use.</legend>#}
-
-
-
-{#                <div>#}
-{#                    <input type="checkbox" id="overwriteImage" name="overwriteImage">#}
-{#                    <label for="overwriteImage">Overwrite image</label>#}
-{#                </div>#}
-
-{#            </fieldset>#}
-{#        </div>#}
-
-{#    </div>#}
-
     <div class="modal fade" id="image-edit-modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -78,7 +56,6 @@
         const previous_url = '{{ previous_url }}'
         const selected_modus = '{{ selected_modus|default('media_gallery') }}'
 
-        //modal
         var modal = document.getElementById("image-edit-modal");
         var cancel = document.getElementById("cancelModal");
         cancel.onclick = function() {

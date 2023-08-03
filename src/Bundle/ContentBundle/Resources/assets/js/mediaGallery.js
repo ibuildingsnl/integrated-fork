@@ -132,7 +132,6 @@ function handleMediaClick(event) {
     // If the parent is NOT a modal, we want to load the edit image page in a new page
     // If the parent IS a modal, we want to load the edit image page without layout
     const selected_modus = document.querySelector('.media-library').dataset.selectedModus
-    console.log(selected_modus)
     $('#editpaneliframe').
         attr('src',
             '/admin/content/' + event.target.closest('.media-item').dataset.id +
