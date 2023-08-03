@@ -29,6 +29,7 @@
                                 {% set image = integrated_document(form.vars.value.id).file %}
                                 {% set thumbnail = integrated_image(image).scaleResize(300) %}
                                 <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
+                                    <button id="go_to_editor" class="no-icon btn btn-white">Edit image</button>
                                 </div>
                             {% endif %}
                         {% endif %}
@@ -94,9 +95,6 @@
                         {% block form_rest %}
                             {{ form_rest(form) }}
                         {% endblock %}
-
-                        <button id="go_to_editor">Edit image</button>
-
                     {% endblock %}
                 </div>
             </aside>
