@@ -14,9 +14,9 @@ function addShowPopupButton() {
     const statusBar = document.querySelector('#uppy-DashboardContent-panel--editor .uppy-DashboardContent-bar')
     const button = document.createElement('button');
     button.innerHTML = 'Save image';
-    // @Bas here is the event listener:
+    button.classList.add('btn', 'btn-green');
     button.addEventListener('click', () => {
-        const modal = document.getElementById("myModal");
+        const modal = document.getElementById("image-edit-modal");
         modal.style.display = "block";
     });
 

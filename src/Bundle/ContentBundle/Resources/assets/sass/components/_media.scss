@@ -135,132 +135,6 @@
                     height: 30px;
                 }
             }
-
-            .uppy-Dashboard-inner {
-                height: calc(100vh - 60px) !important;
-                border-radius: 0px;
-
-                .uppy-StatusBar-actionBtn--upload, .uppy-DashboardContent-save, .uppy-StatusBar-actionBtn {
-                    font-size: 1.1rem;
-                    font-weight: 400;
-                    height: 40px;
-                    line-height: 40px;
-                    border: 1px solid;
-                    display: inline-flex;
-                    align-items: center;
-                    border-radius: 8px;
-                    -webkit-appearance: none;
-                    -moz-appearance: none;
-                    -ms-appearance: none;
-                    -o-appearance: none;
-                    appearance: none;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    background-color: #00ae93;
-                    border-color: #00ae93;
-                    color: white;
-
-                    &:hover, &:focus {
-                        color: white;
-                        background-color: #00483d;
-                        border-color: #00483d;
-                    }
-                }
-
-                .uppy-DashboardContent-addMore {
-                    margin: 0;
-                    font-family: inherit;
-                    background: none;
-                    padding: 0 0.8rem;
-                    font-size: 1.1rem !important;
-                    font-weight: 400;
-                    height: 40px !important;
-                    line-height: 40px;
-                    border: 1px solid;
-                    display: inline-flex;
-                    align-items: center;
-                    border-radius: 8px;
-                    -webkit-appearance: none;
-                    -moz-appearance: none;
-                    -ms-appearance: none;
-                    -o-appearance: none;
-                    appearance: none;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    background-color: #ffa620 !important;
-                    border-color: #ffa620;
-                    color: white;
-
-                    &:hover, &:focus {
-                        color: white;
-                        background-color: #b96f00;
-                        border-color: #b96f00;
-                    }
-                }
-
-                button.uppy-DashboardContent-back {
-                    padding: 0 0.8rem;
-                    font-size: 1.1rem;
-                    font-weight: 400;
-                    height: 40px;
-                    line-height: 40px;
-                    border: 1px solid;
-                    display: inline-flex;
-                    align-items: center;
-                    border-radius: 8px;
-                    -webkit-appearance: none;
-                    -moz-appearance: none;
-                    -ms-appearance: none;
-                    -o-appearance: none;
-                    appearance: none;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    background-color: white;
-                    border-color: #dee3e9;
-                    color: #637281;
-
-                    &:hover, &:focus {
-                        color: #637281;
-                        background-color: #dee3e9;
-                    }
-                }
-
-                button.uppy-DashboardContent-back:before {
-                    content: "";
-                    mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.5 12H6M6 12L12 6M6 12L12 18\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
-                    -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.5 12H6M6 12L12 6M6 12L12 18\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
-                    content: " ";
-                    display: block;
-                    background: currentColor;
-                    mask-size: cover;
-                    -webkit-mask-size: cover;
-                    width: 20px;
-                    height: 20px;
-                    margin-right: 1rem;
-                }
-
-                .uppy-Dashboard-Item-preview img.uppy-Dashboard-Item-previewImg {
-                    border-radius: 8px;
-                    object-fit: contain;
-                    background-color: #f2f2f2;
-                }
-
-                .uppy-Dashboard-Item-previewInnerWrap {
-                    border-radius: 8px;
-                }
-
-                .uppy-StatusBar-actions {
-                    justify-content: end;
-                }
-
-                .uppy-StatusBar {
-                    height: 56px;
-                }
-
-                .uppy-DashboardContent-bar {
-                    padding: 0 65px 0 15px;
-                }
-            }
         }
 
         .page-title {
@@ -960,6 +834,163 @@
     div#dropdown_overlay {
         top: 0;
     }
+}
+
+
+.uppy-Dashboard-inner {
+    height: calc(100vh - 60px) !important;
+    border-radius: 0px;
+
+    .uppy-StatusBar-actionBtn--upload, .uppy-DashboardContent-save, .uppy-StatusBar-actionBtn {
+        font-size: 1.1rem;
+        font-weight: 400;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 8px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        white-space: nowrap;
+        background-color: #00ae93;
+        border-color: #00ae93;
+        color: white;
+
+        &:hover, &:focus {
+            color: white;
+            background-color: #00483d;
+            border-color: #00483d;
+        }
+    }
+
+    .uppy-DashboardContent-addMore {
+        margin: 0;
+        font-family: inherit;
+        background: none;
+        padding: 0 0.8rem;
+        font-size: 1.1rem !important;
+        font-weight: 400;
+        height: 40px !important;
+        line-height: 40px;
+        border: 1px solid;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 8px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        white-space: nowrap;
+        background-color: #ffa620 !important;
+        border-color: #ffa620;
+        color: white;
+
+        &:hover, &:focus {
+            color: white;
+            background-color: #b96f00;
+            border-color: #b96f00;
+        }
+    }
+
+    button.uppy-DashboardContent-back {
+        padding: 0 0.8rem;
+        font-size: 1.1rem;
+        font-weight: 400;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 8px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        white-space: nowrap;
+        background-color: white;
+        border-color: #dee3e9;
+        color: #637281;
+
+        &:hover, &:focus {
+            color: #637281;
+            background-color: #dee3e9;
+        }
+    }
+
+    button.uppy-DashboardContent-back:before {
+        content: "";
+        mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.5 12H6M6 12L12 6M6 12L12 18\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
+        -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.5 12H6M6 12L12 6M6 12L12 18\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
+        content: " ";
+        display: block;
+        background: currentColor;
+        mask-size: cover;
+        -webkit-mask-size: cover;
+        width: 20px;
+        height: 20px;
+        margin-right: 1rem;
+    }
+
+    .uppy-Dashboard-Item-preview img.uppy-Dashboard-Item-previewImg {
+        border-radius: 8px;
+        object-fit: contain;
+        background-color: #f2f2f2;
+    }
+
+    .uppy-Dashboard-Item-previewInnerWrap {
+        border-radius: 8px;
+    }
+
+    .uppy-StatusBar-actions {
+        justify-content: end;
+    }
+
+    .uppy-StatusBar {
+        height: 56px;
+    }
+
+    .uppy-DashboardContent-bar {
+        padding: 0 65px 0 15px;
+    }
+}
+
+.integrated_content_media_edit_image {
+    button.uppy-DashboardContent-save {
+        display: none;
+    }
+    .uppy-Dashboard-inner {
+        border: none;
+        border-radius: 0;
+    }
+    .uppy-Dashboard-inner .uppy-DashboardContent-bar {
+        padding: 0 15px 0 15px;
+    }
+    [dir=ltr] .uppy-DashboardContent-back {
+        margin-left: 9px;
+    }
+    .uppy-ImageCropper {
+        padding: 2rem;
+    }
+    .modal {
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+}
+
+.uppy-Dashboard-FileCard-preview {
+    background-color: rgb(51, 87, 103) !important;
+}
+
+.uppy-Dashboard-inner {
+    border: 0;
 }
 
 
