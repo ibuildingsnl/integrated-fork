@@ -60,8 +60,7 @@ async function inititalizeUppy(uppyOptions) {
     });
 
     function closeUppyWithRefresh() {
-        // Todo
-        window.location.href = 'https://integrated.localhost.e-active.nl/admin/media'
+        window.location.href = uppyOptions.mediaGalleryPath
     }
 
     uppy.use(XHRUpload, {
