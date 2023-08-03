@@ -800,7 +800,7 @@
     }
 }
 
-.integrated_content_media_select_one, .integrated_content_media_select_multiple, .integrated_formtype_media_image, .integrated_formtype_media_video, .integrated_formtype_media_gallery {
+.integrated_content_media_select_one, .integrated_content_media_select_multiple, .integrated_formtype_media_image, .integrated_formtype_media_video, .integrated_formtype_media_gallery, .integrated_content_media_edit_image_iframe {
     #wrapper-holder {
         top: 0;
         width: 100%;
@@ -857,13 +857,13 @@
         appearance: none;
         cursor: pointer;
         white-space: nowrap;
-        background-color: #00ae93;
+        background-color: #00ae93 !important;
         border-color: #00ae93;
         color: white;
 
         &:hover, &:focus {
             color: white;
-            background-color: #00483d;
+            background-color: #00483d !important;
             border-color: #00483d;
         }
     }
@@ -963,7 +963,7 @@
     }
 }
 
-.integrated_content_media_edit_image {
+.integrated_content_media_edit_image, .integrated_content_media_edit_image_iframe {
     button.uppy-DashboardContent-save {
         display: none;
     }
@@ -993,6 +993,45 @@
     border: 0;
 }
 
+.uppy-Dashboard-FileCard-edit {
+    border-radius: 8px;
+}
+
+.uppy-c-btn.uppy-Dashboard-FileCard-actionsBtn {
+    align-items: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    border: 1px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 1.1rem;
+    font-weight: 400;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 0.8rem;
+    white-space: nowrap;
+}
+
+.uppy-Dashboard-FileCard-actionsBtn[type="submit"] {
+    background-color: #00ae93;
+    border-color: #00ae93;
+    color: #fff;
+}
+
+.uppy-Dashboard-FileCard-actionsBtn[type="button"] {
+    background-color: #fff;
+    border-color: #dee3e9;
+    color: #637281;
+}
+
+.uppy-Dashboard-FileCard-actions {
+    justify-content: space-between;
+    flex-direction: row-reverse;
+}
 
 @keyframes flash {
     0% {
