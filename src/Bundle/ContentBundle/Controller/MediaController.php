@@ -11,20 +11,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
-use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -198,6 +196,7 @@ class MediaController extends AbstractController
     private function removeIdsFromRequest(Request $request): Request
     {
         $request->query->remove('ids');
+
         return $request;
     }
 
