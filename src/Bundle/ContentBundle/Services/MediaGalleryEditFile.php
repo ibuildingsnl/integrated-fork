@@ -36,7 +36,7 @@ class MediaGalleryEditFile
     /* This function replaces the link in the database to the file on the storage
      * We dont touch the actual files on the storage.
      */
-    public function replaceImage($request, $image)
+    public function replaceImage($request, $image): File
     {
         $oldImageFile = $image->getFile();
         $newFileStorage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
@@ -47,7 +47,7 @@ class MediaGalleryEditFile
         return $image;
     }
 
-    public function createCopy($request)
+    public function createCopy($request): Image
     {
         $original = $this->documentManager->getRepository(File::class)->find($request->get('id'));
         $file = $this->copyImage($original);
