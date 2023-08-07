@@ -173,7 +173,7 @@ class MediaController extends AbstractController
         ];
     }
 
-    public function editImage(string $id, Request $request, string $iframe): Response
+    public function editImage(string $id, Request $request, string $format): Response
     {
         $file = $this->documentManager->getRepository(File::class)->find($id);
 
@@ -181,7 +181,7 @@ class MediaController extends AbstractController
             throw $this->createNotFoundException('File not found.');
         }
 
-        return $this->render("@IntegratedContent/media/edit_image{$iframe}.html.twig", [
+        return $this->render("@IntegratedContent/media/edit_image{$format}.html.twig", [
             'id' => $id,
             'title' => $file->getTitle(),
             'meta' => json_encode([
