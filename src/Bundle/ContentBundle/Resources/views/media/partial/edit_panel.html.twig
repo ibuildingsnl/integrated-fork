@@ -1,28 +1,9 @@
 <div class="aside-edit-holder bg-white hide">
-    <div class="aside-item-wrapper">
+    <div class="aside-item-wrapper" id="editimagewrapper" data-editImagePath="{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}" data-editImageIframePath='{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'>
         <button class="close-media-edit-form">
             <i class="iconoir-cancel"></i></button>
         <iframe id="editpaneliframe" src=""></iframe>
     </div>
 </div>
 
-<script>
-    window.document.addEventListener('editImageClick', handleEvent, false)
-
-    const edit_image_path = '{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}'
-    const edit_image_iframe_path = '{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'
-
-    function handleEvent(e) {
-        const media_id = document.querySelector('iframe').dataset.media_id
-
-        // If selected modus == media gallery, we should go to the page with a redirect,
-        // If selected_modus is something else (select_multiple, select_one) then this is loaded via an iframe
-        // And then we load the same page without sidebar and header
-
-        if (selected_modus == 'media_gallery') {
-            window.location.href = edit_image_path.replace('REPLACE', media_id)
-        } else {
-            window.location.href = edit_image_iframe_path.replace('REPLACE', media_id)
-        }
-    }
-</script>
+<script src="{{ asset('bundles/integratedintegrated/edit_panel.js') }}"></script>
