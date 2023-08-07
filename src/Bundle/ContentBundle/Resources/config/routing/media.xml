@@ -10,10 +10,14 @@
 
     <route id="integrated_content_media_edit_image" path="/edit_image/{id}" methods="GET, POST">
         <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::editImage</default>
+        <requirement key="id">[\w-]+</requirement>
+        <default key="iframe"></default>
     </route>
 
     <route id="integrated_content_media_edit_image_iframe" path="/edit_image_iframe/{id}" methods="GET, POST">
-        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::editImageIframe</default>
+        <default key="_controller">Integrated\Bundle\ContentBundle\Controller\MediaController::editImage</default>
+        <requirement key="id">[\w-]+</requirement>
+        <default key="iframe">_iframe</default>
     </route>
 
     <route id="integrated_content_media_select_one" path="/select_one" methods="GET, POST">

@@ -173,21 +173,7 @@ class MediaController extends AbstractController
         ];
     }
 
-    public function editImage(string $id, Request $request): Response
-    {
-        return $this->render('@IntegratedContent/media/edit_image.html.twig', [
-            ...$this->editImageData($id, $request),
-        ]);
-    }
-
-    public function editImageIframe(string $id, Request $request): Response
-    {
-        return $this->render('@IntegratedContent/media/edit_image_iframe.html.twig', [
-            ...$this->editImageData($id, $request),
-        ]);
-    }
-
-    private function editImageData(string $id, Request $request)
+    public function editImage(string $id, Request $request, string $iframe): Response
     {
         $file = $this->documentManager->getRepository(File::class)->find($id);
 
@@ -195,7 +181,7 @@ class MediaController extends AbstractController
             throw $this->createNotFoundException('File not found.');
         }
 
-        return [
+        return $this->render("@IntegratedContent/media/edit_image{$iframe}.html.twig", [
             'id' => $id,
             'title' => $file->getTitle(),
             'meta' => json_encode([
@@ -204,7 +190,7 @@ class MediaController extends AbstractController
             ]),
             'previous_url' => $request->headers->get('referer'),
             'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
-        ];
+        ]);
     }
 
     private function removeIdsFromRequest(Request $request): Request
