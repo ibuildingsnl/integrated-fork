@@ -29,6 +29,7 @@
                                 {% set image = integrated_document(form.vars.value.id).file %}
                                 {% set thumbnail = integrated_image(image).scaleResize(300) %}
                                 <div class="thumbnail-holder" style="background-image:url('{{ thumbnail }}');">
+                                    <button id="go_to_editor" class="no-icon btn btn-white">Edit image</button>
                                 </div>
                             {% endif %}
                         {% endif %}
@@ -94,7 +95,6 @@
                         {% block form_rest %}
                             {{ form_rest(form) }}
                         {% endblock %}
-
                     {% endblock %}
                 </div>
             </aside>
@@ -131,7 +131,20 @@
 
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector('#go_to_editor').addEventListener('click', (event) => {
+                dispatchEvent(event);
+            })
+        });
+
+        // This loads the edit image screen. This can be a full redirect, or an iframe (without
+        function dispatchEvent() {
+            let event = new CustomEvent('editImageClick')
+            window.parent.document.dispatchEvent(event)
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.content-form.form-inline');
             const submitButton = document.getElementById(

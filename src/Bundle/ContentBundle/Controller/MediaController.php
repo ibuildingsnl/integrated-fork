@@ -12,15 +12,17 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,6 +80,7 @@ class MediaController extends AbstractController
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
+        private MediaGalleryEditFile $mediaGalleryEditFile,
     ) {
     }
 
@@ -158,7 +161,7 @@ class MediaController extends AbstractController
 
         return [
             'paginator' => $paginator,
-            'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
+            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
@@ -170,6 +173,26 @@ class MediaController extends AbstractController
         ];
     }
 
+    public function editImage(string $id, Request $request, string $format): Response
+    {
+        $file = $this->documentManager->getRepository(File::class)->find($id);
+
+        if (!$file) {
+            throw $this->createNotFoundException('File not found.');
+        }
+
+        return $this->render("@IntegratedContent/media/edit_image{$format}.html.twig", [
+            'id' => $id,
+            'title' => $file->getTitle(),
+            'meta' => json_encode([
+                'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
+                'extension' => $file->getFile()->getMetadata()->getExtension(),
+            ]),
+            'previous_url' => $request->headers->get('referer'),
+            'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
+        ]);
+    }
+
     private function removeIdsFromRequest(Request $request): Request
     {
         $request->query->remove('ids');
@@ -177,26 +200,35 @@ class MediaController extends AbstractController
         return $request;
     }
 
-    private function removeStardardClasses($contentTypeSelectOptions): array
+    private function removeStandardClasses($contentTypeSelectOptions): array
     {
         return array_filter($contentTypeSelectOptions, function ($item) {
             return !\in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name'));
         });
     }
 
+    // There is a class File -> Image that has a file. The file references to a file on the hard drive.
     public function uploadFile(Request $request)
     {
         try {
-            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+            if ($request->get('user_approved_overwrite') === 'true') {
+                // Creating a new file, replacing the class Image
+                $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
+                $file = $this->mediaGalleryEditFile->replaceImage($request, $file);
+            } else {
+                if ($request->get('user_approved_overwrite') === 'false') {
+                    // Creating a new file, creating a new class Image
+                    $file = $this->mediaGalleryEditFile->createCopy($request);
+                } else { // new upload
+                    // Creating a new file, creating a new class Image
+                    $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                }
 
-            // save the FILE
-            $this->taxonomyRelationManager->runSolrQueue();
+                $request->attributes->set('media_id', $file->getId());
 
-            $request->attributes->set('media_id', $file->getId());
-
-            $this->taxonomyRelationManager->manageRelations($request);
-
-            // save the RELATION
+                $this->taxonomyRelationManager->manageRelations($request);
+            }
+            // save the relation
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
@@ -393,27 +425,6 @@ class MediaController extends AbstractController
             'current' => $mediaTaxonomy,
             'default' => null,
         ];
-    }
-
-    private function createPaginator(array $items, Request $requestSource): SlidingPagination
-    {
-        $paginator = $this->getPaginator()->paginate(
-            $items,
-            $requestSource->query->get('page', 1),
-            $this::PAGINATOR_LIMIT
-        );
-
-        $showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($showingEnd > $paginator->getTotalItemCount()) {
-            $showingEnd = $paginator->getTotalItemCount();
-        }
-        $paginator->setCustomParameters([
-            'amountOfPages' => ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage()),
-            'showingStart' => $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1,
-            'showingEnd' => $showingEnd,
-        ]);
-
-        return $paginator;
     }
 
     public function manageRelations(Request $request): Response

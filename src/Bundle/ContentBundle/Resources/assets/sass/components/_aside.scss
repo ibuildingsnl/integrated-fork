@@ -834,8 +834,14 @@ ul {
                     height: 200px;
                     background-size: contain;
                     margin-bottom: 1rem;
-                    background-position: center;
+                    background-position: top center;
                     background-repeat: no-repeat;
+                    .btn {
+                        padding: 5px;
+                        height: 26px;
+                        margin: 5px;
+                        font-size: 12px;
+                    }
                 }
 
                 .aside-item-wrapper {
