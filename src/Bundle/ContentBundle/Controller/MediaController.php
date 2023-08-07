@@ -20,6 +20,7 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
@@ -81,6 +82,7 @@ class MediaController extends AbstractController
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
+        private MediaGalleryEditFile $mediaGalleryEditFile,
     ) {
     }
 
@@ -161,7 +163,7 @@ class MediaController extends AbstractController
 
         return [
             'paginator' => $paginator,
-            'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
+            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
@@ -196,51 +198,14 @@ class MediaController extends AbstractController
     private function removeIdsFromRequest(Request $request): Request
     {
         $request->query->remove('ids');
-
         return $request;
     }
 
-    private function removeStardardClasses($contentTypeSelectOptions): array
+    private function removeStandardClasses($contentTypeSelectOptions): array
     {
         return array_filter($contentTypeSelectOptions, function ($item) {
             return !\in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name'));
         });
-    }
-
-    private function replaceImage($request, $image)
-    {
-        $oldImageFile = $image->getFile();
-        $newFileStorage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
-        $this->changeImageLinksInContent($oldImageFile, $image, $newFileStorage);
-        $image->setFile($newFileStorage);
-        $this->documentManager->persist($image);
-
-        return $image;
-    }
-
-    private function changeImageLinksInContent($oldImageFile, $image, $newFileStorage)
-    {
-        $linkedItemsQuery = $this->documentManager->getRepository(Content::class)->getUsedBy(new ArrayCollection([$image]), null, null, false);
-        foreach ($linkedItemsQuery->getQuery()->execute() as $item) {
-            $relatedArticleContent = $item->getContent();
-            foreach ($item->getReferencesByRelationType('embedded') as $embeddedImage) {
-                if ($embeddedImage instanceof Image) {
-                    $relatedArticleContent = str_replace($oldImageFile->getPathname(), $newFileStorage->getPathname(), $relatedArticleContent);
-                }
-            }
-            $item->setContent($relatedArticleContent);
-        }
-    }
-
-    private function createCopy($request)
-    {
-        $original = $this->documentManager->getRepository(File::class)->find($request->get('id'));
-        $file = $this->copyImage($original);
-        $storage = $this->mediaGalleryUploadFile->getContentFromUploadedFile($request);
-        $file->setFile($storage);
-        $this->documentManager->persist($file);
-
-        return $file;
     }
 
     // There is a class File -> Image that has a file. The file references to a file on the hard drive.
@@ -250,11 +215,11 @@ class MediaController extends AbstractController
             if ($request->get('user_approved_overwrite') === 'true') {
                 // Creating a new file, replacing the class Image
                 $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
-                $file = $this->replaceImage($request, $file);
+                $file = $this->mediaGalleryEditFile->replaceImage($request, $file);
             } else {
                 if ($request->get('user_approved_overwrite') === 'false') {
                     // Creating a new file, creating a new class Image
-                    $file = $this->createCopy($request);
+                    $file = $this->mediaGalleryEditFile->createCopy($request);
                 } else { // new upload
                     // Creating a new file, creating a new class Image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);
@@ -272,29 +237,6 @@ class MediaController extends AbstractController
             return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
                 ->setStatusCode(422);
         }
-    }
-
-    private function copyImage($originalImage)
-    {
-        $class = new \ReflectionClass($originalImage);
-        $copy = new Image();
-        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $excludedSetters = ['setUpdatedAt', 'setCreatedAt', 'setId', 'setFile'];
-
-        foreach ($methods as $method) {
-            $methodName = $method->name;
-
-            // Check if it's a setter and not excluded
-            if (strncasecmp($methodName, 'set', 3) === 0 && !\in_array($methodName, $excludedSetters, true)) {
-                $getterName = 'get'.substr($methodName, 3);
-
-                if ($class->hasMethod($getterName)) {
-                    $copy->{$methodName}($originalImage->{$getterName}());
-                }
-            }
-        }
-
-        return $copy;
     }
 
     private function getDateFilterOptions(Request $request, array $dateFilter): array
@@ -484,27 +426,6 @@ class MediaController extends AbstractController
             'current' => $mediaTaxonomy,
             'default' => null,
         ];
-    }
-
-    private function createPaginator(array $items, Request $requestSource): SlidingPagination
-    {
-        $paginator = $this->getPaginator()->paginate(
-            $items,
-            $requestSource->query->get('page', 1),
-            $this::PAGINATOR_LIMIT
-        );
-
-        $showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($showingEnd > $paginator->getTotalItemCount()) {
-            $showingEnd = $paginator->getTotalItemCount();
-        }
-        $paginator->setCustomParameters([
-            'amountOfPages' => ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage()),
-            'showingStart' => $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1,
-            'showingEnd' => $showingEnd,
-        ]);
-
-        return $paginator;
     }
 
     public function manageRelations(Request $request): Response
