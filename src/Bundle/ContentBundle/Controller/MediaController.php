@@ -26,7 +26,6 @@ use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -286,12 +285,12 @@ class MediaController extends AbstractController
                     ->getQuery()
                     ->execute();
 
-                if (count($usedByItems) > 0) {
+                if (\count($usedByItems) > 0) {
                     $usedByResult = [];
                     foreach ($usedByItems as $usedByItem) {
                         $usedByResult[] = [
-                            "id" => $usedByItem->getId(),
-                            "title" => $usedByItem->getTitle(),
+                            'id' => $usedByItem->getId(),
+                            'title' => $usedByItem->getTitle(),
                         ];
                     }
 
