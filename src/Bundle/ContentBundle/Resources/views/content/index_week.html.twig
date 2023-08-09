@@ -1,0 +1,172 @@
+{% extends '@IntegratedContent/content/base.html.twig' %}
+{% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
+{% block title %}{% trans %}Content navigator - week{% endtrans %} {{ filters.start|date('W') }}{% endblock title %}
+
+{% block options_start %}
+    <li>
+        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('-1 week')|date('c') })) }}"
+           tabindex="-1" class="btn btn-select">
+            &leftarrow;
+        </a>
+    </li>
+    <li class="dropdown close-outside" data-underlay="no">
+        <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
+            <span>
+                {{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }} (Week {{ filters.start|date('W') }})
+            </span>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
+
+        <ul role="menu" class="dropdown-menu">
+            {% if filters.start > date('+4 weeks') %}
+                <li role="presentation">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
+                       tabindex="-1" role="menuitem">
+                        Current week (Week {{ "now"|date('W') }})
+                    </a>
+                </li>
+            {% endif %}
+            {% for i in range(-3, -1) %}
+                <li role="presentation">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
+                       tabindex="-1" role="menuitem">
+                        {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
+                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }} (Week {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('W') }})
+                    </a>
+                </li>
+            {% endfor %}
+            <li role="presentation" class="active">
+                <a role="menuitem">
+                    <b>{{ filters.start|date('M d') }} t/m {{ filters.start|date_modify('+6 days')|date('M d') }} (Week {{ filters.start|date_modify('+6 days')|date('W') }})</b>
+                </a>
+            </li>
+            {% for i in range(1, 3) %}
+                <li role="presentation">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+%d weeks'|format(i))|date('c') })) }}"
+                       tabindex="-1" role="menuitem">
+                        {{ filters.start|date_modify('+%d weeks'|format(i))|date('M d') }} t/m
+                        {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('M d') }} (Week {{ filters.start|date_modify('+%d weeks +6 days'|format(i))|date('W') }})
+                    </a>
+                </li>
+            {% endfor %}
+            {% if filters.start < date('4 weeks ago') %}
+                <li role="presentation">
+                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': null})) }}"
+                       tabindex="-1" role="menuitem">
+                        Current week (Week {{ "now"|date('W') }})
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+    <li>
+        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'week': filters.start|date_modify('+1 week')|date('c') })) }}"
+           tabindex="-1" class="btn btn-select">
+            &rightarrow;
+        </a>
+    </li>
+{% endblock options_start %}
+
+{% block content_items %}
+    {% set scroll_message = 'Scroll to see more'|trans %}
+    <div class="calendar-view calendar-week">
+        <div class="week title">
+            {% for i in range(0, 6) %}
+                {% set d = filters.start|date_modify('+%d days'|format(i)) %}
+                <div class="day title {% if d|date('d/m/Y') == date('now')|date('d/m/Y') %}today{% endif %}"
+                     data-date="{{ d|date('Y/m/d') }}">
+                    {{ d|date('D d') }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="week columns">
+            {% set dayN = 0 %}
+            <div class="day column" draggable="true" data-date="{{ filters.start|date('Y/m/d') }}">
+                {% set prev_day = 0 %}
+                {% for content in pager %}
+                {% set day = filters.start.diff(date(content.pub_time)).days %}
+
+                {% if day != prev_day %}
+                {% for i in range(prev_day, day - 1) %}
+                {% set dayN = dayN + 1 %}
+                <div class="message">{{ scroll_message }}</div>
+            </div>
+            <div class="day column" draggable="true" data-date="{{ filters.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
+                {% endfor %}
+                {% set prev_day = day %}
+                {% endif %}
+
+                {% if content.type_class|split('\\')|last in ["Image", "Video", "File"] %}
+                    {% set editLink = path('integrated_content_media_index', {ids: content.type_id}) %}
+                {% else %}
+                    {% set editLink = path('integrated_content_content_edit', {id: content.type_id}) %}
+                {% endif %}
+                {% set type = contentTypes|filter(t => t.id == content.type_name)|first %}
+
+                {% set document = integrated_document(content) %}
+
+                {% if content.pub_active and ('now'|date('U') > content.pub_time |date('U')) %}
+                    {% set calendarState = 'published' %}
+                {% elseif content.pub_active %}
+                    {% set calendarState = 'planned' %}
+                {% else %}
+                    {% set calendarState = 'concept' %}
+                {% endif %}
+
+                <a class="quick-edit-link calendar-item {{ calendarState }}" href="#" data-id="{{ content.type_id }}"
+                   data-title="Edit {{ type }}" data-time="{{ date(content.pub_time)|date('Hi') }}">
+                    <div class="calendar-wrap" style="--color: {{ type.options.color|default('gray') }}">
+                        <div class="calendar-item-heading">
+                            <div class="heading-left">
+                                <i class="icon iconoir-{{ type.options.icon|default('empty-page') }}"
+                                   title="{{ type }}"></i>
+                                <span class="publish-time">{{ date(content.pub_time)|date('H:i') }}</span>
+
+                                {% if document.channels is defined and document.channels is not null %}
+                                <div class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}">
+                                    {% if document.channels|length > 3 %}
+                                        <span class="channel-popout">3+</span>
+                                    {% endif %}
+                                    <div
+                                        class="channel-favicons {% if document.channels|length > 3 %}popout{% endif %}">
+                                        {% for channel in document.channels %}
+                                            {% if channel.favicon.file is defined %}
+                                                <div class="channel-favicon"
+                                                     style="background-image:url('{{ image(channel.favicon.file).cropResize(36, 36)|default }}')"
+                                                     title="{{ channel.name }}">
+
+                                                </div>
+                                            {% else %}
+                                                <div class="channel-favicon font-bold" title="{{ channel.name }}" style="background-color: {{ channel.color|default('gray') }}">
+                                                    {{ channel.name|first }}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="heading-right">
+
+                            </div>
+                        </div>
+                        <div class="calendar-item-content">
+                            {{ content.title|default('untitled') }}
+                        </div>
+                    </div>
+                </a>
+
+                {% endfor %}
+                {% if prev_day < 6 %}
+                {% for i in range(prev_day + 1, 6) %}
+                {% set dayN = dayN + 1 %}
+                <div class="message">{{ scroll_message }}</div>
+            </div>
+            <div class="day column" draggable="true" data-date="{{ filters.start|date_modify('+%d days'|format(dayN))|date('Y/m/d') }}">
+                {% endfor %}
+                {% endif %}
+                <div class="message">{{ scroll_message }}</div>
+            </div>
+        </div>
+    </div>
+{% endblock content_items %}

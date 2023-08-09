@@ -27,7 +27,7 @@
                     image: {
                         id: media.data('id'),
                         uri: media.data('file'),
-                        title: media.data('title'),
+                        title: media.data('title')
                     }
                 }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
             };

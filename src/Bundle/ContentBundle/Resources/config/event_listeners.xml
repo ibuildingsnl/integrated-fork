@@ -13,6 +13,12 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
+        <service id="integrated_content.event_listener.search_selections_menu_subscriber" class="Integrated\Bundle\ContentBundle\EventListener\SearchSelectionsMenuSubscriber">
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="integrated_content.search_selection_repository" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
         <service id="integrated_content.event_listener.channel_exception" class="Integrated\Bundle\ContentBundle\EventListener\ChannelExceptionSubscriber">
             <argument type="service" id="router" />
             <argument type="service" id="channel.context" />

@@ -21,6 +21,7 @@
             <argument type="service" id="mailer" />
             <argument type="service" id="translator" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
+            <argument type="service" id="integrated_theme.templating.theme_manager" />
             <argument>%mailer_from%</argument>
             <argument>%mailer_name%</argument>
         </service>

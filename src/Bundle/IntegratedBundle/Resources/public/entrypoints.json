@@ -39,6 +39,16 @@
         "/bundles/integratedintegrated/upload_uppy.js"
       ]
     },
+    "edit_uppy": {
+      "js": [
+        "/bundles/integratedintegrated/edit_uppy.js"
+      ]
+    },
+    "edit_panel": {
+      "js": [
+        "/bundles/integratedintegrated/edit_panel.js"
+      ]
+    },
     "iframe": {
       "css": [
         "/bundles/integratedintegrated/iframe.css"

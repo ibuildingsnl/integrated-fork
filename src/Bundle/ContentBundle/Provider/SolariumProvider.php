@@ -129,12 +129,11 @@ class SolariumProvider
 
             // It would be strange to exclude items when a search text is entered
             $options['exclude'] = false;
-            $options['sort_default'] = 'rel';
+            $options['sort_default'] = 'time';
         }
 
         try {
             $selection = $subject instanceof SearchSelection ? $subject : $subject->getSearchSelection();
-
             if ($selection) {
                 $this->addFacetFilters($query, $subject, (array) $selection->getFilters(), array_merge($options, ['search_selection' => true]));
 
@@ -192,8 +191,8 @@ class SolariumProvider
         }
 
         foreach ($this->dm->getRepository(Relation::class)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-            $filters = isset($request[$name]) ? $request[$name] : [];
+            $name = strtolower(preg_replace('/[^a-zA-Z]/', '', $relation->getName()));
+            $filters = isset($request['relation'][$name]) ? $request['relation'][$name] : [];
 
             if (\count($filters)) {
                 if (!\in_array('facet_'.$relation->getId(), $facetFields)) {
@@ -248,7 +247,7 @@ class SolariumProvider
 
         if (null !== $suffix || null !== $sort) {
             // always add default sorting with search selections
-            $sortDefault = $options['sort_default'] ?? 'changed';
+            $sortDefault = $options['sort_default'] ?? 'time';
             $sortOptions = $this->getSortOptions();
 
             $order = isset($request['order']) ? $request['order'] : null;
@@ -278,9 +277,9 @@ class SolariumProvider
     {
         return [
             'rel' => ['name' => 'rel', 'field' => 'score', 'label' => 'relevance', 'order' => 'desc'],
+            'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'changed' => ['name' => 'changed', 'field' => 'pub_edited', 'label' => 'date modified', 'order' => 'desc'],
             'created' => ['name' => 'created', 'field' => 'pub_created', 'label' => 'date created', 'order' => 'desc'],
-            'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
             'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
             'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
             'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],

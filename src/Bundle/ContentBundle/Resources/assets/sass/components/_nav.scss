@@ -10,17 +10,13 @@ nav.navbar {
     z-index: 1050;
 
     .integrated-logo {
-        background-image: url("../../images/logo_white.svg");
-        flex: 0 0 200px;
-        padding: 10px 0;
-        background-size: contain;
+        background-image: url("../../images/logo_white_trademark.svg");
+        background-position: 50%;
         background-repeat: no-repeat;
-        background-position: center;
-        @include media(max-xl) {
-            background-image: url("../../images/logo_white_trademark.svg");
-            flex: 0 0 50px;
-            background-size: 30px;
-        }
+        padding: 10px 0;
+        flex: 0 0 50px;
+        background-size: 30px;
+        margin-right: 15px;
         @include media(max-sm) {
             display: none;
         }
@@ -46,7 +42,7 @@ nav.navbar {
 
 
     .new-contenttype {
-        margin-left: 64px;
+        margin-left: 71px;
     }
 
     ul.header-nav {
@@ -66,7 +62,6 @@ nav.navbar {
 
                 span.user-name {
                     font-weight: bold;
-                    text-transform: capitalize;
                     margin-right: 10px;
                 }
 
@@ -135,6 +130,9 @@ div#dropdown_overlay {
     top: 60px;
     z-index: 1040;
     height: -webkit-fill-available;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 body div#dropdown_overlay {
@@ -300,6 +298,12 @@ body div#dropdown_overlay {
             }
         }
 
+        .website-list {
+            span {
+                display: none;
+            }
+        }
+
         .dropdown-profile {
             margin-right: 10px;
 
@@ -345,7 +349,7 @@ body div#dropdown_overlay {
 
 @include media(max-sm) {
     nav.navbar {
-        .new-contenttype {
+        .website-list {
             margin-left: 0px;
         }
     }

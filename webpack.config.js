@@ -32,6 +32,12 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .addEntry('upload_uppy', [
         './src/Bundle/ContentBundle/Resources/assets/js/upload_uppy.js',
     ])
+    .addEntry('edit_uppy', [
+        './src/Bundle/ContentBundle/Resources/assets/js/edit_uppy.js',
+    ])
+    .addEntry('edit_panel', [
+        './src/Bundle/ContentBundle/Resources/assets/js/edit_panel.js',
+    ])
     .addEntry('iframe', [
         './src/Bundle/BlockBundle/Resources/assets/css/iframe.css',
     ])
@@ -62,6 +68,10 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .copyFiles({
         from: './src/Bundle/ContentBundle/Resources/assets/images',
         to: 'images/[path][name].[ext]',
+    })
+    .copyFiles({
+        from: './src/Bundle/ContentBundle/Resources/assets/fonts',
+        to: 'fonts/[path][name].[ext]',
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()

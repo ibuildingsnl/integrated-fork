@@ -29,6 +29,11 @@
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
+        <reference-one
+            field="favicon"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+        />
+
         <embed-many
             field="contacts"
             target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact"

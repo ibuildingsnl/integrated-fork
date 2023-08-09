@@ -1,0 +1,44 @@
+{% extends '@IntegratedContent/media/select_multiple.html.twig' %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script>
+        jQuery(function($) {
+            window.send_cancel_to_parent = function() {
+                window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+            }
+
+            $(document).keyup(function(e) {
+                if (e.key === "Escape") {
+                    window.parent.postMessage({mceAction: 'close'}, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+                }
+            });
+
+            window.send_message_to_parent = function(e) {
+                var media = $('#gallery li.media-item.selected');
+
+                if (!media.length) {
+                    return;
+                }
+
+                var images = [];
+                media.each(function() {
+                    var image = {
+                        id: $(this).data('id'),
+                        uri: $(this).data('file'),
+                        thumbnail: $(this).data('thumbnail'),
+                        title: $(this).data('title')
+                    };
+                    images.push(image);
+
+                });
+
+                window.parent.postMessage({
+                    mceAction: 'insertGallery',
+                    images: images
+                }, {{ app.request.schemeAndHttpHost|json_encode|raw }});
+            };
+        })
+    </script>
+{% endblock %}

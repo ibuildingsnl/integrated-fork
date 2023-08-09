@@ -60,6 +60,7 @@
             <argument type="service" id="router" />
             <argument type="string">integrated_content_content_edit</argument>
             <argument type="service" id="integrated_content.resolver" />
+            <argument type="service" id="integrated_image.twig_extension" />
 
             <tag name="serializer.normalizer" priority="32" />
         </service>
@@ -86,6 +87,14 @@
                 </argument>
                 <argument type="service">
                     <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
+                        <argument>time</argument>
+                        <argument>publication date</argument>
+                        <argument>pub_time</argument>
+                        <argument>desc</argument>
+                    </service>
+                </argument>
+                <argument type="service">
+                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
                         <argument>changed</argument>
                         <argument>date modified</argument>
                         <argument>pub_edited</argument>
@@ -97,14 +106,6 @@
                         <argument>created</argument>
                         <argument>date created</argument>
                         <argument>pub_created</argument>
-                        <argument>desc</argument>
-                    </service>
-                </argument>
-                <argument type="service">
-                    <service class="Integrated\Bundle\ContentBundle\Solr\Query\SortOption">
-                        <argument>time</argument>
-                        <argument>publication date</argument>
-                        <argument>pub_time</argument>
                         <argument>desc</argument>
                     </service>
                 </argument>

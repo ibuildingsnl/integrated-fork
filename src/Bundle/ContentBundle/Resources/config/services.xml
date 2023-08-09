@@ -17,6 +17,11 @@
             <argument type="service" id="integrated_storage.manager" />
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile" />
+        </service>
+
         <service id="Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="security.authorization_checker" />
@@ -29,6 +34,10 @@
 
         <service id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+        </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Services\CalendarOptions">
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
         </service>
 
         <service id="integrated_content.services.main_flusher" class="Integrated\Common\Services\MainFlusher">

@@ -1,0 +1,28 @@
+{% extends '@IntegratedContent/content/edit.html.twig' %}
+
+{% block style %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/iframe.css') }}">
+{% endblock %}
+
+{% block header %}{% endblock %}
+{% block crumbs %}{% endblock %}
+{% block sidebar_menu %}{% endblock %}
+{% block filters %}{% endblock %}
+{% block main_title %}{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script>
+$(document).ready(function () {
+    $('button[data-dismiss="modal"]').click(function() {
+        parent.$('#navigator-edit-modal.modal').removeClass('show');
+        parent.$('#dropdown_overlay').addClass('hide');
+        parent.$('#editmodaliframe').attr('src', '').empty();
+    });
+});
+
+
+</script>
+{% endblock %}

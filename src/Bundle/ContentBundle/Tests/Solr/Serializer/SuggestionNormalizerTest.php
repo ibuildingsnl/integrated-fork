@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Tests\Solr\Serializer;
 
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Bundle\ContentBundle\Solr\Serializer\SuggestionNormalizer;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -41,10 +42,16 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolver;
 
+    /**
+     * @var ImageExtension|MockObject
+     */
+    protected $imageExtension;
+
     protected function setUp(): void
     {
         $this->generator = $this->createMock(UrlGeneratorInterface::class);
         $this->resolver = $this->createMock(ResolverInterface::class);
+        $this->imageExtension = $this->createMock(ImageExtension::class);
     }
 
     protected function setUpNormalize()
@@ -259,7 +266,7 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance()
     {
-        return new SuggestionNormalizer($this->generator, self::ROUTE, $this->resolver);
+        return new SuggestionNormalizer($this->generator, self::ROUTE, $this->resolver, $this->imageExtension);
     }
 
     /**
@@ -337,27 +344,35 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
             new Document([
                 'type_id' => 'id_0',
                 'type_name' => 'news',
+                'type_class' => \stdClass::class,
                 'title' => 'title_0',
                 'pub_time' => 'invalid',
                 'pub_edited' => 'invalid',
+                'image_string' => '',
             ]),
             new Document([
                 'type_id' => 'id_1',
                 'type_name' => 'blog',
+                'type_class' => \stdClass::class,
                 'pub_time' => '2012-12-12T12:12:12Z',
+                'image_string' => '',
             ]),
             new Document([
                 'type_id' => 'id_2',
                 'type_name' => 'invalid',
+                'type_class' => \stdClass::class,
                 'title' => 'title_2',
                 'pub_edited' => '2012-12-12T12:12:12Z',
+                'image_string' => '',
             ]),
             new Document([
                 'type_id' => 'id_3',
                 'type_name' => 'blog',
+                'type_class' => \stdClass::class,
                 'title' => 'title_3',
                 'pub_time' => '2012-12-12T12:12:12Z',
                 'pub_edited' => 'invalid',
+                'image_string' => '',
             ]),
             new Document([]),
         ];
@@ -372,42 +387,52 @@ class SuggestionNormalizerTest extends \PHPUnit\Framework\TestCase
             [
                 'id' => 'id_0',
                 'type' => 'this-is-news',
+                'class' => 'stdClass',
                 'title' => 'title_0',
                 'url' => 'url_0',
                 'published' => null,
                 'updated' => null,
+                'image_string' => '',
             ],
             [
                 'id' => 'id_1',
                 'type' => 'this-is-a-blog',
+                'class' => 'stdClass',
                 'title' => '',
                 'url' => 'url_1',
                 'published' => '2012-12-12T12:12:12Z',
                 'updated' => null,
+                'image_string' => '',
             ],
             [
                 'id' => 'id_2',
                 'type' => 'invalid',
+                'class' => 'stdClass',
                 'title' => 'title_2',
                 'url' => 'url_2',
                 'published' => null,
                 'updated' => '2012-12-12T12:12:12Z',
+                'image_string' => '',
             ],
             [
                 'id' => 'id_3',
                 'type' => 'this-is-a-blog',
+                'class' => 'stdClass',
                 'title' => 'title_3',
                 'url' => 'url_3',
                 'published' => '2012-12-12T12:12:12Z',
                 'updated' => null,
+                'image_string' => '',
             ],
             [
                 'id' => '',
                 'type' => '',
+                'class' => '',
                 'title' => '',
                 'url' => '',
                 'published' => null,
                 'updated' => null,
+                'image_string' => '',
             ],
         ];
     }

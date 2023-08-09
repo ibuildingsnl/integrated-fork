@@ -65,105 +65,57 @@ class Company extends Relation
     #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www']], location: 'sidebar')]
     protected $website;
 
-    /**
-     * Get the name of the document.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getTitle(): string
     {
         return $this->name;
     }
 
-    /**
-     * Set the name of the document.
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get the slug of the document.
-     *
-     * @return string
-     */
-    public function getSlug()
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
 
-    /**
-     * Set the slug of the document.
-     *
-     * @param string $slug
-     *
-     * @return $this
-     */
-    public function setSlug($slug)
+    public function setSlug($slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    /**
-     * Get the file of the document.
-     *
-     * @return Image
-     */
-    public function getLogo()
+    public function getLogo(): ?Image
     {
         return $this->logo;
     }
 
-    /**
-     * Set the logo of the document.
-     *
-     * @return $this
-     */
-    public function setLogo(Image $logo = null)
+    public function setLogo(?Image $logo): void
     {
         $this->logo = $logo;
-
-        return $this;
     }
 
-    /**
-     * Get the website of the document.
-     *
-     * @return string
-     */
-    public function getWebsite()
+    public function getWebsite(): ?string
     {
         return $this->website;
     }
 
-    /**
-     * Set the website of the document.
-     *
-     * @param string $website
-     *
-     * @return $this
-     */
-    public function setWebsite($website)
+    public function setWebsite(string $website): static
     {
         $this->website = $website;
 
         return $this;
     }
 
-    /**
-     * Get the relative cover image URL for person (picture).
-     *
-     * @return string|null
-     */
     public function getCover()
     {
         if ($this->getLogo() instanceof Image) {

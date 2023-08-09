@@ -11,7 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\SearchSelection;
 
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\UserBundle\Model\GroupInterface;
+use Integrated\Bundle\UserBundle\Model\User;
 
 /**
  * Repository for SearchSelection.
@@ -21,20 +24,21 @@ use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 class SearchSelectionRepository extends DocumentRepository
 {
     /**
-     * @param int $id
+     * @return SearchSelection[]
      *
-     * @return mixed
-     *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
-    public function findPublicByUserId($id)
+    public function findForUser(User $user): iterable
     {
         $builder = $this->createQueryBuilder();
 
-        $builder->addOr($builder->expr()->field('userId')->equals($id));
+        $builder->addOr($builder->expr()->field('userId')->equals($user->getId()));
         $builder->addOr($builder->expr()->field('public')->equals(true));
+        $builder->addOr($builder->expr()->field('groupId')->in(
+            array_map(fn (GroupInterface $g) => $g->getId(), $user->getGroups())
+        ));
 
-        $builder->sort('title');
+        $builder->sort(['public' => 'desc', 'groupId' => 'desc', 'title' => 'asc']);
 
         return $builder->getQuery()->execute();
     }

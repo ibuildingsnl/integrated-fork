@@ -1,14 +1,12 @@
 let form_relations = {}; //this holds all the form relation objects with an id
-let form_relation = {}; //these will be placed in form_relations
-let selected_relation = ''; //after a user clicks on a form button, the clicked form element is selected
 const mediagallery_link = '/admin/media/';
 
-window.onload = function() {
-    addEventListeners();
+window.onload = async function() {
     populateFormRelations();
     generateSrcAttributeForIframes();
-    populateSelectedImages();
+    await populateSelectedImages(); // wait for populateSelectedImages() to finish
     setupFormRelations();
+    addEventListeners();
 };
 
 function setupFormRelations() {
@@ -19,39 +17,34 @@ function setupFormRelations() {
 }
 
 function populateSelectedImages() {
-    document.querySelectorAll('.mediagallery_selector').forEach((relation) => {
-        const relationid = relation.getAttribute('id');
-        const given_images = relation.querySelectorAll(
-            '.previously_selected_images li');
-        given_images.forEach((given_image) => {
-            form_relations[relationid].selected_images.push(
-                {...given_image.dataset});
+    return new Promise(resolve => {
+        document.querySelectorAll('.mediagallery_selector').forEach((relation) => {
+            const relationid = relation.getAttribute('id');
+            const given_images = relation.querySelectorAll('.previously_selected_images li');
+            given_images.forEach((given_image) => {
+                form_relations[relationid].selected_images.push({...given_image.dataset});
+            });
         });
+        resolve();
     });
 }
 
 function populateFormRelations() {
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
-        let inputIdentifier = '';
         const id = item.getAttribute('id');
-        if (item.parentNode.classList.contains('relation')) {
-            inputIdentifier = 'integrated_content[relations]' + '[' + id + ']';
-        } else {
-            inputIdentifier = item.querySelector('.selected_images').getAttribute('data-fieldName');
-        }
+        const inputIdentifier = item.parentNode.classList.contains('relation') ?
+            `integrated_content[relations][${id}]` :
+            item.querySelector('.selected_images').getAttribute('data-fieldName');
+
         form_relations[id] = {
-            modus: item.querySelector(
-                '.select_multimedia_button').dataset.multiple ?
-                'select_multiple' :
-                'select_one',
+            modus: item.querySelector('.select_multimedia_button').dataset.multiple ? 'select_multiple' : 'select_one',
             selected_images: [],
             relationid: id,
-            types: JSON.parse(
-                item.querySelector('.select_multimedia_button').dataset.types),
-            input_selector: 'input[name="' + inputIdentifier + '"]',
-            selected_images_selector: '#' + id + ' .selected_images',
-            wrap_selector: '#' + id + ' .wrap',
-            iframe_selector: '#' + id + ' iframe',
+            types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
+            input_selector: `input[name="${inputIdentifier}"]`,
+            selected_images_selector: `#${id} .selected_images`,
+            wrap_selector: `#${id} .wrap`,
+            iframe_selector: `#${id} iframe`,
         };
         form_relations[id].types_url = getTypesUrl(form_relations[id].types);
     });
@@ -64,33 +57,41 @@ function getTypesUrl(types) {
 
 function generateSrcAttributeForIframes() {
     Object.values(form_relations).forEach(form_relation => {
-        const link = mediagallery_link + form_relation.modus + '?page=1&' +
-            form_relation.types_url;
-        document.querySelector(form_relation.iframe_selector).
-            setAttribute('src', link);
+        const link = `${mediagallery_link}${form_relation.modus}?page=1&${form_relation.types_url}`;
+        document.querySelector(form_relation.iframe_selector).setAttribute('src', link);
     });
 }
 
 function addEventListeners() {
-    document.querySelectorAll('.select_multimedia_button').forEach((item) => {
-        item.addEventListener('click', function(event) {
-            showMediaGallery(event, item);
-        }, false);
+    const selectButtons = document.querySelectorAll('.select_multimedia_button');
+    const selectedImages = document.querySelectorAll('.selected_images');
+
+    selectButtons.forEach((selectButton) => {
+        selectButton.addEventListener('click', (event) => {
+            const { relationid } = event.target.dataset;
+            selected_relation = form_relations[relationid];
+            showMediaGallery(selected_relation);
+        });
     });
-    document.querySelectorAll('.selected_images').forEach((item) => {
-        item.addEventListener('click', function(event) {
-            if (!event.target.classList.contains('remove')) {
-                showMediaGallery(event, item);
+
+    selectedImages.forEach((selectedImage) => {
+        selectedImage.addEventListener('click', (event) => {
+            const imageItem = event.target.closest('li');
+            const removeButton = event.target.closest('.remove');
+
+            if (imageItem && !removeButton) {
+                const { relationid } = imageItem.closest('.selected_images').dataset;
+                selected_relation = form_relations[relationid];
+                showMediaGallery(selected_relation);
             }
-        }, false);
+        });
     });
 }
 
 window.removeImage = function(event) {
     event.preventDefault();
     const closest_image_id = event.target.closest('li').id;
-    const closest_media_gallery_selector = event.target.closest(
-        '.mediagallery_selector').id;
+    const closest_media_gallery_selector = event.target.closest('.mediagallery_selector').id;
     selected_relation = form_relations[closest_media_gallery_selector];
     selected_relation.selected_images = selected_relation.selected_images.filter(
         item => item.id !== closest_image_id);
@@ -98,24 +99,22 @@ window.removeImage = function(event) {
 };
 
 function createClone(selectedImage) {
-    let clone = $('#selected_image').clone(true, true);
-    let clone_img = clone.find('img');
-    let remove_link = clone.find('.remove_link');
-    clone.attr('id', selectedImage.id);
-    clone.removeClass('hidden');
-    clone_img.attr('src', selectedImage.thumbnail);
-    remove_link.attr('onclick', 'removeImage(event)');
-    remove_link.innerHTML = 'New Heading';
+    const clone = document.querySelector('#selected_image').cloneNode(true);
+    const clone_img = clone.querySelector('img');
+    const remove_link = clone.querySelector('.remove_link');
+    clone.id = selectedImage.id;
+    clone.classList.remove('hidden');
+    clone_img.src = selectedImage.thumbnail;
+    remove_link.setAttribute('onclick', 'removeImage(event)');
     return clone;
 }
 
 function placeClone(clone) {
-    if (selected_relation.modus == 'select_one') {
-        $(selected_relation.selected_images_selector).empty();
-        $(selected_relation.selected_images_selector).append(clone);
-    } else if (selected_relation.modus == 'select_multiple') {
-        $(selected_relation.selected_images_selector).append(clone);
+    const selectedImagesContainer = document.querySelector(selected_relation.selected_images_selector);
+    if (selected_relation.modus === 'select_one') {
+        selectedImagesContainer.innerHTML = '';
     }
+    selectedImagesContainer.appendChild(clone);
 }
 
 function filterImages(selection) {
@@ -124,16 +123,11 @@ function filterImages(selection) {
 }
 
 function addImageIDsToInputField() {
-    $(selected_relation.input_selector).
-        attr('value', JSON.stringify(
-            selected_relation.selected_images.map(item => item.id)).
-            replace('[', '').
-            replace(']', '').
-            replaceAll('"', ''));
+    document.querySelector(selected_relation.input_selector).value = selected_relation.selected_images.map(item => item.id).join(',');
 }
 
 function emptyShownImagesInDOM() {
-    $(selected_relation.selected_images_selector).empty();
+    document.querySelector(selected_relation.selected_images_selector).innerHTML = '';
 }
 
 function selectImagesToShow(response_from_iframe) {
@@ -155,11 +149,11 @@ function populateDOMWithImages() {
 }
 
 window.addEventListener('message', function(e) {
-    if (e.data == 'cancel') {
+    if (e.data === 'cancel') {
         closeMediaGallery();
         return;
     }
-    if (typeof e.data == 'string') {
+    if (typeof e.data === 'string') {
         const response_from_iframe = filterImages(JSON.parse(e.data));
         if (response_from_iframe.length > 0) {
             selectImagesToShow(response_from_iframe);
@@ -179,18 +173,20 @@ function rebuildDOM() {
 
 function closeMediaGallery() {
     reloadMediaLibrary();
-    $(selected_relation.wrap_selector).removeClass('show');
-    $('#dropdown_overlay').addClass('hide');
+
+    document.querySelector(selected_relation.wrap_selector).classList.remove('show');
+    document.querySelector('#dropdown_overlay').classList.add('hide');
+    window.popupShown = false;
 }
 
 function reloadMediaLibrary() {
-    $(selected_relation.iframe_selector).attr('src', function(i, val) {
-        return val;
-    });
+    const iframe = document.querySelector(selected_relation.iframe_selector);
+    iframe.src = iframe.src;
 }
 
-function showMediaGallery(event, item) {
-    selected_relation = form_relations[item.dataset.relationid];
-    $(selected_relation.wrap_selector).addClass('show');
-    $('#dropdown_overlay').removeClass('hide');
+function showMediaGallery(selected_relation) {
+    window.popupShown = true;
+
+    document.querySelector(selected_relation.wrap_selector).classList.add('show');
+    document.querySelector('#dropdown_overlay').classList.remove('hide');
 }

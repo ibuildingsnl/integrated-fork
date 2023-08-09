@@ -12,18 +12,27 @@
         box-sizing: border-box;
         cursor: pointer;
         display: block;
-        height: 28px;
         user-select: none;
         -webkit-user-select: none;
 
         .select2-selection__rendered {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            padding-left: 8px;
+            //padding-left: 8px;
             padding-right: 20px;
             overflow: hidden;
             text-overflow: ellipsis;
             flex-wrap: wrap;
+            .select2-selected {
+                background-color: #e0e3e9;
+                border: 1px solid #e0e3e9;
+                border-radius: 4px;
+                color: #283c53;
+                cursor: default;
+                float: left;
+                margin: 0.2rem 0.2rem !important;
+                padding: 0 5px;
+            }
         }
     }
 
@@ -212,6 +221,44 @@
                 position: absolute;
                 top: 50%;
                 width: 0;
+            }
+        }
+        .select2-selection__clear {
+            font-weight: 700;
+            align-items: center;
+            background-color: #c6422f;
+            border: 2px solid #c6422f;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            height: 20px;
+            justify-content: center;
+            position: absolute;
+            left: 10px;
+            top: 19px;
+            width: 20px;
+            color: #c6422f;
+            text-indent: -999px;
+            &:before {
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
+                height: 20px;
+                width: 20px;
+                content: " ";
+                display: block;
+                background: currentColor;
+                mask-size: cover;
+                -webkit-mask-size: cover;
+                color: white;
+                margin-left: -2px;
+            }
+            &:hover {
+                background-color: #902b1d;
+                border:2px solid #902b1d;
+                color:#902b1d;
+                &:after{
+                    color:white;
+                }
             }
         }
     }
@@ -772,5 +819,23 @@ div#authorTypes {
     input {
         border-radius: 0 0 8px 8px;
     }
+}
+
+.editor-item-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 56px;
+    width: 36px;
+}
+.editor-item-wrapper, .aside-item-wrapper {
+    .select2-container--default .select2-selection--single {
+        padding-left: 2.5rem;
+    }
+}
+
+.editor-item-wrapper .select2-container--default .select2-selection--single .select2-selection__clear {
+    top: 16px;
+    left: 8px;
+}
+.editor-item-list-container .input-group-addon {
+    display: block;
 }
 

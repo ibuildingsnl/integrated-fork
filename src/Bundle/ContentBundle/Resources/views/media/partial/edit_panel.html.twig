@@ -1,7 +1,9 @@
 <div class="aside-edit-holder bg-white hide">
-    <div class="aside-item-wrapper">
-        <button class="close-media-edit-form"><i
-                class="iconoir-cancel"></i></button>
+    <div class="aside-item-wrapper" id="editimagewrapper" data-editImagePath="{{ path('integrated_content_media_edit_image', {'id': 'REPLACE'}) }}" data-editImageIframePath='{{ path('integrated_content_media_edit_image_iframe', {'id': 'REPLACE'}) }}'>
+        <button class="close-media-edit-form">
+            <i class="iconoir-cancel"></i></button>
         <iframe id="editpaneliframe" src=""></iframe>
     </div>
 </div>
+
+<script src="{{ asset('bundles/integratedintegrated/edit_panel.js') }}"></script>

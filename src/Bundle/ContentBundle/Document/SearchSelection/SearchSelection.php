@@ -58,12 +58,28 @@ class SearchSelection
      */
     protected $userId;
 
+    protected bool $inMenu = false;
+
+    protected ?string $groupId = null;
+
     /**
      * @return string
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param string|null $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -186,7 +202,7 @@ class SearchSelection
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserId()
     {
@@ -203,5 +219,25 @@ class SearchSelection
         $this->userId = (int) $userId;
 
         return $this;
+    }
+
+    public function isInMenu(): bool
+    {
+        return $this->inMenu;
+    }
+
+    public function setInMenu(bool $inMenu): void
+    {
+        $this->inMenu = $inMenu;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $group): void
+    {
+        $this->groupId = $group;
     }
 }

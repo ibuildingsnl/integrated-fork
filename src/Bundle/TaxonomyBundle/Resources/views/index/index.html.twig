@@ -7,6 +7,41 @@
                 {{ form_start(form) }}
             {% endblock %}
             <div class="taxonomy-list-wrapper">
+                {% if filter_options|default([])|length > 0 %}
+                    <div class="page-title">
+                        <div class="options">
+                            <ul class="mr-2">
+                                <li class="dropdown close-outside" data-underlay="no">
+                                    <a data-toggle="dropdown" role="button" id="filtering-list" class="btn btn-select space-between">
+                                        <span>{% trans %}Filter by parent{% endtrans %}
+                                : {{ filter_options[filter]|default('Show all')|trans }}</span>
+                                        <i class="iconoir-nav-arrow-down"></i>
+                                    </a>
+                                    <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
+                                        <li role="presentation">
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all
+                                                |merge(app.request.attributes.get('_route_params'))
+                                                |merge({'filter': 'root', 'page': 1 })
+                                            ) }}" role="menuitem">
+                                                {{ "Show all"|trans }}
+                                            </a>
+                                        </li>
+                                        {% for filter_id, filter_name in filter_options %}
+                                            <li{% if filter_id == filter %} class="active"{% endif %} role="presentation">
+                                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all
+                                                    |merge(app.request.attributes.get('_route_params'))
+                                                    |merge({'filter': filter_id, 'page': 1 })
+                                                ) }}" role="menuitem">
+                                                    {{ filter_name|trans }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="section-white section-radius taxonomy-list">
                     <table class="table table-hover">
                         <thead>
@@ -41,7 +76,7 @@
                                             {% trans %}Edit{% endtrans %}
                                         </a> |
                                         <a class="color-red"
-                                           href="{{ path('integrated_content_content_delete_rest', {'id': item.taxonomyId}) }}"
+                                           href="{{ path('integrated_content_content_delete', {'id': item.taxonomyId}) }}"
                                            title="{% trans %}Delete{% endtrans %}">
                                             {% trans %}Delete{% endtrans %}
                                         </a>
@@ -54,14 +89,7 @@
                                     {{ item.slug }}
                                 </td>
                                 <td>
-
-                                    {% if item.count %}
-                                        <a href="{{ path('integrated_content_content_index', { (content_type.name): [item.title] }) }}">
-                                            {{ "(%d)"|trans|format(item.count) }}
-                                        </a>
-                                    {% else %}
-                                        {{ "(0)"|trans }}
-                                    {% endif %}
+                                    {{ "(%d)"|trans|format(item.count) }}
                                 </td>
                             </tr>
                         {% else %}
@@ -121,45 +149,36 @@
                                                          style="background-color:{{ workflow.color|alpha(15) }};color:{{ workflow.color }};">
                                                         <i class="iconoir-{{ workflow.icon }}"></i> {{ workflow.name }}
                                                     </div>
-                                                    <a class="delete"
-                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                        <i class="iconoir-trash"></i>
-                                                    </a>
                                                 {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                                                     <div class="status planned">
                                                         <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                                     </div>
-                                                    <a class="delete"
-                                                       href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                        <i class="iconoir-trash"></i>
-                                                    </a>
                                                 {% else %}
                                                     {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
                                                         <div class="status published">
                                                             <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
                                                         </div>
-                                                        <a class="delete"
-                                                           href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                            <i class="iconoir-trash"></i>
-                                                        </a>
                                                     {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                                                         <div class="status planned">
                                                             <i class="iconoir-calendar"></i> {% trans %}Planned{% endtrans %}
                                                         </div>
-                                                        <a class="delete"
-                                                           href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                            <i class="iconoir-trash"></i>
-                                                        </a>
                                                     {% else %}
                                                         <div class="status draft">
                                                             <i class="iconoir-design-pencil"></i> {% trans %}Draft{% endtrans %}
                                                         </div>
-                                                        {% if content is defined %}
-                                                            <a class="delete"
-                                                               href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
-                                                                <i class="iconoir-trash"></i>
-                                                            </a>
-                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if content is defined %}
+                                                    {% if locking is defined and locking.lock is defined and locking.locked == false %}
+                                                        <a class="delete"
+                                                           href="{{ path('integrated_content_content_delete', {'id': content.id, 'lock': locking.lock.getId}) }}">
+                                                            <i class="iconoir-trash"></i>
+                                                        </a>
+                                                    {% else %}
+                                                        <a class="delete"
+                                                           href="{{ path('integrated_content_content_delete', {'id': content.id}) }}">
+                                                            <i class="iconoir-trash"></i>
+                                                        </a>
                                                     {% endif %}
                                                 {% endif %}
                                             </div>
@@ -177,15 +196,21 @@
 
                                 {% block content_options %}
                                     {% set options = false %}
-                                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS'))  %}
+                                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                         {% set options = true %}
                                     {% endfor %}
+                                    {% if form.children.customFields is defined %}
+                                        {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                            {% set options = true %}
+                                        {% endfor %}
+                                    {% endif %}
                                     {% if options == true %}
                                         <div class="aside-item-wrapper">
                                             <div class="aside-item-header">
                                                 <h3 class="aside-item-title">
                                                     <i class="iconoir-settings"></i>
-                                                    <span class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
+                                                    <span
+                                                        class="aside-item-icon">{% trans %}Content Options{% endtrans %}</span>
                                                 </h3>
                                                 <i class="iconoir-nav-arrow-up"></i>
                                             </div>
@@ -194,6 +219,13 @@
                                                     {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
                                                         {{ form_row(child) }}
                                                     {% endfor %}
+                                                    {% block custom_sidebar_fields %}
+                                                        {% if form.children.customFields is defined %}
+                                                            {% for field in form.children.customFields|filter(f => f.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_OPTIONS')) %}
+                                                                {{ form_row(field) }}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endblock %}
                                                 </div>
                                             </div>
                                         </div>
@@ -219,7 +251,15 @@
                                 {{ form_row(child) }}
                             {% endfor %}
 
-                            {{ form_rest(form) }}
+                            {% if form.children.customFields is defined %}
+                                {% for field in form.children.customFields %}
+                                    {% if not field.rendered %}
+                                        {{ form_row(field, {'style':'editor', 'state':'show'}) }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
+                            {{ form_rest(form, {'style':'editor', 'state':'show'}) }}
                         {% endblock %}
                     </section>
                 </div>

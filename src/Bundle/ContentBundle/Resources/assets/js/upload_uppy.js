@@ -10,12 +10,10 @@ global.XHRUpload = XHRUpload
 import ImageEditor from '@uppy/image-editor'
 global.ImageEditor = ImageEditor
 
-// import UppyDutch from '@uppy/locales/lib/nl_NL'
-// global.UppyDutch = UppyDutch
-
 function inititalizeUppy(uppyOptions) {
     let default_height = '750px'
     let default_language = '' //defaults to eng
+    let uploaded_files = 0
     if (! ("target" in uppyOptions)) {
         console.log("No target given for the Uppy component")
         return false
@@ -26,6 +24,16 @@ function inititalizeUppy(uppyOptions) {
     }
 
     let uppy = new Uppy({
+        restrictions: {
+            maxFileSize: 50000000, //50 MB
+            allowedFileTypes: ['image/*', 'video/*', '.doc', '.docx', '.pdf', '.xls', '.xlsx'],
+        },
+        meta: {
+            title: '',
+            description: '',
+            credits: '',
+            copyright_restrictions: '',
+        },
         // locale: (uppyOptions.language === 'nl') ? UppyDutch : default_language,
         onBeforeUpload(files) {
             // We have 2 entry points: when a user selects a ContentType, and when he clicks on the add button.
@@ -45,6 +53,24 @@ function inititalizeUppy(uppyOptions) {
         },
     })
 
+    uppy.on('complete', (result) => {
+        if (result.failed.length === 0) {
+            closeUppyWithRefresh()
+        }
+    });
+
+    let userMetaData = {}
+    let currentEditingId = ''
+
+    function processEvent(event = null) {
+        const inputs = document.querySelectorAll('.uppy-Dashboard-FileCard-info input')
+
+        for (const input of inputs) {
+            const id = input.id.replace("uppy-Dashboard-FileCard-input-", "")
+            uppy.setFileMeta(currentEditingId, {[id]: input.value });
+        }
+    }
+
     uppy.use(Dashboard, {
         inline: true,
         target: uppyOptions.target,
@@ -52,12 +78,43 @@ function inititalizeUppy(uppyOptions) {
         height: uppyOptions.height || default_height,
         proudlyDisplayPoweredByUppy: false,
         showProgressDetails: true,
+        singleFileFullScreen: false,
         doneButtonHandler: () => {
-            $('#upload_container').removeClass('show');
-            $('#dropdown_overlay').addClass('hide');
-            window.location.reload();
+            closeUppyWithRefresh()
         },
+
+        metaFields: [
+            { id: 'title', name: 'Title', placeholder: 'File name' },
+            { id: 'description', name: 'Description', placeholder: '' },
+            { id: 'credits', name: 'Credits', placeholder: '' },
+            { id: 'copyright_restrictions', name: 'Copyright restrictions', placeholder: '' },
+        ],
     });
+
+    uppy.on('dashboard:modal-open', () => {
+    });
+
+    uppy.on('dashboard:modal-close', () => {
+    });
+
+    uppy.on('file-added', (file) => {
+    });
+
+    uppy.on('dashboard:file-edit-start', async (file) => {
+        currentEditingId = file.id
+        const saveButton = await waitForElement('.uppy-Dashboard-FileCard-actions button.uppy-c-btn-primary');
+        saveButton.classList.remove('uppy-c-btn-primary')
+    });
+
+    uppy.on('dashboard:file-edit-complete', (file) => {
+        processEvent()
+    });
+
+    function closeUppyWithRefresh() {
+        $('#upload_container').removeClass('show');
+        $('#dropdown_overlay').addClass('hide');
+        window.location.reload();
+    }
 
     uppy.use(XHRUpload, {
         endpoint: uppyOptions.endpoint,
@@ -71,6 +128,27 @@ function inititalizeUppy(uppyOptions) {
     }
 
     return uppy;
+}
+
+//Needed to show savebutton
+function waitForElement(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                resolve(document.querySelector(selector));
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
 }
 
 $('.drag-drop-area').each(function() {

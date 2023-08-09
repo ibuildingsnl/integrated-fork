@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Services;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage as StorageItem;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -40,7 +41,7 @@ class MediaGalleryUploadFile
 
     public function handleUpload(Request $request)
     {
-        // check filetype
+        // check filetype, this will be retrieved from the name parameter
         $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
         // QUESTION: What do you guys think about using this as whitelist:
         // https://gist.github.com/tylerlee/53609bff1346cebf8f0a85b6be29a88e
@@ -64,6 +65,17 @@ class MediaGalleryUploadFile
             return new JsonResponse(['message' => 'This filetype is not allowed.']);
         }
 
+        // Process meta fields:
+        if ($request->get('description') && $request->get('description') != '') {
+            $file->setDescription($request->get('description'));
+        }
+        if ($request->get('credits') && $request->get('credits') != '') {
+            $file->setCredits($request->get('credits'));
+        }
+        if ($request->get('copyright_restrictions') && $request->get('copyright_restrictions') != '') {
+            $file->setCopyrightRestrictions($request->get('copyright_restrictions'));
+        }
+
         // If a customContenttype is provided we use it, else we fall back on the filetype
         $customContenttype = $request->get('custom_contenttype');
         if (null !== $customContenttype) {
@@ -72,12 +84,26 @@ class MediaGalleryUploadFile
             $file->setContentType($contenttype);
         }
 
-        // Get file title
+        // Get and set file title
         $uploadedFile = $request->files->get('file');
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
-        $file->setTitle($originalFilename);
+        if ($request->get('title') && $request->get('title') != '') {
+            $file->setTitle($request->get('title'));
+        } else {
+            $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), \PATHINFO_FILENAME);
+            $file->setTitle($originalFilename);
+        }
 
-        $storage = $this->manager->write(
+        $storage = $this->writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype);
+
+        $file->setFile($storage);
+        $this->documentManager->persist($file);
+
+        return $file;
+    }
+
+    private function writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype)
+    {
+        return $this->manager->write(
             new MemoryReader(
                 file_get_contents($uploadedFile),
                 new Metadata(
@@ -88,10 +114,14 @@ class MediaGalleryUploadFile
                 )
             )
         );
+    }
 
-        $file->setFile($storage);
-        $this->documentManager->persist($file);
+    public function getContentFromUploadedFile(Request $request): StorageItem
+    {
+        $uploadedFile = $request->files->get('file');
+        $uploadedFileExtension = strtolower($request->files->get('file')->getClientOriginalExtension());
+        $uploadedFileMimetype = $request->files->get('file')->getMimeType();
 
-        return $file;
+        return $this->writeFile($uploadedFile, $uploadedFileExtension, $uploadedFileMimetype);
     }
 }

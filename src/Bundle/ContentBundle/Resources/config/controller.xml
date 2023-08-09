@@ -24,6 +24,7 @@
             <argument type="service" id="integrated_content.metadata.factory"/>
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\CalendarOptions" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -67,6 +68,7 @@
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile" />
+            <argument type="service" id="Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

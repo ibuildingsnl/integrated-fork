@@ -15,44 +15,6 @@ $(document).ready(function () {
         $(this).closest('.nav-form-inner').removeClass('full-width');
     });
 
-    //Expanded hidden watch list items
-    $(".list-watch .watch-item-trigger").click(function (event) {
-        event.preventDefault();
-        if ($(this).hasClass('active')) {
-            $(this).closest('.list-watch').find('.hidden-item').css("display", "none");
-            $(this).removeClass('active');
-        } else {
-            $(this).closest('.list-watch').find('.hidden-item').css("display", "inline-block");
-            $(this).addClass('active');
-        }
-    });
-
-    //Expanded hidden text holder items
-    $(".hidden-text-holder .link-more").click(function (event) {
-        event.preventDefault();
-        if ($(this).hasClass('active')) {
-            $(this).closest('.hidden-text-holder').find('.hidden-item').css("display", "none");
-            $(this).removeClass('active');
-        } else {
-            $(this).closest('.hidden-text-holder').find('.hidden-item').css("display", "block");
-            $(this).addClass('active');
-        }
-    });
-
-    //Expanded list action
-    $(".list-expanded > li > a").click(function (event) {
-        event.preventDefault();
-        $(this).next('.list-sub-expanded').slideToggle(250);
-        $(this).toggleClass('active');
-    });
-
-    if (typeof tinymce !== 'undefined') {
-        //Tinymce initial
-        tinymce.init({
-            selector: "textarea#tinymce-holder"
-        });
-    }
-
     //Select 2 initial
     $(".basic-multiple").select2();
 
@@ -60,12 +22,6 @@ $(document).ready(function () {
         $(this).select2({
             placeholder: $(this).data('placeholder')
         });
-    });
-
-    $('.btn_show_more').on('click', function(e){
-        e.preventDefault();
-        $(this).closest('.filters_list').find('.to_show').slideToggle(200);
-        $(this).hide();
     });
 
     $('button[type="submit"]').click(function() {
@@ -102,14 +58,26 @@ $(document).ready(function () {
                 '{{#if type.suggestion }}' +
                     '<div class="tt-suggestion-term"><div class="tt-suggestion-head">{{data}}</div></div>' +
                 '{{/if}}' +
+                '{{#if type.media_gallery }}' +
+                    '<div class="tt-suggestion-term">' +
+                        '<a href="{{data.url}}">Show result in media gallery: {{data.query}}</a>' +
+                    '</div>' +
+                '{{/if}}' +
                 '{{#if type.result }}' +
                     '<div class="tt-suggestion-result">' +
-                        '<div><a href="{{data.url}}">{{data.title}}</a></div>' +
+                        '{{#if data.open_in_media_gallery }}' +
+                            '<div class="media-preview">\n' +
+                            '<img src="{{data.image_string}}">\n' +
+                            '</div>' +
+                            '<div class="tt-result-wrapper"><div><a href="{{data.media_gallery_url}}">{{data.title}}</a></div>' +
+                        '{{else}}' +
+                            '<div class="tt-result-wrapper"><div><a href="{{data.url}}">{{data.title}}</a></div>' +
+                        '{{/if}}' +
                         '<ul>' +
                             '<li>{{data.type}}</li>' +
                             '<li>{{data.published}}</li>' +
                         '</ul>' +
-                    '</div>' +
+                    '</div></div>' +
                 '{{/if}}'
             )
         }
@@ -136,9 +104,27 @@ $(document).ready(function () {
     function transform(response) {
         var results = [];
 
+        let media_item_in_results = false
+
         if ($.isArray(response.results)) {
             $.each(response.results, function () {
                 var data = this;
+
+                if (data.class === 'Image' || data.class === 'Video' || data.class === 'File') {
+                    if (media_item_in_results == false) {
+                        results.unshift({
+                            type: { suggestion: false, result: false, media_gallery: true },
+                            data: {
+                                url: '/admin/media?q=' + response.query,
+                                query: response.query
+                            }
+                        });
+                        media_item_in_results = true
+                    }
+
+                    data.open_in_media_gallery = true
+                    data.media_gallery_url = '/admin/media?ids=' + data.id
+                }
 
                 if (data.published) {
                     data.published = moment(data.published).format('lll');
@@ -181,4 +167,18 @@ $('.alert.alert-dismissible .close').on('click', function() {
     $(this).parent().remove();
 });
 
+var selectElement = $('#integrated_content_parent_id');
 
+if (selectElement) {
+    if (selectElement.find('option:selected').length > 0) {
+        $('.aside-item-wrapper.channels').hide();
+    }
+
+    selectElement.on('select2:select', function(e) {
+        $('.aside-item-wrapper.channels').hide();
+    });
+
+    selectElement.on('select2:unselect', function(e) {
+        $('.aside-item-wrapper.channels').show();
+    });
+}

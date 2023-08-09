@@ -17,14 +17,18 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\CalendarOptions;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
-use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyIndexer;
+use Integrated\Bundle\TaxonomyBundle\Services\TaxonomyOverview;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -73,37 +77,104 @@ class ContentController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly ImageExtension $imageExtension,
         private readonly MediaProvider $mediaProvider,
-        private readonly TaxonomyIndexer $taxonomyIndexer,
+        private readonly TaxonomyOverview $taxonomyIndexer,
         private readonly QueryFactoryInterface $queryFactory,
         private readonly MetadataFactoryInterface $metadataFactory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly DocumentManager $documentManager
+        private readonly DocumentManager $documentManager,
+        private readonly CalendarOptions $calendarOptions,
     ) {
     }
 
-    public function index(Request $request): Response
+    public function index(Request $request, string $searchSelection = 'all'): Response
     {
         // remember search state
         $session = $request->getSession();
 
-        if ($request->query->get('remember') && $session->has('content_index_view')) {
-            $request->query->add(unserialize($session->get('content_index_view')));
-            $request->query->remove('remember');
-        } elseif (!$request->getRequestFormat() == 'json') {
+        if ($request->query->get('remember')) {
+            if ($session->has('content_redirect_route')) {
+                $route = $session->get('content_redirect_route', []);
+
+                return $this->redirectToRoute($route['route'], $route['params'] ?? []);
+            } elseif ($session->has('content_index_view')) {
+                $request->query->add(unserialize($session->get('content_index_view')));
+                $request->query->remove('remember');
+            }
+        } elseif ($request->getRequestFormat() !== 'json') {
             $session->set('content_index_view', serialize($request->query->all()));
+            $session->remove('content_redirect_route');
         }
 
         $options = $request->query->all();
+        unset($options['searchSelection'], $options['page']);
+
+        /** @var SearchSelection|null $selection */
+        $selection = null;
+        if ($searchSelection && $searchSelection !== 'all') {
+            $selection = $this->getDoctrineODM()
+                ->getRepository(SearchSelection::class)
+                ->find($searchSelection);
+            if ($selection && empty($options)) {
+                $options = $selection->getFilters();
+            }
+        }
+        $newSelection = false;
+        if (!$selection) {
+            $newSelection = true;
+            $selection = new SearchSelection();
+        }
+        $editableSelection = $this->isGranted('ROLE_ADMIN') || (
+            !$selection->isPublic() &&
+            $selection->getUserId() === $this->getUser()->getId()
+        );
+
+        $searchSelectionForm = $this->createForm(SearchSelectionType::class, $selection);
+        $searchSelectionForm->add('actions', ActionsType::class, [
+            'buttons' => $newSelection || !$editableSelection ? ['create'] : ['save', 'create'],
+        ]);
+        $searchSelectionForm->handleRequest($request);
+        if ($searchSelectionForm->isSubmitted() && $searchSelectionForm->isValid()) {
+            if ($searchSelectionForm->get('actions')->getData() === 'create') {
+                $newSelection = true;
+                $this->documentManager->detach($selection);
+                $selection = clone $selection;
+                $selection->setId(null);
+                $selection->setUserId($this->getUser()->getId());
+                if (!$editableSelection) {
+                    $selection->setPublic(false);
+                }
+            } elseif (!$editableSelection) {
+                throw new AccessDeniedException();
+            }
+            $selection->setFilters($options);
+            $this->documentManager->persist($selection);
+            $this->documentManager->flush();
+
+            $this->addFlash('success', 'Selection saved');
+            if ($newSelection) {
+                return $this->redirectToRoute('integrated_content_content_selection', ['searchSelection' => $selection->getId()]);
+            }
+        }
+
+        // view settings (calendar etc)
+
+        $view = '';
+        if (!empty($options['view']) && $options['view'] != 'list') {
+            $request->query->set('page', 1);
+            $request->query->set('limit', 10000);
+            $options = $this->calendarOptions->prepare($options);
+            $view = $options['_view'] ?? '';
+            unset($options['_view']);
+        }
 
         // all this relations stuff is only used on the json response
         $relations = [];
-
         if ($options['relation'] ?? null) {
             $options['contenttypes'] = [];
 
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $options['contenttypes'] = $target->getId();
+                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),
@@ -112,7 +183,7 @@ class ContentController extends AbstractController
             }
         }
 
-        if ($request->isMethod('post')) {
+        if ($request->isMethod('post') && $request->get('id')) {
             $options['ids'] = $request->get('id');
         }
 
@@ -128,12 +199,21 @@ class ContentController extends AbstractController
             [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
-        return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
+        /** @var SearchSelectionRepository $repo */
+        $repo = $this->documentManager->getRepository(SearchSelection::class);
+
+        return $this->render('@IntegratedContent/content/index'.$view.'.'.$request->getRequestFormat().'.twig', [
             'params' => $query->getOptions(),
             'pager' => $paginator,
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
+            'filters' => $options,
+            'selection' => $selection,
+            'isSelectionEditable' => $editableSelection,
+            'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
+            'searchSelectionForm' => $searchSelectionForm->createView(),
+            'contentTypes' => $this->contentTypeManager->getAll(),
         ]);
     }
 
@@ -238,14 +318,14 @@ class ContentController extends AbstractController
             }
         }
 
-        $taxonomyCategoriess = [];
+        $taxonomyCategories = [];
         foreach ($contentRelations as $contentRelation) {
             foreach ($contentRelation->getTargets() as $target) {
-                $taxonomyCategoriess[$contentRelation->getId()] = $this->taxonomyIndexer->buildTaxonomyIndex($target->getId());
+                $taxonomyCategories[$contentRelation->getId()] = $this->taxonomyIndexer->overviewFor($target->getId());
             }
         }
 
-        return $taxonomyCategoriess;
+        return $taxonomyCategories;
     }
 
     /**
@@ -383,6 +463,8 @@ class ContentController extends AbstractController
 
         if ($request->get('_route') == 'integrated_content_content_edit_iframe') {
             $renderTo = '@IntegratedContent/content/edit.iframe.html.twig';
+        } elseif ($request->get('_route') == 'integrated_content_content_edit_modal_iframe') {
+            $renderTo = '@IntegratedContent/content/edit.modal.iframe.html.twig';
         } else {
             $renderTo = '@IntegratedContent/content/edit.html.twig';
         }

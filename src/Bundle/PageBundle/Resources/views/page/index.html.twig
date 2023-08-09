@@ -29,7 +29,7 @@
                                 <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
                                     <li><a href="{{ editUrl }}">{% trans %}Edit page{% endtrans %}</a></li>
                                     <li>
-                                        <a href="{{ path('integrated_page_page_copy') }}">{% trans %}Edit page properties{% endtrans %}</a>
+                                        <a href="{{ path('integrated_page_page_edit', {'id': lastPage.id}) }}">{% trans %}Edit page properties{% endtrans %}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -181,4 +181,18 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+
+        $('form[name="page_filter"]').on('change', function () {
+            $(this).trigger('submit');
+        });
+    });
+</script>
 {% endblock %}

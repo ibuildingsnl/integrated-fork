@@ -82,6 +82,9 @@
             font-size: 14px;
             font-weight: 400;
             white-space: nowrap;
+            @include media(max-sm) {
+                display: none;
+            }
         }
     }
 

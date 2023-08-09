@@ -1,27 +1,32 @@
-$(function () {
-    var block = $("#integrated_block_block");
-    var use_title = $('.use-title', block);
-    var title = $(".main-title", block);
-    var published_title = $('.published-title', block);
-    var published_form_row = published_title.closest(".form-item");
-    var use_title_form_row = use_title.closest('.form-item');
+$(document).ready(function() {
+    const block = $("#integrated_block_block");
+    const useTitle = $('.use-title', block);
+    const title = $(".main-title", block);
+    const publishedTitle = $('.published-title', block);
+    const publishedFormRow = publishedTitle.closest(".form-item");
+    const useTitleFormRow = useTitle.closest('.form-item');
 
-    var compare_titles = function (at_start) {
-        if (title.val() === published_title.val()) {
-            use_title.prop('checked', true);
-            use_title_form_row.show();
-            published_form_row.hide();
-        }
-        else if (at_start) {
-            use_title_form_row.hide();
+    const compareTitles = function(atStart) {
+        if (title.val() === publishedTitle.val()) {
+            useTitle.prop('checked', true);
+            useTitleFormRow.show();
+            publishedFormRow.hide();
+        } else if (atStart) {
+            useTitleFormRow.hide();
         }
     };
-    /* TODO: Check if this is still working like it should */
-    compare_titles(true);
+    compareTitles(true);
 
-    use_title.on('change', function () {
-        /* user can do uncheck only */
-        published_form_row.show();
-        use_title_form_row.hide();
+    useTitle.on('change', function() {
+        if (this.checked) {
+            publishedFormRow.hide();
+            useTitleFormRow.show();
+        }
     });
+});
+
+$(document).ready(function() {
+    if ($('body').hasClass('integrated_block_block_edit')) {
+        $('#block_edit_id').addClass('disabled');
+    }
 });

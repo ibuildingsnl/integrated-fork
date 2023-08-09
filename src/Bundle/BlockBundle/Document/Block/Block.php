@@ -17,17 +17,13 @@ use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Block document.
- *
- * @author Ger Jan van den Bosch <gerjan@e-active.nl
- */
 abstract class Block implements BlockInterface
 {
     /**
      * @var string
      */
     #[Slug(fields: ['title'], separator: '_')]
+    #[Type\Field(options: ['priority' => 980, 'required' => false])]
     protected $id;
 
     /**

@@ -55,6 +55,46 @@
             display: inline-flex;
         }
     }
+
+    .aside-filters {
+        form[name="page_filter"] {
+            .aside-item-list-container {
+                padding: 1rem;
+
+                .form-control {
+                    padding: 0.5rem;
+                }
+            }
+        }
+    }
+}
+
+.content-wrapper {
+    .calendar {
+        .index-wrapper {
+            width:100%;
+        }
+        .aside-filters {
+            right: -350px;
+            transition: all .3s;
+            position: absolute;
+            z-index: 1050;
+
+            &.show {
+                transition: all .3s;
+                right: 0;
+                z-index: 1050;
+            }
+
+            .aside-header > span {
+                padding-left: 28px;
+            }
+        }
+
+        .index-wrapper .toggle-filters {
+            display: flex;
+        }
+    }
 }
 
 .aside-item-holder {
@@ -181,6 +221,12 @@
                     padding: 10px 10px 0;
                     margin-bottom: 0;
                 }
+
+                &.bc-collection {
+                    > li {
+                        margin-bottom: 0px;
+                    }
+                }
             }
 
             a.primary-channel-selector {
@@ -191,8 +237,9 @@
                 label {
                     font-weight: 300;
                     padding: 0 1rem;
+
                     &:hover {
-                        background-color:#ecf6ff;
+                        background-color: #ecf6ff;
                     }
 
                     &.is-primary-channel {
@@ -434,6 +481,7 @@ body.hide-options {
         border: 0;
         border-top: 1px solid $border-color;
         background-color: white;
+        position: relative;
 
         &.show {
             .aside-item-header {
@@ -707,10 +755,12 @@ ul {
                 margin-right: 10px;
             }
         }
+
         .back {
-            margin-left:10px;
+            margin-left: 10px;
         }
     }
+
     .aside-filters {
         &.media-edit-panel {
             transform: translateX(0);
@@ -779,13 +829,21 @@ ul {
 
             .aside-holder {
                 padding-top: 1rem;
+
                 .thumbnail-holder {
                     height: 200px;
                     background-size: contain;
                     margin-bottom: 1rem;
-                    background-position: center;
+                    background-position: top center;
                     background-repeat: no-repeat;
+                    .btn {
+                        padding: 5px;
+                        height: 26px;
+                        margin: 5px;
+                        font-size: 12px;
+                    }
                 }
+
                 .aside-item-wrapper {
                     margin-bottom: 1rem;
 
@@ -805,6 +863,7 @@ ul {
 .integrated_content_history_show_iframe, .integrated_content_history_index_iframe {
     #wrapper-holder {
         top: 0;
+
         .content-wrapper {
             .index-wrapper-full {
                 .page-title h1.heading {
@@ -813,6 +872,7 @@ ul {
                     line-height: initial;
                 }
             }
+
             #toolbar .back {
                 margin-left: 60px;
             }
@@ -820,6 +880,7 @@ ul {
     }
 
 }
+
 .integrated_content_history_index_iframe {
     #wrapper-holder {
         .content-wrapper {

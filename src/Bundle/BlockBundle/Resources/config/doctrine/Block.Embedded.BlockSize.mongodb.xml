@@ -10,6 +10,7 @@
         <field name="sizeSm" type="int" />
         <field name="sizeMd" type="int" />
         <field name="sizeLg" type="int" />
+        <field name="order" type="float" />
 
         <reference-one field="block" target-document="Integrated\Bundle\BlockBundle\Document\Block\Block" />
 

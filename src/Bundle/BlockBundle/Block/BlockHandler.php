@@ -123,6 +123,7 @@ class BlockHandler implements BlockHandlerInterface
     {
         $resolver->setDefaults([
             'gridLevel' => 0,
+            'data' => '',
         ]);
     }
 

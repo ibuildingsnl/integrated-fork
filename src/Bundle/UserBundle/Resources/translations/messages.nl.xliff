@@ -126,6 +126,14 @@
                 <source>The two factor authenticator for user %name% is removed</source>
                 <target>De tweefactorauthenticatie voor gebruiker %name% is verwijderd</target>
             </trans-unit>
+            <trans-unit id="33">
+                <source>This email was sent by %channel% on %domain%</source>
+                <target>Deze e-mail is gestuurd door %channel% op %domain%</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>Click the button below to reset your password.</source>
+                <target>Klik op de knop hieronder om je wachtwoord te wijzigen.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

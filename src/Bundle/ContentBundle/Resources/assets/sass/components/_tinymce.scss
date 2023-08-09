@@ -3,12 +3,16 @@
     border-radius: 0 !important;
 }
 
+.tinymce-inline .tox-tinymce {
+    border-radius: 8px !important;
+}
+
 .tox-tinymce.tox-container.tox-panel {
     border-color: $border-color;
 }
 
 .tox .tox-dialog-wrap__backdrop {
-    background-color: rgba(0,0,0,0.3) !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
 }
 
 body:not(.tox-fullscreen) {
@@ -24,12 +28,13 @@ body:not(.tox-fullscreen) {
 body.tox-fullscreen {
     .tox-editor-header {
         top: 0 !important;
-        width:100% !important;;
+        width: 100% !important;;
     }
+
     .fancy_tinymce {
         .tox-tinymce {
             .tox-edit-area {
-                padding:0 !important;
+                padding: 0 !important;
             }
         }
     }
@@ -180,8 +185,8 @@ body.tox-fullscreen {
             background-color: #fff;
         }
 
-        .tox .tox-menubar + .tox-toolbar, .tox .tox-menubar + .tox-toolbar-overlord {
-            padding-left: 12px;
+        .tox-menubar + .tox-toolbar, .tox-menubar + .tox-toolbar-overlord {
+            padding-left: 19px;
         }
     }
 }

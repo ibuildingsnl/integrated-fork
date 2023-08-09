@@ -14,7 +14,6 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
-use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionType;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -117,10 +116,14 @@ class SearchSelectionController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        $form = $this->createEditForm($searchSelection);
+        $form = $this->createEditForm($searchSelection, $request);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($request->query->get('searchSelection') === $searchSelection->getId()) {
+                $searchSelection->setFilters($request->query->all());
+            }
+
             $this->documentManager->flush();
 
             $this->addFlash('success', 'Item updated');
@@ -168,27 +171,6 @@ class SearchSelectionController extends AbstractController
     }
 
     /**
-     * Shows the menu.
-     *
-     * @return Response
-     */
-    public function menu()
-    {
-        /** @var Request $request */
-        $request = $this->requestStack->getMainRequest();
-
-        /** @var SearchSelectionRepository $repo */
-        $repo = $this->documentManager->getRepository(SearchSelection::class);
-
-        $user = $this->getUser();
-
-        return $this->render('@IntegratedContent/search_selection/menu.html.twig', [
-            'filters' => $request ? $request->query->all() : [],
-            'searchSelections' => $user ? $repo->findPublicByUserId($user->getId()) : [],
-        ]);
-    }
-
-    /**
      * Creates a form to create a SearchSelection document.
      *
      * @return FormInterface
@@ -220,7 +202,7 @@ class SearchSelectionController extends AbstractController
      *
      * @return FormInterface
      */
-    protected function createEditForm(SearchSelection $searchSelection)
+    protected function createEditForm(SearchSelection $searchSelection, Request $request)
     {
         $form = $this->createForm(
             SearchSelectionType::class,
@@ -228,7 +210,7 @@ class SearchSelectionController extends AbstractController
             [
                 'action' => $this->generateUrl(
                     'integrated_content_search_selection_edit',
-                    ['id' => $searchSelection->getId()]
+                    ['id' => $searchSelection->getId()] + $request->query->all()
                 ),
                 'method' => 'PUT',
             ]

@@ -148,8 +148,9 @@ button * {
     }
 
     &.btn-blue {
-        color: $color-white;
-        background: $color-azure-radiance;
+        color: $color-azure-radiance;
+        background: white;
+        border-color:$color-azure-radiance;
 
         &:hover, &:focus {
             color: $color-white;
@@ -279,5 +280,15 @@ button * {
             color: #0D4E4D;
             background-color: darken(#E5F6F4, 20%);
         }
+    }
+    &.btn-red {
+            background: #c6422f;
+            border-color: #c6422f;
+            color: white;
+            &:hover, &:focus {
+                color: white;
+                background: darken(#c6422f, 20%);
+                border-color: darken(#c6422f, 20%);
+            }
     }
 }

@@ -15,8 +15,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
+use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
@@ -81,6 +84,7 @@ class MediaController extends AbstractController
         private TaxonomyRelationManager $taxonomyRelationManager,
         protected AuthorizationCheckerInterface $authorizationChecker,
         private MediaGalleryUploadFile $mediaGalleryUploadFile,
+        private MediaGalleryEditFile $mediaGalleryEditFile,
     ) {
     }
 
@@ -118,6 +122,7 @@ class MediaController extends AbstractController
         $contentTypeSelectOptions = $this->getContentTypes();
 
         $requestSource->query->set('sort', 'created');
+        $requestSource->query->set('id', $requestSource->get('id'));
 
         $requestCopy = clone $requestSource;
 
@@ -141,8 +146,8 @@ class MediaController extends AbstractController
         $paginator = $this->getPaginator();
         $paginator = $paginator->paginate(
             new CallbackPagination(
-                fn () => $this->provider->getContentFromSolr($requestCopy, 0, 0, true),
-                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit * 2, $offset),
+                fn () => $this->provider->getContentFromSolr($requestCopy, 40, 0, true),
+                fn ($offset, $limit) => $this->provider->getContentFromSolr($requestCopy, $limit, $offset),
             ),
             $requestCopy->query->get('page', 1),
             $requestCopy->query->get('limit', 40),
@@ -156,9 +161,11 @@ class MediaController extends AbstractController
         $dateFilter = $this->getYearMonthDates($requestCopy, $contentTypeSelectOptions);
         $dateFilterOptions = $this->getDateFilterOptions($requestCopy, $dateFilter);
 
+        $requestSource = $this->removeIdsFromRequest($requestSource);
+
         return [
             'paginator' => $paginator,
-            'contentTypeSelectOptions' => $this->removeStardardClasses($contentTypeSelectOptions),
+            'contentTypeSelectOptions' => $this->removeStandardClasses($contentTypeSelectOptions),
             'contentTypeFilterOptions' => $contentTypeFilterOptions,
             'dateFilterOptions' => $dateFilterOptions,
             'selectedMediaTaxonomy' => $selectedMediaTaxonomy,
@@ -170,30 +177,69 @@ class MediaController extends AbstractController
         ];
     }
 
-    private function removeStardardClasses($contentTypeSelectOptions): array
+    public function editImage(string $id, Request $request, string $format): Response
+    {
+        $file = $this->documentManager->getRepository(File::class)->find($id);
+
+        if (!$file) {
+            throw $this->createNotFoundException('File not found.');
+        }
+
+        return $this->render("@IntegratedContent/media/edit_image{$format}.html.twig", [
+            'id' => $id,
+            'title' => $file->getTitle(),
+            'meta' => json_encode([
+                'mimetype' => $file->getFile()->getMetadata()->getMimeType(),
+                'extension' => $file->getFile()->getMetadata()->getExtension(),
+            ]),
+            'previous_url' => $request->headers->get('referer'),
+            'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$file->getFile()->getPathName(),
+        ]);
+    }
+
+    private function removeIdsFromRequest(Request $request): Request
+    {
+        $request->query->remove('ids');
+
+        return $request;
+    }
+
+    private function removeStandardClasses($contentTypeSelectOptions): array
     {
         return array_filter($contentTypeSelectOptions, function ($item) {
             return !\in_array($item->getName(), array_column($this::DEFAULT_FILE_TYPES, 'class_name'));
         });
     }
 
+    // There is a class File -> Image that has a file. The file references to a file on the hard drive.
     public function uploadFile(Request $request)
     {
         try {
-            $file = $this->mediaGalleryUploadFile->handleUpload($request);
+            if ($request->get('user_approved_overwrite') === 'true') {
+                // Creating a new file, replacing the class Image
+                $file = $this->documentManager->getRepository(File::class)->find($request->get('id'));
+                $file = $this->mediaGalleryEditFile->replaceImage($request, $file);
+            } else {
+                if ($request->get('user_approved_overwrite') === 'false') {
+                    // Creating a new file, creating a new class Image
+                    $file = $this->mediaGalleryEditFile->createCopy($request);
+                } else { // new upload
+                    // Creating a new file, creating a new class Image
+                    $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                }
 
-            $request->attributes->set('media_id', $file->getId());
+                $request->attributes->set('media_id', $file->getId());
 
-            $this->taxonomyRelationManager->manageRelations($request);
-
+                $this->taxonomyRelationManager->manageRelations($request);
+            }
+            // save the relation
             $this->taxonomyRelationManager->runSolrQueue();
 
             return new JsonResponse(['message' => 'File is uploaded?', 'content' => json_encode($file)]);
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'This file is not uploaded. Is this filetype allowed?']);
+            return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
+                ->setStatusCode(422);
         }
-
-        return new JsonResponse(['message' => 'Error:', 'content' => json_encode($file)]);
     }
 
     public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
@@ -217,7 +263,6 @@ class MediaController extends AbstractController
 
         $searchReferenced = new SearchContentReferenced($this->documentManager);
         $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
-
         $deleteHandler->multiExecute($toBeDeletedArray, $idSelection);
 
         $this->taxonomyRelationManager->runSolrQueue();
@@ -236,14 +281,26 @@ class MediaController extends AbstractController
 
             if ($content) {
                 // get the usedby, is there an easier way?
-                $result = $this->documentManager->getRepository(Content::class)
+                $usedByItems = $this->documentManager->getRepository(Content::class)
                     ->getUsedBy(new ArrayCollection([$content]), null, null, false)
                     ->getQuery()
                     ->execute();
 
-                // if we have a usedBy, add the title to the array
-                if (false !== $result->current()) {
-                    $usesByTitles[] = $content->getTitle();
+                if (count($usedByItems) > 0) {
+                    $usedByResult = [];
+                    foreach ($usedByItems as $usedByItem) {
+                        $usedByResult[] = [
+                            "id" => $usedByItem->getId(),
+                            "title" => $usedByItem->getTitle(),
+                        ];
+                    }
+
+                    $usesByTitles[] =
+                        [
+                            'usedBy' => $usedByResult,
+                            'id' => $content->getId(),
+                            'title' => $content->getTitle(),
+                        ];
                 }
             }
         }
@@ -445,27 +502,6 @@ class MediaController extends AbstractController
             'current' => $mediaTaxonomy,
             'default' => null,
         ];
-    }
-
-    private function createPaginator(array $items, Request $requestSource): SlidingPagination
-    {
-        $paginator = $this->getPaginator()->paginate(
-            $items,
-            $requestSource->query->get('page', 1),
-            $this::PAGINATOR_LIMIT
-        );
-
-        $showingEnd = $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT;
-        if ($showingEnd > $paginator->getTotalItemCount()) {
-            $showingEnd = $paginator->getTotalItemCount();
-        }
-        $paginator->setCustomParameters([
-            'amountOfPages' => ceil($paginator->getTotalItemCount() / $paginator->getItemNumberPerPage()),
-            'showingStart' => $paginator->getCurrentPageNumber() * $this::PAGINATOR_LIMIT - $this::PAGINATOR_LIMIT + 1,
-            'showingEnd' => $showingEnd,
-        ]);
-
-        return $paginator;
     }
 
     public function manageRelations(Request $request): Response
