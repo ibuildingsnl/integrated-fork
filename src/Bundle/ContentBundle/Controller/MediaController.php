@@ -189,7 +189,7 @@ class MediaController extends AbstractController
                 'extension' => $file->getFile()->getMetadata()->getExtension(),
             ]),
             'previous_url' => $request->headers->get('referer'),
-            'file_url' => 'https://integrated.localhost.e-active.nl'.$file->getFile()->getPathName(),
+            'file_url' => $request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$file->getFile()->getPathName(),
         ]);
     }
 
