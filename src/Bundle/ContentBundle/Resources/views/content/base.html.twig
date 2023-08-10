@@ -3,13 +3,17 @@
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 
 {% block content %}
+    {% set queryParams = app.request.query.all %}
+
+    {% if selection %}
+        {% set queryParams = queryParams|merge(selection.filters) %}
+    {% endif %}
+
     {% set pageClass = 'list' %}
-    {% if app.request.query.all.view is defined and app.request.query.all.view == 'week'
-        or selection.filters.view is defined and selection.filters.view == 'week' %}
+    {% if queryParams.view|default('') == 'week' %}
         {% set pageClass = 'calendar' %}
     {% endif %}
-    <div
-        class="flex flex-wrap {{ pageClass }}">
+    <div class="flex flex-wrap {{ pageClass }}">
 
         <div class="index-wrapper">
             <div class="page-title">
@@ -17,21 +21,15 @@
                     <div class="heading-switcher">
                         <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
 
-                        {% set queryParams = app.request.query.all %}
-
-                        {% if selection %}
-                            {% set queryParams = queryParams|merge(selection.filters) %}
-                        {% endif %}
-
                         {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
                         {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
                         <div class="switcher-buttons">
-                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == '' or app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
+                            <a class="button_list_view list switcher btn btn-select {% if pageClass == 'list' %}active{% endif %}"
                                href="{{ path('integrated_content_content_index', queryParamsList) }}">
                                 <span>{% trans %}List{% endtrans %}</span>
                                 <i class="iconoir-list"></i>
                             </a>
-                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if app.request.query.all.view|default == 'week' or selection.filters.view|default == 'week' %}active{% endif %}"
+                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
                                href="{{ path('integrated_content_content_index', queryParamsCal) }}">
                                 <span>{% trans %}Calendar{% endtrans %}</span>
                                 <i class="iconoir-calendar"></i>
