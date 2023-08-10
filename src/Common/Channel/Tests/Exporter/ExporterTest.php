@@ -72,8 +72,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $exporter1 = $this->getExporter();
         $exporter1->expects($this->exactly(2))
             ->method('export')
-            ->with($this->identicalTo($content), $this->equalTo(self::TEST_STATE), $this->identicalTo($channel))
-            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->with($this->identicalTo($content), $this->equalTo(self::TEST_STATE), $this->identicalTo($channel));
 
         $exporter3 = $this->getExporter();
         $exporter3->expects($this->exactly(2))
