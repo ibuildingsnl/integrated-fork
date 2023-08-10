@@ -73,8 +73,9 @@ class QueueExporter implements ExporterInterface
     /**
      * Execute a queued exporter run.
      */
-    public function execute()
+    public function execute(): int
     {
+        $i = 0;
         foreach ($this->queue->pull(1000) as $message) {
             try {
                 $this->process($message)->delete();
@@ -82,7 +83,9 @@ class QueueExporter implements ExporterInterface
                 $message->delete();
                 throw $e;
             }
+            $i++;
         }
+        return $i;
     }
 
     /**

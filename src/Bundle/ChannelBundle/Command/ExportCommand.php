@@ -98,13 +98,14 @@ class ExportCommand extends Command
     private function runInternal(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->exporter->execute();
+            $n = $this->exporter->execute();
         } catch (\Exception $e) {
             $output->writeln('Aborting: '.$e->getMessage());
 
             return 1;
         }
 
+        $output->writeln("Processed $n messages");
         return 0;
     }
 
