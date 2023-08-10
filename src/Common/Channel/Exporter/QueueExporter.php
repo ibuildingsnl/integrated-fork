@@ -76,7 +76,12 @@ class QueueExporter implements ExporterInterface
     public function execute()
     {
         foreach ($this->queue->pull(1000) as $message) {
-            $this->process($message)->delete();
+            try {
+                $this->process($message)->delete();
+            } catch (\Throwable $e) {
+                $message->delete();
+                throw $e;
+            }
         }
     }
 
@@ -87,15 +92,11 @@ class QueueExporter implements ExporterInterface
     {
         $request = $this->serializer->deserialize($message->getPayload());
 
-        if ($request === null) {
-            return $message; // probably should log this somewhere
+        if ($request === null) { // @todo Let serializer throw exception rather than silently returning null
+            throw new \InvalidArgumentException('Failed to deserialize the request message.');
         }
 
-        try {
-            $this->export($request->content, $request->state, $request->channel);
-        } catch (\Exception $e) {
-            // @todo probably should log this somewhere
-        }
+        $this->export($request->content, $request->state, $request->channel);
 
         return $message;
     }
