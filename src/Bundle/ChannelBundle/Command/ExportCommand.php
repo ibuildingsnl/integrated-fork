@@ -106,6 +106,7 @@ class ExportCommand extends Command
         }
 
         $output->writeln("Processed $n messages");
+
         return 0;
     }
 

@@ -83,8 +83,9 @@ class QueueExporter implements ExporterInterface
                 $message->delete();
                 throw $e;
             }
-            $i++;
+            ++$i;
         }
+
         return $i;
     }
 
