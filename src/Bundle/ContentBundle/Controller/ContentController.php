@@ -208,12 +208,13 @@ class ContentController extends AbstractController
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
-            'filters' => $options,
             'selection' => $selection,
             'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
             'contentTypes' => $this->contentTypeManager->getAll(),
+            'route' => $request->attributes->get('_route'),
+            'queryParams' => array_merge($request->query->all(), $options),
         ]);
     }
 

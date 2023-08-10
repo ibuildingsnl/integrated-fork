@@ -3,12 +3,6 @@
 {% form_theme searchSelectionForm with '@IntegratedFormType/form/form_div_layout.html.twig' %}
 
 {% block content %}
-    {% set queryParams = app.request.query.all %}
-
-    {% if selection %}
-        {% set queryParams = queryParams|merge(selection.filters) %}
-    {% endif %}
-
     {% set pageClass = 'list' %}
     {% if queryParams.view|default('') == 'week' %}
         {% set pageClass = 'calendar' %}
@@ -20,17 +14,14 @@
                 <div class="heading flex justify-between w-full">
                     <div class="heading-switcher">
                         <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
-
-                        {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
-                        {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
                         <div class="switcher-buttons">
                             <a class="button_list_view list switcher btn btn-select {% if pageClass == 'list' %}active{% endif %}"
-                               href="{{ path('integrated_content_content_index', queryParamsList) }}">
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'})) }}">
                                 <span>{% trans %}List{% endtrans %}</span>
                                 <i class="iconoir-list"></i>
                             </a>
                             <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
-                               href="{{ path('integrated_content_content_index', queryParamsCal) }}">
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 10000})) }}">
                                 <span>{% trans %}Calendar{% endtrans %}</span>
                                 <i class="iconoir-calendar"></i>
                             </a>
@@ -54,7 +45,7 @@
 
                                 <ul role="menu" class=" dropdown-menu">
                                     <li role="presentation">
-                                        <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                        <a href="{{ path('integrated_content_bulk_select', queryParams) }}"
                                            tabindex="-1"
                                            role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
                                     </li>
@@ -158,9 +149,9 @@
                         <form>
                             <input type="hidden" value="{{ params['q'] }}" name="q"/>
                             <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
-                            <input type="hidden" value="{{ filters['view']|default }}" name="view"/>
-                            <input type="hidden" value="{{ filters['week']|default }}" name="week"/>
-                            <input type="hidden" value="{{ filters['month']|default }}" name="month"/>
+                            <input type="hidden" value="{{ queryParams['view']|default }}" name="view"/>
+                            <input type="hidden" value="{{ queryParams['week']|default }}" name="week"/>
+                            <input type="hidden" value="{{ queryParams['month']|default }}" name="month"/>
                             {% if selection %}
                                 <input type="hidden" name="searchSelection" value="{{ selection.id }}">
                             {% endif %}
