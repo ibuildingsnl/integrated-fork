@@ -249,7 +249,7 @@ async function askForConfirmation() {
     if (bulkSelection.length === 0) {
         return
     }
-    document.querySelector('#bulkdelete_confirm_popup').classList.remove('hidden')
+    document.querySelector('#bulkdelete_confirm_popup').style.display = 'block'
     await confirmDelete(false)
 }
 
@@ -259,7 +259,7 @@ async function singleDelete(event) {
 }
 
 async function hideBulkdeletionPopup() {
-    document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden')
+    document.querySelector('#bulkdelete_confirm_popup').style.display = 'none'
     document.querySelector('#used_images').innerHTML = ''
 }
 
@@ -269,12 +269,12 @@ async function confirmBulkDelete() {
 
 function showUsedByPopup(json_response) {
     if (json_response?.used_by?.length > 0) {
-        document.querySelector('#confirm_delete').classList.add('hidden')
-        document.querySelector('#used_images_message').classList.remove('hidden')
+        document.querySelector('#confirm_delete').style.display = 'none'
+        document.querySelector('#used_images_message').style.display = 'block'
         showUsedByToUser(json_response)
     } else {
-        document.querySelector('#confirm_delete').classList.remove('hidden')
-        document.querySelector('#used_images_message').classList.add('hidden')
+        document.querySelector('#confirm_delete').style.display = 'block'
+        document.querySelector('#used_images_message').style.display = 'none';
     }
 }
 

@@ -16,25 +16,30 @@
         {% endblock toolbar %}
     {% endif %}
 
-    <div class="relative absolute">
-        <div id="bulkdelete_confirm_popup" tabindex="-1" class="fixed top-500 left-500  z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <div class="p-6 text-center text-black">
-                        <svg aria-hidden="true" class="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete these files?</h3>
-                        <div class="mb-5 mt-2 text-lg font-normal" id="used_images_message">These images are currently used in other content:</div>
-                        <div class="mb-5 mt-2 text-lg font-normal" id="used_images"></div>
-                        <div class="mt-2 text-left font-normal used_images"></div>
-                        <button data-modal-hide="popup-modal" id="confirm_delete" type="button" class="mt-2 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                            Yes
-                        </button>
-                        <button data-modal-hide="popup-modal" id="cancel_delete" type="button" class="mt-2 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No</button>
-                    </div>
+    <div class="modal fade" id="bulkdelete_confirm_popup" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete images</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete these files?</p>
+                    <p id="used_images_message" style="display:none;">These images are currently used in other content:</p>
+                    <p id="used_images"></p>
+                    <p class="used_images"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-modal-hide="popup-modal" id="cancel_delete" class="btn btn-white"
+                            data-dismiss="modal">Cancel
+                    </button>
+                    <button type="button" data-modal-hide="popup-modal" id="confirm_delete"
+                            class="btn btn-dark-green live-page">Remove images
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="aside-filters close-outside media-sidebar">
         <aside>

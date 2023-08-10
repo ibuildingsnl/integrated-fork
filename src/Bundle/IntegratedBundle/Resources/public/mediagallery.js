@@ -14633,7 +14633,7 @@ function _askForConfirmation() {
           }
           return _context8.abrupt("return");
         case 2:
-          document.querySelector('#bulkdelete_confirm_popup').classList.remove('hidden');
+          document.querySelector('#bulkdelete_confirm_popup').style.display = 'block';
           _context8.next = 5;
           return confirmDelete(false);
         case 5:
@@ -14671,7 +14671,7 @@ function _hideBulkdeletionPopup() {
     return _regeneratorRuntime().wrap(function _callee10$(_context10) {
       while (1) switch (_context10.prev = _context10.next) {
         case 0:
-          document.querySelector('#bulkdelete_confirm_popup').classList.add('hidden');
+          document.querySelector('#bulkdelete_confirm_popup').style.display = 'none';
           document.querySelector('#used_images').innerHTML = '';
         case 2:
         case "end":
@@ -14702,12 +14702,12 @@ function _confirmBulkDelete() {
 function showUsedByPopup(json_response) {
   var _json_response$used_b;
   if ((json_response === null || json_response === void 0 ? void 0 : (_json_response$used_b = json_response.used_by) === null || _json_response$used_b === void 0 ? void 0 : _json_response$used_b.length) > 0) {
-    document.querySelector('#confirm_delete').classList.add('hidden');
-    document.querySelector('#used_images_message').classList.remove('hidden');
+    document.querySelector('#confirm_delete').style.display = 'none';
+    document.querySelector('#used_images_message').style.display = 'block';
     showUsedByToUser(json_response);
   } else {
-    document.querySelector('#confirm_delete').classList.remove('hidden');
-    document.querySelector('#used_images_message').classList.add('hidden');
+    document.querySelector('#confirm_delete').style.display = 'block';
+    document.querySelector('#used_images_message').style.display = 'none';
   }
 }
 function showUsedByToUser(json_response) {
