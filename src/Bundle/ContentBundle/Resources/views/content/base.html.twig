@@ -60,32 +60,6 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="dropdown close-outside" data-underlay="no">
-                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
-                                    <span>{% trans %}View{% endtrans %}</span>
-                                    <i class="iconoir-nav-arrow-down"></i>
-                                </a>
-
-                                <ul role="menu" class=" dropdown-menu">
-                                    <li role="presentation" class="active">
-                                        <a tabindex="-1" role="menuitem">
-                                            {% trans %}List{% endtrans %}
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"
-                                           tabindex="-1" role="menuitem">
-                                            {% trans %}Week{% endtrans %}
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"
-                                           tabindex="-1" role="menuitem">
-                                            {% trans %}Month{% endtrans %}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
                             <li class="dropdown close-outside searchselection" data-underlay="no">
                                 <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
                                 <span>
