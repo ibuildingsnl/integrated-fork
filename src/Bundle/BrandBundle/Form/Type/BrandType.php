@@ -6,6 +6,9 @@ use Integrated\Bundle\BrandBundle\Document\BrandProfile;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class BrandType extends AbstractType
 {
@@ -20,5 +23,12 @@ class BrandType extends AbstractType
             'label' => 'Channels',
             'attr' => ['location' => 'sidebar', 'style' => 'sidebar', 'state' => 'show', 'show_headings' => false],
         ]);
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $types = array_column($event->getData()['channelLinks'] ?? [], 'type');
+            if ($types !== array_unique($types)) {
+                $event->getForm()->get('channelLinks')->addError(new FormError('Select unique channel types'));
+            }
+        });
     }
 }

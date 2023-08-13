@@ -59,6 +59,9 @@ class Brand
 
     public function addChannel(ChannelInterface $channel, LinkType $type, bool $default = true): void
     {
+        if (in_array($type->name, $this->getChannelTypeNames())) {
+            throw new \InvalidArgumentException('Duplicate channel type');
+        }
         $this->channelLinks[] = new ChannelLink($type, $channel, $default);
     }
 
