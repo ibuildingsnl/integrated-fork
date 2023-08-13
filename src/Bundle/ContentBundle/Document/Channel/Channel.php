@@ -12,9 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -79,31 +76,6 @@ class Channel implements ChannelInterface
      * @var bool
      */
     protected $primaryDomainRedirect;
-
-    /**
-     * @var Collection<Contact>
-     */
-    protected $contacts;
-
-    /**
-     * @var Collection<Social>
-     */
-    protected $social;
-
-    /**
-     * @var string
-     */
-    protected $vat;
-
-    /**
-     * @var string
-     */
-    protected $companyId;
-
-    /**
-     * @var string
-     */
-    protected $analytics;
 
     /**
      * @var mixed[]
@@ -181,7 +153,7 @@ class Channel implements ChannelInterface
     /**
      * @return Image|null
      */
-    public function getLogo()
+    public function getLogo(): ?Image
     {
         return $this->logo;
     }
@@ -210,140 +182,6 @@ class Channel implements ChannelInterface
     public function setFavicon(?Image $favicon)
     {
         $this->favicon = $favicon;
-
-        return $this;
-    }
-
-    /**
-     * @return Contact[]
-     */
-    public function getContacts()
-    {
-        return $this->contacts;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setContacts(Collection $contacts)
-    {
-        $this->contacts = $contacts;
-
-        return $this;
-    }
-
-    /**
-     * @param Contact $contact
-     *
-     * @return $this
-     */
-    public function addContact(Contact $contact = null)
-    {
-        if ($contact !== null) {
-            $this->contacts->add($contact);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function removeContact(Contact $contact)
-    {
-        return $this->contacts->removeElement($contact);
-    }
-
-    /**
-     * @return Social[]
-     */
-    public function getSocial()
-    {
-        return $this->social;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setSocial(Collection $social)
-    {
-        $this->social = $social;
-
-        return $this;
-    }
-
-    /**
-     * @param Social $social
-     *
-     * @return $this
-     */
-    public function addSocial(Social $social = null)
-    {
-        if ($social !== null) {
-            $this->social->add($social);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function removeSocial(Social $social)
-    {
-        return $this->social->removeElement($social);
-    }
-
-    /**
-     * @return string
-     */
-    public function getVat()
-    {
-        return $this->vat;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setVat(string $vat)
-    {
-        $this->vat = $vat;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCompanyId()
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setCompanyID(string $companyId)
-    {
-        $this->companyId = $companyId;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnalytics()
-    {
-        return $this->analytics;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setAnalytics(string $analytics)
-    {
-        $this->analytics = $analytics;
 
         return $this;
     }
@@ -519,7 +357,7 @@ class Channel implements ChannelInterface
 
     public function defaultPrimaryDomain()
     {
-        if (!$this->primaryDomain) {
+        if (!$this->primaryDomain && $this->domains) {
             $this->primaryDomain = reset($this->domains);
         }
     }

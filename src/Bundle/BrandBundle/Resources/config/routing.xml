@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="integrated_content_brand_index" path="/" methods="GET">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::index</default>
+    </route>
+
+    <route id="integrated_content_channel_index" path="/" methods="GET">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::index</default>
+    </route>
+
+    <route id="integrated_content_brand_new" path="/new" methods="GET,POST">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::create</default>
+    </route>
+
+    <route id="integrated_content_brand_edit" path="/{id}/edit" methods="GET,PUT">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::edit</default>
+    </route>
+
+    <route id="integrated_content_brand_delete" path="/{id}/delete" methods="GET,DELETE">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\BrandController::delete</default>
+    </route>
+
+</routes>

@@ -1,0 +1,13 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Integrated\Bundle\BrandBundle\Document\LinkType" collection="channel_link_type">
+
+        <id field-name="id" strategy="NONE" />
+        <field field-name="name" type="string" />
+        <field field-name="formType" type="string" />
+
+    </document>
+</doctrine-mongo-mapping>

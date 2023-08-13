@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="integrated_brand.brand.odm.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument type="string">\Integrated\Bundle\BrandBundle\Document\Brand</argument>
+        </service>
+        <service id="integrated_brand.brand.repository" class="Integrated\Bundle\BrandBundle\Infrastructure\ODMBrandRepository">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_brand.brand.odm.repository" />
+        </service>
+
+        <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
+            <argument type="service" id="integrated_content.services.flusher"/>
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
+            <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="tagged_iterator" tag="integrated_brand.type" />
+
+            <tag name="form.type" />
+        </service>
+
+        <service id="integrated_brand.event_listener.configure_menu_subscriber" class="Integrated\Bundle\BrandBundle\EventListener\ConfigureMenuSubscriber">
+            <argument type="service" id="security.authorization_checker" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+
+        <service id="integrated_brand.type.website" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+            <argument>website</argument>
+            <argument>Website</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="integrated_brand.type.newsletter" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+            <argument>newsletter</argument>
+            <argument>Newsletter</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+            <argument>woodwing</argument>
+            <argument>Woodwing</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+            <argument>twitter</argument>
+            <argument>Twitter (X)</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+            <argument>linkedin</argument>
+            <argument>LinkedIn</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+    </services>
+</container>
