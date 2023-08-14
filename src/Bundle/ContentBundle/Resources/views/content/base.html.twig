@@ -141,7 +141,10 @@
                                 <i class="iconoir-cancel"></i>
                             </button>
                             <span>{% trans %}Filters{% endtrans %}</span>
-                            <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                            <a href="{{ path('integrated_content_content_index', {
+                                'view': queryParams.view|default,
+                                'week': queryParams.week|default
+                            }) }}" class="clear-filters">
                                 <span>{% trans %}Remove active filters{% endtrans %}</span>
                                 <i class="iconoir-cancel"></i>
                             </a>
