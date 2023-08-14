@@ -269,25 +269,32 @@ async function confirmBulkDelete() {
 
 function showUsedByPopup(json_response) {
     if (json_response?.used_by?.length > 0) {
-        document.querySelector('#confirm_delete').style.display = 'none'
-        document.querySelector('#used_images_message').style.display = 'block'
         showUsedByToUser(json_response)
-    } else {
-        document.querySelector('#confirm_delete').style.display = 'block'
-        document.querySelector('#used_images_message').style.display = 'none';
     }
 }
 
 function showUsedByToUser(json_response) {
     for (let to_delete_item of json_response.used_by) {
-        new_item = document.querySelector('.used_images').cloneNode()
-        new_item.textContent = to_delete_item.title + ' is used in:'
-        new_item.classList.add('used_images_copy')
+
+        let new_item = document.querySelector('#used_image').cloneNode(true)
+        new_item.removeAttribute('id');
+
+        let new_p = document.createElement('p');
+        new_p.textContent = to_delete_item.title + ' is used in:'
+        new_p.style.marginBottom = "0px";
+        new_item.classList.add('used_image_copy')
+        new_item.appendChild(new_p)
+
         for (let used_by_item of to_delete_item.usedBy) {
-            let newDiv = document.createElement('div');
-            newDiv.innerHTML = '<a href="/admin/content/' + used_by_item.id + '">' + used_by_item.title + '</a>';
-            new_item.appendChild(newDiv)
+            let new_div = document.createElement('div');
+            let new_link = document.createElement('a');
+            new_link.style.color = "rgb(1, 131, 213)"
+            new_link.textContent = used_by_item.title
+            new_link.href = '/admin/content/' + used_by_item.id
+            new_div.appendChild(new_link)
+            new_item.appendChild(new_div)
         }
+
         document.querySelector('#used_images').appendChild(new_item);
     }
 }
@@ -312,11 +319,6 @@ async function confirmDelete(confirmed_by_user) {
     async function deleteData(url = '', data = {}) {
         const response = await fetch(url, {
             method: 'PUT',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
             body: data
         });
 

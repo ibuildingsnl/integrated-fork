@@ -1050,6 +1050,22 @@
                 <source>Doesn't have images</source>
                 <target>Heeft geen afbeelding</target>
             </trans-unit>
+            <trans-unit id="266">
+                <source>Remove images</source>
+                <target>Verwijder afbeeldingen</target>
+            </trans-unit>
+            <trans-unit id="267">
+                <source>Delete images</source>
+                <target>Verwijder afbeeldingen</target>
+            </trans-unit>
+            <trans-unit id="268">
+                <source>Are you sure you want to delete these files?</source>
+                <target>Weet je zeker dat deze afbeeldingen verwijderd kunnen worden?</target>
+            </trans-unit>
+            <trans-unit id="269">
+                <source>These images are currently used in other content</source>
+                <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
