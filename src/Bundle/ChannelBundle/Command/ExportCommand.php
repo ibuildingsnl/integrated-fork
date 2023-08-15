@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ChannelBundle\Command;
 
 use Integrated\Common\Channel\Exporter\QueueExporter;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,32 +26,14 @@ use Symfony\Component\Process\Process;
 class ExportCommand extends Command
 {
     /**
-     * @var QueueExporter
-     */
-    private $exporter;
-
-    /**
-     * @var KernelInterface
-     */
-    protected $kernel;
-
-    /**
-     * @var string
-     */
-    protected $workingDirectory;
-
-    /**
      * Constructor.
      */
     public function __construct(
-        QueueExporter $exporter,
-        KernelInterface $kernel,
-        $workingDirectory
+        private readonly QueueExporter $exporter,
+        private readonly KernelInterface $kernel,
+        private readonly LoggerInterface $logger,
+        private readonly string $workingDirectory,
     ) {
-        $this->exporter = $exporter;
-        $this->workingDirectory = $workingDirectory;
-        $this->kernel = $kernel;
-
         parent::__construct();
     }
 
@@ -100,6 +83,7 @@ class ExportCommand extends Command
         try {
             $n = $this->exporter->execute();
         } catch (\Exception $e) {
+            $this->logger->error('Channel Export Error: '.$e->getMessage());
             $output->writeln('Aborting: '.$e->getMessage());
 
             return 1;
