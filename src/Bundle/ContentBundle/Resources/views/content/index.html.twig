@@ -6,13 +6,14 @@
         <a data-toggle="dropdown" role="button" id="sorting-list"
            class="btn btn-select space-between"><span>{% trans %}Sort by{% endtrans %}
                                 : {{ integrated_search_sorting_option(params.sort).label|trans }}</span>
-            <i class="iconoir-nav-arrow-down"></i></a>
+            <i class="iconoir-nav-arrow-down"></i>
+        </a>
         <ul aria-labelledby="sorting-list" role="menu" class="dropdown-menu" id="sorting-menu">
             {% set sort_default = params.q ? 'rel' : 'time' %}
             {% for sort in integrated_search_sorting_options()|filter(v => v.name != 'rel' or params.q) %}
                 <li {% if sort.name == params.sort %}class="active"
                     {% endif %}role="presentation">
-                    <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
+                    <a href="{{ path(route, queryParams|merge({'sort': sort.name == sort_default ? null : sort.name })) }}"
                        tabindex="-1" role="menuitem">{{ sort.label|trans|capitalize }}</a>
                 </li>
             {% endfor %}

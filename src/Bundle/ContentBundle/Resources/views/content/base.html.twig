@@ -4,35 +4,24 @@
 
 {% block content %}
     {% set pageClass = 'list' %}
-    {% if app.request.query.all.view is defined and app.request.query.all.view == 'week'
-        or selection.filters.view is defined and selection.filters.view == 'week' %}
+    {% if queryParams.view|default('') == 'week' %}
         {% set pageClass = 'calendar' %}
     {% endif %}
-    <div
-        class="flex flex-wrap {{ pageClass }}">
+    <div class="flex flex-wrap {{ pageClass }}">
 
         <div class="index-wrapper">
             <div class="page-title">
                 <div class="heading flex justify-between w-full">
                     <div class="heading-switcher">
                         <h1 class="heading">{% block heading %}{% trans %}Content navigator{% endtrans %}{% endblock heading %}</h1>
-
-                        {% set queryParams = app.request.query.all %}
-
-                        {% if selection %}
-                            {% set queryParams = queryParams|merge(selection.filters) %}
-                        {% endif %}
-
-                        {% set queryParamsList = queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'}) %}
-                        {% set queryParamsCal = queryParams|merge({view: 'week', page: 1, limit: 10000}) %}
                         <div class="switcher-buttons">
-                            <a class="button_list_view list switcher btn btn-select {% if app.request.query.all.view|default == '' or app.request.query.all.view|default == 'list' or selection.filters.view|default == 'list' %}active{% endif %}"
-                               href="{{ path('integrated_content_content_index', queryParamsList) }}">
+                            <a class="button_list_view list switcher btn btn-select {% if pageClass == 'list' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'list', page: 1, limit: 25, order: 'desc'})) }}">
                                 <span>{% trans %}List{% endtrans %}</span>
                                 <i class="iconoir-list"></i>
                             </a>
-                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if app.request.query.all.view|default == 'week' or selection.filters.view|default == 'week' %}active{% endif %}"
-                               href="{{ path('integrated_content_content_index', queryParamsCal) }}">
+                            <a class="button_calendar_view toggle_view calendar switcher btn btn-select {% if pageClass == 'calendar' %}active{% endif %}"
+                               href="{{ path('integrated_content_content_index', queryParams|merge({view: 'week', page: 1, limit: 10000})) }}">
                                 <span>{% trans %}Calendar{% endtrans %}</span>
                                 <i class="iconoir-calendar"></i>
                             </a>
@@ -56,35 +45,9 @@
 
                                 <ul role="menu" class=" dropdown-menu">
                                     <li role="presentation">
-                                        <a href="{{ path('integrated_content_bulk_select', filters) }}"
+                                        <a href="{{ path('integrated_content_bulk_select', queryParams) }}"
                                            tabindex="-1"
                                            role="menuitem">{% trans %}Bulk change this selection{% endtrans %}</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="dropdown close-outside" data-underlay="no">
-                                <a data-toggle="dropdown" role="button" class="btn btn-select space-between">
-                                    <span>{% trans %}View{% endtrans %}</span>
-                                    <i class="iconoir-nav-arrow-down"></i>
-                                </a>
-
-                                <ul role="menu" class=" dropdown-menu">
-                                    <li role="presentation" class="active">
-                                        <a tabindex="-1" role="menuitem">
-                                            {% trans %}List{% endtrans %}
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'week'})) }}"
-                                           tabindex="-1" role="menuitem">
-                                            {% trans %}Week{% endtrans %}
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="{{ path(app.request.attributes.get('_route'), filters|merge({'view': 'month'})) }}"
-                                           tabindex="-1" role="menuitem">
-                                            {% trans %}Month{% endtrans %}
-                                        </a>
                                     </li>
                                 </ul>
                             </li>
@@ -178,7 +141,10 @@
                                 <i class="iconoir-cancel"></i>
                             </button>
                             <span>{% trans %}Filters{% endtrans %}</span>
-                            <a href="{{ path('integrated_content_content_index') }}" class="clear-filters">
+                            <a href="{{ path('integrated_content_content_index', {
+                                'view': queryParams.view|default,
+                                'week': queryParams.week|default
+                            }) }}" class="clear-filters">
                                 <span>{% trans %}Remove active filters{% endtrans %}</span>
                                 <i class="iconoir-cancel"></i>
                             </a>
@@ -186,9 +152,9 @@
                         <form>
                             <input type="hidden" value="{{ params['q'] }}" name="q"/>
                             <input type="hidden" value="{{ params['sort'] }}" name="sort"/>
-                            <input type="hidden" value="{{ filters['view']|default }}" name="view"/>
-                            <input type="hidden" value="{{ filters['week']|default }}" name="week"/>
-                            <input type="hidden" value="{{ filters['month']|default }}" name="month"/>
+                            <input type="hidden" value="{{ queryParams['view']|default }}" name="view"/>
+                            <input type="hidden" value="{{ queryParams['week']|default }}" name="week"/>
+                            <input type="hidden" value="{{ queryParams['month']|default }}" name="month"/>
                             {% if selection %}
                                 <input type="hidden" name="searchSelection" value="{{ selection.id }}">
                             {% endif %}
