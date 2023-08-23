@@ -199,11 +199,12 @@
                                         <i class="iconoir-line-space"></i>
                                         <span>
                                             {{ field.vars.value.title|
+                                            default(field.vars.value.name|
                                             default(field.vars.value.label|
                                             default(field.vars.value.block|
                                             default(field.vars.value.text|
                                             default(form.vars.default_title|
-                                            default('Item'))))) }}
+                                                                default('Item'))))))|raw }}
                                         </span>
                                     </a>
                                     {% if form.vars.allow_delete %}
@@ -308,12 +309,13 @@
                                             <i class="iconoir-nav-arrow-down"></i>
                                             <span class="capitalize">
                                                 {{ field.vars.value.title|
+                                                default(field.vars.value.name|
                                                 default(field.vars.value.label|
                                                 default(field.vars.value.block|
                                                 default(field.vars.value.text|
                                                 default(field.vars.value.frequency|
                                                 default(form.vars.default_title|
-                                                default('Item')))))) }}
+                                                                        default('Item')))))))|raw }}
                                             </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
