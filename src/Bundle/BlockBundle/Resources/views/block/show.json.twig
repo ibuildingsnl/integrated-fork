@@ -3,7 +3,8 @@
     'id'   : block.id,
     'title': block.title,
     'type' : block.type,
-    'html' : integrated_block(block)
+    'html' : integrated_block(block),
+    'cssClass' : block.cssClass
 } %}
 
 {{ data|json_encode|raw }}
