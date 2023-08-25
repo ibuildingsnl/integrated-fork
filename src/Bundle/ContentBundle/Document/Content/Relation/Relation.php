@@ -201,7 +201,7 @@ abstract class Relation extends Content implements RankableInterface
         $this->email = $email;
     }
 
-    public function getAddresses(): array
+    public function getAddresses(): array|Collection
     {
         return $this->addresses;
     }
