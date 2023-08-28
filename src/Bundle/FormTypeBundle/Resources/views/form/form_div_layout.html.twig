@@ -540,7 +540,7 @@
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                <div class="w-full {{ widget_col }} widget">
+                <div class="w-full {% if style != 'inline' %}{{ widget_col }}{% endif%} widget">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
