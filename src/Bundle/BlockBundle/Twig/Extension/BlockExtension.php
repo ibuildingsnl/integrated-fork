@@ -252,6 +252,7 @@ class BlockExtension extends AbstractExtension
         usort($array, function ($a, $b) {
             return strcmp($a->getType(), $b->getType());
         });
+
         return $array;
     }
 

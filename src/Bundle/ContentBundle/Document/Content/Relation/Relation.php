@@ -118,6 +118,7 @@ abstract class Relation extends Content implements RankableInterface
     {
         return $this->accountnumber;
     }
+
     public function setAccountnumber(string $accountnumber): void
     {
         $this->accountnumber = $accountnumber;
@@ -133,7 +134,7 @@ abstract class Relation extends Content implements RankableInterface
         $this->description = $description;
     }
 
-    public function getPhonenumbers($type = null): array | Collection
+    public function getPhonenumbers($type = null): array|Collection
     {
         if ($type !== null) {
             $result = [];
@@ -154,7 +155,6 @@ abstract class Relation extends Content implements RankableInterface
     {
         $this->phonenumbers = $phonenumbers;
     }
-
 
     public function addPhonenumber(string|Phonenumber $phonenumber, string $type = null): void
     {
