@@ -45,7 +45,7 @@ class CompanyTest extends RelationTest
         $website = 'http://www.website.com';
         $this->assertEquals($website, $this->company->setWebsite($website)->getWebsite());
     }
-    
+
     public function testGetAndSetAddressesFunction()
     {
         $addresses = new ArrayCollection([
@@ -54,7 +54,7 @@ class CompanyTest extends RelationTest
         $this->company->setAddresses($addresses);
         $this->assertSame($addresses, $this->company->getAddresses());
     }
-    
+
     public function testGetAndSetNameFunction()
     {
         $name = 'name';
