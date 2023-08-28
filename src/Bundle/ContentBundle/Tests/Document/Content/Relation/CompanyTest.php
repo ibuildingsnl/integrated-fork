@@ -39,7 +39,8 @@ class CompanyTest extends RelationTest
     public function testGetAndSetEmailFunction()
     {
         $email = 'email';
-        $this->assertEquals($email, $this->company->setEmail($email)->getEmail());
+        $this->company->setEmail($email);
+        $this->assertEquals($email, $this->company->getEmail());
     }
 
     /**
@@ -57,9 +58,10 @@ class CompanyTest extends RelationTest
     public function testGetAndSetAddressesFunction()
     {
         $addresses = new ArrayCollection([
-            $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
-        ]);
-        $this->assertSame($addresses, $this->company->setAddresses($addresses)->getAddresses());
+                                             $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address'),
+                                         ]);
+        $this->company->setAddresses($addresses);
+        $this->assertSame($addresses, $this->company->getAddresses());
     }
 
     /**

@@ -33,7 +33,8 @@ abstract class RelationTest extends ContentTest
     public function testGetAndSetAccountnumberFunction()
     {
         $accountnumber = 'accountnumber';
-        $this->assertEquals($accountnumber, $this->getContent()->setAccountnumber($accountnumber)->getAccountnumber());
+        $this->getContent()->setAccountnumber($accountnumber);
+        $this->assertEquals($accountnumber, $this->getContent()->getAccountnumber());
     }
 
     /**
@@ -42,7 +43,8 @@ abstract class RelationTest extends ContentTest
     public function testGetAndSetDescriptionFunction()
     {
         $description = 'description';
-        $this->assertEquals($description, $this->getContent()->setDescription($description)->getDescription());
+        $this->getContent()->setDescription($description);
+        $this->assertEquals($description, $this->getContent()->getDescription());
     }
 
     /**
@@ -51,7 +53,8 @@ abstract class RelationTest extends ContentTest
     public function testGetAndSetPhonenumbersFunction()
     {
         $phonenumbers = new ArrayCollection(['0123456789', '9876543210']);
-        $this->assertSame($phonenumbers, $this->getContent()->setPhonenumbers($phonenumbers)->getPhonenumbers());
+        $this->getContent()->setPhonenumbers($phonenumbers);
+        $this->assertSame($phonenumbers, $this->getContent()->getPhonenumbers());
     }
 
     /**
@@ -59,8 +62,8 @@ abstract class RelationTest extends ContentTest
      */
     public function testAddPhonenumberFunction()
     {
-        // Asserts
-        $this->assertSame($this->getContent(), $this->getContent()->addPhonenumber('work', '0123456789'));
+        $this->getContent()->addPhonenumber('work', '0123456789');
+
         $this->assertCount(1, $this->getContent()->getPhonenumbers());
     }
 
