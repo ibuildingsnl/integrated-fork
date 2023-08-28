@@ -66,5 +66,15 @@
 {% block javascript %}
 {{ parent() }}
 
+<script>
+const a = document.querySelector('.channelLinks.show .btn-blue');
+const n = document.createElement('a');
+a.parentElement.append(n);
+n.innerText = 'New channel';
+n.className = 'btn btn-blue';
+n.href = '{{ path('integrated_content_channel_new') }}';
+console.log(a);
+</script>
+
 {#<script src="{{ asset('bundles/integratedcontent/js/brand.js') }}"></script>#}
 {% endblock javascript %}

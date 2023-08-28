@@ -110,6 +110,5 @@ class BrandProfileType extends AbstractType
             ],
             'required' => false,
         ]);
-
     }
 }

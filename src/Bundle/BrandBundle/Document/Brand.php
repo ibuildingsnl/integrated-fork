@@ -65,6 +65,7 @@ class Brand
         $this->channelLinks[] = new ChannelLink($type, $channel, $default);
     }
 
+    /** @return ChannelLink[] */
     public function getChannelLinks(): iterable
     {
         return $this->channelLinks;
