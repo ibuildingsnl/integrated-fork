@@ -170,6 +170,7 @@ class ArticleTest extends ContentTest
         $this->article->setAddress(new Address());
 
         $location = new Location();
+        
         $this->article->getAddress()->setLocation($location);
         $this->assertSame($location, $this->article->getAddress()->getLocation());
     }
