@@ -90,6 +90,7 @@
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
                 });
+
         };
 
         /**
@@ -101,6 +102,10 @@
             element.dataset.blockType = 'row';
             element.classList.add('row');
             element.classList.add('integrated-website-sortable');
+            if (typeof framework !== 'undefined' && framework === 'tailwind') {
+                element.classList.add('flex');
+                element.classList.add('flex-wrap');
+            }
 
             return element;
         };
