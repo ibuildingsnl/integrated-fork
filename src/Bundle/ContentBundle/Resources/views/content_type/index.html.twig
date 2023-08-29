@@ -17,7 +17,7 @@
                                 {% if type.type %}
                                     <li role="presentation">
                                         <a href="{{ path('integrated_content_content_type_new') }}?class={{ type.class }}">
-                                            {{ type.type }}
+                                            {{ type.type|trans }}
                                         </a>
                                     </li>
                                 {% endif %}
