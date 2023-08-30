@@ -57,7 +57,7 @@ class RelationType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'help_text' => 'Select the Content Types where you want this Relation to be shown.',
-                        ]
+                        ],
                 ]
             )->add(
                 'targets',
@@ -69,7 +69,7 @@ class RelationType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'help_text' => 'Select the Content Types you want to be able to choose from.',
-                    ]
+                    ],
                 ]
             )->add(
                 'location',
