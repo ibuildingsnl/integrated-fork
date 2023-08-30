@@ -1050,6 +1050,34 @@
                 <source>Doesn't have images</source>
                 <target>Heeft geen afbeelding</target>
             </trans-unit>
+            <trans-unit id="266">
+                <source>News</source>
+                <target>Nieuws</target>
+            </trans-unit>
+            <trans-unit id="267">
+                <source>Form</source>
+                <target>Formulier</target>
+            </trans-unit>
+            <trans-unit id="268">
+                <source>Event</source>
+                <target>Evenement</target>
+            </trans-unit>
+            <trans-unit id="269">
+                <source>Company</source>
+                <target>Bedrijf</target>
+            </trans-unit>
+            <trans-unit id="270">
+                <source>JobPosting</source>
+                <target>Vacature</target>
+            </trans-unit>
+            <trans-unit id="271">
+                <source>Person</source>
+                <target>Persoon</target>
+            </trans-unit>
+            <trans-unit id="272">
+                <source>Taxonomy</source>
+                <target>Categorie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
