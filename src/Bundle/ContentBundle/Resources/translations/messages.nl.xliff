@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>New</source>
-                <target>Nieuw</target>
+                <target>Nieuwe</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>Search text</source>
@@ -570,10 +570,6 @@
                 <source>Categories</source>
                 <target>Categorieën</target>
             </trans-unit>
-            <trans-unit id="146">
-                <source>New</source>
-                <target>Nieuw</target>
-            </trans-unit>
             <trans-unit id="147">
                 <source>Bulk selection</source>
                 <target>Bulkselectie</target>
@@ -924,7 +920,7 @@
             </trans-unit>
             <trans-unit id="234">
                 <source>Configuration name</source>
-                <target>Configuratie name</target>
+                <target>Configuratie naam</target>
             </trans-unit>
             <trans-unit id="235">
                 <source>Options</source>
@@ -1077,6 +1073,134 @@
             <trans-unit id="272">
                 <source>Taxonomy</source>
                 <target>Categorie</target>
+            </trans-unit>
+            <trans-unit id="273">
+                <source>List</source>
+                <target>Lijst</target>
+            </trans-unit>
+            <trans-unit id="274">
+                <source>Calendar</source>
+                <target>Kalender</target>
+            </trans-unit>
+            <trans-unit id="275">
+                <source>Search in folders</source>
+                <target>Zoek in folders</target>
+            </trans-unit>
+            <trans-unit id="276">
+                <source>Channels</source>
+                <target>Kanalen</target>
+            </trans-unit>
+            <trans-unit id="277">
+                <source>relation</source>
+                <target>relatie</target>
+            </trans-unit>
+            <trans-unit id="278">
+                <source>Select the Content Types where you want this Relation to be shown.</source>
+                <target>Selecteer de Content Types waar je deze Relatie wilt tonen.</target>
+            </trans-unit>
+            <trans-unit id="279">
+                <source>Select the Content Types you want to be able to choose from.</source>
+                <target>Selecteer de Content Types waar je uit wilt kunnen kiezen.</target>
+            </trans-unit>
+            <trans-unit id="280">
+                <source>Multiple select</source>
+                <target>Meerdere selecties</target>
+            </trans-unit>
+            <trans-unit id="281">
+                <source>Icon</source>
+                <target>Icoon</target>
+            </trans-unit>
+            <trans-unit id="282">
+                <source>group</source>
+                <target>groep</target>
+            </trans-unit>
+            <trans-unit id="283">
+                <source>Inherit from content type</source>
+                <target>Overerft van content type</target>
+            </trans-unit>
+            <trans-unit id="284">
+                <source>Statuses</source>
+                <target>Statussen</target>
+            </trans-unit>
+            <trans-unit id="285">
+                <source>Optional</source>
+                <target>Optioneel</target>
+            </trans-unit>
+            <trans-unit id="286">
+                <source>Default</source>
+                <target>Standaard</target>
+            </trans-unit>
+            <trans-unit id="287">
+                <source>Read</source>
+                <target>Lezen</target>
+            </trans-unit>
+            <trans-unit id="288">
+                <source>Write</source>
+                <target>Schrijven</target>
+            </trans-unit>
+            <trans-unit id="289">
+                <source>Status color</source>
+                <target>Status kleur</target>
+            </trans-unit>
+            <trans-unit id="290">
+                <source>Add workflow state</source>
+                <target>Workflow status toevoegen</target>
+            </trans-unit>
+            <trans-unit id="291">
+                <source>Transitions to</source>
+                <target>Overgang naar</target>
+            </trans-unit>
+            <trans-unit id="292">
+                <source>Assignee</source>
+                <target>Toewijzen</target>
+            </trans-unit>
+            <trans-unit id="293">
+                <source>New workflow state</source>
+                <target>Nieuwe workflow status</target>
+            </trans-unit>
+            <trans-unit id="294">
+                <source>Create</source>
+                <target>Aanmaken</target>
+            </trans-unit>
+            <trans-unit id="295">
+                <source>New block</source>
+                <target>Nieuw blok</target>
+            </trans-unit>
+            <trans-unit id="296">
+                <source>Used on</source>
+                <target>Gebruikt op</target>
+            </trans-unit>
+            <trans-unit id="297">
+                <source>No taxonomies added</source>
+                <target>Geen categorieen toegevoegd</target>
+            </trans-unit>
+            <trans-unit id="298">
+                <source>Theme</source>
+                <target>Thema</target>
+            </trans-unit>
+            <trans-unit id="299">
+                <source>Options</source>
+                <target>Opties</target>
+            </trans-unit>
+            <trans-unit id="300">
+                <source>Publication start date</source>
+                <target>Publicatiedatum</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>Update</source>
+                <target>Bijwerken</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>Page</source>
+                <target>Pagina</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>page</source>
+                <target>pagina</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>Copy</source>
+                <target>Kopieer</target>
             </trans-unit>
         </body>
     </file>

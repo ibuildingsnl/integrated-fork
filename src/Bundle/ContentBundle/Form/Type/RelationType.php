@@ -55,6 +55,9 @@ class RelationType extends AbstractType
                     'choice_label' => 'name',
                     'multiple' => true,
                     'required' => false,
+                    'attr' => [
+                        'help_text' => 'Select the Content Types where you want this Relation to be shown.',
+                        ]
                 ]
             )->add(
                 'targets',
@@ -64,6 +67,9 @@ class RelationType extends AbstractType
                     'choice_label' => 'name',
                     'multiple' => true,
                     'required' => false,
+                    'attr' => [
+                        'help_text' => 'Select the Content Types you want to be able to choose from.',
+                    ]
                 ]
             )->add(
                 'location',
@@ -110,7 +116,7 @@ class RelationType extends AbstractType
                     'multiple',
                     CheckboxSwitcherType::class,
                     [
-                        'label' => false,
+                        'label' => 'Multiple select',
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,
@@ -120,7 +126,7 @@ class RelationType extends AbstractType
                     'required',
                     CheckboxSwitcherType::class,
                     [
-                        'label' => false,
+                        'label' => 'Required',
                         'required' => false,
                         'attr' => [
                             'align_with_widget' => true,

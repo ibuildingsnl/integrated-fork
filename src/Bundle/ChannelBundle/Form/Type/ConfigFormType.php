@@ -53,12 +53,10 @@ class ConfigFormType extends AbstractType
 
         $builder->add('name', TextType::class, [
             'label' => 'Configuration name',
-            'translation_domain' => 'IntegratedChannelBundle',
         ]);
 
         $builder->add('channels', ChannelChoiceType::class, [
             'label' => 'Channels',
-            'translation_domain' => 'IntegratedChannelBundle',
             'multiple' => true,
             'expanded' => true,
             'attr' => [
@@ -72,7 +70,6 @@ class ConfigFormType extends AbstractType
 
         $builder->add('publicationStartDate', DateTimeType::class, [
             'label' => 'Publication start date',
-            'translation_domain' => 'IntegratedChannelBundle',
             'required' => false,
         ]);
 
@@ -80,7 +77,7 @@ class ConfigFormType extends AbstractType
             $child = $builder->create(
                 'options',
                 $adapter->getConfiguration()->getForm(),
-                ['label' => 'Options', 'translation_domain' => 'IntegratedChannelBundle']
+                ['label' => 'Options']
             );
             $child->addModelTransformer(new OptionsTransformer());
 
