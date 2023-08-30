@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\BrandBundle\Document;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelLink
 {

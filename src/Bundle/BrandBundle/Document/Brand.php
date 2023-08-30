@@ -4,6 +4,7 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
@@ -11,8 +12,8 @@ class Brand
 {
     #[Slug(fields: ['name'], separator: '_')]
     private ?string $id = null;
-    /** @var Collection|ChannelLink[] */
-    private iterable $channelLinks;
+    /** @var Collection<ChannelLink> */
+    private Collection $channelLinks;
 
     public function __construct(
         public ?BrandProfile $profile = null,
@@ -65,9 +66,41 @@ class Brand
         $this->channelLinks[] = new ChannelLink($type, $channel, $default);
     }
 
-    /** @return ChannelLink[] */
-    public function getChannelLinks(): iterable
+    public function hasChannel(ChannelInterface $channel): bool
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($link->channel->getId() === $channel->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function hasAtLeastOneOfChannels(ChannelInterface ...$channels): bool
+    {
+        foreach ($channels as $channel) {
+            foreach ($this->channelLinks as $link) {
+                if ($link->channel->getId() === $channel->getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** @return Collection<ChannelLink> */
+    public function getChannelLinks(): Collection
     {
         return $this->channelLinks;
+    }
+
+    public function hasPublished(Content $content): bool
+    {
+        foreach ($this->channelLinks as $link) {
+            if ($content->hasChannel($link->channel)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

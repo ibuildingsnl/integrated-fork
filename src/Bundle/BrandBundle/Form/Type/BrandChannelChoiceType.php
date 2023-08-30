@@ -23,10 +23,9 @@ class BrandChannelChoiceType extends AbstractType
             'choices' => $options['links'],
             'choice_label' => 'type.name',
             'choice_value' => 'channel.id',
-            'choice_attr' => fn(ChannelLink $link) => array_merge(
-                $link->default ? ['checked' => true] : [], // @todo set data instead?
-                is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
-            ),
+            'choice_attr' => fn(ChannelLink $link) => is_array($options['choice_attr']) ?
+                $options['choice_attr'] :
+                $options['choice_attr']($link->channel),
             'multiple' => true,
             'expanded' => true,
         ]);

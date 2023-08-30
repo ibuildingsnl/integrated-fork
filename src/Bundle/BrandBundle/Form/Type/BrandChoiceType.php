@@ -23,7 +23,7 @@ class BrandChoiceType extends AbstractType
                 }
             }
             if (!empty($links)) {
-                $builder->add($brand->profile->getId(), BrandChannelChoiceType::class, [
+                $builder->add($brand->getId(), BrandChannelChoiceType::class, [
                     'links' => $links,
                     'brand_name' => $brand->getName(),
                     'label' => false,

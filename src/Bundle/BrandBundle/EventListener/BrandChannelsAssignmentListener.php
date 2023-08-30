@@ -34,16 +34,17 @@ class BrandChannelsAssignmentListener implements EventSubscriberInterface
         }
 
         $brands = $event->getForm()->get('brands')->getData();
+        $channels = [];
         foreach ($brands ?? [] as $brand) {
             if ($brand['publish'] ?? false) {
-                // @todo instead merge and set as collection (enforced channels are added afterwards)
                 /** @var ChannelLink $channelLink */
                 foreach ($brand['channels'] ?? [] as $channelLink) {
                     if ($this->authorizationChecker->isGranted(PermissionInterface::WRITE, $channelLink->channel)) {
-                        $content->addChannel($channelLink->channel);
+                        $channels[] = $channelLink->channel;
                     }
                 }
             }
         }
+        $content->setChannels($channels);
     }
 }

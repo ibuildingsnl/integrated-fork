@@ -2,7 +2,9 @@
 
 namespace Integrated\Bundle\BrandBundle\EventListener;
 
+use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
@@ -13,6 +15,8 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly BrandRepository $brands,
+        private readonly ChannelRepository $channels,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -40,6 +44,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
             ]
         ]);
         $form->addEventSubscriber(new BrandChannelsAssignmentListener($this->authorizationChecker));
+        $form->addEventSubscriber(new BrandDefaultDataListener($event->getContentType(), $this->brands, $this->channels));
         $form->remove('channels');
     }
 }
