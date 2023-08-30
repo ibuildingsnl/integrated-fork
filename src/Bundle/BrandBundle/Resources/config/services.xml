@@ -40,6 +40,7 @@
         </service>
 
         <service id="integrated_brand.event_listener.content.brand" class="Integrated\Bundle\BrandBundle\EventListener\ContentBrandIntegrationListener">
+            <argument type="service" id="security.authorization_checker" />
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 

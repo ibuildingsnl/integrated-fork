@@ -3,17 +3,22 @@
 namespace Integrated\Bundle\BrandBundle\EventListener;
 
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Common\Content\ChannelableInterface;
+use Integrated\Common\Security\PermissionInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BrandChannelsAssignmentListener implements EventSubscriberInterface
 {
+    public function __construct(
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+    ) {}
+
     public static function getSubscribedEvents(): array
     {
         return [
-            // @todo make it a pre-submit, to integrate with channel permission listener?
             FormEvents::POST_SUBMIT => ['addBrandChannels', 100],
         ];
     }
@@ -24,17 +29,19 @@ class BrandChannelsAssignmentListener implements EventSubscriberInterface
             return;
         }
         $content = $event->getData();
-        if (!$content instanceof Content) {
+        if (!$content instanceof ChannelableInterface) {
             return;
         }
 
         $brands = $event->getForm()->get('brands')->getData();
         foreach ($brands ?? [] as $brand) {
             if ($brand['publish'] ?? false) {
-                // @todo instead merge with enforced channels and set as collection
+                // @todo instead merge and set as collection (enforced channels are added afterwards)
                 /** @var ChannelLink $channelLink */
                 foreach ($brand['channels'] ?? [] as $channelLink) {
-                    $content->addChannel($channelLink->channel);
+                    if ($this->authorizationChecker->isGranted(PermissionInterface::WRITE, $channelLink->channel)) {
+                        $content->addChannel($channelLink->channel);
+                    }
                 }
             }
         }

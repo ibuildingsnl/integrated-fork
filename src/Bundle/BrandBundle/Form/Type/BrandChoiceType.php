@@ -27,6 +27,7 @@ class BrandChoiceType extends AbstractType
                     'links' => $links,
                     'brand_name' => $brand->getName(),
                     'label' => false,
+                    'choice_attr' => $options['channel_choice_attr'],
                 ]);
             }
         }
@@ -35,5 +36,6 @@ class BrandChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('channel_choices', []);
+        $resolver->setDefault('channel_choice_attr', []);
     }
 }
