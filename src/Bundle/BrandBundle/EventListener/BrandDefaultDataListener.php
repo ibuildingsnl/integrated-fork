@@ -44,6 +44,10 @@ class BrandDefaultDataListener implements EventSubscriberInterface
 
         $brandsData = [];
         foreach ($this->brands->all() as $brand) {
+            if (!$brandsForm->has($brand->getId())) {
+                continue;
+            }
+
             $condition = fn(ChannelLink $link) => in_array($link->channel, $defaultChannels) || $link->default;
             $publish = true;
 

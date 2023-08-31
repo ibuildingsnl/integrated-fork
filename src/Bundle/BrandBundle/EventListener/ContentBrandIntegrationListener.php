@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\BrandBundle\EventListener;
 
+use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
@@ -17,6 +18,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly BrandRepository $brands,
         private readonly ChannelRepository $channels,
+        private readonly AssetManager $js,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -41,10 +43,13 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'icon' => 'network-alt',
+                'class' => 'brands',
             ]
         ]);
         $form->addEventSubscriber(new BrandChannelsAssignmentListener($this->authorizationChecker));
         $form->addEventSubscriber(new BrandDefaultDataListener($event->getContentType(), $this->brands, $this->channels));
         $form->remove('channels');
+
+        $this->js->add('bundles/integratedbrand/js/brand_channel_selection.js');
     }
 }

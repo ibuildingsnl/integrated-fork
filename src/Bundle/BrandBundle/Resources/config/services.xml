@@ -43,6 +43,7 @@
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="integrated_brand.brand.repository" />
             <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="service" id="integrated_asset.manager.javascript_manager" />
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 

@@ -28,6 +28,9 @@ class BrandChoiceType extends AbstractType
                     'brand_name' => $brand->getName(),
                     'label' => false,
                     'choice_attr' => $options['channel_choice_attr'],
+                    'attr' => [
+                        'class' => 'brand-container',
+                    ],
                 ]);
             }
         }

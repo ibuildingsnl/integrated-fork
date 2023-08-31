@@ -17,17 +17,24 @@ class BrandChannelChoiceType extends AbstractType
             'required' => false,
             'value' => $options['publish'],
             'label' => $options['brand_name'],
+            'attr' => [
+                'class' => 'brand-choice',
+            ],
         ]);
         $builder->add('channels', ChoiceType::class, [
             'label' => false,
             'choices' => $options['links'],
             'choice_label' => 'type.name',
             'choice_value' => 'channel.id',
-            'choice_attr' => fn(ChannelLink $link) => is_array($options['choice_attr']) ?
-                $options['choice_attr'] :
-                $options['choice_attr']($link->channel),
+            'choice_attr' => fn(ChannelLink $link) => array_merge(
+                ['class' => 'brand-channel-choice',],
+                is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
+            ),
             'multiple' => true,
             'expanded' => true,
+            'attr' => [
+                'class' => 'brand-channels',
+            ],
         ]);
     }
 
