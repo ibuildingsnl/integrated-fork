@@ -114,7 +114,7 @@ abstract class Relation extends Content implements RankableInterface
         $this->addresses = new ArrayCollection();
     }
 
-    public function getAccountnumber(): string
+    public function getAccountnumber(): ?string
     {
         return $this->accountnumber;
     }
@@ -124,7 +124,7 @@ abstract class Relation extends Content implements RankableInterface
         $this->accountnumber = $accountnumber;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -223,7 +223,7 @@ abstract class Relation extends Content implements RankableInterface
         return $this->addresses->removeElement($address);
     }
 
-    public function getIntro(): string
+    public function getIntro(): ?string
     {
         return $this->intro;
     }
