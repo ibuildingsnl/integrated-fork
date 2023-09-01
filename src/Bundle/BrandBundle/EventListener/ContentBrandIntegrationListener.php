@@ -19,6 +19,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         private readonly BrandRepository $brands,
         private readonly ChannelRepository $channels,
         private readonly AssetManager $js,
+        private readonly AssetManager $css,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -50,6 +51,8 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         $form->addEventSubscriber(new BrandDefaultDataListener($event->getContentType(), $this->brands, $this->channels));
         $form->remove('channels');
 
+        $this->css->add('bundles/integratedbrand/css/brand_channel_selection.css');
         $this->js->add('bundles/integratedbrand/js/brand_channel_selection.js');
+        $this->js->add('bundles/integratedbrand/js/primary_channel.js');
     }
 }

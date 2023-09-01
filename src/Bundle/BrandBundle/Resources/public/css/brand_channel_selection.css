@@ -1,0 +1,9 @@
+.brands .brand-channels .checkbox {
+    display: inline-block;
+    width: 50%;
+}
+.brands .brand-channels .make-primary {
+    display: inline-block;
+    width: 25%;
+    font-size: smaller;
+}

@@ -3,10 +3,11 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Integrated\Bundle\BrandBundle\Document\LinkType" collection="channel_link_type">
+    <document name="Integrated\Bundle\BrandBundle\Document\LinkType">
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
+        <field field-name="canBePrimary" type="boolean" />
         <field field-name="formType" type="string" />
 
     </document>
