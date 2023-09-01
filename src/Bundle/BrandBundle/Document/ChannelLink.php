@@ -9,7 +9,12 @@ class ChannelLink
     private ?string $id = null;
     public function __construct(
         public LinkType $type,
-        public ChannelInterface $channel,
+        public ?ChannelInterface $channel,
         public bool $default,
     ){}
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
 }

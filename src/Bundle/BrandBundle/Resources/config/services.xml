@@ -16,8 +16,10 @@
 
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
+            <argument type="tagged_iterator" tag="integrated_brand.type" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -28,7 +30,7 @@
         </service>
 
         <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
-            <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="service" id="translator"/>
             <argument type="tagged_iterator" tag="integrated_brand.type" />
 
             <tag name="form.type" />

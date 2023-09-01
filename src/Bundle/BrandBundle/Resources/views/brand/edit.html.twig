@@ -1,5 +1,11 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block title %}{% trans %}Edit brand{% endtrans %}{% endblock title %}
+{% block title %}
+    {% if brand|default %}
+        {% trans %}Edit {% endtrans %} {{ brand.name }}
+    {% else %}
+        {% trans %}New{% endtrans %} {% trans %}Brand{% endtrans %}
+    {% endif %}
+{% endblock title %}
 {% block style %}
     {{ parent() }}
 
@@ -37,18 +43,98 @@
         </div>
         <div class="editor-wrapper">
             <div class="page-title">
-                <h1 class="heading">{% trans %}Edit {% endtrans %} {{ brand.name }}</h1>
+                <h1 class="heading">
+                    {% if brand|default %}
+                        {% trans %}Edit {% endtrans %} {{ brand.name }}
+                    {% else %}
+                        {% trans %}New{% endtrans %} {% trans %}Brand{% endtrans %}
+                    {% endif %}
+                </h1>
             </div>
             <section class="editor">
                 {{ form_errors(form) }}
 
-                {% block content_form %}
-                    {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR'))  %}
-                        {{ form_row(child) }}
-                    {% endfor %}
+                    {% if form.profile %}
+                        {{ form_row(form.profile) }}
+                    {% endif %}
 
-                    {{ form_rest(form, {'style':'editor', 'state':'show'})}}
-                {% endblock %}
+            </section>
+
+            {% if brand|default %}
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Channels{% endtrans %}</h1>
+                <ul class="create">
+                    {% for linkType in linkTypes %}
+                        {% if linkType.name not in brand.channelTypeNames %}
+                        <li>
+                            <a
+                                class="btn btn-create-new"
+                                href="{{ path('integrated_content_brand_add_channel', {'id': brand.id, 'type': linkType.id}) }}"
+                            >
+                                <span>{% trans %}Add{% endtrans %} {{ linkType.name }}</span>
+                                <i class="iconoir-plus"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <section class="section-white section-radius">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="name">{% trans %}Type{% endtrans %}</th>
+                        <th class="default">{% trans %}Default{% endtrans %}</th>
+                        <th class="channel">{% trans %}Channel{% endtrans %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for link in brand.channelLinks|default([]) %}
+                        <tr class="has-options">
+                            <td class="name">
+                                <strong>
+                                    <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}">
+                                        {{ link.type.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a class="color-red" href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Remove{% endtrans %}">
+                                        {% trans %}Remove{% endtrans %}
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="default">
+                                {% if link.default %}
+                                    {% trans %}Yes{% endtrans %}
+                                {% else %}
+                                    {% trans %}No{% endtrans %}
+                                {% endif %}
+                            </td>
+                            <td class="channel">
+                                {{ link.channel.name }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">
+                                {% trans %}No channels added{% endtrans %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </section>
+            {% endif %}
+            <section class="editor">
+
+                {% for child in form|filter(row => row.vars.attr.location|default == constant('Integrated\\Common\\Form\\Mapping\\Attributes\\Field::LOCATION_EDITOR')) %}
+                    {{ form_row(child) }}
+                {% endfor %}
+                {{ form_rest(form, {'style':'editor', 'state':'show'})}}
             </section>
         </div>
 
@@ -62,19 +148,3 @@
 {% block webpack_js %}
     <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
 {% endblock %}
-
-{% block javascript %}
-    {{ parent() }}
-
-<script>
-const a = document.querySelector('.channelLinks.show .btn-blue');
-const n = document.createElement('a');
-a.parentElement.append(n);
-n.innerText = 'New channel';
-n.className = 'btn btn-blue';
-n.href = '{{ path('integrated_content_channel_new') }}';
-console.log(a);
-</script>
-
-{#    <script src="{{ asset('bundles/integratedcontent/js/brand.js') }}"></script>#}
-{% endblock javascript %}

@@ -94,6 +94,23 @@ class Brand
         return $this->channelLinks;
     }
 
+    public function addChannelLink(ChannelLink $link): void
+    {
+        if (in_array($link->type->name, $this->getChannelTypeNames())) {
+            throw new \InvalidArgumentException('Duplicate channel type');
+        }
+        $this->channelLinks[] = $link;
+    }
+
+    public function removeChannelLink(ChannelLink $link): void
+    {
+        foreach ($this->channelLinks as $i => $channelLink) {
+            if ($channelLink->getId() === $link->getId()) {
+                unset($this->channelLinks[$i]);
+            }
+        }
+    }
+
     public function hasPublished(Content $content): bool
     {
         foreach ($this->channelLinks as $link) {
