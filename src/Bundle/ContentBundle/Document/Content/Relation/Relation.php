@@ -16,9 +16,15 @@ use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Phonenumber;
+use Integrated\Bundle\ContentBundle\Form\Type\AddressType;
+use Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\EditorType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
 use Integrated\Common\Content\RankableInterface;
 use Integrated\Common\Content\RankTrait;
 use Integrated\Common\Form\Mapping\Attributes as Type;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Class for Relations.
@@ -38,11 +44,12 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: [
-        'priority' => 980,
+    #[Type\Field(type: EditorType::class, options: [
+        'priority' => 970,
         'attr' => [
-            'state' => 'fancy_tinymce',
-            'class' => 'content-edit-form fancy_tinymce',
+            'style' => 'editor',
+            'state' => 'show',
+            'class' => 'content-edit-form',
             'placeholder' => 'Your content starts here',
         ],
     ], location: 'editor')]
@@ -51,8 +58,8 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var Phonenumber[]|Collection
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
-        'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\PhonenumberType',
+    #[Type\Field(type: SortableCollectionType::class, options: [
+        'entry_type' => PhonenumberType::class,
         'allow_add' => true,
         'allow_delete' => true,
         'add_button_text' => 'Add Phonenumber',
@@ -63,7 +70,7 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\EmailType', options: [
+    #[Type\Field(type: EmailType::class, options: [
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
@@ -74,8 +81,8 @@ abstract class Relation extends Content implements RankableInterface
     /**
      * @var Address[]|Collection
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType', options: [
-        'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\AddressType',
+    #[Type\Field(type: SortableCollectionType::class, options: [
+        'entry_type' => AddressType::class,
         'default_title' => 'New address',
         'allow_add' => true,
         'allow_delete' => true,
@@ -83,6 +90,18 @@ abstract class Relation extends Content implements RankableInterface
         'attr' => ['style' => 'editor', 'state' => 'show'],
     ], location: 'editor')]
     protected $addresses;
+
+    /**
+     * @var string
+     */
+    #[Type\Field(type: TextareaType::class, options: [
+        'priority' => 490,
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
+    protected $intro;
 
     /**
      * Constructor.
@@ -95,60 +114,27 @@ abstract class Relation extends Content implements RankableInterface
         $this->addresses = new ArrayCollection();
     }
 
-    /**
-     * Get the accountnumber of the document.
-     *
-     * @return string
-     */
-    public function getAccountnumber()
+    public function getAccountnumber(): ?string
     {
         return $this->accountnumber;
     }
 
-    /**
-     * Set the accountnumber of the document.
-     *
-     * @param string $accountnumber
-     *
-     * @return $this
-     */
-    public function setAccountnumber($accountnumber)
+    public function setAccountnumber(string $accountnumber): void
     {
         $this->accountnumber = $accountnumber;
-
-        return $this;
     }
 
-    /**
-     * Get the description of the document.
-     *
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * Set the description of the document.
-     *
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
-
-        return $this;
     }
 
-    /**
-     * Get the phonenumbers of the document.
-     *
-     * @return Phonenumber[]
-     */
-    public function getPhonenumbers($type = null)
+    public function getPhonenumbers($type = null): array|Collection
     {
         if ($type !== null) {
             $result = [];
@@ -165,32 +151,15 @@ abstract class Relation extends Content implements RankableInterface
         return $this->phonenumbers;
     }
 
-    /**
-     * Set the phonenumbers of the document.
-     *
-     * @param Phonenumber[] $phonenumbers
-     *
-     * @return $this
-     */
-    public function setPhonenumbers(Collection $phonenumbers)
+    public function setPhonenumbers(Collection $phonenumbers): void
     {
         $this->phonenumbers = $phonenumbers;
-
-        return $this;
     }
 
-    /**
-     * Add phonenumber to phonenumbers collection.
-     *
-     * @param string|Phonenumber $phonenumber
-     * @param string             $type
-     *
-     * @return $this
-     */
-    public function addPhonenumber($phonenumber, $type = null)
+    public function addPhonenumber(string|Phonenumber $phonenumber, string $type = null): void
     {
         if ($phonenumber === null) {
-            return $this;
+            return;
         }
 
         if ($phonenumber instanceof Phonenumber) {
@@ -202,18 +171,9 @@ abstract class Relation extends Content implements RankableInterface
         }
 
         $this->phonenumbers->add($obj);
-
-        return $this;
     }
 
-    /**
-     * Remove phonenumber from phonenumbers collection.
-     *
-     * @param string|Phonenumber $phonenumber
-     *
-     * @return bool the removed element or null if the collection did not contain the element
-     */
-    public function removePhonenumber($phonenumber)
+    public function removePhonenumber(string|Phonenumber $phonenumber): bool
     {
         // @todo (INTEGRATED-452)
         if ($phonenumber instanceof Phonenumber) {
@@ -231,73 +191,45 @@ abstract class Relation extends Content implements RankableInterface
         return $return;
     }
 
-    /**
-     * Get the email of the document.
-     *
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * Set the email of the document.
-     *
-     * @param string $email
-     *
-     * @return $this
-     */
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
-
-        return $this;
     }
 
-    /**
-     * Get the addresses of the document.
-     *
-     * @return Address[]
-     */
-    public function getAddresses()
+    public function getAddresses(): array|Collection
     {
         return $this->addresses;
     }
 
-    /**
-     * Set the addresses of the document.
-     *
-     * @return $this
-     */
-    public function setAddresses(Collection $addresses)
+    public function setAddresses(Collection $addresses): void
     {
         $this->addresses = $addresses;
-
-        return $this;
     }
 
-    /**
-     * Add address to addresses collection.
-     *
-     * @param Address $address
-     *
-     * @return $this
-     */
-    public function addAddress(Address $address = null)
+    public function addAddress(Address $address = null): void
     {
         if ($address !== null) {
             $this->addresses->add($address);
         }
-
-        return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function removeAddress(Address $address)
+    public function removeAddress(Address $address): bool
     {
         return $this->addresses->removeElement($address);
+    }
+
+    public function getIntro(): ?string
+    {
+        return $this->intro;
+    }
+
+    public function setIntro(string $intro): void
+    {
+        $this->intro = $intro;
     }
 }
