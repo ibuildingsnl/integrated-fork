@@ -46,9 +46,14 @@
 
                     {{ form_rest(form, {'style':'editor', 'state':'show'})}}
                 {% endblock %}
+
+                {% if link|default and link.type.connector %}
+                    <a href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Connector{% endtrans %}">
+                        {% trans %}Manage{% endtrans %} {{ brand.name }} {{ link.name }} {% trans %}Connector{% endtrans %}
+                    </a>
+                {% endif %}
             </section>
         </div>
-
 
         {% block form_end %}
             {{ form_end(form) }}

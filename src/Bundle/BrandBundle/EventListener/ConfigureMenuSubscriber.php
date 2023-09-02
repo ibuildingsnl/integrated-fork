@@ -34,7 +34,10 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             $this->permission->isGranted('ROLE_ADMIN') ||
             $this->permission->isGranted('ROLE_CHANNEL_MANAGER')
         ) {
+            // Out with the old,
             $settings->removeChild('Channels');
+            $settings->removeChild('Connectors');
+            // In with the new
             $settings->addChild('Brands', ['route' => 'integrated_content_brand_index']);
         }
     }

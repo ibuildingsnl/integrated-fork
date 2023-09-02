@@ -42,6 +42,19 @@
             </call>
         </service>
 
+        <service id="Integrated\Bundle\BrandBundle\Controller\ConnectorController">
+            <argument type="service" id="integrated_channel.config.manager" />
+            <argument type="service" id="integrated_channel.adapter.registry" />
+            <argument type="service" id="event_dispatcher" />
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
         <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
             <argument type="service" id="translator"/>
             <argument type="tagged_iterator" tag="integrated_brand.type" />
@@ -63,11 +76,21 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_brand.event_listener.connector.deletion" class="Integrated\Bundle\BrandBundle\EventListener\ConnectorDeletionRedirectListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="integrated_brand.event_listener.connector.external.return" class="Integrated\Bundle\BrandBundle\EventListener\ExternalReturnRedirectListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType">
             <argument type="service" id="integrated_brand.brand.repository" />
 
             <tag name="form.type" />
         </service>
+
+        <!-- Note: the types below are mainly here for demo purposes, they can and should be moved to bundles/plugins -->
 
         <service id="integrated_brand.type.website" class="Integrated\Bundle\BrandBundle\Document\LinkType">
             <argument>website</argument>
@@ -107,6 +130,7 @@
             <argument>linkedin</argument>
             <argument>LinkedIn</argument>
             <argument type="expression">false</argument>
+            <argument>linkedin</argument>
 
             <tag name="integrated_brand.type" />
         </service>

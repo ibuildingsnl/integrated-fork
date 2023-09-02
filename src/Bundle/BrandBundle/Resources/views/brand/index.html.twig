@@ -60,9 +60,13 @@
                     </tbody>
                 </table>
             </section>
-            <a href="{{ path('integrated_content_channel_index') }}" style="font-size: smaller; display: block; text-align: center; padding-top: 2em">
-                {% trans %}View full (uncategorized) channels reference{% endtrans %}
-            </a>
+            <div style="font-size: smaller; display: block; text-align: right; padding-top: 2em">
+                {% trans %}View full (uncategorized) reference for:{% endtrans %}
+                <ul>
+                    <li><a href="{{ path('integrated_content_channel_index') }}">{% trans %}All channels{% endtrans %}</a></li>
+                    <li><a href="{{ path('integrated_channel_config_index') }}">{% trans %}All connectors{% endtrans %}</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 {% endblock %}

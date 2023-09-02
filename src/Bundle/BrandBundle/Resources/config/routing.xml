@@ -32,4 +32,8 @@
         <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ChannelLinkController::removeChannel</default>
     </route>
 
+    <route id="integrated_content_brand_manage_connector" path="/{id}/connector/{link}" methods="GET,POST,PUT">
+        <default key="_controller">Integrated\Bundle\BrandBundle\Controller\ConnectorController::configure</default>
+    </route>
+
 </routes>

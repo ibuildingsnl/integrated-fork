@@ -113,6 +113,7 @@ class ChannelLinkController extends AbstractController
 
         return $this->render('@IntegratedBrand/brand/channel_edit.html.twig', [
             'channel' => $link->channel,
+            'link' => $link,
             'brand' => $brand,
             'form' => $form->createView(),
         ]);

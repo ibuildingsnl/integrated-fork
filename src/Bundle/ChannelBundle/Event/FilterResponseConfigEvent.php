@@ -20,23 +20,18 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class FilterResponseConfigEvent extends ConfigEvent
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
-    public function __construct(Config $config, Request $request, Response $response)
+    public function __construct(Config $config, Request $request, private Response $response)
     {
         parent::__construct($config, $request);
-
-        $this->response = $response;
     }
 
-    /**
-     * @return Response
-     */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
+    }
+
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
     }
 }

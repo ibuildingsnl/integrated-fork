@@ -101,6 +101,11 @@
                                     <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Edit{% endtrans %}">
                                         {% trans %}Edit{% endtrans %}
                                     </a> |
+                                    {% if link.type.connector %}
+                                        <a href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Connector{% endtrans %}">
+                                            {% trans %}Connector{% endtrans %}
+                                        </a> |
+                                    {% endif %}
                                     <a class="color-red" href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Remove{% endtrans %}">
                                         {% trans %}Remove{% endtrans %}
                                     </a>
