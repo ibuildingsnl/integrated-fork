@@ -46,26 +46,6 @@ class Brand
         return $types;
     }
 
-    /** @return ChannelInterface[] */
-    public function getChannels(?string $type = null): array
-    {
-        $channels = [];
-        foreach ($this->channelLinks as $link) {
-            if (!$type || $link->type->tag === $type) {
-                $channels[] = $link->channel;
-            }
-        }
-        return $channels;
-    }
-
-    public function addChannel(ChannelInterface $channel, LinkType $type, bool $default = true): void
-    {
-        if (in_array($type->name, $this->getChannelTypeNames())) {
-            throw new \InvalidArgumentException('Duplicate channel type');
-        }
-        $this->channelLinks[] = new ChannelLink($type, $channel, $default);
-    }
-
     public function hasChannel(ChannelInterface $channel): bool
     {
         foreach ($this->channelLinks as $link) {
@@ -96,7 +76,7 @@ class Brand
 
     public function addChannelLink(ChannelLink $link): void
     {
-        if (in_array($link->type->name, $this->getChannelTypeNames())) {
+        if (in_array($link->getName(), $this->getChannelTypeNames())) {
             throw new \InvalidArgumentException('Duplicate channel type');
         }
         $this->channelLinks[] = $link;

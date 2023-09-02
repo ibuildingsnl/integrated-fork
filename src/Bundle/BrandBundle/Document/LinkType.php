@@ -8,6 +8,7 @@ class LinkType
         public readonly string $id,
         public readonly string $name,
         public readonly bool $canBePrimary = true,
-        public readonly ?string $formType = null,
+        public readonly ?string $connector = null,
+        public readonly ?string $publicationSettingsForm = null,
     ){}
 }

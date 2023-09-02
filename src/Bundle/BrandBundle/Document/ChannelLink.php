@@ -13,6 +13,11 @@ class ChannelLink
         public bool $default,
     ){}
 
+    public function getName(): string
+    {
+        return $this->type->name;
+    }
+
     public function getId(): ?string
     {
         return $this->id;

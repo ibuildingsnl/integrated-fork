@@ -8,7 +8,8 @@
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
         <field field-name="canBePrimary" type="boolean" />
-        <field field-name="formType" type="string" />
+        <field field-name="connector" type="string" nullable="true" />
+        <field field-name="publicationSettingsForm" type="string" nullable="true" />
 
     </document>
 </doctrine-mongo-mapping>

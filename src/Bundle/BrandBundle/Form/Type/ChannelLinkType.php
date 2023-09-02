@@ -38,6 +38,7 @@ class ChannelLinkType extends AbstractType
         ]);
         $builder->add('channel', ChannelType::class, [
             'data_class' => Channel::class,
+            'label' => $this->translator->trans('Channel'),
         ]);
         if ($options['allow_choose']) {
             $builder->add('choose_channel', CheckboxType::class, [
