@@ -14,22 +14,21 @@ namespace Integrated\Bundle\ContentBundle\Solr\Query\Type;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Solr\Query\SortOptions;
+use Integrated\Common\Solr\Search\Event\ConfigureOptionsEvent;
+use Integrated\Common\Solr\Search\QueryEvents;
 use Integrated\Common\Solr\Search\Type\AbstractType;
 use Solarium\QueryType\Select\Query\Query;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntegratedContent extends AbstractType
 {
-    private SortOptions $sorting;
-
-    private DocumentManager $manager;
-
-    public function __construct(SortOptions $sorting, DocumentManager $manager)
-    {
-        $this->sorting = $sorting;
-        $this->manager = $manager;
-    }
+    public function __construct(
+        private readonly SortOptions $sorting,
+        private readonly DocumentManager $manager,
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {}
 
     public function build(Query $query, array $options): void
     {
@@ -266,5 +265,10 @@ class IntegratedContent extends AbstractType
             'start' => null,
             'end' => null,
         ]);
+
+        $this->dispatcher->dispatch(
+            new ConfigureOptionsEvent(static::class, $resolver),
+            QueryEvents::CONFIGURE_OPTIONS
+        );
     }
 }

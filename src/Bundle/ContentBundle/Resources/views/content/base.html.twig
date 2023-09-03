@@ -229,7 +229,7 @@
         {% set facetTitle = key|capitalize %}
     {% endif %}
     <div class="aside-item-holder">
-        <div class="aside-item-wrapper {% if (key == 'contenttypes') or (key =='channels') %}show{% endif %}">
+        <div class="aside-item-wrapper {% if integrated_facet_show(key) %}show{% endif %}">
             <div class="aside-item-header">
                 <h3 class="aside-item-title">
                     <span class="aside-item-icon">
@@ -257,13 +257,12 @@
                                     <span class="checkmark"></span>
                                     <div class="facet-wrappper">
                                         <span class="facet-title">
-                                            {% if key == 'contenttypes' %}
-                                                {{ title|integrated_content_type.name|default(title) }}
-                                            {% elseif key == 'channels' %}
-                                                {{ title|integrated_channel.name|default(title) }}
-                                            {% else %}
-                                                {{ title|trans }}
-                                            {% endif %}
+{#                                            {% if key == 'contenttypes' %}#}
+{#                                                {{ title|integrated_content_type.name|default(title) }}#}
+{#                                            {% elseif key == 'channels' %}#}
+{#                                                {{ title|integrated_channel.name|default(title) }}#}
+
+                                            {{ integrated_facet_title(key, title)|default(title|trans) }}
                                         </span>
                                         <span class="facet-count">({{ count }})</span>
                                     </div>

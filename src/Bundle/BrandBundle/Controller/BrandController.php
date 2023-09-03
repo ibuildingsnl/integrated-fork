@@ -52,11 +52,10 @@ class BrandController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->brands->add($brand);
-            $this->flusher->flush();
-
-            $this->addFlash('success', 'Item created');
-
             $this->dispatcher->dispatch(new BrandAddedEvent($brand));
+
+            $this->flusher->flush();
+            $this->addFlash('success', 'Item created');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
@@ -80,12 +79,10 @@ class BrandController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->flusher->flush();
-
-            $this->addFlash('success', 'Item updated');
-
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
+            $this->flusher->flush();
+            $this->addFlash('success', 'Item updated');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
@@ -114,10 +111,9 @@ class BrandController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->brands->remove($brand);
-            $this->flusher->flush();
-
             $this->dispatcher->dispatch(new BrandRemovedEvent($brand));
 
+            $this->flusher->flush();
             $this->addFlash('success', 'Brand removed');
 
             return $this->redirectToRoute('integrated_content_brand_index');

@@ -55,6 +55,12 @@
             </call>
         </service>
 
+        <service id="Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType">
+            <argument type="service" id="integrated_brand.brand.repository" />
+
+            <tag name="form.type" />
+        </service>
+
         <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
             <argument type="service" id="translator"/>
             <argument type="tagged_iterator" tag="integrated_brand.type" />
@@ -84,10 +90,33 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="Integrated\Bundle\BrandBundle\Form\Type\BrandChoiceType">
+        <service id="integrated_brand.event_listener.solr.brand_facet" class="Integrated\Bundle\BrandBundle\Solr\EventListener\BrandFacetListener">
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="integrated_brand.solr.brand.extension" class="Integrated\Bundle\BrandBundle\Solr\Extension\BrandExtension">
             <argument type="service" id="integrated_brand.brand.repository" />
 
-            <tag name="form.type" />
+            <tag name="integrated_solr.type_extension" />
+        </service>
+
+        <service id="integrated_brand.twig_title.brand" class="Integrated\Bundle\BrandBundle\Twig\Resolver\BrandTitleResolver">
+            <argument type="service" id="integrated_brand.brand.repository" />
+        </service>
+
+        <service id="integrated_brand.facet_setting.brand" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
+            <argument>brands</argument>
+            <argument type="expression">true</argument>
+            <argument type="service" id="integrated_brand.twig_title.brand" />
+            <tag name="integrated_content.facet_setting" />
+        </service>
+
+        <service id="integrated_content.facet_setting.channel" class="Integrated\Bundle\ContentBundle\Twig\FacetSettings">
+            <argument>channels</argument>
+            <argument type="expression">false</argument>
+            <argument type="service" id="integrated_content.twig_title.channel" />
+            <tag name="integrated_content.facet_setting" />
         </service>
 
         <!-- Note: the types below are mainly here for demo purposes, they can and should be moved to bundles/plugins -->
