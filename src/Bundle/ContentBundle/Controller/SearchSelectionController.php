@@ -160,7 +160,7 @@ class SearchSelectionController extends AbstractController
 
             $this->addFlash('success', 'Item deleted');
 
-            return $this->redirectToRoute('integrated_content_search_selection_index');
+            return $this->redirectToRoute('integrated_content_content_index');
         }
 
         return $this->render('@IntegratedContent/search_selection/delete.html.twig', [

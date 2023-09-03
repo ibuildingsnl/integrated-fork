@@ -60,15 +60,15 @@ div.heading-switcher {
 
         &.column {
             border-right: 1px solid $border-color;
-            max-height: calc(100vh - 270px);
+            height: calc(100vh - 270px);
             overflow: auto;
 
             @include media(max-4xl) {
-                max-height: calc(100vh - 283px);
+                height: calc(100vh - 283px);
             }
 
             @include media(max-md) {
-                max-height: calc(100vh - 340px);
+                height: calc(100vh - 340px);
             }
 
             &::-webkit-scrollbar-track {

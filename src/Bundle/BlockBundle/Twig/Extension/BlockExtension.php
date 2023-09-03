@@ -114,6 +114,7 @@ class BlockExtension extends AbstractExtension
     {
         return [
             new TwigFilter('integrated_block_type', [$this, 'getBlockTypeName']),
+            new TwigFilter('integrated_sort_blocks', [$this, 'sortByType']),
         ];
     }
 
@@ -244,6 +245,15 @@ class BlockExtension extends AbstractExtension
         ksort($blocks);
 
         return $blocks;
+    }
+
+    public function sortByType($array)
+    {
+        usort($array, function ($a, $b) {
+            return strcmp($a->getType(), $b->getType());
+        });
+
+        return $array;
     }
 
     /**
