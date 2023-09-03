@@ -70,6 +70,7 @@
                             <a
                                 class="btn btn-create-new"
                                 href="{{ path('integrated_content_brand_add_channel', {'id': brand.id, 'type': linkType.id}) }}"
+                                title="{% trans with {'%brand%': brand.name, '%type%': linkType.name } %}Add %type% channel to %brand%{% endtrans %}"
                             >
                                 <span>{% trans %}Add{% endtrans %} {{ linkType.name }}</span>
                                 <i class="iconoir-plus"></i>
@@ -98,15 +99,25 @@
                                     </a>
                                 </strong>
                                 <div class="row-options">
-                                    <a href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Edit{% endtrans %}">
+                                    <a
+                                        href="{{ path('integrated_content_brand_edit_channel', {'id': brand.id, 'link': link.id}) }}"
+                                        title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Edit %brand%'s %type% Channel{% endtrans %}"
+                                    >
                                         {% trans %}Edit{% endtrans %}
                                     </a> |
                                     {% if link.type.connector %}
-                                        <a href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Connector{% endtrans %}">
+                                        <a
+                                            href="{{ path('integrated_content_brand_manage_connector', {'id': brand.id, 'link': link.id}) }}"
+                                            title="{% trans with {'%brand%': brand.name, '%type%': link.name} %}Manage %brand%'s %type% Connector{% endtrans %}"
+                                        >
                                             {% trans %}Connector{% endtrans %}
                                         </a> |
                                     {% endif %}
-                                    <a class="color-red" href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}" title="{% trans %}Remove{% endtrans %}">
+                                    <a
+                                        class="color-red"
+                                        href="{{ path('integrated_content_brand_remove_channel', {'id': brand.id, 'link': link.id}) }}"
+                                        title="{% trans with {'%brand%': brand.name, '%type%': link.name } %}Remove %type% from %brand%{% endtrans %}"
+                                    >
                                         {% trans %}Remove{% endtrans %}
                                     </a>
                                 </div>
