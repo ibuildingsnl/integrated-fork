@@ -72,7 +72,6 @@ class ChannelLinkController extends AbstractController
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
 
             $this->flusher->flush();
-
             $this->addFlash('success', $link->type->name.' added');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
@@ -101,14 +100,13 @@ class ChannelLinkController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->flusher->flush();
-
-            $this->addFlash('success', $link->type->name.' updated');
-
             if ($link->channel instanceof Channel) {
                 $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
             }
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
+
+            $this->flusher->flush();
+            $this->addFlash('success', $link->type->name.' updated');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
@@ -138,10 +136,9 @@ class ChannelLinkController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $brand->removeChannelLink($link);
-            $this->flusher->flush();
-
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
+            $this->flusher->flush();
             $this->addFlash('success', $link->type->name.' removed');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
