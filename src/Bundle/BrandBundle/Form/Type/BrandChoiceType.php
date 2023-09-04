@@ -11,7 +11,8 @@ class BrandChoiceType extends AbstractType
 {
     public function __construct(
         private readonly BrandRepository $brands,
-    ) {}
+    ) {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

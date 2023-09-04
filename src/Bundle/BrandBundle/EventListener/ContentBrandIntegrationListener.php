@@ -20,7 +20,8 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
         private readonly ChannelRepository $channels,
         private readonly AssetManager $js,
         private readonly AssetManager $css,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {

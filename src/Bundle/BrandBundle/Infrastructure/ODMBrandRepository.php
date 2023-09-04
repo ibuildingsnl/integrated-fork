@@ -12,7 +12,8 @@ class ODMBrandRepository implements BrandRepository
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly ObjectRepository $doctrineRepo,
-    ) {}
+    ) {
+    }
 
     public function all(): array
     {

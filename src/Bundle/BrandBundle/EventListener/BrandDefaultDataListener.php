@@ -17,7 +17,8 @@ class BrandDefaultDataListener implements EventSubscriberInterface
         private readonly ContentTypeInterface $contentType,
         private readonly BrandRepository $brands,
         private readonly ChannelRepository $channels,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {

@@ -10,7 +10,8 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly AuthorizationCheckerInterface $permission
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -30,10 +31,7 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (
-            $this->permission->isGranted('ROLE_ADMIN') ||
-            $this->permission->isGranted('ROLE_CHANNEL_MANAGER')
-        ) {
+        if ($this->permission->isGranted('ROLE_ADMIN') || $this->permission->isGranted('ROLE_CHANNEL_MANAGER')) {
             // Out with the old,
             $settings->removeChild('Channels');
             $settings->removeChild('Connectors');

@@ -27,7 +27,8 @@ class ChannelLinkController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
         private readonly iterable $linkTypes,
-    ) {}
+    ) {
+    }
 
     public function addChannel(Request $request, Brand $brand, string $type): Response
     {

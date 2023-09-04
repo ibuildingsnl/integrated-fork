@@ -10,5 +10,6 @@ class LinkType
         public readonly bool $canBePrimary = true,
         public readonly ?string $connector = null,
         public readonly ?string $publicationSettingsForm = null,
-    ){}
+    ) {
+    }
 }

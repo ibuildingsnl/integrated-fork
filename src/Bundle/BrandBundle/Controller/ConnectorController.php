@@ -27,7 +27,8 @@ class ConnectorController extends AbstractController
         private readonly ConfigManagerInterface $configs,
         private readonly RegistryInterface $adapters,
         private readonly EventDispatcherInterface $dispatcher,
-    ) {}
+    ) {
+    }
 
     public function configure(Request $request, Brand $brand, ChannelLink $link): Response
     {

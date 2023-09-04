@@ -22,7 +22,8 @@ class ChannelLinkType extends AbstractType
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly iterable $linkTypes,
-    ) {}
+    ) {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -55,7 +56,7 @@ class ChannelLinkType extends AbstractType
                 'return_object' => true,
                 'label' => $this->translator->trans('Channel'),
             ]);
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 $link = $event->getData();
                 if ($form->get('choose_channel')?->getData() && $link instanceof ChannelLink) {

@@ -9,7 +9,8 @@ class BrandTitleResolver implements TitleResolverInterface
 {
     public function __construct(
         private readonly BrandRepository $brands,
-    ) {}
+    ) {
+    }
 
     public function getTitle(string $id): string
     {

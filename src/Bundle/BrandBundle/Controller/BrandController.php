@@ -24,7 +24,8 @@ class BrandController extends AbstractController
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
         private readonly iterable $linkTypes,
-    ) {}
+    ) {
+    }
 
     public function index(): Response
     {

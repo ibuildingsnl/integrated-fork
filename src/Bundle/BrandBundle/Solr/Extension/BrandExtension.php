@@ -11,7 +11,8 @@ class BrandExtension implements TypeExtensionInterface
 {
     public function __construct(
         private readonly BrandRepository $brands,
-    ) {}
+    ) {
+    }
 
     public function build(ContainerInterface $container, $data, array $options = []): void
     {

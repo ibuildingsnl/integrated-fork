@@ -11,7 +11,8 @@ class ChannelLink
         public LinkType $type,
         public ?ChannelInterface $channel,
         public bool $default,
-    ){}
+    ) {
+    }
 
     public function getName(): string
     {

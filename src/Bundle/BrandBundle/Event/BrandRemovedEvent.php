@@ -9,5 +9,6 @@ final class BrandRemovedEvent extends Event
 {
     public function __construct(
         public readonly Brand $brand,
-    ) {}
+    ) {
+    }
 }
