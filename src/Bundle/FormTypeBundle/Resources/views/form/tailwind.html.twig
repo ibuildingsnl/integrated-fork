@@ -40,9 +40,9 @@
 
         {% if (style == 'inline' and (attr.placeholder is not defined or attr.placeholder is empty) and label is not same as (false)) or (show_placeholder is not same as (false)) %}
             {% if label is empty %}
-                {% set attr = attr|merge({ 'placeholder': name|humanize }) %}
+                {% set attr = attr|merge({ 'placeholder': name|humanize|trans }) %}
             {% else %}
-                {% set attr = attr|merge({ 'placeholder': label}) %}
+                {% set attr = attr|merge({ 'placeholder': label|trans}) %}
             {% endif %}
         {% endif %}
         {% if static_control is defined and static_control == true %}
@@ -52,7 +52,7 @@
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' form-control')|trim }) %}
             <{% if state == 'title_tinymce' %}textarea class="title_tinymce_input form-control"{% else %}input {% endif %}
             type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}
-            value="{{ value }}" {% endif %}>{% if state == 'title_tinymce' %}{{ value }}</textarea>{% endif %}
+            value="{{ value|trans }}" {% endif %}>{% if state == 'title_tinymce' %}{{ value }}</textarea>{% endif %}
         {%- endif %}
         {% if simple_col is defined %}
             </div>
@@ -132,12 +132,12 @@
                                             <span>
                                                 {{ field.vars.value.title|
                                                 default(field.vars.value.name|
-                                                default(field.vars.value.label|
-                                                default(field.vars.value.block|
-                                                default(field.vars.value.text|
-                                                default(field.vars.value.frequency|
-                                                default(form.vars.default_title|
-                                                default('Item')))))))|raw }}
+                                                    default(field.vars.value.label|
+                                                        default(field.vars.value.block|
+                                                            default(field.vars.value.text|
+                                                                default(field.vars.value.frequency|
+                                                                    default(form.vars.default_title|
+                                                                        default('Item')))))))|raw }}
                                             </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
@@ -198,7 +198,7 @@
             {% set label = name|humanize %}
         {% endif %}
 
-        <textarea {{ block('widget_attributes') }} placeholder="{{ label|raw }}">{{ value }}</textarea>
+        <textarea {{ block('widget_attributes') }} placeholder="{{ label|trans|raw }}">{{ value }}</textarea>
 
         {% if simple_col is defined %}
             </div>
@@ -559,7 +559,7 @@
         {% endif %}
         {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' switch-input' )}) %}
         <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %}
-               value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
         <span class="switch-label" data-on="{% trans %}Yes{% endtrans %}" data-off="{% trans %}No{% endtrans %}"></span>
         <span class="switch-handle"></span>
     {% endapply %}

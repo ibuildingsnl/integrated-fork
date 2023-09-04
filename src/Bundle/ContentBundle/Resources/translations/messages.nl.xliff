@@ -1202,6 +1202,18 @@
                 <source>Copy</source>
                 <target>Kopieer</target>
             </trans-unit>
+            <trans-unit id="305">
+                <source>Message</source>
+                <target>Uw bericht</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>Successfully submitted</source>
+                <target>Succesvol verstuurd</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>Subject</source>
+                <target>Onderwerp</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
