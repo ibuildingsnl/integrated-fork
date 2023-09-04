@@ -68,6 +68,7 @@ class ChannelLinkController extends AbstractController
             $brand->addChannelLink($link);
             $this->channels->getDocumentManager()->persist($link->channel);
 
+            $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
 
@@ -100,6 +101,7 @@ class ChannelLinkController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             if ($link->channel instanceof Channel) {
                 $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
             }
