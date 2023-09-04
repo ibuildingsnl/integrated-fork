@@ -38,8 +38,8 @@ class BrandDefaultDataListener implements EventSubscriberInterface
 
         $brandsForm = $form->get('brands');
 
-        $defaultChannels = array_map(
-            fn(array $channel) => $this->channels->find($channel['id']),
+        $defaultChannels = \array_map(
+            fn (array $channel) => $this->channels->find($channel['id']),
             $this->contentType->getOption('channels')['defaults'] ?? [],
         );
 
@@ -49,18 +49,18 @@ class BrandDefaultDataListener implements EventSubscriberInterface
                 continue;
             }
 
-            $condition = fn(ChannelLink $link) => in_array($link->channel, $defaultChannels) || $link->default;
+            $condition = fn (ChannelLink $link) => in_array($link->channel, $defaultChannels) || $link->default;
             $publish = true;
 
             if ($brand->hasPublished($content)) {
-                $condition = fn(ChannelLink $link) => $content->hasChannel($link->channel);
-            } elseif (count($content->getChannels()) || !$brand->hasAtLeastOneOfChannels(...$defaultChannels)) {
+                $condition = fn (ChannelLink $link) => $content->hasChannel($link->channel);
+            } elseif (\count($content->getChannels()) || !$brand->hasAtLeastOneOfChannels(...$defaultChannels)) {
                 $publish = false;
             }
 
             $brandsData[$brand->getId()] = [
                 'publish' => $publish,
-                'channels' => array_filter($brand->getChannelLinks()->toArray(), $condition),
+                'channels' => \array_filter($brand->getChannelLinks()->toArray(), $condition),
             ];
         }
 

@@ -150,9 +150,6 @@ class Channel implements ChannelInterface
         return $this->name;
     }
 
-    /**
-     * @return Image|null
-     */
     public function getLogo(): ?Image
     {
         return $this->logo;

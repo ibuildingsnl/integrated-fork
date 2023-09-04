@@ -15,7 +15,6 @@ use Integrated\Bundle\ChannelBundle\Model\Config;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
-use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +58,7 @@ class ConnectorController extends AbstractController
         } else {
             $request->getSession()->set(
                 sprintf(ConnectorDeletionRedirectListener::SESSION_PATH, $config->getAdapter()),
-                $this->generateUrl('integrated_content_brand_edit', ['id' => $brand->getId()]),
+                $this->generateUrl('integrated_content_brand_edit', ['id' => $brand->getId()])
             );
         }
 

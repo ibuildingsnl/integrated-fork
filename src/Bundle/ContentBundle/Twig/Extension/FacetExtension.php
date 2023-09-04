@@ -24,11 +24,11 @@ class FacetExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'integrated_facet_show',
-                fn($key) => isset($this->settings[$key]) ? $this->settings[$key]->show : false,
+                fn ($key) => isset($this->settings[$key]) ? $this->settings[$key]->show : false,
             ),
             new TwigFunction(
                 'integrated_facet_title',
-                fn($key, $id) => isset($this->settings[$key]) ? $this->settings[$key]->titleFor($id) : $id,
+                fn ($key, $id) => isset($this->settings[$key]) ? $this->settings[$key]->titleFor($id) : $id,
             ),
         ];
     }

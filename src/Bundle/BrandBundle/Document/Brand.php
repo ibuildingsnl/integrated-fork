@@ -43,6 +43,7 @@ class Brand
         foreach ($this->channelLinks as $link) {
             $types[] = $link->type->name;
         }
+
         return $types;
     }
 
@@ -53,6 +54,7 @@ class Brand
                 return true;
             }
         }
+
         return false;
     }
 
@@ -65,6 +67,7 @@ class Brand
                 }
             }
         }
+
         return false;
     }
 
@@ -76,7 +79,7 @@ class Brand
 
     public function addChannelLink(ChannelLink $link): void
     {
-        if (in_array($link->getName(), $this->getChannelTypeNames())) {
+        if (\in_array($link->getName(), $this->getChannelTypeNames())) {
             throw new \InvalidArgumentException('Duplicate channel type');
         }
         $this->channelLinks[] = $link;
@@ -98,6 +101,7 @@ class Brand
                 return true;
             }
         }
+
         return false;
     }
 }

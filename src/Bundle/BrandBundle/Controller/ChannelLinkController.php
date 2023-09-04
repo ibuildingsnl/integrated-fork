@@ -70,7 +70,7 @@ class ChannelLinkController extends AbstractController
 
             $this->flusher->flush();
 
-            $this->addFlash('success', $link->type->name.' added');
+            $this->addFlash('success', $link->type->name . ' added');
 
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 

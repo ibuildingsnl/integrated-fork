@@ -26,12 +26,12 @@ class BrandChannelChoiceType extends AbstractType
             'choices' => $options['links'],
             'choice_label' => 'type.name',
             'choice_value' => 'channel.id',
-            'choice_attr' => fn(ChannelLink $link) => array_merge(
+            'choice_attr' => fn (ChannelLink $link) => array_merge(
                 [
                     'class' => 'brand-channel-choice',
                     'data-can-be-primary' => $link->type->canBePrimary ? 'yes' : 'no',
                 ],
-                is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
+                \is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
             ),
             'multiple' => true,
             'expanded' => true,

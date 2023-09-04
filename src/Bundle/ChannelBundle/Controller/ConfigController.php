@@ -225,7 +225,6 @@ class ConfigController extends AbstractController
             return $this->index($request);
         }
 
-        dump(__METHOD__, $request);
         return $this->edit($request, $id);
     }
 

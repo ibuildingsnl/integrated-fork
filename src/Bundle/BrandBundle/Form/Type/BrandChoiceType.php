@@ -19,7 +19,7 @@ class BrandChoiceType extends AbstractType
         foreach ($this->brands->all() as $brand) {
             $links = [];
             foreach ($brand->getChannelLinks() as $link) {
-                if (in_array($link->channel, $options['channel_choices'])) {
+                if (\in_array($link->channel, $options['channel_choices'])) {
                     $links[] = $link;
                 }
             }
