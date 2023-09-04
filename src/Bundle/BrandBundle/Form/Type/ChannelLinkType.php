@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChannelLinkType extends AbstractType
 {
-    /** @param LinkType[] $linkTypes */
+    /** @param iterable<LinkType> $linkTypes */
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly iterable $linkTypes,
