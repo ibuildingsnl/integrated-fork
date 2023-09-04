@@ -20,7 +20,7 @@ class ODMBrandRepository implements BrandRepository
         return $this->doctrineRepo->findBy([], ['profile.name' => 'asc']);
     }
 
-    public function withId(string $id): ?Brand
+    public function find(string $id): ?Brand
     {
         return $this->doctrineRepo->find($id);
     }

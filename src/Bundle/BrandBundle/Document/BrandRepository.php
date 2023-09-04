@@ -7,7 +7,7 @@ interface BrandRepository
     /** @return Brand[] */
     public function all(): array;
 
-    public function withId(string $id): ?Brand;
+    public function find(string $id): ?Brand;
 
     public function add(Brand $brand): void;
 

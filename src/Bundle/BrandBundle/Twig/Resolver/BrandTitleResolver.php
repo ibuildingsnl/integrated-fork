@@ -14,6 +14,6 @@ class BrandTitleResolver implements TitleResolverInterface
 
     public function getTitle(string $id): string
     {
-        return $this->brands->withId($id)?->getName() ?: $id;
+        return $this->brands->find($id)?->getName() ?: $id;
     }
 }
