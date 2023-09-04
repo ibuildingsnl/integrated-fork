@@ -144,7 +144,6 @@ class TwitterChannelConfigSubscriber implements EventSubscriberInterface
             ->remove('request_token')
             ->remove('request_token_secret');
 
-        dump('saving', $options, $config);
         $this->manager->persist($config->setOptions($options));
 
         $event->setResponse(new RedirectResponse(
