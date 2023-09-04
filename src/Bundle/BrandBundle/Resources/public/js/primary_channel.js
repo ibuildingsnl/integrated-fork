@@ -23,4 +23,9 @@ if (primaryChannel) {
         input.addEventListener('change', () => showHideMakePrimary(input));
     });
     updatePrimarySelectors();
+    const firstChoice = document.querySelector('.brands input.brand-channel-choice[data-can-be-primary="yes"]:not(:disabled)');
+    if (firstChoice) {
+        primaryChannel.value = firstChoice.value;
+        updatePrimarySelectors();
+    }
 }
