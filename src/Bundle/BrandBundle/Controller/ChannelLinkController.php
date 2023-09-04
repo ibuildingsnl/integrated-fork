@@ -68,11 +68,12 @@ class ChannelLinkController extends AbstractController
             $brand->addChannelLink($link);
             $this->channels->getDocumentManager()->persist($link->channel);
 
+            $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
+            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
+
             $this->flusher->flush();
 
             $this->addFlash('success', $link->type->name.' added');
-
-            $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
@@ -104,10 +105,10 @@ class ChannelLinkController extends AbstractController
 
             $this->addFlash('success', $link->type->name.' updated');
 
-            $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
             if ($link->channel instanceof Channel) {
                 $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
             }
+            $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
