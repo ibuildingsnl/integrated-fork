@@ -74,7 +74,7 @@ class ConnectorController extends AbstractController
         ]);
         $form->add('actions', ActionsType::class, ['buttons' => [
             $new ? 'create' : 'save',
-            'cancel'
+            'cancel',
         ]]);
         $form->remove('channels');
 

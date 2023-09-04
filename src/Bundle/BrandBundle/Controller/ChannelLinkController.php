@@ -70,7 +70,7 @@ class ChannelLinkController extends AbstractController
 
             $this->flusher->flush();
 
-            $this->addFlash('success', $link->type->name . ' added');
+            $this->addFlash('success', $link->type->name.' added');
 
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
@@ -141,7 +141,7 @@ class ChannelLinkController extends AbstractController
 
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
 
-            $this->addFlash('success', $link->type->name . ' removed');
+            $this->addFlash('success', $link->type->name.' removed');
 
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
