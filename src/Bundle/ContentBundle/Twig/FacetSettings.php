@@ -10,7 +10,8 @@ class FacetSettings
         public readonly string $tag,
         public readonly bool $show,
         public readonly TitleResolverInterface $titleResolver,
-    ) {}
+    ) {
+    }
 
     public function titleFor(string $id): string
     {

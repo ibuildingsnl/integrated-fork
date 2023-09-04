@@ -19,7 +19,8 @@ class ConfigureOptionsEvent extends Event
     public function __construct(
         private readonly string $formType,
         private readonly OptionsResolver $resolver,
-    ) {}
+    ) {
+    }
 
     public function getFormType(): string
     {

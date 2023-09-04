@@ -9,7 +9,8 @@ class ContentTypeTitleResolver implements TitleResolverInterface
 {
     public function __construct(
         private readonly ResolverInterface $resolver,
-    ) {}
+    ) {
+    }
 
     public function getTitle(string $id): string
     {

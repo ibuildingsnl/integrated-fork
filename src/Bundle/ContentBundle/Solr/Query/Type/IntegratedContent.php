@@ -28,7 +28,8 @@ class IntegratedContent extends AbstractType
         private readonly SortOptions $sorting,
         private readonly DocumentManager $manager,
         private readonly EventDispatcherInterface $dispatcher,
-    ) {}
+    ) {
+    }
 
     public function build(Query $query, array $options): void
     {

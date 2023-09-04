@@ -9,7 +9,8 @@ class ChannelTitleResolver implements TitleResolverInterface
 {
     public function __construct(
         private readonly ChannelRepository $channels,
-    ) {}
+    ) {
+    }
 
     public function getTitle(string $id): string
     {
