@@ -30,7 +30,7 @@ class QueueExporter implements ExporterInterface
         private readonly int $maxAttempts,
         \Closure $retryDelay = null,
     ) {
-        $this->retryDelay = $retryDelay ?: fn(int $attempt) => 10 + $attempt * 5;
+        $this->retryDelay = $retryDelay ?: fn (int $attempt) => 10 + $attempt * 5;
     }
 
     /**
