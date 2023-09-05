@@ -21,29 +21,16 @@ use Integrated\Common\Queue\QueueMessageInterface;
  */
 class QueueExporter implements ExporterInterface
 {
-    /**
-     * @var QueueInterface
-     */
-    private $queue;
-
-    /**
-     * @var RequestSerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var ExporterInterface
-     */
-    private $exporter;
+    private \Closure $retryDelay;
 
     public function __construct(
-        QueueInterface $queue,
-        RequestSerializerInterface $serializer,
-        ExporterInterface $exporter
+        private readonly QueueInterface $queue,
+        private readonly RequestSerializerInterface $serializer,
+        private readonly ExporterInterface $exporter,
+        private readonly int $maxAttempts,
+        \Closure $retryDelay = null,
     ) {
-        $this->queue = $queue;
-        $this->serializer = $serializer;
-        $this->exporter = $exporter;
+        $this->retryDelay = $retryDelay ?: fn(int $attempt) => 10 + $attempt * 5;
     }
 
     /**
@@ -80,6 +67,15 @@ class QueueExporter implements ExporterInterface
             try {
                 $this->process($message)->delete();
             } catch (\Throwable $e) {
+                if ($message->getAttempts() < $this->maxAttempts) {
+                    // In case of e.g. network error, retry processing in a couple of seconds
+                    $this->queue->push(
+                        $message->getPayload(),
+                        ($this->retryDelay)($message->getAttempts(), $message),
+                        $message->getPriority(),
+                        $message->getAttempts() + 1,
+                    );
+                }
                 $message->delete();
                 throw $e;
             }
