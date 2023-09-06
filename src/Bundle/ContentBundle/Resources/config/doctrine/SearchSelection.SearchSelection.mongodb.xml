@@ -9,11 +9,11 @@
         repository-class="Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelectionRepository">
 
         <id field-name="id" strategy="NONE" />
-        <field field-name="title" type="string" />
+        <field field-name="title" type="string" index="true" />
         <field field-name="filters" type="hash" />
         <field field-name="internalParams" type="hash" />
-        <field field-name="locked" type="boolean" />
-        <field field-name="public" type="boolean" />
+        <field field-name="locked" type="bool" />
+        <field field-name="public" type="bool" />
         <field field-name="userId" type="int" />
 
     </document>

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Solr\Extension;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Workflow\State;
 use Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension;
@@ -21,7 +21,7 @@ use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Security\PermissionInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\WorkflowBundle\Solr\Extension\WorkflowExtension
@@ -31,25 +31,25 @@ use stdClass;
 class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var ObjectRepository | \PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectRepository|MockObject
      */
     private $workflow;
 
     /**
-     * @var ObjectRepository | \PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectRepository|MockObject
      */
     private $definition;
 
     protected function setUp(): void
     {
         $this->resolver = $this->createMock(ResolverInterface::class);
-        $this->workflow = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
-        $this->definition = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $this->workflow = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $this->definition = $this->createMock('Doctrine\Persistence\ObjectRepository');
     }
 
     public function testInterface()
@@ -129,7 +129,7 @@ class WorkflowExtensionTest extends \PHPUnit\Framework\TestCase
 
         /* @var ContainerInterface $container */
 
-        $this->getInstance()->build($container, new stdClass());
+        $this->getInstance()->build($container, new \stdClass());
     }
 
     public function testBuildNoContentType()

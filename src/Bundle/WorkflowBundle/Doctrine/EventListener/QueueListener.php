@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\WorkflowBundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Common\Queue\QueueAwareInterface;
@@ -34,9 +34,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
      */
     private $identities = [];
 
-    /**
-     * @param QueueInterface $queue
-     */
     public function __construct(QueueInterface $queue)
     {
         $this->setQueue($queue);
@@ -69,17 +66,11 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(LifecycleEventArgs $event)
     {
         $this->process($event);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
     public function postUpdate(LifecycleEventArgs $event)
     {
         $this->process($event);
@@ -87,8 +78,6 @@ class QueueListener implements EventSubscriber, QueueAwareInterface
 
     /**
      * Queue a workflow index.
-     *
-     * @param LifecycleEventArgs $event
      */
     protected function process(LifecycleEventArgs $event)
     {

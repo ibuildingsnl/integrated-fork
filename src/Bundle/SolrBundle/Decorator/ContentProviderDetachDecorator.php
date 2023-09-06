@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\SolrBundle\Decorator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\SolrBundle\Iterator\DetachIterator;
 use Integrated\Common\Solr\Task\Provider\ContentProviderInterface;
 
@@ -30,10 +30,6 @@ class ContentProviderDetachDecorator implements ContentProviderInterface
      */
     private $manager;
 
-    /**
-     * @param ContentProviderInterface $provider
-     * @param ObjectManager            $manager
-     */
     public function __construct(ContentProviderInterface $provider, ObjectManager $manager)
     {
         $this->provider = $provider;

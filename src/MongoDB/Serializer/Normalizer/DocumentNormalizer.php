@@ -12,7 +12,6 @@
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Exception;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
@@ -29,9 +28,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     protected $dm = null;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
@@ -52,7 +48,7 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         try {
             $document = $this->getDocumentManager()->getRepository($class)->find($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
 
@@ -65,10 +61,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
     public function normalize($object, $format = null, array $context = [])
     {
         $meta = $this->getDocumentManager()->getClassMetadata(\get_class($object));
-
-        if (!$meta) {
-            return null;
-        }
 
         $keys = [];
 
@@ -103,24 +95,12 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      * Check if the class is a mongodb document class registered by the
      * registered document manager.
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
     protected function supports($class)
     {
-        $meta = $this->getDocumentManager()->getClassMetadata($class);
-
-        if ($meta->isMappedSuperclass || $meta->isEmbeddedDocument) {
-            return false;
-        }
-
-        $identifier = $meta->getIdentifierFieldNames();
-
-        if (empty($identifier)) {
-            return false;
-        }
-
-        return true;
+        return !$this->getDocumentManager()->getMetadataFactory()->isTransient($class);
     }
 }

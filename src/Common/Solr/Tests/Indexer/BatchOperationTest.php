@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Indexer;
 
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Indexer\BatchOperation;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\QueryType\Update\Query\Command\AbstractCommand;
 
 /**
@@ -21,12 +22,12 @@ use Solarium\QueryType\Update\Query\Command\AbstractCommand;
 class BatchOperationTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueMessageInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueMessageInterface|MockObject
      */
     protected $message;
 
     /**
-     * @var AbstractCommand | \PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractCommand|MockObject
      */
     protected $command;
 

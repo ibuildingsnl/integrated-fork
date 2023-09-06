@@ -12,12 +12,11 @@
 namespace Integrated\Common\Channel\Connector\Config\Util;
 
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
-use IteratorIterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class UniqueConfigIterator extends IteratorIterator
+class UniqueConfigIterator extends \IteratorIterator
 {
     /**
      * @var array
@@ -27,7 +26,7 @@ class UniqueConfigIterator extends IteratorIterator
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): ?string
     {
         if ($this->valid()) {
             return $this->current()->getName();
@@ -39,7 +38,7 @@ class UniqueConfigIterator extends IteratorIterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         do {
             parent::next();
@@ -49,7 +48,7 @@ class UniqueConfigIterator extends IteratorIterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         parent::rewind();
 

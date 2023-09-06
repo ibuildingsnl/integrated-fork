@@ -11,43 +11,33 @@
 
 namespace Integrated\Common\Content;
 
-use DateTime;
-
 interface PublishTimeInterface
 {
     /**
      * @var string
      */
-    const DATE_MAX = '9999-12-31 00:00:00'; // @todo find a better way (INTEGRATED-429)
+    public const DATE_MAX = '9999-12-31 00:00:00Z'; // @todo find a better way (INTEGRATED-429)
+
+    public function getStartDate(): ?\DateTime;
 
     /**
-     * @return DateTime|null
-     */
-    public function getStartDate(): ?DateTime;
-
-    /**
-     * @param DateTime $startDate
+     * @param \DateTime $startDate
      *
      * @return $this
      */
-    public function setStartDate(DateTime $startDate = null);
+    public function setStartDate(\DateTime $startDate = null);
+
+    public function getEndDate(): ?\DateTime;
 
     /**
-     * @return DateTime|null
-     */
-    public function getEndDate(): ?DateTime;
-
-    /**
-     * @param DateTime $endDate
+     * @param \DateTime $endDate
      *
      * @return $this
      */
-    public function setEndDate(DateTime $endDate = null);
+    public function setEndDate(\DateTime $endDate = null);
 
     /**
-     * @param DateTime $date
-     *
-     * @return bool
+     * @param \DateTime $date
      */
-    public function isPublished(DateTime $date = null): bool;
+    public function isPublished(\DateTime $date = null): bool;
 }

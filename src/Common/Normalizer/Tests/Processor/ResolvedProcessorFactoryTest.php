@@ -16,7 +16,7 @@ use Integrated\Common\Normalizer\ContainerFactoryInterface;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessor;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorFactory;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorFactoryInterface;
-use ReflectionProperty;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,7 +24,7 @@ use ReflectionProperty;
 class ResolvedProcessorFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerFactoryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerFactoryInterface|MockObject
      */
     private $factory;
 
@@ -40,7 +40,7 @@ class ResolvedProcessorFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testConstructor()
     {
-        $property = new ReflectionProperty(ResolvedProcessorFactory::class, 'factory');
+        $property = new \ReflectionProperty(ResolvedProcessorFactory::class, 'factory');
         $property->setAccessible(true);
 
         self::assertSame($this->factory, $property->getValue($this->getInstance()));

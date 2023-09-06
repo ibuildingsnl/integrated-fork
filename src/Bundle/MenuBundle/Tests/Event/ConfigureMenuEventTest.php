@@ -11,6 +11,8 @@
 namespace Integrated\Bundle\MenuBundle\Tests\Event;
 
 use Integrated\Bundle\MenuBundle\Event\ConfigureMenuEvent;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Test for ConfigureMenuEvent.
@@ -25,12 +27,12 @@ class ConfigureMenuEventTest extends \PHPUnit\Framework\TestCase
     protected $event;
 
     /**
-     * @var \Knp\Menu\FactoryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var \Knp\Menu\FactoryInterface|MockObject
      */
     protected $factory;
 
     /**
-     * @var \Knp\Menu\ItemInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var \Knp\Menu\ItemInterface|MockObject
      */
     protected $menu;
 
@@ -49,7 +51,7 @@ class ConfigureMenuEventTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $this->event);
+        $this->assertInstanceOf(Event::class, $this->event);
     }
 
     /**

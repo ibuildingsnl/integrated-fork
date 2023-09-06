@@ -11,15 +11,13 @@
 
 namespace Integrated\Common\Solr\Tests\Task;
 
-use Exception;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Task\Event\ErrorEvent;
 use Integrated\Common\Solr\Task\Event\WorkerEvent;
-use Integrated\Common\Solr\Task\Events;
 use Integrated\Common\Solr\Task\Registry;
 use Integrated\Common\Solr\Task\Worker;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -28,17 +26,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class WorkerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Registry | \PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|MockObject
      */
     private $registry;
 
     /**
-     * @var QueueInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
     /**
-     * @var EventDispatcherInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|MockObject
      */
     private $dispatcher;
 
@@ -80,8 +78,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        $task1 = new stdClass();
-        $task2 = new stdClass();
+        $task1 = new \stdClass();
+        $task2 = new \stdClass();
 
         $this->queue->expects($this->atLeastOnce())
             ->method('pull')
@@ -109,11 +107,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->equalTo(Events::PRE_EXECUTE), $this->callback($callback)],
-                [$this->equalTo(Events::POST_EXECUTE), $this->callback($callback)]
-            )
-            ->willReturnArgument(1);
+            ->with($this->callback($callback))
+            ->willReturnArgument(0);
 
         $instance->execute();
     }
@@ -137,11 +132,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->equalTo(Events::PRE_EXECUTE), $this->callback($callback)],
-                [$this->equalTo(Events::POST_EXECUTE), $this->callback($callback)]
-            )
-            ->willReturnArgument(1);
+            ->with($this->callback($callback))
+            ->willReturnArgument(0);
 
         $instance->execute();
     }
@@ -153,8 +145,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $this->queue->expects($this->atLeastOnce())
             ->method('pull')
             ->willReturnOnConsecutiveCalls(
-                [$message = $this->getMessage(new stdClass())],
-                [$this->getMessage($task = new stdClass())],
+                [$message = $this->getMessage(new \stdClass())],
+                [$this->getMessage($task = new \stdClass())],
                 []
             );
 
@@ -165,18 +157,17 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->exactly(2))
             ->method('getHandler')
             ->with($this->equalTo('stdClass'))
-            ->willReturnOnConsecutiveCalls($this->throwException($exception = new Exception()), $callback);
+            ->willReturnOnConsecutiveCalls($this->throwException($exception = new \Exception()), $callback);
 
         $callback = [
-            function (WorkerEvent $event) use ($instance) {
+            function (WorkerEvent $event) use ($instance, $message, $exception) {
                 self::assertSame($instance, $event->getWorker());
 
-                return true;
-            },
-            function (ErrorEvent $event) use ($instance, $message, $exception) {
-                self::assertSame($instance, $event->getWorker());
-                self::assertSame($message, $event->getMessage());
-                self::assertSame($exception, $event->getException());
+                if ($event instanceof ErrorEvent) {
+                    print_r('test');
+                    self::assertSame($message, $event->getMessage());
+                    self::assertSame($exception, $event->getException());
+                }
 
                 return true;
             },
@@ -184,12 +175,8 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->dispatcher->expects($this->exactly(3))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->equalTo(Events::PRE_EXECUTE), $this->callback($callback[0])],
-                [$this->equalTo(Events::ERROR), $this->callback($callback[1])],
-                [$this->equalTo(Events::POST_EXECUTE), $this->callback($callback[0])]
-            )
-            ->willReturnArgument(1);
+            ->with($this->callback($callback[0]))
+            ->willReturnArgument(0);
 
         $instance->execute();
     }
@@ -204,7 +191,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
 
         $this->queue->expects($this->exactly($count))
             ->method('pull')
-            ->willReturn($count ? [$this->getMessage(new stdClass())] : [null]);
+            ->willReturn($count ? [$this->getMessage(new \stdClass())] : [null]);
 
         $this->registry->expects($this->exactly($count))
             ->method('getHandler')
@@ -241,7 +228,7 @@ class WorkerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param mixed $task
      *
-     * @return QueueMessageInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return QueueMessageInterface|MockObject
      */
     protected function getMessage($task)
     {

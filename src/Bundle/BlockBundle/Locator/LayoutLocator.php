@@ -29,9 +29,6 @@ class LayoutLocator
      */
     private $layouts;
 
-    /**
-     * @param ThemeManager $themeManager
-     */
     public function __construct(ThemeManager $themeManager)
     {
         $this->themeManager = $themeManager;
@@ -49,15 +46,17 @@ class LayoutLocator
 
             foreach ($this->themeManager->getThemes() as $id => $theme) {
                 foreach ($theme->getPaths() as $path) {
-                    $path = $this->themeManager->locateResource($path).'/blocks/'.$type;
+                    foreach ($this->themeManager->locateResources($path) as $path) {
+                        $path = $path.'/blocks/'.$type;
 
-                    if (is_dir($path)) {
-                        $finder = new Finder();
-                        $finder->files()->in($path)->name('*.html.twig');
+                        if (is_dir($path)) {
+                            $finder = new Finder();
+                            $finder->files()->in($path)->name('*.html.twig');
 
-                        /** @var \Symfony\Component\Finder\SplFileInfo $file */
-                        foreach ($finder as $file) {
-                            $this->layouts[$type][] = $file->getRelativePathname();
+                            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+                            foreach ($finder as $file) {
+                                $this->layouts[$type][] = $file->getRelativePathname();
+                            }
                         }
                     }
                 }

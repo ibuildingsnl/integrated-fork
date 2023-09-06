@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ChannelBundle\Form\ChoiceList;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
@@ -40,9 +40,6 @@ class ChannelChoiceLoader implements ChoiceLoaderInterface
 
     /**
      * Constructor.
-     *
-     * @param ObjectRepository           $repository
-     * @param ChoiceListFactoryInterface $factory
      */
     public function __construct(ObjectRepository $repository, ChoiceListFactoryInterface $factory)
     {

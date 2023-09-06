@@ -14,90 +14,56 @@ namespace Integrated\Bundle\ContentBundle\Document\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\PublishTitleTrait;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Content block document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Content block")
  */
+#[Type\Document('Content block')]
 class ContentBlock extends Block
 {
     use PublishTitleTrait;
 
     /**
      * @var SearchSelection
-     * @Type\Field(
-     *      type="Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionChoiceType"
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SearchSelectionChoiceType')]
     protected $searchSelection;
 
     /**
      * @var int
-     * @Assert\Length(min=0)
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
-     *      options={
-     *          "attr"={
-     *              "min"=0
-     *          }
-     *      }
-     * )
      */
+    #[Assert\Length(min: 0)]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['attr' => ['min' => 0]])]
     protected $itemsPerPage = 10;
 
     /**
      * @var int
-     * @Assert\Length(min=0)
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\IntegerType",
-     *      options={
-     *          "required"=false,
-     *          "attr"={
-     *              "min"=0,
-     *          }
-     *      }
-     * )
      */
+    #[Assert\Length(min: 0)]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType', options: ['required' => false, 'attr' => ['min' => 0]])]
     protected $maxItems;
 
     /**
      * @var string
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\TextType",
-     *      options={
-     *          "required"=false
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\TextType', options: ['required' => false])]
     protected $readMoreUrl;
 
     /**
      * @var array
-     * @Type\Field(
-     *      type="Braincrafted\Bundle\BootstrapBundle\Form\Type\BootstrapCollectionType",
-     *      options={
-     *          "allow_add"=true,
-     *          "allow_delete"=true,
-     *          "required"=false,
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType', options: ['allow_add' => true, 'allow_delete' => true, 'required' => false])]
     protected $facetFields = [];
 
     /**
      * @var string
-     * @Assert\NotBlank
-     * @Type\Field(
-     *       options={
-     *          "attr"={"class"="main-title"}
-     *       }
-     * )
      */
+    #[Assert\NotBlank]
+    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
@@ -189,8 +155,6 @@ class ContentBlock extends Block
     }
 
     /**
-     * @param array $facetFields
-     *
      * @return $this
      */
     public function setFacetFields(array $facetFields = [])

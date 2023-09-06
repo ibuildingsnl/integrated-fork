@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Converter;
 
-use ArrayIterator;
 use Integrated\Common\Converter\Exception\UnexpectedTypeException;
 
 /**
@@ -105,7 +104,7 @@ class Container implements ContainerInterface
      */
     protected static function validateAndReturn($value)
     {
-        if (is_scalar($value)) {
+        if (\is_scalar($value)) {
             return $value;
         }
 
@@ -115,7 +114,7 @@ class Container implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -123,8 +122,8 @@ class Container implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 }

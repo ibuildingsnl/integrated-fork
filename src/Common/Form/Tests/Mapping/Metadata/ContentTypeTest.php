@@ -13,13 +13,14 @@ namespace Integrated\Common\Form\Tests\Mapping\Metadata;
 
 use Integrated\Common\Form\Mapping\Metadata\Document;
 use Integrated\Common\Form\Mapping\Metadata\Field;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
 class ContentTypeTest extends \PHPUnit\Framework\TestCase
 {
-    const CONTENT_TYPE_CLASS = 'class';
+    public const CONTENT_TYPE_CLASS = 'class';
 
     /**
      * @var Document
@@ -56,7 +57,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testFields()
     {
-        /** @var Field | \PHPUnit_Framework_MockObject_MockObject $field1 */
+        /** @var Field|MockObject $field1 */
         $field1 = $this->getMockBuilder(Field::class)->disableOriginalConstructor()->getMock();
 
         $field1
@@ -65,7 +66,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn('field1')
         ;
 
-        /** @var Field | \PHPUnit_Framework_MockObject_MockObject $field2 */
+        /** @var Field|MockObject $field2 */
         $field2 = $this->getMockBuilder(Field::class)->disableOriginalConstructor()->getMock();
 
         // Set fields

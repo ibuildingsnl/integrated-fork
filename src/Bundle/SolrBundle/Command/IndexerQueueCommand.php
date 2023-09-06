@@ -11,16 +11,12 @@
 
 namespace Integrated\Bundle\SolrBundle\Command;
 
-use DateTime;
-use DateTimeZone;
-use Doctrine\ODM\MongoDB\Cursor;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Solr\Indexer\Job;
-use InvalidArgumentException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,13 +24,39 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class IndexerQueueCommand extends ContainerAwareCommand
+class IndexerQueueCommand extends Command
 {
+    /**
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
+     * @var QueueInterface
+     */
+    private $queue;
+
+    /**
+     * @var ResolverInterface
+     */
+    private $resolver;
+
+    /**
+     * IndexerQueueCommand constructor.
+     */
+    public function __construct(DocumentManager $documentManager, QueueInterface $queue, ResolverInterface $resolver)
+    {
+        parent::__construct();
+
+        $this->documentManager = $documentManager;
+        $this->queue = $queue;
+        $this->resolver = $resolver;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -73,9 +95,9 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //  validate the content types unless validation is ignored
 
@@ -83,7 +105,7 @@ The <info>%command.name%</info> command starts a index of the site.
             $code = $this->executeValidation($input, $output);
 
             if ($code) {
-                return $code;
+                return (int) $code;
             }
         }
 
@@ -98,7 +120,7 @@ The <info>%command.name%</info> command starts a index of the site.
         }
 
         if (!$input->getArgument('id') && !$input->getOption('full')) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'You need to give one or more content types or choose the --full or --delete option'
             );
         }
@@ -109,19 +131,16 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * validate the ids in de input.
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function executeValidation(InputInterface $input, OutputInterface $output)
     {
         $types = [];
 
-        foreach ($this->getResolver()->getTypes() as $type) {
-            $types[$type->getType()] = $type->getType();
+        foreach ($this->resolver->getTypes() as $type) {
+            $types[$type->getId()] = $type->getId();
         }
 
         $invalid = [];
@@ -136,7 +155,7 @@ The <info>%command.name%</info> command starts a index of the site.
             $text = sprintf('The content types "%s" do not exists', implode(', ', $invalid));
 
             if ($input->getOption('no-interaction')) {
-                throw new InvalidArgumentException($text);
+                throw new \InvalidArgumentException($text);
             }
 
             // ask the user if he/she want to continue or not.
@@ -158,9 +177,6 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * queue a delete on the solr index.
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function executeDelete(InputInterface $input, OutputInterface $output)
@@ -174,31 +190,32 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * queue the indexing of content in to solr.
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function executeIndex(InputInterface $input, OutputInterface $output)
     {
         // Don't hydrate for performance reasons
-        $builder = $this->getDocumentManager()->createQueryBuilder(Content::class);
-        $builder->select('id', 'contentType', 'class')->hydrate(false);
+        $builder = $this->documentManager->createQueryBuilder(Content::class);
+        $builder->select('id', 'contentType', 'class')
+            ->hydrate(false)
+            ->immortal(true)
+            ->setRewindable(false);
+
+        if (!$input->getOption('full')) {
+            $builder->field('contentType')->in($input->getArgument('id'));
+        }
+
+        $count = $builder->count()->getQuery()->execute();
+        $result = $builder->find()->getQuery()->execute();
 
         if ($input->getOption('full')) {
-            $result = $builder->getQuery()->execute()->immortal();
-
             // The entire site is going to be reindex so everything that is now in the queue
             // will be redone so just clear it so content is not double indexed.
 
-            $this->getQueue()->clear();
-        } else {
-            $builder->field('contentType')->in($input->getArgument('id'));
-
-            $result = $builder->getQuery()->execute()->immortal();
+            $this->queue->clear();
         }
 
-        if ($count = $result->count()) {
+        if ($count) {
             $progress = new ProgressBar($output, $count);
 
             $progress->setRedrawFrequency(min(max(floor($count / 250), 1), 100));
@@ -208,7 +225,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
             // get the current time as it will be required at the end for the solr clean up.
 
-            $date = new DateTime();
+            $date = new \DateTime();
 
             $this->doIndex($result, $progress);
             $this->doIndexCleanup($input->getArgument('id'), $date);
@@ -225,26 +242,20 @@ The <info>%command.name%</info> command starts a index of the site.
             $this->doIndexCommit();
         }
 
-        $this->getDocumentManager()->clear();
+        $this->documentManager->clear();
 
         return 0;
     }
 
     /**
      * Add all the documents in the cursor to the solr queue.
-     *
-     * @param Cursor      $cursor
-     * @param ProgressBar $progress
      */
-    protected function doIndex(Cursor $cursor, ProgressBar $progress)
+    protected function doIndex(object $cursor, ProgressBar $progress)
     {
-        $queue = $this->getQueue();
-
         // the document manager need to be cleared from time to time so this counter keeps
         // track of that.
 
         $count = 0;
-        $manager = $this->getDocumentManager();
 
         foreach ($cursor as $document) {
             $progress->advance();
@@ -259,10 +270,10 @@ The <info>%command.name%</info> command starts a index of the site.
             $job->setOption('document.class', $document['class']);
             $job->setOption('document.format', 'json');
 
-            $queue->push($job);
+            $this->queue->push($job);
 
             if (($count++ % 1000) == 0) {
-                $manager->clear();
+                $this->documentManager->clear();
             }
         }
     }
@@ -270,10 +281,9 @@ The <info>%command.name%</info> command starts a index of the site.
     /**
      * delete all the types or everything if none is given.
      *
-     * @param array    $types
-     * @param DateTime $date
+     * @param \DateTime $date
      */
-    protected function doIndexCleanup(array $types, DateTime $date = null)
+    protected function doIndexCleanup(array $types, \DateTime $date = null)
     {
         $query = [];
 
@@ -285,7 +295,7 @@ The <info>%command.name%</info> command starts a index of the site.
 
         if ($date) {
             $date = clone $date;
-            $date->setTimezone(new DateTimeZone('UTC'));
+            $date->setTimezone(new \DateTimeZone('UTC'));
 
             $query[] = '-_time_:['.$date->format('Y-m-d\TG:i:s\Z').' TO *]';
         }
@@ -296,7 +306,7 @@ The <info>%command.name%</info> command starts a index of the site.
         $job = new Job('DELETE');
         $job->setOption('query', implode(' ', $query));
 
-        $this->getQueue()->push($job, 1);
+        $this->queue->push($job, 1);
     }
 
     /**
@@ -304,9 +314,7 @@ The <info>%command.name%</info> command starts a index of the site.
      */
     protected function doIndexCommit()
     {
-        $queue = $this->getQueue();
-
-        $queue->push(new Job('COMMIT', ['softcommit' => 'true']), 2);
+        $this->queue->push(new Job('COMMIT', ['softcommit' => 'true']), 2);
     }
 
     /**
@@ -315,37 +323,5 @@ The <info>%command.name%</info> command starts a index of the site.
     protected function getQuestion()
     {
         return $this->getHelper('question');
-    }
-
-    /**
-     * @return DocumentManager
-     */
-    protected function getDocumentManager()
-    {
-        return $this->getContainer()->get('doctrine_mongodb')->getManager();
-    }
-
-    /**
-     * @return SerializerInterface
-     */
-    protected function getSerializer()
-    {
-        return $this->getContainer()->get('integrated_solr.indexer.serializer');
-    }
-
-    /**
-     * @return QueueInterface
-     */
-    protected function getQueue()
-    {
-        return $this->getContainer()->get('integrated_queue.solr_indexer');
-    }
-
-    /**
-     * @return ResolverInterface
-     */
-    protected function getResolver()
-    {
-        return $this->getContainer()->get('integrated_content.resolver');
     }
 }

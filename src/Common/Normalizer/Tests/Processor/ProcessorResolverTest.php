@@ -20,6 +20,7 @@ use Integrated\Common\Normalizer\Processor\ResolverInterface;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestChild;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestClass;
 use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -27,12 +28,12 @@ use Integrated\Common\Normalizer\Tests\Fixtures\TestParent;
 class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|MockObject
      */
     private $registry;
 
     /**
-     * @var ResolvedProcessorFactoryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolvedProcessorFactoryInterface|MockObject
      */
     private $factory;
 
@@ -61,13 +62,22 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(2))
             ->method('hasProcessors')
-            ->withConsecutive([TestParent::class], [TestChild::class])
+            ->with($this->callback(function ($value) {
+                $this->assertContainsEquals($value, [
+                    TestParent::class,
+                    TestChild::class,
+                ]);
+
+                return true;
+            }))
             ->willReturn(true);
 
         $this->registry->expects($this->exactly(2))
             ->method('getProcessors')
-            ->withConsecutive([TestParent::class], [TestChild::class])
-            ->willReturnOnConsecutiveCalls([$processors[0], $processors[1]], [$processors[2], $processors[3]]);
+            ->willReturnMap([
+                [TestParent::class, [$processors[0], $processors[1]]],
+                [TestChild::class, [$processors[2], $processors[3]]],
+            ]);
 
         $this->factory->expects($this->once())
             ->method('createProcessor')
@@ -134,7 +144,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ProcessorInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ProcessorInterface|MockObject
      */
     protected function getProcessor()
     {
@@ -142,7 +152,7 @@ class ProcessorResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolvedProcessorFactoryTest | \PHPUnit_Framework_MockObject_MockObject
+     * @return ResolvedProcessorFactoryTest|MockObject
      */
     protected function getResolvedProcessor()
     {

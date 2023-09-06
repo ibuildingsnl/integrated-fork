@@ -31,7 +31,7 @@ class BuilderEvent extends FormEvent
     private $options;
 
     /**
-     * @var null | string
+     * @var string|null
      */
     private $field = null;
 
@@ -60,9 +60,6 @@ class BuilderEvent extends FormEvent
         return $this->builder;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options)
     {
         $this->options = $options;

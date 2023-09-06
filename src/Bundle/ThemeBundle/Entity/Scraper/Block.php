@@ -13,10 +13,10 @@ namespace Integrated\Bundle\ThemeBundle\Entity\Scraper;
 
 class Block
 {
-    const MODE_IGNORE = 'ignore';
-    const MODE_REPLACE = 'replace';
-    const MODE_APPEND = 'append';
-    const MODE_REPLACE_INNER = 'replace.inner';
+    public const MODE_IGNORE = 'ignore';
+    public const MODE_REPLACE = 'replace';
+    public const MODE_APPEND = 'append';
+    public const MODE_REPLACE_INNER = 'replace.inner';
 
     /**
      * @var int
@@ -48,41 +48,26 @@ class Block
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTime $createdAt
-     */
     public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     */
     public function setName(?string $name): void
     {
         $this->name = $name;
@@ -96,17 +81,11 @@ class Block
         return $this->mode;
     }
 
-    /**
-     * @param string $mode
-     */
     public function setMode(string $mode): void
     {
         $this->mode = $mode;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSelector(): ?string
     {
         return $this->selector;

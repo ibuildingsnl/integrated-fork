@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type\ContentType;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\BootstrapCollectionType;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\ContentType\FieldsTransformer;
+use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
 use Integrated\Common\Form\Mapping\MetadataInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

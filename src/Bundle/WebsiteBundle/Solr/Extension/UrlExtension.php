@@ -27,9 +27,6 @@ class UrlExtension implements TypeExtensionInterface
      */
     protected $urlResolver;
 
-    /**
-     * @param UrlResolver $urlResolver
-     */
     public function __construct(UrlResolver $urlResolver)
     {
         $this->urlResolver = $urlResolver;
@@ -47,7 +44,7 @@ class UrlExtension implements TypeExtensionInterface
         foreach ($data->getChannels() as $channel) {
             $url = $this->urlResolver->generateUrl($data, $channel->getId());
 
-            //remove app_*.php
+            // remove app_*.php
             $url = preg_replace('/\/app_(.+?)\.php/', '', $url);
 
             $container->set(sprintf('url_%s', $channel->getId()), $url);

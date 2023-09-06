@@ -10,27 +10,18 @@
 
 namespace Integrated\Bundle\UserBundle\Service;
 
-use Integrated\Bundle\UserBundle\Doctrine\UserManager;
-use Integrated\Bundle\UserBundle\Model\ScopeInterface;
-use Symfony\Bridge\Twig\TwigEngine;
-use Symfony\Component\Translation\TranslatorInterface;
+use Integrated\Bundle\UserBundle\Model\User;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Mailer
 {
     /**
-     * @var UserManager
-     */
-    private $userManager;
-
-    /**
-     * @var \Swift_Mailer
+     * @var MailerInterface
      */
     private $mailer;
-
-    /**
-     * @var TwigEngine
-     */
-    private $templating;
 
     /**
      * @var TranslatorInterface
@@ -52,22 +43,9 @@ class Mailer
      */
     private $name;
 
-    /**
-     * Password constructor.
-     *
-     * @param UserManager         $userManager
-     * @param \Swift_Mailer       $mailer
-     * @param TwigEngine          $templating
-     * @param TranslatorInterface $translator
-     * @param KeyGenerator        $keyGenerator
-     * @param                     $from
-     * @param                     $name
-     */
-    public function __construct(UserManager $userManager, \Swift_Mailer $mailer, TwigEngine $templating, TranslatorInterface $translator, KeyGenerator $keyGenerator, $from, $name)
+    public function __construct(MailerInterface $mailer, TranslatorInterface $translator, KeyGenerator $keyGenerator, ?string $from, ?string $name)
     {
-        $this->userManager = $userManager;
         $this->mailer = $mailer;
-        $this->templating = $templating;
         $this->translator = $translator;
         $this->keyGenerator = $keyGenerator;
         $this->from = $from;
@@ -75,42 +53,50 @@ class Mailer
     }
 
     /**
-     * @param string              $email
-     * @param ScopeInterface|null $scope
-     *
-     * @return bool
-     *
-     * @throws \Twig\Error\Error
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    public function sendPasswordResetMail(string $email, ScopeInterface $scope = null): bool
+    public function sendPasswordResetMail(User $user, bool $website = false): void
     {
+        $timestamp = time();
+        $key = $this->keyGenerator->generateKey($timestamp, $user);
+
         $data = [
             'subject' => '[Integrated] '.$this->translator->trans('Password reset'),
+            'user' => $user,
+            'timestamp' => $timestamp,
+            'key' => $key,
+            'website' => $website,
         ];
-        $template = 'IntegratedUserBundle::mail/password.reset.notfound.html.twig';
 
-        if ($user = $this->userManager->findByUsernameAndScope($email, $scope)) {
-            if ($user->isEnabled()) {
-                $timestamp = time();
-                $key = $this->keyGenerator->generateKey($timestamp, $user);
-                $template = 'IntegratedUserBundle::mail/password.reset.html.twig';
+        $message = (new TemplatedEmail())
+            ->from(new Address($this->from, $this->name))
+            ->to($user->getUserIdentifier())
+            ->htmlTemplate('@IntegratedUser/mail/password.reset.html.twig')
+            ->subject($data['subject'])
+            ->context($data);
 
-                $data['user'] = $user;
-                $data['timestamp'] = $timestamp;
-                $data['key'] = $key;
-            }
-        }
-
-        $message = (new \Swift_Message())
-            ->setSubject($data['subject'])
-            ->setFrom($this->from, $this->name)
-            ->setTo($email)
-            ->setBody(
-                $this->templating->render($template, $data),
-                'text/html'
-            );
         $this->mailer->send($message);
+    }
 
-        return true;
+    public function sendActivateMail(User $user)
+    {
+        $timestamp = time();
+        $key = $this->keyGenerator->generateKey($timestamp, $user);
+
+        $data = [
+            'subject' => '[Integrated] '.$this->translator->trans('Registration'),
+            'user' => $user,
+            'timestamp' => $timestamp,
+            'key' => $key,
+        ];
+
+        $message = (new TemplatedEmail())
+            ->from(new Address($this->from, $this->name))
+            ->to($user->getUserIdentifier())
+            ->htmlTemplate('@IntegratedUser/mail/activate.html.twig')
+            ->subject($data['subject'])
+            ->context($data);
+
+        $this->mailer->send($message);
     }
 }

@@ -23,7 +23,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
  */
 class CleanRelationsListener implements EventSubscriber
 {
-    const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
+    public const RELATION_DOCUMENT = 'Integrated\Bundle\ContentBundle\Document\Relation\Relation';
 
     /**
      * {@inheritdoc}
@@ -35,9 +35,6 @@ class CleanRelationsListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         // Get document
@@ -52,8 +49,7 @@ class CleanRelationsListener implements EventSubscriber
             $queryBuilder = $documentManager->createQueryBuilder(self::RELATION_DOCUMENT);
 
             $queryBuilder
-                ->update()
-                ->multiple(true)
+                ->updateMany()
 
                 ->addOr($queryBuilder->expr()->field('sources.$id')->equals($document->getId()))
                 ->addOr($queryBuilder->expr()->field('targets.$id')->equals($document->getId()))

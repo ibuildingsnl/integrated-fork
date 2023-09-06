@@ -15,7 +15,6 @@ use Doctrine\ORM\EntityRepository;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
-use InvalidArgumentException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -36,7 +35,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
     public function persist(ConfigInterface $object, $flush = true)
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
             );
         }
@@ -44,7 +43,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         $this->_em->persist($object);
 
         if ($flush) {
-            $this->_em->flush($object);
+            $this->_em->flush();
         }
     }
 
@@ -54,7 +53,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
     public function remove(ConfigInterface $object, $flush = true)
     {
         if (!$this->_class->getReflectionClass()->isInstance($object)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 sprintf('The object (%s) is not a instance of %s', \get_class($object), $this->getClassName())
             );
         }
@@ -62,7 +61,7 @@ class ConfigRepository extends EntityRepository implements ConfigManagerInterfac
         $this->_em->remove($object);
 
         if ($flush) {
-            $this->_em->flush($object);
+            $this->_em->flush();
         }
     }
 

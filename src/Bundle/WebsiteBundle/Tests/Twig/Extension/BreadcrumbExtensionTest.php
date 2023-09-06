@@ -14,6 +14,7 @@ use Integrated\Bundle\MenuBundle\Provider\BreadcrumbMenuProvider;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbResolver;
 use Integrated\Bundle\WebsiteBundle\Twig\Extension\BreadcrumbExtension;
 use Knp\Menu\Twig\Helper;
+use PHPUnit\Framework\MockObject\MockObject;
 use Twig\TwigFunction;
 
 /**
@@ -21,25 +22,25 @@ use Twig\TwigFunction;
  */
 class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    const TEMPLATE = 'default';
+    public const TEMPLATE = 'default';
 
     /**
-     * @var Helper | \PHPUnit_Framework_MockObject_MockObject
+     * @var Helper|MockObject
      */
     protected $menuTwigHelper;
 
     /**
-     * @var BreadcrumbMenuProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbMenuProvider|MockObject
      */
     protected $breadcrumbMenuProvider;
 
     /**
-     * @var BreadcrumbResolver | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbResolver|MockObject
      */
     protected $breadcrumbResolver;
 
     /**
-     * @var BreadcrumbExtension | \PHPUnit_Framework_MockObject_MockObject
+     * @var BreadcrumbExtension|MockObject
      */
     protected $breadcrumbExtension;
 
@@ -66,7 +67,7 @@ class BreadcrumbExtensionTest extends \PHPUnit\Framework\TestCase
         $this->breadcrumbMenuProvider
             ->expects($this->once())
             ->method('get')
-            ->willReturn([$menu]);
+            ->willReturn($menu);
 
         $this->assertEquals('', $this->breadcrumbExtension->renderBreadcrumb());
     }

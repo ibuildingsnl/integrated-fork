@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\ContainerAwareQueueListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,10 +20,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContainerAwareQueueListenerTest extends QueueListenerTest
 {
-    const SERVICE_NAME = 'the.queue.service.name';
+    public const SERVICE_NAME = 'the.queue.service.name';
 
     /**
-     * @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|MockObject
      */
     protected $container;
 

@@ -13,21 +13,17 @@ namespace Integrated\Bundle\ContentBundle\Block;
 
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
-use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
+use Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock;
 use Integrated\Common\Block\BlockInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Content block handler.
- *
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- */
 class ContentBlockHandler extends BlockHandler
 {
     /**
-     * @var SolariumProvider
+     * @var IntegratedContentBlock
      */
     private $provider;
 
@@ -36,11 +32,7 @@ class ContentBlockHandler extends BlockHandler
      */
     private $requestStack;
 
-    /**
-     * @param SolariumProvider $provider
-     * @param RequestStack     $requestStack
-     */
-    public function __construct(SolariumProvider $provider, RequestStack $requestStack)
+    public function __construct(IntegratedContentBlock $provider, RequestStack $requestStack)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
@@ -71,19 +63,13 @@ class ContentBlockHandler extends BlockHandler
             'block' => $block,
             'pagination' => $pagination,
             'document' => $this->getDocument(),
+            'options' => $options,
         ]);
     }
 
-    /**
-     * @param ContentBlock $block
-     * @param Request      $request
-     * @param array        $options
-     *
-     * @return \Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination
-     */
-    public function getPagination(ContentBlock $block, Request $request, array $options = [])
+    public function getPagination(ContentBlock $block, Request $request, array $options = []): PaginationInterface
     {
-        return $this->provider->execute($block, $request->duplicate(), $options); // don't change original request
+        return $this->provider->get($block, $request->duplicate(), $options);
     }
 
     /**
@@ -94,6 +80,7 @@ class ContentBlockHandler extends BlockHandler
         $resolver->setDefaults([
             'filters' => [],   // add extra filters (overwrites search selection)
             'exclude' => true, // exclude already shown items
+            'gridLevel' => 0,
         ]);
 
         $resolver->setAllowedTypes('filters', 'array');

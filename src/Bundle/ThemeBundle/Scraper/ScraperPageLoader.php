@@ -16,7 +16,7 @@ use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Component\Cache\Simple\ApcuCache;
+use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
@@ -39,7 +39,7 @@ class ScraperPageLoader implements LoaderInterface
     private $entityManager;
 
     /**
-     * @var ApcuAdapter
+     * @var CacheInterface
      */
     private $cache;
 
@@ -60,25 +60,20 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * ScraperPageLoader constructor.
-     *
-     * @param EntityManagerInterface  $entityManager
-     * @param ChannelContextInterface $channelContext
      */
     public function __construct(EntityManagerInterface $entityManager, ChannelContextInterface $channelContext)
     {
         $this->cachekeyPagelist .= '.'.md5(__DIR__);
         $this->cachekeyLastupdate .= '.'.md5(__DIR__);
-        $this->cache = new ApcuCache('integrated.theme');
+        $this->cache = new ApcuAdapter('integrated.theme');
         $this->entityManager = $entityManager;
         $this->channelContext = $channelContext;
-        $this->pageList = $this->cache->get($this->cachekeyPagelist);
-        $this->lastUpdate = $this->cache->get($this->cachekeyLastupdate);
+        $this->pageList = $this->cache->getItem($this->cachekeyPagelist)->get();
+        $this->lastUpdate = $this->cache->getItem($this->cachekeyLastupdate)->get();
     }
 
     /**
      * @param string $name
-     *
-     * @return Source
      *
      * @throws LoaderError
      */
@@ -97,8 +92,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * @param string $name
-     *
-     * @return bool
      *
      * @throws InvalidArgumentException
      */
@@ -119,8 +112,6 @@ class ScraperPageLoader implements LoaderInterface
 
     /**
      * @param string $name
-     *
-     * @return string
      */
     public function getCacheKey($name): string
     {
@@ -134,8 +125,6 @@ class ScraperPageLoader implements LoaderInterface
     /**
      * @param string $name
      * @param int    $time
-     *
-     * @return bool
      *
      * @throws LoaderError
      */
@@ -153,8 +142,6 @@ class ScraperPageLoader implements LoaderInterface
     }
 
     /**
-     * @param bool $force
-     *
      * @throws InvalidArgumentException
      */
     public function pageListCacheWarmup(bool $force = false): void
@@ -172,7 +159,7 @@ class ScraperPageLoader implements LoaderInterface
 
         $this->lastUpdate = time();
 
-        $this->cache->set($this->cachekeyPagelist, $this->pageList);
-        $this->cache->set($this->cachekeyLastupdate, $this->lastUpdate);
+        $this->cache->save($this->cache->getItem($this->cachekeyPagelist)->set($this->pageList));
+        $this->cache->save($this->cache->getItem($this->cachekeyLastupdate)->set($this->lastUpdate));
     }
 }

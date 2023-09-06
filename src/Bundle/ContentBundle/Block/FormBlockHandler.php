@@ -11,27 +11,29 @@
 
 namespace Integrated\Bundle\ContentBundle\Block;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
+use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrue as RecaptchaTrue;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\FormBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Bundle\ContentBundle\Event\FormBlockEvent;
 use Integrated\Bundle\ContentBundle\Mailer\FormMailer;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Form\ContentFormType;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Vihuvac\Bundle\RecaptchaBundle\Form\Type\VihuvacRecaptchaType;
-use Vihuvac\Bundle\RecaptchaBundle\Validator\Constraints\IsTrue;
 
 /**
  * Form block handler.
@@ -66,25 +68,17 @@ class FormBlockHandler extends BlockHandler
     protected $channelContext;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
-    /**
-     * @param FormFactory             $formFactory
-     * @param DocumentManager         $documentManager
-     * @param RequestStack            $requestStack
-     * @param FormMailer              $formMailer
-     * @param ChannelContextInterface $channelContext
-     * @param EventDispatcher         $eventDispatcher
-     */
     public function __construct(
         FormFactory $formFactory,
         DocumentManager $documentManager,
         RequestStack $requestStack,
         FormMailer $formMailer,
         ChannelContextInterface $channelContext,
-        EventDispatcher $eventDispatcher
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->formFactory = $formFactory;
         $this->documentManager = $documentManager;
@@ -113,53 +107,52 @@ class FormBlockHandler extends BlockHandler
 
         $content = $contentType->create();
 
-        $this->eventDispatcher->dispatch(FormBlockEvent::PRE_LOAD, new FormBlockEvent($content, $block));
+        $this->eventDispatcher->dispatch(new FormBlockEvent($content, $block), FormBlockEvent::PRE_LOAD);
 
         $form = $this->createForm($content, ['method' => 'post', 'content_type' => $contentType], $block);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('post')) {
-            $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->linkActiveDocument($block, $content);
 
-            if ($form->isValid()) {
-                $this->linkActiveDocument($block, $content);
+            if ($channel = $this->channelContext->getChannel()) {
+                $content->addChannel($channel);
+            }
 
-                if ($channel = $this->channelContext->getChannel()) {
-                    $content->addChannel($channel);
-                }
+            $this->eventDispatcher->dispatch(new FormBlockEvent($content, $block), FormBlockEvent::PRE_FLUSH);
 
-                $this->eventDispatcher->dispatch(FormBlockEvent::PRE_FLUSH, new FormBlockEvent($content, $block));
+            $this->documentManager->persist($content);
+            $this->documentManager->flush();
 
-                $this->documentManager->persist($content);
-                $this->documentManager->flush();
+            $this->eventDispatcher->dispatch(new FormBlockEvent($content, $block), FormBlockEvent::POST_FLUSH);
 
-                $this->eventDispatcher->dispatch(FormBlockEvent::POST_FLUSH, new FormBlockEvent($content, $block));
+            $data = $request->request->get($form->getName());
 
-                $data = $request->request->get($form->getName());
-
-                // remove irrelevant fields
+            // remove irrelevant fields
+            if ($data instanceof InputBag) {
                 unset($data['actions']);
                 unset($data['_token']);
+            }
 
-                $this->formMailer->send($data, $block->getEmailAddresses(), $block->getTitle());
+            $this->formMailer->send($data, $block->getEmailAddresses(), $block->getTitle());
 
-                if ($block->getReturnUrl()) {
-                    return new RedirectResponse($block->getReturnUrl());
-                }
+            if ($block->getReturnUrl()) {
+                return new RedirectResponse($block->getReturnUrl());
             }
         }
 
         return $this->render([
             'block' => $block,
             'form' => $form->createView(),
+            'options' => $options,
         ]);
     }
 
     /**
      * @param mixed     $data
-     * @param array     $options
      * @param FormBlock $block
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createForm($data = null, array $options = [], FormBlock $block = null)
     {
@@ -191,11 +184,11 @@ class FormBlockHandler extends BlockHandler
         }
 
         if (null !== $block && $block->isRecaptcha()) {
-            $form->add('recaptcha', VihuvacRecaptchaType::class, [
+            $form->add('recaptcha', EWZRecaptchaType::class, [
                 'mapped' => false,
                 'label' => ' ',
                 'constraints' => [
-                    new IsTrue(),
+                    new RecaptchaTrue(),
                 ],
             ]);
         }
@@ -211,9 +204,6 @@ class FormBlockHandler extends BlockHandler
 
     /**
      * Link active document to content item as integrated relation.
-     *
-     * @param FormBlock $block
-     * @param Content   $content
      */
     public function linkActiveDocument(FormBlock $block, Content $content)
     {

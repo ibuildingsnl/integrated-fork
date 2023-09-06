@@ -23,8 +23,7 @@ interface ManagerInterface
      * be used so 0 is no wait and will immediately fail if not lock can be
      * acquired right away.
      *
-     * @param RequestInterface $request
-     * @param int | null       $timeout null
+     * @param int|null $timeout null
      *
      * @return LockInterface
      */
@@ -33,14 +32,14 @@ interface ManagerInterface
     /**
      * Release the lock on the resource.
      *
-     * @param LockInterface | string $lock lock object or a string with the lock id
+     * @param LockInterface|string $lock lock object or a string with the lock id
      */
     public function release($lock);
 
     /**
      * Refresh the timeout of the lock.
      *
-     * @param LockInterface | string $lock lock object or a string with the lock id
+     * @param LockInterface|string $lock lock object or a string with the lock id
      *
      * @return LockInterface
      */
@@ -49,7 +48,7 @@ interface ManagerInterface
     /**
      * Finds a lock by its identifier.
      *
-     * @param LockInterface | string $lock lock object or a string with the lock id
+     * @param LockInterface|string $lock lock object or a string with the lock id
      *
      * @return LockInterface
      */
@@ -68,16 +67,12 @@ interface ManagerInterface
      * The result should always contain zero to one result, can't lock the same
      * resource more then once, but its returned as a array for constancy reasons.
      *
-     * @param ResourceInterface $resource
-     *
      * @return LockInterface[]
      */
     public function findByResource(ResourceInterface $resource);
 
     /**
      * Finds all the locks by its owner.
-     *
-     * @param ResourceInterface $resource
      *
      * @return LockInterface[]
      */
@@ -86,7 +81,7 @@ interface ManagerInterface
     /**
      * Finds the locks based on the given set of filters.
      *
-     * @param Filter | Filter[] $filters
+     * @param Filter|Filter[] $filters
      *
      * @return LockInterface[]
      */

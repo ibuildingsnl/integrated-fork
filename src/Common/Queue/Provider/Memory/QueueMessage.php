@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Queue\Provider\Memory;
 
-use Closure;
 use Integrated\Common\Queue\Memory\QueueMessageInterface;
 
 /**
@@ -50,20 +49,19 @@ class QueueMessage implements QueueMessageInterface
     private $executeAt;
 
     /**
-     * @var Closure | null
+     * @var \Closure|null
      */
     private $release = null;
 
     /**
-     * @param mixed   $payload
-     * @param int     $attempts
-     * @param int     $priority
-     * @param int     $createdAt
-     * @param int     $updatedAt
-     * @param int     $executeAt
-     * @param Closure $release
+     * @param mixed $payload
+     * @param int   $attempts
+     * @param int   $priority
+     * @param int   $createdAt
+     * @param int   $updatedAt
+     * @param int   $executeAt
      */
-    public function __construct($payload, $attempts, $priority, $createdAt, $updatedAt, $executeAt, Closure $release)
+    public function __construct($payload, $attempts, $priority, $createdAt, $updatedAt, $executeAt, \Closure $release)
     {
         $this->payload = $payload;
         $this->attempts = $attempts;

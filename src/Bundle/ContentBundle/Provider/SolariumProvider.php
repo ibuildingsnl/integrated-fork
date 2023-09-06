@@ -13,11 +13,10 @@ namespace Integrated\Bundle\ContentBundle\Provider;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +37,7 @@ class SolariumProvider
     private $dm;
 
     /**
-     * @var Paginator
+     * @var PaginatorInterface
      */
     private $paginator;
 
@@ -47,12 +46,7 @@ class SolariumProvider
      */
     private $registry = [];
 
-    /**
-     * @param Client          $client
-     * @param DocumentManager $dm
-     * @param Paginator       $paginator
-     */
-    public function __construct(Client $client, DocumentManager $dm, Paginator $paginator)
+    public function __construct(Client $client, DocumentManager $dm, PaginatorInterface $paginator)
     {
         $this->client = $client;
         $this->dm = $dm;
@@ -61,17 +55,15 @@ class SolariumProvider
 
     /**
      * @param ContentBlock|SearchSelection $subject
-     * @param Request                      $request
-     * @param array                        $options
      *
      * @return \Knp\Component\Pager\Pagination\PaginationInterface
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function execute($subject, Request $request, array $options = [])
     {
         if (!$subject instanceof ContentBlock && !$subject instanceof SearchSelection) {
-            throw new Exception('subject is not supported. Only ContentBlock and SearchSelection are supported');
+            throw new \Exception('subject is not supported. Only ContentBlock and SearchSelection are supported');
         }
 
         $pageParam = (null !== $subject->getId() ? $subject->getId().'-' : '').'page';
@@ -111,8 +103,6 @@ class SolariumProvider
 
     /**
      * @param ContentBlock|SearchSelection $subject
-     * @param Request                      $request
-     * @param array                        $options
      *
      * @return Query
      */
@@ -176,10 +166,7 @@ class SolariumProvider
     }
 
     /**
-     * @param Query                        $query
      * @param ContentBlock|SearchSelection $subject
-     * @param array                        $request
-     * @param array                        $options
      *
      * @return int
      */
@@ -232,7 +219,7 @@ class SolariumProvider
                     ->setField($field);
 
                 if (null === $suffix) {
-                    $facet->addExclude($field);
+                    $facet->getLocalParameters()->setExclude($field);
                 }
 
                 $param = isset($request[$field]) ? $request[$field] : null;

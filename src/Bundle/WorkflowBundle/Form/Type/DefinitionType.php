@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Form\DataTransformer\DefinitionTransformer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -29,9 +29,6 @@ class DefinitionType extends AbstractType
      */
     private $repository;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

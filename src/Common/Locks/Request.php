@@ -22,18 +22,15 @@ class Request implements RequestInterface
     protected $resource;
 
     /**
-     * @var null | ResourceInterface
+     * @var ResourceInterface|null
      */
     protected $owner = null;
 
     /**
-     * @var null | int
+     * @var int|null
      */
     protected $timeout = null;
 
-    /**
-     * @param ResourceInterface $resource
-     */
     public function __construct(ResourceInterface $resource)
     {
         $this->resource = $resource;
@@ -64,7 +61,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * @param null | int $timeout
+     * @param int|null $timeout
      */
     public function setTimeout($timeout)
     {

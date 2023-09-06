@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Form\Tests\EventListener;
 
-use ArrayIterator;
 use Integrated\Common\Form\EventListener\ClickedButtonListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -69,7 +69,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormEvent | \PHPUnit_Framework_MockObject_MockObject
+     * @return FormEvent|MockObject
      */
     protected function getEvent(FormInterface $form)
     {
@@ -82,7 +82,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return FormInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return FormInterface|MockObject
      */
     protected function getForm(array $children = null)
     {
@@ -92,7 +92,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
         if (null !== $children) {
             $mock->expects($this->once())
                 ->method('getIterator')
-                ->willReturn(new ArrayIterator($children));
+                ->willReturn(new \ArrayIterator($children));
         }
 
         return $mock;
@@ -101,7 +101,7 @@ class ClickedButtonListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @param bool $clicked
      *
-     * @return ClickableInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ClickableInterface|MockObject
      */
     protected function getButton($clicked, $name = null)
     {

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -25,9 +25,6 @@ class DefinitionTransformer implements DataTransformerInterface
      */
     private $repository;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Security;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
@@ -59,12 +59,6 @@ class WorkflowVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ManagerRegistry          $manager
-     * @param ResolverInterface        $resolver
-     * @param MetadataFactoryInterface $metadata
-     * @param array                    $permissions
-     */
     public function __construct(ManagerRegistry $manager, ResolverInterface $resolver, MetadataFactoryInterface $metadata, array $permissions = [])
     {
         $this->manager = $manager;
@@ -243,7 +237,7 @@ class WorkflowVoter implements VoterInterface
     /**
      * @param string $type
      *
-     * @return ContentTypeInterface | null
+     * @return ContentTypeInterface|null
      */
     protected function getContentType($type)
     {
@@ -255,8 +249,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param $class
-     *
      * @return MetadataInterface
      */
     protected function getMetadata($class)
@@ -277,9 +269,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param ContentInterface $content
-     * @param Definition       $workflow
-     *
      * @return Definition\State
      */
     protected function getState(ContentInterface $content, Definition $workflow)
@@ -299,8 +288,7 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param GroupableInterface $user
-     * @param Permission[]       $permissionGroups
+     * @param Permission[] $permissionGroups
      *
      * @return array
      */
@@ -310,9 +298,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param GroupableInterface $user
-     * @param ContentInterface   $content
-     *
      * @return bool
      */
     protected function isAssigned(GroupableInterface $user, ContentInterface $content)
@@ -322,6 +307,10 @@ class WorkflowVoter implements VoterInterface
             $extensions = $content->getExtensions();
 
             $workflowExtension = $extensions->get('integrated.extension.workflow');
+
+            if (!isset($workflowExtension['assigned'])) {
+                return false;
+            }
 
             /** @var User $assigned */
             $assigned = $workflowExtension['assigned'];
@@ -339,9 +328,6 @@ class WorkflowVoter implements VoterInterface
     }
 
     /**
-     * @param User             $user
-     * @param ContentInterface $content
-     *
      * @return bool
      */
     protected function isAuthor(User $user, ContentInterface $content)

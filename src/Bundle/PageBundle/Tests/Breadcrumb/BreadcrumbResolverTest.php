@@ -10,8 +10,8 @@
 
 namespace Integrated\Bundle\PageBundle\Tests\Breadcrumb;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
@@ -21,36 +21,37 @@ use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Content\Channel\ChannelContext;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class BreadcrumbResolverTest extends TestCase
 {
-    const TEMPLATE = 'default';
+    public const TEMPLATE = 'default';
 
     /**
-     * @var DocumentManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var DocumentManager|MockObject
      */
     protected $documentManager;
 
     /**
-     * @var urlResolver | \PHPUnit_Framework_MockObject_MockObject
+     * @var urlResolver|MockObject
      */
     protected $urlResolver;
 
     /**
-     * @var ChannelContextInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ChannelContextInterface|MockObject
      */
     protected $channelContext;
 
     /**
-     * @var RequestStack | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|MockObject
      */
     protected $requestStack;
 
     /**
-     * @var Request | \PHPUnit_Framework_MockObject_MockObject
+     * @var Request|MockObject
      */
     protected $request;
 
@@ -67,7 +68,7 @@ class BreadcrumbResolverTest extends TestCase
         $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->request = $this->createMock(Request::class);
-        $this->requestStack->method('getMasterRequest')->willReturn($this->request);
+        $this->requestStack->method('getMainRequest')->willReturn($this->request);
 
         $this->breadcrumbResolver = new BreadcrumbResolver(
             $this->documentManager,
@@ -86,17 +87,14 @@ class BreadcrumbResolverTest extends TestCase
         $this->channelContext->method('getChannel')->willReturn($channel);
 
         $pageRepository = $this->createMock(ObjectRepository::class);
-        $this->documentManager
-            ->expects($this->at(0))
-            ->method('getRepository')
-            ->with(Page::class)->willReturn($pageRepository);
-
         $contentRepository = $this->createMock(ObjectRepository::class);
         $this->documentManager
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('getRepository')
-            ->with(Content::class)
-            ->willReturn($contentRepository);
+            ->willReturnMap([
+                [Page::class, $pageRepository],
+                [Content::class, $contentRepository],
+            ]);
 
         $this->urlResolver
             ->expects($this->once())
@@ -115,39 +113,28 @@ class BreadcrumbResolverTest extends TestCase
         $article->getPublishTime()->setEndDate(new \DateTime('next week'));
 
         $pageRepository
-            ->expects($this->at(0))
+            ->expects($this->exactly(4))
             ->method('findOneBy')
-            ->with(['path' => '/', 'channel.$id' => 'my_channel'])
-            ->willReturn(null);
+            ->willReturnMap([
+                [['path' => '/', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my', 'channel.$id' => 'my_channel'], null],
+                [['path' => '/my/page', 'channel.$id' => 'my_channel'], $page],
+                [['path' => '/my/page/article', 'channel.$id' => 'my_channel'], null],
+            ]);
 
         $contentRepository
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('findOneBy')
-            ->with(['slug' => 'my', 'channels.$id' => 'my_channel'])
-            ->willReturn($article);
-
-        $pageRepository
-            ->expects($this->at(1))
-            ->method('findOneBy')
-            ->with(['path' => '/my', 'channel.$id' => 'my_channel'])
-            ->willReturn(null);
-
-        $contentRepository
-            ->expects($this->at(1))
-            ->method('findOneBy')
-            ->with(['slug' => 'my-article', 'channels.$id' => 'my_channel'])
-            ->willReturn(null);
-
-        $pageRepository
-            ->expects($this->at(2))
-            ->method('findOneBy')
-            ->with(['path' => '/my/page', 'channel.$id' => 'my_channel'])
-            ->willReturn($page);
+            ->willReturnMap([
+                [['slug' => 'my', 'channels.$id' => 'my_channel'], $article],
+                [['slug' => 'my-article', 'channels.$id' => 'my_channel'], null],
+            ]);
 
         $expectedResult = [
             new BreadcrumbItem('My article', '/my'),
             new BreadcrumbItem('My page', '/my/page'),
         ];
+
         $this->assertEquals($expectedResult, $this->breadcrumbResolver->getBreadcrumb());
     }
 }

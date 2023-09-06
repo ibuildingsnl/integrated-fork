@@ -30,8 +30,6 @@ class ActionsType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param array $buttons
      */
     public function __construct(array $buttons)
     {
@@ -73,6 +71,6 @@ class ActionsType extends AbstractType
      */
     public function getParent()
     {
-        return 'Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType';
+        return 'Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType';
     }
 }

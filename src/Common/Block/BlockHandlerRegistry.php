@@ -24,8 +24,7 @@ class BlockHandlerRegistry implements BlockHandlerRegistryInterface
     private $registry = [];
 
     /**
-     * @param string                $type
-     * @param BlockHandlerInterface $block
+     * @param string $type
      *
      * @throws InvalidArgumentException
      */
@@ -54,5 +53,7 @@ class BlockHandlerRegistry implements BlockHandlerRegistryInterface
         if ($this->hasHandler($type)) {
             return $this->registry[$type];
         }
+
+        return null;
     }
 }

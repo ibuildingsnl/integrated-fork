@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContentSubscriber implements ContentSubscriberInterface
 {
-    const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
+    public const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
     /**
      * @var ExtensionInterface
@@ -40,10 +40,6 @@ class ContentSubscriber implements ContentSubscriberInterface
      */
     private $manager;
 
-    /**
-     * @param ExtensionInterface $extension
-     * @param ContainerInterface $container
-     */
     public function __construct(ExtensionInterface $extension, ContainerInterface $container)
     {
         $this->extension = $extension;

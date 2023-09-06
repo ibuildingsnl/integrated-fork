@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CustomFieldListener implements EventSubscriberInterface
 {
-    const FORM_NAME = 'customFields';
+    public const FORM_NAME = 'customFields';
 
     /**
      * {@inheritdoc}
@@ -34,9 +34,6 @@ class CustomFieldListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param BuilderEvent $event
-     */
     public function onPostBuild(BuilderEvent $event)
     {
         $type = $event->getContentType();

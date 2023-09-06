@@ -29,8 +29,7 @@ class Queue implements QueueInterface
     protected $provider;
 
     /**
-     * @param QueueProviderInterface $provider
-     * @param string                 $channel
+     * @param string $channel
      */
     public function __construct(QueueProviderInterface $provider, $channel)
     {
@@ -73,7 +72,7 @@ class Queue implements QueueInterface
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return $this->provider->count($this->channel);
     }

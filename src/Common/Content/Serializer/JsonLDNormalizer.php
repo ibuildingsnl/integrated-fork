@@ -22,16 +22,13 @@ class JsonLDNormalizer implements \Symfony\Component\Serializer\Normalizer\Norma
     /**
      * @var string
      */
-    const FORMAT = 'json-ld';
+    public const FORMAT = 'json-ld';
 
     /**
      * @var NormalizerInterface
      */
     private $normalizer;
 
-    /**
-     * @param NormalizerInterface $normalizer
-     */
     public function __construct(NormalizerInterface $normalizer)
     {
         $this->normalizer = $normalizer;

@@ -16,14 +16,13 @@ namespace Integrated\Bundle\CommentBundle\Util;
  */
 class StripTagsUtil
 {
-    const COMMENT_REPLACEMENT = '<!--integrated-comment=$2-->$3<!--end-integrated-comment-->';
-    const SPAN_REPLACEMENT = '<span class="integrated-comment" data-comment-id="$2">$3</span>';
-    const ONLY_CONTENT_REPLACEMENT = '$3';
+    public const COMMENT_REPLACEMENT = '<!--integrated-comment=$2-->$3<!--end-integrated-comment-->';
+    public const SPAN_REPLACEMENT = '<span class="integrated-comment" data-comment-id="$2">$3</span>';
+    public const ONLY_CONTENT_REPLACEMENT = '$3';
 
     /**
      * Searches for integrated comment span tag and replaces it with $replacement.
      *
-     * @param $content
      * @param $replacement $2 commentId, $3 content
      *
      * @return string
@@ -38,7 +37,6 @@ class StripTagsUtil
     /**
      * Searches for comment tag and replaces it with $replacement.
      *
-     * @param $content
      * @param $replacement $2 commentId, $3 content
      *
      * @return string

@@ -23,16 +23,13 @@ use Symfony\Component\Validator\Constraints\Valid;
  */
 class MetadataSubscriber implements MetadataSubscriberInterface
 {
-    const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
+    public const RELATION_CLASS = 'Integrated\\Bundle\\ContentBundle\\Document\\Content\\Relation\\Relation';
 
     /**
      * @var ExtensionInterface
      */
     private $extension;
 
-    /**
-     * @param ExtensionInterface $extension
-     */
     public function __construct(ExtensionInterface $extension)
     {
         $this->extension = $extension;

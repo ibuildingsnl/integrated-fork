@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -32,14 +32,14 @@ class Channel implements ChannelInterface
 
     /**
      * @var string
-     * @Slug(fields={"name"}, separator="_")
      */
+    #[Slug(fields: ['name'], separator: '_')]
     protected $id;
 
     /**
      * @var string the name of the channel
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**
@@ -76,6 +76,11 @@ class Channel implements ChannelInterface
      * @var \DateTime
      */
     protected $createdAt;
+
+    /**
+     * @var bool
+     */
+    protected $ipProtected = false;
 
     /**
      * @var Scope
@@ -176,8 +181,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param array $domains
-     *
      * @return $this
      */
     public function setDomains(array $domains)
@@ -222,8 +225,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param $name
-     *
      * @return mixed|null
      */
     public function getOption($name)
@@ -238,8 +239,8 @@ class Channel implements ChannelInterface
     /**
      * Set the value of the specified key.
      *
-     * @param string       $name
-     * @param null | mixed $value
+     * @param string     $name
+     * @param mixed|null $value
      *
      * @return $this
      */
@@ -274,8 +275,6 @@ class Channel implements ChannelInterface
 
     /**
      * Set the createdAt of the channel.
-     *
-     * @param \DateTime $createdAt
      *
      * @return $this
      */
@@ -325,6 +324,21 @@ class Channel implements ChannelInterface
         }
     }
 
+    public function isIpProtected(): bool
+    {
+        return (bool) $this->ipProtected;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setIpProtected(bool $protected)
+    {
+        $this->ipProtected = $protected ? true : null;
+
+        return $this;
+    }
+
     /**
      * @return Scope
      */
@@ -334,8 +348,6 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @param Scope|null $scope
-     *
      * @return $this
      */
     public function setScope(Scope $scope = null)

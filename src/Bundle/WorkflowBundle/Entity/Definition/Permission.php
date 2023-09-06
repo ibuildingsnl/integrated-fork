@@ -54,13 +54,11 @@ class Permission extends CommonPermission
 
     /**
      * Remove the permissions that have a null state (orphans).
-     *
-     * @param PreFlushEventArgs $event
      */
     public function doPermissionFix(PreFlushEventArgs $event)
     {
         if ($this->getState() === null) {
-            $uow = $event->getEntityManager()->getUnitOfWork();
+            $uow = $event->getObjectManager()->getUnitOfWork();
 
             // this entity should always be in the identity map or else this event should not be
             // triggered. But still check it anyways in case someone, for some unknown reasons,

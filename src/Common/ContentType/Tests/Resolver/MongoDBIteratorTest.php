@@ -13,6 +13,7 @@ namespace Integrated\Common\ContentType\Tests\Resolver;
 
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Resolver\MongoDBIterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -107,7 +108,7 @@ class MongoDBIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ContentTypeInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContentTypeInterface|MockObject
      */
     protected function getType($name)
     {

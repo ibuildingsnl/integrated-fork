@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Solr\Exception\ExceptionInterface;
 use Integrated\Common\Solr\Indexer\Event\ErrorEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Common\Solr\Indexer\Event\ErrorEvent;
 class ErrorEventTest extends MessageEventTest
 {
     /**
-     * @var ExceptionInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ExceptionInterface|MockObject
      */
     protected $exception;
 

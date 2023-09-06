@@ -37,8 +37,6 @@ interface ConfigRepositoryInterface
     /**
      * Finds the objects by a set of criteria.
      *
-     * @param array $criteria
-     *
      * @return ConfigInterface[]
      */
     public function findBy(array $criteria);
@@ -55,7 +53,7 @@ interface ConfigRepositoryInterface
     /**
      * Find the object by the given channel.
      *
-     * @param string | ChannelInterface $criteria
+     * @param string|ChannelInterface $criteria
      *
      * @return ConfigInterface[]
      */

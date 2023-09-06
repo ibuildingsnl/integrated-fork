@@ -11,19 +11,22 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeFormType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
+use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
 use Integrated\Common\ContentType\Events;
 use Integrated\Common\Form\Mapping\MetadataFactory;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Integrated\Common\Form\Mapping\MetadataInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
  */
-class ContentTypeController extends Controller
+class ContentTypeController extends AbstractController
 {
     /**
      * @var string
@@ -51,22 +54,28 @@ class ContentTypeController extends Controller
     private $contentTypeManager;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
     /**
-     * ContentTypeController constructor.
-     *
-     * @param ContentTypeManager $contentTypeManager
-     * @param EventDispatcher    $eventDispatcher
-     * @param MetadataFactory    $metadataFactory
+     * @var DocumentManager
      */
-    public function __construct(ContentTypeManager $contentTypeManager, EventDispatcher $eventDispatcher, MetadataFactory $metadataFactory)
-    {
+    private $documentManager;
+
+    /**
+     * ContentTypeController constructor.
+     */
+    public function __construct(
+        ContentTypeManager $contentTypeManager,
+        EventDispatcherInterface $eventDispatcher,
+        MetadataFactory $metadataFactory,
+        DocumentManager $documentManager
+    ) {
         $this->contentTypeManager = $contentTypeManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->metadata = $metadataFactory;
+        $this->documentManager = $documentManager;
     }
 
     /**
@@ -74,14 +83,14 @@ class ContentTypeController extends Controller
      *
      * @return Response
      */
-    public function indexAction()
+    public function index()
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $documents = $this->contentTypeManager->getAll();
         $documentTypes = $this->metadata->getAllMetadata();
 
-        return $this->render('IntegratedContentBundle:content_type:index.html.twig', [
+        return $this->render('@IntegratedContent/content_type/index.html.twig', [
             'documents' => $documents,
             'documentTypes' => $documentTypes,
         ]);
@@ -92,11 +101,11 @@ class ContentTypeController extends Controller
      *
      * @return Response
      */
-    public function selectAction()
+    public function select()
     {
         $documentTypes = $this->metadata->getAllMetadata();
 
-        return $this->render('IntegratedContentBundle:content_type:select.html.twig', [
+        return $this->render('@IntegratedContent/content_type/select.html.twig', [
             'documentTypes' => $documentTypes,
         ]);
     }
@@ -108,14 +117,14 @@ class ContentTypeController extends Controller
      *
      * @return Response
      */
-    public function showAction($id)
+    public function show($id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $contentType = $this->getContentType($id);
         $form = $this->createDeleteForm($contentType);
 
-        return $this->render('IntegratedContentBundle:content_type:show.html.twig', [
+        return $this->render('@IntegratedContent/content_type/show.html.twig', [
             'form' => $form->createView(),
             'contentType' => $contentType,
         ]);
@@ -124,18 +133,16 @@ class ContentTypeController extends Controller
     /**
      * Creates a new ContentType document.
      *
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $metadata = $this->metadata->getMetadata($request->get('class'));
 
         if (!$metadata) {
-            return $this->redirect($this->generateUrl('integrated_content_content_type_select'));
+            return $this->redirectToRoute('integrated_content_content_type_select');
         }
 
         $contentType = new ContentType();
@@ -145,19 +152,17 @@ class ContentTypeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $dm->persist($contentType);
-            $dm->flush();
+            $this->documentManager->persist($contentType);
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_CREATED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_CREATED);
 
-            return $this->redirect($this->generateUrl('integrated_content_content_type_show', ['id' => $contentType->getId()]));
+            return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:content_type:new.html.twig', [
+        return $this->render('@IntegratedContent/content_type/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -165,14 +170,13 @@ class ContentTypeController extends Controller
     /**
      * Edits an existing ContentType document.
      *
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return Response|RedirectResponse
      */
-    public function editAction(Request $request, $id)
+    public function edit(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $contentType = $this->getContentType($id);
         $metadata = $this->metadata->getMetadata($contentType->getClass());
@@ -181,24 +185,21 @@ class ContentTypeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-
-            if (!$dm->contains($contentType)) {
+            if (!$this->documentManager->contains($contentType)) {
                 // Needed for content types from XML files
-                $dm->persist($contentType);
+                $this->documentManager->persist($contentType);
             }
 
-            $dm->flush();
+            $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_UPDATED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_UPDATED);
 
-            return $this->redirect($this->generateUrl('integrated_content_content_type_show', ['id' => $contentType->getId()]));
+            return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
         }
 
-        return $this->render('IntegratedContentBundle:content_type:edit.html.twig', [
+        return $this->render('@IntegratedContent/content_type/edit.html.twig', [
             'form' => $form->createView(),
             'contentType' => $contentType,
         ]);
@@ -207,14 +208,13 @@ class ContentTypeController extends Controller
     /**
      * Deletes a ContentType document.
      *
-     * @param Request $request
-     * @param string  $id
+     * @param string $id
      *
      * @return RedirectResponse
      */
-    public function deleteAction(Request $request, $id)
+    public function delete(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $contentType = $this->getContentType($id);
 
@@ -226,31 +226,28 @@ class ContentTypeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
-
             // Only delete ContentType when there are no Content items
-            $count = \count($dm->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()]));
+            $count = \count($this->documentManager->getRepository($contentType->getClass())->findBy(['contentType' => $contentType->getId()]));
 
             if ($count > 0) {
                 // Set flash message and redirect to item page
-                $this->get('braincrafted_bootstrap.flash')->error('Unable te delete, ContentType is not empty');
+                $this->addFlash('danger', 'Unable te delete, ContentType is not empty');
 
-                return $this->redirect($this->generateUrl('integrated_content_content_type_show', ['id' => $contentType->getId()]));
+                return $this->redirectToRoute('integrated_content_content_type_show', ['id' => $contentType->getId()]);
             }
 
-            $dm->remove($contentType);
-            $dm->flush();
+            $this->documentManager->remove($contentType);
+            $this->documentManager->flush();
 
-            $this->eventDispatcher->dispatch(Events::CONTENT_TYPE_DELETED, new ContentTypeEvent($contentType));
+            $this->eventDispatcher->dispatch(new ContentTypeEvent($contentType), Events::CONTENT_TYPE_DELETED);
 
             // Set flash message
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Item deleted');
 
-            return $this->redirect($this->generateUrl('integrated_content_content_type_index'));
+            return $this->redirectToRoute('integrated_content_content_type_index');
         }
 
-        return $this->render('IntegratedContentBundle:content_type:delete.html.twig', [
+        return $this->render('@IntegratedContent/content_type/delete.html.twig', [
             'contentType' => $contentType,
             'form' => $form->createView(),
         ]);
@@ -259,7 +256,7 @@ class ContentTypeController extends Controller
     /**
      * @param string $id
      *
-     * @return \Integrated\Common\ContentType\ContentTypeInterface
+     * @return ContentTypeInterface
      *
      * @throws NotFoundHttpException
      */
@@ -275,10 +272,7 @@ class ContentTypeController extends Controller
     /**
      * Creates a form to create a ContentType document.
      *
-     * @param ContentType       $type
-     * @param MetadataInterface $metadata
-     *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createNewForm(ContentType $type, MetadataInterface $metadata)
     {
@@ -304,10 +298,7 @@ class ContentTypeController extends Controller
     /**
      * Creates a form to edit a ContentType document.
      *
-     * @param ContentType       $type
-     * @param MetadataInterface $metadata
-     *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createEditForm(ContentType $type, MetadataInterface $metadata)
     {
@@ -333,9 +324,7 @@ class ContentTypeController extends Controller
     /**
      * Creates a form to delete a ContentType document.
      *
-     * @param ContentType $type
-     *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createDeleteForm(ContentType $type)
     {

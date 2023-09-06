@@ -11,13 +11,14 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\ContainerInterface;
 use Integrated\Common\Converter\Type\TypeInterface;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 
 /**
  * @author Marijn Otte <marijn@e-active.nl>
+ *
  * @description Add usefull properties for filtering
  */
 class HasImageType implements TypeInterface
@@ -31,7 +32,7 @@ class HasImageType implements TypeInterface
             return; // only process content
         }
 
-        //Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
+        // Add property for has image / doesn't have image (usefull to make selections with articles for views with image, or to find articles with missing image)
         $found = false;
         $items = $data->getReferencesByRelationType('embedded');
         if ($items) {

@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\ContentTypePageService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Integrated\Common\Channel\Event\ChannelEvent;
@@ -46,12 +47,6 @@ class ChannelChangedListener implements EventSubscriberInterface
      */
     private $contentTypeInformation;
 
-    /**
-     * @param DocumentManager        $dm
-     * @param ContentTypePageService $contentTypePageService
-     * @param RouteCache             $routeCache
-     * @param ContentTypeInformation $contentTypeInformation
-     */
     public function __construct(
         DocumentManager $dm,
         ContentTypePageService $contentTypePageService,
@@ -76,9 +71,6 @@ class ChannelChangedListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ChannelEvent $event
-     */
     public function channelChanged(ChannelEvent $event)
     {
         $channel = $event->getChannel();
@@ -108,30 +100,21 @@ class ChannelChangedListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ChannelEvent $event
-     */
     public function channelDeleted(ChannelEvent $event)
     {
         $this->deletePagesByChannel($event->getChannel());
     }
 
-    /**
-     * @param Channel $channel
-     */
     protected function deletePagesByChannel(Channel $channel)
     {
         $pages = $this->getPageRepository()->findBy(['channel.$id' => $channel->getId()]);
 
         foreach ($pages as $page) {
             $this->dm->remove($page);
-            $this->dm->flush($page);
+            $this->dm->flush();
         }
     }
 
-    /**
-     * @param ContentType $contentType
-     */
     protected function deletePagesByContentType(ContentType $contentType, $channelId)
     {
         $criteria = ['contentType.$id' => $contentType->getId()];
@@ -141,7 +124,7 @@ class ChannelChangedListener implements EventSubscriberInterface
 
         foreach ($pages as $page) {
             $this->dm->remove($page);
-            $this->dm->flush($page);
+            $this->dm->flush();
         }
     }
 
@@ -150,7 +133,7 @@ class ChannelChangedListener implements EventSubscriberInterface
      */
     protected function getPageRepository()
     {
-        return $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage');
+        return $this->dm->getRepository(ContentTypePage::class);
     }
 
     /**
@@ -158,7 +141,7 @@ class ChannelChangedListener implements EventSubscriberInterface
      */
     protected function getChannelRepository()
     {
-        return $this->dm->getRepository('IntegratedContentBundle:Channel\Channel');
+        return $this->dm->getRepository(Channel::class);
     }
 
     /**
@@ -166,6 +149,6 @@ class ChannelChangedListener implements EventSubscriberInterface
      */
     protected function getContentTypeRepository()
     {
-        return $this->dm->getRepository('IntegratedContentBundle:ContentType\ContentType');
+        return $this->dm->getRepository(ContentType::class);
     }
 }

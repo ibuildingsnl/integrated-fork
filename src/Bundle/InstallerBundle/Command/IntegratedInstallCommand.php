@@ -52,13 +52,6 @@ class IntegratedInstallCommand extends Command
      */
     private $bundleTest;
 
-    /**
-     * @param EntityManager   $entityManager
-     * @param DocumentManager $documentManager
-     * @param Client          $solrClient
-     * @param MySQLMigrations $migrations
-     * @param BundleTest      $bundleTest
-     */
     public function __construct(EntityManager $entityManager, DocumentManager $documentManager, Client $solrClient, MySQLMigrations $migrations, MongoDBMigrations $mongoDBMigrations, BundleTest $bundleTest)
     {
         $this->migrations = $migrations;
@@ -85,24 +78,15 @@ class IntegratedInstallCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return int|void|null
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $steps = $input->getOption('step');
         $io = new SymfonyStyle($input, $output);
 
         if (\in_array('tests', $steps) || empty($steps)) {
             $io->section('Test environment');
-
-            $this->entityManager->getConnection()->connect();
-            $io->success('MySQL connection successful');
-
-            $this->documentManager->getConnection()->connect();
-            $io->success('MongoDB connection successful');
 
             $this->solrClient->execute(new Query());
             $io->success('Solr connection successful');
@@ -126,10 +110,6 @@ class IntegratedInstallCommand extends Command
         if (\in_array('assets', $steps) || empty($steps)) {
             $io->section('Install assets');
 
-            $this->executeCommand('braincrafted:bootstrap:install', $output);
-            $this->executeCommand('sp:bower:install', $output);
-            $this->executeCommand('assetic:dump', $output);
-            $this->executeCommand('fos:js-routing:dump', $output);
             $this->executeCommand('assets:install', $output);
         }
 
@@ -139,20 +119,18 @@ class IntegratedInstallCommand extends Command
             $this->migrations->execute();
             $this->mongoDBMigrations->execute();
         }
+
+        return 0;
     }
 
-    /**
-     * @param $command
-     * @param OutputInterface $output
-     */
     protected function executeCommand($command, OutputInterface $output)
     {
-        $php = escapeshellarg(self::getPhp(false));
-        $console = escapeshellarg('bin/console');
+        $php = self::getPhp(false);
+        $console = 'bin/console';
 
         $output->writeln(sprintf('Execute %s %s %s', $php, $console, $command), OutputInterface::VERBOSITY_VERY_VERBOSE);
 
-        $process = new Process(sprintf('%s %s %s', $php, $console, $command));
+        $process = new Process([$php, $console, $command]);
 
         $process->setTimeout(0);
         $process->run(function ($type, $buffer) use ($output) {

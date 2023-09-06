@@ -11,31 +11,30 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Event")
  */
+#[Type\Document('Event')]
 class Event extends Article
 {
     /**
      * @var \DateTime
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
     protected $startDate;
 
     /**
      * @var \DateTime
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
     protected $endDate;
 
     /**
      * @var string
-     * @Type\Field
      */
+    #[Type\Field]
     protected $website;
 
     /**

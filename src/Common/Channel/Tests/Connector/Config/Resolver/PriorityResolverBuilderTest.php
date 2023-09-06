@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
 use Integrated\Common\Channel\Connector\Config\Resolver\PriorityResolverBuilder;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -98,7 +99,7 @@ class PriorityResolverBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver()
     {

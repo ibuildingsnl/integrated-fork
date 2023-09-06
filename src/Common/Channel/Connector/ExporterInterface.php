@@ -16,14 +16,14 @@ use Integrated\Common\Channel\Exporter\ExporterResponse;
 
 interface ExporterInterface
 {
-    const STATE_ADD = 'add';
+    public const STATE_ADD = 'add';
 
-    const STATE_DELETE = 'delete';
+    public const STATE_DELETE = 'delete';
 
     /**
-     * @param object                    $content
-     * @param string                    $state
-     * @param string | ChannelInterface $channel
+     * @param object                  $content
+     * @param string                  $state
+     * @param string|ChannelInterface $channel
      *
      * @return ExporterResponse|null
      */

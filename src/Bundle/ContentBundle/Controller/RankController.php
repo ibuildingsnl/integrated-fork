@@ -16,13 +16,13 @@ use Integrated\Bundle\ContentBundle\Document\Bulk\BulkAction;
 use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Integrated\Common\Content\RankableInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class RankController extends Controller
+class RankController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -44,10 +44,6 @@ class RankController extends Controller
      */
     private $translator;
 
-    /**
-     * @param DocumentManager $dm
-     * @param ContentProvider $contentProvider
-     */
     public function __construct(
         DocumentManager $dm,
         ContentProvider $contentProvider,
@@ -59,7 +55,6 @@ class RankController extends Controller
     }
 
     /**
-     * @param Request    $request
      * @param BulkAction $bulk
      *
      * @return RedirectResponse|Response
@@ -106,7 +101,7 @@ class RankController extends Controller
             $result[$current] = '...'.$this->translator->trans('Current position');
         }
 
-        return $this->render('IntegratedContentBundle:rank:lookup.json.twig', [
+        return $this->render('@IntegratedContent/rank/lookup.json.twig', [
             'result' => $result,
             'relations' => [],
         ]);

@@ -30,7 +30,7 @@ class Group implements GroupInterface
     protected $name;
 
     /**
-     * @var Collection | RoleInterface[]
+     * @var Collection|RoleInterface[]
      */
     protected $roles;
 
@@ -63,9 +63,6 @@ class Group implements GroupInterface
         return $this->name;
     }
 
-    /**
-     * @param RoleInterface $role
-     */
     public function addRole(RoleInterface $role)
     {
         if (!$this->roles->contains($role)) {
@@ -74,7 +71,7 @@ class Group implements GroupInterface
     }
 
     /**
-     * @param RoleInterface | string $role
+     * @param RoleInterface|string $role
      */
     public function removeRole($role)
     {
@@ -91,7 +88,7 @@ class Group implements GroupInterface
     }
 
     /**
-     * @param RoleInterface | string $role
+     * @param RoleInterface|string $role
      *
      * @return bool
      */

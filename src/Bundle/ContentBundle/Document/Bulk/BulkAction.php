@@ -36,7 +36,7 @@ class BulkAction
     private $executedAt;
 
     /**
-     * @var string | null
+     * @var string|null
      */
     private $filters = null;
 
@@ -77,8 +77,6 @@ class BulkAction
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -97,8 +95,6 @@ class BulkAction
     }
 
     /**
-     * @param \DateTime $executedAt
-     *
      * @return $this
      */
     public function setExecutedAt(\DateTime $executedAt)
@@ -109,7 +105,7 @@ class BulkAction
     }
 
     /**
-     * @return array | null
+     * @return array|null
      */
     public function getFilters()
     {
@@ -150,8 +146,6 @@ class BulkAction
     }
 
     /**
-     * @param ContentInterface $content
-     *
      * @return $this
      */
     public function addSelection(ContentInterface $content)
@@ -164,8 +158,6 @@ class BulkAction
     }
 
     /**
-     * @param ContentInterface $content
-     *
      * @return $this
      */
     public function removeSelection(ContentInterface $content)
@@ -201,8 +193,6 @@ class BulkAction
     }
 
     /**
-     * @param BulkActionInterface $action
-     *
      * @return $this
      */
     public function addAction(BulkActionInterface $action)
@@ -215,8 +205,6 @@ class BulkAction
     }
 
     /**
-     * @param BulkActionInterface $action
-     *
      * @return $this
      */
     public function removeAction(BulkActionInterface $action)

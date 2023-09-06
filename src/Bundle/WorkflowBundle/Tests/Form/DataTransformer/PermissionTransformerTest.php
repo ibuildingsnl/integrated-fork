@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Tests\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\Permission;
 use Integrated\Bundle\WorkflowBundle\Form\DataTransformer\PermissionTransformer;
@@ -63,18 +63,12 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
         $this->repository
             ->expects($this->exactly(4))
             ->method('findOneBy')
-            ->withConsecutive(
-                [$this->equalTo(['id' => 'group-1'])],
-                [$this->equalTo(['id' => 'group-2'])],
-                [$this->equalTo(['id' => 'group-3'])],
-                [$this->equalTo(['id' => 'group-4'])]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $group1,
-                $group2,
-                $group3,
-                null
-            );
+            ->willReturnMap([
+                [['id' => 'group-1'], $group1],
+                [['id' => 'group-2'], $group2],
+                [['id' => 'group-3'], $group3],
+                [['id' => 'group-4'], null],
+            ]);
 
         $result = $this->getInstance()->transform([$permission1, $permission2, $permission3, $permission4]);
 
@@ -197,8 +191,6 @@ class PermissionTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
      * @return \PHPUnit\Framework\MockObject\MockObject|GroupInterface
      */
     protected function getGroup($id)

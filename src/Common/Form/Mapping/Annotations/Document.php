@@ -15,7 +15,10 @@ namespace Integrated\Common\Form\Mapping\Annotations;
  * Annotation for defining metadata for a document.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
  * @Annotation
+ *
+ * @deprecated
  */
 class Document
 {
@@ -26,8 +29,6 @@ class Document
 
     /**
      * Constructor.
-     *
-     * @param array $data
      *
      * @throws \BadMethodCallException
      */

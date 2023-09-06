@@ -49,7 +49,7 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         $time = 0;
 
@@ -60,17 +60,11 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
         $this->data['total_time'] = $time;
     }
 
-    /**
-     * @param PreExecuteRequest $event
-     */
     public function preExecuteRequest(PreExecuteRequest $event)
     {
         $this->startTime = microtime(true);
     }
 
-    /**
-     * @param PostExecuteRequest $event
-     */
     public function postExecuteRequest(PostExecuteRequest $event)
     {
         $this->data['queries'][] = [
@@ -135,5 +129,15 @@ class SolariumDataCollector extends AbstractPlugin implements DataCollectorInter
     public function unserialize($data)
     {
         $this->data = unserialize($data);
+    }
+
+    public function __serialize(): array
+    {
+        return $this->data;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->data = $data;
     }
 }

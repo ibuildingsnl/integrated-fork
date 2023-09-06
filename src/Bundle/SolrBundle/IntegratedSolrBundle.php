@@ -15,8 +15,8 @@ use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterConfig
 use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterTaskHandlerPass;
 use Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass\RegisterTypePass;
 use Integrated\Bundle\SolrBundle\DependencyInjection\IntegratedSolrExtension;
+use Integrated\Common\Solr\Search\DependencyInjection\RegisterQueryTypePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -29,16 +29,14 @@ class IntegratedSolrBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
-
         $container->addCompilerPass(new RegisterConfigFileProviderPass());
         $container->addCompilerPass(new RegisterTypePass());
         $container->addCompilerPass(new RegisterTaskHandlerPass());
 
-        $container->addCompilerPass(new RegisterListenersPass(
-            'integrated_solr.event.dispatcher',
-            'integrated_solr.event_listener',
-            'integrated_solr.event_subscriber'
+        $container->addCompilerPass(new RegisterQueryTypePass(
+            'integrated_solr.search.type.dependency_injection_provider',
+            'solr_query.type',
+            'solr_query.type_extension'
         ));
     }
 

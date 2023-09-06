@@ -52,12 +52,6 @@ class IntegratedMenuProvider implements MenuProviderInterface
      */
     private $urlExtractor;
 
-    /**
-     * @param ChannelContextInterface $channelContext
-     * @param DocumentRepository      $repository
-     * @param SolariumProvider        $solariumProvider
-     * @param solrUrlExtractor        $urlExtractor
-     */
     public function __construct(ChannelContextInterface $channelContext, DocumentRepository $repository, SolariumProvider $solariumProvider, SolrUrlExtractor $urlExtractor)
     {
         $this->channelContext = $channelContext;
@@ -69,7 +63,27 @@ class IntegratedMenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, array $options = [])
+    public function get(string $name, array $options = []): ItemInterface
+    {
+        if ($menu = $this->find($name, $options)) {
+            return $menu;
+        }
+
+        throw new \Exception(sprintf('Menu %s not found on channel', $name));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has(string $name, array $options = []): bool
+    {
+        return null !== $this->find($name, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function find($name, array $options = []): ?ItemInterface
     {
         $channel = $this->channelContext->getChannel();
 
@@ -95,19 +109,10 @@ class IntegratedMenuProvider implements MenuProviderInterface
         if (isset($this->menus[$name][$channel])) {
             return $this->menus[$name][$channel];
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($name, array $options = [])
-    {
-        return null !== $this->get($name, $options);
-    }
-
-    /**
-     * @param ItemInterface $menu
-     */
     protected function resolveParent(ItemInterface $menu)
     {
         foreach ($menu->getChildren() as $child) {
@@ -119,9 +124,6 @@ class IntegratedMenuProvider implements MenuProviderInterface
         }
     }
 
-    /**
-     * @param ItemInterface $menu
-     */
     protected function parseSearchSelections(ItemInterface $menu)
     {
         $factory = new MenuFactory();

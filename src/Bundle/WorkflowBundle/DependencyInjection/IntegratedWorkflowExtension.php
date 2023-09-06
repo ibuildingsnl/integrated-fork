@@ -17,23 +17,16 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * Extension for loading configuration.
- *
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
- */
 class IntegratedWorkflowExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * Load the configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
+        $loader->load('controller.xml');
         $loader->load('command.xml');
 
         $loader->load('doctrine.xml');
@@ -51,7 +44,10 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
         $loader->load('solr.xml');
 
         $loader->load('event_listeners.xml');
-        $loader->load('event_dispatcher.xml');
+
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
+        $container->setParameter('integrated_workflow_email', $config['email']);
     }
 
     /**
@@ -70,7 +66,7 @@ class IntegratedWorkflowExtension extends Extension implements PrependExtensionI
         foreach ($container->getExtensions() as $name => $extension) {
             switch ($name) {
                 case 'twig':
-                    $container->prependExtensionConfig($name, ['form_themes' => ['IntegratedWorkflowBundle:form:form_div_layout.html.twig']]);
+                    $container->prependExtensionConfig($name, ['form_themes' => ['@IntegratedWorkflow/form/form_div_layout.html.twig']]);
                     break;
             }
         }

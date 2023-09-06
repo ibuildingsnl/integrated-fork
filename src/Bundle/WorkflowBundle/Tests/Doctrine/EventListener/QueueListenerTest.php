@@ -11,13 +11,13 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Tests\Doctrine\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Integrated\Bundle\WorkflowBundle\Doctrine\EventListener\QueueListener;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition\State;
 use Integrated\Common\Queue\QueueInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,7 +25,7 @@ use stdClass;
 class QueueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QueueInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     protected $queue;
 
@@ -73,7 +73,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostPersistNoWorkflow()
     {
-        $event = $this->getEvent(new stdClass());
+        $event = $this->getEvent(new \stdClass());
 
         $this->queue->expects($this->never())
             ->method('push');
@@ -123,7 +123,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostUpdateNoWorkflow()
     {
-        $event = $this->getEvent(new stdClass());
+        $event = $this->getEvent(new \stdClass());
 
         $this->queue->expects($this->never())
             ->method('push');
@@ -158,13 +158,11 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $object
-     *
-     * @return LifecycleEventArgs | \PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|MockObject
      */
     protected function getEvent($object)
     {
-        $instance = $this->getMockBuilder('Doctrine\\ORM\\Event\\LifecycleEventArgs')->disableOriginalConstructor()->getMock();
+        $instance = $this->getMockBuilder('Doctrine\\Persistence\\Event\\LifecycleEventArgs')->disableOriginalConstructor()->getMock();
         $instance->expects($this->any())
             ->method('getObject')
             ->willReturn($object);
@@ -173,9 +171,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
-     * @return State | \PHPUnit_Framework_MockObject_MockObject
+     * @return State|MockObject
      */
     protected function getState($id)
     {
@@ -188,9 +184,7 @@ class QueueListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $id
-     *
-     * @return Definition | \PHPUnit_Framework_MockObject_MockObject
+     * @return Definition|MockObject
      */
     protected function getDefinition($id)
     {

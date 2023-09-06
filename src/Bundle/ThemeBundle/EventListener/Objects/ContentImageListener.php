@@ -11,12 +11,12 @@
 
 namespace Integrated\Bundle\ThemeBundle\EventListener\Objects;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Event\ContentEvent;
 use Integrated\Bundle\SlugBundle\Slugger\SluggerInterface;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
@@ -34,7 +34,7 @@ class ContentImageListener
     protected $objectManager;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
     protected $templating;
 
@@ -49,16 +49,12 @@ class ContentImageListener
     protected $env;
 
     /**
-     * @param ThemeManager     $themeManager
-     * @param ObjectManager    $objectManager
-     * @param EngineInterface  $templating
-     * @param SluggerInterface $slugger
-     * @param string           $env
+     * @param string $env
      */
     public function __construct(
         ThemeManager $themeManager,
         ObjectManager $objectManager,
-        EngineInterface $templating,
+        Environment $templating,
         SluggerInterface $slugger,
         $env
     ) {
@@ -70,8 +66,6 @@ class ContentImageListener
     }
 
     /**
-     * @param ContentEvent $contentEvent
-     *
      * @throws \Exception
      */
     public function replaceImages(ContentEvent $contentEvent)
@@ -113,18 +107,17 @@ class ContentImageListener
     }
 
     /**
-     * @param Content $file
-     * @param string  $class
+     * @param string $class
      *
      * @return string|null
      */
     protected function getTemplate(Content $file, $class = '')
     {
         if ($template = $this->getViewFromClass($class)) {
-            return $this->templating->renderResponse(
+            return $this->templating->render(
                 $template,
                 ['document' => $file, 'class' => $class]
-            )->getContent();
+            );
         }
 
         return null;

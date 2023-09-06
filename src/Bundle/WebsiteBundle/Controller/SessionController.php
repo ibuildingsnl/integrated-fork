@@ -15,32 +15,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionController extends AbstractController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-
-    /**
-     * SessionController constructor.
-     *
-     * @param SessionInterface $session
-     */
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
-    }
-
-    /**
-     * @param string  $sessionId
-     * @param Request $request
-     *
      * @return RedirectResponse
      */
-    public function enterSessionAction(string $sessionId, Request $request)
+    public function enterSession(string $sessionId, Request $request)
     {
         $page = $request->get('path', '/');
 
@@ -49,7 +30,7 @@ class SessionController extends AbstractController
         if ($this->getUser() == false) {
             $sessionId = preg_replace('/[^a-zA-Z0-9]+/', '', $sessionId);
 
-            $response->headers->setCookie(new Cookie('PHPSESSID', $sessionId));
+            $response->headers->setCookie(Cookie::create('PHPSESSID', $sessionId));
         }
 
         return $response;

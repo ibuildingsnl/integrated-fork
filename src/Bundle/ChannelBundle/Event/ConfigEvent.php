@@ -12,8 +12,8 @@
 namespace Integrated\Bundle\ChannelBundle\Event;
 
 use Integrated\Bundle\ChannelBundle\Model\Config;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -30,10 +30,6 @@ class ConfigEvent extends Event
      */
     private $request;
 
-    /**
-     * @param Config  $config
-     * @param Request $request
-     */
     public function __construct(Config $config, Request $request)
     {
         $this->config = $config;

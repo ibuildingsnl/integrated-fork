@@ -11,7 +11,10 @@
 
 namespace Integrated\Bundle\SolrBundle\DependencyInjection;
 
+use Integrated\Common\Solr\Search\Type\TypeExtensionInterface;
+use Integrated\Common\Solr\Search\Type\TypeInterface;
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
 use Solarium\Core\Client\Endpoint;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -29,19 +32,16 @@ class IntegratedSolrExtension extends Extension
 {
     /**
      * Load the configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('converter.xml');
-        $loader->load('event.xml');
         $loader->load('event_listeners.xml');
         $loader->load('command.xml');
         $loader->load('indexer.xml');
+        $loader->load('search.xml');
         $loader->load('lock.xml');
         $loader->load('queue.xml');
         $loader->load('solarium.xml');
@@ -67,13 +67,19 @@ class IntegratedSolrExtension extends Extension
             $endpoints[] = new Reference('solarium.client.endpoint.'.$name);
         }
 
+        $container->register('solarium.adapter.curl', Curl::class)->addMethodCall(
+            'setTimeout',
+            [$config['timeout'] ?? 200]
+        );
+
         $container->setDefinition(
             'solarium.client',
             (new Definition(
                 Client::class,
                 [
+                    new Reference('solarium.adapter.curl'),
+                    new Reference('event_dispatcher'),
                     ['endpoint' => $endpoints],
-                    new Reference('integrated_solr.event.dispatcher'),
                 ]
             ))->setPublic(true)
         );
@@ -84,5 +90,8 @@ class IntegratedSolrExtension extends Extension
                 ['solarium.client.logger', new Reference('integrated_solr.solarium.data_collector')]
             );
         }
+
+        $container->registerForAutoconfiguration(TypeInterface::class)->addTag('solr_query.type');
+        $container->registerForAutoconfiguration(TypeExtensionInterface::class)->addTag('solr_query.type_extension');
     }
 }

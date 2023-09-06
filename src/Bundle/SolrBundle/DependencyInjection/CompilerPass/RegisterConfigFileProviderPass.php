@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\SolrBundle\DependencyInjection\CompilerPass;
 
 use Integrated\Common\Converter\Config\Provider\XmlProvider;
-use ReflectionClass;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -38,8 +37,8 @@ class RegisterConfigFileProviderPass implements CompilerPassInterface
 
         foreach ($container->getParameter('kernel.bundles') as $name => $class) {
             if (null !== (
-                $ref = $this->addProvider($container, \dirname((new ReflectionClass($class))->getFileName()), $name)
-                )) {
+                $ref = $this->addProvider($container, \dirname((new \ReflectionClass($class))->getFileName()), $name)
+            )) {
                 $definition->addMethodCall('addProvider', [$ref]);
             }
         }
@@ -52,9 +51,8 @@ class RegisterConfigFileProviderPass implements CompilerPassInterface
      * got any solr config files. But only if the container does not already contain a service definition
      * with the same name.
      *
-     * @param ContainerBuilder $container
-     * @param string           $dir
-     * @param string           $bundle
+     * @param string $dir
+     * @param string $bundle
      */
     protected function addProvider(ContainerBuilder $container, $dir, $bundle)
     {
@@ -85,9 +83,8 @@ class RegisterConfigFileProviderPass implements CompilerPassInterface
      * Create the definition of a finder instance that will look for files in the bundle. If the finder
      * definition already exists then that one is returned.
      *
-     * @param ContainerBuilder $container
-     * @param string           $dir
-     * @param string           $bundle
+     * @param string $dir
+     * @param string $bundle
      *
      * @return Reference
      */

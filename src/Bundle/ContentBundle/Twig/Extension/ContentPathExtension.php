@@ -16,9 +16,6 @@ class ContentPathExtension extends AbstractExtension
      */
     private $documentManager;
 
-    /**
-     * @param DocumentManager $documentManager
-     */
     public function __construct(DocumentManager $documentManager)
     {
         $this->documentManager = $documentManager;
@@ -52,7 +49,7 @@ class ContentPathExtension extends AbstractExtension
         $path = [];
         while ($data = $data->getReferenceByRelationType('parent')) {
             if (isset($path[$data->getId()])) {
-                //circular reference
+                // circular reference
                 break;
             }
             $path[$data->getId()] = (string) $data;

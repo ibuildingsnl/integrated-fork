@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Config;
 use Integrated\Common\Converter\Config\Config;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Integrated\Common\Converter\Config\TypeConfigInterface;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TypeConfigInterface[] | \PHPUnit_Framework_MockObject_MockObject[]
+     * @var TypeConfigInterface[]|MockObject[]
      */
     protected $types = [];
 
@@ -68,7 +69,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig()
     {

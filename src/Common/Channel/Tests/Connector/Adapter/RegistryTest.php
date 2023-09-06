@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Adapter;
 
 use Integrated\Common\Channel\Connector\Adapter\Registry;
 use Integrated\Common\Channel\Connector\AdapterInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -86,7 +87,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return AdapterInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return AdapterInterface|MockObject
      */
     protected function getAdapter()
     {

@@ -12,7 +12,7 @@
 namespace Integrated\Common\Form\Mapping\Event;
 
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,9 +24,6 @@ class MetadataEvent extends Event
      */
     protected $metadata;
 
-    /**
-     * @param MetadataEditorInterface $metadata
-     */
     public function __construct(MetadataEditorInterface $metadata)
     {
         $this->metadata = $metadata;

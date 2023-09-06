@@ -25,13 +25,15 @@ interface IteratorInterface extends BaseIteratorInterface
      *
      * @return contentTypeInterface
      */
-    public function current();
+    #[\ReturnTypeWillChange]
+    public function current(): mixed;
 
     /**
      * Move forward to next content type.
      *
      * @see http://php.net/manual/en/iterator.next.php
      */
+    #[\ReturnTypeWillChange]
     public function next();
 
     /**
@@ -41,7 +43,7 @@ interface IteratorInterface extends BaseIteratorInterface
      *
      * @return mixed scalar on success, or null on failure
      */
-    public function key();
+    public function key(): mixed;
 
     /**
      * Checks if current position is valid.
@@ -50,6 +52,7 @@ interface IteratorInterface extends BaseIteratorInterface
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid();
 
     /**
@@ -57,5 +60,6 @@ interface IteratorInterface extends BaseIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.rewind.php
      */
+    #[\ReturnTypeWillChange]
     public function rewind();
 }

@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\StorageBundle\Form\Type;
 
-use ArrayObject;
 use Integrated\Bundle\ContentBundle\Form\Util\FormUtil;
 use Integrated\Bundle\StorageBundle\Form\EventListener\FileEventSubscriber;
 use Integrated\Bundle\StorageBundle\Form\Upload\StorageIntentUpload;
@@ -46,9 +45,6 @@ class FileType extends AbstractType
         $this->appCache = $appCache;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         // The field might not be required in the integrated content type
@@ -59,7 +55,7 @@ class FileType extends AbstractType
         ]);
 
         // Move the constraints from the main object to the file object
-        $constraints = new ArrayObject();
+        $constraints = new \ArrayObject();
         $resolver->setNormalizer(
             'constraints',
             function (Options $options, $value) use ($constraints) {
@@ -82,7 +78,7 @@ class FileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('file', SymfonyFileType::class, [
-            'required' => false,
+            'required' => $options['required'],
             'mapped' => false,
             'empty_data' => null,
             'constraints' => $options['constraints_file'],

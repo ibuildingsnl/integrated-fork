@@ -14,7 +14,7 @@ namespace Integrated\Common\Normalizer\Tests\Processor;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ResolverInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,7 +22,7 @@ use stdClass;
 class ContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
@@ -32,7 +32,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     private $options = [];
 
     /**
-     * @var Context | \PHPUnit_Framework_MockObject_MockObject
+     * @var Context|MockObject
      */
     private $nesting = null;
 
@@ -61,7 +61,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
 
     public function testNormalize()
     {
-        $object = new stdClass();
+        $object = new \stdClass();
         $options = [
             'key1' => 'value1',
             'key2' => 'value2',

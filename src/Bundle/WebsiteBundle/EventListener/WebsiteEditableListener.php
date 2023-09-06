@@ -14,7 +14,7 @@ namespace Integrated\Bundle\WebsiteBundle\EventListener;
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\WebsiteBundle\Service\EditableChecker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -32,10 +32,6 @@ class WebsiteEditableListener implements EventSubscriberInterface
      */
     protected $javascripts;
 
-    /**
-     * @param EditableChecker $websiteEditableChecker
-     * @param AssetManager    $javascripts
-     */
     public function __construct(EditableChecker $websiteEditableChecker, AssetManager $javascripts)
     {
         $this->websiteEditableChecker = $websiteEditableChecker;
@@ -52,10 +48,7 @@ class WebsiteEditableListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FilterControllerEvent $event
-     */
-    public function onController(FilterControllerEvent $event)
+    public function onController(ControllerEvent $event)
     {
         if (!$this->websiteEditableChecker->checkEditable()) {
             return;
@@ -64,14 +57,9 @@ class WebsiteEditableListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if (!$request->query->get('integrated_website_edit')) {
-            //edit mode is off
+            // edit mode is off
             return;
         }
-
-        $this->javascripts->add('bundles/integratedcontent/js/handlebars.helpers.js');
-        $this->javascripts->add('bundles/integratedwebsite/js/page.js');
-        $this->javascripts->add('bundles/integratedwebsite/js/grid.js');
-        $this->javascripts->add('bundles/integratedwebsite/js/menu.js');
 
         $request->attributes->set('integrated_block_edit', true);
         $request->attributes->set('integrated_menu_edit', true);

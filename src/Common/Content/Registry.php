@@ -11,8 +11,6 @@
 
 namespace Integrated\Common\Content;
 
-use ArrayIterator;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
@@ -23,9 +21,6 @@ class Registry implements RegistryInterface
      */
     protected $data;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -106,7 +101,7 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -114,15 +109,15 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -130,6 +125,7 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -138,7 +134,7 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->add($value);
@@ -150,7 +146,7 @@ class Registry implements RegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }

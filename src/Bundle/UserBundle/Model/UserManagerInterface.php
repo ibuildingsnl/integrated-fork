@@ -25,15 +25,11 @@ interface UserManagerInterface extends ManagerInterface
 
     /**
      * Change or add the user to the manager.
-     *
-     * @param UserInterface $user
      */
     public function persist(UserInterface $user);
 
     /**
      * Remove the user from the manager.
-     *
-     * @param UserInterface $user
      */
     public function remove(UserInterface $user);
 
@@ -88,11 +84,16 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds the users by a set of criteria.
      *
-     * @param array $criteria
-     *
      * @return UserInterface[]
      */
     public function findBy(array $criteria);
+
+    /**
+     * Finds an user by a set of criteria.
+     *
+     * @return UserInterface
+     */
+    public function findOneBy(array $criteria);
 
     /**
      * Returns the class name of the user object.
@@ -104,10 +105,9 @@ interface UserManagerInterface extends ManagerInterface
     /**
      * Finds the user by its username and scope.
      *
-     * @param $username
      * @param ScopeInterface $scope
      *
      * @return UserInterface
      */
-    public function findByUsernameAndScope($username, ?ScopeInterface $scope = null);
+    public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null);
 }

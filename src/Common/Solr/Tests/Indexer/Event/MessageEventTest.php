@@ -13,6 +13,7 @@ namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Queue\QueueMessageInterface;
 use Integrated\Common\Solr\Indexer\Event\MessageEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Common\Solr\Indexer\Event\MessageEvent;
 class MessageEventTest extends AbstractEventTest
 {
     /**
-     * @var QueueMessageInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueMessageInterface|MockObject
      */
     protected $message;
 

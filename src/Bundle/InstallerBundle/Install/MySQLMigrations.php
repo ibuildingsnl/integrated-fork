@@ -9,11 +9,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MySQLMigrations
 {
-    const DOCTRINE_MIGRATIONS_DIRECTORY = '/../Migrations/MySQL';
-    const DOCTRINE_MIGRATIONS_NAMESPACE = 'Integrated\Bundle\InstallerBundle\Migrations\MySQL';
-    const DOCTRINE_MIGRATIONS_NAME = 'Integrated MySQL Migrations';
-    const DOCTRINE_MIGRATIONS_TABLE = 'integrated_migration_versions';
-    const DOCTRINE_MIGRATIONS_DIRECTION_UP = 'up';
+    public const DOCTRINE_MIGRATIONS_DIRECTORY = '/../Migrations/MySQL';
+    public const DOCTRINE_MIGRATIONS_NAMESPACE = 'Integrated\Bundle\InstallerBundle\Migrations\MySQL';
+    public const DOCTRINE_MIGRATIONS_NAME = 'Integrated MySQL Migrations';
+    public const DOCTRINE_MIGRATIONS_TABLE = 'integrated_migration_versions';
+    public const DOCTRINE_MIGRATIONS_DIRECTION_UP = 'up';
 
     /**
      * @var EntityManager
@@ -27,9 +27,6 @@ class MySQLMigrations
 
     /**
      * Migrations constructor.
-     *
-     * @param EntityManager      $entityManager
-     * @param ContainerInterface $container
      */
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {

@@ -12,14 +12,14 @@
 namespace Integrated\Bundle\ContentBundle\Block;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\RelatedContentBlock;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Block\BlockInterface;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RelatedContentBlockHandler extends BlockHandler
 {
     /**
-     * @var Paginator
+     * @var PaginatorInterface
      */
     private $paginator;
 
@@ -45,12 +45,7 @@ class RelatedContentBlockHandler extends BlockHandler
      */
     private $dm;
 
-    /**
-     * @param Paginator       $paginator
-     * @param RequestStack    $requestStack
-     * @param DocumentManager $dm
-     */
-    public function __construct(Paginator $paginator, RequestStack $requestStack, DocumentManager $dm)
+    public function __construct(PaginatorInterface $paginator, RequestStack $requestStack, DocumentManager $dm)
     {
         $this->paginator = $paginator;
         $this->requestStack = $requestStack;
@@ -82,13 +77,11 @@ class RelatedContentBlockHandler extends BlockHandler
             'block' => $block,
             'pagination' => $pagination,
             'document' => $this->getDocument(),
+            'options' => $options,
         ]);
     }
 
     /**
-     * @param RelatedContentBlock $block
-     * @param Request             $request
-     *
      * @return \Knp\Component\Pager\Pagination\PaginationInterface|null
      *
      * @throws \Exception
@@ -115,8 +108,6 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param RelatedContentBlock $block
-     *
      * @return \Doctrine\MongoDB\Query\Builder|\Doctrine\Common\Collections\ArrayCollection|null
      */
     protected function getQuery(RelatedContentBlock $block)
@@ -169,10 +160,7 @@ class RelatedContentBlockHandler extends BlockHandler
     }
 
     /**
-     * @param Content             $document
-     * @param RelatedContentBlock $block
-     *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return \Doctrine\ODM\MongoDB\Query\Builder
      */
     protected function getLinkedByQuery(Content $document, RelatedContentBlock $block)
     {
@@ -182,16 +170,11 @@ class RelatedContentBlockHandler extends BlockHandler
             $ids[$content->getId()] = $content->getId();
         }
 
-        return $this->dm->getRepository(Content::class)
-            ->createQueryBuilder()
+        return $this->dm->createQueryBuilder(Content::class)
             ->field('_id')->in($ids);
     }
 
     /**
-     * @param Builder             $query
-     * @param Content             $document
-     * @param RelatedContentBlock $block
-     *
      * @return ArrayCollection
      */
     protected function getSortedLinkedByItems(Builder $query, Content $document, RelatedContentBlock $block)

@@ -13,24 +13,32 @@ namespace Integrated\Bundle\WebsiteBundle\Controller;
 
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
 use Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection;
+use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class SearchSelectionController extends Controller
+class SearchSelectionController extends AbstractController
 {
+    /**
+     * @var SolariumProvider
+     */
+    private $solariumProvider;
+
+    public function __construct(SolariumProvider $solariumProvider)
+    {
+        $this->solariumProvider = $solariumProvider;
+    }
+
     /**
      * @Template
      *
-     * @param Request         $request
-     * @param SearchSelection $selection
-     *
      * @return array
      */
-    public function rssAction(Request $request, SearchSelection $selection)
+    public function rss(Request $request, SearchSelection $selection)
     {
         $block = new ContentBlock();
         $block->setSearchSelection($selection);
@@ -40,9 +48,9 @@ class SearchSelectionController extends Controller
             $block->setItemsPerPage($itemsPerPage);
         }
 
-        return $this->render('IntegratedWebsiteBundle:search_selection:rss.'.$request->getRequestFormat('xml').'.twig', [
+        return $this->render('@IntegratedWebsite/search_selection/rss.'.$request->getRequestFormat('xml').'.twig', [
             'selection' => $selection,
-            'documents' => $this->get('integrated_content.provider.solarium')->execute($block, $request),
+            'documents' => $this->solariumProvider->execute($block, $request),
         ]);
     }
 }

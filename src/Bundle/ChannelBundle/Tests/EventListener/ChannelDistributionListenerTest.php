@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Tests\EventListener;
 
-use DateTime;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Integrated\Bundle\ChannelBundle\EventListener\Doctrine\ChannelDistributionListener;
 use Integrated\Bundle\ChannelBundle\Tests\EventListener\Mock\Serializer;
@@ -88,7 +87,7 @@ class ChannelDistributionListenerTest extends TestCase
      */
     public function testQueueDelayedStartDate()
     {
-        $startDate = DateTime::createFromFormat('U', time())->modify('+1 day');
+        $startDate = \DateTime::createFromFormat('U', time())->modify('+1 day');
 
         $document = $this->getDocumentWithPublishTime($startDate);
 
@@ -107,8 +106,8 @@ class ChannelDistributionListenerTest extends TestCase
      */
     public function testQueueDelayedEndDate()
     {
-        $startDate = DateTime::createFromFormat('U', time());
-        $endDate = DateTime::createFromFormat('U', time())->modify('+1 day');
+        $startDate = \DateTime::createFromFormat('U', time());
+        $endDate = \DateTime::createFromFormat('U', time())->modify('+1 day');
 
         $document = $this->getDocumentWithPublishTime($startDate, $endDate);
 
@@ -132,8 +131,8 @@ class ChannelDistributionListenerTest extends TestCase
      */
     public function testQueueMaxEndDate()
     {
-        $startDate = DateTime::createFromFormat('U', time());
-        $endDate = new DateTime(PublishTimeInterface::DATE_MAX); // should not be queued
+        $startDate = \DateTime::createFromFormat('U', time());
+        $endDate = new \DateTime(PublishTimeInterface::DATE_MAX); // should not be queued
 
         $document = $this->getDocumentWithPublishTime($startDate, $endDate);
 
@@ -144,8 +143,6 @@ class ChannelDistributionListenerTest extends TestCase
     }
 
     /**
-     * @param MockObject $document
-     *
      * @return LifecycleEventArgs|MockObject
      */
     private function getLifecycleEventArgs(MockObject $document): LifecycleEventArgs
@@ -158,9 +155,6 @@ class ChannelDistributionListenerTest extends TestCase
         return $event;
     }
 
-    /**
-     * @return MockObject
-     */
     private function getDocument(): MockObject
     {
         $document = $this->createMock(Content::class);
@@ -174,13 +168,7 @@ class ChannelDistributionListenerTest extends TestCase
         return $document;
     }
 
-    /**
-     * @param DateTime|null $startDate
-     * @param DateTime|null $endDate
-     *
-     * @return MockObject
-     */
-    private function getDocumentWithPublishTime(DateTime $startDate = null, DateTime $endDate = null): MockObject
+    private function getDocumentWithPublishTime(\DateTime $startDate = null, \DateTime $endDate = null): MockObject
     {
         $document = $this->getDocument();
         $document->method('isPublished')
@@ -209,8 +197,6 @@ class ChannelDistributionListenerTest extends TestCase
 
     /**
      * Get the first message from the queue.
-     *
-     * @return QueueMessageInterface
      */
     private function pull(): QueueMessageInterface
     {
@@ -225,8 +211,6 @@ class ChannelDistributionListenerTest extends TestCase
 
     /**
      * Get the first payload from the queue.
-     *
-     * @return Request
      */
     private function getPayload(): Request
     {

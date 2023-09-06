@@ -12,7 +12,7 @@
 namespace Integrated\Common\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Form\Type\GroupType;
 use Integrated\Common\Form\DataTransformer\PermissionTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -27,9 +27,6 @@ class PermissionsType extends AbstractType
      */
     protected $repository;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type\Job;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\BootstrapCollectionType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\BootstrapCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,9 +20,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ContactPersonsType extends AbstractType
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

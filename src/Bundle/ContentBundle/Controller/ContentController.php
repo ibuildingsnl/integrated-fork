@@ -11,55 +11,129 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
-use Integrated\Bundle\UserBundle\Model\GroupableInterface;
+use Integrated\Bundle\ContentBundle\Provider\MediaProvider;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
+use Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent;
+use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Form\ContentFormType;
 use Integrated\Common\ContentType\ContentTypeInterface;
+use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Locks;
+use Integrated\Common\Locks\Filter;
+use Integrated\Common\Locks\Provider\DBAL\Manager;
+use Integrated\Common\Locks\Resource;
 use Integrated\Common\Security\Permissions;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Common\Solr\Indexer\IndexerInterface;
+use Integrated\Common\Solr\Search\QueryFactoryInterface;
+use Integrated\MongoDB\Solr\Indexer\QueueSubscriber;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Traversable;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentController extends Controller
+class ContentController extends AbstractController
 {
     /**
-     * @var string
+     * @var ResolverInterface
      */
-    protected $relationClass = 'Integrated\\Bundle\\ContentBundle\\Document\\Relation\\Relation';
+    private $resolver;
 
     /**
-     * @param Request $request
-     *
-     * @return Response
+     * @var ContentTypeManager
      */
-    public function indexAction(Request $request)
+    private $contentTypeManager;
+
+    /**
+     * @var QueueSubscriber
+     */
+    private $queueSubscriber;
+
+    /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    /**
+     * @var IndexerInterface
+     */
+    private $indexer;
+    /**
+     * @var SearchContentReferenced
+     */
+    private $contentReferenced;
+
+    /**
+     * @var Manager
+     */
+    private $lockManager;
+
+    /**
+     * @var UserManagerInterface
+     */
+    private $userManager;
+
+    /**
+     * @var ImageExtension
+     */
+    private $imageExtension;
+
+    /**
+     * @var MediaProvider
+     */
+    private $mediaProvider;
+
+    /**
+     * @var QueryFactoryInterface
+     */
+    private $queryFactory;
+
+    public function __construct(
+        ResolverInterface $resolver,
+        ContentTypeManager $contentTypeManager,
+        QueueSubscriber $queueSubscriber,
+        LockFactory $lockFactory,
+        IndexerInterface $indexer,
+        SearchContentReferenced $contentReferenced,
+        Manager $lockManager,
+        UserManagerInterface $userManager,
+        ImageExtension $imageExtension,
+        MediaProvider $mediaProvider,
+        QueryFactoryInterface $queryFactory
+    ) {
+        $this->resolver = $resolver;
+        $this->contentTypeManager = $contentTypeManager;
+        $this->queueSubscriber = $queueSubscriber;
+        $this->lockFactory = $lockFactory;
+        $this->indexer = $indexer;
+        $this->contentReferenced = $contentReferenced;
+        $this->lockManager = $lockManager;
+        $this->userManager = $userManager;
+        $this->imageExtension = $imageExtension;
+        $this->mediaProvider = $mediaProvider;
+        $this->queryFactory = $queryFactory;
+    }
+
+    public function index(Request $request): Response
     {
-        // group the types based on there class
-        $types = [];
-
-        // Store contentTypes in array
-        $displayTypes = [];
-
-        // Store facetTitles in array
-        $facetTitles = [];
-
-        //remember search state
+        // remember search state
         $session = $request->getSession();
+
         if ($request->query->get('remember') && $session->has('content_index_view')) {
             $request->query->add(unserialize($session->get('content_index_view')));
             $request->query->remove('remember');
@@ -67,313 +141,58 @@ class ContentController extends Controller
             $session->set('content_index_view', serialize($request->query->all()));
         }
 
-        /** @var $type \Integrated\Common\ContentType\ContentTypeInterface */
-        foreach ($this->get('integrated.form.resolver')->getTypes() as $type) {
-            $types[$type->getClass()][$type->getType()] = $type;
-            $displayTypes[$type->getType()] = $type->getName();
-        }
+        $options = $request->query->all();
 
-        foreach (array_keys($types) as $key) {
-            ksort($types[$key]);
-        }
-
-        /** @var $client \Solarium\Client */
-        $client = $this->get('solarium.client');
-        $client->getPlugin('postbigrequest');
-
-        $query = $client->createSelect();
-
-        $facetSet = $query->getFacetSet();
-        $facetSet->setMinCount(1);
-        $facetSet->createFacetField('contenttypes')->setField('type_name')->addExclude('contenttypes');
-        $facetSet->createFacetField('channels')->setField('facet_channels')->addExclude('channels');
-
-        $facetSet->createFacetField('workflow_state')->setField('facet_workflow_state')->addExclude('workflow_state');
-        $facetTitles['workflow_state'] = 'Workflow status';
-
-        $facetSet->createFacetField('workflow_assigned')->setField('facet_workflow_assigned')->addExclude('workflow_assigned');
-        $facetTitles['workflow_assigned'] = 'Assigned user';
-
-        $facetSet->createFacetField('authors')->setField('facet_authors')->addExclude('authors');
-        $facetTitles['authors'] = 'Author';
-
-        $facetSet->createFacetField('properties')->setField('facet_properties')->addExclude('properties');
-
-        // If the request query contains a relation parameter we need to fetch all the targets of the relation in order
-        // to filter on these targets.
-        // TODO this code should be somewhere else
-        $relation = $request->query->get('relation');
+        // all this relations stuff is only used on the json response
         $relations = [];
-        if (null !== $relation) {
-            $contentType = [];
 
-            /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-            $dm = $this->get('doctrine_mongodb')->getManager();
+        if ($options['relation'] ?? null) {
+            $options['contenttypes'] = [];
 
-            /** @var Relation $relation */
-            if ($relation = $dm->getRepository($this->relationClass)->find($relation)) {
+            if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $contentType[] = $target->getType();
+                    $options['contenttypes'] = $target->getId();
                     $relations[] = [
-                        'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getType(), 'relation' => $relation->getId()]),
+                        'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),
                     ];
                 }
             }
-        } else {
-            $contentType = $request->query->get('contenttypes');
-        }
-
-        /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $active = [];
-
-        $helper = $query->getHelper();
-        $filter = function ($param) use ($helper) {
-            return $helper->escapePhrase($param);
-        };
-
-        // If the request query contains a properties parameter we need to fetch all the targets of the relation in order
-        // to filter on these targets.
-        // TODO this code should be somewhere else
-        $propertiesfilter = $request->query->get('properties');
-        if (\is_array($propertiesfilter)) {
-            $query
-                ->createFilterQuery('properties')
-                ->addTag('properties')
-                ->setQuery('facet_properties: ((%1%))', [implode(') OR (', array_map($filter, $propertiesfilter))]);
-
-            $active['properties'] = $propertiesfilter;
-        }
-
-        /** @var Relation $relation */
-        foreach ($dm->getRepository($this->relationClass)->findAll() as $relation) {
-            $name = preg_replace('/[^a-zA-Z]/', '', $relation->getName());
-
-            //create relation facet field
-            $facetSet->createFacetField($name)->setField('facet_'.$relation->getId())->addExclude($name);
-            $facetTitles[$name] = $relation->getName();
-            $relationfilter = $request->query->get($name);
-
-            if (\is_array($relationfilter)) {
-                $query
-                    ->createFilterQuery($name)
-                    ->addTag($name)
-                    ->setQuery('facet_'.$relation->getId().': ((%1%))', [implode(') OR (', array_map($filter, $relationfilter))]);
-
-                $active[$name] = $relationfilter;
-            }
-        }
-
-        if (\is_array($contentType)) {
-            if (\count($contentType)) {
-                $query
-                    ->createFilterQuery('contenttypes')
-                    ->addTag('contenttypes')
-                    ->setQuery('type_name: ((%1%))', [implode(') OR (', array_map($filter, $contentType))]);
-            }
-        }
-
-        // If the workflow bundle is loaded then only display the results that the
-        // user has read rights to
-
-        if ($this->has('integrated_workflow.solr.workflow.extension')) {
-            $filterWorkflow = [];
-
-            $user = $this->getUser();
-
-            if ($user instanceof GroupableInterface) {
-                foreach ($user->getGroups() as $group) {
-                    $filterWorkflow[] = $group->getId();
-                }
-            }
-
-            if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
-                // allow content without workflow
-                $fq = $query->createFilterQuery('workflow')
-                    ->addTag('workflow')
-                    ->addTag('security')
-                    ->setQuery('(*:* -security_workflow_read:[* TO *])');
-
-                // allow content with group access
-                if ($filterWorkflow) {
-                    $fq->setQuery(
-                        $fq->getQuery().' OR security_workflow_read: ((%1%))',
-                        [implode(') OR (', $filterWorkflow)]
-                    );
-                }
-
-                // always allow access to assigned content
-                $fq->setQuery(
-                    $fq->getQuery().' OR facet_workflow_assigned_id: %1%',
-                    [$user->getId()]
-                );
-
-                if ($person = $user->getRelation()) {
-                    $fq->setQuery(
-                        $fq->getQuery().' OR author: %1%*',
-                        [$person->getId()]
-                    );
-                }
-            }
-        }
-
-        // TODO this should be somewhere else:
-        $activeChannels = $request->query->get('channels');
-        if (\is_array($activeChannels)) {
-            if (\count($activeChannels)) {
-                $query
-                    ->createFilterQuery('channels')
-                    ->addTag('channels')
-                    ->setQuery('facet_channels: ((%1%))', [implode(') OR (', array_map($filter, $activeChannels))]);
-            }
-        }
-
-        $activeStates = $request->query->get('workflow_state');
-        if (\is_array($activeStates)) {
-            if (\count($activeStates)) {
-                $query
-                    ->createFilterQuery('workflow_state')
-                    ->addTag('workflow_state')
-                    ->setQuery('facet_workflow_state: ((%1%))', [implode(') OR (', array_map($filter, $activeStates))]);
-            }
-        }
-
-        $activeAssigned = $request->query->get('workflow_assigned');
-        if (\is_array($activeAssigned)) {
-            if (\count($activeAssigned)) {
-                $query
-                    ->createFilterQuery('workflow_assigned')
-                    ->addTag('workflow_assigned')
-                    ->setQuery('facet_workflow_assigned: ((%1%))', [implode(') OR (', array_map($filter, $activeAssigned))]);
-            }
-        }
-
-        $activeAuthors = $request->query->get('authors');
-        if (\is_array($activeAuthors)) {
-            if (\count($activeAuthors)) {
-                $query
-                    ->createFilterQuery('authors')
-                    ->addTag('authors')
-                    ->setQuery('facet_authors: ((%1%))', [implode(') OR (', array_map($filter, $activeAuthors))]);
-            }
         }
 
         if ($request->isMethod('post')) {
-            $id = (array) $request->get('id');
-            if (\is_array($id)) {
-                if (\count($id) == 0) {
-                    $id[] = '';
-                }
-
-                if (\count($id)) {
-                    $query
-                        ->createFilterQuery('id')
-                        ->addTag('id')
-                        ->setQuery('type_id: ((%1%))', [implode(') OR (', array_map($filter, $id))]);
-                }
-            }
+            $options['ids'] = $request->get('id');
         }
 
-        // sorting
-        $sort_default = 'changed';
-        $sort_options = [
-            'rel' => ['name' => 'rel', 'field' => 'score', 'label' => 'relevance', 'order' => 'desc'],
-            'changed' => ['name' => 'changed', 'field' => 'pub_edited', 'label' => 'date modified', 'order' => 'desc'],
-            'created' => ['name' => 'created', 'field' => 'pub_created', 'label' => 'date created', 'order' => 'desc'],
-            'time' => ['name' => 'time', 'field' => 'pub_time', 'label' => 'publication date', 'order' => 'desc'],
-            'title' => ['name' => 'title', 'field' => 'title_sort', 'label' => 'title', 'order' => 'asc'],
-            'rank' => ['name' => 'rank', 'field' => 'rank', 'label' => 'rank', 'order' => 'asc'],
-            'random' => ['name' => 'random', 'field' => 'random_'.mt_rand(), 'label' => 'random', 'order' => 'desc'],
-        ];
-        $order_options = [
-            'asc' => 'asc',
-            'desc' => 'desc',
-        ];
+        $client = $this->getSolarium();
+        $client->getPlugin('postbigrequest');
 
-        if ($q = $request->get('q')) {
-            $edismax = $query->getEDisMax();
-            $edismax->setQueryFields('title content');
-            $edismax->setMinimumMatch('75%');
+        $query = $this->queryFactory->createQuery(IntegratedContent::class, $options);
 
-            $query->setQuery($q);
-
-            $sort_default = 'rel';
-        } else {
-            //relevance only available when sorting on specific query
-            unset($sort_options['rel']);
-        }
-
-        $sort = $request->query->get('sort', $sort_default);
-        $sort = trim(strtolower($sort));
-        $sort = \array_key_exists($sort, $sort_options) ? $sort : $sort_default;
-
-        $query->addSort($sort_options[$sort]['field'], \in_array($request->query->get('order'), $order_options) ? $request->query->get('order') : $sort_options[$sort]['order']);
-
-        // add field filters
-        foreach ((array) $request->query->get('filter') as $name => $value) {
-            $value = trim($value);
-            if (!\is_string($name) || !\is_string($value) || !$value) {
-                continue;
-            }
-
-            $query->createFilterQuery($name)->setQuery('%1%:%P2%', [$name, $value]);
-        }
-
-        // Execute the query
-        $result = $client->select($query);
-
-        /** @var $paginator \Knp\Component\Pager\Paginator */
-        $paginator = $this->get('knp_paginator');
-        $paginator = $paginator->paginate(
-            [$client, $query],
+        $paginator = $this->getPaginator()->paginate(
+            [$client, $query->getQuery()],
             $request->query->get('page', 1),
             $request->query->get('limit', 15),
-            ['sortFieldParameterName' => null]
+            [PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null]
         );
 
-        /** @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $channels = [];
-        if ($channelResult = $dm->getRepository('Integrated\\Bundle\\ContentBundle\\Document\\Channel\\Channel')->findAll()) {
-            /** @var $channel \Integrated\Bundle\ContentBundle\Document\Channel\Channel */
-            foreach ($channelResult as $channel) {
-                $channels[$channel->getId()] = $channel->getName();
-            }
-        }
-
-        $active['contenttypes'] = $contentType;
-        $active['channels'] = $activeChannels;
-        $active['workflow_state'] = $activeStates;
-        $active['workflow_assigned'] = $activeAssigned;
-        $active['authors'] = $activeAuthors;
-
-        return $this->render('IntegratedContentBundle:content:index.'.$request->getRequestFormat().'.twig', [
-            'types' => $types,
-            'params' => ['sort' => ['current' => $sort, 'default' => $sort_default, 'options' => $sort_options]],
+        return $this->render('@IntegratedContent/content/index.'.$request->getRequestFormat().'.twig', [
+            'params' => $query->getOptions(),
             'pager' => $paginator,
-            'contentTypes' => $displayTypes,
-            'active' => $active,
-            'channels' => $channels,
-            'facets' => $result->getFacetSet()->getFacets(),
+            'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
-            'facetTitles' => $facetTitles,
         ]);
     }
 
     /**
      * Show a document.
      *
-     * @param Request $request
-     * @param Content $content
-     *
      * @return Response
      */
-    public function showAction(Request $request, Content $content)
+    public function show(Request $request, Content $content)
     {
-        return $this->render('IntegratedContentBundle:content:show.'.$request->getRequestFormat().'.twig', [
+        return $this->render('@IntegratedContent/content/show.'.$request->getRequestFormat().'.twig', [
             'document' => $content,
         ]);
     }
@@ -381,61 +200,51 @@ class ContentController extends Controller
     /**
      * Create a new document.
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         /** @var ContentTypeInterface $contentType */
-        $contentType = $this->get('integrated_content.content_type.manager')->getType($request->get('type'));
+        $contentType = $this->contentTypeManager->getType($request->get('type'));
 
         $content = $contentType->create();
 
-        if (!$this->get('security.authorization_checker')->isGranted(Permissions::CREATE, $content)) {
+        if (!$this->isGranted(Permissions::CREATE, $content)) {
             throw new AccessDeniedException();
         }
 
         $form = $this->createNewForm($contentType, $content, $request);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('post')) {
-            $form->handleRequest($request);
-
-            // check for back click else its a submit
+        if ($form->isSubmitted()) {
             if ($form->get('actions')->getData() == 'cancel') {
-                return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+                return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
 
             if ($form->isValid()) {
-                if ($this->has('integrated_solr.indexer')) {
-                    //higher priority for content edited in Integrated
-                    $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
-                    $queue = $subscriber->getQueue();
-                    $subscriber->setPriority($queue::PRIORITY_HIGH);
-                }
+                // higher priority for content edited in Integrated
+                $queue = $this->queueSubscriber->getQueue();
+                $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
                 /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                $dm = $this->get('doctrine_mongodb')->getManager();
+                $dm = $this->getDoctrineODM()->getManager();
 
                 $dm->persist($content);
                 $dm->flush();
 
-                if ($this->has('integrated_solr.indexer')) {
-                    $lock = $this->get('integrated_solr.lock.factory')->createLock(self::class);
-                    $lock->acquire(true);
+                $lock = $this->lockFactory->createLock(self::class);
+                $lock->acquire(true);
 
-                    try {
-                        $indexer = $this->get('integrated_solr.indexer');
-                        $indexer->setOption('queue.size', 2);
-                        $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                    } finally {
-                        $lock->release();
-                    }
+                try {
+                    $this->indexer->setOption('queue.size', 2);
+                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                } finally {
+                    $lock->release();
                 }
 
                 if ($request->getRequestFormat() == 'iframe.html') {
                     return $this->render(
-                        'IntegratedContentBundle:content:saved.iframe.html.twig',
+                        '@IntegratedContent/content/saved.iframe.html.twig',
                         [
                             'id' => $content->getId(),
                             'title' => method_exists($content, 'getTitle') ? $content->getTitle() : $content->getId(),
@@ -445,20 +254,17 @@ class ContentController extends Controller
                 }
 
                 // Set flash message
-                $this->get('braincrafted_bootstrap.flash')->success(
-                    $this->get('translator')->trans('The document %name% has been created', ['%name%' => $contentType->getName()])
-                );
+                $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been created', ['%name%' => $contentType->getName()]));
 
-                return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+                return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
         }
 
-        return $this->render(sprintf('IntegratedContentBundle:content:new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(sprintf('@IntegratedContent/content/new.%s.twig', $request->getRequestFormat()), [
             'editable' => true,
             'type' => $contentType,
             'form' => $form->createView(),
-            'hasWorkflowBundle' => $this->has('integrated_workflow.form.workflow.state.type'),
-            'hasContentHistoryBundle' => false, // not needed here
+            'showContentHistory' => false,
             'references' => json_encode($this->getReferences($content)),
         ]);
     }
@@ -466,17 +272,14 @@ class ContentController extends Controller
     /**
      * Update a existing document.
      *
-     * @param Request $request
-     * @param Content $content
-     *
      * @return Response
      */
-    public function editAction(Request $request, Content $content)
+    public function edit(Request $request, Content $content)
     {
         /** @var ContentTypeInterface $contentType */
-        $contentType = $this->get('integrated_content.content_type.manager')->getType($content->getContentType());
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
 
-        if (!$this->get('security.authorization_checker')->isGranted(Permissions::VIEW, $content)) {
+        if (!$this->isGranted(Permissions::VIEW, $content)) {
             throw new AccessDeniedException();
         }
 
@@ -497,7 +300,7 @@ class ContentController extends Controller
                         'lock' => $locking['lock']->getId(),
                     ]);
 
-                    return $this->redirect($this->generateUrl('integrated_content_content_edit', $parameters));
+                    return $this->redirectToRoute('integrated_content_content_edit', $parameters);
                 }
 
                 $locking['locked'] = false;
@@ -521,51 +324,43 @@ class ContentController extends Controller
                 return $this->redirect($url);
             }
 
-            if (!$this->get('security.authorization_checker')->isGranted(Permissions::EDIT, $content)) {
+            if (!$this->isGranted(Permissions::EDIT, $content)) {
                 throw new AccessDeniedException();
             }
 
             if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirect($this->generateUrl('integrated_content_content_edit', ['id' => $content->getId()]));
+                return $this->redirectToRoute('integrated_content_content_edit', ['id' => $content->getId()]);
             }
 
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'save') {
                 if (!$locking['locked'] && $form->isValid()) {
-                    if ($this->has('integrated_solr.indexer')) {
-                        //higher priority for content edited in Integrated
-                        $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
-                        $queue = $subscriber->getQueue();
-                        $subscriber->setPriority($queue::PRIORITY_HIGH);
-                    }
+                    // higher priority for content edited in Integrated
+                    $queue = $this->queueSubscriber->getQueue();
+                    $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
                     /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->get('doctrine_mongodb')->getManager();
+                    $dm = $this->getDoctrineODM()->getManager();
                     $dm->flush();
 
                     // Set flash message
-                    $this->get('braincrafted_bootstrap.flash')->success(
-                        $this->get('translator')->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()])
-                    );
+                    $this->addFlash('success', $this->getTranslator()->trans('The changes to %name% are saved', ['%name%' => $contentType->getName()]));
 
-                    if ($this->has('integrated_solr.indexer')) {
-                        $lock = $this->get('integrated_solr.lock.factory')->createLock(self::class);
-                        $lock->acquire(true);
+                    $lock = $this->lockFactory->createLock(self::class);
+                    $lock->acquire(true);
 
-                        try {
-                            $indexer = $this->get('integrated_solr.indexer');
-                            $indexer->setOption('queue.size', 2);
-                            $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                        } finally {
-                            $lock->release();
-                        }
+                    try {
+                        $this->indexer->setOption('queue.size', 2);
+                        $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
+                    } finally {
+                        $lock->release();
                     }
 
                     if (!$locking['locked']) {
                         $locking['release']();
                     }
 
-                    return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
 
@@ -597,17 +392,16 @@ class ContentController extends Controller
                 $text = 'The document is currently locked and can not be edited until this lock is released.';
             }
 
-            $this->get('braincrafted_bootstrap.flash')->error($text);
+            $this->addFlash('danger', $text);
         }
 
-        return $this->render('IntegratedContentBundle:content:edit.html.twig', [
-            'editable' => $this->get('security.authorization_checker')->isGranted(Permissions::EDIT, $content),
+        return $this->render('@IntegratedContent/content/edit.html.twig', [
+            'editable' => $this->isGranted(Permissions::EDIT, $content),
             'type' => $contentType,
             'form' => $form->createView(),
             'content' => $content,
             'locking' => $locking,
-            'hasWorkflowBundle' => $this->has('integrated_workflow.form.workflow.state.type'),
-            'hasContentHistoryBundle' => $this->has('integrated_content_history.controller.content_history'),
+            'showContentHistory' => true,
             'references' => json_encode($this->getReferences($content)),
         ]);
     }
@@ -615,17 +409,14 @@ class ContentController extends Controller
     /**
      * Delete a document.
      *
-     * @param Request $request
-     * @param Content $content
-     *
      * @return Response
      */
-    public function deleteAction(Request $request, Content $content)
+    public function delete(Request $request, Content $content)
     {
         /** @var $type \Integrated\Common\ContentType\ContentTypeInterface */
-        $type = $this->get('integrated.form.resolver')->getType($content->getContentType());
+        $type = $this->resolver->getType($content->getContentType());
 
-        if (!$this->get('security.authorization_checker')->isGranted(Permissions::DELETE, $content)) {
+        if (!$this->isGranted(Permissions::DELETE, $content)) {
             throw new AccessDeniedException();
         }
 
@@ -641,21 +432,19 @@ class ContentController extends Controller
 
             if ($locking['new']) {
                 if ($request->isMethod('get')) {
-                    return $this->redirect($this->generateUrl('integrated_content_content_delete', ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]));
+                    return $this->redirectToRoute('integrated_content_content_delete', ['id' => $content->getId(), 'lock' => $locking['lock']->getId()]);
                 }
 
                 $locking['locked'] = false;
             }
         }
 
-        $contentReferenced = $this->get('integrated_content.services.search.content.referenced');
-        $referenced = $contentReferenced->getReferenced($content);
+        $referenced = $this->contentReferenced->getReferenced($content);
 
         $form = $this->createDeleteForm($content, $locking, \count($referenced) > 0);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('delete')) {
-            $form->handleRequest($request);
-
+        if ($form->isSubmitted()) {
             // possible actions are cancel, reload and delete
 
             if ($form->get('actions')->getData() == 'cancel') {
@@ -663,45 +452,37 @@ class ContentController extends Controller
                     $locking['release']();
                 }
 
-                return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+                return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
             }
 
             if ($form->get('actions')->getData() == 'reload') {
-                return $this->redirect($this->generateUrl('integrated_content_content_delete', ['id' => $content->getId()]));
+                return $this->redirectToRoute('integrated_content_content_delete', ['id' => $content->getId()]);
             }
 
             // this is not rest compatible since a button click is required to save
             if ($form->get('actions')->getData() == 'delete') {
                 if ($form->isValid()) {
-                    if ($this->has('integrated_solr.indexer')) {
-                        //higher priority for content edited in Integrated
-                        $subscriber = $this->get('integrated_solr.indexer.mongodb.subscriber');
-                        $queue = $subscriber->getQueue();
-                        $subscriber->setPriority($queue::PRIORITY_HIGH);
-                    }
+                    // higher priority for content edited in Integrated
+                    $queue = $this->queueSubscriber->getQueue();
+                    $this->queueSubscriber->setPriority($queue::PRIORITY_HIGH);
 
                     /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-                    $dm = $this->get('doctrine_mongodb')->getManager();
+                    $dm = $this->getDoctrineODM()->getManager();
 
                     $dm->remove($content);
                     $dm->flush();
 
                     // Set flash message
-                    $this->get('braincrafted_bootstrap.flash')->success(
-                        $this->get('translator')->trans('The document %name% has been deleted', ['%name%' => $type->getName()])
-                    );
+                    $this->addFlash('success', $this->getTranslator()->trans('The document %name% has been deleted', ['%name%' => $type->getName()]));
 
-                    if ($this->has('integrated_solr.indexer')) {
-                        $indexer = $this->get('integrated_solr.indexer');
-                        $indexer->setOption('queue.size', 2);
-                        $indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
-                    }
+                    $this->indexer->setOption('queue.size', 2);
+                    $this->indexer->execute(); // lets hope that the gods of random is in our favor as there is no way to guarantee that this will do what we want
 
                     if (!$locking['locked']) {
                         $locking['release']();
                     }
 
-                    return $this->redirect($this->generateUrl('integrated_content_content_index', ['remember' => 1]));
+                    return $this->redirectToRoute('integrated_content_content_index', ['remember' => 1]);
                 }
             }
         }
@@ -730,10 +511,10 @@ class ContentController extends Controller
                 $text = 'The document is currently locked and can not be deleted until this lock is released.';
             }
 
-            $this->get('braincrafted_bootstrap.flash')->error($text);
+            $this->addFlash('danger', $text);
         }
 
-        return $this->render('IntegratedContentBundle:content:delete.html.twig', [
+        return $this->render('@IntegratedContent/content/delete.html.twig', [
             'type' => $type,
             'form' => $form->createView(),
             'content' => $content,
@@ -750,14 +531,14 @@ class ContentController extends Controller
      * - user: this is the user the lock belongs to or null if the lock does
      *         not have a owner.
      *
-     * @param object     $object
-     * @param int | null $timeout
+     * @param object   $object
+     * @param int|null $timeout
      *
      * @return array
      */
     protected function getLock($object, $timeout = null)
     {
-        if (!$this->has('integrated_locking.dbal.manager') || !$this->get('security.authorization_checker')->isGranted(Permissions::EDIT, $object)) {
+        if (!$this->isGranted(Permissions::EDIT, $object)) {
             return [
                 'lock' => null,
                 'user' => null,
@@ -769,16 +550,16 @@ class ContentController extends Controller
         }
 
         /** @var Locks\ManagerInterface $service */
-        $service = $this->get('integrated_locking.dbal.manager');
+        $service = $this->lockManager;
 
         // Remove expired locks
         $service->clean();
 
-        $object = Locks\Resource::fromObject($object);
+        $object = Resource::fromObject($object);
         $owner = null;
 
         if ($user = $this->getUser()) {
-            $owner = Locks\Resource::fromAccount($user);
+            $owner = Resource::fromAccount($user);
         }
 
         if ($owner) {
@@ -818,13 +599,8 @@ class ContentController extends Controller
             $user = null;
 
             if ($owner = $lock->getRequest()->getOwner()) {
-                if ($this->has('integrated_user.user.manager')) {
-                    /** @var UserManagerInterface $manager */
-                    $manager = $this->get('integrated_user.user.manager');
-
-                    if ($manager->getClassName() === $owner->getType()) {
-                        $user = $manager->findByUsername($owner->getIdentifier());
-                    }
+                if ($this->userManager->getClassName() === $owner->getType()) {
+                    $user = $this->userManager->findByUsername($owner->getIdentifier());
                 }
             }
 
@@ -850,50 +626,36 @@ class ContentController extends Controller
     }
 
     /**
-     * @param Traversable $iterator
-     *
      * @return array
      */
-    protected function getLocks(Traversable $iterator)
+    protected function getLocks(\Traversable $iterator)
     {
         $results = [];
 
-        if (!$this->has('integrated_locking.dbal.manager')) {
-            return $results;
-        }
-
-        $filter = new Locks\Filter();
+        $filter = new Filter();
 
         foreach ($iterator as $data) {
-            $filter->resources[] = new Locks\Resource($data['type_class'], $data['type_id']);
+            $filter->resources[] = new Resource($data['type_class'], $data['type_id']);
         }
 
         if (!$filter->resources) {
             return $results;
         }
 
-        /** @var Locks\ManagerInterface $service */
-        $service = $this->get('integrated_locking.dbal.manager');
-
-        foreach ($service->findBy($filter) as $lock) {
+        foreach ($this->lockManager->findBy($filter) as $lock) {
             // get the user the locks belongs to.
             $user = null;
 
             if ($owner = $lock->getRequest()->getOwner()) {
-                if ($this->has('integrated_user.user.manager')) {
-                    /** @var UserManagerInterface $manager */
-                    $manager = $this->get('integrated_user.user.manager');
-
-                    if ($manager->getClassName() === $owner->getType()) {
-                        $user = $manager->findByUsername($owner->getIdentifier());
-                    }
+                if ($this->userManager->getClassName() === $owner->getType()) {
+                    $user = $this->userManager->findByUsername($owner->getIdentifier());
                 }
             }
 
             $text = '';
 
             if ($user) {
-                $text = $user->getUsername();
+                $text = $user->getUserIdentifier();
 
                 // we got a basic user name now try to get a better one
 
@@ -916,11 +678,9 @@ class ContentController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
-    public function navdropdownsAction(Request $request)
+    public function navdropdowns(Request $request)
     {
         $session = $request->getSession();
 
@@ -942,8 +702,7 @@ class ContentController extends Controller
         //
         // Get documents assigned to this user
         //
-        $client = $this->get('solarium.client');
-        $query = $client->createSelect();
+        $query = $this->getSolarium()->createSelect();
 
         $assignedContent = [];
 
@@ -954,12 +713,12 @@ class ContentController extends Controller
                 ->createFilterQuery('workflow_assigned_id')
                 ->setQuery('facet_workflow_assigned_id:'.$userId.'');
 
-            $result = $client->select($query);
+            $result = $this->getSolarium()->select($query);
 
             $assignedContent = $result->getDocuments();
         }
 
-        return $this->render('IntegratedContentBundle:content:navdropdowns.html.twig', [
+        return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [
             'avatarurl' => $avatarurl,
             'queuecount' => $queuecount,
             'queuepercentage' => $queuepercentage,
@@ -968,30 +727,26 @@ class ContentController extends Controller
     }
 
     /**
-     * @param Content $content
-     * @param Request $request
-     *
      * @return Response
      */
-    public function usedByAction(Content $content, Request $request)
+    public function usedBy(Content $content, Request $request)
     {
         /* @var $dm \Doctrine\ODM\MongoDB\DocumentManager */
-        $dm = $this->get('doctrine_mongodb')->getManager();
+        $dm = $this->getDoctrineODM()->getManager();
 
-        $qb = $dm->createQueryBuilder('IntegratedContentBundle:Content\Content');
+        $qb = $dm->createQueryBuilder(Content::class);
         $qb->field('relations.references.$id')->equals($content->getId());
 
         $query = $qb->getQuery();
 
         /** @var $paginator \Knp\Component\Pager\Paginator */
-        $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
+        $pagination = $this->getPaginator()->paginate(
             $query,
             $request->query->get('page', 1),
             $request->query->get('limit', 15)
         );
 
-        return $this->render('IntegratedContentBundle:content:used_by.'.$request->getRequestFormat().'.twig', [
+        return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
         ]);
@@ -1007,7 +762,7 @@ class ContentController extends Controller
         $output = [];
 
         /* @var Image $image */
-        foreach ($this->container->get('integrated_content.provider.media')->getContentTypes($filter) as $contentType) {
+        foreach ($this->mediaProvider->getContentTypes($filter) as $contentType) {
             $output[] = [
                 'id' => $contentType->getId(),
                 'name' => $contentType->getName(),
@@ -1019,10 +774,6 @@ class ContentController extends Controller
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     * @param ContentInterface     $content
-     * @param Request              $request
-     *
      * @return FormInterface
      */
     protected function createNewForm(ContentTypeInterface $contentType, ContentInterface $content, Request $request)
@@ -1047,11 +798,6 @@ class ContentController extends Controller
     }
 
     /**
-     * @param ContentTypeInterface $contentType
-     * @param ContentInterface     $content
-     * @param array                $locking
-     * @param Request|null         $request
-     *
      * @return FormInterface
      */
     protected function createEditForm(ContentTypeInterface $contentType, ContentInterface $content, array $locking, Request $request = null)
@@ -1086,7 +832,7 @@ class ContentController extends Controller
 
         // load a different set of buttons based on the permissions and locking state
 
-        if (!$this->get('security.authorization_checker')->isGranted(Permissions::EDIT, $content)) {
+        if (!$this->isGranted(Permissions::EDIT, $content)) {
             return $form->add('actions', ActionsType::class, ['buttons' => ['back']]);
         }
 
@@ -1098,9 +844,7 @@ class ContentController extends Controller
     }
 
     /**
-     * @param ContentInterface $content
-     * @param array            $locking
-     * @param bool             $notDelete
+     * @param bool $notDelete
      *
      * @return FormInterface
      */
@@ -1120,8 +864,6 @@ class ContentController extends Controller
     }
 
     /**
-     * @param ContentInterface $content
-     *
      * @return array
      */
     protected function getReferences(ContentInterface $content)
@@ -1136,7 +878,7 @@ class ContentController extends Controller
                 ];
 
                 if ($reference instanceof Image) {
-                    $properties['image'] = $this->get('integrated_image.twig_extension')->image($reference->getFile())->cropResize(250, 250)->jpeg();
+                    $properties['image'] = $this->imageExtension->image($reference->getFile())->cropResize(250, 250)->jpeg();
                 }
 
                 $references[$relation->getRelationId()][] = $properties;

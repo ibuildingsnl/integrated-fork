@@ -28,13 +28,13 @@ class ChannelEnforcerListener implements EventSubscriberInterface
      * The channels will be set the to content and completely overriding
      * the currently set channels.
      */
-    const SET = 'set';
+    public const SET = 'set';
 
     /**
      * The channels will be added to the content with out overriding the
      * currently set channels.
      */
-    const ADD = 'add';
+    public const ADD = 'add';
 
     /**
      * @var Channel[]
@@ -72,9 +72,6 @@ class ChannelEnforcerListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -86,9 +83,6 @@ class ChannelEnforcerListener implements EventSubscriberInterface
         $form->get('channels')->setData(array_merge($form->get('channels')->getData(), $this->channels));
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $data = $event->getData();

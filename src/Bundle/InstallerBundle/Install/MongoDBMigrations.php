@@ -11,11 +11,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MongoDBMigrations
 {
-    const DOCTRINE_MIGRATIONS_DIRECTORY = '/../Migrations/MongoDB';
-    const DOCTRINE_MIGRATIONS_NAMESPACE = 'Integrated\Bundle\InstallerBundle\Migrations\MongoDB';
-    const DOCTRINE_MIGRATIONS_NAME = 'Integrated MongoDB Migrations';
-    const DOCTRINE_MIGRATIONS_COLLECTION = 'integrated_migration_versions';
-    const DOCTRINE_MIGRATIONS_DIRECTION_UP = 'up';
+    public const DOCTRINE_MIGRATIONS_DIRECTORY = '/../Migrations/MongoDB';
+    public const DOCTRINE_MIGRATIONS_NAMESPACE = 'Integrated\Bundle\InstallerBundle\Migrations\MongoDB';
+    public const DOCTRINE_MIGRATIONS_NAME = 'Integrated MongoDB Migrations';
+    public const DOCTRINE_MIGRATIONS_COLLECTION = 'integrated_migration_versions';
+    public const DOCTRINE_MIGRATIONS_DIRECTION_UP = 'up';
 
     /**
      * @var DocumentManager
@@ -29,9 +29,6 @@ class MongoDBMigrations
 
     /**
      * Migrations constructor.
-     *
-     * @param DocumentManager    $documentManager
-     * @param ContainerInterface $container
      */
     public function __construct(DocumentManager $documentManager, ContainerInterface $container)
     {
@@ -46,9 +43,9 @@ class MongoDBMigrations
     {
         $directory = realpath(__DIR__.self::DOCTRINE_MIGRATIONS_DIRECTORY);
 
-        $configuration = new Configuration($this->documentManager->getConnection());
+        $configuration = new Configuration($this->documentManager->getClient());
         $configuration->setMigrationsCollectionName(self::DOCTRINE_MIGRATIONS_COLLECTION);
-        $configuration->setMigrationsDatabaseName($this->documentManager->getDocumentDatabase(Content::class)->getName());
+        $configuration->setMigrationsDatabaseName($this->documentManager->getDocumentDatabase(Content::class)->getDatabaseName());
         $configuration->setMigrationsDirectory($directory);
         $configuration->setMigrationsNamespace(self::DOCTRINE_MIGRATIONS_NAMESPACE);
         $configuration->setName(self::DOCTRINE_MIGRATIONS_NAME);

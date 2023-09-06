@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Config;
 
 use Integrated\Common\Channel\Connector\Config\Config;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var OptionsInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var OptionsInterface|MockObject
      */
     private $options;
 

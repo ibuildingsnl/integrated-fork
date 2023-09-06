@@ -14,6 +14,7 @@ namespace Integrated\Common\Converter\Tests\Config\Util;
 use Integrated\Common\Converter\Config\ConfigInterface;
 use Integrated\Common\Converter\Config\TypeConfigInterface;
 use Integrated\Common\Converter\Config\Util\ParentAwareConfigIterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test the ParentAwareConfigIterator.
@@ -158,7 +159,7 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return TypeConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return TypeConfigInterface|MockObject
      */
     protected function getType()
     {
@@ -169,7 +170,7 @@ class ParentAwareConfigIteratorTest extends \PHPUnit\Framework\TestCase
      * @param TypeConfigInterface[] $types
      * @param ConfigInterface       $parent
      *
-     * @return ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig(array $types = [], ConfigInterface $parent = null)
     {

@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Solr\Type;
 
+use Doctrine\Persistence\ObjectManager;
 use Integrated\Bundle\ContentBundle\Solr\Type\ContentType;
 use Integrated\Bundle\ContentBundle\Tests\Fixtures\__CG__\ProxyObject;
 use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object1;
@@ -18,7 +19,7 @@ use Integrated\Bundle\ContentBundle\Tests\Fixtures\Object2;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Type\ContentType
@@ -27,6 +28,16 @@ use stdClass;
  */
 class ContentTypeTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var ObjectManager|MockObject
+     */
+    private $manager;
+
+    protected function setUp(): void
+    {
+        $this->manager = $this->createMock('Doctrine\\Persistence\\ObjectManager');
+    }
+
     public function testInterface()
     {
         self::assertInstanceOf('Integrated\\Common\\Converter\\Type\\TypeInterface', $this->getInstance());
@@ -37,6 +48,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuild(ContentInterface $content, array $expected)
     {
+        $this->configureManager($expected['type_class'][0]);
         $container = $this->getContainer();
 
         $this->getInstance()->build($container, $content);
@@ -86,7 +98,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
 
         /* @var ContainerInterface $container */
 
-        $this->getInstance()->build($container, new stdClass());
+        $this->getInstance()->build($container, new \stdClass());
     }
 
     public function testGetName()
@@ -99,7 +111,19 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected function getInstance()
     {
-        return new ContentType();
+        return new ContentType($this->manager);
+    }
+
+    protected function configureManager($class)
+    {
+        $mockMeta = $this->createMock('Doctrine\\Persistence\\Mapping\\ClassMetadata');
+        $mockMeta->expects($this->exactly(2))
+            ->method('getName')
+            ->willReturn($class);
+
+        $this->manager->expects($this->exactly(2))
+            ->method('getClassMetadata')
+            ->willReturn($mockMeta);
     }
 
     /**

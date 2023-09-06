@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
@@ -38,10 +38,6 @@ class AuthorType extends AbstractType
      */
     private $contentTypeManager;
 
-    /**
-     * @param ManagerRegistry    $mr
-     * @param ContentTypeManager $contentTypeManager
-     */
     public function __construct(ManagerRegistry $mr, ContentTypeManager $contentTypeManager)
     {
         $this->mr = $mr;

@@ -22,9 +22,7 @@ interface PropertyInterface
     public function getPropertyName();
 
     /**
-     * @param array $document
-     *
-     * @return string | null
+     * @return string|null
      */
     public function getFileId(array $document);
 }

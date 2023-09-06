@@ -21,6 +21,20 @@
 <body>
 
 <div class="container">
+    {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning', 'error']) %}
+        {% for message in messages %}
+            {% if label == 'alert' %}
+                {% set label = 'warning' %}
+            {% elseif label == 'error' %}
+                {% set label = 'danger' %}
+            {% endif %}
+            <div class="alert alert-{{ label }} alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message|trans }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <br />
     {{ integrated_menu('main', { 'depth': 2 }) }}
     <br />
@@ -33,14 +47,6 @@
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{{ asset('bundles/integratedcontent/components/handlebars/handlebars.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/integratedwebsite/components/bootbox/bootbox.js') }}"></script>
-
-<script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-<script type="text/javascript" src="{{ path('fos_js_routing_js', { 'callback': 'fos.Router.setData' }) }}"></script>
-
-{% if app.request.attributes.get('integrated_block_edit') %}
-    {{ include('@IntegratedWebsite/handlebars/grid.html.twig') }}
-{% endif %}
 
 {% if app.request.attributes.get('integrated_menu_edit') %}
     {{ include('@IntegratedWebsite/handlebars/menu.html.twig') }}

@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Solr\Serializer;
 
 use Integrated\Bundle\ContentBundle\Solr\Query\SuggestionQuery;
 use Integrated\Common\ContentType\ResolverInterface;
-use Solarium\QueryType\Select\Result\DocumentInterface;
+use Solarium\Core\Query\DocumentInterface;
 use Solarium\QueryType\Select\Result\Result;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -42,9 +42,7 @@ class SuggestionNormalizer implements NormalizerInterface
     /**
      * Constructor.
      *
-     * @param UrlGeneratorInterface $generator
-     * @param string                $route
-     * @param ResolverInterface     $resolver
+     * @param string $route
      */
     public function __construct(UrlGeneratorInterface $generator, $route, ResolverInterface $resolver)
     {
@@ -104,8 +102,6 @@ class SuggestionNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param DocumentInterface $document
-     *
      * @return string
      */
     protected function getType(DocumentInterface $document)
@@ -118,8 +114,6 @@ class SuggestionNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param DocumentInterface $document
-     *
      * @return string
      */
     protected function getUrl(DocumentInterface $document)
@@ -128,8 +122,7 @@ class SuggestionNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param DocumentInterface $document
-     * @param string            $field
+     * @param string $field
      *
      * @return string
      */

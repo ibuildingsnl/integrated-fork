@@ -12,7 +12,8 @@
 namespace Integrated\Common\Routing\Tests;
 
 use Integrated\Common\Routing\Router;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
@@ -23,15 +24,15 @@ use Symfony\Component\Routing\RouterInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class RouterTest extends \PHPUnit\Framework\TestCase
+class RouterTest extends TestCase
 {
     /**
-     * @var RouterInterface | \PHPUnit\Framework\MockObject\MockObject
+     * @var RouterInterface|MockObject
      */
     protected $router;
 
     /**
-     * @var UrlGeneratorInterface | \PHPUnit\Framework\MockObject\MockObject
+     * @var UrlGeneratorInterface|MockObject
      */
     protected $generator;
 
@@ -80,19 +81,18 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->router->expects($this->exactly(3))
             ->method('match')
-            ->withConsecutive(
-                [$this->equalTo('path1')],
-                [$this->equalTo('path2')],
-                [$this->equalTo('path3')]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                ['path1', $response[0]],
+                ['path2', $response[1]],
+                ['path3', $response[2]],
+            ]);
 
         $router = $this->getInstance();
 
@@ -112,9 +112,9 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $request = [
@@ -125,12 +125,11 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
         $this->router->expects($this->exactly(3))
             ->method('matchRequest')
-            ->withConsecutive(
-                [$this->identicalTo($request[0])],
-                [$this->identicalTo($request[1])],
-                [$this->identicalTo($request[2])]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                [$request[0], $response[0]],
+                [$request[1], $response[1]],
+                [$request[2], $response[2]],
+            ]);
 
         $router = $this->getInstance();
 
@@ -146,9 +145,9 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($this->context));
 
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $request = [
@@ -159,12 +158,11 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
         $this->router->expects($this->exactly(3))
             ->method('match')
-            ->withConsecutive(
-                [$this->equalTo('path1')],
-                [$this->equalTo('path2')],
-                [$this->equalTo('path3')]
-            )
-            ->willReturnOnConsecutiveCalls($response[0], $response[1], $response[2]);
+            ->willReturnMap([
+                ['path1', $response[0]],
+                ['path2', $response[1]],
+                ['path3', $response[2]],
+            ]);
 
         $router = $this->getInstance();
 
@@ -209,7 +207,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'name2',
-                null,
+                [],
                 UrlGeneratorInterface::ABSOLUTE_PATH,
                 'return2',
             ],
@@ -231,9 +229,9 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     public function testGetRouteCollection()
     {
         $response = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->router->expects($this->exactly(3))
@@ -276,7 +274,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $path
      *
-     * @return Request | \PHPUnit\Framework\MockObject\MockObject
+     * @return Request|MockObject
      */
     protected function getRequest($path = null)
     {

@@ -21,11 +21,13 @@ use Knp\Menu\Twig\Helper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class MenuExtension extends \Twig_Extension
+class MenuExtension extends AbstractExtension
 {
     /**
      * @var IntegratedMenuProvider
@@ -68,12 +70,7 @@ class MenuExtension extends \Twig_Extension
     protected $request;
 
     /**
-     * @param IntegratedMenuProvider $provider
-     * @param DatabaseMenuFactory    $factory
-     * @param Helper                 $helper
-     * @param RecursiveActiveMatcher $matcher
-     * @param RequestStack           $requestStack
-     * @param string                 $template
+     * @param string $template
      */
     public function __construct(
         IntegratedMenuProvider $provider,
@@ -87,7 +84,7 @@ class MenuExtension extends \Twig_Extension
         $this->factory = $factory;
         $this->helper = $helper;
         $this->matcher = $matcher;
-        $this->request = $requestStack->getMasterRequest();
+        $this->request = $requestStack->getMainRequest();
 
         $this->resolver = new OptionsResolver();
         $this->resolver->setDefaults([
@@ -106,19 +103,18 @@ class MenuExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'integrated_menu',
                 [$this, 'renderMenu'],
                 ['is_safe' => ['html'], 'needs_context' => true]
             ),
-            new \Twig_SimpleFunction('integrated_menu_prepare', [$this, 'prepareMenu'], ['is_safe' => ['html']]),
+            new TwigFunction('integrated_menu_prepare', [$this, 'prepareMenu'], ['is_safe' => ['html']]),
         ];
     }
 
     /**
      * @param array  $context
      * @param string $name
-     * @param array  $options
      *
      * @return string
      */
@@ -131,16 +127,16 @@ class MenuExtension extends \Twig_Extension
             $options['editMode'] = true;
         }
 
-        $menu = $this->provider->get($name, $options);
+        if ($this->provider->has($name)) {
+            $menu = $this->provider->get($name, $options);
+        } else {
+            $menu = $this->factory->createItem($name);
+        }
 
         $html = '';
 
         if ($edit) {
             $html .= '<div class="integrated-website-menu">';
-
-            if (!$this->provider->has($name)) {
-                $menu = $this->factory->createItem($name);
-            }
 
             $html .= '<script type="text/json">'.json_encode(
                 ['data' => $menu->toArray(), 'options' => $options]
@@ -161,8 +157,7 @@ class MenuExtension extends \Twig_Extension
     }
 
     /**
-     * @param Menu  $menu
-     * @param array $options
+     * @param Menu $menu
      *
      * @return string
      */
@@ -180,9 +175,7 @@ class MenuExtension extends \Twig_Extension
     }
 
     /**
-     * @param MenuItem $menu
-     * @param array    $options
-     * @param int      $depth
+     * @param int $depth
      */
     protected function prepareItems(MenuItem $menu, array $options = [], $depth = 1)
     {

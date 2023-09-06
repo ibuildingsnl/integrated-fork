@@ -11,10 +11,10 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
-use Integrated\Bundle\SlugBundle\Mapping\Annotations\Slug;
+use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Common\Block\BlockInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,15 +26,15 @@ abstract class Block implements BlockInterface
 {
     /**
      * @var string
-     * @Slug(fields={"title"}, separator="_")
      */
+    #[Slug(fields: ['title'], separator: '_')]
     protected $id;
 
     /**
      * @var string
-     * @Assert\NotBlank
-     * @Type\Field
      */
+    #[Assert\NotBlank]
+    #[Type\Field]
     protected $title;
 
     /**
@@ -54,31 +54,20 @@ abstract class Block implements BlockInterface
 
     /**
      * @var \DateTime
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType")
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType')]
     protected $publishedAt;
 
     /**
      * @var \DateTime
-     * @Type\Field(
-     *      type="Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType",
-     *      options={
-     *          "required"=false
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['required' => false])]
     protected $publishedUntil;
 
     /**
      * @var bool
-     * @Type\Field(
-     *      type="Symfony\Component\Form\Extension\Core\Type\CheckboxType",
-     *      options={
-     *          "required"=false,
-     *          "attr"={"align_with_widget"=true}
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', options: ['required' => false, 'attr' => ['align_with_widget' => true]])]
     protected $disabled = false;
 
     /**
@@ -109,9 +98,6 @@ abstract class Block implements BlockInterface
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id)
     {
         $this->id = $id;
@@ -166,8 +152,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -186,8 +170,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param \DateTime $updatedAt
-     *
      * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -310,8 +292,6 @@ abstract class Block implements BlockInterface
     }
 
     /**
-     * @param int $group
-     *
      * @return bool
      */
     public function hasGroup(int $group)

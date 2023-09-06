@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -24,9 +24,6 @@ class HandleRequestEvent extends Event
      */
     private $form;
 
-    /**
-     * @param FormInterface $form
-     */
     public function __construct(FormInterface $form)
     {
         $this->form = $form;

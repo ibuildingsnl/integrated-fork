@@ -15,62 +15,48 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Block\BlockRequiredItemsInterface;
 use Integrated\Common\Content\ContentInterface;
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * TextBlock document.
  *
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
- * @Type\Document("Text block")
  */
+#[Type\Document('Text block')]
 class TextBlock extends Block implements BlockRequiredItemsInterface
 {
     use PublishTitleTrait;
 
     /**
      * @var string
-     * @Assert\NotBlank
-     * @Type\Field(
-     *       options={
-     *          "attr"={"class"="main-title"}
-     *       }
-     * )
      */
+    #[Assert\NotBlank]
+    #[Type\Field(options: ['attr' => ['class' => 'main-title']])]
     protected $title;
 
     /**
      * @var string
-     * @Type\Field(type="Integrated\Bundle\FormTypeBundle\Form\Type\EditorType",options={"mode"="web"})
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\EditorType', options: ['mode' => 'web'])]
     protected $content;
 
     /**
      * @var Relation
-     * @Type\Field(
-     *      type="Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType",
-     *      options={
-     *          "class"="IntegratedContentBundle:Relation\Relation",
-     *          "choice_label"="name",
-     *          "placeholder"="",
-     *          "label"="Require relation",
-     *          "required"=false
-     *      }
-     * )
      */
+    #[Type\Field(type: 'Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType', options: [
+        'class' => 'Integrated\Bundle\ContentBundle\Document\Relation\Relation',
+        'choice_label' => 'name',
+        'placeholder' => '',
+        'label' => 'Require relation',
+        'required' => false,
+    ])]
     protected $requiredRelation;
 
     /**
      * @var ArrayCollection
-     * @Type\Field(
-     *     type="Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType",
-     *     options={
-     *         "label"="Require relation with",
-     *         "required"=false
-     *     }
-     * )
      */
+    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\ContentChoiceType', options: ['label' => 'Require relation with', 'required' => false])]
     protected $requiredItems;
 
     /**
@@ -113,9 +99,6 @@ class TextBlock extends Block implements BlockRequiredItemsInterface
         return $this->requiredRelation;
     }
 
-    /**
-     * @param Relation|null $requiredRelation
-     */
     public function setRequiredRelation(?Relation $requiredRelation)
     {
         $this->requiredRelation = $requiredRelation;

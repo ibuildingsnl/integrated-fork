@@ -13,7 +13,6 @@ namespace Integrated\Common\Form\Mapping\Metadata;
 
 use Integrated\Common\Form\Mapping\AttributeInterface;
 use Integrated\Common\Form\Mapping\MetadataEditorInterface;
-use ReflectionClass;
 
 /**
  * Class for storing metadata properties of a Document.
@@ -23,7 +22,7 @@ use ReflectionClass;
 class Document implements MetadataEditorInterface
 {
     /**
-     * @var ReflectionClass
+     * @var \ReflectionClass
      */
     private $reflection = null;
 
@@ -47,9 +46,6 @@ class Document implements MetadataEditorInterface
      */
     protected $options = [];
 
-    /**
-     * @param $class
-     */
     public function __construct($class)
     {
         $this->class = $class;
@@ -67,10 +63,10 @@ class Document implements MetadataEditorInterface
         $reflection = $this->getReflection();
 
         return (
-                (interface_exists($class) && $reflection->implementsInterface($class)) ||
-                $reflection->isSubclassOf($class) ||
-                (class_exists($class) && $reflection->isInstance(new $class()))
-            )
+            (interface_exists($class) && $reflection->implementsInterface($class)) ||
+            $reflection->isSubclassOf($class) ||
+            (class_exists($class) && $reflection->isInstance(new $class()))
+        )
             &&
             $reflection->isInstantiable();
     }
@@ -81,7 +77,7 @@ class Document implements MetadataEditorInterface
     public function getReflection()
     {
         if ($this->reflection === null) {
-            $this->reflection = new ReflectionClass($this->class);
+            $this->reflection = new \ReflectionClass($this->class);
         }
 
         return $this->reflection;

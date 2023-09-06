@@ -20,13 +20,10 @@ use Integrated\Common\Content\Extension\DispatcherInterface;
 abstract class AbstractAdaptor implements AdaptorInterface
 {
     /**
-     * @var DispatcherInterface | null
+     * @var DispatcherInterface|null
      */
     protected $dispatcher = null;
 
-    /**
-     * @param DispatcherInterface $dispatcher
-     */
     public function setDispatcher(DispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;

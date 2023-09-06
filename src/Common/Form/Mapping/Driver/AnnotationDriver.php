@@ -12,7 +12,7 @@
 namespace Integrated\Common\Form\Mapping\Driver;
 
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Integrated\Common\Form\Mapping\Annotations\Document;
 use Integrated\Common\Form\Mapping\Annotations\Field;
 use Integrated\Common\Form\Mapping\DriverInterface;
@@ -20,12 +20,14 @@ use Integrated\Common\Form\Mapping\MetadataEditorInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
+ *
+ * @deprecated
  */
 class AnnotationDriver implements DriverInterface
 {
-    const DOCUMENT_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Document';
+    public const DOCUMENT_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Document';
 
-    const FIELD_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Field';
+    public const FIELD_CLASS = 'Integrated\\Common\\Form\\Mapping\\Annotations\\Field';
 
     /**
      * @var MappingDriver
@@ -46,15 +48,17 @@ class AnnotationDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function getAllClassNames()
+    public function getAllClassNames(): array
     {
-        return $this->driver->getAllClassNames();
+        return array_filter($this->driver->getAllClassNames(), function (string $class) {
+            return $this->isSupported($class);
+        });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass($class, MetadataEditorInterface $metadata)
+    public function loadMetadataForClass(MetadataEditorInterface $metadata): void
     {
         /* @var $document Document */
         $document = $this->reader->getClassAnnotation($metadata->getReflection(), self::DOCUMENT_CLASS);
@@ -79,5 +83,12 @@ class AnnotationDriver implements DriverInterface
 
             $metadata->addField($metadataField);
         }
+    }
+
+    public function isSupported(string $class): bool
+    {
+        $reflection = new \ReflectionClass($class);
+
+        return (bool) $this->reader->getClassAnnotation($reflection, self::DOCUMENT_CLASS);
     }
 }

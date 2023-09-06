@@ -11,12 +11,11 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Common\Content\ContentInterface;
-use Solarium\QueryType\Select\Result\DocumentInterface;
+use Solarium\Core\Query\DocumentInterface;
 
 /**
  * Class ContentRepository.
@@ -28,10 +27,7 @@ class ContentRepository extends DocumentRepository
     /**
      * Get items which have the current document linked.
      *
-     * @param ArrayCollection $content
-     * @param Relation|null   $relation
-     * @param Content|null    $excludeContent
-     * @param bool            $filterPublished
+     * @param bool $filterPublished
      *
      * @return \Doctrine\MongoDB\Query\Builder
      *
@@ -68,8 +64,8 @@ class ContentRepository extends DocumentRepository
 
         if ($filterPublished) {
             $query->field('disabled')->equals(false)
-                ->field('publishTime.startDate')->lte(new DateTime())
-                ->field('publishTime.endDate')->gte(new DateTime());
+                ->field('publishTime.startDate')->lte(new \DateTime())
+                ->field('publishTime.endDate')->gte(new \DateTime());
         }
 
         if ($relation) {
@@ -81,8 +77,6 @@ class ContentRepository extends DocumentRepository
 
     /**
      * Deletes all references to a content item.
-     *
-     * @param $id
      */
     public function deleteReference($id)
     {
@@ -100,6 +94,6 @@ class ContentRepository extends DocumentRepository
             }
         }
 
-        $this->dm->flush($documents);
+        $this->dm->flush();
     }
 }

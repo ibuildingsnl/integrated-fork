@@ -13,6 +13,7 @@ namespace Integrated\Common\Channel\Tests\Connector\Config\Util;
 
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\Util\ConfigIterator;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 
 /**
@@ -31,11 +32,11 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testCurrent()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
             $this->getConfig('name1'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -76,11 +77,11 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testKey()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
             $this->getConfig('name1'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -98,11 +99,11 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testValid()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
             $this->getConfig('name1'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -128,11 +129,11 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     public function testRewind()
     {
         $configs = [
-            new stdClass(),
+            new \stdClass(),
             $this->getConfig('name1'),
             $this->getConfig('name2'),
             $this->getConfig('name1'),
-            new stdClass(),
+            new \stdClass(),
         ];
 
         $iterator = $this->getInstance($configs);
@@ -167,7 +168,7 @@ class ConfigIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($name)
     {

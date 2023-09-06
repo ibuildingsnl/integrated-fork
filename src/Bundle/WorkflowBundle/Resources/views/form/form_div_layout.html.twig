@@ -1,5 +1,8 @@
 {% block integrated_workflow_row  %}
-    {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' workflow')|trim }) %}
+    {% set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' workflow')|trim,
+        'data-workflow-state-change': path('integrated_workflow_change_state')
+    }) %}
 
     <div {{ block('widget_container_attributes') }}>
         {{ block('form_rows') }}
@@ -24,7 +27,7 @@
 {% endblock %}
 
 {% block workflow_definition_state_collection_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_vars = {} %}
             {% if style is defined %}
@@ -65,5 +68,5 @@
             {% endif %}
 
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock workflow_definition_state_collection_widget %}

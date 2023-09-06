@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 
 /**
@@ -20,53 +21,52 @@ use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 class BlockRepository extends DocumentRepository
 {
     /**
-     * @param MetadataFactoryInterface $factory
-     * @param array|null               $ids
-     *
      * @return array
      */
     public function getTypeChoices(MetadataFactoryInterface $factory, array $ids = null)
     {
-        $qb = $this->createQueryBuilder()
-            ->group(['class' => 1], ['total' => 0])
-            ->reduce('function (curr, result ) { result.total += 1;}');
+        $qb = $this->createAggregationBuilder();
 
         if (null !== $ids) {
-            $qb->field('_id')->in($ids);
+            $qb->match()->field('_id')->in($ids);
         }
 
-        $groupCountBlock = $qb->getQuery()->getIterator();
+        $qb->group()
+            ->field('_id')
+            ->expression('$class')
+            ->field('total')
+            ->sum(1);
+
+        $groupCountBlock = $qb->getAggregation();
 
         $typeCount = [];
         foreach ($groupCountBlock as $result) {
-            $typeCount[$result['class']] = $result['total'];
+            $typeCount[$result['_id']] = $result['total'];
         }
 
         $typeChoices = [];
         foreach ($factory->getAllMetadata() as $metaData) {
-            /** @var $metaData \Integrated\Common\Form\Mapping\Metadata\Document */
             $class = $metaData->getClass();
 
             if (\array_key_exists($class, $typeCount) && $typeCount[$class]) {
-                $typeChoices[$metaData->getType().' '.$typeCount[$class]] = $class;
+                $typeChoices[$metaData->getType().' ('.$typeCount[$class].')'] = $class;
             }
         }
+
+        ksort($typeChoices);
 
         return $typeChoices;
     }
 
     /**
-     * @param Block $block
-     *
-     * @return \Doctrine\MongoDB\Query\Query
+     * @return \Doctrine\ODM\MongoDB\Query\Query
      *
      * @internal heavy query, multiple calls make page slow
      */
     public function pagesByBlockQb(Block $block)
     {
         return $this->dm
-            ->getRepository('IntegratedPageBundle:Page\Page')
-            ->createQueryBuilder()
+            ->createQueryBuilder(Page::class)
             ->where('function() {
                 var block_id = "'.$block->getId().'";
 
@@ -113,8 +113,6 @@ class BlockRepository extends DocumentRepository
 
     /**
      * Check if given block is used on some page.
-     *
-     * @param Block $block
      *
      * @return bool
      *

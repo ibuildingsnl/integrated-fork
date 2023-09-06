@@ -12,8 +12,10 @@
 namespace Integrated\Bundle\PageBundle\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
+use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Services\ContentTypePageService;
 use Integrated\Bundle\PageBundle\Services\RouteCache;
 use Integrated\Common\ContentType\Event\ContentTypeEvent;
@@ -45,12 +47,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
      */
     private $contentTypeInformation;
 
-    /**
-     * @param DocumentManager        $dm
-     * @param ContentTypePageService $contentTypePageService
-     * @param RouteCache             $routeCache
-     * @param ContentTypeInformation $contentTypeInformation
-     */
     public function __construct(
         DocumentManager $dm,
         ContentTypePageService $contentTypePageService,
@@ -75,9 +71,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentTypeEvent $event
-     */
     public function contentTypeChanged(ContentTypeEvent $event)
     {
         $contentType = $event->getContentType();
@@ -104,17 +97,11 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ContentTypeEvent $event
-     */
     public function contentTypeDeleted(ContentTypeEvent $event)
     {
         $this->deletePagesByContentType($event->getContentType());
     }
 
-    /**
-     * @param ContentType $contentType
-     */
     protected function deletePagesByContentType(ContentType $contentType, $channelId = null)
     {
         $criteria = ['contentType.$id' => $contentType->getId()];
@@ -126,7 +113,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
 
         foreach ($pages as $page) {
             $this->dm->remove($page);
-            $this->dm->flush($page);
+            $this->dm->flush();
         }
     }
 
@@ -135,7 +122,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
      */
     protected function getPageRepository()
     {
-        return $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage');
+        return $this->dm->getRepository(ContentTypePage::class);
     }
 
     /**
@@ -143,6 +130,6 @@ class ContentTypeChangedListener implements EventSubscriberInterface
      */
     protected function getChannelRepository()
     {
-        return $this->dm->getRepository('IntegratedContentBundle:Channel\Channel');
+        return $this->dm->getRepository(Channel::class);
     }
 }

@@ -11,9 +11,7 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
-use ArrayIterator;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Exception;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
@@ -27,7 +25,7 @@ use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ConnectorInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -37,20 +35,20 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
-     * @var RegistryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|MockObject
      */
     private $registry;
 
     /**
-     * @var ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|MockObject
      */
     private $resolver;
 
     /**
-     * @var DocumentManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var DocumentManager|MockObject
      */
     private $dm;
 
@@ -68,14 +66,14 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExport()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel('channel');
 
         $exporter1 = $this->getExporter();
         $exporter1->expects($this->exactly(2))
             ->method('export')
             ->with($this->identicalTo($content), $this->equalTo(self::TEST_STATE), $this->identicalTo($channel))
-            ->willThrowException(new Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
 
         $exporter3 = $this->getExporter();
         $exporter3->expects($this->exactly(2))
@@ -92,7 +90,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $this->resolver->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([
+            ->willReturn(new \ArrayIterator([
                 $config1,
                 $config2,
                 $config3,
@@ -100,12 +98,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
-            ->willReturnOnConsecutiveCalls(
-                $this->getAdapter($config1, $exporter1),
-                $this->getAdapter(),
-                $this->getAdapter($config3, $exporter3)
-            );
+            ->willReturnMap([
+                ['adapter1', $this->getAdapter($config1, $exporter1)],
+                ['adapter2', $this->getAdapter()],
+                ['adapter3', $this->getAdapter($config3, $exporter3)],
+            ]);
 
         $exporter = $this->getInstance();
 
@@ -155,13 +152,13 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExportNoExporters()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel('channel');
 
         $this->resolver->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([
+            ->willReturn(new \ArrayIterator([
                 $this->getConfig('adapter1'),
                 $this->getConfig('adapter2'),
                 $this->getConfig('adapter3'),
@@ -169,12 +166,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->withConsecutive(
-                [$this->equalTo('adapter1')],
-                [$this->equalTo('adapter2')],
-                [$this->equalTo('adapter3')]
-            )
-            ->willReturnOnConsecutiveCalls($this->getAdapter(), $this->getAdapter(), $this->getAdapter());
+            ->willReturnMap([
+                ['adapter1', $this->getAdapter()],
+                ['adapter2', $this->getAdapter()],
+                ['adapter3', $this->getAdapter()],
+            ]);
 
         $exporter = $this->getInstance();
 
@@ -184,13 +180,13 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExportInvalidAdaptor()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel('channel');
 
         $this->resolver->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([
+            ->willReturn(new \ArrayIterator([
                 $this->getConfig('adapter1'),
                 $this->getConfig('adapter2'),
                 $this->getConfig('adapter3'),
@@ -198,12 +194,11 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->registry->expects($this->exactly(3))
             ->method('getAdapter')
-            ->withConsecutive([$this->equalTo('adapter1')], [$this->equalTo('adapter2')], [$this->equalTo('adapter3')])
-            ->willReturnOnConsecutiveCalls(
-                $this->throwException(new Exception('i-will-be-caught-and-not-cause-any-troubles')),
-                $this->getAdapter(),
-                $this->getAdapter()
-            );
+            ->willReturnMap([
+                ['adapter1', $this->throwException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'))],
+                ['adapter2', $this->getAdapter()],
+                ['adapter3', $this->getAdapter()],
+            ]);
 
         $exporter = $this->getInstance();
 
@@ -213,13 +208,13 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExportNoConfig()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel('channel');
 
         $this->resolver->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([]));
+            ->willReturn(new \ArrayIterator([]));
 
         $this->registry->expects($this->never())
             ->method($this->anything());
@@ -248,7 +243,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $this->resolver->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([
+            ->willReturn(new \ArrayIterator([
                 $config1,
             ]));
 
@@ -270,7 +265,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ChannelInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel($id)
     {
@@ -283,7 +278,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ExporterInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ExporterInterface|MockObject
      */
     protected function getExporter()
     {
@@ -294,7 +289,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      * @param string           $adaptor
      * @param OptionsInterface $options
      *
-     * @return ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($adaptor, OptionsInterface $options = null)
     {
@@ -313,7 +308,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return OptionsInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return OptionsInterface|MockObject
      */
     protected function getOptions()
     {
@@ -324,7 +319,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      * @param ConfigInterface   $config
      * @param ExporterInterface $exporter
      *
-     * @return AdapterInterface | ExportableInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return AdapterInterface|ExportableInterface|MockObject
      */
     protected function getAdapter(ConfigInterface $config = null, ExporterInterface $exporter = null)
     {

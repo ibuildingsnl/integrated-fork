@@ -11,54 +11,55 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
-use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Integrated\Bundle\ContentHistoryBundle\History\Parser;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class ContentHistoryController
+class ContentHistoryController extends AbstractController
 {
-    /**
-     * @var TwigEngine
-     */
-    protected $templating;
-
     /**
      * @var DocumentRepository
      */
-    protected $repository;
+    protected $manager;
 
     /**
-     * @var Paginator
+     * @var Parser
+     */
+    protected $parser;
+
+    /**
+     * @var PaginatorInterface
      */
     protected $paginator;
 
     /**
-     * @param TwigEngine         $templating
-     * @param DocumentRepository $repository
-     * @param Paginator          $paginator
+     * @var ContentTypeManager
      */
-    public function __construct(TwigEngine $templating, DocumentRepository $repository, Paginator $paginator)
+    protected $contentTypeManager;
+
+    public function __construct(DocumentManager $manager, Parser $parser, PaginatorInterface $paginator, ContentTypeManager $contentTypeManager)
     {
-        $this->templating = $templating;
-        $this->repository = $repository;
+        $this->manager = $manager;
+        $this->parser = $parser;
         $this->paginator = $paginator;
+        $this->contentTypeManager = $contentTypeManager;
     }
 
-    /**
-     * @param Content $content
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function indexAction(Content $content, Request $request)
+    public function index(Content $content, Request $request): Response
     {
-        $builder = $this->repository->createQueryBuilder();
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+
+        $builder = $this->manager->getRepository(ContentHistory::class)->createQueryBuilder();
 
         $builder->field('contentId')->equals($content->getId());
         $builder->sort('date', 'desc');
@@ -69,34 +70,31 @@ class ContentHistoryController
             $request->query->get('limit', 20)
         );
 
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:index.html.twig', [
+        return $this->render('@IntegratedContentHistory/content_history/index.html.twig', [
+            'type' => $contentType,
+            'content' => $content,
             'paginator' => $paginator,
         ]);
     }
 
-    /**
-     * @param ContentHistory $contentHistory
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(ContentHistory $contentHistory)
+    public function show(ContentHistory $contentHistory): Response
     {
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:show.html.twig', [
+        $content = $this->manager->find(Content::class, $contentHistory->getContentId());
+        $contentType = $this->contentTypeManager->getType($content->getContentType());
+
+        return $this->render('@IntegratedContentHistory/content_history/show.html.twig', [
+            'type' => $contentType,
+            'content' => $content,
             'contentHistory' => $contentHistory,
+            'changeSet' => $this->parser->getReadableChangeset($contentHistory),
         ]);
     }
 
-    /**
-     * @param Content $content
-     * @param int     $limit
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function historyAction(Content $content, $limit = 3)
+    public function history(Content $content, int $limit = 3): Response
     {
-        return $this->templating->renderResponse('IntegratedContentHistoryBundle:content_history:history.html.twig', [
+        return $this->render('@IntegratedContentHistory/content_history/history.html.twig', [
             'content' => $content,
-            'documents' => $this->repository->findBy(
+            'documents' => $this->manager->getRepository(ContentHistory::class)->findBy(
                 ['contentId' => $content->getId()],
                 ['date' => 'desc'],
                 $limit + 1

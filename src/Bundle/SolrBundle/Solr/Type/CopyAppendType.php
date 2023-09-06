@@ -27,8 +27,7 @@ class CopyAppendType extends CopyType
     }
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $field
+     * @param string $field
      */
     protected function remove(ContainerInterface $container, $field)
     {

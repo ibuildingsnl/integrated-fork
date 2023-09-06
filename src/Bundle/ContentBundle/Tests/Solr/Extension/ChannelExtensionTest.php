@@ -18,7 +18,7 @@ use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 use Integrated\Common\Converter\Container;
 use Integrated\Common\Converter\ContainerInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @covers \Integrated\Bundle\ContentBundle\Solr\Extension\ChannelExtension
@@ -57,11 +57,11 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
                 ['facet_channels' => ['id1', 'id2']],
             ],
             [
-                $this->getContent([$this->getChannel('id1'), new stdClass(), $this->getChannel('id2')]),
+                $this->getContent([$this->getChannel('id1'), new \stdClass(), $this->getChannel('id2')]),
                 ['facet_channels' => ['id1', 'id2']],
             ],
             [
-                $this->getContent([new stdClass(), new stdClass()]),
+                $this->getContent([new \stdClass(), new \stdClass()]),
                 [],
             ],
         ];
@@ -75,7 +75,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
 
         /* @var ContainerInterface $container */
 
-        $this->getInstance($this->getResolver())->build($container, new stdClass());
+        $this->getInstance($this->getResolver())->build($container, new \stdClass());
     }
 
     public function testGetName()
@@ -84,8 +84,6 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ResolverInterface $resolver
-     *
      * @return ChannelExtension
      */
     protected function getInstance(ResolverInterface $resolver)
@@ -135,10 +133,7 @@ class ChannelExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string|null               $type
-     * @param ContentTypeInterface|null $contentType
-     *
-     * @return ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver(string $type = null, ContentTypeInterface $contentType = null)
     {

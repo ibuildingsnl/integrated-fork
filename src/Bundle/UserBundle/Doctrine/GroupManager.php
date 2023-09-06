@@ -11,11 +11,10 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Bundle\UserBundle\Model\GroupManagerInterface;
-use InvalidArgumentException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -38,7 +37,7 @@ class GroupManager implements GroupManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\GroupInterface')) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\GroupInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\GroupInterface', $this->repository->getClassName()));
         }
     }
 
@@ -76,7 +75,7 @@ class GroupManager implements GroupManagerInterface
         $this->om->persist($group);
 
         if ($flush) {
-            $this->om->flush($group);
+            $this->om->flush();
         }
     }
 
@@ -88,7 +87,7 @@ class GroupManager implements GroupManagerInterface
         $this->om->remove($group);
 
         if ($flush) {
-            $this->om->flush($group);
+            $this->om->flush();
         }
     }
 

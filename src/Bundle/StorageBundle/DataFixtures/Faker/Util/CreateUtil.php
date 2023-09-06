@@ -24,8 +24,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class CreateUtil
 {
     /**
-     * @param ManagerInterface $manager
-     * @param string           $path
+     * @param string $path
      *
      * @return StorageInterface
      *

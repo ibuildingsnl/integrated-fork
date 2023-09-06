@@ -33,9 +33,6 @@ class CleanReferencesListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args)
     {
         // Get document
@@ -47,8 +44,7 @@ class CleanReferencesListener implements EventSubscriber
         // Document must be instanceof Content
         if ($document instanceof Content) {
             $dm->createQueryBuilder(Content::class)
-                ->update()
-                ->multiple(true)
+                ->updateMany()
                 ->field('relations.references.$id')->equals($document->getId())
                 ->field('relations.$.references')->pull(['$id' => $document->getId()])
                 ->getQuery()

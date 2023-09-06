@@ -12,6 +12,7 @@
 namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Solr\Indexer\Event\SendEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\QueryType\Update\Query\Query;
 
 /**
@@ -20,7 +21,7 @@ use Solarium\QueryType\Update\Query\Query;
 class SendEventTest extends AbstractEventTest
 {
     /**
-     * @var Query | \PHPUnit_Framework_MockObject_MockObject
+     * @var Query|MockObject
      */
     protected $query;
 

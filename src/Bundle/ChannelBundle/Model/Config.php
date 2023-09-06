@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Model;
 
-use DateTime;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 
@@ -46,17 +45,17 @@ class Config implements ConfigInterface
     protected $channels = [];
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $publicationStartDate;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $created;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $updated;
 
@@ -68,9 +67,9 @@ class Config implements ConfigInterface
     public function __construct(?int $id = null)
     {
         $this->id = $id;
-        $this->created = new DateTime();
-        $this->publicationStartDate = new DateTime();
-        $this->updated = new DateTime();
+        $this->created = new \DateTime();
+        $this->publicationStartDate = new \DateTime();
+        $this->updated = new \DateTime();
     }
 
     /**
@@ -90,8 +89,6 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
     public function setName(string $name)
@@ -110,8 +107,6 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string $adapter
-     *
      * @return $this
      */
     public function setAdapter(string $adapter)
@@ -130,7 +125,7 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string[] | ChannelInterface[] $channels
+     * @param string[]|ChannelInterface[] $channels
      *
      * @return $this
      */
@@ -146,7 +141,7 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string | ChannelInterface $channel
+     * @param string|ChannelInterface $channel
      *
      * @return $this
      */
@@ -166,7 +161,7 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string | ChannelInterface $channel
+     * @param string|ChannelInterface $channel
      *
      * @return bool
      */
@@ -182,7 +177,7 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param string | ChannelInterface $channel
+     * @param string|ChannelInterface $channel
      *
      * @return $this
      */
@@ -230,7 +225,7 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -238,11 +233,9 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param DateTime $created
-     *
      * @return $this
      */
-    public function setCreated(DateTime $created)
+    public function setCreated(\DateTime $created)
     {
         $this->created = $created;
 
@@ -250,23 +243,23 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getPublicationStartDate(): ?DateTime
+    public function getPublicationStartDate(): ?\DateTime
     {
         return $this->publicationStartDate;
     }
 
     /**
-     * @param DateTime $publicationStartDate
+     * @param \DateTime $publicationStartDate
      */
-    public function setPublicationStartDate(?DateTime $publicationStartDate): void
+    public function setPublicationStartDate(?\DateTime $publicationStartDate): void
     {
         $this->publicationStartDate = $publicationStartDate;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -274,11 +267,9 @@ class Config implements ConfigInterface
     }
 
     /**
-     * @param DateTime $updated
-     *
      * @return $this
      */
-    public function setUpdated(DateTime $updated)
+    public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
 

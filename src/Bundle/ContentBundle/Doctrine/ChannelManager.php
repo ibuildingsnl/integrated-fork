@@ -11,11 +11,10 @@
 
 namespace Integrated\Bundle\ContentBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Channel\ChannelManagerInterface;
-use InvalidArgumentException;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -38,7 +37,7 @@ class ChannelManager implements ChannelManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Common\\Content\\Channel\\ChannelInterface')) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Common\\Content\\Channel\\ChannelInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Common\\Content\\Channel\\ChannelInterface', $this->repository->getClassName()));
         }
     }
 
@@ -76,7 +75,7 @@ class ChannelManager implements ChannelManagerInterface
         $this->om->persist($channel);
 
         if ($flush) {
-            $this->om->flush($channel);
+            $this->om->flush();
         }
     }
 
@@ -88,7 +87,7 @@ class ChannelManager implements ChannelManagerInterface
         $this->om->remove($channel);
 
         if ($flush) {
-            $this->om->flush($channel);
+            $this->om->flush();
         }
     }
 
@@ -123,7 +122,7 @@ class ChannelManager implements ChannelManagerInterface
     {
         $channel = $this->repository->findOneBy(['domains' => $criteria]);
         if (!$channel) {
-            //find a fallback with/without www.
+            // find a fallback with/without www.
             $channel = $this->repository->findOneBy(
                 ['domains' => (stripos($criteria, 'www.')) ? str_ireplace('www.', '', $criteria) : 'www.'.$criteria]
             );

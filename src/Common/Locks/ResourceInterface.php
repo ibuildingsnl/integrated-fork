@@ -17,8 +17,6 @@ namespace Integrated\Common\Locks;
 interface ResourceInterface
 {
     /**
-     * @param ResourceInterface $resource
-     *
      * @return bool
      */
     public function equals(self $resource);
@@ -29,7 +27,7 @@ interface ResourceInterface
     public function getType();
 
     /**
-     * @return string | null
+     * @return string|null
      */
     public function getIdentifier();
 }

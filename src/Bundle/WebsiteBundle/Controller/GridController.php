@@ -11,23 +11,39 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Bundle\PageBundle\Grid\GridFactory;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class GridController extends Controller
+class GridController extends AbstractController
 {
     /**
-     * @param Request $request
-     *
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
+     * @var GridFactory
+     */
+    private $gridFactory;
+
+    public function __construct(DocumentManager $documentManager, GridFactory $gridFactory)
+    {
+        $this->documentManager = $documentManager;
+        $this->gridFactory = $gridFactory;
+    }
+
+    /**
      * @return JsonResponse
      */
-    public function saveAction(Request $request)
+    public function save(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -39,10 +55,8 @@ class GridController extends Controller
             return new JsonResponse(['error' => 'No page specified']);
         }
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
         /** @var AbstractPage $page */
-        if (!$page = $dm->getRepository(AbstractPage::class)->find($data['page'])) {
+        if (!$page = $this->documentManager->getRepository(AbstractPage::class)->find($data['page'])) {
             return new JsonResponse(['error' => 'Page not found']);
         }
 
@@ -50,7 +64,7 @@ class GridController extends Controller
 
         if (isset($data['grids'])) {
             foreach ($data['grids'] as $grid) {
-                $grid = $this->get('integrated_page.grid.factory')->fromArray($grid);
+                $grid = $this->gridFactory->fromArray($grid);
 
                 if ($grid instanceof Grid) {
                     $grids[] = $grid;
@@ -60,7 +74,7 @@ class GridController extends Controller
 
         $page->setGrids($grids);
 
-        $dm->flush();
+        $this->documentManager->flush();
 
         return new JsonResponse(['success' => true]);
     }

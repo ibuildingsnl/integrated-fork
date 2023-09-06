@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,12 +6,20 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\ThemeBundle\Controller\ScraperController">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="Integrated\Bundle\ThemeBundle\Scraper\Scraper" />
 
             <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
         </service>
 
     </services>
+
 </container>

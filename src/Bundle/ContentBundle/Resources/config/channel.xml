@@ -1,32 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		   xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-	<parameters>
+    <services>
 
-		<parameter key="integrated_content.channel.context.class">Integrated\Common\Content\Channel\RequestAwareChannelContext</parameter>
-		<parameter key="integrated_content.channel.request_channel_injection.listener.class">Integrated\Bundle\ContentBundle\EventListener\RequestChannelInjectionListener</parameter>
+        <defaults autowire="true" autoconfigure="true"/>
 
-	</parameters>
+        <service id="integrated_content.channel.context" class="Integrated\Common\Content\Channel\RequestAwareChannelContext">
+            <argument type="service" id="integrated_content.channel.manager"/>
+            <argument type="service" id="request_stack"/>
+        </service>
 
-	<services>
+        <service id="integrated_content.channel.request_channel_injection.listener" class="Integrated\Bundle\ContentBundle\EventListener\RequestChannelInjectionListener">
+            <argument type="service" id="integrated_content.channel.manager"/>
+            <argument type="service" id="integrated_content.channel.context"/>
 
-		<service id="integrated_content.channel.context" class="%integrated_content.channel.context.class%">
-			<argument type="service" id="integrated_content.channel.manager" />
-			<argument type="service" id="request_stack" />
-		</service>
+            <tag name="kernel.event_subscriber"/>
+        </service>
 
-		<service id="integrated_content.channel.request_channel_injection.listener" class="%integrated_content.channel.request_channel_injection.listener.class%">
-			<argument type="service" id="integrated_content.channel.manager" />
-			<argument type="service" id="integrated_content.channel.context" />
+        <service id="channel.context" alias="integrated_content.channel.context" public="true"/>
 
-			<tag name="kernel.event_subscriber" />
-		</service>
+        <service id="Integrated\Common\Content\Channel\ChannelContextInterface" alias="integrated_content.channel.context"/>
 
-		<service id="channel.context" alias="integrated_content.channel.context" public="true" />
-		
-	</services>
+    </services>
 
 </container>

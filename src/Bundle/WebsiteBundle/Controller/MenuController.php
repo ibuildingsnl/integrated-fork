@@ -11,8 +11,11 @@
 
 namespace Integrated\Bundle\WebsiteBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory;
 use Integrated\Bundle\MenuBundle\Provider\IntegratedMenuProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,90 +23,86 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class MenuController extends Controller
+class MenuController extends AbstractController
 {
     /**
-     * @param Request $request
-     *
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
+     * @var IntegratedMenuProvider
+     */
+    private $menuProvider;
+
+    /**
+     * @var DatabaseMenuFactory
+     */
+    private $menuFactory;
+
+    /**
+     * @var ChannelContextInterface
+     */
+    private $channelContext;
+
+    public function __construct(
+        DocumentManager $documentManager,
+        IntegratedMenuProvider $menuProvider,
+        DatabaseMenuFactory $menuFactory,
+        ChannelContextInterface $channelContext
+    ) {
+        $this->documentManager = $documentManager;
+        $this->menuProvider = $menuProvider;
+        $this->menuFactory = $menuFactory;
+        $this->channelContext = $channelContext;
+    }
+
+    /**
      * @return Response
      */
-    public function renderAction(Request $request)
+    public function renderMenu(Request $request)
     {
         $data = (array) json_decode($request->getContent(), true);
         $menu = null;
 
         if (isset($data['data'])) {
-            $menu = $this->getMenuFactory()->fromArray($data['data']);
+            $menu = $this->menuFactory->fromArray($data['data']);
         }
 
-        return $this->render('IntegratedWebsiteBundle:menu:render.'.$request->getRequestFormat('json').'.twig', [
+        return $this->render('@IntegratedWebsite/menu/render.'.$request->getRequestFormat('json').'.twig', [
             'menu' => $menu,
             'options' => isset($data['options']) ? $data['options'] : [],
         ]);
     }
 
     /**
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function saveAction(Request $request)
+    public function save(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        $dm = $this->getDocumentManager();
         $data = (array) json_decode($request->getContent(), true);
 
         if (isset($data['menu'])) {
             foreach ((array) $data['menu'] as $array) { // support multiple menu's
-                if ($menu = $this->getMenuFactory()->fromArray((array) $array)) {
-                    if ($menu2 = $this->getMenuProvider()->get($menu->getName())) {
+                if ($menu = $this->menuFactory->fromArray((array) $array)) {
+                    if ($this->menuProvider->has($menu->getName())) {
+                        $menu2 = $this->menuProvider->get($menu->getName());
                         $menu2->setChildren($menu->getChildren());
                     } else {
-                        $menu->setChannel($this->getChannel());
+                        $menu->setChannel($this->channelContext->getChannel());
 
-                        $dm->persist($menu);
+                        $this->documentManager->persist($menu);
                     }
                 }
             }
 
-            $dm->flush();
+            $this->documentManager->flush();
         }
 
         return new JsonResponse();
-    }
-
-    /**
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    protected function getDocumentManager()
-    {
-        return $this->get('doctrine_mongodb')->getManager();
-    }
-
-    /**
-     * @return IntegratedMenuProvider
-     */
-    protected function getMenuProvider()
-    {
-        return $this->get('integrated_menu.provider.integrated_menu_provider');
-    }
-
-    /**
-     * @return \Integrated\Bundle\MenuBundle\Menu\DatabaseMenuFactory
-     */
-    protected function getMenuFactory()
-    {
-        return $this->get('integrated_menu.menu.database_menu_factory');
-    }
-
-    /**
-     * @return \Integrated\Common\Content\Channel\ChannelInterface|null
-     */
-    protected function getChannel()
-    {
-        return $this->get('channel.context')->getChannel();
     }
 }

@@ -15,19 +15,23 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
+use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
-use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class BlockController extends Controller
+class BlockController extends AbstractController
 {
     /**
      * @var MetadataFactoryInterface
@@ -40,68 +44,62 @@ class BlockController extends Controller
     protected $documentManager;
 
     /**
-     * @var Paginator
+     * @var PaginatorInterface
      */
     protected $paginator;
 
     /**
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param DocumentManager          $documentManager
-     * @param Paginator                $paginator
+     * @var FilterQueryProvider
      */
+    protected $provider;
+
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         DocumentManager $documentManager,
-        Paginator $paginator
+        PaginatorInterface $paginator,
+        FilterQueryProvider $provider
     ) {
         $this->metadataFactory = $metadataFactory;
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
+        $this->provider = $provider;
     }
 
     /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         $user = null;
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             $user = $this->getUser();
         }
 
-        $pageBundleInstalled = isset($this->getParameter('kernel.bundles')['IntegratedPageBundle']);
-        $data = $request->query->get('integrated_block_filter');
-        $queryProvider = $this->get('integrated_block.provider.filter_query');
+        $data = $request->get('integrated_block_filter');
 
         $facetFilter = $this->createForm(BlockFilterType::class, null, [
-            'blockIds' => $queryProvider->getBlockIds($data, $user),
+            'blockIds' => $this->provider->getBlockIds($data, $user),
         ]);
         $facetFilter->handleRequest($request);
 
         $pagination = $this->paginator->paginate(
-            $queryProvider->getBlocksByChannelQueryBuilder($data, $user),
+            $this->provider->getBlocksByChannelQueryBuilder($data, $user),
             $request->query->get('page', 1),
             $request->query->get('limit', 20),
             ['defaultSortFieldName' => 'title', 'defaultSortDirection' => 'asc', 'query_type' => 'block_overview']
         );
 
-        return $this->render(sprintf('IntegratedBlockBundle:block:index.%s.twig', $request->getRequestFormat()), [
+        return $this->render(sprintf('@IntegratedBlock/block/index.%s.twig', $request->getRequestFormat()), [
             'blocks' => $pagination,
             'factory' => $this->metadataFactory,
-            'pageBundleInstalled' => $pageBundleInstalled,
             'facetFilter' => $facetFilter->createView(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function showAction(Request $request, Block $block)
+    public function show(Request $request, Block $block)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -109,17 +107,15 @@ class BlockController extends Controller
 
         $request->attributes->set('integrated_block_edit', true);
 
-        return $this->render('IntegratedBlockBundle:block:show.json.twig', [
+        return $this->render('@IntegratedBlock/block/show.json.twig', [
             'block' => $block,
         ]);
     }
 
     /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -149,25 +145,23 @@ class BlockController extends Controller
             $this->documentManager->flush();
 
             if ('iframe.html' === $request->getRequestFormat()) {
-                return $this->render('IntegratedBlockBundle:block:saved.iframe.html.twig', ['id' => $block->getId()]);
+                return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
             }
 
-            $this->get('braincrafted_bootstrap.flash')->success('Block created');
+            $this->addFlash('success', 'Block created');
 
-            return $this->redirect($this->generateUrl('integrated_block_block_index'));
+            return $this->redirectToRoute('integrated_block_block_index');
         }
 
-        return $this->render(sprintf('IntegratedBlockBundle:block:new.%s.twig', $request->getRequestFormat()), [
+        return $this->render(sprintf('@IntegratedBlock/block/new.%s.twig', $request->getRequestFormat()), [
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function newChannelBlockAction(Request $request)
+    public function newChannelBlock(Request $request)
     {
         $csrfToken = $request->request->get('csrf_token');
 
@@ -197,12 +191,9 @@ class BlockController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return array|RedirectResponse|Response
      */
-    public function editAction(Request $request, Block $block)
+    public function edit(Request $request, Block $block)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             $user = $this->getUser();
@@ -226,28 +217,28 @@ class BlockController extends Controller
             $this->documentManager->flush();
 
             if ('iframe.html' === $request->getRequestFormat()) {
-                return $this->render('IntegratedBlockBundle:block:saved.iframe.html.twig', [
+                return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', [
                     'id' => $block->getId(),
                 ]);
             }
 
-            $this->get('braincrafted_bootstrap.flash')->success('Block updated');
+            $this->addFlash('success', 'Block updated');
 
-            return $this->redirect($this->generateUrl('integrated_block_block_index'));
+            return $this->redirectToRoute('integrated_block_block_index');
         }
 
-        return $this->render(sprintf('IntegratedBlockBundle:block:edit.%s.twig', $request->getRequestFormat()), [
+        $metadata = $this->metadataFactory->getMetadata(\get_class($block));
+
+        return $this->render(sprintf('@IntegratedBlock/block/edit.%s.twig', $request->getRequestFormat()), [
             'form' => $form->createView(),
+            'blockType' => $metadata->getType(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param Block   $block
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
-    public function deleteAction(Request $request, Block $block)
+    public function delete(Request $request, Block $block)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -271,21 +262,19 @@ class BlockController extends Controller
             $this->documentManager->remove($block);
             $this->documentManager->flush();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Block deleted');
+            $this->addFlash('success', 'Block deleted');
 
-            return $this->redirect($this->generateUrl('integrated_block_block_index'));
+            return $this->redirectToRoute('integrated_block_block_index');
         }
 
-        return $this->render('IntegratedBlockBundle:block:delete.html.twig', [
+        return $this->render('@IntegratedBlock/block/delete.html.twig', [
             'block' => $block,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param $id
-     *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createDeleteForm($id)
     {

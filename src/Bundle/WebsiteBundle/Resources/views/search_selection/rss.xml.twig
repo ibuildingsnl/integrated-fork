@@ -4,7 +4,7 @@
         <title>{{ selection.title|default }}</title>
         <link>{{ url('integrated_website_search_selection_rss', { 'id': selection.id }) }}</link>
 
-        {% spaceless %}
+        {% apply spaceless %}
         {% for document in documents %}
             {% set content = document.content|default %}
             {% if content is iterable %}
@@ -15,13 +15,13 @@
                 <title>{{ document.title|default }}</title>
                 <pubDate>{{ document.pub_created|date('D, d M Y H:i:s O') }}</pubDate>
                 <link>{{ app.request.schemeAndHttpHost }}{{ integrated_url(document) }}</link>
-                <description><![CDATA[ {{ content|striptags|truncate(200, true)|raw }}]]></description>
+                <description><![CDATA[ {{ content|striptags|u.truncate(200, true)|raw }}]]></description>
                 {% if document.cover|default %}
                     <enclosure url="{{ app.request.schemeAndHttpHost }}{{ integrated_image(document.cover).zoomCrop(150, 150, '#ffffff', 'center', 'top') }}" />
                 {% endif %}
             </item>
 
         {% endfor %}
-        {% endspaceless %}
+        {% endapply %}
     </channel>
 </rss>

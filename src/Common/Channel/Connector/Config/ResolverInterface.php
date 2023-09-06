@@ -13,7 +13,6 @@ namespace Integrated\Common\Channel\Connector\Config;
 
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exception\InvalidArgumentException;
-use Iterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -43,9 +42,7 @@ interface ResolverInterface
     /**
      * Get all the configs that match the given channel.
      *
-     * @param ChannelInterface $channel
-     *
-     * @return ConfigInterface[] | Iterator
+     * @return ConfigInterface[]|\Iterator
      */
     public function getConfigs(ChannelInterface $channel);
 }

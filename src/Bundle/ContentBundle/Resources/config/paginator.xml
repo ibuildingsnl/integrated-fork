@@ -4,17 +4,14 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-
-        <parameter key="integrated_content.subscriber.paginate_solarium_query.class">Integrated\Bundle\ContentBundle\EventListener\PaginateSolariumQuerySubscriber</parameter>
-
-    </parameters>
-
     <services>
 
-        <service id="integrated_content.subscriber.paginate_solarium_query" class="%integrated_content.subscriber.paginate_solarium_query.class%">
-            <tag name="knp_paginator.subscriber" />
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_content.subscriber.paginate_solarium_query" class="Integrated\Bundle\ContentBundle\EventListener\PaginateSolariumQuerySubscriber">
+            <tag name="kernel.event_subscriber" />
         </service>
 
     </services>
+
 </container>

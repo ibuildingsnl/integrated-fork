@@ -13,6 +13,7 @@ namespace Integrated\Common\Content\Tests\Channel;
 
 use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Integrated\Common\Content\Channel\RequestAwareChannelContext;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -22,12 +23,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestAwareChannelContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ChannelManagerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ChannelManagerInterface|MockObject
      */
     private $manager;
 
     /**
-     * @var RequestStack | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|MockObject
      */
     private $stack;
 

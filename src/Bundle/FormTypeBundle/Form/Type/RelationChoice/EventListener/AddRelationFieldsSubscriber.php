@@ -54,20 +54,13 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
      */
     protected $options;
 
-    /**
-     * @param DocumentManager $dm
-     * @param array           $options
-     */
     public function __construct(DocumentManager $dm, array $options)
     {
-        $this->repo = $dm->getRepository('IntegratedContentBundle:Relation\Relation');
+        $this->repo = $dm->getRepository(Relation::class);
         $this->relations = new ArrayCollection();
         $this->options = $options;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->ensureRelations($event);
@@ -75,8 +68,6 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FormEvent $event
-     *
      * @throws \Exception
      */
     protected function ensureRelations(FormEvent $event)
@@ -87,7 +78,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
             throw new \Exception(sprintf('Relations should implement Collection, "%s" given', \gettype($relations)));
         }
 
-        //get all relation ids
+        // get all relation ids
         $relationIds = [];
         foreach ($relations as $relation) {
             $relationIds[] = $relation->getRelationId();
@@ -96,7 +87,7 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         foreach ($this->options['relations'] as $relationId) {
             $relation = $this->findRelation($relationId, $event->getForm()->getParent()->getData());
 
-            //no need to add if the relation is already in the collection
+            // no need to add if the relation is already in the collection
             if (\in_array($relationId, $relationIds)) {
                 continue;
             }
@@ -145,9 +136,6 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         return $relation;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     protected function addFormFields(FormEvent $event)
     {
         /** @var EmbeddedRelation $embeddedRelation */
@@ -178,18 +166,12 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param $relationId
-     * @param Relation $relation
-     */
     public function setRelation($relationId, Relation $relation)
     {
         $this->relations->set($relationId, $relation);
     }
 
     /**
-     * @param $id
-     *
      * @return Relation $relation
      */
     public function getRelation($id)
@@ -205,9 +187,6 @@ class AddRelationFieldsSubscriber implements EventSubscriberInterface
         return $this->relations->toArray();
     }
 
-    /**
-     * @param Collection $relations
-     */
     public function setEmbeddedRelations(Collection $relations)
     {
         $this->embeddedRelations = $relations;

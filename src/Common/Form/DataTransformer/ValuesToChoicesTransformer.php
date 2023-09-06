@@ -27,8 +27,6 @@ class ValuesToChoicesTransformer implements DataTransformerInterface
 
     /**
      * Constructor.
-     *
-     * @param ChoiceListInterface $choiceList
      */
     public function __construct(ChoiceListInterface $choiceList)
     {

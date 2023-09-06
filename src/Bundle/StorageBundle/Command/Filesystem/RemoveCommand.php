@@ -52,11 +52,6 @@ class RemoveCommand extends Command
      */
     private $metadata;
 
-    /**
-     * @param DatabaseInterface  $database
-     * @param FilesystemRegistry $registry
-     * @param ManagerInterface   $storage
-     */
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry,
@@ -89,7 +84,7 @@ class RemoveCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
 
@@ -108,5 +103,7 @@ class RemoveCommand extends Command
         } else {
             throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
         }
+
+        return 0;
     }
 }

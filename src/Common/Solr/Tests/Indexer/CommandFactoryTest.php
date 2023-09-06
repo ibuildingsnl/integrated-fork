@@ -16,12 +16,13 @@ use Integrated\Common\Converter\ConverterInterface;
 use Integrated\Common\Solr\Indexer\CommandFactory;
 use Integrated\Common\Solr\Indexer\CommandFactoryInterface;
 use Integrated\Common\Solr\Indexer\JobInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\QueryType\Update\Query\Command\Add;
 use Solarium\QueryType\Update\Query\Command\Commit;
 use Solarium\QueryType\Update\Query\Command\Delete;
 use Solarium\QueryType\Update\Query\Command\Optimize;
 use Solarium\QueryType\Update\Query\Command\Rollback;
-use Solarium\QueryType\Update\Query\Document\Document;
+use Solarium\QueryType\Update\Query\Document;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -30,12 +31,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConverterInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ConverterInterface|MockObject
      */
     private $converter;
 
     /**
-     * @var SerializerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var SerializerInterface|MockObject
      */
     private $serializer;
 
@@ -111,7 +112,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'options' => [
                 ['overwrite' => true, 'commitwithin' => true],
-                ['overwrite' => true, 'commitwithin' => true],
+                ['overwrite' => true, 'commitwithin' => 1],
             ],
             'only overwrite' => [
                 ['overwrite' => true],
@@ -119,11 +120,11 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'only commitwithin' => [
                 ['commitwithin' => true],
-                ['commitwithin' => true],
+                ['commitwithin' => 1],
             ],
             'none bool' => [
                 ['overwrite' => 1, 'commitwithin' => 0],
-                ['overwrite' => true, 'commitwithin' => false],
+                ['overwrite' => true, 'commitwithin' => 0],
             ],
             'invalid' => [
                 ['invalid-option' => 'invalid-value'],
@@ -289,11 +290,11 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'options' => [
                 ['maxsegments' => true, 'waitsearcher' => true, 'softcommit' => true],
-                ['maxsegments' => true, 'waitsearcher' => true, 'softcommit' => true],
+                ['maxsegments' => 1, 'waitsearcher' => true, 'softcommit' => true],
             ],
             'only maxsegments' => [
                 ['maxsegments' => true],
-                ['maxsegments' => true],
+                ['maxsegments' => 1],
             ],
             'only waitsearcher' => [
                 ['waitsearcher' => true],
@@ -305,7 +306,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'none bool' => [
                 ['maxsegments' => 1, 'waitsearcher' => 0, 'softcommit' => 0],
-                ['maxsegments' => true, 'waitsearcher' => false, 'softcommit' => false],
+                ['maxsegments' => 1, 'waitsearcher' => false, 'softcommit' => false],
             ],
             'invalid' => [
                 ['invalid-option' => 'invalid-value'],
@@ -385,9 +386,8 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $action
-     * @param array  $options
      *
-     * @return JobInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return JobInterface|MockObject
      */
     protected function getJob($action = null, array $options = [])
     {
@@ -420,9 +420,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $data
-     *
-     * @return ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerInterface|MockObject
      */
     protected function getContainer(array $data = [])
     {

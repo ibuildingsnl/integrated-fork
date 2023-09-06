@@ -12,7 +12,7 @@
 namespace Integrated\Common\ContentType\Event;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -24,9 +24,6 @@ class ContentTypeEvent extends Event
      */
     protected $contentType;
 
-    /**
-     * @param ContentType $contentType
-     */
     public function __construct(ContentType $contentType)
     {
         $this->contentType = $contentType;

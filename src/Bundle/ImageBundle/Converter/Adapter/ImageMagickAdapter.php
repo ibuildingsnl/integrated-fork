@@ -25,16 +25,13 @@ class ImageMagickAdapter implements AdapterInterface
     /**
      * @const string
      */
-    const NAME = 'Imagick';
+    public const NAME = 'Imagick';
 
     /**
      * @var AppCache
      */
     private $cache;
 
-    /**
-     * @param AppCache $cache
-     */
     public function __construct(AppCache $cache)
     {
         $this->cache = $cache;

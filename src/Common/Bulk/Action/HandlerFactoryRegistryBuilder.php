@@ -22,8 +22,7 @@ class HandlerFactoryRegistryBuilder
     private $factories = [];
 
     /**
-     * @param string                  $class
-     * @param HandlerFactoryInterface $factory
+     * @param string $class
      */
     public function addFactory($class, HandlerFactoryInterface $factory)
     {

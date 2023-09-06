@@ -11,11 +11,10 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
-use InvalidArgumentException;
 
 /**
  * @author Michael Jongman <michael@e-active.nl>
@@ -33,8 +32,7 @@ class ScopeManager implements ScopeManagerInterface
     private $repository;
 
     /**
-     * @param ObjectManager $om
-     * @param string        $class
+     * @param string $class
      */
     public function __construct(ObjectManager $om, $class)
     {
@@ -42,7 +40,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\ScopeInterface')) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\ScopeInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\ScopeInterface', $this->repository->getClassName()));
         }
     }
 
@@ -80,7 +78,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->om->persist($scope);
 
         if ($flush) {
-            $this->om->flush($scope);
+            $this->om->flush();
         }
     }
 
@@ -92,7 +90,7 @@ class ScopeManager implements ScopeManagerInterface
         $this->om->remove($scope);
 
         if ($flush) {
-            $this->om->flush($scope);
+            $this->om->flush();
         }
     }
 
@@ -121,8 +119,6 @@ class ScopeManager implements ScopeManagerInterface
     }
 
     /**
-     * @param $name
-     *
      * @return ScopeInterface|null
      */
     public function findByName($name)

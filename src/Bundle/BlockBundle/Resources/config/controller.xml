@@ -6,20 +6,34 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="Integrated\Bundle\BlockBundle\Controller\BlockController">
             <argument type="service" id="integrated_block.metadata.factory"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <argument type="service" id="knp_paginator"/>
+            <argument type="service" id="integrated_block.provider.filter_query"/>
 
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
         </service>
 
         <service id="Integrated\Bundle\BlockBundle\Controller\InlineTextBlockController">
             <argument type="service" id="integrated_block.metadata.factory"/>
             <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
             <argument type="service" id="knp_paginator"/>
+            <argument type="service" id="integrated_block.provider.filter_query"/>
 
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
         </service>
 
     </services>

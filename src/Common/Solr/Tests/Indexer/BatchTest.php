@@ -11,9 +11,9 @@
 
 namespace Integrated\Common\Solr\Tests\Indexer;
 
-use Countable;
 use Integrated\Common\Solr\Indexer\Batch;
 use Integrated\Common\Solr\Indexer\BatchOperation;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -75,7 +75,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $instance = $this->getInstance();
 
-        self::assertInstanceOf(Countable::class, $instance);
+        self::assertInstanceOf(\Countable::class, $instance);
         self::assertEquals(0, $instance->count());
 
         $instance->add($this->getOperation());
@@ -97,7 +97,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return BatchOperation | \PHPUnit_Framework_MockObject_MockObject
+     * @return BatchOperation|MockObject
      */
     protected function getOperation()
     {

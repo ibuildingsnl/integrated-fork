@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\FormTypeBundle\Form\DataTransformer;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\RankableInterface;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -24,9 +24,6 @@ class ContentRankTransformer implements DataTransformerInterface
      */
     protected $repo;
 
-    /**
-     * @param DocumentRepository $repo
-     */
     public function __construct(DocumentRepository $repo)
     {
         $this->repo = $repo;

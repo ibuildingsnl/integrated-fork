@@ -35,9 +35,8 @@ class ContainerAwareRequestSerializer extends RequestSerializer
     /**
      * Constructor.
      *
-     * @param ContainerInterface $container
-     * @param string             $serializer
-     * @param string             $manager
+     * @param string $serializer
+     * @param string $manager
      */
     public function __construct(ContainerInterface $container, $serializer, $manager)
     {

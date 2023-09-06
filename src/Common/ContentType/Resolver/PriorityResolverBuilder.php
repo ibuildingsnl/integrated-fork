@@ -29,8 +29,7 @@ class PriorityResolverBuilder
      * If the resolver is already in the list then if will first be removed and
      * then added with the new priority.
      *
-     * @param ResolverInterface $resolver
-     * @param int               $priority
+     * @param int $priority
      *
      * @return PriorityResolverBuilder
      */

@@ -26,9 +26,10 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $builder = new TreeBuilder();
-        $builder->root('integrated_solr')
+        $builder = new TreeBuilder('integrated_solr');
+        $builder->getRootNode()
             ->children()
+            ->scalarNode('timeout')->defaultValue(200)->end()
             ->arrayNode('endpoints')
             ->prototype('array')
             ->children()
@@ -37,9 +38,8 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('port')->defaultValue(8983)->end()
             ->scalarNode('username')->defaultValue(null)->end()
             ->scalarNode('password')->defaultValue(null)->end()
-            ->scalarNode('path')->defaultValue('/solr')->end()
+            ->scalarNode('path')->defaultValue('')->end()
             ->scalarNode('core')->end()
-            ->scalarNode('timeout')->defaultValue(5)->end()
             ->end()
             ->end()
             ->end()

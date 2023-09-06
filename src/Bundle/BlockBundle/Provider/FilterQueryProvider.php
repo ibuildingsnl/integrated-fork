@@ -11,10 +11,11 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\BlockBundle\Document\Block\InlineTextBlock;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
+use MongoDB\BSON\Regex;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -31,28 +32,16 @@ class FilterQueryProvider
      */
     protected $blockUsageProvider;
 
-    /**
-     * @var bool
-     */
-    private $pageBundleInstalled;
-
-    /**
-     * @param ManagerRegistry    $mr
-     * @param BlockUsageProvider $blockUsageProvider
-     * @param array              $bundles
-     */
-    public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider, array $bundles)
+    public function __construct(ManagerRegistry $mr, BlockUsageProvider $blockUsageProvider)
     {
         $this->mr = $mr;
         $this->blockUsageProvider = $blockUsageProvider;
-        $this->pageBundleInstalled = isset($bundles['IntegratedPageBundle']);
     }
 
     /**
-     * @param array|null  $data
-     * @param object|null $groupUser
+     * @param array|null $data
      *
-     * @return \Doctrine\MongoDB\Query\Builder
+     * @return \Doctrine\ODM\MongoDB\Query\Builder
      *
      * @throws \MongoException
      */
@@ -68,11 +57,11 @@ class FilterQueryProvider
         }
 
         if (isset($data['q'])) {
-            $qb->field('title')->equals(new \MongoRegex('/'.$data['q'].'/i'));
+            $qb->field('title')->equals(new Regex($data['q'], 'i'));
         }
 
         $channels = isset($data['channels']) ? array_filter($data['channels']) : null;
-        if ($this->pageBundleInstalled && $channels) {
+        if ($channels) {
             $availableBlockIds = [];
 
             foreach ($channels as $channel) {
@@ -90,8 +79,7 @@ class FilterQueryProvider
     }
 
     /**
-     * @param array|null  $data
-     * @param object|null $groupUser
+     * @param array|null $data
      *
      * @return array
      *
@@ -101,13 +89,19 @@ class FilterQueryProvider
     {
         $queryBuilder = $this->getBlocksByChannelQueryBuilder($data, $groupUser);
 
-        $blocks = $queryBuilder->select('_id')
+        $blockIds = [];
+        $blocks = $queryBuilder
             ->hydrate(false)
+            ->select('_id')
             ->getQuery()
             ->getIterator()
             ->toArray();
 
-        return array_keys($blocks);
+        foreach ($blocks as $block) {
+            $blockIds[] = $block['_id'];
+        }
+
+        return $blockIds;
     }
 
     /**

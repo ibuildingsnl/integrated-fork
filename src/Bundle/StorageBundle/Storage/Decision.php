@@ -31,10 +31,6 @@ class Decision implements DecisionInterface
      */
     protected $decisionMap;
 
-    /**
-     * @param FilesystemRegistryInterface $registry
-     * @param array                       $decisionMap
-     */
     public function __construct(FilesystemRegistryInterface $registry, array $decisionMap)
     {
         $this->registry = $registry;

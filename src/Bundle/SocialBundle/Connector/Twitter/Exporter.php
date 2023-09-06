@@ -38,11 +38,6 @@ class Exporter implements ExporterInterface
      */
     private $urlResolver;
 
-    /**
-     * @param TwitterOAuth    $twitter
-     * @param ConfigInterface $config
-     * @param UrlResolver     $urlResolver
-     */
     public function __construct(TwitterOAuth $twitter, ConfigInterface $config, UrlResolver $urlResolver)
     {
         $this->twitter = $twitter;
@@ -64,7 +59,7 @@ class Exporter implements ExporterInterface
         }
 
         if ($content->hasConnector($this->config->getId())) {
-            //already posted
+            // already posted
             return;
         }
 
@@ -91,7 +86,7 @@ class Exporter implements ExporterInterface
             $response->setExternalId($postResponse->id);
         }
 
-        //@todo: handle error INTEGRATED-995 when id does not exists, also include $postResponse['errors']
+        // @todo: handle error INTEGRATED-995 when id does not exists, also include $postResponse['errors']
 
         return $response;
     }

@@ -25,7 +25,7 @@ class ProcessPoolGenerator
     /**
      * @const
      */
-    const COMMAND = 'php bin/console %s %s %d:%d -e %s';
+    public const COMMAND = 'php bin/console %s %s %d:%d -e %s';
 
     /**
      * @var InputInterface
@@ -37,10 +37,6 @@ class ProcessPoolGenerator
      */
     private $kernel;
 
-    /**
-     * @param InputInterface $input
-     * @param Kernel         $kernel
-     */
     public function __construct(InputInterface $input, Kernel $kernel)
     {
         $this->input = $input;
@@ -48,8 +44,7 @@ class ProcessPoolGenerator
     }
 
     /**
-     * @param ArgumentProcess $argumentProcess
-     * @param string          $workingDirectory
+     * @param string $workingDirectory
      *
      * @return ArrayCollection|Process[]
      *
@@ -60,7 +55,7 @@ class ProcessPoolGenerator
         $result = new ArrayCollection();
 
         for ($i = 0; $i < $argumentProcess->getProcessMax(); ++$i) {
-            $result[] = new Process(
+            $result[] = Process::fromShellCommandline(
                 sprintf(
                     self::COMMAND,
                     $this->input->getFirstArgument(),

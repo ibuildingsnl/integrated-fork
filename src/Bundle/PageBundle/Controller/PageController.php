@@ -12,8 +12,11 @@
 namespace Integrated\Bundle\PageBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Integrated\Bundle\FormTypeBundle\Form\Type\SaveCancelType;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\PageBundle\Document\Page\AbstractPage;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
@@ -21,7 +24,8 @@ use Integrated\Bundle\PageBundle\Form\Type\PageCopyType;
 use Integrated\Bundle\PageBundle\Form\Type\PageFilterType;
 use Integrated\Bundle\PageBundle\Form\Type\PageType;
 use Integrated\Bundle\PageBundle\Services\PageCopyService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Bundle\PageBundle\Services\RouteCache;
+use MongoDB\BSON\Regex;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,7 +36,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class PageController extends Controller
+class PageController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -45,23 +49,24 @@ class PageController extends Controller
     private $pageCopyService;
 
     /**
-     * PageController constructor.
-     *
-     * @param DocumentManager $documentManager
-     * @param PageCopyService $pageCopyService
+     * @var RouteCache
      */
-    public function __construct(DocumentManager $documentManager, PageCopyService $pageCopyService)
+    private $routeCache;
+
+    /**
+     * PageController constructor.
+     */
+    public function __construct(DocumentManager $documentManager, PageCopyService $pageCopyService, RouteCache $routeCache)
     {
         $this->documentManager = $documentManager;
         $this->pageCopyService = $pageCopyService;
+        $this->routeCache = $routeCache;
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -90,8 +95,8 @@ class PageController extends Controller
         $this->displayPathErrors($builder);
 
         if ($query = $filterForm->get('q')->getData()) {
-            $builder->addOr($builder->expr()->field('title')->equals(new \MongoRegex('/'.$query.'/i')));
-            $builder->addOr($builder->expr()->field('path')->equals(new \MongoRegex('/'.$query.'/i')));
+            $builder->addOr($builder->expr()->field('title')->equals(new Regex('/'.$query.'/i')));
+            $builder->addOr($builder->expr()->field('path')->equals(new Regex('/'.$query.'/i')));
         }
 
         if ($channel = $filterForm->get('channel')->getData()) {
@@ -105,13 +110,13 @@ class PageController extends Controller
             $request->getSession()->set('page_filterform_data', $filterForm->getData());
         }
 
-        $pagination = $this->get('knp_paginator')->paginate(
+        $pagination = $this->getPaginator()->paginate(
             $builder,
             $request->query->get('page', 1),
             25
         );
 
-        $response = $this->render('IntegratedPageBundle:page:index.html.twig', [
+        $response = $this->render('@IntegratedPage/page/index.html.twig', [
             'pages' => $pagination,
             'filterForm' => $filterForm->createView(),
             'lastPage' => $this->getLastEditPage($request->getSession()),
@@ -121,11 +126,9 @@ class PageController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -140,27 +143,24 @@ class PageController extends Controller
             $this->documentManager->persist($page);
             $this->documentManager->flush();
 
-            $this->get('integrated_page.services.route_cache')->clear();
+            $this->routeCache->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success(sprintf('Page "%s" has been created', $page->getTitle()));
+            $this->addFlash('success', sprintf('Page "%s" has been created', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
-            return $this->redirect($this->generateUrl('integrated_page_page_index'));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:new.html.twig', [
+        return $this->render('@IntegratedPage/page/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param Page    $page
-     *
      * @return Response|RedirectResponse
      */
-    public function editAction(Request $request, Page $page)
+    public function edit(Request $request, Page $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -172,28 +172,25 @@ class PageController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 
-            $this->get('integrated_page.services.route_cache')->clear();
+            $this->routeCache->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success(sprintf('Page "%s" has been updated', $page->getTitle()));
+            $this->addFlash('success', sprintf('Page "%s" has been updated', $page->getTitle()));
 
             $this->setLastEditPage($request->getSession(), $page);
 
-            return $this->redirect($this->generateUrl('integrated_page_page_index'));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:edit.html.twig', [
+        return $this->render('@IntegratedPage/page/edit.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param Page    $page
-     *
      * @return Response|RedirectResponse
      */
-    public function deleteAction(Request $request, Page $page)
+    public function delete(Request $request, Page $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -210,28 +207,26 @@ class PageController extends Controller
             $this->documentManager->remove($page);
             $this->documentManager->flush();
 
-            $this->get('integrated_page.services.route_cache')->clear();
+            $this->routeCache->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Page deleted');
+            $this->addFlash('success', 'Page deleted');
 
-            return $this->redirect($this->generateUrl('integrated_page_page_index'));
+            return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:page:delete.html.twig', [
+        return $this->render('@IntegratedPage/page/delete.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      *
-     * @throws \Doctrine\ODM\MongoDB\Mapping\MappingException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MappingException
+     * @throws MongoDBException
      */
-    public function copyAction(Request $request)
+    public function copy(Request $request)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -264,20 +259,18 @@ class PageController extends Controller
             if ($data['action'] != 'refresh') {
                 $this->pageCopyService->copyPages($form->getData());
 
-                $this->get('braincrafted_bootstrap.flash')->success('Pages copied');
+                $this->addFlash('success', 'Pages copied');
 
-                return $this->redirect($this->generateUrl('integrated_page_page_index'));
+                return $this->redirectToRoute('integrated_page_page_index');
             }
         }
 
-        return $this->render('IntegratedPageBundle:page:copy.html.twig', [
+        return $this->render('@IntegratedPage/page/copy.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param Page $page
-     *
      * @return FormInterface
      */
     protected function createCreateForm(Page $page)
@@ -301,8 +294,6 @@ class PageController extends Controller
     }
 
     /**
-     * @param Page $page
-     *
      * @return FormInterface
      */
     protected function createEditForm(Page $page)
@@ -343,9 +334,7 @@ class PageController extends Controller
     }
 
     /**
-     * @param Builder $builder
-     *
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     protected function displayPathErrors(Builder $builder)
     {
@@ -358,7 +347,7 @@ class PageController extends Controller
             $settings = $item->getControllerService().$item->getLayout();
             $key = $item->getChannel()->getId().'-'.$item->getPath();
             if (isset($paths[$key]) && $paths[$key] != $settings) {
-                $this->get('braincrafted_bootstrap.flash')->error('Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
+                $this->addFlash('danger', 'Path '.$item->getPath().' is used multiple times with diffent settings. Only one will be used');
                 continue;
             }
 
@@ -366,18 +355,12 @@ class PageController extends Controller
         }
     }
 
-    /**
-     * @param SessionInterface $session
-     * @param Page             $page
-     */
     private function setLastEditPage(SessionInterface $session, Page $page)
     {
         $session->set('page_lastedit_id', $page->getId());
     }
 
     /**
-     * @param SessionInterface $session
-     *
      * @return Page|null
      */
     private function getLastEditPage(SessionInterface $session)

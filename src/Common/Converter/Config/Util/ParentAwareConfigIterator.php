@@ -23,7 +23,7 @@ use Iterator;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ParentAwareConfigIterator implements Iterator
+class ParentAwareConfigIterator implements \Iterator
 {
     /**
      * @var ConfigIterator[]
@@ -44,8 +44,6 @@ class ParentAwareConfigIterator implements Iterator
 
     /**
      * Constructor.
-     *
-     * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
     {
@@ -63,7 +61,7 @@ class ParentAwareConfigIterator implements Iterator
      *
      * @return TypeConfigInterface
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->current ? $this->current->current() : false;
     }
@@ -71,7 +69,7 @@ class ParentAwareConfigIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         if (!$this->current) {
             return;
@@ -85,20 +83,16 @@ class ParentAwareConfigIterator implements Iterator
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
-    public function key()
+    public function key(): ?int
     {
         return $this->current ? $this->counter : null;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->current ? true : false;
     }
@@ -106,7 +100,7 @@ class ParentAwareConfigIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->iterators);
 

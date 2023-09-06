@@ -1,4 +1,11 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
+{% extends '@IntegratedContent/base.html.twig' %}
+
+{% block style %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/edit.css') }}">
+{% endblock %}
+
 {% block crumbs %}
     <div class="breadcrumb-holder">
         <div class="container">
@@ -22,9 +29,12 @@
     </div>
 {% endblock %}
 
+{% block webpack_js %}
+    <script src="{{ asset('bundles/integratedintegrated/edit.js') }}"></script>
+{% endblock %}
+
 {% block javascript %}
     {{ parent() }}
-    {% javascripts "@IntegratedContentBundle/Resources/public/js/channel.js" %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+
+    <script src="{{ asset('bundles/integratedcontent/js/channel.js') }}" />
 {% endblock javascript %}

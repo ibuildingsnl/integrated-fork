@@ -12,23 +12,32 @@
 namespace Integrated\Bundle\LockingBundle\Controller;
 
 use Integrated\Common\Locks;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Common\Locks\Resource;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ApiController extends Controller
+class ApiController extends AbstractController
 {
     /**
-     * @param Request $request
-     *
+     * @var Locks\ManagerInterface|null
+     */
+    private $manager;
+
+    public function __construct(?Locks\ManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
+    /**
      * @return JsonResponse
      */
-    public function refreshAction(Request $request)
+    public function refresh(Request $request)
     {
-        if (!$this->has('integrated_locking.dbal.manager')) {
+        if (!$this->manager) {
             $response = [
                 'code' => 403,
                 'message' => 'Locking is not enabled',
@@ -46,7 +55,7 @@ class ApiController extends Controller
             return new JsonResponse($response, $response['code']);
         }
 
-        $owner = Locks\Resource::fromAccount($owner);
+        $owner = Resource::fromAccount($owner);
 
         // get the lock and check if the lock is set by the current use else do nothing
 
@@ -59,10 +68,7 @@ class ApiController extends Controller
             return new JsonResponse($response, $response['code']);
         }
 
-        /** @var Locks\ManagerInterface $service */
-        $service = $this->get('integrated_locking.dbal.manager');
-
-        if (!$lock = $service->find($lock)) {
+        if (!$lock = $this->manager->find($lock)) {
             $response = [
                 'code' => 404,
                 'message' => 'The lock could not be found',
@@ -80,7 +86,7 @@ class ApiController extends Controller
         if ($owner->equals($lock->getRequest()->getOwner())) {
             // only the owner can extends the lock.
 
-            if ($lock = $service->refresh($lock)) {
+            if ($lock = $this->manager->refresh($lock)) {
                 $response['message'] = 'The lock is extended';
                 $response['lock'] = $lock->getId();
             }

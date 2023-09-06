@@ -22,7 +22,7 @@ use Integrated\Common\ContentType\ResolverInterface;
  */
 class MongoDBResolver implements ResolverInterface
 {
-    const CONTENT_TYPE_INTERFACE = 'Integrated\\Common\\ContentType\\ContentTypeInterface';
+    public const CONTENT_TYPE_INTERFACE = 'Integrated\\Common\\ContentType\\ContentTypeInterface';
 
     /**
      * @var DocumentRepository
@@ -41,8 +41,6 @@ class MongoDBResolver implements ResolverInterface
      *
      * The DocumentRepository should be of a class that implements ContentTypeInterface
      * or else the ContentTypeResolver will throw a exception.
-     *
-     * @param DocumentRepository $repository
      *
      * @throws InvalidArgumentException if the document class does implement the correct interface
      */

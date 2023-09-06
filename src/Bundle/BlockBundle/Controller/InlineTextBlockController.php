@@ -22,12 +22,9 @@ use Symfony\Component\HttpFoundation\Request;
 class InlineTextBlockController extends BlockController
 {
     /**
-     * @param Request      $request
-     * @param AbstractPage $page
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function createAction(Request $request, AbstractPage $page)
+    public function create(Request $request, AbstractPage $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -52,10 +49,10 @@ class InlineTextBlockController extends BlockController
             $this->documentManager->persist($block);
             $this->documentManager->flush();
 
-            return $this->render('IntegratedBlockBundle:block:saved.iframe.html.twig', ['id' => $block->getId()]);
+            return $this->render('@IntegratedBlock/block/saved.iframe.html.twig', ['id' => $block->getId()]);
         }
 
-        return $this->render('IntegratedBlockBundle:block:new.iframe.html.twig', [
+        return $this->render('@IntegratedBlock/block/new.iframe.html.twig', [
             'form' => $form->createView(),
         ]);
     }

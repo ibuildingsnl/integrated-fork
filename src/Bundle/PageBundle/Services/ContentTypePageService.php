@@ -31,25 +31,17 @@ class ContentTypePageService
      */
     protected $dm;
 
-    /**
-     * @param ContentTypeControllerManager $controllerManager
-     * @param DocumentManager              $dm
-     */
     public function __construct(ContentTypeControllerManager $controllerManager, DocumentManager $dm)
     {
         $this->controllerManager = $controllerManager;
         $this->dm = $dm;
     }
 
-    /**
-     * @param ContentType $contentType
-     * @param Channel     $channel
-     */
     public function addContentType(ContentType $contentType, Channel $channel)
     {
         $controller = $this->controllerManager->getController($contentType->getClass());
 
-        //don't add if no controller service is defined
+        // don't add if no controller service is defined
         if (!\is_array($controller)) {
             return;
         }
@@ -60,6 +52,6 @@ class ContentTypePageService
         $contentTypePage->setControllerAction($controller['controller_actions'][0]);
 
         $this->dm->persist($contentTypePage);
-        $this->dm->flush($contentTypePage);
+        $this->dm->flush();
     }
 }

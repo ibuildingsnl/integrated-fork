@@ -12,6 +12,7 @@
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
 use Integrated\Common\Channel\Exporter\Queue\ContainerAwareRequestSerializer;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContainerAwareRequestSerializerTest extends RequestSerializerTest
 {
     /**
-     * @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|MockObject
      */
     private $container;
 

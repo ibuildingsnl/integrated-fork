@@ -15,7 +15,7 @@ use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -33,10 +33,6 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
      */
     private $context;
 
-    /**
-     * @param ChannelManagerInterface $manager
-     * @param ChannelContextInterface $context
-     */
     public function __construct(ChannelManagerInterface $manager, ChannelContextInterface $context)
     {
         $this->manager = $manager;
@@ -53,10 +49,7 @@ class RequestChannelInjectionListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onRequest(GetResponseEvent $event)
+    public function onRequest(RequestEvent $event)
     {
         $channel = $this->getManager()->findByDomain($event->getRequest()->getHost());
         $this->getContext()->setChannel($channel);

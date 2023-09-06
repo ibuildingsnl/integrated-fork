@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
     <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_block.form.metadata.type.block" class="Integrated\Common\Form\Type\MetadataType">
             <argument type="service" id="integrated_block.metadata.factory" />
@@ -35,11 +38,11 @@
 
         <service id="integrated_block.form.type.block_filter" class="Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType">
             <argument type="service" id="integrated_block.metadata.factory" />
-            <argument type="service" id="doctrine.odm.mongodb.document_manager" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_block.provider.block_usage" />
-            <argument>%kernel.bundles%</argument>
             <tag name="form.type" />
         </service>
 
     </services>
+
 </container>

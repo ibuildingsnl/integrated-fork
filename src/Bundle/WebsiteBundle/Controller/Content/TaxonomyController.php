@@ -15,12 +15,12 @@ use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
-class TaxonomyController
+class TaxonomyController extends AbstractController
 {
     /**
      * @var ContentService
@@ -28,38 +28,24 @@ class TaxonomyController
     private $contentService;
 
     /**
-     * @var TwigEngine
-     */
-    protected $templating;
-
-    /**
      * @var ThemeManager
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param TwigEngine     $templating
-     * @param ThemeManager   $themeManager
-     */
-    public function __construct(ContentService $contentService, TwigEngine $templating, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
-        $this->templating = $templating;
         $this->themeManager = $themeManager;
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param Taxonomy        $taxonomy
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(ContentTypePage $page, Taxonomy $taxonomy)
     {
         $this->contentService->prepare($taxonomy);
 
-        return $this->templating->renderResponse(
+        return $this->render(
             $this->themeManager->locateTemplate('content/taxonomy/show/'.$page->getLayout()),
             [
                 'taxonomy' => $taxonomy,

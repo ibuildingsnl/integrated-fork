@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,9 +6,14 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_theme.templating.theme_manager" class="Integrated\Bundle\ThemeBundle\Templating\ThemeManager" public="true">
-            <argument type="service" id="kernel" />
-            <argument type="service" id="Integrated\Bundle\ThemeBundle\Scraper\ScraperPageLoader" />
+            <argument type="service" id="twig.loader.native_filesystem" />
+            <argument>%kernel.project_dir%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\ThemeBundle\Templating\ThemeManager" alias="integrated_theme.templating.theme_manager">
         </service>
 
         <service id="integrated_theme.form.type.theme_choice" class="Integrated\Bundle\ThemeBundle\Form\Type\ThemeChoiceType">
@@ -23,8 +28,8 @@
 
         <service id="integrated_theme.event_listener.content_image_listener" class="Integrated\Bundle\ThemeBundle\EventListener\Objects\ContentImageListener">
             <argument type="service" id="integrated_theme.templating.theme_manager" />
-            <argument type="service" id="doctrine.odm.mongodb.document_manager" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="twig" />
             <argument type="service" id="integrated_slug.slugger" />
             <argument>%kernel.environment%</argument>
             <tag name="kernel.event_listener" event="content.event" method="replaceImages" />
@@ -38,8 +43,7 @@
 
         <service id="Integrated\Bundle\ThemeBundle\Scraper\Scraper">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="doctrine.odm.mongodb.document_manager" />
-            <argument type="service" id="kernel" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="twig.loader.native_filesystem" />
             <argument type="service" id="Integrated\Bundle\ThemeBundle\Scraper\ScraperPageLoader" />
         </service>
@@ -52,4 +56,5 @@
         </service>
 
     </services>
+
 </container>

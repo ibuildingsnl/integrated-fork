@@ -26,10 +26,6 @@ class CleanFilesystem
      */
     private $database;
 
-    /**
-     * @param FilesystemRegistry $registry
-     * @param DatabaseInterface  $database
-     */
     public function __construct(FilesystemRegistry $registry, DatabaseInterface $database)
     {
         $this->registry = $registry;
@@ -39,7 +35,6 @@ class CleanFilesystem
     /**
      * Finds unused files in the storage and moves them to the given directory.
      *
-     * @param string      $identifier
      * @param string|null $targetDirectory
      *
      * @return void

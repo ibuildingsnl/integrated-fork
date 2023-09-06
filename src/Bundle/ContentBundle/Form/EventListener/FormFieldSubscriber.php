@@ -28,9 +28,6 @@ class FormFieldSubscriber implements EventSubscriberInterface
      */
     protected $authorizationChecker;
 
-    /**
-     * @param AuthorizationChecker $authorizationChecker
-     */
     public function __construct(AuthorizationChecker $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -46,9 +43,6 @@ class FormFieldSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FieldEvent $event
-     */
     public function buildField(FieldEvent $event)
     {
         if ($event->getData() instanceof ContentInterface) {

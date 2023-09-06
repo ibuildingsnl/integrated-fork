@@ -13,13 +13,19 @@ namespace Integrated\Bundle\BlockBundle\Twig\Extension;
 
 use Integrated\Bundle\BlockBundle\Provider\BlockUsageProvider;
 use Integrated\Bundle\BlockBundle\Templating\BlockManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
-use Symfony\Bridge\Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class BlockExtension extends \Twig_Extension
+class BlockExtension extends AbstractExtension
 {
     /**
      * @var BlockManager
@@ -52,7 +58,7 @@ class BlockExtension extends \Twig_Extension
     private $channelContext;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -61,22 +67,13 @@ class BlockExtension extends \Twig_Extension
      */
     private $environment;
 
-    /**
-     * @param BlockManager             $blockManager
-     * @param ThemeManager             $themeManager
-     * @param BlockUsageProvider       $blockUsageProvider
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param ChannelContextInterface  $channelContext
-     * @param Logger                   $logger
-     * @param string                   $environment
-     */
     public function __construct(
         BlockManager $blockManager,
         ThemeManager $themeManager,
         BlockUsageProvider $blockUsageProvider,
         MetadataFactoryInterface $metadataFactory,
         ChannelContextInterface $channelContext,
-        Logger $logger,
+        LoggerInterface $logger,
         string $environment
     ) {
         $this->blockManager = $blockManager;
@@ -94,19 +91,19 @@ class BlockExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'integrated_block',
                 [$this, 'renderBlock'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'integrated_channel_block',
                 [$this, 'renderChannelBlock'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new \Twig_SimpleFunction('integrated_find_channels', [$this, 'findChannels']),
-            new \Twig_SimpleFunction('integrated_find_pages', [$this, 'findPages']),
-            new \Twig_SimpleFunction('integrated_find_block_types', [$this, 'findBlockTypes']),
+            new TwigFunction('integrated_find_channels', [$this, 'findChannels']),
+            new TwigFunction('integrated_find_pages', [$this, 'findPages']),
+            new TwigFunction('integrated_find_block_types', [$this, 'findBlockTypes']),
         ];
     }
 
@@ -116,20 +113,19 @@ class BlockExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('integrated_block_type', [$this, 'getBlockTypeName']),
+            new TwigFilter('integrated_block_type', [$this, 'getBlockTypeName']),
         ];
     }
 
     /**
-     * @param \Twig_Environment                              $environment
-     * @param \Integrated\Common\Block\BlockInterface|string $block
-     * @param array                                          $options
+     * @param \Twig_Environment     $environment
+     * @param BlockInterface|string $block
      *
      * @return string|null
      *
      * @throws \Exception
      */
-    public function renderBlock(\Twig_Environment $environment, $block, array $options = [])
+    public function renderBlock(Environment $environment, $block, array $options = [])
     {
         if ($block instanceof BlockInterface) {
             $id = $block->getId();
@@ -165,21 +161,17 @@ class BlockExtension extends \Twig_Extension
 
     /**
      * @param \Twig_Environment $environment
-     * @param string            $id
-     * @param string            $name
-     * @param string            $class
-     * @param array             $options
      *
      * @return string|null
      *
-     * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
+     * @throws CircularFallbackException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function renderChannelBlock(\Twig_Environment $environment, string $id, string $name, string $class, array $options = [])
+    public function renderChannelBlock(Environment $environment, string $id, string $name, string $class, array $options = [])
     {
-        //postfix with channel
+        // postfix with channel
         $id = $id.'_'.$this->channelContext->getChannel()->getId();
         $name = $name.' '.$this->channelContext->getChannel()->getName();
 
@@ -199,9 +191,7 @@ class BlockExtension extends \Twig_Extension
     }
 
     /**
-     * @param \Integrated\Common\Block\BlockInterface $block
-     *
-     * @return \Integrated\Bundle\ContentBundle\Document\Channel\Channel[]
+     * @return Channel[]
      */
     public function findChannels(BlockInterface $block)
     {
@@ -220,8 +210,6 @@ class BlockExtension extends \Twig_Extension
     }
 
     /**
-     * @param \Integrated\Common\Block\BlockInterface $block
-     *
      * @return array
      */
     public function findPages(BlockInterface $block)
@@ -230,8 +218,6 @@ class BlockExtension extends \Twig_Extension
     }
 
     /**
-     * @param BlockInterface $block
-     *
      * @return string
      */
     public function getBlockTypeName(BlockInterface $block)
@@ -244,7 +230,19 @@ class BlockExtension extends \Twig_Extension
      */
     public function findBlockTypes()
     {
-        return $this->metadataFactory->getAllMetadata();
+        $blocks = $this->metadataFactory->getAllMetadata();
+
+        usort($blocks, function ($a, $b) {
+            if ($a->getType() === $b->getType()) {
+                return 0;
+            }
+
+            return ($a->getType() < $b->getType()) ? -1 : 1;
+        });
+
+        ksort($blocks);
+
+        return $blocks;
     }
 
     /**

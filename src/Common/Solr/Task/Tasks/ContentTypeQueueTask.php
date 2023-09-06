@@ -11,12 +11,10 @@
 
 namespace Integrated\Common\Solr\Task\Tasks;
 
-use Serializable;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ContentTypeQueueTask implements Serializable
+class ContentTypeQueueTask implements \Serializable
 {
     /**
      * @var string
@@ -53,5 +51,15 @@ class ContentTypeQueueTask implements Serializable
     public function unserialize($serialized)
     {
         $this->id = $serialized;
+    }
+
+    public function __serialize(): array
+    {
+        return ['id' => $this->id];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
     }
 }

@@ -11,26 +11,23 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Command;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Exception;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Service\StateManager;
 use Integrated\Common\ContentType\ContentTypeInterface;
 use Integrated\Common\ContentType\ResolverInterface;
-use InvalidArgumentException;
-use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Lock;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class IndexCommand extends ContainerAwareCommand
+class IndexCommand extends Command
 {
     /**
      * @var StateManager
@@ -38,15 +35,31 @@ class IndexCommand extends ContainerAwareCommand
     private $stateManager;
 
     /**
-     * IndexCommand constructor.
-     *
-     * @param StateManager $stateManager
+     * @var ResolverInterface
      */
-    public function __construct(StateManager $stateManager)
-    {
-        parent::__construct();
+    private $resolver;
 
+    /**
+     * @var ObjectRepository
+     */
+    private $workflowRepository;
+
+    /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    /**
+     * IndexCommand constructor.
+     */
+    public function __construct(StateManager $stateManager, ResolverInterface $resolver, ObjectRepository $workflowRepository, LockFactory $lockFactory)
+    {
         $this->stateManager = $stateManager;
+        $this->resolver = $resolver;
+        $this->workflowRepository = $workflowRepository;
+        $this->lockFactory = $lockFactory;
+
+        parent::__construct();
     }
 
     /**
@@ -73,10 +86,10 @@ The <info>%command.name%</info> command starts a index of all the content from t
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$input->getArgument('id') && !$input->getOption('full')) {
-            throw new InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
+            throw new \InvalidArgumentException('You need to give one or more workflow ids or choose the --full option');
         }
 
         $lock = $this->getLock();
@@ -108,7 +121,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
                     }
 
                     if ($invalid) {
-                        throw new InvalidArgumentException(sprintf(
+                        throw new \InvalidArgumentException(sprintf(
                             'The workflow ids "%s" do not exists',
                             implode(', ', $invalid)
                         ));
@@ -122,26 +135,26 @@ The <info>%command.name%</info> command starts a index of all the content from t
             $types = [];
 
             foreach ($this->findTypes($workflow) as $row) {
-                $this->stateManager->ensureWorkflowState($row->getType());
-                $types[] = $row->getType();
+                $this->stateManager->ensureWorkflowState($row->getId());
+                $types[] = $row->getId();
             }
 
             if (!$types) {
-                return 0; // no content type connected to the selected workflow ids.
+                return 0;
             }
 
             $command = null;
 
             try {
                 $command = $this->getApplication()->find('solr:indexer:queue');
-            } catch (Exception $e) {
-                throw new RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
+            } catch (\Exception $e) {
+                throw new \RuntimeException(sprintf('Could not find the command "%s"', 'solr:indexer:queue'));
             }
 
             try {
                 return $command->run(new ArrayInput(['--ignore' => true, 'id' => $types]), $output);
-            } catch (Exception $e) {
-                throw new RuntimeException(sprintf(
+            } catch (\Exception $e) {
+                throw new \RuntimeException(sprintf(
                     'An error occurred when executing the command "%s"',
                     'solr:indexer:queue'
                 ), 0, $e);
@@ -149,6 +162,8 @@ The <info>%command.name%</info> command starts a index of all the content from t
         } finally {
             $lock->release();
         }
+
+        return 0;
     }
 
     /**
@@ -159,10 +174,10 @@ The <info>%command.name%</info> command starts a index of all the content from t
     protected function findDefinition(array $ids = null)
     {
         if (null === $ids) {
-            return $this->getRepository()->findAll();
+            return $this->workflowRepository->findAll();
         }
 
-        return $this->getRepository()->findBy(['id' => $ids]);
+        return $this->workflowRepository->findBy(['id' => $ids]);
     }
 
     /**
@@ -174,7 +189,7 @@ The <info>%command.name%</info> command starts a index of all the content from t
     {
         $result = [];
 
-        foreach ($this->getResolver()->getTypes() as $type) {
+        foreach ($this->resolver->getTypes() as $type) {
             if ($type->hasOption('workflow') && isset($ids[$type->getOption('workflow')])) {
                 $result[] = $type;
             }
@@ -184,26 +199,10 @@ The <info>%command.name%</info> command starts a index of all the content from t
     }
 
     /**
-     * @return ResolverInterface
-     */
-    protected function getResolver()
-    {
-        return $this->getContainer()->get('integrated_content.resolver');
-    }
-
-    /**
-     * @return ObjectRepository
-     */
-    protected function getRepository()
-    {
-        return $this->getContainer()->get('integrated_workflow.repository.definition');
-    }
-
-    /**
-     * @return Lock
+     * @return LockFactory
      */
     protected function getLock()
     {
-        return $this->getContainer()->get('integrated_workflow.lock.factory')->createLock(self::class.md5(__DIR__));
+        return $this->lockFactory->createLock(self::class.md5(__DIR__.$this->getName()));
     }
 }

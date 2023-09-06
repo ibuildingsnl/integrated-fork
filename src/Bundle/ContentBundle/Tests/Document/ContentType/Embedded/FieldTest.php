@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType\Embedded;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\Embedded\Field;
+use Integrated\Common\ContentType\ContentTypeFieldInterface;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -36,7 +37,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceOf()
     {
-        $this->assertInstanceOf('Integrated\Common\ContentType\ContentTypeFieldInterface', $this->field);
+        $this->assertInstanceOf(ContentTypeFieldInterface::class, $this->field);
     }
 
     /**

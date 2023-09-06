@@ -32,14 +32,14 @@ abstract class AbstractPage
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $path;
 
     /**
      * @var string
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $layout;
 
     /**
@@ -126,8 +126,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param array $grids
-     *
      * @return $this
      */
     public function setGrids(array $grids)
@@ -138,8 +136,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param Grid $grid
-     *
      * @return $this
      */
     public function addGrid(Grid $grid)
@@ -150,8 +146,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param Grid $grid
-     *
      * @return $this
      */
     public function removeGrid(Grid $grid)
@@ -162,8 +156,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param Grid $grid
-     *
      * @return int
      */
     public function indexOf(Grid $grid)
@@ -196,8 +188,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
@@ -216,8 +206,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param \DateTime $updatedAt
-     *
      * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -236,8 +224,6 @@ abstract class AbstractPage
     }
 
     /**
-     * @param Channel $channel
-     *
      * @return $this
      */
     public function setChannel(Channel $channel)

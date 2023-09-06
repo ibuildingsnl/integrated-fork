@@ -11,13 +11,12 @@
 
 namespace Integrated\Bundle\SolrBundle\Iterator;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Iterator;
+use Doctrine\Persistence\ObjectManager;
 
 /**
  * @author Patrick Mestebeld <patrick@e-active.nl>
  */
-class DetachIterator implements Iterator
+class DetachIterator implements \Iterator
 {
     /**
      * @var ObjectManager
@@ -25,15 +24,11 @@ class DetachIterator implements Iterator
     private $manager;
 
     /**
-     * @var Iterator
+     * @var \Iterator
      */
     private $iterator;
 
-    /**
-     * @param Iterator      $iterator
-     * @param ObjectManager $manager
-     */
-    public function __construct(Iterator $iterator, ObjectManager $manager)
+    public function __construct(\Iterator $iterator, ObjectManager $manager)
     {
         $this->iterator = $iterator;
         $this->manager = $manager;
@@ -42,7 +37,7 @@ class DetachIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): mixed
     {
         $this->manager->detach($current = $this->iterator->current());
 
@@ -52,7 +47,7 @@ class DetachIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         $this->iterator->next();
     }
@@ -60,7 +55,7 @@ class DetachIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->iterator->key();
     }
@@ -68,7 +63,7 @@ class DetachIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->iterator->valid();
     }
@@ -76,7 +71,7 @@ class DetachIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iterator->rewind();
     }

@@ -11,19 +11,19 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
-use Braincrafted\Bundle\BootstrapBundle\Session\FlashMessage;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\UserBundle\Form\Type\ProfileFormType;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
     /**
      * @var UserManagerInterface
@@ -31,39 +31,24 @@ class ProfileController extends Controller
     protected $userManager;
 
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
-    protected $encoderFactory;
+    protected $hasherFactory;
 
-    /**
-     * @var FlashMessage
-     */
-    protected $flashMessage;
-
-    /**
-     * @param UserManagerInterface    $userManager
-     * @param EncoderFactoryInterface $encoderFactory
-     * @param FlashMessage            $flashMessage
-     * @param ContainerInterface      $container
-     */
     public function __construct(
         UserManagerInterface $userManager,
-        EncoderFactoryInterface $encoderFactory,
-        FlashMessage $flashMessage,
+        PasswordHasherFactoryInterface $hasherFactory,
         ContainerInterface $container
     ) {
         $this->userManager = $userManager;
-        $this->encoderFactory = $encoderFactory;
-        $this->flashMessage = $flashMessage;
+        $this->hasherFactory = $hasherFactory;
         $this->container = $container;
     }
 
     /**
-     * @param Request $request
-     *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function index(Request $request)
     {
         $user = $this->getUser();
 
@@ -72,32 +57,28 @@ class ProfileController extends Controller
 
         if ($form->isSubmitted()) {
             if ($form->get('actions')->get('cancel')->isClicked()) {
-                return $this->redirect($this->generateUrl('integrated_content_content_index'));
+                return $this->redirectToRoute('integrated_content_content_index');
             }
 
             if ($form->isValid()) {
-                $salt = base64_encode(random_bytes(72));
-
-                $user->setPassword($this->encoderFactory->getEncoder($user)->encodePassword($form->get('password')->getData(), $salt));
-                $user->setSalt($salt);
+                $user->setPassword($this->hasherFactory->getPasswordHasher($user)->hash($form->get('password')->getData()));
+                $user->setSalt(null);
 
                 $this->userManager->persist($user);
-                $this->flashMessage->success('Your profile have been saved');
+                $this->addFlash('success', 'Your profile have been saved');
 
-                return $this->redirect($this->generateUrl('integrated_content_content_index'));
+                return $this->redirectToRoute('integrated_content_content_index');
             }
         }
 
-        return $this->render('IntegratedUserBundle:profile:index.html.twig', [
+        return $this->render('@IntegratedUser/profile/index.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param UserInterface $user
-     *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     protected function createProfileForm(UserInterface $user)
     {

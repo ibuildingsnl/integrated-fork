@@ -25,8 +25,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('integrated_storage');
+        $treeBuilder = new TreeBuilder('integrated_storage');
+        $rootNode = $treeBuilder->getRootNode();
 
         $this->addRootConfig($rootNode);
         $this->addResolverConfig($rootNode);
@@ -37,8 +37,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the default identifier_class to the root node.
-     *
-     * @param ArrayNodeDefinition $node
      */
     protected function addRootConfig(ArrayNodeDefinition $node)
     {
@@ -51,8 +49,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the required resolvers key to the root node.
-     *
-     * @param ArrayNodeDefinition $node
      */
     protected function addResolverConfig(ArrayNodeDefinition $node)
     {
@@ -77,8 +73,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the optional decision map to to the root node.
-     *
-     * @param ArrayNodeDefinition $node
      */
     protected function addFilesystemDecisionMap(ArrayNodeDefinition $node)
     {

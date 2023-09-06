@@ -58,13 +58,6 @@ class AddCommand extends Command
      */
     private $metadata;
 
-    /**
-     * @param DatabaseInterface        $database
-     * @param FilesystemRegistry       $registry
-     * @param ManagerInterface         $storage
-     * @param DecisionInterface        $decision
-     * @param MetadataFactoryInterface $metadata
-     */
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry,
@@ -101,7 +94,7 @@ class AddCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
 
@@ -120,5 +113,7 @@ class AddCommand extends Command
         } else {
             throw new \InvalidArgumentException(sprintf('The filesystem %s does not exist', $filesystem));
         }
+
+        return 0;
     }
 }

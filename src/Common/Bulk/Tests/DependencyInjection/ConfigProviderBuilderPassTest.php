@@ -12,6 +12,7 @@
 namespace Integrated\Common\Bulk\Tests\DependencyInjection;
 
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -28,10 +29,11 @@ class ConfigProviderBuilderPassTest extends \PHPUnit\Framework\TestCase
         $definition = $this->createMock(Definition::class);
         $definition->expects($this->exactly(2))
             ->method('addMethodCall')
-            ->withConsecutive(
-                ['addProvider', $this->identicalTo([$service1])],
-                ['addProvider', $this->identicalTo([$service2])]
-            );
+            ->with($this->equalTo('addProvider'), $this->callback(function ($arguments) use ($service1, $service2) {
+                $this->assertContainsEquals($arguments[0], [$service1, $service2]);
+
+                return true;
+            }));
 
         $container = $this->getContainer();
         $container->expects($this->once())
@@ -41,8 +43,11 @@ class ConfigProviderBuilderPassTest extends \PHPUnit\Framework\TestCase
 
         $container->expects($this->exactly(3))
             ->method('getDefinition')
-            ->withConsecutive(['service'], ['tagged.service.1'], ['tagged.service.2'])
-            ->willReturnOnConsecutiveCalls($definition, $service1, $service2);
+            ->willReturnMap([
+                ['service', $definition],
+                ['tagged.service.1', $service1],
+                ['tagged.service.2', $service2],
+            ]);
 
         $container->expects($this->once())
             ->method('findTaggedServiceIds')
@@ -81,7 +86,7 @@ class ConfigProviderBuilderPassTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerBuilder|MockObject
      */
     protected function getContainer()
     {

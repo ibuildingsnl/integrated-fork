@@ -22,21 +22,22 @@ use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
 use Integrated\Common\Content\ContentInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ExporterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TwitterOAuth | \PHPUnit_Framework_MockObject_MockObject
+     * @var TwitterOAuth|MockObject
      */
     private $twitter;
 
     /**
-     * @var ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigInterface|MockObject
      */
     private $config;
 
     /**
-     * @var UrlResolver | \PHPUnit_Framework_MockObject_MockObject
+     * @var UrlResolver|MockObject
      */
     private $urlResolver;
 
@@ -91,9 +92,6 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
         $this->assertNotInstanceOf(ExporterResponse::class, $response);
     }
 
-    /**
-     * @return Exporter
-     */
     protected function getInstance(): Exporter
     {
         return new Exporter($this->twitter, $this->config, $this->urlResolver);
@@ -102,7 +100,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $id
      *
-     * @return ChannelInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel($id)
     {

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Solr\Indexer;
 
-use Exception;
 use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 use Integrated\Common\Queue\Queue;
 use Integrated\Common\Queue\QueueInterface;
@@ -64,8 +63,7 @@ class Indexer extends Configurable implements IndexerInterface
     /**
      * Indexer constructor.
      *
-     * @param CommandFactoryInterface $factory
-     * @param Batch                   $batch
+     * @param Batch $batch
      */
     public function __construct(CommandFactoryInterface $factory, Batch $batch = null)
     {
@@ -93,8 +91,6 @@ class Indexer extends Configurable implements IndexerInterface
 
     /**
      * Set the event dispatcher.
-     *
-     * @param EventDispatcherInterface $dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
@@ -172,7 +168,7 @@ class Indexer extends Configurable implements IndexerInterface
             throw new InvalidArgumentException('No instance of a Solarium\Core\Client\Client has been inserted into the indexer.');
         }
 
-        $this->getEventDispatcher()->dispatch(Events::PRE_EXECUTE, new IndexerEvent($this));
+        $this->getEventDispatcher()->dispatch(new IndexerEvent($this), Events::PRE_EXECUTE);
 
         try {
             foreach ($this->getQueue()->pull($this->getOption('queue.size')) as $message) {
@@ -182,22 +178,20 @@ class Indexer extends Configurable implements IndexerInterface
             $this->send(); // send the last batch if there is any
         } finally {
             $this->batch->clear();
-            $this->getEventDispatcher()->dispatch(Events::POST_EXECUTE, new IndexerEvent($this));
+            $this->getEventDispatcher()->dispatch(new IndexerEvent($this), Events::POST_EXECUTE);
         }
     }
 
     /**
      * A queue message it not send to the solr server but grouped in a
      * batch to send more operations at ones.
-     *
-     * @param QueueMessageInterface $message
      */
     protected function batch(QueueMessageInterface $message)
     {
         try {
             $operation = new BatchOperation($message, $this->factory->create($message->getPayload()));
         } catch (RuntimeException $e) {
-            $event = $this->getEventDispatcher()->dispatch(Events::ERROR, new ErrorEvent($this, $message, $e));
+            $event = $this->getEventDispatcher()->dispatch(new ErrorEvent($this, $message, $e), Events::ERROR);
             $event->getMessage()->delete();
 
             return;
@@ -207,10 +201,10 @@ class Indexer extends Configurable implements IndexerInterface
         // that check if the batch is canceled or not. If canceled just remove the message
         // from the queue and drop the batch operation
 
-        $this->getEventDispatcher()->dispatch(Events::BATCHING, new BatchEvent($this, $operation));
+        $this->getEventDispatcher()->dispatch(new BatchEvent($this, $operation), Events::BATCHING);
 
         if ($operation->getCommand() === null) {
-            $event = $this->getEventDispatcher()->dispatch(Events::PROCESSED, new MessageEvent($this, $message));
+            $event = $this->getEventDispatcher()->dispatch(new MessageEvent($this, $message), Events::PROCESSED);
             $event->getMessage()->delete();
 
             return;
@@ -242,19 +236,19 @@ class Indexer extends Configurable implements IndexerInterface
         }
 
         $dispatcher = $this->getEventDispatcher();
-        $dispatcher->dispatch(Events::SENDING, new SendEvent($this, $query));
+        $dispatcher->dispatch(new SendEvent($this, $query), Events::SENDING);
 
         try {
             $result = $this->getClient()->execute($query);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new ClientException($e->getMessage(), $e->getCode(), $e);
         }
 
-        $dispatcher->dispatch(Events::RESULTS, new ResultEvent($this, $result));
+        $dispatcher->dispatch(new ResultEvent($this, $result), Events::RESULTS);
 
         /** @var BatchOperation $operation */
         foreach ($this->batch as $operation) {
-            $event = $dispatcher->dispatch(Events::PROCESSED, new MessageEvent($this, $operation->getMessage()));
+            $event = $dispatcher->dispatch(new MessageEvent($this, $operation->getMessage()), Events::PROCESSED);
             $event->getMessage()->delete();
         }
 

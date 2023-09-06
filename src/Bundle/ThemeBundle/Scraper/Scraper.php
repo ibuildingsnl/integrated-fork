@@ -13,9 +13,8 @@ namespace Integrated\Bundle\ThemeBundle\Scraper;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Integrated\Bundle\ThemeBundle\DomQuery\DomQuery;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper as ScraperEntity;
-use Rct567\DomQuery\DomQuery;
-use Symfony\Component\HttpKernel\Kernel;
 use Twig\Loader\FilesystemLoader;
 
 class Scraper
@@ -31,11 +30,6 @@ class Scraper
     private $documentManager;
 
     /**
-     * @var Kernel
-     */
-    private $kernel;
-
-    /**
      * @var FilesystemLoader
      */
     private $loader;
@@ -47,31 +41,22 @@ class Scraper
 
     /**
      * Scraper constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param DocumentManager        $documentManager
-     * @param Kernel                 $kernel
-     * @param FilesystemLoader       $loader
-     * @param ScraperPageLoader      $scraperPageLoader
      */
-    public function __construct(EntityManagerInterface $entityManager, DocumentManager $documentManager, Kernel $kernel, FilesystemLoader $loader, ScraperPageLoader $scraperPageLoader)
+    public function __construct(EntityManagerInterface $entityManager, DocumentManager $documentManager, FilesystemLoader $loader, ScraperPageLoader $scraperPageLoader)
     {
         $this->entityManager = $entityManager;
         $this->documentManager = $documentManager;
-        $this->kernel = $kernel;
         $this->loader = $loader;
         $this->scraperPageLoader = $scraperPageLoader;
     }
 
     /**
-     * @param ScraperEntity $scraper
-     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function prepare(ScraperEntity $scraper): void
     {
         try {
-            $template = file_get_contents($this->kernel->locateResource($scraper->getTemplateName()));
+            $template = $this->getTemplate($scraper->getTemplateName());
 
             preg_match_all('/{% block (.*) %}([\s\S]*){% endblock(.*)%}/msU', $template, $matches);
 
@@ -112,9 +97,6 @@ class Scraper
         $this->scraperPageLoader->pageListCacheWarmup(true);
     }
 
-    /**
-     * @param ScraperEntity|null $scraper
-     */
     public function run(ScraperEntity $scraper = null): void
     {
         if ($scraper === null) {
@@ -130,7 +112,7 @@ class Scraper
 
                 $dom = new DomQuery($html);
 
-                $template = file_get_contents($this->kernel->locateResource($scraper->getTemplateName()));
+                $template = $this->getTemplate($scraper->getTemplateName());
 
                 $scraperBlocks = [];
                 foreach ($scraper->getBlocks() as $block) {
@@ -177,8 +159,6 @@ class Scraper
     /**
      * @param string $html
      * @param string $url
-     *
-     * @return string
      */
     protected function replaceUrls($html, $url): string
     {
@@ -191,5 +171,34 @@ class Scraper
         $html = preg_replace('|<base href="(.+)"\s?/>|', '', $html);
 
         return $html;
+    }
+
+    private function getTemplate(string $templateName): string
+    {
+        if (strpos($templateName, '@') === 0) {
+            list($namespace, $templateName) = explode('/', substr($templateName, 1), 2);
+
+            $namespacePaths = $this->loader->getPaths($namespace);
+
+            if (\count($namespacePaths) === 0) {
+                throw new \Exception(sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace));
+            }
+        } else {
+            $namespacePaths = $this->loader->getPaths();
+        }
+
+        $template = null;
+        foreach ($namespacePaths as $namespacePath) {
+            if (file_exists($namespacePath.'/'.$templateName)) {
+                $template = $namespacePath.'/'.$templateName;
+                break;
+            }
+        }
+
+        if (!$template) {
+            throw new \Exception(sprintf('Template %s not found', $templateName));
+        }
+
+        return file_get_contents($template);
     }
 }

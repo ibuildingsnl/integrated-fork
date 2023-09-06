@@ -34,10 +34,6 @@ class CleanCommand extends Command
      */
     protected $registry;
 
-    /**
-     * @param DatabaseInterface  $database
-     * @param FilesystemRegistry $registry
-     */
     public function __construct(
         DatabaseInterface $database,
         FilesystemRegistry $registry
@@ -73,7 +69,7 @@ class CleanCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filesystem = $input->getArgument('filesystem');
         $directory = $input->getArgument('directory');
@@ -82,5 +78,7 @@ class CleanCommand extends Command
         $cleanFileSystem->clean($filesystem, $directory);
 
         $output->writeln(sprintf('Cleanable files for %s have been moved to %s', $filesystem, $directory));
+
+        return 0;
     }
 }

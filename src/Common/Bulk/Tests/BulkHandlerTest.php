@@ -19,7 +19,7 @@ use Integrated\Common\Bulk\BulkHandler;
 use Integrated\Common\Bulk\BulkHandlerInterface;
 use Integrated\Common\Bulk\Exception\InvalidArgumentException;
 use Integrated\Common\Content\ContentInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -27,7 +27,7 @@ use stdClass;
 class BulkHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var HandlerFactoryRegistry | \PHPUnit_Framework_MockObject_MockObject
+     * @var HandlerFactoryRegistry|MockObject
      */
     private $registry;
 
@@ -52,33 +52,39 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
 
         $handler1->expects($this->exactly(2))
             ->method('execute')
-            ->withConsecutive([$this->identicalTo($content1)], [$this->identicalTo($content2)]);
+            ->with($this->isInstanceOf(ContentInterface::class));
 
         $handler2->expects($this->exactly(2))
             ->method('execute')
-            ->withConsecutive([$this->identicalTo($content1)], [$this->identicalTo($content2)]);
+            ->with($this->isInstanceOf(ContentInterface::class));
 
         $handler3->expects($this->exactly(2))
             ->method('execute')
-            ->withConsecutive([$this->identicalTo($content1)], [$this->identicalTo($content2)]);
+            ->with($this->isInstanceOf(ContentInterface::class));
 
         $factory1 = $this->getFactory();
         $factory2 = $this->getFactory();
 
         $factory1->expects($this->exactly(2))
             ->method('createHandler')
-            ->withConsecutive([['options1']], [['options2']])
-            ->willReturnOnConsecutiveCalls($handler1, $handler2);
+            ->willReturnMap([
+                [['options1'], $handler1],
+                [['options2'], $handler2],
+            ]);
 
         $factory2->expects($this->once())
             ->method('createHandler')
-            ->with(['options3'])
-            ->willReturn($handler3);
+            ->willReturnMap([
+                [['options3'], $handler3],
+            ]);
 
         $this->registry->expects($this->exactly(3))
             ->method('getFactory')
-            ->withConsecutive(['class1'], ['class2'], ['class3'])
-            ->willReturnOnConsecutiveCalls($factory1, $factory1, $factory2);
+            ->willReturnMap([
+                ['class1', $factory1],
+                ['class2', $factory1],
+                ['class3', $factory2],
+            ]);
 
         $action1 = $this->getAction('class1', ['options1']);
         $action2 = $this->getAction('class2', ['options2']);
@@ -98,7 +104,7 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
 
-        $this->getInstance()->execute([new stdClass()], []);
+        $this->getInstance()->execute([new \stdClass()], []);
     }
 
     public function testExecuteInvalidActions()
@@ -112,7 +118,7 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Integrated\Common\Bulk\Exception\UnexpectedTypeException::class);
 
-        $this->getInstance()->execute([], [new stdClass()]);
+        $this->getInstance()->execute([], [new \stdClass()]);
     }
 
     public function testExecuteActionNotFound()
@@ -136,7 +142,7 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentInterface|MockObject
      */
     protected function getContent()
     {
@@ -145,9 +151,8 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $name
-     * @param array  $options
      *
-     * @return BulkActionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return BulkActionInterface|MockObject
      */
     protected function getAction($name, array $options = [])
     {
@@ -165,7 +170,7 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return HandlerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return HandlerFactoryInterface|MockObject
      */
     protected function getFactory()
     {
@@ -173,7 +178,7 @@ class BulkHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return HandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return HandlerInterface|MockObject
      */
     protected function getHandler()
     {

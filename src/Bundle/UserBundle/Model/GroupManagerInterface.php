@@ -25,15 +25,11 @@ interface GroupManagerInterface extends ManagerInterface
 
     /**
      * Change or add the group to the manager.
-     *
-     * @param GroupInterface $group
      */
     public function persist(GroupInterface $group);
 
     /**
      * Remove the group from the manager.
-     *
-     * @param GroupInterface $group
      */
     public function remove(GroupInterface $group);
 
@@ -69,8 +65,6 @@ interface GroupManagerInterface extends ManagerInterface
 
     /**
      * Finds the groups by a set of criteria.
-     *
-     * @param array $criteria
      *
      * @return GroupInterface[]
      */

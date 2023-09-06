@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,9 +6,15 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_solr.event_listeners.doctrine.clear" class="Integrated\Bundle\SolrBundle\EventListener\DoctrineClearEventSubscriber">
-            <argument type="service" id="doctrine.odm.mongodb.document_manager" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
+        <service id="integrated_solr.event_listeners.solarium_query_subscriber" class="Integrated\Bundle\SolrBundle\EventListener\SolariumQueryPageFixerSubscriber">
+            <tag name="knp_paginator.subscriber" />
         </service>
 
     </services>

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
-use Exception;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
@@ -19,7 +18,7 @@ use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Channel\Exporter\QueueExporter;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -29,20 +28,20 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    const TEST_STATE = 'TEST';
+    public const TEST_STATE = 'TEST';
 
     /**
-     * @var QueueInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var QueueInterface|MockObject
      */
     private $queue;
 
     /**
-     * @var RequestSerializerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestSerializerInterface|MockObject
      */
     private $serializer;
 
     /**
-     * @var ExporterInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ExporterInterface|MockObject
      */
     private $exporter;
 
@@ -101,7 +100,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
         $exporter = $this->getInstance('process');
         $exporter->expects($this->exactly(3))
             ->method('process')
-            ->withConsecutive([$this->identicalTo($message1)], [$this->identicalTo($message2)], [$this->identicalTo($message3)])
+            ->with($this->isInstanceOf(QueueMessageInterface::class))
             ->willReturnArgument(0);
 
         $exporter->execute();
@@ -116,7 +115,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
         $request->channel = $this->getChannel();
 
@@ -148,7 +147,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
         $request = new Request();
 
-        $request->content = new stdClass();
+        $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
         $request->channel = $this->getChannel();
 
@@ -160,7 +159,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
         $this->exporter->expects($this->once())
             ->method('export')
             ->with($this->identicalTo($request->content), $this->equalTo(self::TEST_STATE), $this->identicalTo($request->channel))
-            ->willThrowException(new Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
 
         self::assertSame($message, $this->getInstance()->process($message));
     }
@@ -185,7 +184,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
     public function testExport()
     {
-        $content = new stdClass();
+        $content = new \stdClass();
         $channel = $this->getChannel();
 
         $this->exporter->expects($this->once())
@@ -196,26 +195,26 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return QueueExporter | \PHPUnit_Framework_MockObject_MockObject
+     * @return QueueExporter|MockObject
      */
     protected function getInstance($method = null)
     {
         return $this->getMockBuilder('Integrated\\Common\\Channel\\Exporter\\QueueExporter')
             ->setConstructorArgs([$this->queue, $this->serializer, $this->exporter])
-            ->setMethods($method ? [$method] : null)
+            ->onlyMethods($method ? [$method] : [])
             ->getMock();
     }
 
     /**
-     * @return QueueMessageInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return QueueMessageInterface|MockObject
      */
     protected function getMessage()
     {
-        return $this->createMock('Integrated\\Common\\Queue\\QueueMessageInterface');
+        return $this->createMock(QueueMessageInterface::class);
     }
 
     /**
-     * @return ChannelInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel()
     {

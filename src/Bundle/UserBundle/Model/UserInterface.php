@@ -11,13 +11,16 @@
 
 namespace Integrated\Bundle\UserBundle\Model;
 
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 use Serializable;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-interface UserInterface extends AdvancedUserInterface, GroupableInterface, Serializable
+interface UserInterface extends LegacyPasswordAuthenticatedUserInterface, SymfonyUserInterface, GroupableInterface, TwoFactorInterface, Serializable, EquatableInterface
 {
     /**
      * @return string
@@ -50,17 +53,22 @@ interface UserInterface extends AdvancedUserInterface, GroupableInterface, Seria
     public function getEmail();
 
     /**
-     * @param RoleInterface $role
+     * Checks whether the user is enabled.
      */
+    public function isEnabled(): bool;
+
+    public function setEnabled(bool $enabled): void;
+
     public function addRole(RoleInterface $role);
 
-    /**
-     * @param ScopeInterface $scope
-     */
     public function setScope(ScopeInterface $scope);
 
     /**
      * @return ScopeInterface
      */
     public function getScope();
+
+    public function setGoogleAuthenticatorEnabled(bool $googleAuthenticatorEnabled): void;
+
+    public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void;
 }

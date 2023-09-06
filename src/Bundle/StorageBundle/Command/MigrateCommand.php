@@ -47,11 +47,6 @@ class MigrateCommand extends Command
      */
     private $metadata;
 
-    /**
-     * @param DatabaseInterface        $database
-     * @param ManagerInterface         $storage
-     * @param MetadataFactoryInterface $metadata
-     */
     public function __construct(DatabaseInterface $database, ManagerInterface $storage, MetadataFactoryInterface $metadata)
     {
         $this->database = $database;
@@ -100,7 +95,7 @@ class MigrateCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Fetch all data from database
         $data = $this->database->getRows();
@@ -179,6 +174,8 @@ class MigrateCommand extends Command
 
         // Release the output
         $progress->finish();
+
+        return 0;
     }
 
     /**

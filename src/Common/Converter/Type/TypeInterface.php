@@ -21,9 +21,7 @@ interface TypeInterface
     /**
      * Extract and manipulated the data from the $data object en add them to the $container.
      *
-     * @param ContainerInterface $container
-     * @param object             $data
-     * @param array              $options
+     * @param object $data
      */
     public function build(ContainerInterface $container, $data, array $options = []);
 

@@ -13,6 +13,7 @@ namespace Integrated\Common\Queue\Tests\Provider\DBAL;
 
 use Doctrine\DBAL\Connection;
 use Integrated\Common\Queue\Provider\DBAL\QueueProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 
 /**
@@ -20,7 +21,7 @@ use stdClass;
  */
 class QueueProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const PAYLOAD = 'O:8:"stdClass":0:{}'; // serialized stdClass;
+    public const PAYLOAD = 'O:8:"stdClass":0:{}'; // serialized stdClass;
 
     /**
      * @var QueueProvider
@@ -28,7 +29,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var Connection | \PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|MockObject
      */
     protected $connection;
 
@@ -53,6 +54,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
             ->method('insert')
             ->with($this->identicalTo('queue'));
 
-        $this->provider->push('channel', new stdClass());
+        $this->provider->push('channel', new \stdClass());
     }
 }

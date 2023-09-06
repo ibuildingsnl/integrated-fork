@@ -13,7 +13,7 @@ namespace Integrated\Bundle\WebsiteBundle\EventListener\Objects;
 
 use Integrated\Bundle\ContentBundle\Event\ContentEvent;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * @author Marijn Otte <marijn@e-active.nl>
@@ -26,7 +26,7 @@ class ContentYoutubeListener
     protected $themeManager;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
     protected $templating;
 
@@ -36,13 +36,11 @@ class ContentYoutubeListener
     protected $env;
 
     /**
-     * @param ThemeManager    $themeManager
-     * @param EngineInterface $templating
-     * @param string          $env
+     * @param string $env
      */
     public function __construct(
         ThemeManager $themeManager,
-        EngineInterface $templating,
+        Environment $templating,
         $env
     ) {
         $this->themeManager = $themeManager;
@@ -51,8 +49,6 @@ class ContentYoutubeListener
     }
 
     /**
-     * @param ContentEvent $contentEvent
-     *
      * @throws \Exception
      */
     public function process(ContentEvent $contentEvent)
@@ -75,8 +71,6 @@ class ContentYoutubeListener
     }
 
     /**
-     * @param string $youtubeId
-     *
      * @return string|null
      *
      * @throws \Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException
@@ -85,9 +79,9 @@ class ContentYoutubeListener
     {
         $template = $this->themeManager->locateTemplate('objects/youtube/default.html.twig');
 
-        return $this->templating->renderResponse(
+        return $this->templating->render(
             $template,
             ['youtubeId' => $youtubeId]
-        )->getContent();
+        );
     }
 }

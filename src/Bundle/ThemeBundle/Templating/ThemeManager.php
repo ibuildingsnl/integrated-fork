@@ -12,18 +12,13 @@
 namespace Integrated\Bundle\ThemeBundle\Templating;
 
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
-use Symfony\Component\HttpKernel\Kernel;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
 class ThemeManager
 {
-    /**
-     * @var Kernel
-     */
-    protected $kernel;
-
     /**
      * @var array
      */
@@ -40,17 +35,26 @@ class ThemeManager
     private $fallbackStack = [];
 
     /**
-     * @param Kernel $kernel
+     * @var FilesystemLoader
      */
-    public function __construct(Kernel $kernel)
+    private $loader;
+
+    /**
+     * @var string
+     */
+    private $rootPath;
+
+    public function __construct(FilesystemLoader $loader, string $rootPath)
     {
-        $this->kernel = $kernel;
+        $this->loader = $loader;
+        $this->rootPath = (null === $rootPath ? getcwd() : $rootPath).\DIRECTORY_SEPARATOR;
+        if (null !== $rootPath && false !== ($realPath = realpath($rootPath))) {
+            $this->rootPath = $realPath.\DIRECTORY_SEPARATOR;
+        }
     }
 
     /**
      * @param string $id
-     * @param array  $paths
-     * @param array  $fallback
      *
      * @return $this
      *
@@ -164,10 +168,12 @@ class ThemeManager
         $this->fallbackStack[$theme->getId()] = 1;
 
         foreach ($theme->getPaths() as $path) {
-            if (file_exists($this->locateResource($path).'/'.$template)) {
+            $resource = $path.'/'.$template;
+
+            if ($this->loader->exists($resource)) {
                 $this->fallbackStack = []; // reset
 
-                return $path.'/'.$template;
+                return $resource;
             }
         }
 
@@ -198,13 +204,50 @@ class ThemeManager
 
     /**
      * @param string $name
-     * @param string $dir
-     * @param bool   $first
      *
-     * @return string|array
+     * @return array
      */
-    public function locateResource($name, $dir = null, $first = true)
+    public function locateResources($name)
     {
-        return $this->kernel->locateResource($name, $dir, $first);
+        if (str_starts_with($name, '@')) {
+            $namespace = explode('/', substr($name, 1), 2);
+
+            $paths = [];
+            $namespacePaths = $this->loader->getPaths($namespace[0]);
+            if (\count($namespacePaths) === 0) {
+                throw new \Exception(sprintf('Namespace %s not found. Use Twig namespace notation for themes', $namespace[0]));
+            }
+            foreach ($namespacePaths as $namespacePath) {
+                if (!$this->isAbsolutePath($namespacePath)) {
+                    $namespacePath = $this->rootPath.$namespacePath;
+                }
+
+                if (isset($namespace[1])) {
+                    $paths[] = $namespacePath.'/'.$namespace[1];
+                } else {
+                    $paths[] = $namespacePath;
+                }
+            }
+
+            return $paths;
+        }
+
+        $paths = [];
+        foreach ($this->loader->getPaths() as $path) {
+            $paths[] = rtrim($path.'/'.trim($name, '/'), '/');
+        }
+
+        return $paths;
+    }
+
+    private function isAbsolutePath(string $file): bool
+    {
+        return strspn($file, '/\\', 0, 1)
+            || (\strlen($file) > 3 && ctype_alpha($file[0])
+                && ':' === $file[1]
+                && strspn($file, '/\\', 2, 1)
+            )
+            || null !== parse_url($file, \PHP_URL_SCHEME)
+        ;
     }
 }

@@ -31,8 +31,7 @@ class ChannelTransformer implements DataTransformerInterface
     private $multiple;
 
     /**
-     * @param ChannelRepository $repository
-     * @param bool              $multiple
+     * @param bool $multiple
      */
     public function __construct(ChannelRepository $repository, $multiple = false)
     {

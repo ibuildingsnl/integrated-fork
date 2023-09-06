@@ -13,18 +13,18 @@ namespace Integrated\Bundle\ContentHistoryBundle\Event;
 
 use Integrated\Bundle\ContentHistoryBundle\Document\ContentHistory;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Ger Jan van den Bosch <gerjan@e-active.nl>
  */
 final class ContentHistoryEvent extends Event
 {
-    const INSERT = 'insert';
+    public const INSERT = 'insert';
 
-    const UPDATE = 'update';
+    public const UPDATE = 'update';
 
-    const DELETE = 'delete';
+    public const DELETE = 'delete';
 
     /**
      * @var ContentHistory
@@ -41,11 +41,6 @@ final class ContentHistoryEvent extends Event
      */
     protected $originalData;
 
-    /**
-     * @param ContentHistory   $contentHistory
-     * @param ContentInterface $document
-     * @param array            $originalData
-     */
     public function __construct(ContentHistory $contentHistory, ContentInterface $document, array $originalData = [])
     {
         $this->contentHistory = $contentHistory;

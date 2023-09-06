@@ -11,14 +11,10 @@
 
 namespace Integrated\Common\Solr\Indexer;
 
-use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class Batch implements Countable, IteratorAggregate
+class Batch implements \Countable, \IteratorAggregate
 {
     /**
      * @var BatchOperation[]
@@ -27,8 +23,6 @@ class Batch implements Countable, IteratorAggregate
 
     /**
      * Add the given batch operation to the batch.
-     *
-     * @param BatchOperation $operation
      */
     public function add(BatchOperation $operation)
     {
@@ -37,8 +31,6 @@ class Batch implements Countable, IteratorAggregate
 
     /**
      * Remove the given batch operation from the batch.
-     *
-     * @param BatchOperation $operation
      */
     public function remove(BatchOperation $operation)
     {
@@ -61,10 +53,8 @@ class Batch implements Countable, IteratorAggregate
 
     /**
      * Return the number of batch operations.
-     *
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->batch);
     }
@@ -74,8 +64,8 @@ class Batch implements Countable, IteratorAggregate
      *
      * @return BatchOperation[]
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->batch);
+        return new \ArrayIterator($this->batch);
     }
 }

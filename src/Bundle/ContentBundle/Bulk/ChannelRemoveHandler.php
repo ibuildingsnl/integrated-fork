@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Bulk\Action\HandlerInterface;
 use Integrated\Common\Content\ContentInterface;
@@ -38,10 +38,6 @@ class ChannelRemoveHandler implements HandlerInterface
 
     /**
      * Constructor.
-     *
-     * @param string               $channel
-     * @param ObjectRepository     $repository
-     * @param AuthorizationChecker $authorizationChecker
      */
     public function __construct(string $channel, ObjectRepository $repository, AuthorizationChecker $authorizationChecker)
     {

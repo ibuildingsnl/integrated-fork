@@ -41,27 +41,14 @@ class BlockFilterType extends AbstractType
      */
     private $blockUsageProvider;
 
-    /**
-     * @var bool
-     */
-    private $pageBundleInstalled;
-
-    /**
-     * @param MetadataFactoryInterface $factory
-     * @param DocumentManager          $dm
-     * @param BlockUsageProvider       $blockUsageProvider
-     * @param array                    $bundles
-     */
     public function __construct(
         MetadataFactoryInterface $factory,
         DocumentManager $dm,
-        BlockUsageProvider $blockUsageProvider,
-        array $bundles
+        BlockUsageProvider $blockUsageProvider
     ) {
         $this->factory = $factory;
         $this->dm = $dm;
         $this->blockUsageProvider = $blockUsageProvider;
-        $this->pageBundleInstalled = isset($bundles['IntegratedPageBundle']);
     }
 
     /**
@@ -74,7 +61,10 @@ class BlockFilterType extends AbstractType
         $builder->add(
             'q',
             TextType::class,
-            ['attr' => ['placeholder' => 'Filter block name']]
+            [
+                'required' => false,
+                'attr' => ['placeholder' => 'Filter block name'],
+            ]
         );
 
         $builder->add(
@@ -87,23 +77,17 @@ class BlockFilterType extends AbstractType
             ]
         );
 
-        /* if IntegratedPageBundle is installed show channels */
-        if ($this->pageBundleInstalled) {
-            $builder->add(
-                'channels',
-                ChoiceType::class,
-                [
-                    'choices' => $this->getChannelChoices($options['blockIds']),
-                    'expanded' => true,
-                    'multiple' => true,
-                ]
-            );
-        }
+        $builder->add(
+            'channels',
+            ChoiceType::class,
+            [
+                'choices' => $this->getChannelChoices($options['blockIds']),
+                'expanded' => true,
+                'multiple' => true,
+            ]
+        );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('blockIds');
@@ -119,8 +103,6 @@ class BlockFilterType extends AbstractType
     }
 
     /**
-     * @param array $blockIds
-     *
      * @return mixed
      */
     private function getTypeChoices(array $blockIds)
@@ -132,8 +114,6 @@ class BlockFilterType extends AbstractType
     }
 
     /**
-     * @param array $blockIds
-     *
      * @return array
      */
     private function getChannelChoices(array $blockIds)
@@ -145,10 +125,12 @@ class BlockFilterType extends AbstractType
             $count = \count(array_intersect($blocks, $blockIds));
             if ($count) {
                 if ($channel = $this->blockUsageProvider->getChannel($channelId)) {
-                    $channelChoices[$channel->getName().' '.$count] = $channelId;
+                    $channelChoices[$channel->getName().' ('.$count.')'] = $channelId;
                 }
             }
         }
+
+        ksort($channelChoices);
 
         return $channelChoices;
     }

@@ -49,9 +49,8 @@ class DatabaseMenuFactory implements FactoryInterface
     private $documentManager;
 
     /**
-     * @param string          $menuClass
-     * @param string          $menuItemClass
-     * @param DocumentManager $documentManager
+     * @param string $menuClass
+     * @param string $menuItemClass
      */
     public function __construct($menuClass, $menuItemClass, DocumentManager $documentManager)
     {
@@ -62,19 +61,15 @@ class DatabaseMenuFactory implements FactoryInterface
     }
 
     /**
-     * @param string $name
-     * @param array  $options
-     *
      * @return \Integrated\Bundle\MenuBundle\Document\Menu
      */
-    public function createItem($name, array $options = [])
+    public function createItem(string $name, array $options = []): ItemInterface
     {
         return $this->getItem($this->menuClass, $name, $options);
     }
 
     /**
      * @param string $name
-     * @param array  $options
      *
      * @return \Integrated\Bundle\MenuBundle\Document\MenuItem
      */
@@ -84,8 +79,6 @@ class DatabaseMenuFactory implements FactoryInterface
     }
 
     /**
-     * @param array $array
-     *
      * @return \Integrated\Bundle\MenuBundle\Document\Menu|null
      */
     public function fromArray(array $array = [])
@@ -102,8 +95,6 @@ class DatabaseMenuFactory implements FactoryInterface
     }
 
     /**
-     * @param array $array
-     *
      * @return array
      */
     protected function parseChildren(array $array = [])
@@ -146,10 +137,6 @@ class DatabaseMenuFactory implements FactoryInterface
     }
 
     /**
-     * @param $class
-     * @param $name
-     * @param array $options
-     *
      * @return \Integrated\Bundle\MenuBundle\Document\MenuItem
      */
     protected function getItem($class, $name, array $options = [])
@@ -174,8 +161,7 @@ class DatabaseMenuFactory implements FactoryInterface
     /**
      * Adds a factory extension.
      *
-     * @param ExtensionInterface $extension
-     * @param int                $priority
+     * @param int $priority
      */
     public function addExtension(ExtensionInterface $extension, $priority = 0)
     {

@@ -17,8 +17,7 @@ namespace Integrated\Common\Block;
 interface BlockHandlerRegistryInterface
 {
     /**
-     * @param string                $type
-     * @param BlockHandlerInterface $block
+     * @param string $type
      */
     public function registerHandler($type, BlockHandlerInterface $block);
 
@@ -32,7 +31,7 @@ interface BlockHandlerRegistryInterface
     /**
      * @param string $type
      *
-     * @return BlockHandlerInterface
+     * @return BlockHandlerInterface|null
      */
     public function getHandler($type);
 }

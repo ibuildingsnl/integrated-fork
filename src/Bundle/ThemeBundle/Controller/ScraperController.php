@@ -11,20 +11,20 @@
 
 namespace Integrated\Bundle\ThemeBundle\Controller;
 
-use Braincrafted\Bundle\BootstrapBundle\Form\Type\FormActionsType;
 use Doctrine\ORM\EntityManagerInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\DeleteFormType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ThemeBundle\Entity\Scraper;
 use Integrated\Bundle\ThemeBundle\Form\Type\ScraperType;
 use Integrated\Bundle\ThemeBundle\Scraper\Scraper as ScraperService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ScraperController extends Controller
+class ScraperController extends AbstractController
 {
     /**
      * @var EntityManagerInterface
@@ -35,10 +35,6 @@ class ScraperController extends Controller
      */
     private $scraper;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param ScraperService         $scraper
-     */
     public function __construct(EntityManagerInterface $entityManager, ScraperService $scraper)
     {
         $this->entityManager = $entityManager;
@@ -47,16 +43,14 @@ class ScraperController extends Controller
 
     /**
      * Lists all the Scrapers.
-     *
-     * @return Response
      */
-    public function indexAction(): Response
+    public function index(): Response
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $result = $this->entityManager->getRepository(Scraper::class)->findBy([], ['channelId' => 'asc', 'name' => 'asc']);
 
-        return $this->render('IntegratedThemeBundle:scraper:index.html.twig', [
+        return $this->render('@IntegratedTheme/scraper/index.html.twig', [
             'result' => $result,
         ]);
     }
@@ -64,13 +58,11 @@ class ScraperController extends Controller
     /**
      * Creates a new Scraper.
      *
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
-    public function newAction(Request $request): Response
+    public function new(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $scraper = new Scraper();
 
@@ -83,12 +75,12 @@ class ScraperController extends Controller
 
             $this->scraper->prepare($scraper);
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item created');
+            $this->addFlash('success', 'Item created');
 
-            return $this->redirect($this->generateUrl('integrated_theme_scraper_edit', ['id' => $scraper->getId()]));
+            return $this->redirectToRoute('integrated_theme_scraper_edit', ['id' => $scraper->getId()]);
         }
 
-        return $this->render('IntegratedThemeBundle:scraper:new.html.twig', [
+        return $this->render('@IntegratedTheme/scraper/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -96,14 +88,11 @@ class ScraperController extends Controller
     /**
      * Edits an existing Scraper.
      *
-     * @param Scraper $scraper
-     * @param Request $request
-     *
      * @return Response|RedirectResponse
      */
-    public function editAction(Scraper $scraper, Request $request): Response
+    public function edit(Scraper $scraper, Request $request): Response
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createForm(ScraperType::class, $scraper);
         $form->handleRequest($request);
@@ -113,27 +102,22 @@ class ScraperController extends Controller
 
             $this->scraper->prepare($scraper);
 
-            $this->get('braincrafted_bootstrap.flash')->success('Item updated');
+            $this->addFlash('success', 'Item updated');
 
-            return $this->redirect($this->generateUrl('integrated_theme_scraper_index'));
+            return $this->redirectToRoute('integrated_theme_scraper_index');
         }
 
-        return $this->render('IntegratedThemeBundle:scraper:edit.html.twig', [
+        return $this->render('@IntegratedTheme/scraper/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
      * Deletes a Scraper.
-     *
-     * @param Scraper $scraper
-     * @param Request $request
-     *
-     * @return Response
      */
     public function deleteAction(Scraper $scraper, Request $request): Response
     {
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createDeleteForm($scraper);
         $form->handleRequest($request);
@@ -143,12 +127,12 @@ class ScraperController extends Controller
             $this->entityManager->flush();
 
             // Set flash message
-            $this->get('braincrafted_bootstrap.flash')->success('Item deleted');
+            $this->addFlash('success', 'Item updated');
 
-            return $this->redirect($this->generateUrl('integrated_theme_scraper_index'));
+            return $this->redirectToRoute('integrated_theme_scraper_index');
         }
 
-        return $this->render('IntegratedThemeBundle:scraper:delete.html.twig', [
+        return $this->render('@IntegratedTheme/scraper/delete.html.twig', [
             'scraper' => $scraper,
             'form' => $form->createView(),
         ]);
@@ -156,10 +140,6 @@ class ScraperController extends Controller
 
     /**
      * Creates a form to delete a Scraper.
-     *
-     * @param Scraper $scraper
-     *
-     * @return Form
      */
     protected function createDeleteForm(Scraper $scraper): Form
     {

@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var RequestStack | null
+     * @var RequestStack|null
      */
     protected $requestStack;
 
@@ -47,13 +47,10 @@ class RequestSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ContentHistoryEvent $event
-     */
     public function onChange(ContentHistoryEvent $event)
     {
         if ($this->requestStack instanceof RequestStack) {
-            $masterRequest = $this->requestStack->getMasterRequest();
+            $masterRequest = $this->requestStack->getMainRequest();
 
             if ($masterRequest instanceof Request) {
                 $request = new Embedded\Request();

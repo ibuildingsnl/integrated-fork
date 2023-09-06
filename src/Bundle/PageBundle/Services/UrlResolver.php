@@ -49,12 +49,6 @@ class UrlResolver
      */
     protected $dm;
 
-    /**
-     * @param ContentTypeControllerManager $controllerManager
-     * @param ChannelContextInterface      $channelContext
-     * @param RouterInterface              $router
-     * @param DocumentManager              $dm
-     */
     public function __construct(
         ContentTypeControllerManager $controllerManager,
         ChannelContextInterface $channelContext,
@@ -70,8 +64,6 @@ class UrlResolver
     /**
      * Returns the correct path for symfony routing module (replace "#[string]#" with "{[string}").
      *
-     * @param ContentTypePage $page
-     *
      * @return string
      */
     public function getRoutePath(ContentTypePage $page)
@@ -86,8 +78,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return string
      */
     public function getRouteName(ContentTypePage $page)
@@ -96,9 +86,7 @@ class UrlResolver
     }
 
     /**
-     * @param ContentInterface $document
-     * @param null             $channelId
-     * @param bool             $fallback
+     * @param null $channelId
      *
      * @return string|null
      */
@@ -119,16 +107,13 @@ class UrlResolver
             '%s/content/%s/%s',
             $this->router->getContext()->getBaseUrl(),
             $document->getContentType(),
-            //todo INTEGRATED-440 add Slug to ContentInterface
+            // todo INTEGRATED-440 add Slug to ContentInterface
             $document->getSlug()
         );
     }
 
     /**
      * todo INTEGRATED-440 add Slug and getReferenceByRelationIdto ContentInterface.
-     *
-     * @param ContentTypePage  $page
-     * @param ContentInterface $document
      *
      * @return string
      */
@@ -141,8 +126,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return array
      */
     protected function getRoutingParamaters(ContentTypePage $page, ContentInterface $content)
@@ -158,7 +141,7 @@ class UrlResolver
 
                 $parameters[$relationId] = $relation->getSlug();
             } else {
-                //no relation found, as fallback use relationId
+                // no relation found, as fallback use relationId
                 $parameters[$relationId] = $relationId;
             }
         }
@@ -167,8 +150,6 @@ class UrlResolver
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return array
      */
     protected function getRelationIds(ContentTypePage $page)
@@ -185,9 +166,6 @@ class UrlResolver
     }
 
     /**
-     * @param $channelId
-     * @param $contentTypeId
-     *
      * @return ContentTypePage
      */
     protected function getContentTypePageById($contentTypeId, $channelId = null)
@@ -204,7 +182,7 @@ class UrlResolver
             return $this->contentTypePages[$channelId][$contentTypeId];
         }
 
-        $page = $this->dm->getRepository('IntegratedPageBundle:Page\ContentTypePage')
+        $page = $this->dm->getRepository(ContentTypePage::class)
             ->findOneBy([
                 'channel.$id' => $channelId,
                 'contentType.$id' => $contentTypeId,

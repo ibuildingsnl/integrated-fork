@@ -13,15 +13,15 @@ namespace Integrated\Bundle\ContentBundle\Event;
 
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\ContentInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class FormBlockEvent extends Event
 {
-    const PRE_LOAD = 'form_block.pre_load';
+    public const PRE_LOAD = 'form_block.pre_load';
 
-    const PRE_FLUSH = 'form_block.pre_flush';
+    public const PRE_FLUSH = 'form_block.pre_flush';
 
-    const POST_FLUSH = 'form_block.post_flush';
+    public const POST_FLUSH = 'form_block.post_flush';
 
     /**
      * @var ContentInterface
@@ -72,8 +72,6 @@ class FormBlockEvent extends Event
     }
 
     /**
-     * @param BlockInterface|null $block
-     *
      * @return $this
      */
     public function setBlock(?BlockInterface $block)

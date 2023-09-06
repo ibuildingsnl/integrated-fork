@@ -13,19 +13,13 @@ namespace Integrated\Bundle\StorageBundle\Form\Type;
 
 use Integrated\Bundle\AssetBundle\Manager\AssetManager;
 use Integrated\Bundle\ImageBundle\Twig\Extension\ImageExtension;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
 class FileDropzoneType extends AbstractDropzoneType
 {
-    /**
-     * @param AssetManager        $stylesheets
-     * @param AssetManager        $javascripts
-     * @param TranslatorInterface $translator
-     * @param ImageExtension      $imageExtension
-     */
     public function __construct(
         AssetManager $stylesheets,
         AssetManager $javascripts,

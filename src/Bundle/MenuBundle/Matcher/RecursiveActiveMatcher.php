@@ -26,16 +26,13 @@ class RecursiveActiveMatcher
      */
     protected $matcher;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         // Store voters in array
         $voters = [];
 
         // Add the URI matcher whenever we've got a request
-        if ($request = $requestStack->getMasterRequest()) {
+        if ($request = $requestStack->getMainRequest()) {
             $voters[] = new UriVoter(
                 str_replace(
                     $request->getScriptName(), // contains; app.php or app_dev.php
@@ -49,9 +46,6 @@ class RecursiveActiveMatcher
         $this->matcher = new Matcher($voters);
     }
 
-    /**
-     * @param ItemInterface $menuItem
-     */
     public function setActive(ItemInterface $menuItem)
     {
         foreach ($menuItem->getChildren() as $item) {

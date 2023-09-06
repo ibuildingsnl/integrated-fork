@@ -12,6 +12,7 @@
 namespace Integrated\Common\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\RouterInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class Router implements RouterInterface, RequestMatcherInterface
+class Router implements RouterInterface, RequestMatcherInterface, WarmableInterface
 {
     /**
      * @var RouterInterface
@@ -39,9 +40,7 @@ class Router implements RouterInterface, RequestMatcherInterface
     protected $context;
 
     /**
-     * @param RouterInterface       $router
-     * @param UrlGeneratorInterface $generator
-     * @param RequestContext        $context
+     * @param RequestContext $context
      */
     public function __construct(
         RouterInterface $router,
@@ -125,5 +124,10 @@ class Router implements RouterInterface, RequestMatcherInterface
         $this->generator->setContext($this->getContext());
 
         return $this->generator;
+    }
+
+    public function warmUp(string $cacheDir): array
+    {
+        return [];
     }
 }

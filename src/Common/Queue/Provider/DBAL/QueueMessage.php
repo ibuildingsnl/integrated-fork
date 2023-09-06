@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Queue\Provider\DBAL;
 
-use Closure;
 use Integrated\Common\Queue\QueueMessageInterface;
 
 /**
@@ -25,26 +24,25 @@ class QueueMessage implements QueueMessageInterface
     protected $data;
 
     /**
-     * @var mixed | null
+     * @var mixed|null
      */
     private $payload = null;
 
     /**
-     * @var Closure | null
+     * @var \Closure|null
      */
     private $delete;
 
     /**
-     * @var Closure | null
+     * @var \Closure|null
      */
     private $release;
 
     /**
-     * @param array    $data
      * @param callable $delete
      * @param callable $release
      */
-    public function __construct(array $data, Closure $delete, Closure $release)
+    public function __construct(array $data, \Closure $delete, \Closure $release)
     {
         $this->data = $data;
 

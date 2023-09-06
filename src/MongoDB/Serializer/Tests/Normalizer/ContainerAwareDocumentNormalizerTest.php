@@ -12,6 +12,7 @@
 namespace Integrated\MongoDB\Serializer\Tests\Normalizer;
 
 use Integrated\MongoDB\Serializer\Normalizer\ContainerAwareDocumentNormalizer;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContainerAwareDocumentNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|MockObject
      */
     private $container;
 

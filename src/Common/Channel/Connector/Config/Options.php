@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Channel\Connector\Config;
 
-use ArrayIterator;
+use ReturnTypeWillChange;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -25,8 +25,6 @@ class Options implements OptionsInterface
 
     /**
      * Constructor.
-     *
-     * @param array $data
      */
     public function __construct(array $data = [])
     {
@@ -96,7 +94,7 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -104,15 +102,15 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -120,7 +118,8 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset): mixed
     {
         return $this->get($offset);
     }
@@ -128,7 +127,7 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
@@ -136,7 +135,7 @@ class Options implements OptionsInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }

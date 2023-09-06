@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\WorkflowBundle\Solr\Extension;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\ChannelableInterface;
@@ -44,10 +44,6 @@ class WorkflowExtension implements TypeExtensionInterface
 
     /**
      * Constructor.
-     *
-     * @param ResolverInterface $resolver
-     * @param ObjectRepository  $workflow
-     * @param ObjectRepository  $definition
      */
     public function __construct(ResolverInterface $resolver, ObjectRepository $workflow, ObjectRepository $definition)
     {
@@ -149,8 +145,6 @@ class WorkflowExtension implements TypeExtensionInterface
      *
      * If not workflow is connected to the content type or none can be found then null will
      * be returned.
-     *
-     * @param ContentInterface $content
      */
     protected function getState(ContentInterface $content)
     {
@@ -188,8 +182,6 @@ class WorkflowExtension implements TypeExtensionInterface
 
     /**
      * Get the workflow assignee for the content.
-     *
-     * @param ContentInterface $content
      */
     protected function getAssigned(ContentInterface $content)
     {

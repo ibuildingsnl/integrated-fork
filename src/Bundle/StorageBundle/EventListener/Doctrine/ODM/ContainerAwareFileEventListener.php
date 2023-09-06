@@ -22,14 +22,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ContainerAwareFileEventListener extends FileEventListener
 {
     /**
-     * @var \Closure | null
+     * @var \Closure|null
      */
     private $initializer;
 
     /**
-     * @param ContainerInterface $container
-     * @param string             $manager
-     * @param string             $intentTransformer
+     * @param string $manager
+     * @param string $intentTransformer
      */
     public function __construct(ContainerInterface $container, $manager, $intentTransformer)
     {

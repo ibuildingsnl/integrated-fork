@@ -11,13 +11,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Form\Mapping\Annotations as Type;
+use Integrated\Common\Form\Mapping\Attributes as Type;
 
 /**
  * Document type Form.
- *
- * @Type\Document("Form")
  */
+#[Type\Document('Form')]
 class Form extends Content
 {
     /**
@@ -25,7 +24,7 @@ class Form extends Content
      */
     public function getTitle()
     {
-        return 'Form created at '.strftime('F jS, Y', $this->createdAt->getTimestamp());
+        return 'Form created at '.date('F jS, Y', $this->createdAt->getTimestamp());
     }
 
     /**

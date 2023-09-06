@@ -17,7 +17,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * Annotation for defining field options for properties of a document.
  *
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
+ *
  * @Annotation
+ *
+ * @deprecated
  */
 class Field
 {
@@ -33,8 +36,6 @@ class Field
 
     /**
      * Constructor.
-     *
-     * @param array $data
      *
      * @throws \BadMethodCallException
      */
@@ -85,8 +86,6 @@ class Field
 
     /**
      * Set the label of the field.
-     *
-     * @param array $options
      *
      * @return $this
      */

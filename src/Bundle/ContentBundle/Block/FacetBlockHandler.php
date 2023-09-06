@@ -39,10 +39,6 @@ class FacetBlockHandler extends BlockHandler
      */
     private $requestStack;
 
-    /**
-     * @param BlockHandlerRegistryInterface $blockRegistry
-     * @param RequestStack                  $requestStack
-     */
     public function __construct(BlockHandlerRegistryInterface $blockRegistry, RequestStack $requestStack)
     {
         $this->blockRegistry = $blockRegistry;
@@ -107,6 +103,7 @@ class FacetBlockHandler extends BlockHandler
         return $this->render([
             'block' => $block,
             'facets' => $facets,
+            'options' => $options,
         ]);
     }
 
@@ -117,6 +114,7 @@ class FacetBlockHandler extends BlockHandler
     {
         $resolver->setDefaults([
             'filters' => [], // add extra filters (overwrites search selection)
+            'gridLevel' => 0,
         ]);
 
         $resolver->setAllowedTypes('filters', 'array');

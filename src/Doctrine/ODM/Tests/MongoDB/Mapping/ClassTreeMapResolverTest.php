@@ -13,6 +13,7 @@ namespace Integrated\Doctrine\ODM\Tests\MongoDB\Mapping;
 
 use Integrated\Doctrine\ODM\MongoDB\Mapping\ClassTreeMapResolver;
 use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\ClassLocatorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -20,7 +21,7 @@ use Integrated\Doctrine\ODM\MongoDB\Mapping\Locator\ClassLocatorInterface;
 class ClassTreeMapResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ClassLocatorInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ClassLocatorInterface|MockObject
      */
     private $locator;
 

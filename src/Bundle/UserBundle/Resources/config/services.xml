@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_user.provider.filter_query" class="Integrated\Bundle\UserBundle\Provider\FilterQueryProvider">
             <argument type="service" id="integrated_user.user.manager" />
             <argument>%kernel.bundles%</argument>
@@ -16,9 +18,7 @@
         </service>
 
         <service id="Integrated\Bundle\UserBundle\Service\Mailer">
-            <argument type="service" id="integrated_user.user.manager" />
             <argument type="service" id="mailer" />
-            <argument type="service" id="templating" />
             <argument type="service" id="translator" />
             <argument type="service" id="Integrated\Bundle\UserBundle\Service\KeyGenerator" />
             <argument>%mailer_from%</argument>
@@ -26,4 +26,5 @@
         </service>
 
     </services>
+
 </container>

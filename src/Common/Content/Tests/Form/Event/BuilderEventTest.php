@@ -12,6 +12,7 @@
 namespace Integrated\Common\Content\Tests\Form\Event;
 
 use Integrated\Common\Content\Form\Event\BuilderEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -20,7 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class BuilderEventTest extends FormEventTest
 {
     /**
-     * @var FormBuilderInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var FormBuilderInterface|MockObject
      */
     protected $builder;
 

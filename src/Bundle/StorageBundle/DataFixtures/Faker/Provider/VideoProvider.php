@@ -66,9 +66,6 @@ class VideoProvider
      */
     private $sm;
 
-    /**
-     * @param Manager $sm
-     */
     public function __construct(Manager $sm)
     {
         $this->sm = $sm;
@@ -101,20 +98,20 @@ class VideoProvider
         $destination = sys_get_temp_dir().\DIRECTORY_SEPARATOR.uniqid('video-');
         $url = sprintf('https://wosvideo.e-activesites.nl/%s/', $type ?: 'random');
 
-        //create new local file
+        // create new local file
         $fp = fopen($destination, 'w');
 
-        //init curl
+        // init curl
         $ch = curl_init($url);
 
-        //external file should write to local filehandle
+        // external file should write to local filehandle
         curl_setopt($ch, \CURLOPT_FILE, $fp);
         $success = curl_exec($ch);
 
-        //fetch mimetype of external file
-        $mimeType = (curl_getinfo($ch, \CURLINFO_CONTENT_TYPE));
+        // fetch mimetype of external file
+        $mimeType = curl_getinfo($ch, \CURLINFO_CONTENT_TYPE);
 
-        //close it all
+        // close it all
         curl_close($ch);
         fclose($fp);
 
@@ -123,17 +120,17 @@ class VideoProvider
             return false;
         }
 
-        //check extension
+        // check extension
         if (!isset(self::$mimeTypes[$mimeType])) {
             throw new \Exception(sprintf('No video extension found for mimetype "%s"', $mimeType));
         }
 
         $extension = \is_array(self::$mimeTypes[$mimeType]) ? self::$mimeTypes[$mimeType][0] : self::$mimeTypes[$mimeType];
 
-        //new filename should include extension (we cannot guess extension beforehand)
+        // new filename should include extension (we cannot guess extension beforehand)
         $newDestination = $destination.'.'.$extension;
 
-        //add extension
+        // add extension
         rename($destination, $newDestination);
 
         return $newDestination;

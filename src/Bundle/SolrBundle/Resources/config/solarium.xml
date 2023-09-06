@@ -6,7 +6,9 @@
 
     <services>
 
-		<service id="integrated_solr.solarium.client.indexer" alias="solarium.client" />
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_solr.solarium.client.indexer" alias="solarium.client"/>
 
     </services>
 

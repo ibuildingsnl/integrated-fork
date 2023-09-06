@@ -12,7 +12,6 @@
 namespace Integrated\Common\Solr\Task\Provider;
 
 use Integrated\Common\Content\ContentInterface;
-use Iterator;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -24,7 +23,7 @@ interface ContentTypeProviderInterface
      *
      * @param string $id
      *
-     * @return Iterator | ContentInterface[]
+     * @return \Iterator|ContentInterface[]
      */
     public function getContent($id);
 }

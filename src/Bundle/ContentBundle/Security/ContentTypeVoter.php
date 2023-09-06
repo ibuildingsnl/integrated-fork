@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Security;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Common\ContentType\ContentTypeInterface;
@@ -39,11 +39,6 @@ class ContentTypeVoter implements VoterInterface
      */
     private $permissions;
 
-    /**
-     * @param ResolverInterface $resolver
-     * @param ObjectRepository  $repository
-     * @param array             $permissions
-     */
     public function __construct(ResolverInterface $resolver, ObjectRepository $repository, array $permissions = [])
     {
         $this->resolver = $resolver;

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Normalizer;
 
-use ArrayIterator;
 use Integrated\Common\Normalizer\Exception\UnexpectedTypeException;
 
 /**
@@ -19,9 +18,9 @@ use Integrated\Common\Normalizer\Exception\UnexpectedTypeException;
  */
 class Container implements ContainerInterface
 {
-    const EMPTY_TYPE = 0;
-    const VALUE_TYPE = 1;
-    const ARRAY_TYPE = 2;
+    public const EMPTY_TYPE = 0;
+    public const VALUE_TYPE = 1;
+    public const ARRAY_TYPE = 2;
 
     /**
      * @var array
@@ -106,7 +105,7 @@ class Container implements ContainerInterface
      */
     protected static function validateAndReturn($value)
     {
-        if ($value === null || is_scalar($value) || \is_array($value)) {
+        if ($value === null || \is_scalar($value) || \is_array($value)) {
             return $value;
         }
 
@@ -124,7 +123,7 @@ class Container implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -132,8 +131,8 @@ class Container implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->data);
+        return new \ArrayIterator($this->data);
     }
 }

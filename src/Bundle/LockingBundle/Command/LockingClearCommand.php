@@ -12,15 +12,30 @@
 namespace Integrated\Bundle\LockingBundle\Command;
 
 use Integrated\Common\Locks\ManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class LockingClearCommand extends ContainerAwareCommand
+class LockingClearCommand extends Command
 {
+    /**
+     * @var ManagerInterface
+     */
+    private $manager;
+
+    /**
+     * LockingClearCommand constructor.
+     */
+    public function __construct(ManagerInterface $manager)
+    {
+        parent::__construct();
+
+        $this->manager = $manager;
+    }
+
     /**
      * @see Command
      */
@@ -40,16 +55,10 @@ EOF
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $container = $this->getContainer();
+        $this->manager->clear();
 
-        if (!$container->has('integrated_locking.dbal.manager')) {
-            return;
-        }
-
-        /** @var ManagerInterface $service */
-        $service = $container->get('integrated_locking.dbal.manager');
-        $service->clear();
+        return 0;
     }
 }

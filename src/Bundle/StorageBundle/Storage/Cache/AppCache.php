@@ -26,7 +26,7 @@ class AppCache implements CacheInterface
     /**
      * @const
      */
-    const CACHE_PATH = '%s/integrated/storage/file';
+    public const CACHE_PATH = '%s/integrated/storage/file';
 
     /**
      * @var ManagerInterface
@@ -43,11 +43,6 @@ class AppCache implements CacheInterface
      */
     private $requestStack;
 
-    /**
-     * @param string           $directory
-     * @param ManagerInterface $managerInterface
-     * @param RequestStack     $requestStack
-     */
     public function __construct(string $directory, ManagerInterface $managerInterface, RequestStack $requestStack)
     {
         $this->fileManager = $managerInterface;
@@ -70,7 +65,7 @@ class AppCache implements CacheInterface
         $file = DirectoryUtil::cachePathFile(sprintf(self::CACHE_PATH, $this->directory), $storage);
 
         // Check if a file exists
-        if ($file->isFile()) {
+        if ($file->isFile() && $file->getSize() > 0) {
             return $file;
         }
 
@@ -104,8 +99,6 @@ class AppCache implements CacheInterface
     }
 
     /**
-     * @param StorageInterface $storage
-     *
      * @return bool|\SplFileObject
      */
     private function getLocalFile(StorageInterface $storage)
@@ -114,7 +107,7 @@ class AppCache implements CacheInterface
             return false;
         }
 
-        if ($request = $this->requestStack->getMasterRequest()) {
+        if ($request = $this->requestStack->getMainRequest()) {
             $file = $request->server->get('DOCUMENT_ROOT').$request->getBasePath().$storage->getPathname();
             if (file_exists($file)) {
                 return new \SplFileObject($file, 'r');

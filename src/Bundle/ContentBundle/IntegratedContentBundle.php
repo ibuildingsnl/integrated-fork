@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle;
 
-use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\BraincraftedFlashMessagePass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ContentProviderPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ContentTypeManagerPass;
 use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ExtensionRegistryBuilderPass;
@@ -23,9 +22,9 @@ use Integrated\Bundle\ContentBundle\DependencyInjection\Compiler\ThemeManagerPas
 use Integrated\Bundle\ContentBundle\DependencyInjection\IntegratedContentExtension;
 use Integrated\Common\Bulk\DependencyInjection\ConfigProviderBuilderPass;
 use Integrated\Common\Bulk\DependencyInjection\FactoryRegistryBuilderPass;
+use Integrated\Common\Mapping\Registry\DriverRegistryPass;
 use Integrated\Common\Normalizer\DependencyInjection\RegistryBuilderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -54,19 +53,7 @@ class IntegratedContentBundle extends Bundle
         $container->addCompilerPass(new FactoryRegistryBuilderPass('integrated_content.bulk.handler_registry_builder', 'integrated_content.bulk.handler'));
         $container->addCompilerPass(new ConfigProviderBuilderPass('integrated_content.bulk.form.chain_provider_builder', 'integrated_content.bulk.form.provider'));
         $container->addCompilerPass(new ContentProviderPass());
-        $container->addCompilerPass(new BraincraftedFlashMessagePass());
-
-        $container->addCompilerPass(new RegisterListenersPass(
-            'integrated_content.event_dispatcher',
-            'integrated_content.event_listener',
-            'integrated_content.event_subscriber'
-        ));
-
-        $container->addCompilerPass(new RegisterListenersPass(
-            'integrated_content.form_block.event_dispatcher',
-            'integrated_content.form_block.event_listener',
-            'integrated_content.form_block.event_subscriber'
-        ));
+        $container->addCompilerPass(new DriverRegistryPass('integrated_content.metadata.driver.registry', 'integrated.mapping.driver'));
     }
 
     /**

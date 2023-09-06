@@ -11,20 +11,17 @@
 
 namespace Integrated\Bundle\SlugBundle\Mapping\Annotations;
 
-use Doctrine\Common\Annotations\Annotation;
-
 /**
- * Slug annotation.
- *
- * @author Ger Jan van den Bosch <gerjan@e-active.nl>
- *
  * @Annotation
+ *
  * @Target({"PROPERTY"})
+ *
+ * @deprecated
  */
-final class Slug extends Annotation
+class Slug
 {
     /**
-     * @var array
+     * @var string[]
      */
     public $fields = [];
 
@@ -37,4 +34,54 @@ final class Slug extends Annotation
      * @var int
      */
     public $lengthLimit = 200;
+
+    /**
+     * @throws \BadMethodCallException
+     */
+    public function __construct(array $data)
+    {
+        foreach ($data as $key => $value) {
+            $method = 'set'.str_replace('_', '', $key);
+            if (!method_exists($this, $method)) {
+                throw new \BadMethodCallException(sprintf("Unknown property '%s' on annotation '%s'.", $key, static::class));
+            }
+            $this->$method($value);
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @param string[] $fields
+     */
+    public function setFields(array $fields): void
+    {
+        $this->fields = $fields;
+    }
+
+    public function getSeparator(): string
+    {
+        return $this->separator;
+    }
+
+    public function setSeparator(string $separator): void
+    {
+        $this->separator = $separator;
+    }
+
+    public function getLengthLimit(): int
+    {
+        return $this->lengthLimit;
+    }
+
+    public function setLengthLimit(int $lengthLimit): void
+    {
+        $this->lengthLimit = $lengthLimit;
+    }
 }

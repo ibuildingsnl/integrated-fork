@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentHistoryBundle\Document;
 
-use DateTime;
 use Integrated\Bundle\ContentHistoryBundle\Document\Embedded\Request;
 use Integrated\Bundle\ContentHistoryBundle\Document\Embedded\User;
 use Integrated\Common\Content\ContentInterface;
@@ -47,7 +46,7 @@ class ContentHistory
     protected $action;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $date;
 
@@ -57,18 +56,17 @@ class ContentHistory
     protected $changeSet = [];
 
     /**
-     * @var Request | null
+     * @var Request|null
      */
     protected $request;
 
     /**
-     * @var User | null
+     * @var User|null
      */
     protected $user;
 
     /**
-     * @param ContentInterface $content
-     * @param string           $action
+     * @param string $action
      */
     public function __construct(ContentInterface $content, $action)
     {
@@ -76,7 +74,7 @@ class ContentHistory
         $this->contentType = $content->getContentType();
         $this->contentClass = \get_class($content);
         $this->action = $action;
-        $this->date = new DateTime();
+        $this->date = new \DateTime();
     }
 
     /**
@@ -120,7 +118,7 @@ class ContentHistory
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -136,8 +134,6 @@ class ContentHistory
     }
 
     /**
-     * @param array $changeSet
-     *
      * @return $this
      */
     public function setChangeSet(array $changeSet = [])
@@ -148,7 +144,7 @@ class ContentHistory
     }
 
     /**
-     * @return Request | null
+     * @return Request|null
      */
     public function getRequest()
     {
@@ -156,8 +152,6 @@ class ContentHistory
     }
 
     /**
-     * @param Request | null $request
-     *
      * @return $this
      */
     public function setRequest(Request $request = null)
@@ -168,7 +162,7 @@ class ContentHistory
     }
 
     /**
-     * @return User | null
+     * @return User|null
      */
     public function getUser()
     {
@@ -176,8 +170,6 @@ class ContentHistory
     }
 
     /**
-     * @param User | null $user
-     *
      * @return $this
      */
     public function setUser(User $user = null)

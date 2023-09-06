@@ -11,11 +11,11 @@
 
 namespace Integrated\Common\Channel\Tests\Connector\Config\Resolver;
 
-use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\Resolver\PriorityResolver;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Converter\Config\ConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -23,7 +23,7 @@ use Integrated\Common\Converter\Config\ConfigInterface;
 class PriorityResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface[] | \PHPUnit_Framework_MockObject_MockObject[]
+     * @var ResolverInterface[]|MockObject[]
      */
     private $resolvers = [];
 
@@ -42,12 +42,14 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     {
         $this->resolvers[0]->expects($this->exactly(2))
             ->method('hasConfig')
-            ->withConsecutive([$this->equalTo('config')], [$this->equalTo('this-is-a-config-that-does-not-exist')])
-            ->willReturnOnConsecutiveCalls(true, false);
+            ->willReturnMap([
+                ['config', true],
+                ['this-is-a-config-that-does-not-exist', false],
+            ]);
 
         $this->resolvers[1]->expects($this->exactly(1))
             ->method('hasConfig')
-            ->withConsecutive([$this->equalTo('this-is-a-config-that-does-not-exist')])
+            ->with($this->equalTo('this-is-a-config-that-does-not-exist'))
             ->willReturnOnConsecutiveCalls(false);
 
         $resolver = $this->getInstance();
@@ -104,12 +106,12 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolvers[0]->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([$configs['config1'], $configs['config2'], $configs['config3']]));
+            ->willReturn(new \ArrayIterator([$configs['config1'], $configs['config2'], $configs['config3']]));
 
         $this->resolvers[1]->expects($this->once())
             ->method('getConfigs')
             ->with($this->identicalTo($channel))
-            ->willReturn(new ArrayIterator([$this->getConfig('config2'), $this->getConfig('config3'), $configs['config4'], $configs['config5']]));
+            ->willReturn(new \ArrayIterator([$this->getConfig('config2'), $this->getConfig('config3'), $configs['config4'], $configs['config5']]));
 
         $iterator = $this->getInstance()->getConfigs($channel);
 
@@ -126,7 +128,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ResolverInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverInterface|MockObject
      */
     protected function getResolver()
     {
@@ -136,7 +138,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $name
      *
-     * @return ConfigInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigInterface|MockObject
      */
     protected function getConfig($name)
     {
@@ -149,7 +151,7 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ChannelInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ChannelInterface|MockObject
      */
     protected function getChannel()
     {

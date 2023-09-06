@@ -34,10 +34,6 @@ class ListCommand extends Command
      */
     protected $resolverStorage;
 
-    /**
-     * @param FilesystemRegistry $registry
-     * @param Resolver           $resolverStorage
-     */
     public function __construct(FilesystemRegistry $registry, Resolver $resolverStorage)
     {
         $this->registry = $registry;
@@ -60,7 +56,7 @@ class ListCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->registry->getIterator() as $key => $filesystem) {
             $output->writeln(
@@ -86,5 +82,7 @@ class ListCommand extends Command
                 );
             }
         }
+
+        return 0;
     }
 }

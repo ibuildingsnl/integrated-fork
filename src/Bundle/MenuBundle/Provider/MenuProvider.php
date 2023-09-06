@@ -37,10 +37,6 @@ class MenuProvider implements MenuProviderInterface
      */
     protected $menus = [];
 
-    /**
-     * @param FactoryInterface         $factory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(FactoryInterface $factory, EventDispatcherInterface $eventDispatcher)
     {
         $this->factory = $factory;
@@ -50,7 +46,7 @@ class MenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function get($name, array $options = [])
+    public function get(string $name, array $options = []): ItemInterface
     {
         if (!$this->has($name, $options)) {
             throw new \InvalidArgumentException(sprintf('The menu "%s" is not defined.', $name));
@@ -61,8 +57,8 @@ class MenuProvider implements MenuProviderInterface
         }
 
         $this->eventDispatcher->dispatch(
-            ConfigureMenuEvent::CONFIGURE,
-            new ConfigureMenuEvent($this->factory, $this->menus[$name])
+            new ConfigureMenuEvent($this->factory, $this->menus[$name]),
+            ConfigureMenuEvent::CONFIGURE
         );
 
         return $this->menus[$name];
@@ -71,7 +67,7 @@ class MenuProvider implements MenuProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function has($name, array $options = [])
+    public function has(string $name, array $options = []): bool
     {
         return strpos($name, 'integrated_') === 0;
     }

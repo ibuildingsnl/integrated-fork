@@ -13,7 +13,8 @@ namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Solr\Indexer\Event\IndexerEvent;
 use Integrated\Common\Solr\Indexer\IndexerInterface;
-use Symfony\Component\EventDispatcher\Event;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -21,7 +22,7 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class AbstractEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var IndexerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerInterface|MockObject
      */
     protected $indexer;
 

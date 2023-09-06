@@ -20,7 +20,7 @@ use Iterator;
  *
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIterator implements Iterator
+class ConfigIterator implements \Iterator
 {
     /**
      * @var TypeConfigInterface[]
@@ -29,8 +29,6 @@ class ConfigIterator implements Iterator
 
     /**
      * Constructor.
-     *
-     * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
     {
@@ -42,7 +40,7 @@ class ConfigIterator implements Iterator
      *
      * @return TypeConfigInterface
      */
-    public function current()
+    public function current(): mixed
     {
         return current($this->types);
     }
@@ -50,7 +48,7 @@ class ConfigIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         next($this->types);
     }
@@ -60,17 +58,15 @@ class ConfigIterator implements Iterator
      *
      * @return int
      */
-    public function key()
+    public function key(): mixed
     {
         return key($this->types);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->types) !== null;
     }
@@ -78,7 +74,7 @@ class ConfigIterator implements Iterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->types);
     }

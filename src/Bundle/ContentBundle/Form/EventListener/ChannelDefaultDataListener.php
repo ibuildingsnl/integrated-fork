@@ -47,9 +47,6 @@ class ChannelDefaultDataListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();

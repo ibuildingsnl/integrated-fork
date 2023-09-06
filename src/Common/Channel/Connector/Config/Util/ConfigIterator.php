@@ -11,18 +11,17 @@
 
 namespace Integrated\Common\Channel\Connector\Config\Util;
 
-use ArrayIterator;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class ConfigIterator extends ArrayIterator
+class ConfigIterator extends \ArrayIterator
 {
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): ?string
     {
         if ($this->valid()) {
             return $this->current()->getName();
@@ -34,7 +33,7 @@ class ConfigIterator extends ArrayIterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         do {
             parent::next();
@@ -44,7 +43,7 @@ class ConfigIterator extends ArrayIterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         parent::rewind();
 

@@ -19,10 +19,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class RobotsController
 {
     /**
-     * @return array
      * @Template
      */
-    public function indexAction()
+    public function index(): array
     {
         return [];
     }

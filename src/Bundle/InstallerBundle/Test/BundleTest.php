@@ -6,7 +6,7 @@ use Symfony\Component\Finder\Finder;
 
 class BundleTest
 {
-    const BUNDLES_DIRECTORY = '/../../';
+    public const BUNDLES_DIRECTORY = '/../../';
 
     /**
      * @var array
@@ -15,8 +15,6 @@ class BundleTest
 
     /**
      * Migrations constructor.
-     *
-     * @param array $bundles
      */
     public function __construct(array $bundles)
     {
@@ -38,7 +36,7 @@ class BundleTest
         foreach ($finder as $directory) {
             $directory = $directory->getFilename();
             if (isset($this->bundles['Integrated'.$directory])) {
-                //bundle found
+                // bundle found
                 continue;
             }
             $errors[] = 'Integrated'.$directory.' has not been loaded';

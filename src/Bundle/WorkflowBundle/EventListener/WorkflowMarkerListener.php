@@ -33,10 +33,6 @@ class WorkflowMarkerListener implements EventSubscriberInterface
      */
     private $authorizationChecker;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationChecker  $authorizationChecker
-     */
     public function __construct(TokenStorageInterface $tokenStorage, AuthorizationChecker $authorizationChecker)
     {
         $this->tokenStorage = $tokenStorage;
@@ -53,9 +49,6 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param Event\PreExecute $event
-     */
     public function preExecute(Event\PreExecute $event)
     {
         $query = $event->getQuery();
@@ -69,7 +62,7 @@ class WorkflowMarkerListener implements EventSubscriberInterface
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            //admin is always allowed to do everything
+            // admin is always allowed to do everything
             return;
         }
 

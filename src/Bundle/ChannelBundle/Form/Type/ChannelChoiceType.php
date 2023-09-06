@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ChannelBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ChannelBundle\Form\DataTransformer\ChannelTransformer;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Symfony\Component\Form\AbstractType;
@@ -31,8 +31,6 @@ class ChannelChoiceType extends AbstractType
 
     /**
      * Constructor.
-     *
-     * @param ObjectRepository $repository
      */
     public function __construct(ObjectRepository $repository)
     {

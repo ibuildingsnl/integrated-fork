@@ -14,7 +14,8 @@ namespace Integrated\Bundle\PageBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\PageBundle\Form\Type\ContentTypePageType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Integrated\Bundle\PageBundle\Services\RouteCache;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Johan Liefers <johan@e-active.nl>
  */
-class ContentTypePageController extends Controller
+class ContentTypePageController extends AbstractController
 {
     /**
      * @var DocumentManager
@@ -32,22 +33,23 @@ class ContentTypePageController extends Controller
     private $documentManager;
 
     /**
-     * PageController constructor.
-     *
-     * @param DocumentManager $documentManager
+     * @var RouteCache
      */
-    public function __construct(DocumentManager $documentManager)
+    private $routeCache;
+
+    /**
+     * PageController constructor.
+     */
+    public function __construct(DocumentManager $documentManager, RouteCache $routeCache)
     {
         $this->documentManager = $documentManager;
+        $this->routeCache = $routeCache;
     }
 
     /**
-     * @param Request         $request
-     * @param ContentTypePage $page
-     *
      * @return Response|RedirectResponse
      */
-    public function editAction(Request $request, ContentTypePage $page)
+    public function edit(Request $request, ContentTypePage $page)
     {
         if (!$this->isGranted('ROLE_WEBSITE_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -56,25 +58,23 @@ class ContentTypePageController extends Controller
         $form = $this->createEditForm($page);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->documentManager->flush();
 
-            $this->get('integrated_page.services.route_cache')->clear();
+            $this->routeCache->clear();
 
-            $this->get('braincrafted_bootstrap.flash')->success('Page updated');
+            $this->addFlash('success', 'Page updated');
 
             return $this->redirectToRoute('integrated_page_page_index');
         }
 
-        return $this->render('IntegratedPageBundle:content_type_page:edit.html.twig', [
+        return $this->render('@IntegratedPage/content_type_page/edit.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @param ContentTypePage $page
-     *
      * @return FormInterface
      */
     protected function createEditForm(ContentTypePage $page)
@@ -84,7 +84,7 @@ class ContentTypePageController extends Controller
             $page,
             [
                 'method' => 'PUT',
-                'controller' => $this->get($page->getControllerService()),
+                'controller' => $this->container->get($page->getControllerService()),
             ]
         );
 

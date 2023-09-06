@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\ContentType\Resolver;
 
-use AppendIterator;
 use Integrated\Common\ContentType\IteratorInterface;
 use Integrated\Common\ContentType\ResolverInterface;
 
@@ -21,7 +20,7 @@ use Integrated\Common\ContentType\ResolverInterface;
 class PriorityIterator implements IteratorInterface
 {
     /**
-     * @var AppendIterator
+     * @var \AppendIterator
      */
     private $iterator;
 
@@ -37,7 +36,7 @@ class PriorityIterator implements IteratorInterface
      */
     public function __construct(array $resolvers)
     {
-        $this->iterator = new AppendIterator();
+        $this->iterator = new \AppendIterator();
 
         foreach ($resolvers as $resolver) {
             $this->iterator->append($resolver->getTypes());
@@ -49,7 +48,7 @@ class PriorityIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->iterator->current();
     }
@@ -57,7 +56,7 @@ class PriorityIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         if (!$this->iterator->valid()) {
             return;
@@ -71,7 +70,7 @@ class PriorityIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->iterator->valid() ? $this->iterator->key() : null;
     }
@@ -79,7 +78,7 @@ class PriorityIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->iterator->valid();
     }
@@ -87,7 +86,7 @@ class PriorityIterator implements IteratorInterface
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->accepted = [];
         $this->iterator->rewind();

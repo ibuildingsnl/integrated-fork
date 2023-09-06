@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\UserBundle\Command;
 
-use Exception;
 use Integrated\Bundle\UserBundle\Doctrine\RoleManager;
 use Integrated\Bundle\UserBundle\Doctrine\ScopeManager;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -20,7 +19,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -49,29 +49,22 @@ class CreateUserCommand extends Command
     private $validator;
 
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
-    private $encoderFactory;
+    private $hasherFactory;
 
-    /**
-     * @param ScopeManager            $scopeManager
-     * @param RoleManager             $roleManager
-     * @param UserManagerInterface    $userManager
-     * @param ValidatorInterface      $validator
-     * @param EncoderFactoryInterface $encoderFactory
-     */
     public function __construct(
         ScopeManager $scopeManager,
         RoleManager $roleManager,
         UserManagerInterface $userManager,
         ValidatorInterface $validator,
-        EncoderFactoryInterface $encoderFactory
+        PasswordHasherFactoryInterface $hasherFactory
     ) {
         $this->scopeManager = $scopeManager;
         $this->roleManager = $roleManager;
         $this->userManager = $userManager;
         $this->validator = $validator;
-        $this->encoderFactory = $encoderFactory;
+        $this->hasherFactory = $hasherFactory;
 
         parent::__construct();
     }
@@ -101,7 +94,7 @@ The <info>%command.name%</info> command creates a new user
     /**
      * @see Command::execute()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
@@ -119,12 +112,19 @@ The <info>%command.name%</info> command creates a new user
 
         $user = $this->userManager->create();
 
-        $salt = base64_encode(random_bytes(72));
+        $hasher = $this->hasherFactory->getPasswordHasher($user);
 
         $user->setUsername($username);
-        $user->setPassword($this->encoderFactory->getEncoder($user)->encodePassword($password, $salt));
-        $user->setSalt($salt);
         $user->setEmail($email);
+
+        if (!$hasher instanceof LegacyPasswordHasherInterface) {
+            $user->setPassword($hasher->hash($password));
+        } else {
+            $salt = base64_encode(random_bytes(72));
+
+            $user->setPassword($hasher->hash($password, $salt));
+            $user->setSalt($salt);
+        }
 
         $scopeName = 'Integrated';
         if ($input->hasArgument('scope')) {
@@ -170,7 +170,7 @@ The <info>%command.name%</info> command creates a new user
 
         try {
             $this->userManager->persist($user);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln(sprintf('Aborting: %s', $e->getMessage()));
 
             return 1;

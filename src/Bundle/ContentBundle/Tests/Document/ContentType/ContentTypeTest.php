@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Tests\Document\ContentType;
 
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Common\ContentType\ContentTypeFieldInterface;
 
 /**
  * @author Jeroen van Leeuwen <jeroen@e-active.nl>
@@ -92,9 +93,8 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAndSetFieldsFunction()
     {
-        // Mock fields
-        $field1 = $this->getMockClass('Integrated\Common\ContentType\ContentTypeFieldInterface');
-        $field2 = $this->getMockClass('Integrated\Common\ContentType\ContentTypeFieldInterface');
+        $field1 = ContentTypeFieldInterface::class;
+        $field2 = ContentTypeFieldInterface::class;
 
         $fields = [
             $field1,
@@ -111,7 +111,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetFieldFunction()
     {
         // Mock fields
-        $field = $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface');
+        $field = $this->createMock(ContentTypeFieldInterface::class);
         $field->expects($this->exactly(2))
             ->method('getName')
             ->willReturn('henk');
@@ -129,7 +129,7 @@ class ContentTypeTest extends \PHPUnit\Framework\TestCase
     public function testHasFieldFunction()
     {
         // Mock fields
-        $field = $this->createMock('Integrated\Common\ContentType\ContentTypeFieldInterface');
+        $field = $this->createMock(ContentTypeFieldInterface::class);
         $field->expects($this->exactly(2))
             ->method('getName')
             ->willReturn('henk');

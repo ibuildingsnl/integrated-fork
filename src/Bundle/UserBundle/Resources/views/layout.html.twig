@@ -7,27 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 {% block style %}
-
-    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" media="screen" />
-
-    {% stylesheets "@integrated_css" %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
-
+    <link rel="stylesheet" href="{{ asset('bundles/integratedintegrated/app.css') }}">
 {% endblock style %}
 
 </head>
 <body>
 {% block form_theme %}
     {% if form is defined %}
-        {% form_theme form with ['IntegratedFormTypeBundle:form:form_div_layout.html.twig'] %}
+        {% form_theme form with ['@IntegratedFormType/form/form_div_layout.html.twig'] %}
     {% endif %}
 {% endblock %}
 
     <div class="container">
         {% block flash %}
-            {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
+            {% for label, messages in app.flashes(['alert', 'danger', 'info', 'success', 'warning']) %}
+                {% for message in messages %}
+                    {% if label == 'alert' %}
+                        {% set label = 'warning' %}
+                    {% endif %}
+                    <div class="alert alert-{{ label }} alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message|trans }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {% endblock flash %}
         {% block body %}{% endblock body %}
     </div>
@@ -36,9 +39,11 @@
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="{{ asset('/js/bootstrap.js') }}"></script>
 
+{# TODO: migrate to Webpack Encore
     {% javascripts "@integrated_js" %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
+#}
 {% endblock javascript %}
 
 </body>

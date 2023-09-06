@@ -13,7 +13,9 @@ namespace Integrated\Bundle\UserBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\Compiler\RegisterRolesParametersPass;
+use Integrated\Bundle\UserBundle\DependencyInjection\Compiler\ThemeManagerPass;
 use Integrated\Bundle\UserBundle\DependencyInjection\IntegratedUserExtension;
+use Integrated\Bundle\UserBundle\DependencyInjection\Security\IpListFactory;
 use Integrated\Bundle\UserBundle\DependencyInjection\Security\ScopeFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,9 +26,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntegratedUserBundle extends Bundle
 {
-    /**
-     * @param ContainerBuilder $container
-     */
     public function build(ContainerBuilder $container)
     {
         $mapping = [
@@ -35,11 +34,13 @@ class IntegratedUserBundle extends Bundle
 
         $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver($mapping, ['integrated_user.mapping.entity_manager'], 'integrated_user.mapping.enabled'));
         $container->addCompilerPass(new RegisterRolesParametersPass());
+        $container->addCompilerPass(new ThemeManagerPass());
 
         $security = $container->getExtension('security');
 
         if ($security instanceof SecurityExtension) {
-            $security->addSecurityListenerFactory(new ScopeFactory());
+            $security->addAuthenticatorFactory(new ScopeFactory());
+            $security->addAuthenticatorFactory(new IpListFactory());
         }
     }
 

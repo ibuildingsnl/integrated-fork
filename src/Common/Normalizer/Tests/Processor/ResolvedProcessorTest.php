@@ -11,14 +11,13 @@
 
 namespace Integrated\Common\Normalizer\Tests\Processor;
 
-use Exception;
 use Integrated\Common\Normalizer\ContainerFactoryInterface;
 use Integrated\Common\Normalizer\ContainerInterface;
 use Integrated\Common\Normalizer\Processor\Context;
 use Integrated\Common\Normalizer\Processor\ProcessorInterface;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessor;
 use Integrated\Common\Normalizer\Processor\ResolvedProcessorInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -26,12 +25,12 @@ use stdClass;
 class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerFactoryInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerFactoryInterface|MockObject
      */
     private $factory;
 
     /**
-     * @var ProcessorInterface[] | \PHPUnit_Framework_MockObject_MockObject[]
+     * @var ProcessorInterface[]|MockObject[]
      */
     protected $processors = [];
 
@@ -48,7 +47,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         $container = $this->getContainer();
-        $object = new stdClass();
+        $object = new \stdClass();
         $context = $this->getContext();
 
         $this->factory->expects($this->once())
@@ -77,7 +76,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
         $this->factory->expects($this->never())
             ->method($this->anything());
 
-        $this->getInstance()->process(new stdClass(), $this->getContext());
+        $this->getInstance()->process(new \stdClass(), $this->getContext());
     }
 
     public function testProcessOrder()
@@ -94,13 +93,13 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->processors[0]->expects($this->any())
             ->method('process')
-            ->willThrowException(new Exception('The test succeeded'));
+            ->willThrowException(new \Exception('The test succeeded'));
 
         $this->processors[1]->expects($this->any())
             ->method('process')
-            ->willThrowException(new Exception('The test failed'));
+            ->willThrowException(new \Exception('The test failed'));
 
-        $this->getInstance()->process(new stdClass(), $this->getContext());
+        $this->getInstance()->process(new \stdClass(), $this->getContext());
     }
 
     /**
@@ -112,7 +111,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ContainerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @return ContainerInterface|MockObject
      */
     protected function getContainer()
     {
@@ -120,7 +119,7 @@ class ResolvedProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Context | \PHPUnit_Framework_MockObject_MockObject
+     * @return Context|MockObject
      */
     protected function getContext()
     {

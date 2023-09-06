@@ -16,11 +16,11 @@ use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
 use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Bundle\WebsiteBundle\Service\ContentService;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\Error;
 
-class PersonController
+class PersonController extends AbstractController
 {
     /**
      * @var ContentService
@@ -28,31 +28,17 @@ class PersonController
     private $contentService;
 
     /**
-     * @var TwigEngine
-     */
-    protected $templating;
-
-    /**
      * @var ThemeManager
      */
     protected $themeManager;
 
-    /**
-     * @param ContentService $contentService
-     * @param TwigEngine     $templating
-     * @param ThemeManager   $themeManager
-     */
-    public function __construct(ContentService $contentService, TwigEngine $templating, ThemeManager $themeManager)
+    public function __construct(ContentService $contentService, ThemeManager $themeManager)
     {
         $this->contentService = $contentService;
-        $this->templating = $templating;
         $this->themeManager = $themeManager;
     }
 
     /**
-     * @param ContentTypePage $page
-     * @param Person          $person
-     *
      * @return Response
      *
      * @throws CircularFallbackException
@@ -62,7 +48,7 @@ class PersonController
     {
         $this->contentService->prepare($person);
 
-        return $this->templating->renderResponse(
+        return $this->render(
             $this->themeManager->locateTemplate('content/person/show/'.$page->getLayout()),
             [
                 'person' => $person,

@@ -11,13 +11,12 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Model\ScopeInterface;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Bundle\UserBundle\Model\UserManagerInterface;
-use InvalidArgumentException;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -35,25 +34,20 @@ class UserManager implements UserManagerInterface
     private $repository;
 
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
-    private $encoderFactory;
+    private $hasherFactory;
 
-    /**
-     * @param ObjectManager           $om
-     * @param                         $class
-     * @param EncoderFactoryInterface $encoderFactory
-     */
-    public function __construct(ObjectManager $om, $class, EncoderFactoryInterface $encoderFactory)
+    public function __construct(ObjectManager $om, $class, PasswordHasherFactoryInterface $hasherFactory)
     {
         $this->om = $om;
         $this->repository = $this->om->getRepository($class);
 
         if (!is_subclass_of($this->repository->getClassName(), 'Integrated\\Bundle\\UserBundle\\Model\\UserInterface')) {
-            throw new InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\UserInterface', $this->repository->getClassName()));
         }
 
-        $this->encoderFactory = $encoderFactory;
+        $this->hasherFactory = $hasherFactory;
     }
 
     /**
@@ -90,7 +84,7 @@ class UserManager implements UserManagerInterface
         $this->om->persist($user);
 
         if ($flush) {
-            $this->om->flush($user);
+            $this->om->flush();
         }
     }
 
@@ -102,7 +96,7 @@ class UserManager implements UserManagerInterface
         $this->om->remove($user);
 
         if ($flush) {
-            $this->om->flush($user);
+            $this->om->flush();
         }
     }
 
@@ -166,6 +160,11 @@ class UserManager implements UserManagerInterface
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    public function findOneBy(array $criteria)
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -177,12 +176,13 @@ class UserManager implements UserManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function findByUsernameAndScope($username, ?ScopeInterface $scope = null)
+    public function findEnabledByUsernameAndScope($username, ?ScopeInterface $scope = null)
     {
         $builder = $this->createQueryBuilder()
             ->select('User')
             ->leftJoin('User.scope', 'Scope')
             ->where('User.username = :username')
+            ->andWhere('User.enabled = true')
             ->setParameter('username', $username);
 
         if ($scope) {
@@ -204,11 +204,6 @@ class UserManager implements UserManagerInterface
     }
 
     /**
-     * @param int    $id
-     * @param string $password
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     public function changePassword(int $id, string $password): bool
@@ -217,10 +212,8 @@ class UserManager implements UserManagerInterface
             return false;
         }
 
-        $salt = base64_encode(random_bytes(72));
-
-        $user->setPassword($this->encoderFactory->getEncoder($user)->encodePassword($password, $salt));
-        $user->setSalt($salt);
+        $user->setPassword($this->hasherFactory->getPasswordHasher($user)->hash($password));
+        $user->setSalt(null);
 
         $this->persist($user);
 

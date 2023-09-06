@@ -27,9 +27,6 @@ class ColorType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param AssetManager $manager
-     */
     public function __construct(AssetManager $manager)
     {
         $this->manager = $manager;
@@ -40,8 +37,6 @@ class ColorType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->manager->add('bundles/integratedformtype/components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css');
-
         $builder->addViewTransformer(new ColorTransformer());
     }
 

@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\WorkflowBundle\Entity\Definition;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\WorkflowStateListener;
 use Symfony\Component\Form\AbstractType;
@@ -32,9 +32,6 @@ class WorkflowStateType extends AbstractType
      */
     private $repository;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

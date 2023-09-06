@@ -14,7 +14,7 @@ namespace Integrated\Common\Bulk\Tests\Form;
 use Integrated\Common\Bulk\Form\ChainProvider;
 use Integrated\Common\Bulk\Form\ConfigProviderInterface;
 use Integrated\Common\Content\ContentInterface;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
@@ -22,12 +22,12 @@ use stdClass;
 class ChainProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigProviderInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigProviderInterface|MockObject
      */
     private $provider1;
 
     /**
-     * @var ConfigProviderInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigProviderInterface|MockObject
      */
     private $provider2;
 
@@ -50,11 +50,11 @@ class ChainProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $config = [
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
-            new stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $this->provider1->expects($this->once())

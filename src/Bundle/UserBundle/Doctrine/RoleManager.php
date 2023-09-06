@@ -11,12 +11,11 @@
 
 namespace Integrated\Bundle\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\UserBundle\Event\ConfigureRolesEvent;
 use Integrated\Bundle\UserBundle\Model\RoleInterface;
 use Integrated\Bundle\UserBundle\Model\RoleManagerInterface;
-use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -52,10 +51,8 @@ class RoleManager implements RoleManagerInterface
     /**
      * RoleManager constructor.
      *
-     * @param ObjectManager            $om
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param string                   $class
-     * @param string[]                 $roles
+     * @param string   $class
+     * @param string[] $roles
      */
     public function __construct(ObjectManager $om, EventDispatcherInterface $eventDispatcher, $class, array $roles = [])
     {
@@ -65,7 +62,7 @@ class RoleManager implements RoleManagerInterface
         $this->roles = $roles;
 
         if (!is_subclass_of($this->repository->getClassName(), RoleInterface::class)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(sprintf(
                 'The class "%s" is not subclass of Integrated\\Bundle\\UserBundle\\Model\\RoleInterface',
                 $this->repository->getClassName()
             ));
@@ -106,7 +103,7 @@ class RoleManager implements RoleManagerInterface
         $this->om->persist($role);
 
         if ($flush) {
-            $this->om->flush($role);
+            $this->om->flush();
         }
     }
 
@@ -118,7 +115,7 @@ class RoleManager implements RoleManagerInterface
         $this->om->remove($role);
 
         if ($flush) {
-            $this->om->flush($role);
+            $this->om->flush();
         }
     }
 
@@ -195,8 +192,8 @@ class RoleManager implements RoleManagerInterface
     {
         if (!$this->rolesEventFired) {
             $roles = $this->eventDispatcher->dispatch(
-                ConfigureRolesEvent::CONFIGURE,
-                new ConfigureRolesEvent($this->roles)
+                new ConfigureRolesEvent($this->roles),
+                ConfigureRolesEvent::CONFIGURE
             )->getRoles();
 
             $this->roles = [];

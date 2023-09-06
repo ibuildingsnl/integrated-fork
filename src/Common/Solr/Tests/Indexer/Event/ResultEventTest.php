@@ -12,6 +12,7 @@
 namespace Integrated\Common\Solr\Tests\Indexer\Event;
 
 use Integrated\Common\Solr\Indexer\Event\ResultEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use Solarium\Core\Query\Result\ResultInterface;
 
 /**
@@ -20,7 +21,7 @@ use Solarium\Core\Query\Result\ResultInterface;
 class ResultEventTest extends AbstractEventTest
 {
     /**
-     * @var ResultInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResultInterface|MockObject
      */
     protected $result;
 

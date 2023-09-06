@@ -27,9 +27,6 @@ class DoctrineODMDatabase implements DatabaseInterface
      */
     protected $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
@@ -40,15 +37,12 @@ class DoctrineODMDatabase implements DatabaseInterface
      */
     public function getRows()
     {
-        return $this->dm
-            ->getConnection()
+        return $this->dm->getClient()
             ->selectCollection(
                 $this->dm->getConfiguration()->getDefaultDB(),
                 'content'
             )
             ->find()
-            ->getMongoCursor()
-            ->batchSize(100)
         ;
     }
 
@@ -57,13 +51,13 @@ class DoctrineODMDatabase implements DatabaseInterface
      */
     public function saveRow(array $row)
     {
-        return $this->dm->getConnection()
+        return $this->dm->getClient()
             // Use parameters for the database
             ->selectCollection(
                 $this->dm->getConfiguration()->getDefaultDB(),
                 'content'
             )
-            ->update(['_id' => $row['_id']], $row);
+            ->updateOne(['_id' => $row['_id']], $row);
     }
 
     /**
@@ -75,7 +69,6 @@ class DoctrineODMDatabase implements DatabaseInterface
             ->getUnitOfWork()
             ->getDocumentPersister(Content::class)
             ->loadAll()
-            ->batchSize(100)
         ;
     }
 
@@ -85,7 +78,7 @@ class DoctrineODMDatabase implements DatabaseInterface
     public function saveObject($object)
     {
         $this->dm->persist($object);
-        $this->dm->flush($object);
+        $this->dm->flush();
     }
 
     /**

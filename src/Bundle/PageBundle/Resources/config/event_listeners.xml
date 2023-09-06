@@ -6,6 +6,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true"/>
+
         <service id="integrated_page.event_listener.configure_menu_subscriber" class="Integrated\Bundle\PageBundle\EventListener\ConfigureMenuSubscriber">
             <argument type="service" id="security.authorization_checker" />
 
@@ -17,7 +19,7 @@
             <argument type="service" id="integrated_page.services.content_type_page" />
             <argument type="service" id="integrated_page.services.route_cache" />
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation"/>
-            <tag name="integrated_content.event_subscriber" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_page.event_listener.channel_changed" class="Integrated\Bundle\PageBundle\EventListener\ChannelChangedListener">
@@ -25,7 +27,7 @@
             <argument type="service" id="integrated_page.services.content_type_page" />
             <argument type="service" id="integrated_page.services.route_cache"/>
             <argument type="service" id="Integrated\Bundle\ContentBundle\Services\ContentTypeInformation"/>
-            <tag name="integrated_content.event_subscriber" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="integrated_page.event_listener.grid_item" class="Integrated\Bundle\PageBundle\EventListener\GridItemSubscriber">

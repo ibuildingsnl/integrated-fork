@@ -27,9 +27,6 @@ trait ContentTypeHelper
      * @param string $id
      * @param string $name
      * @param string $class
-     * @param array  $requiredFields
-     * @param array  $optionalFields
-     * @param array  $options
      *
      * @return ContentType
      */
@@ -59,16 +56,12 @@ trait ContentTypeHelper
             $this->setContentTypeFields($contentType, $requiredFields, $optionalFields);
         }
 
-        $dm->flush($contentType);
+        $dm->flush();
 
         return $contentType;
     }
 
     /**
-     * @param ContentType $contentType
-     * @param array       $requiredFields
-     * @param array       $optionalFields
-     *
      * @return ContentType
      */
     protected function setContentTypeFields(
@@ -83,8 +76,6 @@ trait ContentTypeHelper
 
     /**
      * @param string $contentTypeId
-     * @param array  $requiredFields
-     * @param array  $optionalFields
      *
      * @return ContentType
      */
@@ -120,7 +111,7 @@ trait ContentTypeHelper
 
         $contentType->setFields($fields);
 
-        $this->getDocumentManager()->flush($contentType);
+        $this->getDocumentManager()->flush();
 
         return $contentType;
     }
@@ -154,7 +145,6 @@ trait ContentTypeHelper
 
     /**
      * @param string $contentTypeId
-     * @param array  $removeFields
      *
      * @return ContentType
      */
@@ -176,7 +166,7 @@ trait ContentTypeHelper
 
         $contentType->setFields($fields);
 
-        $this->getDocumentManager()->flush($contentType);
+        $this->getDocumentManager()->flush();
 
         return $contentType;
     }
@@ -218,7 +208,7 @@ trait ContentTypeHelper
 
         if ($contentType) {
             $dm->remove($contentType);
-            $dm->flush($contentType);
+            $dm->flush();
 
             $this->write(sprintf('Removed contentType with id "%s".', $id));
         }

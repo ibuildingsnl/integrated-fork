@@ -27,9 +27,6 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
      */
     protected $dm;
 
-    /**
-     * @param DocumentManager $dm
-     */
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
@@ -64,8 +61,7 @@ class ReferencesToArrayTransformer implements DataTransformerInterface
             return new ArrayCollection();
         }
 
-        $references = $this->dm->getRepository(Content::class)
-            ->createQueryBuilder()
+        $references = $this->dm->createQueryBuilder(Content::class)
             ->field('id')->in($value)
             ->getQuery()
             ->getIterator()

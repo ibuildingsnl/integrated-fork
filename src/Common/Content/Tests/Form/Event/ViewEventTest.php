@@ -12,6 +12,7 @@
 namespace Integrated\Common\Content\Tests\Form\Event;
 
 use Integrated\Common\Content\Form\Event\ViewEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -21,12 +22,12 @@ use Symfony\Component\Form\FormView;
 class ViewEventTest extends FormEventTest
 {
     /**
-     * @var FormView | \PHPUnit_Framework_MockObject_MockObject
+     * @var FormView|MockObject
      */
     protected $view;
 
     /**
-     * @var FormInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|MockObject
      */
     protected $form;
 

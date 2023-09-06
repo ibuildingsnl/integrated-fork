@@ -26,9 +26,6 @@ class GroupType extends AbstractType
      */
     private $manager;
 
-    /**
-     * @param GroupManagerInterface $manager
-     */
     public function __construct(GroupManagerInterface $manager)
     {
         $this->manager = $manager;
@@ -40,7 +37,6 @@ class GroupType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('class', $this->manager->getClassName());
-        $resolver->setDefault('choice_value', 'id');
         $resolver->setDefault('choice_label', 'name');
     }
 

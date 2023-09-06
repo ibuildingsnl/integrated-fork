@@ -13,7 +13,6 @@ namespace Integrated\Bundle\StorageBundle\Storage\Handler;
 
 use Integrated\Common\Storage\Command\CommandInterface;
 use Integrated\Common\Storage\Handler\QueuedCommandBusInterface;
-use Symfony\Component\Intl\Exception\NotImplementedException;
 
 /**
  * @author Johnny Borg <johnny@e-active.nl>
@@ -25,9 +24,6 @@ class QueuedCommandBus implements QueuedCommandBusInterface
      */
     protected $queue = [];
 
-    /**
-     * @param CommandInterface $commandInterface
-     */
     public function add(CommandInterface $commandInterface)
     {
         $this->queue[] = $commandInterface;
@@ -36,10 +32,10 @@ class QueuedCommandBus implements QueuedCommandBusInterface
     /**
      * This method clears the queue.
      *
-     * @throws NotImplementedException
+     * @throws \Exception
      */
     public function execute()
     {
-        throw new NotImplementedException('Execute of the bus has not been implemented.');
+        throw new \Exception('Execute of the bus has not been implemented.');
     }
 }

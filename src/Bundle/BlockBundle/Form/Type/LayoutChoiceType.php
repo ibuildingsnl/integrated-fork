@@ -27,9 +27,6 @@ class LayoutChoiceType extends AbstractType
      */
     protected $locator;
 
-    /**
-     * @param LayoutLocator $locator
-     */
     public function __construct(LayoutLocator $locator)
     {
         $this->locator = $locator;
@@ -55,13 +52,15 @@ class LayoutChoiceType extends AbstractType
     }
 
     /**
-     * @param $type
-     *
      * @return array
      */
     protected function getChoiceList($type)
     {
-        return $this->locator->getLayouts($type);
+        $layouts = $this->locator->getLayouts($type);
+
+        sort($layouts);
+
+        return $layouts;
     }
 
     /**

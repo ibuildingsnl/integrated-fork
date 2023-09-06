@@ -12,7 +12,7 @@
 namespace Integrated\Common\Channel\Event;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -24,9 +24,6 @@ class ChannelEvent extends Event
      */
     protected $channel;
 
-    /**
-     * @param Channel $channel
-     */
     public function __construct(Channel $channel)
     {
         $this->channel = $channel;
