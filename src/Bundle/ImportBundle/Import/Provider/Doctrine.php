@@ -32,7 +32,7 @@ class Doctrine
         ];
         $connection = DriverManager::getConnection($connectionParams, $config);
 
-        $result = $connection->fetchAll($importDefinition->getConnectionQuery());
+        $result = $connection->fetchAllAssociative($importDefinition->getConnectionQuery());
 
         //add a heading array
         $startRow = [];

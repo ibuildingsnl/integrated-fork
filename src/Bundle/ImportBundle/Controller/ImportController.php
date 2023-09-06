@@ -26,6 +26,7 @@ use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Serializer\InitializedObjectConstructor;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Form\ContentFormType;
@@ -41,7 +42,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class ImportController extends Controller
+class ImportController extends AbstractController
 {
     /**
      * @var ContentTypeManager
@@ -389,11 +390,11 @@ class ImportController extends Controller
                         if ($field->getSourceField()) {
                             $column = array_search($field->getSourceField(), $data[0]);
                             if ($column === false) {
-                                $this->get('braincrafted_bootstrap.flash')->alert('Warning: field '.$field->getSourceField().' is not available in the import any more will be ignored');
+                                $this->addFlash('warning', 'Warning: field '.$field->getSourceField().' is not available in the import any more will be ignored');
                                 continue;
                             }
                             if ($column != $field->getColumn()) {
-                                $this->get('braincrafted_bootstrap.flash')->alert('Warning: column '.$field->getSourceField().' is on another position now');
+                                $this->addFlash('warning', 'Warning: column '.$field->getSourceField().' is on another position now');
                             }
                         } else {
                             $column = $field->getColumn();
@@ -403,7 +404,7 @@ class ImportController extends Controller
                         }
                         $fields[$field->getMappedField()]['matchCol'][] = $column;
                     } else {
-                        $this->get('braincrafted_bootstrap.flash')->alert('Warning: mapped field is not available and will be ignored: '.$field->getMappedField());
+                        $this->addFlash('warning', 'Warning: mapped field is not available and will be ignored: '.$field->getMappedField());
                     }
                 }
             }
@@ -457,7 +458,7 @@ class ImportController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            $this->get('braincrafted_bootstrap.flash')->error('Unable to read import file: '.$e->getMessage().$e->getTraceAsString());
+            $this->addFlash('danger', 'Unable to read import file: '.$e->getMessage().$e->getTraceAsString());
             $fields = [];
             $data = [];
         }
@@ -962,7 +963,7 @@ class ImportController extends Controller
                             $content
                         );
 
-                        $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/';
+                        $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
                         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
                             if (\strlen(trim($matches[1])) == 11) {
                                 return '[object type="youtube" id="'.trim($matches[1]).'"]';

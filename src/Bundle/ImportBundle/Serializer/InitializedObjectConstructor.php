@@ -5,6 +5,7 @@ namespace Integrated\Bundle\ImportBundle\Serializer;
 use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Metadata\ClassMetadata;
+use JMS\Serializer\Visitor\DeserializationVisitorInterface;
 use JMS\Serializer\VisitorInterface;
 
 /**
@@ -27,10 +28,10 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
     /**
      * {@inheritdoc}
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
+    public function construct(DeserializationVisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context): ?object
     {
-        if ($context->attributes->containsKey('target') && $context->getDepth() === 1) {
-            return $context->attributes->get('target')->get();
+        if ($context->hasAttribute('target') && $context->getDepth() === 1) {
+            return $context->getAttribute('target')->get();
         }
 
         return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
