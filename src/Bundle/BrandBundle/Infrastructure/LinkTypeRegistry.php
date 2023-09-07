@@ -12,6 +12,17 @@ class LinkTypeRegistry
     ) {
     }
 
+    public function getType(string $id): ?LinkType
+    {
+        foreach ($this->linkTypeFactories as $factory) {
+            if ($factory->id === $id) {
+                return $factory->create();
+            }
+        }
+
+        return null;
+    }
+
     /** @return LinkType[] */
     public function allTypes(): array
     {

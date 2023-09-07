@@ -7,7 +7,7 @@ use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\BrandBundle\Document\LinkType;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
-use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory;
+use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -22,12 +22,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChannelLinkController extends AbstractController
 {
-    /** @param LinkTypeFactory[] $linkTypes */
     public function __construct(
         private readonly ChannelRepository $channels,
+        private readonly LinkTypeRegistry $linkTypeRegistry,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
-        private readonly iterable $linkTypes,
     ) {
     }
 
@@ -35,12 +34,7 @@ class ChannelLinkController extends AbstractController
     {
         $this->checkPermissions();
 
-        $linkType = null;
-        foreach ($this->linkTypes as $possibleType) {
-            if ($possibleType->id === $type) {
-                $linkType = $possibleType->create();
-            }
-        }
+        $linkType = $this->linkTypeRegistry->getType($type);
         if (!$linkType instanceof LinkType) {
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }

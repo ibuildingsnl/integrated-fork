@@ -16,9 +16,9 @@
 
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="integrated_brand.link_type.registry" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
-            <argument type="tagged_iterator" tag="integrated_brand.type" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />
@@ -30,9 +30,9 @@
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ChannelLinkController">
             <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="service" id="integrated_brand.link_type.registry" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
-            <argument type="tagged_iterator" tag="integrated_brand.type" />
 
             <tag name="controller.service_arguments" />
             <tag name="container.service_subscriber" />

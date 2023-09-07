@@ -4,11 +4,11 @@ namespace Integrated\Bundle\BrandBundle\Controller;
 
 use Integrated\Bundle\BrandBundle\Document\Brand;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\BrandBundle\Document\LinkType;
 use Integrated\Bundle\BrandBundle\Event\BrandAddedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandRemovedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
+use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,12 +18,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BrandController extends AbstractController
 {
-    /** @param LinkType[] $linkTypes */
     public function __construct(
         private readonly BrandRepository $brands,
+        private readonly LinkTypeRegistry $linkTypeRegistry,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
-        private readonly iterable $linkTypes,
     ) {
     }
 
@@ -63,7 +62,7 @@ class BrandController extends AbstractController
 
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
             'form' => $form->createView(),
-            'linkTypes' => $this->linkTypes,
+            'linkTypes' => $this->linkTypeRegistry->allTypes(),
         ]);
     }
 
@@ -90,7 +89,7 @@ class BrandController extends AbstractController
 
         return $this->render('@IntegratedBrand/brand/edit.html.twig', [
             'form' => $form->createView(),
-            'linkTypes' => $this->linkTypes,
+            'linkTypes' => $this->linkTypeRegistry->allTypes(),
             'brand' => $brand,
         ]);
     }
