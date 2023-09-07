@@ -7,6 +7,7 @@ use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\BrandBundle\Document\LinkType;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
+use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChannelLinkController extends AbstractController
 {
-    /** @param LinkType[] $linkTypes */
+    /** @param LinkTypeFactory[] $linkTypes */
     public function __construct(
         private readonly ChannelRepository $channels,
         private readonly EventDispatcherInterface $dispatcher,
@@ -37,7 +38,7 @@ class ChannelLinkController extends AbstractController
         $linkType = null;
         foreach ($this->linkTypes as $possibleType) {
             if ($possibleType->id === $type) {
-                $linkType = $possibleType;
+                $linkType = $possibleType->create();
             }
         }
         if (!$linkType instanceof LinkType) {

@@ -4,6 +4,7 @@ namespace Integrated\Bundle\BrandBundle\Form\Type;
 
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
 use Integrated\Bundle\BrandBundle\Document\LinkType;
+use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
@@ -18,17 +19,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChannelLinkType extends AbstractType
 {
-    /** @param iterable<LinkType> $linkTypes */
     public function __construct(
         private readonly TranslatorInterface $translator,
-        private readonly iterable $linkTypes,
+        private readonly LinkTypeRegistry $linkTypeRegistry,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('type', ChoiceType::class, [
-            'choices' => $this->linkTypes,
+            'choices' => $this->linkTypeRegistry->allTypes(),
             'choice_label' => 'name',
             'choice_value' => 'id',
             'disabled' => true,

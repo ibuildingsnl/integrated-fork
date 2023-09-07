@@ -61,9 +61,13 @@
             <tag name="form.type" />
         </service>
 
+        <service id="integrated_brand.link_type.registry" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry">
+            <argument type="tagged_iterator" tag="integrated_brand.type" />
+        </service>
+
         <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
             <argument type="service" id="translator"/>
-            <argument type="tagged_iterator" tag="integrated_brand.type" />
+            <argument type="service" id="integrated_brand.link_type.registry" />
 
             <tag name="form.type" />
         </service>
@@ -121,7 +125,7 @@
 
         <!-- Note: the types below are mainly here for demo purposes, they can and should be moved to bundles/plugins -->
 
-        <service id="integrated_brand.type.website" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.website" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>website</argument>
             <argument>Website</argument>
             <argument type="expression">true</argument>
@@ -130,7 +134,7 @@
             <tag name="integrated_brand.type" />
         </service>
 
-        <service id="integrated_brand.type.newsletter" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.newsletter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>newsletter</argument>
             <argument>Newsletter</argument>
             <argument type="expression">true</argument>
@@ -138,7 +142,7 @@
             <tag name="integrated_brand.type" />
         </service>
 
-        <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>woodwing</argument>
             <argument>Woodwing</argument>
             <argument type="expression">true</argument>
@@ -146,7 +150,7 @@
             <tag name="integrated_brand.type" />
         </service>
 
-        <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>twitter</argument>
             <argument>Twitter (X)</argument>
             <argument type="expression">false</argument>
@@ -155,7 +159,7 @@
             <tag name="integrated_brand.type" />
         </service>
 
-        <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>linkedin</argument>
             <argument>LinkedIn</argument>
             <argument type="expression">false</argument>
@@ -164,7 +168,7 @@
             <tag name="integrated_brand.type" />
         </service>
 
-        <service id="integrated_brand.type.facebook" class="Integrated\Bundle\BrandBundle\Document\LinkType">
+        <service id="integrated_brand.type.facebook" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>facebook</argument>
             <argument>Facebook (meta)</argument>
             <argument type="expression">false</argument>
