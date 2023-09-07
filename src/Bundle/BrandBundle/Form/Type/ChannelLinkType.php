@@ -3,7 +3,6 @@
 namespace Integrated\Bundle\BrandBundle\Form\Type;
 
 use Integrated\Bundle\BrandBundle\Document\ChannelLink;
-use Integrated\Bundle\BrandBundle\Document\LinkType;
 use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;

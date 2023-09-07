@@ -19,6 +19,7 @@ class LinkTypeRegistry
         foreach ($this->linkTypeFactories as $factory) {
             $types[] = $factory->create();
         }
+
         return $types;
     }
 }
