@@ -135,12 +135,10 @@ class ConfigController extends AbstractController
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
 
-            $this->dispatcher->dispatch(
+            return $this->dispatcher->dispatch(
                 new FilterResponseConfigEvent($data, $request, $response),
                 IntegratedChannelEvents::CONFIG_CREATE_RESPONSE
-            );
-
-            return $response;
+            )->getResponse();
         }
 
         return $this->render('@IntegratedChannel/config/new.html.twig', [
@@ -201,12 +199,10 @@ class ConfigController extends AbstractController
                 $response = $this->redirectToRoute('integrated_channel_config_index');
             }
 
-            $this->dispatcher->dispatch(
+            return $this->dispatcher->dispatch(
                 new FilterResponseConfigEvent($data, $request, $response),
                 IntegratedChannelEvents::CONFIG_EDIT_RESPONSE
-            );
-
-            return $response;
+            )->getResponse();
         }
 
         return $this->render('@IntegratedChannel/config/edit.html.twig', [
@@ -274,12 +270,10 @@ class ConfigController extends AbstractController
 
             $response = $this->redirectToRoute('integrated_channel_config_index');
 
-            $this->dispatcher->dispatch(
+            return $this->dispatcher->dispatch(
                 new FilterResponseConfigEvent($data, $request, $response),
                 IntegratedChannelEvents::CONFIG_DELETE_RESPONSE
-            );
-
-            return $response;
+            )->getResponse();
         }
 
         return $this->render('@IntegratedChannel/config/delete.html.twig', [

@@ -26,7 +26,7 @@ class QueueProvider implements QueueProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function push($channel, $payload, $delay = 0, $priority = 0)
+    public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0)
     {
         // TODO: for now also ignore priority
 
@@ -39,7 +39,7 @@ class QueueProvider implements QueueProviderInterface
 
         $this->queue[$channel][] = [
             'payload' => $payload,
-            'attempts' => 0,
+            'attempts' => $attempt,
             'priority' => min(max((int) $priority, -10), 10),
             'time_created' => $timestamp,
             'time_updated' => $timestamp,
