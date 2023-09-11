@@ -158,8 +158,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
 
         $this->exporter->expects($this->once())
             ->method('export')
-            ->with($this->identicalTo($request->content), $this->equalTo(self::TEST_STATE), $this->identicalTo($request->channel))
-            ->willThrowException(new \Exception('i-will-be-caught-and-not-cause-any-troubles'));
+            ->with($this->identicalTo($request->content), $this->equalTo(self::TEST_STATE), $this->identicalTo($request->channel));
 
         self::assertSame($message, $this->getInstance()->process($message));
     }
@@ -179,7 +178,8 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
         $this->exporter->expects($this->never())
             ->method('export');
 
-        self::assertSame($message, $this->getInstance()->process($message));
+        $this->expectException(\InvalidArgumentException::class);
+        $this->getInstance()->process($message);
     }
 
     public function testExport()
@@ -200,7 +200,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
     protected function getInstance($method = null)
     {
         return $this->getMockBuilder('Integrated\\Common\\Channel\\Exporter\\QueueExporter')
-            ->setConstructorArgs([$this->queue, $this->serializer, $this->exporter])
+            ->setConstructorArgs([$this->queue, $this->serializer, $this->exporter, 5])
             ->onlyMethods($method ? [$method] : [])
             ->getMock();
     }

@@ -9,7 +9,7 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <service id="integrated_channel.manager.config" alias="integrated_channel.repository.config" />
-        <service id="integrated_channel.manager.channel" alias="integrated_content.channel.manager" /> <!-- this service should be moved to this bundle -->
+        <service id="integrated_channel.manager.channel" alias="integrated_content.channel.manager" public="true" /> <!-- this service should be moved to this bundle -->
 
     </services>
 
