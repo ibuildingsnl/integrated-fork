@@ -76,7 +76,7 @@ class NewsController extends AbstractController
             ->getQuery()
             ->getIterator();
 
-        //TODO: $this->getParameter('locale') is broken
+        // TODO: $this->getParameter('locale') is broken
 
         return [
             'channel' => $channel,
