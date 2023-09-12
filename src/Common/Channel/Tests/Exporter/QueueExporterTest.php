@@ -103,7 +103,7 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf(QueueMessageInterface::class))
             ->willReturnArgument(0);
 
-        $exporter->execute();
+        $exporter->exportMessages();
     }
 
     public function testProcess()

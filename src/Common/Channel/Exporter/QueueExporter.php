@@ -19,7 +19,7 @@ use Integrated\Common\Queue\QueueMessageInterface;
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>
  */
-class QueueExporter implements ExporterInterface
+class QueueExporter implements ExporterInterface, QueueExporterInterface
 {
     private \Closure $retryDelay;
 
@@ -57,13 +57,18 @@ class QueueExporter implements ExporterInterface
         return $this->exporter;
     }
 
+    public function hasMessages(): bool
+    {
+        return $this->queue->count() > 0;
+    }
+
     /**
      * Execute a queued exporter run.
      */
-    public function execute(): int
+    public function exportMessages(int $limit = 1000): int
     {
         $i = 0;
-        foreach ($this->queue->pull(1000) as $message) {
+        foreach ($this->queue->pull($limit) as $message) {
             try {
                 $this->process($message)->delete();
             } catch (\Throwable $e) {
