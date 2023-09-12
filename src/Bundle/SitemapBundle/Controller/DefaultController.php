@@ -85,7 +85,7 @@ class DefaultController extends AbstractController
         }
 
         return [
-            'count' => min(ceil($count / 50000), 50000),
+            'count' => min(ceil((int) $count / 50000), 50000),
         ];
     }
 
