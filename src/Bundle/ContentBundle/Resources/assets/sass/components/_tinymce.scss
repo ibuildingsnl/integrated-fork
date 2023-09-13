@@ -105,7 +105,9 @@ body.tox-fullscreen {
 }
 
 .fancy_tinymce {
-
+    .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary, .tox .tox-menubar {
+        justify-content: center;
+    }
     .tox:not(.tox-tinymce-inline) .tox-editor-header {
         padding: 0;
         z-index: 2;
@@ -159,10 +161,6 @@ body.tox-fullscreen {
             background-color: white;
             top: 0;
             z-index: 9;
-            padding-left: 23px;
-            @include media(max-md) {
-                padding-left: 10px;
-            }
         }
 
         .tox-toolbar-grp {
@@ -170,7 +168,6 @@ body.tox-fullscreen {
             width: 100%;
             top: 35px;
             z-index: 9;
-            padding-left: 23px;
             border-bottom: 1px solid $border-color !important;
             border-radius: 0;
         }
@@ -183,10 +180,6 @@ body.tox-fullscreen {
 
         .tox-btn {
             background-color: #fff;
-        }
-
-        .tox-menubar + .tox-toolbar, .tox-menubar + .tox-toolbar-overlord {
-            padding-left: 19px;
         }
     }
 }
