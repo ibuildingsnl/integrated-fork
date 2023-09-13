@@ -243,26 +243,23 @@ class MediaController extends AbstractController
 
     public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
     {
-        $jsonContent = json_decode($request->getContent());
-        $idSelection = $jsonContent->bulkselection;
-        $request->query->set('ids', $idSelection);
+        $jsonContent = json_decode($request->getContent(), true);
 
-        if (!$jsonContent->confirmed_by_user) {
-            return $this->getUsedBy($idSelection);
+        if (false === $jsonContent['confirmed_by_user']) {
+            return $this->getUsedBy($jsonContent['bulkselection']);
         }
 
-        return $this->removeRelations($idSelection);
+        return $this->removeRelations($jsonContent['bulkselection']);
     }
 
-    private function removeRelations(array $idSelection): Response
+    private function removeRelations(array $bulkselection): Response
     {
         $deletedIds = [];
-        $contentRepository = $this->documentManager->getRepository(Content::class);
-        $toBeDeletedArray = $contentRepository->findBy(['_id' => ['$in' => $idSelection]]);
+        $toBeDeletedArray = $this->documentManager->getRepository(Content::class)->findBy(['_id' => ['$in' => $bulkselection]]);
 
         $searchReferenced = new SearchContentReferenced($this->documentManager);
         $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
-        $deleteHandler->multiExecute($toBeDeletedArray, $idSelection);
+        $deleteHandler->multiExecute($toBeDeletedArray, $bulkselection);
 
         $this->taxonomyRelationManager->runSolrQueue();
 
