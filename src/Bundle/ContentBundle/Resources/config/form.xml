@@ -33,6 +33,12 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_content.form.publication.listener"
+                 class="Integrated\Bundle\ContentBundle\EventListener\ContentPublicationIntegrationListener">
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
         <service id="integrated_content.form.relations.listener" class="Integrated\Bundle\ContentBundle\EventListener\ContentRelationsIntegrationListener">
             <argument type="string">relations</argument>
             <argument type="string">Integrated\Bundle\ContentBundle\Form\Type\RelationsType</argument>
@@ -180,6 +186,10 @@
 
         <service id="integrated_content.form.type.primary_channel" class="Integrated\Bundle\ContentBundle\Form\Type\PrimaryChannelType">
             <argument type="service" id="translator"/>
+            <tag name="form.type"/>
+        </service>
+
+        <service id="integrated_content.form.type.publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\PublicationSettingsType">
             <tag name="form.type"/>
         </service>
 

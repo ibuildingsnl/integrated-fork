@@ -26,7 +26,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            Events::POST_BUILD => ['buildForm', -61],
+            Events::POST_BUILD => ['buildForm', -80],
         ];
     }
 

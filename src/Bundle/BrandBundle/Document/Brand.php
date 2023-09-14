@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
-use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Channel\ChannelInterface;
 
 class Brand
 {
