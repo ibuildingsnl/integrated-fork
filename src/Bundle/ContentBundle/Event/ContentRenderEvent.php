@@ -16,37 +16,21 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * @author Michael Jongman <michael@e-active.nl>
  */
-class ContentEvent extends Event
+class ContentRenderEvent extends Event
 {
     public const NAME = 'content.event';
 
-    /**
-     * @var string
-     */
-    protected $content;
-
-    /**
-     * @param string $content
-     */
-    public function __construct($content)
-    {
-        $this->content = $content;
+    public function __construct(
+        private string $content,
+    ) {
     }
 
-    /**
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    /**
-     * @param string $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
+    public function setContent(string $content): self
     {
         $this->content = $content;
 

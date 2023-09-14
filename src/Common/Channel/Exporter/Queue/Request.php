@@ -18,18 +18,10 @@ use Integrated\Common\Channel\ChannelInterface;
  */
 class Request
 {
-    /**
-     * @var object
-     */
-    public $content;
-
-    /**
-     * @var string
-     */
-    public $state;
-
-    /**
-     * @var ChannelInterface
-     */
-    public $channel;
+    public function __construct(
+        public ?object $content = null,
+        public ?string $state = null,
+        public ?ChannelInterface $channel = null,
+    ) {
+    }
 }
