@@ -25,11 +25,17 @@
     <script src="{{ asset('bundles/integratedintegrated/app.js') }}"></script>
     <script>
         $(document).keyup(function(e) {
+            console.log("JQUERY")
             if (e.key === 'Escape') {
+                console.log("Escape")
                 let closeOutside = parent.$('.close-outside.show');
                 closeOutside.removeClass('show');
                 parent.$('#dropdown_overlay').addClass('hide');
                 window.popupShown = false;
+            }
+            if (e.key === 'Enter') {
+                console.log("Enter")
+                document.querySelector('#toolbar .options .form-actions button').click()
             }
         });
     </script>

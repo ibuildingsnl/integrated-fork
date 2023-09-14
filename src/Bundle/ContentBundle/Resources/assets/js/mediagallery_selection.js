@@ -58,6 +58,7 @@ function getTypesUrl(types) {
 function generateSrcAttributeForIframes() {
     Object.values(form_relations).forEach(form_relation => {
         const link = `${mediagallery_link}${form_relation.modus}?page=1&${form_relation.types_url}`;
+        console.log(link)
         document.querySelector(form_relation.iframe_selector).setAttribute('src', link);
     });
 }

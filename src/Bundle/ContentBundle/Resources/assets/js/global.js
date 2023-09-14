@@ -39,7 +39,16 @@ $(document).keyup(function(e) {
         sendCancelEvent();
         popupShown = false;
     }
+    if (e.key === 'Enter') {
+        console.log("Enter accepted")
+        sendEnterEvent();
+    }
 });
+
+function sendEnterEvent() {
+    console.log("Sending enter")
+    document.dispatchEvent(new CustomEvent('acceptSelectionEvent'));
+}
 
 function sendCancelEvent() {
     document.dispatchEvent(new CustomEvent('cancelPopupEvent'));
