@@ -10,7 +10,9 @@ class PublicationSettingsPopupType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('settings', $options['settings']);
+        $builder->add('settings', $options['settings'], [
+            'label' => $options['label'],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

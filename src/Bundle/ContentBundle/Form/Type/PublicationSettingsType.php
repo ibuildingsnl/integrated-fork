@@ -25,6 +25,7 @@ class PublicationSettingsType extends AbstractType
                     'data-publication-channel' => $channel->getId(),
                 ],
                 'settings' => $this->publicationSettings->settingTypeFor($channel),
+                'label' => $channel->getName(),
             ]);
         }
     }

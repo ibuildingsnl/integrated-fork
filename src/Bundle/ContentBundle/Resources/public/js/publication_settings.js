@@ -4,7 +4,16 @@ function showHidePublicationSettingsButton(input) {
 
 function openPublishingSettings(channelId) {
     const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-hidden');
-    if (settings) settings.className = 'publication-settings-display';
+    if (!settings) {
+        return;
+    }
+    settings.className = 'publication-settings-display';
+    settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
+        d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
+    });
+    settings.querySelectorAll('[name*="[endDate]"]').forEach(function (d) {
+        d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
+    });
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
