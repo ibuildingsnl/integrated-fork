@@ -3,11 +3,17 @@ function showHidePublicationSettingsButton(input) {
 }
 
 function openPublishingSettings(channelId, input) {
-    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-hidden');
+    document.querySelectorAll('.publication-settings-aside').forEach(div => {
+        div.classList.remove('show');
+    });
+    document.querySelectorAll('.editor-overlay').forEach(div => {
+        div.classList.add('show');
+    });
+    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-aside');
     if (!settings) {
         return;
     }
-    settings.className = 'publication-settings-display';
+    settings.classList.add('show') ;
     settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
     });
@@ -15,9 +21,12 @@ function openPublishingSettings(channelId, input) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
     });
     settings.addEventListener('click', function (ev) {
-        if (!settings.querySelector('.publication-settings-popup').contains(ev.target)) {
-            settings.className = 'publication-settings-hidden';
+        if (!settings.querySelector('.publication-settings-aside.show').contains(ev.target)) {
+            settings.classList.remove('show') ;
         }
+        document.querySelectorAll('.editor-overlay').forEach(div => {
+            div.classList.remove('show');
+        });
     });
     settings.channelType = input.dataset.channelType;
     if (settings.channelType) {
@@ -53,7 +62,10 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     );
     settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
-            a.closest('.publication-settings-display').className = 'publication-settings-hidden';
+            a.closest('.publication-settings-aside').classList.remove('show');
+            document.querySelectorAll('.editor-overlay').forEach(div => {
+                div.classList.remove('show');
+            });
             ev.preventDefault();
         });
     });
