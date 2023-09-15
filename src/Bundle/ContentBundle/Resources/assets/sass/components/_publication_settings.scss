@@ -1,0 +1,63 @@
+.publication-settings-container {
+    height: 0;
+    overflow: hidden;
+}
+.publication-settings-aside {
+    background: #fff;
+    padding: 20px;
+    z-index: 99999999;
+    background-color: #ffffff;
+    border-left: 1px solid #dee3e9;
+    height: calc(100vh - 110px);
+    margin-top: -1px;
+    order: 1;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    width: 350px;
+    top: 0;
+    visibility: hidden;
+    transform: translateX(350px);
+    transition: all 0.3s;
+    .form-item, .form-group {
+        .widget {
+            width: 100%;
+        }
+
+        label {
+            width: 100%;
+        }
+        input[type=text], input[type=number] {
+            height: 33px;
+        }
+
+        select {
+            height: 33px;
+            padding: 0 0.6rem;
+        }
+    }
+    &.show {
+        transform: translateX(0px);
+        transition: all 0.3s;
+        visibility: visible;
+    }
+}
+
+.publication-settings-button {
+    color: rgba(63, 63, 63, 0.55);
+    font-size: x-large;
+}
+
+.editor-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    display: none;
+    &.show {
+        display: block;
+    }
+}

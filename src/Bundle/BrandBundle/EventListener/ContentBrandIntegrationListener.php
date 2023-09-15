@@ -38,6 +38,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
             return;
         }
         $form->add('brands', BrandChoiceType::class, [
+            'priority' => 990,
             'mapped' => false,
             'channel_choices' => $form->get('channels')->getOption('choices'),
             'channel_choice_attr' => $form->get('channels')->getOption('choice_attr'),

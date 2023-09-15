@@ -416,43 +416,6 @@
 
 {% block integrated_publication_settings_container_row %}
 
-    <style>{#TODO: move to sass#}
-        .publication-settings-container {
-            height: 0;
-            overflow: hidden;
-        }
-        .settings-apply-to-multiple {
-            display: none;
-        }
-        .publication-settings-element {
-            display: none;
-        }
-        .publication-settings-element.display {
-            display: block;
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            z-index: 99999999;
-        }
-        .publication-settings-popup {
-            position: fixed;
-            left: 20%;
-            right: 20%;
-            top: 20%;
-            bottom: 20%;
-            padding: 3em;
-            border-radius: 1em;
-            background: white;
-            box-shadow: 10px 10px 18px 12px rgba(0,0,0,0.5);
-        }
-        .publication-settings-button {
-            color: rgba(63, 63, 63, 0.55);
-            font-size: x-large;
-        }
-    </style>
-
     <div class="publication-settings-container">
         {{ form_widget(form) }}
     </div>
@@ -463,7 +426,7 @@
 {% endblock %}
 
 {% block integrated_publication_settings_row %}
-    <div class="publication-settings-element">
+    <div class="publication-settings-aside">
         <div class="publication-settings-popup">
             <h2>{{ form_label(form) }}</h2>
             <div class="publication-settings">
