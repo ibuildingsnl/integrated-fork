@@ -425,12 +425,22 @@
     {% endintegrated_javascripts %}
 {% endblock %}
 
-
 {% block integrated_publication_settings_row %}
     <div class="publication-settings-hidden">
-        {{ form_widget(form) }}
+        <div class="publication-settings-popup">
+            <h2>{{ form_label(form) }}</h2>
+            {{ form_widget(form) }}
 
-        <a class="btn btn-default" href="#">Ok</a>
+            <div class="settings-apply-to-menu">
+                Apply to
+                <select>
+                    <option>{{ form_label(form) }}</option>
+                    <option>specific channels</option>
+                </select>
+                <div class="settings-apply-to-channel">(to-do)</div>
+            </div>
+            <a class="btn btn-default" href="#">Ok</a>
+        </div>
     </div>
 {% endblock %}
 

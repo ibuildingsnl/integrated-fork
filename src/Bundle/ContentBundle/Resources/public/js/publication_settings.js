@@ -14,6 +14,11 @@ function openPublishingSettings(channelId) {
     settings.querySelectorAll('[name*="[endDate]"]').forEach(function (d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
     });
+    settings.addEventListener('click', function (ev) {
+        if (!settings.querySelector('.publication-settings-popup').contains(ev.target)) {
+            settings.className = 'publication-settings-hidden';
+        }
+    });
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
