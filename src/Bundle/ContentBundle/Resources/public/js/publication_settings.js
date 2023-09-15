@@ -2,11 +2,7 @@ function showHidePublicationSettingsButton(input) {
     input.openSettings.style.display = input.checked ? 'inline-block' : 'none';
 }
 
-function openPublishingSettings(channelId, input) {
-    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-hidden');
-    if (!settings) {
-        return;
-    }
+function openPublishingSettings(settings) {
     settings.className = 'publication-settings-display';
     settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
@@ -19,6 +15,16 @@ function openPublishingSettings(channelId, input) {
             settings.className = 'publication-settings-hidden';
         }
     });
+}
+
+document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
+    const settings = document.querySelector(
+        '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
+    ).closest('.publication-settings-hidden');
+    if (!settings) {
+        return;
+    }
+
     settings.channelType = input.dataset.channelType;
     if (settings.channelType) {
         const opt = document.createElement('option');
@@ -26,17 +32,16 @@ function openPublishingSettings(channelId, input) {
         opt.text = 'all ' + settings.channelType + ' channels';
         settings.querySelector('[data-apply-to]')?.append(opt);
     }
-}
 
-document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const openSettings = document.createElement('a');
     openSettings.href = '#';
     openSettings.text = '⚙';
     openSettings.className = 'publication-settings-button';
     openSettings.addEventListener('click', function (ev) {
-        openPublishingSettings(input.dataset.channelSelector, input);
+        openPublishingSettings(settings);
         ev.preventDefault();
     });
+
     input.closest('.checkbox').insertAdjacentElement('afterend', openSettings);
     input.openSettings = openSettings;
     input.addEventListener('change', () => showHidePublicationSettingsButton(input));
