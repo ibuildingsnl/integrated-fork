@@ -49,6 +49,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
 
     const openSettings = document.createElement('a');
     openSettings.href = '#';
+    openSettings.title = 'Publication settings';
     openSettings.innerHTML = '<i class="iconoir-settings"></i>';
     openSettings.className = 'publication-settings-button';
     openSettings.addEventListener('click', function (ev) {

@@ -18,7 +18,8 @@ if (primaryChannel) {
     inputElements.forEach(function(input) {
         const makePrimary = document.createElement('a');
         makePrimary.href = '#';
-        makePrimary.text = primaryChannel.dataset.makePrimaryText;
+        makePrimary.title = 'Make primary';
+        makePrimary.innerHTML = '<i class="iconoir-1st-medal"></i>';
         makePrimary.className = 'make-primary';
         input.closest('li').appendChild(makePrimary);
         input.makePrimary = makePrimary;

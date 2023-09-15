@@ -46,7 +46,7 @@ class PrimaryChannelType extends AbstractType
             'required' => false,
             'attr' => [
                 'class' => 'primary-channel',
-                'data-make-primary-text' => $this->translator->trans('primary'),
+                'data-make-primary-text' => $this->translator->trans('make primary'),
             ],
         ]);
     }
