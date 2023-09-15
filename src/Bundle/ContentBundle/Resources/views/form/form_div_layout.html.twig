@@ -421,13 +421,13 @@
             height: 0;
             overflow: hidden;
         }
-        .publication-settings-hidden {
-            display: none;
-        }
         .settings-apply-to-multiple {
             display: none;
         }
-        .publication-settings-display {
+        .publication-settings-element {
+            display: none;
+        }
+        .publication-settings-element.display {
             display: block;
             position: fixed;
             left: 0;
@@ -463,7 +463,7 @@
 {% endblock %}
 
 {% block integrated_publication_settings_row %}
-    <div class="publication-settings-hidden">
+    <div class="publication-settings-element">
         <div class="publication-settings-popup">
             <h2>{{ form_label(form) }}</h2>
             <div class="publication-settings">
@@ -477,7 +477,7 @@
                     <option value="multiple">specific channels</option>
                 </select>
                 <div class="settings-apply-to-multiple">
-                    (to-do)
+
                 </div>
             </div>
             <a class="btn btn-default" href="#">Ok</a>

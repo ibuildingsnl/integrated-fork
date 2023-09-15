@@ -3,7 +3,7 @@ function showHidePublicationSettingsButton(input) {
 }
 
 function openPublishingSettings(settings) {
-    settings.className = 'publication-settings-display';
+    settings.className = 'publication-settings-element display';
     settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
     });
@@ -12,15 +12,16 @@ function openPublishingSettings(settings) {
     });
     settings.addEventListener('click', function (ev) {
         if (!settings.querySelector('.publication-settings-popup').contains(ev.target)) {
-            settings.className = 'publication-settings-hidden';
+            settings.className = 'publication-settings-element';
         }
     });
+    setChannelChoices(settings.querySelector('.settings-apply-to-multiple'));
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const settings = document.querySelector(
         '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
-    ).closest('.publication-settings-hidden');
+    ).closest('.publication-settings-element');
     if (!settings) {
         return;
     }
@@ -58,8 +59,13 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
     );
     settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
-            a.closest('.publication-settings-display').className = 'publication-settings-hidden';
+            a.closest('.publication-settings-element.display').className = 'publication-settings-element';
             ev.preventDefault();
         });
     });
 });
+
+function setChannelChoices(element)
+{
+    // @todo
+}
