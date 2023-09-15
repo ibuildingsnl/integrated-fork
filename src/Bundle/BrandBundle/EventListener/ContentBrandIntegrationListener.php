@@ -47,7 +47,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
                 'style' => 'sidebar',
                 'icon' => 'network-alt',
                 'class' => 'brands',
-                'state' => 'show'
+                'state' => 'show',
             ],
         ]);
         $form->addEventSubscriber(new BrandChannelsAssignmentListener($this->authorizationChecker));

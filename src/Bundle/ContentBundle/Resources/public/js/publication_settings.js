@@ -2,7 +2,7 @@ function showHidePublicationSettingsButton(input) {
     input.openSettings.style.display = input.checked ? 'inline-block' : 'none';
 }
 
-function openPublishingSettings(channelId) {
+function openPublishingSettings(channelId, input) {
     const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-hidden');
     if (!settings) {
         return;
@@ -19,6 +19,13 @@ function openPublishingSettings(channelId) {
             settings.className = 'publication-settings-hidden';
         }
     });
+    settings.channelType = input.dataset.channelType;
+    if (settings.channelType) {
+        const opt = document.createElement('option');
+        opt.value = 'type';
+        opt.text = 'all ' + settings.channelType + ' channels';
+        settings.querySelector('[data-apply-to]')?.append(opt);
+    }
 }
 
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
@@ -27,7 +34,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     openSettings.text = '⚙';
     openSettings.className = 'publication-settings-button';
     openSettings.addEventListener('click', function (ev) {
-        openPublishingSettings(input.dataset.channelSelector);
+        openPublishingSettings(input.dataset.channelSelector, input);
         ev.preventDefault();
     });
     input.closest('.checkbox').insertAdjacentElement('afterend', openSettings);
@@ -36,8 +43,15 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     showHidePublicationSettingsButton(input);
 });
 
-document.querySelectorAll('.publication-settings').forEach(function (settings) {
-    settings.parentElement.querySelectorAll('a.btn').forEach(function(a) {
+document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
+    settings.querySelectorAll('[data-apply-to]').forEach(
+        (s) => s.addEventListener('change', function (ev) {
+            settings.querySelectorAll('.settings-apply-to-multiple').forEach(
+                (e) => e.style.display = s.value === 'multiple' ? 'block' : 'none'
+            );
+        }) || s.dispatchEvent(new Event('change'))
+    );
+    settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
             a.closest('.publication-settings-display').className = 'publication-settings-hidden';
             ev.preventDefault();

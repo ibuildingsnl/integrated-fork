@@ -429,15 +429,17 @@
     <div class="publication-settings-hidden">
         <div class="publication-settings-popup">
             <h2>{{ form_label(form) }}</h2>
-            {{ form_widget(form) }}
+            <div class="publication-settings">
+                {{ form_widget(form) }}
+            </div>
 
             <div class="settings-apply-to-menu">
                 Apply to
-                <select>
-                    <option>{{ form_label(form) }}</option>
-                    <option>specific channels</option>
+                <select data-apply-to>
+                    <option value="this">{{ form_label(form) }}</option>
+                    <option value="multiple">specific channels</option>
                 </select>
-                <div class="settings-apply-to-channel">(to-do)</div>
+                <div class="settings-apply-to-multiple">(to-do)</div>
             </div>
             <a class="btn btn-default" href="#">Ok</a>
         </div>
