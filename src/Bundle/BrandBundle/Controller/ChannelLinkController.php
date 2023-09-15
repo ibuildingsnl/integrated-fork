@@ -14,6 +14,7 @@ use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -65,7 +66,9 @@ class ChannelLinkController extends AbstractController
 
             $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));
-            $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_UPDATED);
+            if ($link->channel instanceof Channel) {
+                $this->dispatcher->dispatch(new ChannelEvent($link->channel), Events::CHANNEL_UPDATED);
+            }
 
             $this->flusher->flush();
             $this->addFlash('success', $link->type->name.' added');
