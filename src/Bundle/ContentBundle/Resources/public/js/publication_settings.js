@@ -34,7 +34,7 @@ function openPublishingSettings(channelId, input) {
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const settings = document.querySelector(
         '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
-    ).closest('.publication-settings-element');
+    ).closest('.publication-settings-aside');
     if (!settings) {
         return;
     }
@@ -52,7 +52,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     openSettings.text = '⚙';
     openSettings.className = 'publication-settings-button';
     openSettings.addEventListener('click', function (ev) {
-        openPublishingSettings(settings);
+        openPublishingSettings(input.dataset.channelSelector, input);
         ev.preventDefault();
     });
 
