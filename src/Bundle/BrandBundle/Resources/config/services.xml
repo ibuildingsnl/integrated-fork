@@ -143,7 +143,7 @@
         <service id="integrated_brand.type.newsletter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>newsletter</argument>
             <argument>Newsletter</argument>
-            <argument type="expression">true</argument>
+            <argument type="expression">false</argument>
 
             <tag name="integrated_brand.type" />
         </service>
@@ -151,7 +151,7 @@
         <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>woodwing</argument>
             <argument>Woodwing</argument>
-            <argument type="expression">true</argument>
+            <argument type="expression">false</argument>
 
             <tag name="integrated_brand.type" />
         </service>
