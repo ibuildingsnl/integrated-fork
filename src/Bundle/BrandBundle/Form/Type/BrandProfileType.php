@@ -32,6 +32,7 @@ class BrandProfileType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'icon' => 'droplet',
+                    'state' => 'show',
                 ],
             ])->add(
                 'color',
@@ -61,6 +62,7 @@ class BrandProfileType extends AbstractType
                     'data-types' => '[{"type":"image","name":"Image"}]',
                     'data-emptytext' => 'Select logo',
                     'data-multiple' => false,
+                    'state' => 'show'
                 ],
             ]
         );
@@ -84,6 +86,7 @@ class BrandProfileType extends AbstractType
                     'location' => 'sidebar',
                     'style' => 'sidebar',
                     'icon' => 'city',
+                    'state' => 'show'
                 ],
             ])->add(
                 'companyId',
@@ -107,6 +110,7 @@ class BrandProfileType extends AbstractType
                 'location' => 'sidebar',
                 'style' => 'sidebar',
                 'icon' => 'graph-up',
+                'state' => 'show'
             ],
             'required' => false,
         ]);

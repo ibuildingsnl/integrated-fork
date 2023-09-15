@@ -158,7 +158,7 @@
 
         <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
             <argument>twitter</argument>
-            <argument>Twitter (X)</argument>
+            <argument>X (Twitter)</argument>
             <argument type="expression">false</argument>
             <argument>twitter</argument>
             <argument>\Integrated\Bundle\BrandBundle\Form\Type\TwitterExampleType</argument>
