@@ -149,14 +149,12 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                         'icon' => 'network-alt',
                     ],
                     'choice_attr' => function ($value) use ($enforce) {
-                        if ($value instanceof Channel && (
-                            isset(
-                                $enforce[$value->getId()]
-                            ) || !$this->authorizationChecker->isGranted(
-                                PermissionInterface::WRITE,
-                                $value
-                            ))) {
-                            return ['disabled' => 'disabled'];
+                        if ($value instanceof Channel) {
+                            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value)) {
+                                return ['disabled' => 'disabled'];
+                            }
+                            $disabled = isset($enforce[$value->getId()]) ? ['disabled' => 'disabled'] : [];
+                            return $disabled + ['data-channel-selector' => $value->getId()];
                         }
 
                         return [];

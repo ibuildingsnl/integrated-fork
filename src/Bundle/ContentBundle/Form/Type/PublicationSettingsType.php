@@ -19,10 +19,12 @@ class PublicationSettingsType extends AbstractType
     {
         /** @var ChannelInterface $channel */
         foreach ($options['channels'] as $channel) {
-            $builder->add($channel->getId(), $this->publicationSettings->settingTypeFor($channel), [
+            $builder->add($channel->getId(), PublicationSettingsPopupType::class, [
                 'attr' => [
                     'class' => 'publication-settings',
+                    'data-publication-channel' => $channel->getId(),
                 ],
+                'settings' => $this->publicationSettings->settingTypeFor($channel),
             ]);
         }
     }
@@ -31,5 +33,10 @@ class PublicationSettingsType extends AbstractType
     {
         $resolver->setDefault('channels', []);
         $resolver->setAllowedTypes('channels', ChannelInterface::class.'[]');
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'integrated_publication_settings_container';
     }
 }
