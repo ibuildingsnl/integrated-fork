@@ -414,6 +414,51 @@
     {{ block('integrated_collection_widget') }}
 {% endblock %}
 
+{% block integrated_publication_settings_container_row %}
+
+    <style>{#TODO: move to sass#}
+        .publication-settings-container {
+            height: 0;
+            overflow: hidden;
+        }
+        .publication-settings-hidden {
+            display: none;
+        }
+        .publication-settings-display {
+            display: block;
+            position: fixed;
+            left: 10%;
+            right: 10%;
+            top: 10%;
+            bottom: 10%;
+            padding: 3em;
+            background: white;
+            z-index: 99999999;
+        }
+        .publication-settings-button {
+            color: rgba(63, 63, 63, 0.55);
+            font-size: x-large;
+        }
+    </style>
+
+    <div class="publication-settings-container">
+        {{ form_widget(form) }}
+    </div>
+
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_settings.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
+
+{% block integrated_publication_settings_row %}
+    <div class="publication-settings-hidden">
+        {{ form_widget(form) }}
+
+        <a class="btn btn-default" href="#">Ok</a>
+    </div>
+{% endblock %}
+
 {% block integrated_content_bulk_actions_row %}
     {{ form_widget(form) }}
 {% endblock %}
