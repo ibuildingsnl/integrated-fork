@@ -1,5 +1,5 @@
 function showHidePublicationSettingsButton(input) {
-    input.openSettings.style.display = input.checked ? 'inline-block' : 'none';
+    input.openSettings.style.display = input.checked ? 'flex' : 'none';
 }
 
 function openPublishingSettings(channelId, input) {
@@ -49,7 +49,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
 
     const openSettings = document.createElement('a');
     openSettings.href = '#';
-    openSettings.text = '⚙';
+    openSettings.innerHTML = '<i class="iconoir-settings"></i>';
     openSettings.className = 'publication-settings-button';
     openSettings.addEventListener('click', function (ev) {
         openPublishingSettings(input.dataset.channelSelector, input);

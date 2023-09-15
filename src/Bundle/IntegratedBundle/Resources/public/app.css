@@ -12837,8 +12837,9 @@ table.table .favicon-wrapper .channel-favicons.popout {
 }
 
 .publication-settings-button {
-  color: rgba(63, 63, 63, 0.55);
-  font-size: x-large;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .editor-overlay {
@@ -12858,6 +12859,83 @@ table.table .favicon-wrapper .channel-favicons.popout {
 .editor-overlay.show {
   opacity: 1;
   visibility: visible;
+}
+
+.aside-item-wrapper .aside-item-list .aside-item-list-container .brand-container {
+  border: 1px solid #dee3e9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container .brand-container .form-group {
+  width: 100%;
+  margin: 0;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container .brand-container .form-group .checkbox {
+  width: 100%;
+  border: none;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container .brand-container .form-group .checkbox label {
+  padding: 0.5rem;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container .brand-container .form-group .checkbox label .background {
+  border-radius: 8px 8px 0 0;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels {
+  max-height: 100%;
+  overflow: visible;
+  padding: 0;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li {
+  margin-bottom: 0px;
+  position: relative;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li.primary-channel label {
+  font-weight: bold;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li .checkbox {
+  position: relative;
+  border: none;
+  border-bottom: 1px solid #dee3e9;
+  border-radius: 0;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li .checkbox:hover {
+  background-color: #f0f1f5;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li label {
+  padding: 0.5rem;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li:last-child .checkbox {
+  border-bottom: none;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li a.publication-settings-button {
+  width: 37px;
+  height: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: 1px solid #dee3e9;
+  color: #637281;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li a.publication-settings-button:hover {
+  background-color: #dee3e9;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li a.make-primary {
+  position: absolute;
+  right: 37px;
+  top: 0;
+  width: 60px;
+  height: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: 1px solid #dee3e9;
+  color: #637281;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels li a.make-primary:hover {
+  background-color: #dee3e9;
+}
+.aside-item-wrapper .aside-item-list .aside-item-list-container ul.brand-channels .checkbox-container input:checked ~ .background {
+  background-color: transparent;
 }
 
 /* HEADER */
