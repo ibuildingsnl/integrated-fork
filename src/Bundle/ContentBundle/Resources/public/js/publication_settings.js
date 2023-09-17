@@ -55,6 +55,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     openSettings.addEventListener('click', function (ev) {
         openPublishingSettings(input.dataset.channelSelector, input);
         ev.preventDefault();
+        ev.stopPropagation();
     });
 
     input.closest('.checkbox').insertAdjacentElement('afterend', openSettings);
@@ -80,6 +81,28 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             ev.preventDefault();
         });
     });
+});
+
+document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' || ev.keyCode === 27) {
+        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
+            div.classList.remove('show');
+        });
+        document.querySelectorAll('.editor-overlay.show').forEach(div => {
+            div.classList.remove('show');
+        });
+    }
+});
+
+document.addEventListener('click', function (ev) {
+    if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder')) {
+        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
+            div.classList.remove('show');
+        });
+        document.querySelectorAll('.editor-overlay.show').forEach(div => {
+            div.classList.remove('show');
+        });
+    }
 });
 
 function setChannelChoices(element)
