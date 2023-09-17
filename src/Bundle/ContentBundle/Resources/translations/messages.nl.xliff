@@ -1202,6 +1202,14 @@
                 <source>Copy</source>
                 <target>Kopieer</target>
             </trans-unit>
+            <trans-unit id="305">
+                <source>New brand</source>
+                <target>Nieuw merk</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>Brands</source>
+                <target>Merken</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
