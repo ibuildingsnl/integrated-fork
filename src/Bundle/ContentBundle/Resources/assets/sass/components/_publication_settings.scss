@@ -64,6 +64,9 @@
 .aside-item-wrapper {
     .aside-item-list {
         .aside-item-list-container {
+            .brand_channel_choice {
+                margin-bottom: 0.5rem;
+            }
             .brand-container {
                 border: 1px solid #dee3e9;
                 border-radius: 8px;
@@ -72,6 +75,7 @@
                 .form-group {
                     width: 100%;
                     margin: 0;
+                    position: relative;
 
                     .checkbox {
                         width: 100%;
@@ -86,6 +90,17 @@
                         }
 
                     }
+                    a.publication-channel-toggle-button {
+                        width: 37px;
+                        height: 37px;
+                        display: none;
+                        justify-content: center;
+                        align-items: center;
+                        border-left: 1px solid #dee3e9;
+                        color: #637281;
+                        position: absolute;
+                        right: 0;
+                    }
                 }
             }
 
@@ -93,6 +108,7 @@
                 max-height: 100%;
                 overflow: visible;
                 padding: 0;
+                display: none;
 
                 li {
                     margin-bottom: 0px;
