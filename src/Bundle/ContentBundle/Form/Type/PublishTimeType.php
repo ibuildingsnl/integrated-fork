@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\MaxDateTimeTransformer;
 use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
+use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -51,6 +52,14 @@ class PublishTimeType extends AbstractType
                 }
                 $startDate = $publishTime->getStartDate();
                 $endDate = $publishTime->getEndDate();
+
+                if (!$startDate instanceof \DateTime) {
+                    $publishTime->setStartDate(new \DateTime());
+                }
+
+                if (!$endDate instanceof \DateTime) {
+                    $publishTime->setEndDate(new \DateTime(PublishTimeInterface::DATE_MAX));
+                }
 
                 if ($startDate instanceof \DateTime && $endDate instanceof \DateTime) {
                     if ($endDate < $startDate) {

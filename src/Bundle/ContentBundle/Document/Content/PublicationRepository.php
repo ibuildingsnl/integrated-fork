@@ -2,20 +2,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
-interface PublicationRepository
+class PublicationRepository extends DocumentRepository
 {
-    public function find(string $id): ?Publication;
-
     /** @return Publication[] */
-    public function publishedBetween(\DateTime $start, \DateTime $end): array;
+    public function forContent(Content|string $content): array
+    {
+        return []; // @todo
+    }
 
-    /** @return Publication[] */
-    public function forContent(Content|string $content): array;
-
-    /** @return Publication[] */
-    public function forChannel(ChannelInterface|string $channel): array;
-
-    public function add(Publication $publication): void;
+    public function add(Publication $publication): void
+    {
+        $this->getDocumentManager()->persist($publication);
+    }
 }

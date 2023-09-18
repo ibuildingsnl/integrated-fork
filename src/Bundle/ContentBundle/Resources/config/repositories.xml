@@ -18,6 +18,10 @@
             <argument type="string">\Integrated\Bundle\ContentBundle\Document\SearchSelection\SearchSelection</argument>
         </service>
 
+        <service id="integrated_content.publication_repository" class="Doctrine\Persistence\ObjectRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument>Integrated\Bundle\ContentBundle\Document\Content\Publication</argument>
+        </service>
     </services>
 
 </container>

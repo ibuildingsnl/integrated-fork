@@ -9,10 +9,10 @@ class Publication
 {
     private string $id;
     public function __construct(
-        public readonly Content $content,
-        public readonly ChannelInterface $channel,
-        public readonly PublishTimeInterface $time,
-        public readonly array $settings = [],
+        private readonly Content $content,
+        private readonly ChannelInterface $channel,
+        private PublishTimeInterface $time,
+        private readonly array $settings = [],
     ) {
     }
 
@@ -24,5 +24,25 @@ class Publication
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getContent(): Content
+    {
+        return $this->content;
+    }
+
+    public function getChannel(): ChannelInterface
+    {
+        return $this->channel;
+    }
+
+    public function getTime(): PublishTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function getSettings(): array
+    {
+        return $this->settings;
     }
 }
