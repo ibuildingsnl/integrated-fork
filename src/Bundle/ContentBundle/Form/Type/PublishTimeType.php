@@ -45,7 +45,10 @@ class PublishTimeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime',
-            'constraints' => new Callback(function (PublishTime $publishTime, ExecutionContextInterface $context) {
+            'constraints' => new Callback(function (?PublishTime $publishTime, ExecutionContextInterface $context) {
+                if (!$publishTime) {
+                    return;
+                }
                 $startDate = $publishTime->getStartDate();
                 $endDate = $publishTime->getEndDate();
 

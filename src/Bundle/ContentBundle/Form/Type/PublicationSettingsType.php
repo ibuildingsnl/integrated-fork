@@ -26,6 +26,7 @@ class PublicationSettingsType extends AbstractType
                 ],
                 'settings' => $this->publicationSettings->settingTypeFor($channel),
                 'label' => $channel->getName(),
+                'required' => false,
             ]);
         }
     }
