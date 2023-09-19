@@ -3,15 +3,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document
-        name="Integrated\Bundle\ContentBundle\Document\Content\Publication"
-        repository-class="Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository"
-    >
-        <id field-name="id" />
-        <reference-one
-            field="content"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Content"
-        />
+    <embedded-document name="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Publication">
         <reference-one
             field="channel"
             target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel"
@@ -22,6 +14,6 @@
         />
         <field field-name="settings" type="hash" />
 
-    </document>
+    </embedded-document>
 
 </doctrine-mongo-mapping>

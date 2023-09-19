@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -47,6 +48,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      * @var Collection
      */
     protected $channels;
+
+    protected Collection $publications;
 
     /**
      * @var Channel
@@ -150,6 +153,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->updatedAt = new \DateTime();
         $this->publishTime = new PublishTime();
         $this->channels = new ArrayCollection();
+        $this->publications = new ArrayCollection();
         $this->connectors = new ArrayCollection();
     }
 
@@ -604,6 +608,30 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->primaryChannel = $primaryChannel;
 
         return $this;
+    }
+
+    public function setPublications(iterable $publications): void
+    {
+        dd($publications);
+        $this->publications->clear();
+        $this->publications = new ArrayCollection();
+
+        foreach ($publications as $publication) {
+            $this->addPublication($publication);
+        }
+    }
+
+    /** @return Publication[] */
+    public function getPublications(): array
+    {
+        return $this->publications?->toArray() ?: [];
+    }
+
+    public function addPublication(Publication $publication): void
+    {
+        if (!$this->publications->contains($publication)) {
+            $this->publications->add($publication);
+        }
     }
 
     /**
