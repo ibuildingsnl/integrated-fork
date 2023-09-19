@@ -20,19 +20,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ConfigureMenuSubscriber implements EventSubscriberInterface
 {
-    const MENU = 'integrated_menu';
-    const MENU_CONTENT = 'Content';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
-    const ROLE_IMPORT = 'ROLE_IMPORT';
+    public const MENU = 'integrated_menu';
+    public const MENU_CONTENT = 'Content';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_IMPORT = 'ROLE_IMPORT';
 
     /**
      * @var AuthorizationCheckerInterface
      */
     protected $authorizationChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -48,9 +45,6 @@ class ConfigureMenuSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ConfigureMenuEvent $event
-     */
     public function onMenuConfigure(ConfigureMenuEvent $event)
     {
         $menu = $event->getMenu();

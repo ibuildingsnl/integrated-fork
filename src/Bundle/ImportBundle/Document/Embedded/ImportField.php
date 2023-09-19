@@ -41,17 +41,11 @@ class ImportField
         return $this->options;
     }
 
-    /**
-     * @return int
-     */
     public function getColumn(): int
     {
         return $this->column;
     }
 
-    /**
-     * @param int $column
-     */
     public function setColumn(int $column): void
     {
         $this->column = $column;
@@ -65,9 +59,6 @@ class ImportField
         return $this->sourceField;
     }
 
-    /**
-     * @param string $sourceField
-     */
     public function setSourceField(string $sourceField): void
     {
         $this->sourceField = $sourceField;
@@ -81,9 +72,6 @@ class ImportField
         return $this->mappedField;
     }
 
-    /**
-     * @param string $mappedField
-     */
     public function setMappedField(string $mappedField): void
     {
         $this->mappedField = $mappedField;

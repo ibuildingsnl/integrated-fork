@@ -125,25 +125,16 @@ class ImportDefinition
         return $this->contentType;
     }
 
-    /**
-     * @param string $contentType
-     */
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
     }
 
-    /**
-     * @return string | null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
@@ -157,9 +148,6 @@ class ImportDefinition
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTime $createdAt
-     */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
@@ -173,17 +161,11 @@ class ImportDefinition
         return $this->executedAt;
     }
 
-    /**
-     * @param \DateTime $executedAt
-     */
     public function setExecutedAt(\DateTime $executedAt)
     {
         $this->executedAt = $executedAt;
     }
 
-    /**
-     * @param Collection $channels
-     */
     public function setChannels(Collection $channels)
     {
         $this->channels->clear();
@@ -202,9 +184,6 @@ class ImportDefinition
         return $this->channels->toArray();
     }
 
-    /**
-     * @param ChannelInterface $channel
-     */
     public function addChannel(ChannelInterface $channel)
     {
         if (!$this->channels->contains($channel)) {
@@ -213,8 +192,6 @@ class ImportDefinition
     }
 
     /**
-     * @param ChannelInterface $channel
-     *
      * @return bool
      */
     public function hasChannel(ChannelInterface $channel)
@@ -222,9 +199,6 @@ class ImportDefinition
         return $this->channels->contains($channel);
     }
 
-    /**
-     * @param ChannelInterface $channel
-     */
     public function removeChannel(ChannelInterface $channel)
     {
         $this->channels->removeElement($channel);
@@ -238,9 +212,6 @@ class ImportDefinition
         return $this->fileId;
     }
 
-    /**
-     * @param null | string $fileId
-     */
     public function setFileId(?string $fileId): void
     {
         $this->fileId = $fileId;
@@ -269,8 +240,6 @@ class ImportDefinition
     }
 
     /**
-     * @param $name
-     *
      * @return bool
      */
     public function hasField($name)
@@ -302,9 +271,6 @@ class ImportDefinition
         return $this->imageBaseUrl;
     }
 
-    /**
-     * @param string $imageBaseUrl
-     */
     public function setImageBaseUrl(string $imageBaseUrl)
     {
         $this->imageBaseUrl = $imageBaseUrl;
@@ -358,9 +324,6 @@ class ImportDefinition
         $this->fileContentType = $fileContentType;
     }
 
-    /**
-     * @return Relation|null
-     */
     public function getFileRelation(): ?Relation
     {
         return $this->fileRelation;

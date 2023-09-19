@@ -13,9 +13,6 @@ class ImportProcessor
 
     /**
      * ImportFile constructor.
-     *
-     * @param AppCache        $storageCache
-     * @param DocumentManager $documentManager
      */
     public function __construct(
         AppCache $storageCache,

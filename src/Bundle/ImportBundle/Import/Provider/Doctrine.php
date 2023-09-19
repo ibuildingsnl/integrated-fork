@@ -16,8 +16,6 @@ class Doctrine
     }
 
     /**
-     * @param ImportDefinition $importDefinition
-     *
      * @return mixed[]
      *
      * @throws \Doctrine\DBAL\DBALException
@@ -34,7 +32,7 @@ class Doctrine
 
         $result = $connection->fetchAllAssociative($importDefinition->getConnectionQuery());
 
-        //add a heading array
+        // add a heading array
         $startRow = [];
         if (\count($result)) {
             foreach ($result[0] as $column => $value) {

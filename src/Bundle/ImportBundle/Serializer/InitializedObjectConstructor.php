@@ -6,7 +6,6 @@ use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface;
-use JMS\Serializer\VisitorInterface;
 
 /**
  * Object constructor that allows deserialization into already constructed objects passed through the deserialization context.

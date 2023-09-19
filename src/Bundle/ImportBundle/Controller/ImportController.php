@@ -12,6 +12,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
@@ -21,11 +22,10 @@ use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
+use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Provider\Doctrine;
 use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
-use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Serializer\InitializedObjectConstructor;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
@@ -35,11 +35,10 @@ use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class ImportController extends AbstractController
@@ -81,14 +80,6 @@ class ImportController extends AbstractController
 
     /**
      * ImportController constructor.
-     *
-     * @param ContentTypeManager $contentTypeManager
-     * @param DocumentManager    $documentManager
-     * @param EntityManager      $entityManager
-     * @param ImportFile         $importFile
-     * @param Doctrine           $doctrine
-     * @param Manager            $storageManager
-     * @param ImportProcessor    $processor
      */
     public function __construct(
         ContentTypeManager $contentTypeManager,
@@ -127,8 +118,6 @@ class ImportController extends AbstractController
     }
 
     /**
-     * @param ImportDefinition $importDefinition
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function cloneImport(ImportDefinition $importDefinition)
@@ -144,9 +133,6 @@ class ImportController extends AbstractController
     }
 
     /**
-     * @param Request     $request
-     * @param ContentType $type
-     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function newImport(Request $request, ContentType $type)
@@ -177,9 +163,6 @@ class ImportController extends AbstractController
     }
 
     /**
-     * @param Request          $request
-     * @param ImportDefinition $importDefinition
-     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editImport(Request $request, ImportDefinition $importDefinition)
@@ -205,9 +188,6 @@ class ImportController extends AbstractController
     }
 
     /**
-     * @param Request          $request
-     * @param ImportDefinition $importDefinition
-     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function chooseFile(Request $request, ImportDefinition $importDefinition)
@@ -228,7 +208,7 @@ class ImportController extends AbstractController
         }
 
         if (!$file) {
-            //file not yet uploaded, create a new one
+            // file not yet uploaded, create a new one
             $file = new File();
             $file->setContentType('import_file');
             $method = 'POST';
@@ -281,9 +261,6 @@ class ImportController extends AbstractController
     }
 
     /**
-     * @param Request          $request
-     * @param ImportDefinition $importDefinition
-     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @throws \Exception
@@ -342,7 +319,7 @@ class ImportController extends AbstractController
                             }
                         }
                     }
-                    //check current field
+                    // check current field
 
                     $fields['field-'.$contentTypeField] = ['label' => $contentTypeField, 'matchCol' => $matchCol];
                 }
@@ -383,7 +360,7 @@ class ImportController extends AbstractController
                 return $this->redirectToRoute('integrated_import_summary', ['importDefinition' => $importDefinition->getId()]);
             }
 
-            //do some checks to generate some warnings
+            // do some checks to generate some warnings
             if ($importDefinition->getFields()) {
                 foreach ($importDefinition->getFields() as $field) {
                     if (isset($fields[$field->getMappedField()])) {
@@ -414,7 +391,7 @@ class ImportController extends AbstractController
                 $columnItemCount[$columnName] = 0;
             }
 
-            //display at least 2 sample rows for each column and minimum 20 rows, don't display the rest
+            // display at least 2 sample rows for each column and minimum 20 rows, don't display the rest
             $rowNumber = 0;
             foreach ($data as $index => $row) {
                 if ($rowNumber >= 1) {
@@ -446,10 +423,10 @@ class ImportController extends AbstractController
                 ++$rowNumber;
             }
 
-            //todo: id for connector
-            //todo: relations match
+            // todo: id for connector
+            // todo: relations match
 
-            //prepare data for display
+            // prepare data for display
             foreach ($data as $index => $row) {
                 foreach ($row as $index2 => $value2) {
                     if (\is_array($value2)) {
@@ -484,7 +461,7 @@ class ImportController extends AbstractController
             $data = $this->importFile->toArray($importDefinition);
         }
 
-        //found out which fields are not in the definition
+        // found out which fields are not in the definition
         $ignoredFields = $data[0];
         foreach ($importDefinition->getFields() as $field) {
             $index = array_search($field->getSourceField(), $ignoredFields);
@@ -519,7 +496,7 @@ class ImportController extends AbstractController
         ini_set('max_execution_time', 3600);
         ini_set('memory_limit', '4G');
 
-        //close session to prevent session locking for other connections
+        // close session to prevent session locking for other connections
         $session = new Session();
         $session->save();
 
@@ -558,7 +535,7 @@ class ImportController extends AbstractController
             ->addMetadataDir(realpath(__DIR__.'/../../ContentBundle/Resources/serializer'))
             ->setObjectConstructor(new InitializedObjectConstructor(new UnserializeObjectConstructor()))
             ->build();
-        //$contentTypeFields = json_decode($serializer->serialize($contentType->create(), 'json', $context), true);
+        // $contentTypeFields = json_decode($serializer->serialize($contentType->create(), 'json', $context), true);
 
         $fieldMapping = [];
         foreach ($importDefinition->getFields() as $field) {
@@ -569,12 +546,12 @@ class ImportController extends AbstractController
         foreach ($data as $row) {
             ++$rowNumber;
             if ($rowNumber <= 0 || $rowNumber < $start) {
-                //skip heading row and processed rows
+                // skip heading row and processed rows
                 continue;
             }
 
             if (($newStart - $start) > $rowsPerRequest) {
-                //max 20 items
+                // max 20 items
                 $result['start'] = $newStart;
                 $result['done'] = false;
                 continue;
@@ -582,7 +559,7 @@ class ImportController extends AbstractController
 
             $newStart = $newStart + 1;
 
-            //create record
+            // create record
             $col = 0;
             $newData = [];
             foreach ($row as $value) {
@@ -605,38 +582,38 @@ class ImportController extends AbstractController
             }
 
             if (isset($newData['created_at'])) {
-                //wordpress
-                //todo: move to WP filter
+                // wordpress
+                // todo: move to WP filter
                 $newData['created_at'] = str_replace(' ', 'T', $newData['created_at']).'+2:00';
-                //$newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
+                // $newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
             }
 
             if (isset($newData['updated_at'])) {
-                //wordpress
-                //todo: move to WP filter
+                // wordpress
+                // todo: move to WP filter
                 $newData['updated_at'] = str_replace(' ', 'T', $newData['updated_at']).'+2:00';
             }
 
             if (isset($newData['start_date'])) {
-                //wordpress
-                //todo: move to WP filter
+                // wordpress
+                // todo: move to WP filter
                 if (\strlen($newData['start_date']) == 10) {
                     $date = new \DateTime($newData['start_date']);
                     $newData['start_date'] = $date->format(\DateTime::ISO8601);
 //                    $newData['start_date'] = $newData['start_date'].'T00:00:00';
                 }
-                //$newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
+                // $newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
             }
 
             if (isset($newData['end_date'])) {
-                //wordpress
-                //todo: move to WP filter
+                // wordpress
+                // todo: move to WP filter
                 if (\strlen($newData['end_date']) == 10) {
                     $date = new \DateTime($newData['end_date']);
                     $newData['end_date'] = $date->format(\DateTime::ISO8601);
 //                        $newData['end_date'].'T00:00:00';
                 }
-                //$newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
+                // $newData['datecreated'] = date("Y-m-d\TH:i:s+1:00", $newData['datecreated']);
             }
 
             if (\count($newData)) {
@@ -655,7 +632,7 @@ class ImportController extends AbstractController
                 }
 
                 if (isset($row['wp:post_id']) && $importDefinition->getImageBaseUrl()) {
-                    //todo image base URL to general base URL
+                    // todo image base URL to general base URL
                     $doubleArticle = $this->documentManager->getRepository(Content::class)->findOneBy([
                         'metadata.data.wpPostId' => $row['wp:post_id'],
                         'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
@@ -718,7 +695,7 @@ class ImportController extends AbstractController
                 }
 
                 try {
-                    //todo: move to Wordpress filter
+                    // todo: move to Wordpress filter
                     /*
                     if (isset($row['wp:post_id']) && $importDefinition->getImageBaseUrl()) {
                         //todo image base URL to general base URL
@@ -744,7 +721,7 @@ class ImportController extends AbstractController
                         }
                     }
 */
-                    //todo, make optional (or remove)
+                    // todo, make optional (or remove)
                     /*
                     $doubleArticle = $this->documentManager->getRepository(Article::class)->findOneBy(['title' => $newObject->getTitle()]);
                     if ($doubleArticle) {
@@ -828,7 +805,7 @@ class ImportController extends AbstractController
 
                             $targets = $relation->getTargets();
                             $targetContentType = $targets[0];
-                            //TODO: allow choose content type
+                            // TODO: allow choose content type
 
                             /*$targetContentType = $this->documentManager->find(
                                 ContentType::class,
@@ -876,7 +853,7 @@ class ImportController extends AbstractController
                                             $link->setTitle($valueName);
                                         }
                                         $link->getMetadata()->set('importDate', date('Ymd'));
-                                        //$link->getMetadata()->set('externalId', 'header/'.$valueName);
+                                        // $link->getMetadata()->set('externalId', 'header/'.$valueName);
                                         $link->getMetadata()->set('externalId', $valueName);
                                         $link->getMetadata()->set('importImageBaseUrl', $importDefinition->getImageBaseUrl());
 
@@ -927,7 +904,7 @@ class ImportController extends AbstractController
 
                                             $imageAltName = str_replace('_src', '_alt', $name);
                                             if (!empty($row[$imageAltName])) {
-                                                //$link->setDescription($row[$imageAltName]);
+                                                // $link->setDescription($row[$imageAltName]);
                                             }
 
                                             $this->documentManager->flush();
@@ -979,8 +956,8 @@ class ImportController extends AbstractController
 
                         $newHtml = '';
                         $prevLine = '';
-                        if (true) { //todo: more to wordpress filter, only for Wordpress
-                            //todo: move to filter
+                        if (true) { // todo: more to wordpress filter, only for Wordpress
+                            // todo: move to filter
                             $contentLines = [];
                             foreach (explode("\n", $content) as $contentLine) {
                                 if (str_replace('-', '', $contentLine) == '') {
@@ -1016,7 +993,7 @@ class ImportController extends AbstractController
                                         || substr($line, 0, 3) == '<ul'
                                         || (substr($line, 0, 1) == '[' && substr($line, -1, 1) == ']')
                                     ) {
-                                        //niks mee doen
+                                        // niks mee doen
                                         if ($prevLine == 'li') {
                                             $newHtml .= '</ul>';
                                         }
@@ -1053,7 +1030,7 @@ class ImportController extends AbstractController
                             if ($prevLine == 'li') {
                                 $newHtml .= '</ul>';
                             }
-                        } else { //content as text
+                        } else { // content as text
                             foreach (explode("\n", $content) as $line) {
                                 $line = trim($line);
                                 $line = '<p>'.$line.'</p>';
@@ -1076,7 +1053,7 @@ class ImportController extends AbstractController
 
                             $href = $element->href;
                             if (strpos($href, '/') === 0) {
-                                //todo: move to filter
+                                // todo: move to filter
                                 if (!$importDefinition->getImageBaseUrl()) {
                                     continue;
                                 }
@@ -1128,8 +1105,8 @@ class ImportController extends AbstractController
                                 $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
                                 file_put_contents($tmpfile, @file_get_contents($href));
                                 if (filesize($tmpfile) == 0) {
-                                    //echo $file . "\n";
-                                    //echo "FILE HAS 0 BYTES\n";
+                                    // echo $file . "\n";
+                                    // echo "FILE HAS 0 BYTES\n";
                                     unlink($tmpfile);
                                     continue;
                                 }
@@ -1146,7 +1123,7 @@ class ImportController extends AbstractController
                                     )
                                 );
 
-                                //if (stripos($href, '.pdf') !== false) {
+                                // if (stripos($href, '.pdf') !== false) {
                                 $contentTT = $importDefinition->getFileContentType();
                                 $file = $this->documentManager->getRepository(File::class)->findOneBy([
                                         'contentType' => $contentTT,
@@ -1223,7 +1200,7 @@ class ImportController extends AbstractController
                             $title = $img->title;
                             $href = $img->src;
                             if (strpos($href, '/') === 0) {
-                                //todo: move to filter
+                                // todo: move to filter
                                 if (!$importDefinition->getImageBaseUrl()) {
                                     continue;
                                 }
@@ -1247,7 +1224,7 @@ class ImportController extends AbstractController
                                 'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
                             ]);
                             if ($image) {
-                                //attach existing images instead of duplication
+                                // attach existing images instead of duplication
 
                                 $skipImage = false;
                                 if ($newObject->getReferencesByRelationType('embedded')) {
@@ -1283,8 +1260,8 @@ class ImportController extends AbstractController
                             $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
                             file_put_contents($tmpfile, @file_get_contents($href));
                             if (filesize($tmpfile) == 0) {
-                                //echo $file . "\n";
-                                //echo "FILE HAS 0 BYTES\n";
+                                // echo $file . "\n";
+                                // echo "FILE HAS 0 BYTES\n";
                                 continue;
                             }
 
@@ -1350,8 +1327,8 @@ class ImportController extends AbstractController
                         rename($tmpBaseFile, $tmpfile);
                         file_put_contents($tmpfile, @file_get_contents($row['wp:attachment_url']));
                         if (filesize($tmpfile) == 0) {
-                            //echo $file . "\n";
-                            //echo "FILE HAS 0 BYTES\n";
+                            // echo $file . "\n";
+                            // echo "FILE HAS 0 BYTES\n";
                             $result['errors'][] = 'Attachment '.$row['wp:post_id'].' has 0 bytes';
                             unlink($tmpfile);
                             continue;
@@ -1381,7 +1358,7 @@ class ImportController extends AbstractController
                         $imgIds[] = $row['metamain_image'];
                     }
 
-                    //wordpress
+                    // wordpress
                     foreach ($imgIds as $imgId) {
                         if (!$imgId) {
                             continue;
@@ -1429,7 +1406,7 @@ class ImportController extends AbstractController
                         $newObject->setSourceUrl($row['meta_yoast_wpseo_canonical']);
                     }
 
-                    //premium articles
+                    // premium articles
                     if ($newObject->getMetadata()->get('premium') == 1) {
                         if ($relation = $newObject->getRelation('premium')) {
                             $newObject->removeRelation($relation);
@@ -1486,8 +1463,6 @@ class ImportController extends AbstractController
     /**
      * Creates a form to edit an ImportDefinition document.
      *
-     * @param ImportDefinition $importDefinition
-     *
      * @return \Symfony\Component\Form\FormInterface
      */
     protected function createCreateImportDefinitionForm(ImportDefinition $importDefinition)
@@ -1531,7 +1506,7 @@ class ImportController extends AbstractController
 
         if (trim($lastname) == '') {
             $lastname = '(empty)';
-            //throw new Exception('Empty lastname: ' . $name); //@todo: waarom?
+            // throw new Exception('Empty lastname: ' . $name); //@todo: waarom?
         }
 
         $person = $dm
