@@ -48,8 +48,6 @@
             field="channels"
             target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel" />
 
-        <embed-many field="publications" target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Publication" />
-
         <discriminator-field name="class" />
 
         <lifecycle-callbacks>

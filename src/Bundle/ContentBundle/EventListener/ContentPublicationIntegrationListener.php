@@ -4,7 +4,8 @@ namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationSettingsType;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
@@ -16,6 +17,7 @@ use Symfony\Component\Form\FormEvents;
 class ContentPublicationIntegrationListener implements EventSubscriberInterface
 {
     public function __construct(
+        private readonly PublicationRepository $publications,
     ) {
     }
 
@@ -33,8 +35,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
         if (!$content instanceof ChannelableInterface || !$form->has('channels')) {
             return;
         }
-        $form->add('publications', PublicationSettingsType::class, [
+        $form->add('publication_settings', PublicationSettingsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
+            'mapped' => false,
             'attr' => [
                 'class' => 'publication-settings-container',
             ],
@@ -45,7 +48,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             if (!$content instanceof Content) {
                 return;
             }
-            $form = $event->getForm()->get('publications');
+            $form = $event->getForm()->get('publication_settings');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
@@ -55,9 +58,9 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     $time = $data['time'];
                     unset($data['time']);
                 }
-//                $content->addPublication(
-//                    new Publication($channel, $time, is_array($data) ? $data : [])
-//                );
+                $this->publications->add(
+                    new Publication($content, $channel, $time, is_array($data) ? $data : [])
+                );
             }
         });
     }
