@@ -191,7 +191,7 @@
             <tag name="form.type"/>
         </service>
 
-        <service id="integrated_content.form.type.publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\PublicationSettingsType">
+        <service id="integrated_content.form.type.publication_settings" class="Integrated\Bundle\ContentBundle\Form\Type\PublicationsType">
             <tag name="form.type"/>
         </service>
 

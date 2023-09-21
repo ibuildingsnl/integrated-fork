@@ -8,7 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PublicationSettingsType extends AbstractType
+class PublicationsType extends AbstractType
 {
     public function __construct(
         private readonly PublicationSettingsProvider $publicationSettings,
@@ -19,7 +19,7 @@ class PublicationSettingsType extends AbstractType
     {
         /** @var ChannelInterface $channel */
         foreach ($options['channels'] as $channel) {
-            $builder->add($channel->getId(), PublicationSettingsPopupType::class, [
+            $builder->add($channel->getId(), PublicationType::class, [
                 'attr' => [
                     'class' => 'publication-settings',
                     'data-publication-channel' => $channel->getId(),
@@ -27,6 +27,8 @@ class PublicationSettingsType extends AbstractType
                 'settings' => $this->publicationSettings->settingTypeFor($channel),
                 'label' => $channel->getName(),
                 'required' => false,
+                'data' => $options['data'][$channel->getId()] ?? [],
+                'mapped' => false,
             ]);
         }
     }

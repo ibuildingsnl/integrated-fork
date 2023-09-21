@@ -6,10 +6,10 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
-use Integrated\Bundle\ContentBundle\Form\Type\PublicationSettingsType;
-use Integrated\Common\Content\ChannelableInterface;
+use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
+use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -32,15 +32,16 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
     {
         $form = $event->getBuilder();
         $content = $form->getData();
-        if (!$content instanceof ChannelableInterface || !$form->has('channels')) {
+        if (!$content instanceof Content || !$form->has('channels')) {
             return;
         }
-        $form->add('publication_settings', PublicationSettingsType::class, [
+        $form->add('publications', PublicationsType::class, [
             'channels' => $form->get('channels')->getOption('choices'),
             'mapped' => false,
             'attr' => [
                 'class' => 'publication-settings-container',
             ],
+            'data' => $this->publications->forContentByChannel($content),
         ]);
 
         $form->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -48,15 +49,20 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             if (!$content instanceof Content) {
                 return;
             }
-            $form = $event->getForm()->get('publication_settings');
+            $form = $event->getForm()->get('publications');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
                 $time = $content->getPublishTime();
-                if ($data instanceof PublishTime) {
-                    $time = $data;
-                } elseif (($data['time'] ?? null) instanceof PublishTime) {
+                if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
                     unset($data['time']);
+                }
+                $previous = $this->publications->forContentOnChannel($content, $channel);
+                if (count($previous)) {
+                    // No duplicate publications
+                    foreach ($previous as $previousPublication) {
+                        $this->publications->remove($previousPublication);
+                    }
                 }
                 $this->publications->add(
                     new Publication($content, $channel, $time, is_array($data) ? $data : [])

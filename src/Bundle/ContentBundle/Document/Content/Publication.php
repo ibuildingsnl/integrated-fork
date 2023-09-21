@@ -45,4 +45,9 @@ class Publication
     {
         return $this->settings;
     }
+
+    public function __get(string $name)
+    {
+        return $this->settings[$name] ?? null;
+    }
 }

@@ -2,16 +2,23 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PublicationSettingsPopupType extends AbstractType
+class PublicationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $data = $options['data'];
+        if ($data instanceof Publication) {
+            $data = $data->getSettings() + ['time' => $data->getTime()];
+        }
         $builder->add('settings', $options['settings'], [
             'label' => $options['label'],
+            'data' => $data,
+            'mapped' => false,
         ]);
     }
 
