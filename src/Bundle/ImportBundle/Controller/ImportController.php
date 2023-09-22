@@ -277,10 +277,12 @@ class ImportController extends AbstractController
                 $data = $this->importFile->toArray($importDefinition);
             }
 
+
             $contentType = $this->documentManager->find(
                 ContentType::class,
                 $importDefinition->getContentType()
             );
+
 
             $context = new SerializationContext();
             $context->setSerializeNull(true);
@@ -294,6 +296,7 @@ class ImportController extends AbstractController
             $fields = $this->processor->getFields();
 
             foreach ($contentTypeFields as $contentTypeField => $contentTypeValue) {
+
                 $contentTypeFields = [];
                 if (\is_array($contentTypeValue)) {
                     foreach ($contentTypeValue as $contentTypeField2 => $contentTypeValue2) {
@@ -496,6 +499,8 @@ class ImportController extends AbstractController
         ini_set('max_execution_time', 3600);
         ini_set('memory_limit', '4G');
 
+
+
         // close session to prevent session locking for other connections
         $session = new Session();
         $session->save();
@@ -507,6 +512,9 @@ class ImportController extends AbstractController
         $result['success'] = [];
         $result['warnings'] = [];
         $result['errors'] = [];
+
+
+        //TODO: When importing slug everything breaks
 
         if ($importDefinition->getConnectionUrl() && $importDefinition->getConnectionQuery()) {
             $data = $this->doctrine->toArray($importDefinition);
@@ -1539,5 +1547,40 @@ class ImportController extends AbstractController
         }
 
         return $person;
+    }
+
+    protected function normalize_comments($data) {
+        // If 'wp:comment' is an indexed array (which means it's a single comment)
+        if (isset($data['wp:comment'][0]) && is_string($data['wp:comment'][0])) {
+            // Prepare a default structure for wp:commentmeta
+            $comment_meta = [];
+            if (isset($data['wp:commentmeta'])) {
+                foreach ($data['wp:commentmeta'] as $meta_index => $meta_data) {
+                    $comment_meta[] = [
+                        "wp:meta_key" => [$meta_data[0]],
+                        "wp:meta_value" => [$meta_data[1]]
+                    ];
+                }
+            }
+            // Convert it to the associative array format
+            $data['wp:comment'] = [
+                [
+                    "wp:comment_id" => [$data['wp:comment'][0]],
+                    "wp:comment_author" => [$data['wp:comment'][1]],
+                    "wp:comment_author_email" => [$data['wp:comment'][2]],
+                    "wp:comment_author_url" => [],  // Assuming empty array since it's not provided
+                    "wp:comment_author_IP" => [$data['wp:comment'][3]],
+                    "wp:comment_date" => [$data['wp:comment'][4]],
+                    "wp:comment_date_gmt" => [$data['wp:comment'][5]],
+                    "wp:comment_content" => [$data['wp:comment'][6]],
+                    "wp:comment_approved" => [$data['wp:comment'][7]],
+                    "wp:comment_type" => [$data['wp:comment'][8]],
+                    "wp:comment_parent" => [$data['wp:comment'][9]],
+                    "wp:comment_user_id" => [$data['wp:comment'][10]],
+                    "wp:commentmeta" => []  // Assuming empty array since it's not provided
+                ]
+            ];
+        }
+        return $data;
     }
 }

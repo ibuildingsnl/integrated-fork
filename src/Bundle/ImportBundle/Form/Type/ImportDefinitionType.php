@@ -45,7 +45,13 @@ class ImportDefinitionType extends AbstractType
                 'icon' => 'network-alt',
             ],
         ]);
-        $builder->add('imageBaseUrl', UrlType::class, ['label' => 'Base URL for images', 'required' => false]);
+        $builder->add('imageBaseUrl', UrlType::class, [
+            'label' => 'Base URL for images',
+            'required' => false,
+            'attr' => [
+                'help_text' => 'For wordpress this will look like; https://yourwebsite.com/?attachment_id='
+            ],
+        ]);
         $builder->add('imageContentType', ContentTypeChoice::class, [
             'label' => 'Content type for images',
             'required' => false,
