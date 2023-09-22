@@ -1,0 +1,48 @@
+{% extends 'IntegratedContentBundle::base.html.twig' %}
+{% block crumbs %}
+    <div class="breadcrumb-holder">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li>
+                    <a href="{{ path('integrated_import_index') }}">{% trans %}Import{% endtrans %}</a>
+                </li>
+                <li>
+                    <a href="{{ path('integrated_import_edit', {'importDefinition': importDefinition.id}) }}">{{ importDefinition.name }}</a>
+                </li>
+                <li class="active">{% trans %}Choose import file{% endtrans %}</li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {{ form_start(form, {'style': 'horizontal', 'label_col': 3, 'widget_col': 9, 'col_size': 'sm'}) }}
+
+    <div class="pull-right">
+        <a class="btn btn-gray-thin" href="{{ path("integrated_import_index") }}">{% trans %}Back{% endtrans %}</a>&nbsp;
+        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
+    </div>
+
+    <h1>{% trans %}Step 1 of 4: Choose import file{% endtrans %}</h1>
+
+    <div class="row">
+        <section class="section-white section-padding section-shadow section-radius section-margin">
+
+            <div class="container">
+                {% trans %}Choose the file to import. Supported file type: CSV, XLSX, XML.{% endtrans  %}
+            </div>
+
+            <hr/>
+
+            {{ form_errors(form) }}
+            {{ form_rest(form) }}
+
+        </section>
+    </div>
+
+    <div class="pull-right">
+        <a class="btn btn-gray-thin" href="{{ path("integrated_import_index") }}">{% trans %}Back{% endtrans %}</a>&nbsp;
+        <button class="btn btn-orange" type="submit">{% trans %}Next{% endtrans %}</button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
