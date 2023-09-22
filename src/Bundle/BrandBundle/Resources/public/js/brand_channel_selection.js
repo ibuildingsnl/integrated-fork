@@ -1,11 +1,3 @@
-document.querySelectorAll('.brands input.brand-choice').forEach(
-    (brandCheckbox) => brandCheckbox.addEventListener('change', () => brandCheckbox
-        .closest('.brand-container')
-        .querySelectorAll('.publication-channel-toggle-button')
-        .forEach((brandChannelsToggle) => brandChannelsToggle.style.display = brandCheckbox.checked ? 'flex' : 'none')
-    ) || brandCheckbox.dispatchEvent(new Event('change'))
-);
-
 document.addEventListener("DOMContentLoaded", function() {
     const brandsDiv = document.querySelector('.brands .aside-item-list');
     const htmlContent = `
@@ -70,5 +62,23 @@ document.querySelectorAll('.brands input.brand-choice').forEach(function (input)
     input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
     input.showChannels = showChannels;
 
+    input.addEventListener('change', function() {
+        openChannelList(input);
+    })
+
 });
 
+document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) => {
+    brandCheckbox.addEventListener('change', () => {
+        brandCheckbox
+        .closest('.brand-container')
+        .querySelectorAll('.publication-channel-toggle-button')
+        .forEach((brandChannelsToggle) => {
+            brandChannelsToggle.style.display = brandCheckbox.checked ? 'flex' : 'none';
+        });
+    });
+
+    if (brandCheckbox.checked) {
+        brandCheckbox.dispatchEvent(new Event('change'));
+    }
+});
