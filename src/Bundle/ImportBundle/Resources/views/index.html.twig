@@ -1,54 +1,63 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="active">{% trans %}Import{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% extends '@IntegratedContent/base.html.twig' %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 push-sm-down">
-            <ul class="list-inline">
-                <li class="dropdown">
-                    <a href="#" data-toggle="dropdown" role="button" id="drop_1">{% trans %}New import{% endtrans %} <b class="caret"></b></a>
-                    <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
-                        {% for type in contentTypes %}
-                            {% if type.type %}
-                                <li role="presentation">
-                                    <a href="{{ path('integrated_import_new', {'type': type.type}) }}">
-                                        {{ type.name }}
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </li>
-            </ul>
+        <div class="index-wrapper-full">
+            <div class="page-title">
+                <h1 class="heading">{% trans %}Imports{% endtrans %}</h1>
+                <ul class="options-no-bg">
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a href="#" data-toggle="dropdown" role="button" id="drop_1" class="btn btn-select">
+                            <span>{% trans %}New import{% endtrans %}</span>
+                            <i class="iconoir-plus"></i>
+                        </a>
+                        <ul aria-labelledby="drop_1" role="menu" class="dropdown-menu" id="menu_1">
+                            {% for type in contentTypes %}
+                                {% if type.type %}
+                                    <li role="presentation"><a
+                                            href="{{ path('integrated_import_new', {'type': type.type}) }}"
+                                            tabindex="-1" role="menuitem">
+                                            {{ type.name }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-            <section class="section-white section-padding section-shadow section-radius">
-                <table class="table">
+            <section class="section-white section-radius">
+
+                <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>{% trans %}ID{% endtrans %}</th>
                         <th>{% trans %}Name{% endtrans %}</th>
                         <th>{% trans %}Document type{% endtrans %}</th>
                         <th>{% trans %}Created{% endtrans %}</th>
-                        <th colspan="3">{% trans %}Actions{% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for document in documents %}
-                        <tr>
+                        <tr class="has-options">
                             <td>
-                                {{ document.id }}
-                            </td>
-                            <td>
-                                <a href="{{ path('integrated_import_file', {'importDefinition': document.id}) }}">
-                                    {{ document.name }}
-                                </a>
+                                <strong>
+                                    <a href="{{ path('integrated_import_edit', {'importDefinition': document.id}) }}">
+                                        {{ document.name }}
+                                    </a>
+                                </strong>
+                                <div class="row-options">
+                                    <a href="{{ path('integrated_import_file', {'importDefinition': document.id}) }}"
+                                       title="{% trans %}Start import{% endtrans %}">
+                                        {% trans %}Start import{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_import_edit', {'importDefinition': document.id}) }}"
+                                       title="{% trans %}Edit{% endtrans %}">
+                                        {% trans %}Edit{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_import_clone', {'importDefinition': document.id}) }}"
+                                       title="{% trans %}Copy{% endtrans %}">
+                                        {% trans %}Copy{% endtrans %}
+                                    </a>
+                                </div>
                             </td>
                             <td>
                                 {% for type in contentTypes %}
@@ -58,22 +67,7 @@
                                 {% endfor %}
                             </td>
                             <td>
-                                {{ document.createdAt|localizeddate("medium", "none") }}
-                            </td>
-                            <td>
-                                <a href="{{ path('integrated_import_file', {'importDefinition': document.id}) }}" title="{% trans %}Copy{% endtrans %}">
-                                    Start import
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{{ path('integrated_import_edit', {'importDefinition': document.id}) }}" title="{% trans %}Copy{% endtrans %}">
-                                    Edit
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{{ path('integrated_import_clone', {'importDefinition': document.id}) }}" title="{% trans %}Copy{% endtrans %}">
-                                    Copy
-                                </a>
+                                {{ document.createdAt|format_date("medium", "none") }}
                             </td>
                         </tr>
                     {% else %}

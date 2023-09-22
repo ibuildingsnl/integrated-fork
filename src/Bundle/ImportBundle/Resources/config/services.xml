@@ -20,8 +20,7 @@
 
         <!-- Load services from whatever directories you want (you can update this!) -->
         <prototype namespace="Integrated\Bundle\ImportBundle\" resource="../../*" />
-        
-        <service id="integrated_content.content_type.manager" alias="integrated_content.content_type.manager.doctrine" public="true"/>
+
 
         <service id="jms_serializer.object_constructor" alias="jms_serializer.initialized_object_constructor" public="false">
         </service>
@@ -29,6 +28,25 @@
         <service id="jms_serializer.initialized_object_constructor" class="Integrated\Bundle\ImportBundle\Serializer\InitializedObjectConstructor" public="false">
             <argument>@jms_serializer.unserialize_object_constructor</argument>
         </service>
+
+        <service id="Integrated\Bundle\ImportBundle\Controller\ImportController">
+            <argument type="service" id="integrated_content.content_type.manager" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="Integrated\Bundle\ImportBundle\Import\Provider\File" />
+
+        </service>
+
+        <service id="Integrated\Bundle\ImportBundle\Import\ImportProcessor">
+            <argument type="service" id="integrated_storage.cache_app" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+        </service>
+
+        <service id="Integrated\Bundle\ImportBundle\Import\Provider\File">
+            <argument type="service" id="integrated_storage.cache_app" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+        </service>
+
     </services>
 
 </container>

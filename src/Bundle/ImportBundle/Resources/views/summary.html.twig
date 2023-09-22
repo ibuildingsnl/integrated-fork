@@ -1,27 +1,23 @@
-{% extends 'IntegratedContentBundle::base.html.twig' %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_import_index') }}">{% trans %}Import{% endtrans %}</a>
-                </li>
-                <li>
-                    <a href="{{ path('integrated_import_edit', {'importDefinition': importDefinition.id}) }}">{{ importDefinition.name }}</a>
-                </li>
-                <li class="active">{% trans %}Summary{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
+{% extends '@IntegratedContent/base.html.twig' %}
 {% block content %}
+    <div class="row">
     <form method="post" id="summaryForm">
         <input type="hidden" name="action" value="go" />
 
-        <div class="pull-right">
-            <a class="btn btn-gray-thin" href="{{ path("integrated_import_definition", {'importDefinition': importDefinition.id }) }}">{% trans %}Back{% endtrans %}</a>&nbsp;
-            <a class="btn btn-orange" href="{{ path("integrated_import_run", {'importDefinition': importDefinition.id }) }}">{% trans %}Start import{% endtrans %}</a>
+        <div id="toolbar" class="w-full flex justify-between">
+            <div class="options">
+                <div class="form-actions">
+                    <a class="no-icon btn btn-green" href="{{ path("integrated_import_run", {'importDefinition': importDefinition.id }) }}">{% trans %}Start import{% endtrans %}</a>
+                </div>
+            </div>
+            <div class="back">
+                <a class="no-icon btn btn-white icon-left"
+                   href="{{ path("integrated_import_definition", {'importDefinition': importDefinition.id }) }}"><i
+                        class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
+            </div>
         </div>
+
+        <div class="index-wrapper-full" style="margin-top:50px;">
 
         <h1>{% trans %}Step 3 of 4: Summary{% endtrans %}</h1>
 
@@ -70,12 +66,7 @@
             </div>
 
         </section>
-
-        <div class="pull-right">
-            <a class="btn btn-gray-thin" href="{{ path("integrated_import_definition", {'importDefinition': importDefinition.id }) }}">{% trans %}Back{% endtrans %}</a>&nbsp;
-            <a class="btn btn-orange" href="{{ path("integrated_import_run", {'importDefinition': importDefinition.id }) }}">{% trans %}Start import{% endtrans %}</a>
         </div>
-
     </form>
-
+    </div>
 {% endblock %}

@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Integrated package.
- *
- * (c) e-Active B.V. <integrated@e-active.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Integrated\Bundle\ImportBundle\Document\Embedded;
 
 /**
@@ -51,9 +42,6 @@ class ImportField
         $this->column = $column;
     }
 
-    /**
-     * @return string
-     */
     public function getSourceField(): ?string
     {
         return $this->sourceField;
@@ -64,9 +52,6 @@ class ImportField
         $this->sourceField = $sourceField;
     }
 
-    /**
-     * @return string
-     */
     public function getMappedField(): ?string
     {
         return $this->mappedField;

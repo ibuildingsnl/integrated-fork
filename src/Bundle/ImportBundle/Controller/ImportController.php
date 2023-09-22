@@ -109,7 +109,7 @@ class ImportController extends AbstractController
         $documents = $this->documentManager->getRepository(ImportDefinition::class)->findBy([], ['name' => 'asc']);
 
         return $this->render(
-            'IntegratedImportBundle::index.html.twig',
+            '@IntegratedImport/index.html.twig',
             [
                 'contentTypes' => $contentTypes,
                 'documents' => $documents,
@@ -154,7 +154,7 @@ class ImportController extends AbstractController
         }
 
         return $this->render(
-            'IntegratedImportBundle::new.html.twig',
+            '@IntegratedImport/new.html.twig',
             [
                 'contentType' => $type,
                 'form' => $form->createView(),
@@ -180,7 +180,7 @@ class ImportController extends AbstractController
         }
 
         return $this->render(
-            'IntegratedImportBundle::edit.html.twig',
+            '@IntegratedImport/edit.html.twig',
             [
                 'form' => $form->createView(),
             ]
@@ -252,7 +252,7 @@ class ImportController extends AbstractController
         }
 
         return $this->render(
-            'IntegratedImportBundle::chooseFile.html.twig',
+            '@IntegratedImport/chooseFile.html.twig',
             [
                 'importDefinition' => $importDefinition,
                 'form' => $form->createView(),
@@ -441,7 +441,7 @@ class ImportController extends AbstractController
         }
 
         return $this->render(
-            'IntegratedImportBundle::composeDefinition.html.twig',
+            '@IntegratedImport/composeDefinition.html.twig',
             [
                 'importDefinition' => $importDefinition,
                 'fields' => $fields,
@@ -471,7 +471,7 @@ class ImportController extends AbstractController
         }
 
         return $this->render(
-            'IntegratedImportBundle::summary.html.twig',
+            '@IntegratedImport/summary.html.twig',
             [
                 'records' => \count($data),
                 'importDefinition' => $importDefinition,
@@ -483,7 +483,7 @@ class ImportController extends AbstractController
     public function run(ImportDefinition $importDefinition)
     {
         return $this->render(
-            'IntegratedImportBundle::run.html.twig',
+            '@IntegratedImport/run.html.twig',
             [
                 'importDefinition' => $importDefinition,
                 'startTime' => time(),

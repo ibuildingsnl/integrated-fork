@@ -25,5 +25,12 @@ class Video extends File
     /**
      * @var StorageInterface
      */
+    #[Type\Field(type: 'Integrated\Bundle\StorageBundle\Form\Type\FileDropzoneType', options: [
+        'priority' => 500,
+        'attr' => [
+            'style' => 'editor',
+            'state' => 'show',
+        ],
+    ], location: 'editor')]
     protected $file;
 }

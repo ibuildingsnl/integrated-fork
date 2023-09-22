@@ -37,53 +37,87 @@ class ImportDefinitionType extends AbstractType
             'choice_label' => 'name',
             'multiple' => true,
             'expanded' => true,
+            'attr' => [
+                'class' => 'channel-options',
+                'location' => 'sidebar',
+                'style' => 'sidebar',
+                'state' => 'show search',
+                'icon' => 'network-alt',
+            ],
         ]);
         $builder->add('imageBaseUrl', UrlType::class, ['label' => 'Base URL for images', 'required' => false]);
-        $builder->add(
-            'imageContentType',
-            ContentTypeChoice::class,
-            ['label' => 'Content type for images', 'required' => false, 'multiple' => false]
-        );
-        $builder->add(
-            'imageRelation',
-            DocumentType::class,
-            [
-                'label' => 'Relation for images',
-                'multiple' => false,
-                'required' => false,
-                'query_builder' => function (DocumentRepository $dr) {
-                    return $dr->createQueryBuilder()->sort('name');
-                },
-                'class' => Relation::class,
-                'choice_label' => 'name',
-                'choice_value' => 'id',
-            ]
-        );
-        $builder->add(
-            'fileContentType',
-            ContentTypeChoice::class,
-            ['label' => 'Content type for files', 'required' => false, 'multiple' => false]
-        );
-        $builder->add(
-            'fileRelation',
-            DocumentType::class,
-            [
-                'label' => 'Relation for files',
-                'multiple' => false,
-                'required' => false,
-                'query_builder' => function (DocumentRepository $dr) {
-                    return $dr->createQueryBuilder()->sort('name');
-                },
-                'class' => Relation::class,
-                'choice_label' => 'name',
-                'choice_value' => 'id',
-            ]
-        );
-        $builder->add(
-            'authorContentType',
-            ContentTypeChoice::class,
-            ['label' => 'Content type for author', 'required' => false, 'multiple' => false]
-        );
+        $builder->add('imageContentType', ContentTypeChoice::class, [
+            'label' => 'Content type for images',
+            'required' => false,
+            'multiple' => false,
+            'attr' => [
+                'location' => 'sidebar',
+                'class' => 'select2',
+                'style' => 'sidebar',
+                'state' => 'show',
+                'icon' => 'network-alt',
+            ],
+        ]);
+        $builder->add('imageRelation', DocumentType::class, [
+            'label' => 'Relation for images',
+            'multiple' => false,
+            'required' => false,
+            'query_builder' => function (DocumentRepository $dr) {
+                return $dr->createQueryBuilder()->sort('name');
+            },
+            'class' => Relation::class,
+            'choice_label' => 'name',
+            'choice_value' => 'id',
+            'attr' => [
+                'location' => 'sidebar',
+                'class' => 'select2',
+                'style' => 'sidebar',
+                'state' => 'show',
+                'icon' => 'network-alt',
+            ],
+        ]);
+        $builder->add('fileContentType', ContentTypeChoice::class, [
+            'label' => 'Content type for files',
+            'required' => false,
+            'multiple' => false,
+            'attr' => [
+                'location' => 'sidebar',
+                'class' => 'select2',
+                'style' => 'sidebar',
+                'state' => 'show',
+                'icon' => 'network-alt',
+            ],
+        ]);
+        $builder->add('fileRelation', DocumentType::class, [
+            'label' => 'Relation for files',
+            'multiple' => false,
+            'required' => false,
+            'query_builder' => function (DocumentRepository $dr) {
+                return $dr->createQueryBuilder()->sort('name');
+            },
+            'class' => Relation::class,
+            'choice_label' => 'name',
+            'choice_value' => 'id',
+            'attr' => [
+                'location' => 'sidebar',
+                'class' => 'select2',
+                'style' => 'sidebar',
+                'state' => 'show',
+                'icon' => 'network-alt',
+            ],
+        ]);
+        $builder->add('authorContentType', ContentTypeChoice::class, [
+            'label' => 'Content type for author',
+            'required' => false,
+            'multiple' => false,
+            'attr' => [
+                'location' => 'sidebar',
+                'class' => 'select2',
+                'style' => 'sidebar',
+                'state' => 'show',
+                'icon' => 'network-alt',
+            ],
+        ]);
         $builder->add('connection_url', TextType::class, ['label' => 'Database connection URL', 'required' => false]);
         $builder->add('connection_query', TextareaType::class, ['label' => 'Database query', 'required' => false]);
     }
