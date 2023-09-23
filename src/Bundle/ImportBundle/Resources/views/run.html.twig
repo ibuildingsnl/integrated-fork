@@ -76,17 +76,17 @@ function executeImport(startRow) {
         url: "{{ path('integrated_import_run_execute', {'importDefinition': importDefinition.id} ) }}?startTime={{ startTime }}&start="+startRow
     }).done(function(data) {
         $.each(data.errors, function(key, value) {
-            $('#error-list').append('<div class="alert alert-danger">'+value+'</div>');
+            $('#error-list').append('<div class="alert-danger">'+value+'</div>');
             errorCount = errorCount + 1;
             $('#error-count').html(errorCount);
         });
         $.each(data.warnings, function(key, value) {
-            $('#warning-list').append('<div class="alert alert-warning">'+value+'</div>');
+            $('#warning-list').append('<div class="alert-warning">'+value+'</div>');
             warningCount = warningCount + 1;
             $('#warning-count').html(warningCount);
         });
         $.each(data.success, function(key, value) {
-            $('#success-list').append('<div class="alert success">'+value+'</div>');
+            $('#success-list').append('<div class="success">'+value+'</div>');
             successCount = successCount + 1;
             $('#success-count').html(successCount);
         });

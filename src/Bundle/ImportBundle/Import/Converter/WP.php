@@ -131,4 +131,36 @@ class WP
         
         return $newHtml;
     }
+
+    public static function processAttachment($row, $newObject, $storageManager)
+    {
+        if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
+            $tmpBaseFile = tempnam('/tmp/', 'img');
+            $tmpfile = $tmpBaseFile . '.' . pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION);
+            rename($tmpBaseFile, $tmpfile);
+            file_put_contents($tmpfile, @file_get_contents($row['wp:attachment_url']));
+            if (filesize($tmpfile) == 0) {
+                $errorMessage = 'Attachment ' . $row['wp:post_id'] . ' has 0 bytes';
+                unlink($tmpfile);
+                return ['error' => $errorMessage];
+            }
+
+            $storage = $storageManager->write(
+                new MemoryReader(
+                    file_get_contents($tmpfile),
+                    new StorageMetadata(
+                        pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION),
+                        mime_content_type($tmpfile),
+                        new ArrayCollection(),
+                        new ArrayCollection()
+                    )
+                )
+            );
+
+            $newObject->setFile($storage);
+            unlink($tmpfile);
+            return ['success' => true];
+        }
+        return ['error' => 'Invalid attachment or object type.'];
+    }
 }

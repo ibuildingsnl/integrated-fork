@@ -3,6 +3,8 @@
 namespace Integrated\Bundle\ImportBundle\Import\Create;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -69,32 +71,91 @@ class Create
 
         return $person;
     }
-    
+
     /**
-     * @param String $imageName
+     * @param String $href
      * @return StorageInterface|void
      */
-    public static function createFileFromImageName($imageName, $storageManager)
-    {
-        $filePath = 'public/files/' . $imageName;
+    public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false) {
 
-        $tmpfile = tempnam("/tmp/", '');
-        file_put_contents($tmpfile, @file_get_contents($filePath));
+        $href = self::maybeFetchRedirectUrl($href);
 
+        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
+        file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
-            return;
+            unlink($tmpfile);
+            return false;
         }
 
-        $reader = new MemoryReader(
-            file_get_contents($tmpfile),
-            new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata(
-                substr($imageName, strrpos($imageName, '.') + 1),
-                mime_content_type($tmpfile),
-                new ArrayCollection(),
-                new ArrayCollection()
+        $storage = $storageManager->write(
+            new MemoryReader(
+                file_get_contents($tmpfile),
+                new StorageMetadata(
+                    pathinfo($href, \PATHINFO_EXTENSION),
+                    mime_content_type($tmpfile),
+                    new ArrayCollection(),
+                    new ArrayCollection()
+                )
             )
         );
 
-        return $storageManager->write($reader);
+        if (!$title) {
+            $title = parse_url($href, PHP_URL_PATH);
+            $title = basename($title);
+        }
+
+        $imageContentType = $importDefinition->getImageContentType();
+
+        $image = $documentManager->getRepository(Image::class)->findOneBy(
+            [
+                'contentType' => $imageContentType,
+                'file.identifier' => $storage->getIdentifier(),
+            ]
+        );
+        //TODO: Add support for description
+        if (!$image) {
+            $newImage = new Image();
+            $newImage->setContentType('image');
+
+            $documentManager->persist($newImage);
+
+            $newImage->setFile($storage);
+            $newImage->setContentType($imageContentType);
+            $newImage->setTitle($title);
+            $newImage->getMetadata()->set('importDate', date('Ymd'));
+
+            $image = $newImage;
+
+            $documentManager->flush();
+        }
+        if ($setFeatured === true) {
+            $newObject->setFeaturedImage($image);
+            $documentManager->flush();
+        }
+
+        return $image;
+    }
+
+    private static function maybeFetchRedirectUrl($url)
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);  // Enable header (not strictly necessary)
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            echo 'Curl error: ' . curl_error($ch);
+            curl_close($ch);
+            return;
+        }
+
+        $effectiveUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);  // Get the final URL after all redirects
+        curl_close($ch);
+
+        return $effectiveUrl;
     }
 }
