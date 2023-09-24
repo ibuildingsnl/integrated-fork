@@ -24,6 +24,7 @@ use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
+use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
@@ -270,90 +271,28 @@ class ImportController extends AbstractController
      */
     public function composeDefinition(Request $request, ImportDefinition $importDefinition)
     {
-        ini_set('max_execution_time', 3600);
-        ini_set('memory_limit', '4G');
+        DefinitionComposer::initConfig();
 
         try {
-            if ($importDefinition->getConnectionUrl() && $importDefinition->getConnectionQuery()) {
-                $data = $this->doctrine->toArray($importDefinition);
-            } else {
-                $data = $this->importFile->toArray($importDefinition);
-            }
-
-
-            $contentType = $this->documentManager->find(
-                ContentType::class,
-                $importDefinition->getContentType()
+            $data = DefinitionComposer::fetchData($importDefinition, $this->doctrine, $this->importFile);
+            $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
+            $contentTypeFields = DefinitionComposer::initSerializer($contentType);
+            $fields = DefinitionComposer::generateFieldMappings(
+                $this->processor,
+                $contentTypeFields,
+                $importDefinition,
+                $this->entityManager,
+                $this->documentManager
             );
+            $result = DefinitionComposer::generateWarnings($importDefinition, $fields, $data);
 
-
-            $context = new SerializationContext();
-            $context->setSerializeNull(true);
-
-            $serializer = SerializerBuilder::create()
-                                           ->addMetadataDir(
-                                               realpath(__DIR__ . '/../../ContentBundle/Resources/serializer')
-                                           )
-                                           ->setObjectConstructor(
-                                               new InitializedObjectConstructor(new UnserializeObjectConstructor())
-                                           )
-                                           ->build();
-            $contentTypeFields = json_decode($serializer->serialize($contentType->create(), 'json', $context), true);
-
-            $fields = $this->processor->getFields();
-
-            foreach ($contentTypeFields as $contentTypeField => $contentTypeValue) {
-                $contentTypeFields = [];
-                if (\is_array($contentTypeValue)) {
-                    foreach ($contentTypeValue as $contentTypeField2 => $contentTypeValue2) {
-                        $contentTypeFields[] = $contentTypeField . '.' . $contentTypeField2;
-                    }
-                } else {
-                    $contentTypeFields[] = $contentTypeField;
-                }
-                foreach ($contentTypeFields as $contentTypeField) {
-                    $matchCol = false;
-                    if (!$importDefinition->getFields()) {
-                        if (isset($data[0])) {
-                            $col = 1;
-                            foreach ($data[0] as $dataValue) {
-                                $dataName = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $dataValue));
-                                $contentTypeFieldName = strtolower(
-                                    preg_replace('/[^A-Za-z0-9]/', '', $contentTypeField)
-                                );
-                                if ($dataName == $contentTypeFieldName) {
-                                    if (!$matchCol) {
-                                        $matchCol = [$col];
-                                    }
-                                }
-                                ++$col;
-                            }
-                        }
-                    }
-                    // check current field
-
-                    $fields['field-' . $contentTypeField] = ['label' => $contentTypeField, 'matchCol' => $matchCol];
-                }
+            foreach ($result['warnings'] as $warning) {
+                $this->addFlash('warning', $warning);
             }
 
-            $fields['author-author'] = ['label' => 'Author', 'matchCol' => false];
-            $fields['meta-meta'] = ['label' => 'Metadata', 'matchCol' => false];
+            $fields = $result['fields'];
 
-            $configs = $this->entityManager->getRepository(Config::class)->findAll();
-            foreach ($configs as $config) {
-                $fields['connector-' . $config->getId()] = [
-                    'label' => 'ID for ' . $config->getName(),
-                    'matchCol' => false
-                ];
-            }
-
-            $relations = $this->documentManager->getRepository(Relation::class)->findAll();
-            foreach ($relations as $relation) {
-                $fields['relation-' . $relation->getId()] = [
-                    'label' => 'Relation ' . $relation->getName(),
-                    'matchCol' => false
-                ];
-            }
+            $data = DefinitionComposer::processColumnData($data);
 
             if ($request->request->get('action') == 'go') {
                 if (isset($data[0])) {
@@ -380,90 +319,6 @@ class ImportController extends AbstractController
                 );
             }
 
-            // do some checks to generate some warnings
-            if ($importDefinition->getFields()) {
-                foreach ($importDefinition->getFields() as $field) {
-                    if (isset($fields[$field->getMappedField()])) {
-                        if ($field->getSourceField()) {
-                            $column = array_search($field->getSourceField(), $data[0]);
-                            if ($column === false) {
-                                $this->addFlash(
-                                    'warning',
-                                    'Warning: field ' . $field->getSourceField(
-                                    ) . ' is not available in the import any more will be ignored'
-                                );
-                                continue;
-                            }
-                            if ($column != $field->getColumn()) {
-                                $this->addFlash(
-                                    'warning',
-                                    'Warning: column ' . $field->getSourceField() . ' is on another position now'
-                                );
-                            }
-                        } else {
-                            $column = $field->getColumn();
-                        }
-                        if ($fields[$field->getMappedField()]['matchCol'] == false) {
-                            $fields[$field->getMappedField()]['matchCol'] = [];
-                        }
-                        $fields[$field->getMappedField()]['matchCol'][] = $column;
-                    } else {
-                        $this->addFlash(
-                            'warning',
-                            'Warning: mapped field is not available and will be ignored: ' . $field->getMappedField()
-                        );
-                    }
-                }
-            }
-
-            $columnItemCount = [];
-            foreach ($data[0] as $columnName) {
-                $columnItemCount[$columnName] = 0;
-            }
-
-            // display at least 2 sample rows for each column and minimum 20 rows, don't display the rest
-            $rowNumber = 0;
-            foreach ($data as $index => $row) {
-                if ($rowNumber >= 1) {
-                    $showThisRow = false;
-                    if ($rowNumber <= 20) {
-                        $showThisRow = true;
-                    }
-                    foreach ($row as $column => $value) {
-                        if (!isset($columnItemCount[$column])) {
-                            $columnItemCount[$column] = 0;
-                        }
-                        if ($columnItemCount[$column] >= 2) {
-                            continue;
-                        }
-                        if (\is_array($value)) {
-                            if (\count($value) > 0) {
-                                ++$columnItemCount[$column];
-                                $showThisRow = true;
-                            }
-                        } elseif ($value != '') {
-                            ++$columnItemCount[$column];
-                            $showThisRow = true;
-                        }
-                    }
-                    if (!$showThisRow) {
-                        unset($data[$index]);
-                    }
-                }
-                ++$rowNumber;
-            }
-
-            // todo: id for connector
-            // todo: relations match
-
-            // prepare data for display
-            foreach ($data as $index => $row) {
-                foreach ($row as $index2 => $value2) {
-                    if (\is_array($value2)) {
-                        $data[$index][$index2] = implode(', ', $value2);
-                    }
-                }
-            }
         } catch (\Exception $e) {
             $this->addFlash('danger', 'Unable to read import file: ' . $e->getMessage() . $e->getTraceAsString());
             $fields = [];
@@ -537,6 +392,7 @@ class ImportController extends AbstractController
         $result['done'] = true;
         $result['success'] = [];
         $result['warnings'] = [];
+        $result['updates'] = [];
         $result['errors'] = [];
 
         if ($importDefinition->getConnectionUrl() && $importDefinition->getConnectionQuery()) {
@@ -591,61 +447,15 @@ class ImportController extends AbstractController
             if (\count($newData)) {
                 $target = $contentType->create();
 
-                if ($importDefinition->getImageBaseUrl()) {
-                    $fields = [
-                        'contentitem_id' => 'Item',
-                        'wp:post_id' => 'wpPostId'
-                    ];
-
-                    foreach ($fields as $field => $dbField) {
-                        if (isset($row[$field])) {
-                            $doubleArticle = BaseConverter::checkForExistingContent(
-                                $field,
-                                $dbField,
-                                $row[$field],
-                                $importDefinition,
-                                $this->documentManager
-                            );
-                            if ($doubleArticle) {
-                                $result['warnings'][] = "{$dbField} {$row[$field]} already imported - updating";
-                                $target = $doubleArticle;
-                            }
-                        }
-                    }
-                }
-
-                $newObject = $target;
+                $checkResult = BaseConverter::checkForExistingContent($importDefinition, $row, $this->documentManager);
+                $result['updates'] = array_merge($result['updates'], $checkResult['result']['updates']);
+                $newObject = $checkResult['target'];
 
                 BaseConverter::setPublicationDate($row, $newData, $newObject);
 
                 BaseConverter::setPublished($newData, $newObject);
 
-                foreach ($newData as $field => $value) {
-                    if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
-                        continue;  // Skip processing for the 'created_at' field
-                    }
-
-                    $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
-
-                    // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
-                    $setterMethod = 'set' . $method;
-
-                    // Special handling for boolean fields
-                    if (in_array($field, ['featured', 'premium'])) {
-                        $setterMethod = 'is' . ucfirst($field);
-                    }
-
-                    if (method_exists($newObject, $setterMethod)) {
-                        call_user_func([$newObject, $setterMethod], $value);
-                    }
-                }
-
-//                try {
-//                    $newObject = $serializer->deserialize(json_encode($newData), $contentType->getClass(), 'json', $context);
-//                } catch (RuntimeException $e) {
-//                    $result['errors'][] = 'Data error: '.$e->getMessage();
-//                    continue;
-//                }
+                BaseConverter::setObjectProperties($newObject, $newData);
 
                 if ($importDefinition->getImageRelation()) {
                     if ($relation = $newObject->getRelation($importDefinition->getImageRelation()->getId())) {
@@ -680,27 +490,21 @@ class ImportController extends AbstractController
 
                     $col = 0;
                     foreach ($row as $name => $value) {
-                        if (!isset($fieldMapping[$data[0][$col]])) {
+                        $currentColValue = $data[0][$col];
+                        if (!isset($fieldMapping[$currentColValue])) {
                             ++$col;
                             continue;
                         }
-                        $mappedField = $fieldMapping[$data[0][$col]];
+                        $mappedField = $fieldMapping[$currentColValue];
 
-                        if (strpos($mappedField, 'author-') === 0) {
-                            BaseConverter::processAuthorField($mappedField, $value, $newObject, $importDefinition, $this->documentManager);
-                        }
-
-                        if (strpos($mappedField, 'meta-') === 0) {
-                            BaseConverter::processMetaField($mappedField, $value, $newObject);
-                        }
-
-                        if (strpos($mappedField, 'connector-') === 0) {
-                            BaseConverter::processConnectorField($mappedField, $value, $newObject, $this->entityManager);
-                        }
-
-                        if (strpos($mappedField, 'relation-') === 0) {
-                            BaseConverter::processRelationField($mappedField, $value, $newObject, $importDefinition, $this->documentManager, $this->storageManager);
-                        }
+                        BaseConverter::fieldProcessor(
+                            $mappedField,
+                            $value,
+                            $newObject,
+                            $importDefinition,
+                            $this->documentManager,
+                            $this->storageManager
+                        );
 
                         ++$col;
                     }
@@ -712,21 +516,9 @@ class ImportController extends AbstractController
                             $content = $newObject->getDescription();
                         }
 
-                        $content = WP::processContent($content);
+                        $content = WP::processContent($content, true);
 
-                        $newHtml = '';
-
-                        if (true) { // todo: more to wordpress filter, only for Wordpress
-                            $newHtml = WP::formatContentLines($content);
-                        } else { // content as text
-                            foreach (explode("\n", $content) as $line) {
-                                $line = trim($line);
-                                $line = '<p>' . $line . '</p>';
-                                $newHtml .= $line . "\n";
-                            }
-                        }
-
-                        $html = HtmlDomParser::str_get_html($newHtml);
+                        $html = HtmlDomParser::str_get_html($content);
 
                         if ($html === false) {
                             if ($newHtml != '') {
@@ -753,7 +545,7 @@ class ImportController extends AbstractController
                     }
 
                     if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
-                        $result = $this->processAttachment($row, $newObject, $this->storageManager);
+                        $result = WP::processAttachment($row, $newObject, $this->storageManager);
                         if (isset($result['error'])) {
                             $result['errors'][] = $result['error'];
                         }
@@ -761,7 +553,15 @@ class ImportController extends AbstractController
 
                     if (isset($row['meta_thumbnail_id'])) {
                         $href = $importDefinition->getImageBaseUrl() . $row['meta_thumbnail_id'];
-                        Create::createFileFromUrl($href, $newObject, $importDefinition, $this->storageManager, $this->documentManager, false,true);
+                        Create::createFileFromUrl(
+                            $href,
+                            $newObject,
+                            $importDefinition,
+                            $this->storageManager,
+                            $this->documentManager,
+                            false,
+                            true
+                        );
                     }
 
                     //Process Metadata

@@ -56,6 +56,10 @@
         <div id="warning-list" style="display: none;">
         </div>
 
+        <h2><a href="#" onclick="$('#update-list').toggle(); return false;">Updates</a> (<span id="update-count">0</span>)</h2>
+        <div id="update-list" style="display: none;">
+        </div>
+
         <h2><a href="#" onclick="$('#success-list').toggle(); return false;">Success</a> (<span id="success-count">0</span>)</h2>
         <div id="success-list" style="display: none;">
         </div>
@@ -71,6 +75,7 @@
 var errorCount = 0;
 var warningCount = 0;
 var successCount = 0;
+var updateCount = 0;
 function executeImport(startRow) {
     $.ajax({
         url: "{{ path('integrated_import_run_execute', {'importDefinition': importDefinition.id} ) }}?startTime={{ startTime }}&start="+startRow
@@ -89,6 +94,11 @@ function executeImport(startRow) {
             $('#success-list').append('<div class="success">'+value+'</div>');
             successCount = successCount + 1;
             $('#success-count').html(successCount);
+        });
+        $.each(data.updates, function(key, value) {
+            $('#update-list').append('<div class="update">'+value+'</div>');
+            updateCount = updateCount + 1;
+            $('#update-count').html(updateCount);
         });
         $('#import-progress').css('width', data.percentage+'%').attr('aria-valuenow', data.percentage);
         $('#status-remaining').html(data.remaining);

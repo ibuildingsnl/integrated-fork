@@ -226,6 +226,23 @@ class BaseConverter
         return $html;
     }
 
+    public static function fieldProcessor($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager) {
+        if (strpos($mappedField, 'author-') === 0) {
+            self::processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager);
+        }
+
+        if (strpos($mappedField, 'meta-') === 0) {
+            self::processMetaField($mappedField, $value, $newObject);
+        }
+
+        if (strpos($mappedField, 'connector-') === 0) {
+            self::processConnectorField($mappedField, $value, $newObject, $entityManager);
+        }
+
+        if (strpos($mappedField, 'relation-') === 0) {
+            self::processRelationField($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager);
+        }
+    }
 
     public static function processMetadata($row, $newObject, $importDefinition)
     {
@@ -255,20 +272,6 @@ class BaseConverter
         }
 
         return $newObject;
-    }
-
-    public static function checkForExistingContent($field, $dbField, $value, $importDefinition, $documentManager)
-    {
-        $doubleArticle = $documentManager
-            ->getRepository(Content::class)
-            ->findOneBy(
-                [
-                    "metadata.data.{$dbField}" => $value,
-                    'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
-                ]
-            );
-
-        return $doubleArticle;
     }
 
     public static function processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager)
@@ -418,5 +421,56 @@ class BaseConverter
         $newObject->addConnector($connector);
     }
 
+    public static function setObjectProperties($newObject, $newData) {
+        foreach ($newData as $field => $value) {
+            if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
+                continue;  // Skip processing for the specified fields
+            }
 
+            $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+
+            // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
+            $setterMethod = 'set' . $method;
+
+            // Special handling for boolean fields
+            if (in_array($field, ['featured', 'premium'])) {
+                $setterMethod = 'is' . ucfirst($field);
+            }
+
+            if (method_exists($newObject, $setterMethod)) {
+                call_user_func([$newObject, $setterMethod], $value);
+            }
+        }
+    }
+
+    public static function checkForExistingContent($importDefinition, $row, $documentManager) {
+        $result = ['updates' => []];
+        $target = null;
+
+        if ($importDefinition->getImageBaseUrl()) {
+            $fields = [
+                'contentitem_id' => 'Item',
+                'wp:post_id' => 'wpPostId'
+            ];
+
+            foreach ($fields as $field => $dbField) {
+                if (isset($row[$field])) {
+                    $doubleArticle = $documentManager
+                        ->getRepository(Content::class)
+                        ->findOneBy(
+                            [
+                                "metadata.data.{$dbField}" => $row[$field],
+                                'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
+                            ]
+                        );
+                    if ($doubleArticle) {
+                        $result['updates'][] = "{$dbField} {$row[$field]} already imported - updating";
+                        $target = $doubleArticle;
+                    }
+                }
+            }
+        }
+
+        return compact('target', 'result');
+    }
 }

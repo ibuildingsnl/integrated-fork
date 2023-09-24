@@ -4,7 +4,7 @@ namespace Integrated\Bundle\ImportBundle\Import\Converter;
 
 class WP
 {
-    public static function processContent($content) {
+    public static function processContent($content, $wordpress = false) {
 
         $newHtml = '';
         $prevLine = '';
@@ -48,7 +48,19 @@ class WP
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
 
-        return $content;
+        $newHtml = '';
+
+        if ($wordpress) { // todo: more to wordpress filter, only for Wordpress
+            $newHtml = self::formatContentLines($content);
+        } else { // content as text
+            foreach (explode("\n", $content) as $line) {
+                $line = trim($line);
+                $line = '<p>' . $line . '</p>';
+                $newHtml .= $line . "\n";
+            }
+        }
+        
+        return $newHtml;
     }
 
     public static function formatContentLines(string $content): string {
