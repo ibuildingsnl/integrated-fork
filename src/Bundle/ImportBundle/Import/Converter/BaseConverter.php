@@ -244,7 +244,7 @@ class BaseConverter
         }
     }
 
-    public static function processMetadata($row, $newObject, $importDefinition)
+    public static function processMetadata($row, $newObject, $importDefinition, $storageManager)
     {
         if (isset($row['wp:post_id'])) {
             $newObject->getMetadata()->set('wpPostId', $row['wp:post_id']);
@@ -264,6 +264,26 @@ class BaseConverter
 
         if (isset($row['meta_yoast_wpseo_canonical']) && $newObject instanceof Article) {
             $newObject->setSourceUrl($row['meta_yoast_wpseo_canonical']);
+        }
+
+        if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
+            $result = WP::processAttachment($row, $newObject, $storageManager);
+            if (isset($result['error'])) {
+                $result['errors'][] = $result['error'];
+            }
+        }
+
+        if (isset($row['meta_thumbnail_id'])) {
+            $href = $importDefinition->getImageBaseUrl() . $row['meta_thumbnail_id'];
+            Create::createFileFromUrl(
+                $href,
+                $newObject,
+                $importDefinition,
+                $storageManager,
+                $documentManager,
+                false,
+                true
+            );
         }
 
         // premium articles
@@ -471,6 +491,9 @@ class BaseConverter
             }
         }
 
-        return compact('target', 'result');
+        return [
+            'target' => $target,
+            'result' => $result
+        ];
     }
 }

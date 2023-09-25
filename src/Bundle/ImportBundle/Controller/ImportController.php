@@ -25,6 +25,7 @@ use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
 use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
+use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImport;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
@@ -49,57 +50,15 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class ImportController extends AbstractController
 {
-    /**
-     * @var ContentTypeManager
-     */
-    protected $contentTypeManager;
-
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var ImportFile
-     */
-    protected $importFile;
-
-    /**
-     * @var Manager
-     */
-    protected $storageManager;
-
-    /**
-     * @var ImportProcessor
-     */
-    private $processor;
-
-    /**
-     * @var Doctrine
-     */
-    private $doctrine;
-
     public function __construct(
-        ContentTypeManager $contentTypeManager,
-        DocumentManager $documentManager,
-        EntityManager $entityManager,
-        ImportFile $importFile,
-        Doctrine $doctrine,
-        Manager $storageManager,
-        ImportProcessor $processor
+        private ContentTypeManager $contentTypeManager,
+        private DocumentManager $documentManager,
+        private EntityManager $entityManager,
+        private ImportFile $importFile,
+        private Doctrine $doctrine,
+        private Manager $storageManager,
+        private ImportProcessor $processor
     ) {
-        $this->contentTypeManager = $contentTypeManager;
-        $this->documentManager = $documentManager;
-        $this->entityManager = $entityManager;
-        $this->importFile = $importFile;
-        $this->doctrine = $doctrine;
-        $this->storageManager = $storageManager;
-        $this->processor = $processor;
     }
 
     /**
@@ -378,37 +337,13 @@ class ImportController extends AbstractController
 
     public function runExecute(Request $request, ImportDefinition $importDefinition)
     {
-        ini_set('max_execution_time', 3600);
-        ini_set('memory_limit', '4G');
-
-
-        // close session to prevent session locking for other connections
-        $session = new Session();
-        $session->save();
+        ExecuteImport::configureExecutionEnvironment();
+        ExecuteImport::handleSession();
 
         $start = $request->get('start', 1);
 
-        $result = [];
-        $result['done'] = true;
-        $result['success'] = [];
-        $result['warnings'] = [];
-        $result['updates'] = [];
-        $result['errors'] = [];
-
-        if ($importDefinition->getConnectionUrl() && $importDefinition->getConnectionQuery()) {
-            $data = $this->doctrine->toArray($importDefinition);
-        } else {
-            $data = $this->importFile->toArray($importDefinition);
-        }
-
-        $totalRowNumber = \count($data);
-        $rowsPerRequest = max(20, min(500, (int)$totalRowNumber / 20));
-        if ($start <= 1) {
-            $start = 1;
-            $rowsPerRequest = 3;
-        }
-
-        $rowNumber = -1;
+        $data = ExecuteImport::getData($importDefinition, $this->doctrine, $this->importFile);
+        $result = ExecuteImport::initializeResult();
 
         $contentType = $this->documentManager->find(
             ContentType::class,
@@ -419,6 +354,16 @@ class ImportController extends AbstractController
         foreach ($importDefinition->getFields() as $field) {
             $fieldMapping[$field->getSourceField()] = $field->getMappedField();
         }
+
+        $totalRowNumber = \count($data);
+        $rowsPerRequest = max(20, min(500, (int)$totalRowNumber / 20));
+
+        if ($start <= 1) {
+            $start = 1;
+            $rowsPerRequest = 3;
+        }
+
+        $rowNumber = -1;
 
         $newStart = $start;
         foreach ($data as $row) {
@@ -437,7 +382,6 @@ class ImportController extends AbstractController
 
             $newStart = $newStart + 1;
 
-            // create record
             $col = 0;
 
             $newData = BaseConverter::fieldMapper($fieldMapping, $row, $data, $col);
@@ -544,32 +488,10 @@ class ImportController extends AbstractController
                         }
                     }
 
-                    if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
-                        $result = WP::processAttachment($row, $newObject, $this->storageManager);
-                        if (isset($result['error'])) {
-                            $result['errors'][] = $result['error'];
-                        }
-                    }
-
-                    if (isset($row['meta_thumbnail_id'])) {
-                        $href = $importDefinition->getImageBaseUrl() . $row['meta_thumbnail_id'];
-                        Create::createFileFromUrl(
-                            $href,
-                            $newObject,
-                            $importDefinition,
-                            $this->storageManager,
-                            $this->documentManager,
-                            false,
-                            true
-                        );
-                    }
-
                     //Process Metadata
-                    $newObject = BaseConverter::processMetadata($row, $newObject, $importDefinition);
+                    $newObject = BaseConverter::processMetadata($row, $newObject, $importDefinition, $this->documentManager, $this->storageManager);
 
-                    if ($this->documentManager->getUnitOfWork()->getDocumentState(
-                            $newObject
-                        ) !== UnitOfWork::STATE_MANAGED) {
+                    if ($this->documentManager->getUnitOfWork()->getDocumentState($newObject) !== UnitOfWork::STATE_MANAGED) {
                         $this->documentManager->persist($newObject);
                     }
                     $this->documentManager->flush();
@@ -581,34 +503,16 @@ class ImportController extends AbstractController
 
                     $result['success'][] = 'Item ' . $import_id . ' (' . (string)$newObject . ') imported';
                 } catch (\Exception $e) {
-                    $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br(
-                            $e->getTraceAsString()
-                        ) . ' ' . $e->getFile() . ' ' . $e->getLine();
+                    $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br($e->getTraceAsString()) . ' ' . $e->getFile() . ' ' . $e->getLine();
                 } catch (\Throwable $e) {
-                    $result['errors'][] = 'Item ' . (string)$newObject . ' fatal: ' . $e->getMessage() . ' ' . nl2br(
-                            $e->getTraceAsString()
-                        ) . ' ' . $e->getFile() . ' ' . $e->getLine();
+                    $result['errors'][] = 'Item ' . (string)$newObject . ' fatal: ' . $e->getMessage() . ' ' . nl2br($e->getTraceAsString()) . ' ' . $e->getFile() . ' ' . $e->getLine();
                 }
             }
         }
 
-        $startTime = (int)$request->get('startTime', time());
-        $duration = time() - $startTime;
-        $remaining = ($duration / ($newStart - 1)) * ($totalRowNumber - ($newStart - 1));
-        if ($remaining >= 120) {
-            $remaining = round($remaining / 60) . ' minutes';
-        } else {
-            $remaining = round($remaining) . ' seconds';
-        }
+        $remainingTime = ExecuteImport::calculateRemainingTime($request, $newStart, $totalRowNumber);
 
-        if ($result['done']) {
-            $result['percentage'] = 100;
-            $result['remaining'] = '';
-        } else {
-            $result['startRow'] = $newStart;
-            $result['percentage'] = round((($newStart - 1) / $totalRowNumber) * 100);
-            $result['remaining'] = 'Estimated remaining time: ' . $remaining;
-        }
+        $result = array_merge($result, $remainingTime);
 
         return new JsonResponse($result);
     }

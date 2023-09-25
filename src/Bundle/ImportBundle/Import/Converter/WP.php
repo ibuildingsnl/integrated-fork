@@ -59,7 +59,7 @@ class WP
                 $newHtml .= $line . "\n";
             }
         }
-        
+
         return $newHtml;
     }
 
@@ -136,14 +136,16 @@ class WP
             }
             $newHtml .= $line."\n";
         }
-        
+
         if ($prevLine == 'li') {
             $newHtml .= '</ul>';
         }
-        
+
         return $newHtml;
     }
 
+
+    //TODO: Make use of file creation by URL
     public static function processAttachment($row, $newObject, $storageManager)
     {
         if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
