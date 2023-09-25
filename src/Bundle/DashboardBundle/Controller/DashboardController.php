@@ -21,7 +21,6 @@ class DashboardController extends AbstractController
     public function index(string $searchSelection = 'all'): Response
     {
 
-
         return $this->render('@IntegratedDashboard/index.html.twig',[
             'controller_name' => 'DashboardController',
             'Name' => 'Mekhelian',
