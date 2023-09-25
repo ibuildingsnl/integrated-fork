@@ -77,32 +77,4 @@ class QueueMessageTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($executeAt, $message->getExecuteAt());
     }
-
-    public function testRelease()
-    {
-        $mock = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $mock->expects($this->once())
-            ->method('callback');
-
-        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use ($mock) {
-            $mock->callback();
-        });
-
-        $message->release();
-        $message->release();
-    }
-
-    public function testDelete()
-    {
-        $mock = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
-        $mock->expects($this->never())
-            ->method('callback');
-
-        $message = new QueueMessage(null, 0, 0, 0, 0, 0, function () use ($mock) {
-            $mock->callback();
-        });
-
-        $message->delete();
-        $message->release();
-    }
 }

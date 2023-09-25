@@ -24,6 +24,8 @@ use Integrated\Common\Queue\Provider\Memory\QueueProvider;
 use Integrated\Common\Queue\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Stratadox\Clock\SneakyTestClock;
+use Stratadox\Clock\UnmovingClock;
 
 class ChannelDistributionListenerTest extends TestCase
 {
@@ -37,9 +39,12 @@ class ChannelDistributionListenerTest extends TestCase
      */
     private $listener;
 
+    private SneakyTestClock $clock;
+
     protected function setUp(): void
     {
-        $this->queue = new Queue(new QueueProvider(), 'test');
+        $this->clock = SneakyTestClock::create();
+        $this->queue = new Queue(new QueueProvider($this->clock), 'test');
         $this->listener = new ChannelDistributionListener($this->queue, new Serializer());
     }
 
@@ -85,13 +90,30 @@ class ChannelDistributionListenerTest extends TestCase
     /**
      * @group time-sensitive
      */
-    public function testQueueDelayedStartDate()
+    public function testQueueDelayedStartDateNow()
     {
         $startDate = \DateTime::createFromFormat('U', time())->modify('+1 day');
 
         $document = $this->getDocumentWithPublishTime($startDate);
 
         $this->listener->postUpdate($this->getLifecycleEventArgs($document));
+
+        $this->assertCount(0, $this->queue);
+
+        $message = $this->pull();
+
+        $this->assertSame('add', $message->getPayload()->state);
+        $this->assertSame($startDate->getTimestamp(), $message->getExecuteAt());
+    }
+
+    public function testQueueDelayedStartDateAfter()
+    {
+        $startDate = \DateTime::createFromFormat('U', time())->modify('+1 day');
+
+        $document = $this->getDocumentWithPublishTime($startDate);
+
+        $this->listener->postUpdate($this->getLifecycleEventArgs($document));
+        $this->clock->sneakForwards(\DateInterval::createFromDateString('+1 day'));
 
         $this->assertCount(1, $this->queue);
 
@@ -112,6 +134,7 @@ class ChannelDistributionListenerTest extends TestCase
         $document = $this->getDocumentWithPublishTime($startDate, $endDate);
 
         $this->listener->postUpdate($this->getLifecycleEventArgs($document));
+        $this->clock->sneakForwards(\DateInterval::createFromDateString('+1 day'));
 
         $this->assertCount(2, $this->queue);
 

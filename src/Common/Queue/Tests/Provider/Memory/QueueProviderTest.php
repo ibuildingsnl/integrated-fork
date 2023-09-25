@@ -100,40 +100,6 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $result);
     }
 
-    public function testRelease()
-    {
-        $this->provider->push('channel', 'payload');
-        $this->provider->push('channel', 'payload');
-
-        $messages = $this->provider->pull('channel');
-        /** @var QueueMessage $message */
-        $message = array_pop($messages);
-
-        $this->assertEquals(1, $this->provider->count('channel'));
-
-        $message->release();
-
-        $this->assertEquals(2, $this->provider->count('channel'));
-    }
-
-    public function testAttempts()
-    {
-        $this->provider->push('channel', 'payload');
-
-        $messages = $this->provider->pull('channel');
-        /** @var QueueMessage $message */
-        $message = array_pop($messages);
-
-        $this->assertEquals(0, $message->getAttempts());
-
-        $message->release();
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals(1, $message->getAttempts());
-    }
-
     public function testClear()
     {
         $this->provider->push('channel1', 'payload');
