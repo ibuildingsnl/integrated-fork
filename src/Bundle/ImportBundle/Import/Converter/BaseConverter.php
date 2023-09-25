@@ -234,10 +234,10 @@ class BaseConverter
         if (strpos($mappedField, 'meta-') === 0) {
             self::processMetaField($mappedField, $value, $newObject);
         }
-
-        if (strpos($mappedField, 'connector-') === 0) {
-            self::processConnectorField($mappedField, $value, $newObject, $entityManager);
-        }
+//
+//        if (strpos($mappedField, 'connector-') === 0) {
+//            self::processConnectorField($mappedField, $value, $newObject, $entityManager);
+//        }
 
         if (strpos($mappedField, 'relation-') === 0) {
             self::processRelationField($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager);
@@ -274,7 +274,7 @@ class BaseConverter
         }
 
         if (isset($row['meta_thumbnail_id'])) {
-            $href = $importDefinition->getImageBaseUrl() . $row['meta_thumbnail_id'];
+            $href = $importDefinition->getImageBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
             Create::createFileFromUrl(
                 $href,
                 $newObject,
@@ -428,19 +428,6 @@ class BaseConverter
         }
     }
 
-    public static function processConnectorField($mappedField, $value, $newObject, $entityManager)
-    {
-        $connectorId = str_replace('connector-', '', $mappedField);
-        $connectorConfig = $entityManager->getRepository(Config::class)->find($connectorId);
-
-        $connector = new Connector();
-        $connector->setConfigId($connectorId);
-        $connector->setConfigAdapter($connectorConfig->getAdapter());
-        $connector->setExternalId($value);
-
-        $newObject->addConnector($connector);
-    }
-
     public static function setObjectProperties($newObject, $newData) {
         foreach ($newData as $field => $value) {
             if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
@@ -466,10 +453,10 @@ class BaseConverter
     public static function checkForExistingContent($importDefinition, $row, $documentManager) {
         $result = ['updates' => []];
         $target = null;
-
+        //TODO: contentitem_id is an integrated id field
         if ($importDefinition->getImageBaseUrl()) {
             $fields = [
-                'contentitem_id' => 'Item',
+                'contentitem_id' => 'contentitem_id',
                 'wp:post_id' => 'wpPostId'
             ];
 

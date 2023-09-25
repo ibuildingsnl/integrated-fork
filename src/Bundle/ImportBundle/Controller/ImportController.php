@@ -25,7 +25,7 @@ use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
 use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
-use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImport;
+use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
@@ -337,13 +337,13 @@ class ImportController extends AbstractController
 
     public function runExecute(Request $request, ImportDefinition $importDefinition)
     {
-        ExecuteImport::configureExecutionEnvironment();
-        ExecuteImport::handleSession();
+        ExecuteImporter::configureExecutionEnvironment();
+        ExecuteImporter::handleSession();
 
         $start = $request->get('start', 1);
 
-        $data = ExecuteImport::getData($importDefinition, $this->doctrine, $this->importFile);
-        $result = ExecuteImport::initializeResult();
+        $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+        $result = ExecuteImporter::initializeResult();
 
         $contentType = $this->documentManager->find(
             ContentType::class,
@@ -510,7 +510,7 @@ class ImportController extends AbstractController
             }
         }
 
-        $remainingTime = ExecuteImport::calculateRemainingTime($request, $newStart, $totalRowNumber);
+        $remainingTime = ExecuteImporter::calculateRemainingTime($request, $newStart, $totalRowNumber);
 
         $result = array_merge($result, $remainingTime);
 

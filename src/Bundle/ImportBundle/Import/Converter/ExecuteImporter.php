@@ -4,7 +4,7 @@ namespace Integrated\Bundle\ImportBundle\Import\Converter;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class ExecuteImport
+class ExecuteImporter
 {
     public static function configureExecutionEnvironment() {
         ini_set('max_execution_time', 3600);

@@ -79,17 +79,9 @@ class DefinitionComposer
                 $fields['field-' . $contentTypeField] = ['label' => $contentTypeField, 'matchCol' => $matchCol];
             }
         }
-        
+
         $fields['author-author'] = ['label' => 'Author', 'matchCol' => false];
         $fields['meta-meta'] = ['label' => 'Metadata', 'matchCol' => false];
-
-        $configs = $entityManager->getRepository(Config::class)->findAll();
-        foreach ($configs as $config) {
-            $fields['connector-' . $config->getId()] = [
-                'label' => 'ID for ' . $config->getName(),
-                'matchCol' => false
-            ];
-        }
 
         $relations = $documentManager->getRepository(Relation::class)->findAll();
         foreach ($relations as $relation) {
@@ -98,7 +90,7 @@ class DefinitionComposer
                 'matchCol' => false
             ];
         }
-        
+
         return $fields;
     }
 
