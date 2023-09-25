@@ -127,6 +127,7 @@ class Article extends Content implements RankableInterface
         'attr' => [
             'style' => 'editor',
             'state' => 'show',
+            'class' => 'generate-ai'
         ],
     ], location: 'editor')]
     protected $intro;

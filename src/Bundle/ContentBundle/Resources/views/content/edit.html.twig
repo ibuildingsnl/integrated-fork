@@ -2,7 +2,7 @@
 {% block title %}{% trans %}Edit{% endtrans %} {{ type.name|trans }}{% endblock title %}
 
 {% block content %}
-     {% block filters %}
+    {% block filters %}
         <div class="filters_row"></div>
     {% endblock %}
 
@@ -239,7 +239,6 @@
                                         <div class="editor-item-list-container relation">
 
 
-
                                             {% if relation.vars.attr['data-relationtype'] == 'embedded' %}
                                                 {% include '@IntegratedContent/media/partial/select_component.html.twig' with {
                                                     relation: relation,
@@ -386,6 +385,54 @@
             resize_ob.observe(document.querySelector('.title_tinymce_input'));
         }, 1000);
     }
+
+document.addEventListener('DOMContentLoaded', function() {
+// Find all textareas with the class 'generate-ai'
+    const aiFields = document.querySelectorAll('.generate-ai');
+
+    // Loop through each textarea and create a button inside its closest '.editor-item-header' element
+    aiFields.forEach(aiField => {
+
+        // Find the closest '.editor-item-header' element
+        let editorItemHeader = aiField.closest('.editor-item-wrapper');
+        editorItemHeader = editorItemHeader.querySelector('.editor-item-header');
+
+        // Create the button element
+        const generateAIButton = document.createElement('a');
+        generateAIButton.className = 'btn btn-primary';
+        generateAIButton.textContent = 'Generate with AI';
+
+        // Insert the button into the '.editor-item-header' element
+        editorItemHeader.appendChild(generateAIButton);
+
+        // Add a click event listener to the button
+        generateAIButton.addEventListener('click', function () {
+            // Get the user input from the closest textarea
+            const userInput = tinymce.activeEditor.getContent();;
+
+            // Make a POST request to your Symfony proxy route
+            fetch('/admin/api/openai/proxy/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: userInput }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const generatedText = data.choices[0].message.content;
+
+                console.log(generatedText)
+
+                // Insert the generated text into the closest textarea
+                aiField.value = generatedText;
+            })
+            .catch(error => {
+                console.error('Proxy Request Error:', error);
+            });
+        });
+    });
+});
 </script>
 
 {% if content is defined %}
