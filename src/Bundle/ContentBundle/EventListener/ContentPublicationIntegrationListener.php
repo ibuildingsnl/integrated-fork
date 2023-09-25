@@ -3,9 +3,8 @@
 namespace Integrated\Bundle\ContentBundle\EventListener;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
-use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Bundle\ContentBundle\Form\Type\PublicationsType;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormEvents;
 class ContentPublicationIntegrationListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly PublicationRepository $publications,
+        private readonly PublicationRepositoryInterface $publications,
     ) {
     }
 

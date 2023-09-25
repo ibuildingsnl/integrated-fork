@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Integrated\Bundle\ChannelBundle\Tests\EventListener\Mock;
+namespace Integrated\Bundle\ChannelBundle\Tests\Mock;
 
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;

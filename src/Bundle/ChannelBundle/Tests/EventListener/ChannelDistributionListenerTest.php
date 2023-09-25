@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ChannelBundle\Tests\EventListener;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Integrated\Bundle\ChannelBundle\EventListener\Doctrine\ChannelDistributionListener;
-use Integrated\Bundle\ChannelBundle\Tests\EventListener\Mock\Serializer;
+use Integrated\Bundle\ChannelBundle\Tests\Mock\Serializer;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Channel\Exporter\Queue\Request;

@@ -5,9 +5,8 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Common\Channel\ChannelInterface;
 
-class PublicationRepository extends DocumentRepository
+class PublicationRepository extends DocumentRepository implements PublicationRepositoryInterface
 {
-    /** @return Publication[] */
     public function forContentByChannel(Content $content): array
     {
         $publications = $this->findBy(['content' => $content]);
@@ -17,7 +16,6 @@ class PublicationRepository extends DocumentRepository
         );
     }
 
-    /** @return Publication[] */
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array
     {
         return $this->findBy(['content' => $content, 'channel' => $channel]);

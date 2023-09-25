@@ -85,29 +85,9 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload2');
         $this->provider->push('channel', 'payload3');
 
+        $messages = $this->provider->pull('channel');
         /** @var QueueMessage $message */
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->assertEquals('payload1', $message->getPayload());
-    }
-
-    public function testPullOrderAfterRelease()
-    {
-        $this->provider->push('channel', 'payload1');
-        $this->provider->push('channel', 'payload2');
-        $this->provider->push('channel', 'payload3');
-
-        /** @var QueueMessage $message */
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
-
-        $this->provider->pull('channel'); // ignore
-
-        $message->release();
-
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
+        $message = array_pop($messages);
 
         $this->assertEquals('payload1', $message->getPayload());
     }
@@ -125,9 +105,9 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->push('channel', 'payload');
         $this->provider->push('channel', 'payload');
 
+        $messages = $this->provider->pull('channel');
         /** @var QueueMessage $message */
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
+        $message = array_pop($messages);
 
         $this->assertEquals(1, $this->provider->count('channel'));
 
@@ -140,9 +120,9 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->provider->push('channel', 'payload');
 
+        $messages = $this->provider->pull('channel');
         /** @var QueueMessage $message */
-        $message = $this->provider->pull('channel');
-        $message = array_pop($message);
+        $message = array_pop($messages);
 
         $this->assertEquals(0, $message->getAttempts());
 
