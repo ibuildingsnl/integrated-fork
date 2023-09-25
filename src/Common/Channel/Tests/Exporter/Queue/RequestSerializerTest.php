@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializer;
@@ -71,7 +72,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $request->content = new \stdClass();
         $request->state = self::TEST_STATE;
-        $request->channel = new \stdClass();
+        $request->channel = null;
 
         $this->serializer->expects($this->once())
             ->method('serialize')
@@ -138,7 +139,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects($this->once())
             ->method('find')
-            ->willReturn(new \stdClass());
+            ->willReturn(null);
 
         self::assertNull($this->getInstance()->deserialize($this->getSerialized()));
     }
