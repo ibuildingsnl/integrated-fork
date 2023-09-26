@@ -11,21 +11,20 @@
 
 namespace Integrated\Bundle\DashboardBundle\Controller;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
+use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 
 class DashboardController extends AbstractController
 {
-    // public function __construct(\Integrated\Bundle\ContentBundle\Controller\MediaController $controller){}
+
+    public function __construct(private readonly ChannelContextInterface $channelContext){}
 
     public function index(string $searchSelection = 'all'): Response
     {
-
-        return $this->render('@IntegratedDashboard/index.html.twig',[
+            return $this->render('@IntegratedDashboard/index.html.twig',[
             'controller_name' => 'DashboardController',
-            'Name' => 'Mekhelian',
-            'FirstName' => 'Gautier',
-            'path' => "       "
+            "channel" => $this->channelContext->getChannel()->getName()
         ]);
 
     }
