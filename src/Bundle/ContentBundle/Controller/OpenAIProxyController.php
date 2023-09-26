@@ -21,7 +21,7 @@ class OpenAIProxyController
         $apiKey = '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';
         $organisation = 'org-JI8kEig0TfIuExyR18SAAm4Y';
         $openaiUrl = 'https://api.openai.com/v1/chat/completions';
-        $content = 'Kan je mij een intro geven van het onderstaande artikel, het mag maximaal 200 karakters bevatten. De intro wordt gebruikt om lezers te motiveren het hele artikel te gaan lezen.: ' . $userInput;
+        $content = 'Kan je mij een intro geven van het onderstaande artikel, het mag maximaal 200 karakters bevatten. De intro wordt gebruikt om lezers te motiveren het hele artikel te gaan lezen: ' . $userInput;
 
         $client = new Client();
         $response = $client->post($openaiUrl, [
