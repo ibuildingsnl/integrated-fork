@@ -9,6 +9,9 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
 {
     public function forContentByChannel(Content $content): array
     {
+        if (!$content->getId()) {
+            return [];
+        }
         $publications = $this->findBy(['content' => $content]);
         return array_combine(
             array_map(fn(Publication $p) => $p->getChannel()->getId(), $publications),
