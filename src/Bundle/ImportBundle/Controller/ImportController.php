@@ -339,10 +339,11 @@ class ImportController extends AbstractController
         }
 
         $totalRowNumber = \count($data);
-        $rowsPerRequest = 2;
+        $rowsPerRequest = max(10, min(500, (int)$totalRowNumber / 10));
 
         if ($start <= 1) {
-            $start = 1;
+            $start = 0;
+            $rowsPerRequest = 1;
         }
 
         $rowNumber = -1;
