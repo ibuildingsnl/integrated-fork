@@ -13,9 +13,10 @@ namespace Integrated\Bundle\ImportBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ODM\MongoDB\PersistentCollection;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ImportDefinition
 {
@@ -62,7 +63,7 @@ class ImportDefinition
     /**
      * @var string
      */
-    private $imageBaseUrl;
+    private $websiteBaseUrl;
 
     /**
      * @var string
@@ -109,17 +110,11 @@ class ImportDefinition
         $this->fields = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getContentType(): ?string
     {
         return $this->contentType;
@@ -140,10 +135,7 @@ class ImportDefinition
         $this->name = $name;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
@@ -153,10 +145,7 @@ class ImportDefinition
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getExecutedAt()
+    public function getExecutedAt(): \DateTime
     {
         return $this->executedAt;
     }
@@ -176,10 +165,7 @@ class ImportDefinition
         }
     }
 
-    /**
-     * @return ChannelInterface[]
-     */
-    public function getChannels()
+    public function getChannels(): array
     {
         return $this->channels->toArray();
     }
@@ -191,10 +177,7 @@ class ImportDefinition
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChannel(ChannelInterface $channel)
+    public function hasChannel(ChannelInterface $channel): bool
     {
         return $this->channels->contains($channel);
     }
@@ -204,9 +187,6 @@ class ImportDefinition
         $this->channels->removeElement($channel);
     }
 
-    /**
-     * @return string
-     */
     public function getFileId(): ?string
     {
         return $this->fileId;
@@ -217,18 +197,12 @@ class ImportDefinition
         $this->fileId = $fileId;
     }
 
-    /**
-     * @return ImportField[]
-     */
-    public function getFields()
+    public function getFields(): PersistentCollection
     {
         return $this->fields;
     }
 
-    /**
-     * @return ImportField
-     */
-    public function getField($name)
+    public function getField($name): ?ImportField
     {
         foreach ($this->getFields() as $field) {
             if ($field->getName() == $name) {
@@ -239,10 +213,7 @@ class ImportDefinition
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasField($name)
+    public function hasField($name): bool
     {
         foreach ($this->getFields() as $field) {
             if ($field->getName() == $name) {
@@ -253,73 +224,47 @@ class ImportDefinition
         return false;
     }
 
-    /**
-     * Set the fields of the import definition.
-     *
-     * @param ImportField[] $fields
-     */
-    public function setFields(array $fields)
+    public function setFields(PersistentCollection $fields)
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return string
-     */
-    public function getImageBaseUrl(): ?string
+    public function getWebsiteBaseUrl(): ?string
     {
-        return $this->imageBaseUrl;
+        return $this->websiteBaseUrl;
     }
 
-    public function setImageBaseUrl(string $imageBaseUrl)
+    public function setWebsiteBaseUrl(string $websiteBaseUrl)
     {
-        $this->imageBaseUrl = $imageBaseUrl;
+        $this->websiteBaseUrl = $websiteBaseUrl;
     }
 
-    /**
-     * @return string
-     */
     public function getImageContentType(): ?string
     {
         return $this->imageContentType;
     }
 
-    /**
-     * @param string $imageContentType
-     */
     public function setImageContentType(?string $imageContentType)
     {
         $this->imageContentType = $imageContentType;
     }
 
-    /**
-     * @return Relation
-     */
-    public function getImageRelation()
+    public function getImageRelation(): Relation
     {
         return $this->imageRelation;
     }
 
-    /**
-     * @param Relation $imageRelation
-     */
-    public function setImageRelation($imageRelation)
+    public function setImageRelation(Relation $imageRelation)
     {
         $this->imageRelation = $imageRelation;
     }
 
-    /**
-     * @return string
-     */
     public function getFileContentType(): ?string
     {
         return $this->fileContentType;
     }
 
-    /**
-     * @param string $fileContentType
-     */
-    public function setFileContentType(?string $fileContentType): void
+    public function setFileContentType(?string $fileContentType)
     {
         $this->fileContentType = $fileContentType;
     }
@@ -329,25 +274,16 @@ class ImportDefinition
         return $this->fileRelation;
     }
 
-    /**
-     * @param Relation $fileRelation
-     */
     public function setFileRelation(?Relation $fileRelation): void
     {
         $this->fileRelation = $fileRelation;
     }
 
-    /**
-     * @return string
-     */
     public function getAuthorContentType(): ?string
     {
         return $this->authorContentType;
     }
 
-    /**
-     * @param string $authorContentType
-     */
     public function setAuthorContentType(?string $authorContentType): void
     {
         $this->authorContentType = $authorContentType;
@@ -358,33 +294,21 @@ class ImportDefinition
         $this->id = null;
     }
 
-    /**
-     * @return string
-     */
     public function getConnectionUrl(): ?string
     {
         return $this->connectionUrl;
     }
 
-    /**
-     * @param string $connectionUrl
-     */
     public function setConnectionUrl(?string $connectionUrl): void
     {
         $this->connectionUrl = $connectionUrl;
     }
 
-    /**
-     * @return string
-     */
     public function getConnectionQuery(): ?string
     {
         return $this->connectionQuery;
     }
 
-    /**
-     * @param string $connectionQuery
-     */
     public function setConnectionQuery(?string $connectionQuery): void
     {
         $this->connectionQuery = $connectionQuery;
