@@ -1,69 +1,65 @@
 {% extends '@IntegratedContent/base.html.twig' %}
-{% block crumbs %}
-    <div class="breadcrumb-holder">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="{{ path('integrated_import_index') }}">{% trans %}Import{% endtrans %}</a>
-                </li>
-                <li>
-                    <a href="{{ path('integrated_import_edit', {'importDefinition': importDefinition.id}) }}">{{ importDefinition.name }}</a>
-                </li>
-                <li class="active">{% trans %}Importing...{% endtrans %}</li>
-            </ol>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
+    <div class="row">
+        <form method="post" id="summaryForm">
+            <input type="hidden" name="action" value="go"/>
 
-    <div class="container">
-        <h1>{% trans %}Step 5 of 5: Importing...{% endtrans %}</h1>
-
-        <div id="status-pending">
-            <p>{% trans %}Please wait while your content is being imported. Do not close this window.{% endtrans %}</p>
-        </div>
-
-        <div id="status-complete" style="display: none;">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="pull-right">
-                        <a class="btn btn-orange" href="{{ path('integrated_import_index') }}">{% trans %}Close import{% endtrans %}</a>
+            <div id="toolbar" class="w-full flex justify-between">
+                <div class="options">
+                    <div class="form-actions">
+                        <a id="status-complete" class="no-icon btn btn-green text-white" style="display: none;"
+                           href="{{ path('integrated_import_index') }}">{% trans %}Close import{% endtrans %}</a>
                     </div>
-
-                    <p>{% trans %}Import complete.{% endtrans %}</p>
+                </div>
+                <div class="back">
+                    <a class="no-icon btn btn-white icon-left"
+                       href="{{ path("integrated_import_definition", {'importDefinition': importDefinition.id }) }}"><i
+                            class="iconoir iconoir-arrow-left"></i><span>{% trans %}Back{% endtrans %}</span></a>
                 </div>
             </div>
-            <br />
-        </div>
 
-        <div class="progress">
-            <div id="import-progress" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                <span class="sr-only"></span>
+            <div class="index-wrapper-full" style="margin-top:50px;">
+                <h1>{% trans %}Step 4 of 4: Importing...{% endtrans %}</h1>
+
+                <div id="status-pending">
+                    <p>{% trans %}Please wait while your content is being imported. Do not close this window.{% endtrans %}</p>
+                </div>
+
+                <div class="progress">
+                    <div id="import-progress" class="progress-bar progress-bar-success" role="progressbar"
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12" id="status-remaining"></div>
+                    <br/>
+                    <br/>
+                </div>
+
+                <h2><a href="#" onclick="$('#error-list').toggle(); return false;">Errors</a> (<span
+                        id="error-count">0</span>)</h2>
+                <div id="error-list" style="display: none;">
+                </div>
+
+                <h2><a href="#" onclick="$('#warning-list').toggle(); return false;">Warnings</a> (<span
+                        id="warning-count">0</span>)</h2>
+                <div id="warning-list" style="display: none;">
+                </div>
+
+                <h2><a href="#" onclick="$('#update-list').toggle(); return false;">Updates</a> (<span
+                        id="update-count">0</span>)</h2>
+                <div id="update-list" style="display: none;">
+                </div>
+
+                <h2><a href="#" onclick="$('#success-list').toggle(); return false;">Success</a> (<span
+                        id="success-count">0</span>)</h2>
+                <div id="success-list" style="display: none;">
+                </div>
+
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12" id="status-remaining"></div>
-            <br />
-            <br />
-        </div>
-
-        <h2><a href="#" onclick="$('#error-list').toggle(); return false;">Errors</a> (<span id="error-count">0</span>)</h2>
-        <div id="error-list" style="display: none;">
-        </div>
-
-        <h2><a href="#" onclick="$('#warning-list').toggle(); return false;">Warnings</a> (<span id="warning-count">0</span>)</h2>
-        <div id="warning-list" style="display: none;">
-        </div>
-
-        <h2><a href="#" onclick="$('#update-list').toggle(); return false;">Updates</a> (<span id="update-count">0</span>)</h2>
-        <div id="update-list" style="display: none;">
-        </div>
-
-        <h2><a href="#" onclick="$('#success-list').toggle(); return false;">Success</a> (<span id="success-count">0</span>)</h2>
-        <div id="success-list" style="display: none;">
-        </div>
-
+        </form>
     </div>
 
 {% endblock %}
@@ -78,7 +74,7 @@ var successCount = 0;
 var updateCount = 0;
 function executeImport(startRow) {
     $.ajax({
-        url: "{{ path('integrated_import_run_execute', {'importDefinition': importDefinition.id} ) }}?startTime={{ startTime }}&start="+startRow
+        url: "{{ path('integrated_import_run_execute', {'importDefinition': importDefinition.id} ) }}?startTime={{ startTime }}&start="+startRow,
     }).done(function(data) {
         $.each(data.errors, function(key, value) {
             $('#error-list').append('<div class="alert-danger">'+value+'</div>');

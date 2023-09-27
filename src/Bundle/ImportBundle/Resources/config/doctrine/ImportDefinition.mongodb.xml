@@ -11,7 +11,7 @@
         <field field-name="executedAt" type="date"/>
         <field field-name="channels" type="collection"/>
         <field field-name="fileId" type="string"/>
-        <field field-name="imageBaseUrl" type="string"/>
+        <field field-name="websiteBaseUrl" type="string"/>
         <field field-name="imageContentType" type="string"/>
         <field field-name="fileContentType" type="string"/>
         <field field-name="authorContentType" type="string"/>

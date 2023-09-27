@@ -5,12 +5,14 @@ namespace Integrated\Bundle\ImportBundle\Import\Converter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ImportBundle\Controller\ImportController;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Channel\Connector\Config\Config;
@@ -75,13 +77,11 @@ class BaseConverter
 
     public static function setPublished($newData, $newObject)
     {
-
         if (array_key_exists('published', $newData)) {
             if ($newData['published'] === true || $newData['published'] === 'published' || $newData['published'] === 'publish' || $newData['published'] === 1) {
                 $newObject->isPublished(true);
             }
         }
-
     }
 
     public static function setPublicationDate($row, $newData, $newObject)
@@ -160,10 +160,10 @@ class BaseConverter
                 $title = ($tag == 'a') ? false : $element->title;
 
                 if (strpos($href, '/') === 0) {
-                    if (!$importDefinition->getImageBaseUrl()) {
+                    if (!$importDefinition->getWebsiteBaseUrl()) {
                         continue;
                     }
-                    $href = rtrim($importDefinition->getImageBaseUrl(), '/') . $href;
+                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/') . $href;
                 }
 
                 if (stripos($href, '.png') === false
@@ -190,7 +190,14 @@ class BaseConverter
                 }
 
                 if ($href) {
-                    $image = Create::createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title);
+                    $image = Create::createFileFromUrl(
+                        $href,
+                        $newObject,
+                        $importDefinition,
+                        $storageManager,
+                        $documentManager,
+                        $title
+                    );
 
                     if ($image === false) {
                         continue;
@@ -201,7 +208,10 @@ class BaseConverter
                     $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
 
                     $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') &&
-                                 array_search($image->getId(), array_column($newObject->getReferencesByRelationType('embedded'), 'id')) !== false;
+                                 array_search(
+                                     $image->getId(),
+                                     array_column($newObject->getReferencesByRelationType('embedded'), 'id')
+                                 ) !== false;
 
 
                     $relation->setRelationType($relationType);
@@ -226,7 +236,16 @@ class BaseConverter
         return $html;
     }
 
-    public static function fieldProcessor($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager) {
+    public static function fieldProcessor(
+        $mappedField,
+        $value,
+        $newObject,
+        $importDefinition,
+        $documentManager,
+        $storageManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
         if (strpos($mappedField, 'author-') === 0) {
             self::processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager);
         }
@@ -234,18 +253,31 @@ class BaseConverter
         if (strpos($mappedField, 'meta-') === 0) {
             self::processMetaField($mappedField, $value, $newObject);
         }
-//
-//        if (strpos($mappedField, 'connector-') === 0) {
-//            self::processConnectorField($mappedField, $value, $newObject, $entityManager);
-//        }
 
         if (strpos($mappedField, 'relation-') === 0) {
-            self::processRelationField($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager);
+            $checkResult = self::processRelationField(
+                $mappedField,
+                $value,
+                $newObject,
+                $importDefinition,
+                $documentManager,
+                $storageManager
+            );
+            $result['warnings'] = array_merge($result['warnings'], $checkResult['warnings']);
         }
+        return $result;
     }
 
-    public static function processMetadata($row, $newObject, $importDefinition, $storageManager)
-    {
+    public static function processMetadata(
+        $row,
+        $newData,
+        $newObject,
+        $importDefinition,
+        $documentManager,
+        $storageManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
         if (isset($row['wp:post_id'])) {
             $newObject->getMetadata()->set('wpPostId', $row['wp:post_id']);
             $newObject->getMetadata()->set(
@@ -253,13 +285,13 @@ class BaseConverter
                 (isset($row['wp:attachment_url'])) ? $row['wp:attachment_url'] : $row['link']
             );
             $newObject->getMetadata()->set('importDate', date('Ymd'));
-            $newObject->getMetadata()->set('importImageBaseUrl', $importDefinition->getImageBaseUrl());
+            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
         }
 
         if (isset($row['contentitem_id'])) {
             $newObject->getMetadata()->set('externalId', $row['contentitem_id']);
             $newObject->getMetadata()->set('importDate', date('Ymd'));
-            $newObject->getMetadata()->set('importImageBaseUrl', $importDefinition->getImageBaseUrl());
+            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
         }
 
         if (isset($row['meta_yoast_wpseo_canonical']) && $newObject instanceof Article) {
@@ -273,17 +305,23 @@ class BaseConverter
             }
         }
 
-        if (isset($row['meta_thumbnail_id'])) {
-            $href = $importDefinition->getImageBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
-            Create::createFileFromUrl(
-                $href,
-                $newObject,
-                $importDefinition,
-                $storageManager,
-                $documentManager,
-                false,
-                true
-            );
+        if (isset($row['wp:comments'])) {
+            $result['warnings'][] = 'There are comments that are not processed.';
+        }
+
+        if (!array_key_exists('featured_image', $newData)) {
+            if (isset($row['meta_thumbnail_id'])) {
+                $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
+                Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    true
+                );
+            }
         }
 
         // premium articles
@@ -291,7 +329,11 @@ class BaseConverter
             $newObject->isPremium(true);
         }
 
-        return $newObject;
+//        return $newObject;
+        return [
+            'result' => $result,
+            'newObject' => $newObject,
+        ];
     }
 
     public static function processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager)
@@ -305,7 +347,7 @@ class BaseConverter
                     $author->setPerson(
                         Create::addAuthor(
                             $auteur,
-                            $importDefinition->getImageBaseUrl(),
+                            $importDefinition->getWebsiteBaseUrl(),
                             $importDefinition->getAuthorContentType(),
                             $documentManager
                         )
@@ -316,8 +358,16 @@ class BaseConverter
         }
     }
 
-    public static function processRelationField($mappedField, $value, $newObject, $importDefinition, $documentManager, $storageManager)
-    {
+    public static function processRelationField(
+        $mappedField,
+        $value,
+        $newObject,
+        $importDefinition,
+        $documentManager,
+        $storageManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
         $relationId = str_replace('relation-', '', $mappedField);
         if ($relation = $newObject->getRelation($relationId)) {
             $newObject->removeRelation($relation);
@@ -335,44 +385,115 @@ class BaseConverter
         );*/
 
         if ($value) {
-            $relation2 = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
-            $relation2->setRelationId($relation->getId());
-            $relation2->setRelationType($relation->getType());
+            $newRelation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
+            $newRelation->setRelationId($relation->getId());
+            $newRelation->setRelationType($relation->getType());
 
             if (!\is_array($value)) {
                 $value = explode(',', $value);
             }
 
+
             foreach ($value as $valueName) {
-                $link = false;
-                $valueName = trim($valueName);
-                if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass() == Article::class) {
-                    $link = $documentManager->getRepository(Content::class)->findOneBy(
-                        ['title' => $valueName, 'contentType' => $targetContentType->getId()]
-                    );
+                $valueName = html_entity_decode($valueName);
+                $contentTypeFields = $targetContentType->getFields()->toArray();
+                $parentId = false;
+                foreach ($contentTypeFields as $contentTypeField) {
+                    if ($contentTypeField->getName() === 'parent_id') {
+                        $parentId = true;
+                    }
                 }
 
-                if (!$link) {
-                    $link = $targetContentType->create();
-                    if (strpos($valueName, 'http') !== false) {
-                        $link->setTitle(basename($valueName));
-                    } else {
-                        $link->setTitle($valueName);
-                    }
-                    $link->getMetadata()->set('importDate', date('Ymd'));
-                    $link->getMetadata()->set('externalId', $valueName);
-                    $link->getMetadata()->set('importImageBaseUrl', $importDefinition->getImageBaseUrl());
+                $existingDocument = false;
 
+                if ($targetContentType->getClass() == Taxonomy::class && $parentId) {
                     foreach ($importDefinition->getChannels() as $channel) {
-                        $link->addChannel($channel);
+                        $title = str_ireplace(' Website', '', $channel->getName());
+                        if (!$parent = $documentManager->getRepository(Content::class)
+                                                       ->createQueryBuilder()->select()
+                                                       ->field('title')->equals($title)
+                                                       ->field('parent_id')->exists(false)
+                                                       ->limit(1)->getQuery()
+                                                       ->getSingleResult()) {
+                            $parent = $targetContentType->create();
+                            $parent->setTitle($title);
+                            $parent->setSlug($title);
+                            $parent->addChannel($channel);
+                            $parent->setDisabled(true);
+
+                            $documentManager->persist($parent);
+                            $documentManager->flush();
+                        }
+
+                        if ($parent) {
+                            $result['warnings'][] = 'Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
+                        }
+
+                        $valueName = trim($valueName);
+
+                        $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
+                            [
+                                'title' => $valueName,
+                                'contentType' => $targetContentType->getId(),
+                                'parent_id' => $parent->getId()
+                            ]
+                        );
+
+                        if (!$existingDocument) {
+                            $existingDocument = $targetContentType->create();
+
+                            if (strpos($valueName, 'http') !== false) {
+                                $existingDocument->setTitle(basename($valueName)); //not sure we need this
+                            } else {
+                                $existingDocument->setTitle($valueName);
+                            }
+
+                            $existingDocument->getMetadata()->set('importDate', date('Ymd'));
+                            $existingDocument->getMetadata()->set('externalId', $valueName);
+                            $existingDocument->getMetadata()->set(
+                                'importWebsiteBaseUrl',
+                                $importDefinition->getWebsiteBaseUrl()
+                            );
+
+                            $existingDocument->addChannel($channel);
+
+                            $documentManager->persist($existingDocument);
+                            $documentManager->flush();
+                        }
+                    }
+                } else {
+                    $valueName = trim($valueName);
+                    if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass(
+                        ) == Article::class) {
+                        $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
+                            ['title' => $valueName, 'contentType' => $targetContentType->getId()]
+                        );
                     }
 
-                    $documentManager->persist($link);
-                    $documentManager->flush();
-                }
+                    if (!$existingDocument) {
+                        $existingDocument = $targetContentType->create();
+                        if (strpos($valueName, 'http') !== false) {
+                            $existingDocument->setTitle(basename($valueName));
+                        } else {
+                            $existingDocument->setTitle($valueName);
+                        }
+                        $existingDocument->getMetadata()->set('importDate', date('Ymd'));
+                        $existingDocument->getMetadata()->set('externalId', $valueName);
+                        $existingDocument->getMetadata()->set(
+                            'importWebsiteBaseUrl',
+                            $importDefinition->getWebsiteBaseUrl()
+                        );
 
-                if ($link instanceof Image || $link instanceof File) {
-                    $path = false;
+                        foreach ($importDefinition->getChannels() as $channel) {
+                            $existingDocument->addChannel($channel);
+                        }
+
+                        $documentManager->persist($existingDocument);
+                        $documentManager->flush();
+                    }
+                }
+                //TODO: This needs to be made better
+                if ($existingDocument instanceof Image || $existingDocument instanceof File) {
                     $path = $valueName;
 
                     if (strpos($path, 'http') === 0) {
@@ -396,29 +517,25 @@ class BaseConverter
                                 )
                             )
                         );
-                        $link->setFile($storage);
+                        $existingDocument->setFile($storage);
 
                         if (!empty($row['credits'])) {
-                            $link->setCredits($row['credits']);
-                        }
-
-                        $imageAltName = str_replace('_src', '_alt', $name);
-                        if (!empty($row[$imageAltName])) {
-                            // $link->setDescription($row[$imageAltName]);
+                            $existingDocument->setCredits($row['credits']);
                         }
 
                         $documentManager->flush();
                     } else {
-                        $result['warnings'][] = 'File not found: ' . $path . ' for ' . $newObject->getTitle(
-                            );
+                        $result['warnings'][] = 'File not found: ' . $path . ' for ' . $newObject->getTitle();
                     }
                 }
 
-                $relation2->addReference($link);
+                $newRelation->addReference($existingDocument);
             }
 
-            $newObject->addRelation($relation2);
+            $newObject->addRelation($newRelation);
         }
+
+        return $result;
     }
 
     public static function processMetaField($mappedField, $value, $newObject)
@@ -428,7 +545,15 @@ class BaseConverter
         }
     }
 
-    public static function setObjectProperties($newObject, $newData) {
+    public static function setObjectProperties(
+        $newData,
+        $newObject,
+        $importDefinition,
+        $storageManager,
+        $documentManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
         foreach ($newData as $field => $value) {
             if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
                 continue;  // Skip processing for the specified fields
@@ -444,17 +569,41 @@ class BaseConverter
                 $setterMethod = 'is' . ucfirst($field);
             }
 
+            if ($field === 'featured_image') {
+                //TODO: Make WP exception for ?attachment_id
+                if (preg_match('/^[0-9]+$/', $value)) {
+                    $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                } else {
+                    if (filter_var($value, FILTER_VALIDATE_URL) !== false) {
+                        $href = $value;
+                    } else {
+                        $result['warnings'][] = "{$field} {$value} does not contain a valid link or id";
+                    }
+                }
+                Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    true
+                );
+            }
+
             if (method_exists($newObject, $setterMethod)) {
                 call_user_func([$newObject, $setterMethod], $value);
             }
         }
+        return $result;
     }
 
-    public static function checkForExistingContent($importDefinition, $row, $documentManager) {
-        $result = ['updates' => []];
+    public static function checkForExistingContent($importDefinition, $row, $documentManager)
+    {
+        $result = ExecuteImporter::initializeResult();
         $target = null;
         //TODO: contentitem_id is an integrated id field
-        if ($importDefinition->getImageBaseUrl()) {
+        if ($importDefinition->getWebsiteBaseUrl()) {
             $fields = [
                 'contentitem_id' => 'contentitem_id',
                 'wp:post_id' => 'wpPostId'
@@ -467,7 +616,7 @@ class BaseConverter
                         ->findOneBy(
                             [
                                 "metadata.data.{$dbField}" => $row[$field],
-                                'metadata.data.importImageBaseUrl' => $importDefinition->getImageBaseUrl(),
+                                'metadata.data.importWebsiteBaseUrl' => $importDefinition->getWebsiteBaseUrl(),
                             ]
                         );
                     if ($doubleArticle) {

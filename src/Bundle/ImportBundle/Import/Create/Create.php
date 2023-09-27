@@ -3,9 +3,12 @@
 namespace Integrated\Bundle\ImportBundle\Import\Create;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
@@ -45,7 +48,7 @@ class Create
             ->field('contentType')->equals($type)
             ->field('firstName')->equals($firstname)
             ->field('lastName')->equals($lastname)
-            ->field('metadata.data.importImageBaseUrl')->equals($baseUrl)
+            ->field('metadata.data.importWebsiteBaseUrl')->equals($baseUrl)
             ->getQuery()
             ->getSingleResult();
         if (!$person) {
@@ -77,8 +80,14 @@ class Create
      * @return StorageInterface|void
      */
     public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false) {
-
+        //TODO: This needs to be made more dynamic for File and Image type.
         $href = self::maybeFetchRedirectUrl($href);
+
+        $extension = pathinfo($href, PATHINFO_EXTENSION);
+
+        if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+
+        }
 
         $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
@@ -104,36 +113,38 @@ class Create
             $title = basename($title);
         }
 
-        $imageContentType = $importDefinition->getImageContentType();
+        if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+            $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getImageContentType());
+        } else {
+            $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getFileContentType());
+        }
 
-        $image = $documentManager->getRepository(Image::class)->findOneBy(
+        $file = $documentManager->getRepository(Content::class)->findOneBy(
             [
-                'contentType' => $imageContentType,
+                'contentType' => $targetContentType,
                 'file.identifier' => $storage->getIdentifier(),
             ]
         );
         //TODO: Add support for description
-        if (!$image) {
-            $newImage = new Image();
-            $newImage->setContentType('image');
+        if (!$file) {
+            $newFile = $targetContentType->create();
 
-            $documentManager->persist($newImage);
+            $documentManager->persist($newFile);
 
-            $newImage->setFile($storage);
-            $newImage->setContentType($imageContentType);
-            $newImage->setTitle($title);
-            $newImage->getMetadata()->set('importDate', date('Ymd'));
+            $newFile->setFile($storage);
+            $newFile->setTitle($title);
+            $newFile->getMetadata()->set('importDate', date('Ymd'));
 
-            $image = $newImage;
+            $file = $newFile;
 
             $documentManager->flush();
         }
         if ($setFeatured === true) {
-            $newObject->setFeaturedImage($image);
+            $newObject->setFeaturedImage($file);
             $documentManager->flush();
         }
 
-        return $image;
+        return $file;
     }
 
     private static function maybeFetchRedirectUrl($url)
