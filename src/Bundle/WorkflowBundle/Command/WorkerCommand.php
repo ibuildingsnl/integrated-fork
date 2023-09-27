@@ -108,7 +108,7 @@ The <info>%command.name%</info> .
     {
         // run in a different process for isolation like memory issues.
         $process = new Process(
-            ['php', 'bin/console', $command, '-e', $input->getOption('env'), implode(' ', $arguments)],
+            ['php', 'bin/console', $command, '-e', $input->getOption('env'), ...$arguments],
             $this->workingDirectory
         );
         $process->run();

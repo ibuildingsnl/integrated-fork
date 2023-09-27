@@ -101,18 +101,6 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     protected function supports($class)
     {
-        $meta = $this->getDocumentManager()->getClassMetadata($class);
-
-        if ($meta->isMappedSuperclass || $meta->isEmbeddedDocument) {
-            return false;
-        }
-
-        $identifier = $meta->getIdentifierFieldNames();
-
-        if (empty($identifier)) {
-            return false;
-        }
-
-        return true;
+        return !$this->getDocumentManager()->getMetadataFactory()->isTransient($class);
     }
 }

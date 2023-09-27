@@ -56,7 +56,7 @@ class NewsController extends AbstractController
 
         return $this->render('@IntegratedSitemapBundle/News/index.html.twig', [
             'channel' => $channel,
-            'locale' => $this->getParameter('locale'),
+            'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
         ]);
     }
