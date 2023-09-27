@@ -325,12 +325,13 @@ class ImportController extends AbstractController
 
         $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
 
+        $importType = ExecuteImporter::getImportType($importDefinition, $this->importFile);
+
         $result = ExecuteImporter::initializeResult();
 
-        $contentType = $this->documentManager->find(
-            ContentType::class,
-            $importDefinition->getContentType()
-        );
+        $result['messages'][] = "[STARTING IMPORT] New import, source is {$importType}";
+
+        $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
 
         $fieldMapping = [];
         foreach ($importDefinition->getFields() as $field) {
@@ -338,11 +339,10 @@ class ImportController extends AbstractController
         }
 
         $totalRowNumber = \count($data);
-        $rowsPerRequest = max(20, min(500, (int)$totalRowNumber / 20));
+        $rowsPerRequest = 2;
 
         if ($start <= 1) {
             $start = 1;
-            $rowsPerRequest = 3;
         }
 
         $rowNumber = -1;
@@ -356,7 +356,7 @@ class ImportController extends AbstractController
             }
 
             if (($newStart - $start) > $rowsPerRequest) {
-                // max 20 items
+                // max 2 items
                 $result['start'] = $newStart;
                 $result['done'] = false;
                 continue;
@@ -372,18 +372,23 @@ class ImportController extends AbstractController
 
             if (\count($newData)) {
                 $newObject = $contentType->create();
-
+                $updating = false;
                 $checkResult = BaseConverter::checkForExistingContent($importDefinition, $row, $this->documentManager);
-                $result['updates'] = array_merge($result['updates'], $checkResult['result']['updates']);
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
                 if ($checkResult['target'] != null) {
                     $newObject = $checkResult['target'];
+                    $updating = true;
+                } else {
+                    if (array_key_exists('title', $newData)) {
+                        $result['messages'][] = "[NEW ITEM] New item found, creating: {$newData['title']}";
+                    }
                 }
 
                 BaseConverter::setPublicationDate($row, $newData, $newObject);
 
                 BaseConverter::setPublished($newData, $newObject);
 
-                BaseConverter::setObjectProperties($newData, $newObject, $importDefinition, $this->storageManager, $this->documentManager);
+                BaseConverter::setObjectProperties($newData, $newObject, $importDefinition, $this->storageManager, $this->documentManager, $importType);
 
                 if ($importDefinition->getImageRelation()) {
                     if ($relation = $newObject->getRelation($importDefinition->getImageRelation()->getId())) {
@@ -406,7 +411,6 @@ class ImportController extends AbstractController
 
                 try {
                     // todo: move to Wordpress filter
-
                     foreach ($importDefinition->getChannels() as $channel) {
                         if ($newObject instanceof Person) {
                             if ($row['own_page'] != 1) {
@@ -414,6 +418,7 @@ class ImportController extends AbstractController
                             }
                         }
                         $newObject->addChannel($channel);
+                        $result['messages'][] = "[INFO] Linked to channel: {$channel->getName()}";
                     }
 
                     $col = 0;
@@ -434,7 +439,7 @@ class ImportController extends AbstractController
                             $this->storageManager
                         );
 
-                        $result['warnings'] = array_merge($result['warnings'], $checkResult['warnings']);
+                        $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
 
                         ++$col;
                     }
@@ -450,7 +455,7 @@ class ImportController extends AbstractController
 
                         $html = HtmlDomParser::str_get_html($content);
 
-                        $html = BaseConverter::processImageElements(
+                        $checkResult = BaseConverter::processImageElements(
                             $html,
                             $newObject,
                             $importDefinition,
@@ -458,10 +463,12 @@ class ImportController extends AbstractController
                             $this->storageManager
                         );
 
-                        $html = (string)$html;
+                        $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+
+                        $html = (string)$checkResult['html'];
 
                         if ($html === '') {
-                            $result['warnings'][] = 'No valid HTML for ' . (string)$newObject . ', content ignored';
+                            $result['messages'][] = "[WARNING] No valid HTML for {(string)$newObject}, content ignored";
                             $html = HtmlDomParser::str_get_html('<p></p>');
                         }
 
@@ -473,9 +480,8 @@ class ImportController extends AbstractController
                     }
 
                     //Process Metadata
-                    $checkResult = BaseConverter::processMetadata($row, $newData, $newObject, $importDefinition, $this->documentManager, $this->storageManager);
-                    $result['errors'] = array_merge($result['errors'], $checkResult['result']['errors']);
-                    $result['warnings'] = array_merge($result['warnings'], $checkResult['result']['warnings']);
+                    $checkResult = BaseConverter::processMetadata($row, $newData, $newObject, $importDefinition, $importType, $this->documentManager, $this->storageManager);
+                    $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
                     $newObject = $checkResult['newObject'];
 
                     if ($this->documentManager->getUnitOfWork()->getDocumentState($newObject) !== UnitOfWork::STATE_MANAGED) {
@@ -488,6 +494,8 @@ class ImportController extends AbstractController
                         $import_id = $row['wp:post_id'];
                     }
 
+                    $result['messages'][] = '[SUCCES] Item ' . $import_id . ' (' . (string)$newObject . ') ' . ($updating ? 'updated' : 'created');
+                    $result['messages'][] = '---NEW IMPORT---';
                     $result['success'][] = 'Item ' . $import_id . ' (' . (string)$newObject . ') imported';
                 } catch (\Exception $e) {
                     $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br($e->getTraceAsString()) . ' ' . $e->getFile() . ' ' . $e->getLine();

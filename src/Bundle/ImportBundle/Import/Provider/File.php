@@ -221,6 +221,22 @@ class File
         return $data;
     }
 
+    public function getFilePath($importDefinition) {
+        $file = null;
+        if ($importDefinition->getFileId()) {
+            $file = $this->documentManager->find(
+                ContentFile::class,
+                $importDefinition->getFileId()
+            );
+        }
+
+        if (!$file || !$file->getFile()) {
+            throw new \Exception('File not available');
+        }
+
+        return $filePath = $this->storageCache->path($file->getFile())->getPathname();
+    }
+
     /**
      * @param SimpleXMLElement $xml
      * @param array            $options

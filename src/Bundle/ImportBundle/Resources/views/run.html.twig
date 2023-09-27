@@ -38,19 +38,13 @@
                     <br/>
                 </div>
 
+                <h2><a href="#" onclick="$('#message-list').toggle(); return false;">Importer log</a></h2>
+                <div id="message-list">
+                </div>
+
                 <h2><a href="#" onclick="$('#error-list').toggle(); return false;">Errors</a> (<span
                         id="error-count">0</span>)</h2>
                 <div id="error-list" style="display: none;">
-                </div>
-
-                <h2><a href="#" onclick="$('#warning-list').toggle(); return false;">Warnings</a> (<span
-                        id="warning-count">0</span>)</h2>
-                <div id="warning-list" style="display: none;">
-                </div>
-
-                <h2><a href="#" onclick="$('#update-list').toggle(); return false;">Updates</a> (<span
-                        id="update-count">0</span>)</h2>
-                <div id="update-list" style="display: none;">
                 </div>
 
                 <h2><a href="#" onclick="$('#success-list').toggle(); return false;">Success</a> (<span
@@ -61,6 +55,45 @@
             </div>
         </form>
     </div>
+<style>
+    div#message-list {
+        height: 400px;
+        overflow-y: scroll;
+        max-width: 1140px;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .progress {
+        width: 1140px;
+        background-color: white;
+        height: 30px;
+        position: relative;
+        border-radius: 8px;
+        border: 1px solid #04ad93;
+        overflow: hidden;
+    }
+
+    div#import-progress {
+        position: absolute;
+        left: 0;
+        height: 30px;
+        background-color: #0dad93;
+        display: flex;
+        z-index: 1;
+        content: attr(aria-valuenow);
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+
+    div#import-progress::before {
+        content: attr(aria-valuenow);
+    }
+</style>
 
 {% endblock %}
 
@@ -69,9 +102,8 @@
 
 <script>
 var errorCount = 0;
-var warningCount = 0;
+var messageCount = 0;
 var successCount = 0;
-var updateCount = 0;
 function executeImport(startRow) {
     $.ajax({
         url: "{{ path('integrated_import_run_execute', {'importDefinition': importDefinition.id} ) }}?startTime={{ startTime }}&start="+startRow,
@@ -81,22 +113,15 @@ function executeImport(startRow) {
             errorCount = errorCount + 1;
             $('#error-count').html(errorCount);
         });
-        $.each(data.warnings, function(key, value) {
-            $('#warning-list').append('<div class="alert-warning">'+value+'</div>');
-            warningCount = warningCount + 1;
-            $('#warning-count').html(warningCount);
+        $.each(data.messages, function(key, value) {
+            $('#message-list').append('<div class="message">'+value+'</div>');
         });
         $.each(data.success, function(key, value) {
             $('#success-list').append('<div class="success">'+value+'</div>');
             successCount = successCount + 1;
             $('#success-count').html(successCount);
         });
-        $.each(data.updates, function(key, value) {
-            $('#update-list').append('<div class="update">'+value+'</div>');
-            updateCount = updateCount + 1;
-            $('#update-count').html(updateCount);
-        });
-        $('#import-progress').css('width', data.percentage+'%').attr('aria-valuenow', data.percentage);
+        $('#import-progress').css('width', data.percentage+'%').attr('aria-valuenow', data.percentage + '%');
         $('#status-remaining').html(data.remaining);
         if (data.done) {
             $('#status-pending').hide();

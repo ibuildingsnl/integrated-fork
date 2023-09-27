@@ -2,14 +2,21 @@
 
 namespace Integrated\Bundle\ImportBundle\Import\Converter;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
+use Integrated\Bundle\ContentBundle\Document\Content\File;
+use Integrated\Bundle\ImportBundle\Import\Create\Create;
+use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
+
 class WP
 {
-    public static function processContent($content, $wordpress = false) {
-
-        $newHtml = '';
+    public static function processContent($content, $wordpress = false)
+    {
         $prevLine = '';
         $imgIds = [];
 
+        //TODO: Add support for gallery.
         $content = preg_replace_callback(
             '/\[gallery ids\="(.+?)".*?\]/',
             function ($matches) use (&$imgIds) {
@@ -22,28 +29,41 @@ class WP
         $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
             if (\strlen(trim($matches[1])) == 11) {
-                return '[object type="youtube" id="'.trim($matches[1]).'"]';
+                return '[object type="youtube" id="' . trim($matches[1]) . '"]';
             }
             return $matches[0];
-        }, $content);
+        },                               $content);
 
         $content = preg_replace_callback(
             '/\[caption.*?\].*?<\/a>\s*(.*?)\[\/caption\]/',
             function ($matches) {
                 $captionText = $matches[1];  // extract caption text
-                // Now find the img tag and update its alt attribute
-                $imgTagPattern = '/(<img.*?alt=")(.*?)(".*?>)/';
-                $updatedImgTag = preg_replace($imgTagPattern, "$1$captionText$3", $matches[0]);  // update the entire caption content
 
                 // Remove the original caption text from the updated caption content
-                $updatedContent = str_replace($captionText, '', $updatedImgTag);
-                return $updatedContent;  // return the updated content without the original caption text
+                $updatedContent = str_replace($captionText, '', $matches[0]);
+
+                // Remove the anchor tags surrounding the img tag
+                $updatedContent = preg_replace('/<a[^>]*>(.*?)<\/a>/', '$1', $updatedContent);
+
+                // Update the alt attribute of the img tag
+                $updatedContent = preg_replace('/(<img.*?alt=")(.*?)(".*?>)/', "$1$captionText$3", $updatedContent);
+
+                // Remove the size attribute from the src URL of the img tag
+                $updatedContent = preg_replace(
+                    '/(<img.*?src=")([^"]+)-\d+x\d+(\.[a-zA-Z]+)(".*?>)/',
+                    "$1$2$3$4",
+                    $updatedContent
+                );
+
+                return $updatedContent;  // return the updated content
             },
             $content
         );
 
+
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
+        $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); //Strip shortcodes
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
@@ -63,8 +83,8 @@ class WP
         return $newHtml;
     }
 
-    public static function formatContentLines(string $content): string {
-
+    public static function formatContentLines(string $content): string
+    {
         $contentLines = [];
         $prevLine = '';
         $newHtml = '';
@@ -120,13 +140,13 @@ class WP
                     if (strpos($line, '- ') === 0) {
                         $line = substr($line, 2);
                     }
-                    $line = '<li>'.$line.'</li>';
+                    $line = '<li>' . $line . '</li>';
                     $prevLine = 'li';
                 } else {
                     if ($prevLine == 'li') {
                         $newHtml .= '</ul>';
                     }
-                    $line = '<p>'.$line.'</p>';
+                    $line = '<p>' . $line . '</p>';
                     $prevLine = 'p';
                 }
             } else {
@@ -134,7 +154,7 @@ class WP
                     $newHtml .= '</ul>';
                 }
             }
-            $newHtml .= $line."\n";
+            $newHtml .= $line . "\n";
         }
 
         if ($prevLine == 'li') {
@@ -142,6 +162,64 @@ class WP
         }
 
         return $newHtml;
+    }
+
+    public static function processWpMetadata(
+        $row,
+        $newData,
+        $newObject,
+        $importDefinition,
+        $documentManager,
+        $storageManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
+        if (isset($row['wp:post_id'])) {
+            $newObject->getMetadata()->set('wpPostId', $row['wp:post_id']);
+            $newObject->getMetadata()->set(
+                'wpUrl',
+                (isset($row['wp:attachment_url'])) ? $row['wp:attachment_url'] : $row['link']
+            );
+            $newObject->getMetadata()->set('importDate', date('Ymd'));
+            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
+        }
+
+        if (isset($row['meta_yoast_wpseo_canonical']) && $newObject instanceof Article) {
+            $newObject->setSourceUrl($row['meta_yoast_wpseo_canonical']);
+        }
+
+        if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
+            $result = WP::processAttachment($row, $newObject, $storageManager);
+            if (isset($result['message'])) {
+                $result['messages'][] = $result['message'];
+            }
+        }
+
+        if (isset($row['wp:comments'])) {
+            $result['messages'][] = '[WARNING] There are comments that are not processed.';
+        }
+
+        if (!array_key_exists('featured_image', $newData)) {
+            if (isset($row['meta_thumbnail_id'])) {
+                $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
+                $checkResult = Create::createFileFromUrl(
+                    $href,
+                    $newObject,
+                    $importDefinition,
+                    $storageManager,
+                    $documentManager,
+                    false,
+                    true
+                );
+
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+            }
+        }
+
+        return [
+            'result' => $result,
+            'newObject' => $newObject,
+        ];
     }
 
 
@@ -154,9 +232,9 @@ class WP
             rename($tmpBaseFile, $tmpfile);
             file_put_contents($tmpfile, @file_get_contents($row['wp:attachment_url']));
             if (filesize($tmpfile) == 0) {
-                $errorMessage = 'Attachment ' . $row['wp:post_id'] . ' has 0 bytes';
+                $errorMessage = '[ERROR] Attachment ' . $row['wp:post_id'] . ' has 0 bytes';
                 unlink($tmpfile);
-                return ['error' => $errorMessage];
+                return ['message' => $errorMessage];
             }
 
             $storage = $storageManager->write(
@@ -175,6 +253,6 @@ class WP
             unlink($tmpfile);
             return ['success' => true];
         }
-        return ['error' => 'Invalid attachment or object type.'];
+        return ['message' => 'Invalid attachment or object type.'];
     }
 }

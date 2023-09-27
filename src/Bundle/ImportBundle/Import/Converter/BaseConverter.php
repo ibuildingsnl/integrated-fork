@@ -148,8 +148,9 @@ class BaseConverter
 
     public static function processImageElements($html, $newObject, $importDefinition, $documentManager, $storageManager)
     {
+        $result = ExecuteImporter::initializeResult();
+
         $tags = ['a', 'img'];
-        //TODO: Check functioning
         foreach ($tags as $tag) {
             foreach ($html->find($tag) as $element) {
                 if (!$importDefinition->getImageContentType() || !$importDefinition->getImageRelation()) {
@@ -190,7 +191,7 @@ class BaseConverter
                 }
 
                 if ($href) {
-                    $image = Create::createFileFromUrl(
+                    $checkResult = Create::createFileFromUrl(
                         $href,
                         $newObject,
                         $importDefinition,
@@ -198,6 +199,10 @@ class BaseConverter
                         $documentManager,
                         $title
                     );
+
+                    $image = $checkResult['file'];
+
+                    $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
 
                     if ($image === false) {
                         continue;
@@ -207,11 +212,16 @@ class BaseConverter
                     $relationType = $tag == 'img' ? 'embedded' : $importDefinition->getImageRelation()->getType();
                     $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
 
-                    $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') &&
-                                 array_search(
-                                     $image->getId(),
-                                     array_column($newObject->getReferencesByRelationType('embedded'), 'id')
-                                 ) !== false;
+                    $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') && array_search(
+                                                                                                             $image->getId(
+                                                                                                             ),
+                                                                                                             array_column(
+                                                                                                                 $newObject->getReferencesByRelationType(
+                                                                                                                     'embedded'
+                                                                                                                 ),
+                                                                                                                 'id'
+                                                                                                             )
+                                                                                                         ) !== false;
 
 
                     $relation->setRelationType($relationType);
@@ -233,7 +243,10 @@ class BaseConverter
                 }
             }
         }
-        return $html;
+        return [
+            'html' => $html,
+            'result' => $result,
+        ];
     }
 
     public static function fieldProcessor(
@@ -263,7 +276,7 @@ class BaseConverter
                 $documentManager,
                 $storageManager
             );
-            $result['warnings'] = array_merge($result['warnings'], $checkResult['warnings']);
+            $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
         }
         return $result;
     }
@@ -273,19 +286,23 @@ class BaseConverter
         $newData,
         $newObject,
         $importDefinition,
+        $importType,
         $documentManager,
         $storageManager
     ) {
         $result = ExecuteImporter::initializeResult();
 
-        if (isset($row['wp:post_id'])) {
-            $newObject->getMetadata()->set('wpPostId', $row['wp:post_id']);
-            $newObject->getMetadata()->set(
-                'wpUrl',
-                (isset($row['wp:attachment_url'])) ? $row['wp:attachment_url'] : $row['link']
+        if ($importType === 'WordPress') {
+            $checkResult = WP::processWpMetadata(
+                $row,
+                $newData,
+                $newObject,
+                $importDefinition,
+                $documentManager,
+                $storageManager
             );
-            $newObject->getMetadata()->set('importDate', date('Ymd'));
-            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
+            $newObject = $checkResult['newObject'];
+            $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
         }
 
         if (isset($row['contentitem_id'])) {
@@ -294,37 +311,7 @@ class BaseConverter
             $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
         }
 
-        if (isset($row['meta_yoast_wpseo_canonical']) && $newObject instanceof Article) {
-            $newObject->setSourceUrl($row['meta_yoast_wpseo_canonical']);
-        }
-
-        if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
-            $result = WP::processAttachment($row, $newObject, $storageManager);
-            if (isset($result['error'])) {
-                $result['errors'][] = $result['error'];
-            }
-        }
-
-        if (isset($row['wp:comments'])) {
-            $result['warnings'][] = 'There are comments that are not processed.';
-        }
-
-        if (!array_key_exists('featured_image', $newData)) {
-            if (isset($row['meta_thumbnail_id'])) {
-                $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
-                Create::createFileFromUrl(
-                    $href,
-                    $newObject,
-                    $importDefinition,
-                    $storageManager,
-                    $documentManager,
-                    false,
-                    true
-                );
-            }
-        }
-
-        // premium articles
+        // //this makes no sense yet..
         if ($newObject->getMetadata()->get('premium') == 1) {
             $newObject->isPremium(true);
         }
@@ -408,6 +395,7 @@ class BaseConverter
 
                 if ($targetContentType->getClass() == Taxonomy::class && $parentId) {
                     foreach ($importDefinition->getChannels() as $channel) {
+                        //TODO: Move to seperate function
                         $title = str_ireplace(' Website', '', $channel->getName());
                         if (!$parent = $documentManager->getRepository(Content::class)
                                                        ->createQueryBuilder()->select()
@@ -421,12 +409,14 @@ class BaseConverter
                             $parent->addChannel($channel);
                             $parent->setDisabled(true);
 
+                            $result['messages'][] = "[INFO] Parent Dossier created with the name: {$title}";
+
                             $documentManager->persist($parent);
                             $documentManager->flush();
                         }
 
                         if ($parent) {
-                            $result['warnings'][] = 'Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
+                            $result['messages'][] = '[INFO] Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
                         }
 
                         $valueName = trim($valueName);
@@ -448,6 +438,7 @@ class BaseConverter
                                 $existingDocument->setTitle($valueName);
                             }
 
+                            $existingDocument->setParentId($parent->getId());
                             $existingDocument->getMetadata()->set('importDate', date('Ymd'));
                             $existingDocument->getMetadata()->set('externalId', $valueName);
                             $existingDocument->getMetadata()->set(
@@ -488,6 +479,8 @@ class BaseConverter
                             $existingDocument->addChannel($channel);
                         }
 
+                        $result['messages'][] = "[INFO] {$targetContentType} created with the name {$valueName}";
+
                         $documentManager->persist($existingDocument);
                         $documentManager->flush();
                     }
@@ -525,7 +518,7 @@ class BaseConverter
 
                         $documentManager->flush();
                     } else {
-                        $result['warnings'][] = 'File not found: ' . $path . ' for ' . $newObject->getTitle();
+                        $result['messages'][] = '[WARNING] File not found: ' . $path . ' for ' . $newObject->getTitle();
                     }
                 }
 
@@ -550,7 +543,8 @@ class BaseConverter
         $newObject,
         $importDefinition,
         $storageManager,
-        $documentManager
+        $documentManager,
+        $importType
     ) {
         $result = ExecuteImporter::initializeResult();
 
@@ -570,17 +564,25 @@ class BaseConverter
             }
 
             if ($field === 'featured_image') {
-                //TODO: Make WP exception for ?attachment_id
+                //TODO: Add more options for example Drupal
                 if (preg_match('/^[0-9]+$/', $value)) {
-                    $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                    if ($importType === 'WordPress') {
+                        $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                    }
                 } else {
                     if (filter_var($value, FILTER_VALIDATE_URL) !== false) {
                         $href = $value;
                     } else {
-                        $result['warnings'][] = "{$field} {$value} does not contain a valid link or id";
+                        $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
                     }
                 }
-                Create::createFileFromUrl(
+
+                if (strlen($href) < 1) {
+                    $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+                    return $result;
+                }
+
+                $checkResult = Create::createFileFromUrl(
                     $href,
                     $newObject,
                     $importDefinition,
@@ -589,6 +591,7 @@ class BaseConverter
                     false,
                     true
                 );
+                $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
             }
 
             if (method_exists($newObject, $setterMethod)) {
@@ -620,7 +623,7 @@ class BaseConverter
                             ]
                         );
                     if ($doubleArticle) {
-                        $result['updates'][] = "{$dbField} {$row[$field]} already imported - updating";
+                        $result['messages'][] = "[UPDATING] Item ID {$row[$field]} already imported - updating";
                         $target = $doubleArticle;
                     }
                 }

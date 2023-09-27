@@ -9,6 +9,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 
@@ -81,19 +82,29 @@ class Create
      */
     public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false) {
         //TODO: This needs to be made more dynamic for File and Image type.
+        $result = ExecuteImporter::initializeResult();
+
         $href = self::maybeFetchRedirectUrl($href);
 
         $extension = pathinfo($href, PATHINFO_EXTENSION);
 
-        if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
-
+        if ($extension === '') {
+            return [
+                'file' => false,
+                'result' => $result,
+            ];
         }
 
         $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
-            return false;
+            $result['messages'][] = "[INFO] Image {$href} has 0 bites";
+
+            return [
+                'file' => false,
+                'result' => $result,
+            ];
         }
 
         $storage = $storageManager->write(
@@ -111,22 +122,24 @@ class Create
         if (!$title) {
             $title = parse_url($href, PHP_URL_PATH);
             $title = basename($title);
+            $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
         }
 
         if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
             $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getImageContentType());
+            $contentType = $importDefinition->getImageContentType();
         } else {
             $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getFileContentType());
+            $contentType = $importDefinition->getFileContentType();
         }
 
-        $file = $documentManager->getRepository(Content::class)->findOneBy(
-            [
-                'contentType' => $targetContentType,
-                'file.identifier' => $storage->getIdentifier(),
-            ]
-        );
         //TODO: Add support for description
-        if (!$file) {
+        if (!$file = $documentManager->getRepository(Content::class)
+                                     ->createQueryBuilder()->select()
+                                     ->field('contentType')->equals($contentType)
+                                     ->field('file.identifier')->equals($storage->getIdentifier())
+                                     ->limit(1)->getQuery()
+                                     ->getSingleResult()) {
             $newFile = $targetContentType->create();
 
             $documentManager->persist($newFile);
@@ -137,14 +150,23 @@ class Create
 
             $file = $newFile;
 
+            $result['messages'][] = "[INFO] Image imported with title {$title}";
+
             $documentManager->flush();
+        } else {
+            $result['messages'][] = "[INFO] Image {$title} already existed";
         }
         if ($setFeatured === true) {
             $newObject->setFeaturedImage($file);
+
+            $result['messages'][] = "[INFO] Image {$title} set as featured image";
             $documentManager->flush();
         }
 
-        return $file;
+        return [
+            'file' => $file,
+            'result' => $result,
+        ];
     }
 
     private static function maybeFetchRedirectUrl($url)
