@@ -2,51 +2,32 @@
 
 namespace Integrated\Bundle\ImportBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Doctrine\ORM\EntityManager;
-use Integrated\Bundle\ChannelBundle\Model\Config;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
-use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
-use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
-use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
 use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
 use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
-use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
 use Integrated\Bundle\ImportBundle\Import\Converter\BaseConverter;
 use Integrated\Bundle\ImportBundle\Import\Provider\Doctrine;
 use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
-use Integrated\Bundle\ImportBundle\Serializer\InitializedObjectConstructor;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
-use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Form\ContentFormType;
-use JMS\Serializer\Construction\UnserializeObjectConstructor;
-use JMS\Serializer\DeserializationContext;
-use JMS\Serializer\Exception\RuntimeException;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\SerializerBuilder;
 use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class ImportController extends AbstractController
 {
@@ -103,7 +84,7 @@ class ImportController extends AbstractController
         $importDefinition = new ImportDefinition();
         $importDefinition->setContentType($type->getId());
 
-        $form = $this->createCreateImportDefinitionForm($importDefinition);
+        $form = $this->createImportDefinitionForm($importDefinition);
 
         $form->handleRequest($request);
 
@@ -130,7 +111,7 @@ class ImportController extends AbstractController
      */
     public function editImport(Request $request, ImportDefinition $importDefinition)
     {
-        $form = $this->createCreateImportDefinitionForm($importDefinition);
+        $form = $this->editImportDefinitionForm($importDefinition);
 
         $form->handleRequest($request);
 
@@ -343,6 +324,7 @@ class ImportController extends AbstractController
         $start = $request->get('start', 1);
 
         $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+
         $result = ExecuteImporter::initializeResult();
 
         $contentType = $this->documentManager->find(
@@ -389,17 +371,19 @@ class ImportController extends AbstractController
             BaseConverter::processDateFields($newData);
 
             if (\count($newData)) {
-                $target = $contentType->create();
+                $newObject = $contentType->create();
 
                 $checkResult = BaseConverter::checkForExistingContent($importDefinition, $row, $this->documentManager);
                 $result['updates'] = array_merge($result['updates'], $checkResult['result']['updates']);
-                $newObject = $checkResult['target'];
+                if ($checkResult['target'] != null) {
+                    $newObject = $checkResult['target'];
+                }
 
                 BaseConverter::setPublicationDate($row, $newData, $newObject);
 
                 BaseConverter::setPublished($newData, $newObject);
 
-                BaseConverter::setObjectProperties($newObject, $newData);
+                BaseConverter::setObjectProperties($newData, $newObject, $importDefinition, $this->storageManager, $this->documentManager);
 
                 if ($importDefinition->getImageRelation()) {
                     if ($relation = $newObject->getRelation($importDefinition->getImageRelation()->getId())) {
@@ -441,7 +425,7 @@ class ImportController extends AbstractController
                         }
                         $mappedField = $fieldMapping[$currentColValue];
 
-                        BaseConverter::fieldProcessor(
+                        $checkResult = BaseConverter::fieldProcessor(
                             $mappedField,
                             $value,
                             $newObject,
@@ -449,6 +433,8 @@ class ImportController extends AbstractController
                             $this->documentManager,
                             $this->storageManager
                         );
+
+                        $result['warnings'] = array_merge($result['warnings'], $checkResult['warnings']);
 
                         ++$col;
                     }
@@ -464,13 +450,6 @@ class ImportController extends AbstractController
 
                         $html = HtmlDomParser::str_get_html($content);
 
-                        if ($html === false) {
-                            if ($newHtml != '') {
-                                $result['warnings'][] = 'No valid HTML for ' . (string)$newObject . ', content ignored' . $newHtml;
-                            }
-                            $html = HtmlDomParser::str_get_html('<p></p>');
-                        }
-
                         $html = BaseConverter::processImageElements(
                             $html,
                             $newObject,
@@ -481,6 +460,11 @@ class ImportController extends AbstractController
 
                         $html = (string)$html;
 
+                        if ($html === '') {
+                            $result['warnings'][] = 'No valid HTML for ' . (string)$newObject . ', content ignored';
+                            $html = HtmlDomParser::str_get_html('<p></p>');
+                        }
+
                         if ($newObject instanceof Article) {
                             $newObject->setContent($html);
                         } else {
@@ -489,7 +473,10 @@ class ImportController extends AbstractController
                     }
 
                     //Process Metadata
-                    $newObject = BaseConverter::processMetadata($row, $newObject, $importDefinition, $this->documentManager, $this->storageManager);
+                    $checkResult = BaseConverter::processMetadata($row, $newData, $newObject, $importDefinition, $this->documentManager, $this->storageManager);
+                    $result['errors'] = array_merge($result['errors'], $checkResult['result']['errors']);
+                    $result['warnings'] = array_merge($result['warnings'], $checkResult['result']['warnings']);
+                    $newObject = $checkResult['newObject'];
 
                     if ($this->documentManager->getUnitOfWork()->getDocumentState($newObject) !== UnitOfWork::STATE_MANAGED) {
                         $this->documentManager->persist($newObject);
@@ -522,7 +509,7 @@ class ImportController extends AbstractController
      *
      * @return \Symfony\Component\Form\FormInterface
      */
-    protected function createCreateImportDefinitionForm(ImportDefinition $importDefinition)
+    protected function createImportDefinitionForm(ImportDefinition $importDefinition)
     {
         $form = $this->createForm(
             ImportDefinitionType::class,
@@ -539,6 +526,48 @@ class ImportController extends AbstractController
                     'options' => [
                         'label' => 'Create',
                         'button_class' => 'orange no-icon',
+                    ],
+                ],
+                'cancel' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Back',
+                        'button_class' => 'white icon-left',
+                        'attr' => [
+                            'formnovalidate' => 'formnovalidate',
+                            'data-dismiss' => 'modal',
+                            'icon' => 'arrow-left',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $form;
+    }
+
+    /**
+     * Creates a form to edit an ImportDefinition document.
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    protected function editImportDefinitionForm(ImportDefinition $importDefinition)
+    {
+        $form = $this->createForm(
+            ImportDefinitionType::class,
+            $importDefinition,
+            [
+                'method' => 'POST',
+            ]
+        );
+
+        $form->add('actions', FormActionsType::class, [
+            'buttons' => [
+                'create' => [
+                    'type' => SubmitType::class,
+                    'options' => [
+                        'label' => 'Update',
+                        'button_class' => 'green no-icon',
                     ],
                 ],
                 'cancel' => [
