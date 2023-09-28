@@ -44,7 +44,9 @@ class ChannelDistributorTest extends TestCase
         $this->channelDistributor->distribute($this->articleMother->withChannel());
 
         self::assertNotEmpty($this->queue);
-        self::assertInstanceOf(Request::class, $this->queue->pull(1)[0]);
+        $message = $this->queue->pull(1)[0];
+        self::assertInstanceOf(Request::class, $message);
+        self::assertEquals('add', $message->state);
     }
 
     public function testAddContentWithScheduledPublicationToQueueWithDelay()
@@ -79,10 +81,13 @@ class ChannelDistributorTest extends TestCase
         self::assertCount(1, $this->queue);
     }
 
-    public function testNotDistributingUnpublishedMaterial()
+    public function testUnDistributingUnpublishedMaterial()
     {
         $this->channelDistributor->distribute($this->articleMother->disabled());
 
-        self::assertEmpty($this->queue);
+        self::assertNotEmpty($this->queue);
+        $message = $this->queue->pull(1)[0];
+        self::assertInstanceOf(Request::class, $message);
+        self::assertEquals('delete', $message->state);
     }
 }

@@ -20,9 +20,6 @@ class ChannelDistributor
 
     public function distribute(Content $content): void
     {
-        if ($content->isDisabled()) {
-            return;
-        }
         foreach ($content->getChannels() as $channel) {
             $this->distributeTo($channel, $content, ...$this->publications->forContentOnChannel($content, $channel));
         }
@@ -30,6 +27,10 @@ class ChannelDistributor
 
     private function distributeTo(ChannelInterface $channel, Content $content, Publication $publication = null): void
     {
+        if ($content->isDisabled()) {
+            $this->queue->push(new Request($content, 'delete', $channel), 0);
+            return;
+        }
         $this->queue->push(new Request($content, 'add', $channel), $this->secondsUntil(
             $publication ? $publication->getTime()->getStartDate() : $content->getPublishTime()->getStartDate(),
             $this->clock->now(),
