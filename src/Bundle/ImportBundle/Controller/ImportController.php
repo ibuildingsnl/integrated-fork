@@ -328,8 +328,8 @@ class ImportController extends AbstractController
 
         $result = ExecuteImporter::initializeResult();
 
-        if ($start === 1) {
-            $result['messages'][] = "[STARTING IMPORT] New import, source is {$importType}";
+        if ($start < 1) {
+            $result['messages'][] = "[STARTING IMPORT] New import, recognized format is {$importType}";
         }
 
         $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());

@@ -13,7 +13,6 @@ class WP
 {
     public static function processContent($content, $importType)
     {
-        $prevLine = '';
         $imgIds = [];
 
         // TODO: Add support for gallery.
@@ -197,6 +196,7 @@ class WP
         }
 
         if (isset($row['wp:comments'])) {
+            //TODO: Warning is not given.
             $result['messages'][] = '[WARNING] There are comments that are not processed.';
         }
 
