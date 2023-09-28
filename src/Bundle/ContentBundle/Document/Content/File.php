@@ -12,8 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
-use Integrated\Bundle\StorageBundle\Form\Type\FileReferenceType;
-use Integrated\Bundle\StorageBundle\Form\Type\ImageReferenceType;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;

@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\ImportBundle\Import\Converter;
 
-use Integrated\Bundle\ChannelBundle\Model\Config;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ImportBundle\Serializer\InitializedObjectConstructor;
 use JMS\Serializer\Construction\UnserializeObjectConstructor;
@@ -33,10 +32,10 @@ class DefinitionComposer
 
         $serializer = SerializerBuilder::create()
                                        ->addMetadataDir(
-                                           realpath(__DIR__ . '/../../../ContentBundle/Resources/serializer')
+                                           realpath(__DIR__.'/../../../ContentBundle/Resources/serializer')
                                        )->setObjectConstructor(
-                new InitializedObjectConstructor(new UnserializeObjectConstructor())
-            )->build();
+                                           new InitializedObjectConstructor(new UnserializeObjectConstructor())
+                                       )->build();
         $contentTypeFields = json_decode($serializer->serialize($contentType->create(), 'json', $context), true);
 
         return $contentTypeFields;
@@ -50,7 +49,7 @@ class DefinitionComposer
             $contentTypeFields = [];
             if (\is_array($contentTypeValue)) {
                 foreach ($contentTypeValue as $contentTypeField2 => $contentTypeValue2) {
-                    $contentTypeFields[] = $contentTypeField . '.' . $contentTypeField2;
+                    $contentTypeFields[] = $contentTypeField.'.'.$contentTypeField2;
                 }
             } else {
                 $contentTypeFields[] = $contentTypeField;
@@ -76,7 +75,7 @@ class DefinitionComposer
                 }
                 // check current field
 
-                $fields['field-' . $contentTypeField] = ['label' => $contentTypeField, 'matchCol' => $matchCol];
+                $fields['field-'.$contentTypeField] = ['label' => $contentTypeField, 'matchCol' => $matchCol];
             }
         }
 
@@ -85,9 +84,9 @@ class DefinitionComposer
 
         $relations = $documentManager->getRepository(Relation::class)->findAll();
         foreach ($relations as $relation) {
-            $fields['relation-' . $relation->getId()] = [
-                'label' => 'Relation ' . $relation->getName(),
-                'matchCol' => false
+            $fields['relation-'.$relation->getId()] = [
+                'label' => 'Relation '.$relation->getName(),
+                'matchCol' => false,
             ];
         }
 
@@ -104,12 +103,12 @@ class DefinitionComposer
                     if ($field->getSourceField()) {
                         $column = array_search($field->getSourceField(), $data[0]);
                         if ($column === false) {
-                            $warnings[] = 'Warning: field ' . $field->getSourceField(
-                                ) . ' is not available in the import any more and will be ignored';
+                            $warnings[] = 'Warning: field '.$field->getSourceField(
+                            ).' is not available in the import any more and will be ignored';
                             continue;
                         }
                         if ($column != $field->getColumn()) {
-                            $warnings[] = 'Warning: column ' . $field->getSourceField() . ' is on another position now';
+                            $warnings[] = 'Warning: column '.$field->getSourceField().' is on another position now';
                         }
                     } else {
                         $column = $field->getColumn();
@@ -119,11 +118,12 @@ class DefinitionComposer
                     }
                     $fields[$field->getMappedField()]['matchCol'][] = $column;
                 } else {
-                    $warnings[] = 'Warning: mapped field is not available and will be ignored: ' . $field->getMappedField(
-                        );
+                    $warnings[] = 'Warning: mapped field is not available and will be ignored: '.$field->getMappedField(
+                    );
                 }
             }
         }
+
         return [
             'warnings' => $warnings,
             'fields' => $fields,
@@ -180,5 +180,4 @@ class DefinitionComposer
 
         return $data;
     }
-
 }

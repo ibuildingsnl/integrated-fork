@@ -14,11 +14,11 @@ use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
 use Integrated\Bundle\ImportBundle\Document\ImportDefinition;
 use Integrated\Bundle\ImportBundle\Form\Type\ImportDefinitionType;
+use Integrated\Bundle\ImportBundle\Import\Converter\BaseConverter;
 use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
 use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
-use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
-use Integrated\Bundle\ImportBundle\Import\Converter\BaseConverter;
+use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Provider\Doctrine;
 use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
@@ -66,7 +66,7 @@ class ImportController extends AbstractController
     public function cloneImport(ImportDefinition $importDefinition)
     {
         $copiedImportDefinition = clone $importDefinition;
-        $copiedImportDefinition->setName('Copy of ' . $copiedImportDefinition->getName());
+        $copiedImportDefinition->setName('Copy of '.$copiedImportDefinition->getName());
         $copiedImportDefinition->setFileId(null);
 
         $this->documentManager->persist($copiedImportDefinition);
@@ -239,7 +239,7 @@ class ImportController extends AbstractController
                     $cols = \count($data[0]);
                     $fields2 = [];
                     for ($col = 0; $col < $cols; ++$col) {
-                        $mappedField = $request->request->get('col' . $col, null);
+                        $mappedField = $request->request->get('col'.$col, null);
                         if ($mappedField) {
                             $field = new ImportField();
                             $field->setColumn($col);
@@ -258,9 +258,8 @@ class ImportController extends AbstractController
                     ['importDefinition' => $importDefinition->getId()]
                 );
             }
-
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Unable to read import file: ' . $e->getMessage() . $e->getTraceAsString());
+            $this->addFlash('danger', 'Unable to read import file: '.$e->getMessage().$e->getTraceAsString());
             $fields = [];
             $data = [];
         }
@@ -329,7 +328,9 @@ class ImportController extends AbstractController
 
         $result = ExecuteImporter::initializeResult();
 
-        $result['messages'][] = "[STARTING IMPORT] New import, source is {$importType}";
+        if ($start === 1) {
+            $result['messages'][] = "[STARTING IMPORT] New import, source is {$importType}";
+        }
 
         $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
 
@@ -339,7 +340,7 @@ class ImportController extends AbstractController
         }
 
         $totalRowNumber = \count($data);
-        $rowsPerRequest = max(10, min(500, (int)$totalRowNumber / 10));
+        $rowsPerRequest = max(10, min(500, (int) $totalRowNumber / 10));
 
         if ($start <= 1) {
             $start = 0;
@@ -380,7 +381,7 @@ class ImportController extends AbstractController
                     $newObject = $checkResult['target'];
                     $updating = true;
                 } else {
-                    if (array_key_exists('title', $newData)) {
+                    if (\array_key_exists('title', $newData)) {
                         $result['messages'][] = "[NEW ITEM] New item found, creating: {$newData['title']}";
                     }
                 }
@@ -389,7 +390,14 @@ class ImportController extends AbstractController
 
                 BaseConverter::setPublished($newData, $newObject);
 
-                BaseConverter::setObjectProperties($newData, $newObject, $importDefinition, $this->storageManager, $this->documentManager, $importType);
+                BaseConverter::setObjectProperties(
+                    $newData,
+                    $newObject,
+                    $importDefinition,
+                    $this->storageManager,
+                    $this->documentManager,
+                    $importType
+                );
 
                 if ($importDefinition->getImageRelation()) {
                     if ($relation = $newObject->getRelation($importDefinition->getImageRelation()->getId())) {
@@ -400,7 +408,7 @@ class ImportController extends AbstractController
                     }
                 }
 
-                //Process Person Object
+                // Process Person Object
                 if ($newObject instanceof Person) {
                     $newObject = BaseConverter::processPersonObject(
                         $newObject,
@@ -452,7 +460,7 @@ class ImportController extends AbstractController
                             $content = $newObject->getDescription();
                         }
 
-                        $content = WP::processContent($content, true);
+                        $content = WP::processContent($content, $importType);
 
                         $html = HtmlDomParser::str_get_html($content);
 
@@ -466,7 +474,7 @@ class ImportController extends AbstractController
 
                         $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
 
-                        $html = (string)$checkResult['html'];
+                        $html = (string) $checkResult['html'];
 
                         if ($html === '') {
                             $result['messages'][] = "[WARNING] No valid HTML for {(string)$newObject}, content ignored";
@@ -480,12 +488,22 @@ class ImportController extends AbstractController
                         }
                     }
 
-                    //Process Metadata
-                    $checkResult = BaseConverter::processMetadata($row, $newData, $newObject, $importDefinition, $importType, $this->documentManager, $this->storageManager);
+                    // Process Metadata
+                    $checkResult = BaseConverter::processMetadata(
+                        $row,
+                        $newData,
+                        $newObject,
+                        $importDefinition,
+                        $importType,
+                        $this->documentManager,
+                        $this->storageManager
+                    );
                     $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
                     $newObject = $checkResult['newObject'];
 
-                    if ($this->documentManager->getUnitOfWork()->getDocumentState($newObject) !== UnitOfWork::STATE_MANAGED) {
+                    if ($this->documentManager->getUnitOfWork()->getDocumentState(
+                        $newObject
+                    ) !== UnitOfWork::STATE_MANAGED) {
                         $this->documentManager->persist($newObject);
                     }
                     $this->documentManager->flush();
@@ -495,13 +513,17 @@ class ImportController extends AbstractController
                         $import_id = $row['wp:post_id'];
                     }
 
-                    $result['messages'][] = '[SUCCES] Item ' . $import_id . ' (' . (string)$newObject . ') ' . ($updating ? 'updated' : 'created');
+                    $result['messages'][] = '[SUCCES] Item '.$import_id.' ('.(string) $newObject.') '.($updating ? 'updated' : 'created');
                     $result['messages'][] = '---NEW IMPORT---';
-                    $result['success'][] = 'Item ' . $import_id . ' (' . (string)$newObject . ') imported';
+                    $result['success'][] = 'Item '.$import_id.' ('.(string) $newObject.') imported';
                 } catch (\Exception $e) {
-                    $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br($e->getTraceAsString()) . ' ' . $e->getFile() . ' ' . $e->getLine();
+                    $result['errors'][] = 'Item '.(string) $newObject.' failed: '.$e->getMessage().' '.nl2br(
+                        $e->getTraceAsString()
+                    ).' '.$e->getFile().' '.$e->getLine();
                 } catch (\Throwable $e) {
-                    $result['errors'][] = 'Item ' . (string)$newObject . ' fatal: ' . $e->getMessage() . ' ' . nl2br($e->getTraceAsString()) . ' ' . $e->getFile() . ' ' . $e->getLine();
+                    $result['errors'][] = 'Item '.(string) $newObject.' fatal: '.$e->getMessage().' '.nl2br(
+                        $e->getTraceAsString()
+                    ).' '.$e->getFile().' '.$e->getLine();
                 }
             }
         }

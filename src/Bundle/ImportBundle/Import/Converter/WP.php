@@ -11,16 +11,17 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 
 class WP
 {
-    public static function processContent($content, $wordpress = false)
+    public static function processContent($content, $importType)
     {
         $prevLine = '';
         $imgIds = [];
 
-        //TODO: Add support for gallery.
+        // TODO: Add support for gallery.
         $content = preg_replace_callback(
             '/\[gallery ids\="(.+?)".*?\]/',
             function ($matches) use (&$imgIds) {
                 $imgIds = array_merge($imgIds, explode(',', $matches[1]));
+
                 return '';
             },
             $content
@@ -29,10 +30,11 @@ class WP
         $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
             if (\strlen(trim($matches[1])) == 11) {
-                return '[object type="youtube" id="' . trim($matches[1]) . '"]';
+                return '[object type="youtube" id="'.trim($matches[1]).'"]';
             }
+
             return $matches[0];
-        },                               $content);
+        }, $content);
 
         $content = preg_replace_callback(
             '/\[caption.*?\].*?<\/a>\s*(.*?)\[\/caption\]/',
@@ -51,7 +53,7 @@ class WP
                 // Remove the size attribute from the src URL of the img tag
                 $updatedContent = preg_replace(
                     '/(<img.*?src=")([^"]+)-\d+x\d+(\.[a-zA-Z]+)(".*?>)/',
-                    "$1$2$3$4",
+                    '$1$2$3$4',
                     $updatedContent
                 );
 
@@ -60,23 +62,22 @@ class WP
             $content
         );
 
-
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
-        $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); //Strip shortcodes
+        $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
 
         $newHtml = '';
 
-        if ($wordpress) { // todo: more to wordpress filter, only for Wordpress
+        if ($importType === 'WordPress') {
             $newHtml = self::formatContentLines($content);
         } else { // content as text
             foreach (explode("\n", $content) as $line) {
                 $line = trim($line);
-                $line = '<p>' . $line . '</p>';
-                $newHtml .= $line . "\n";
+                $line = '<p>'.$line.'</p>';
+                $newHtml .= $line."\n";
             }
         }
 
@@ -140,13 +141,13 @@ class WP
                     if (strpos($line, '- ') === 0) {
                         $line = substr($line, 2);
                     }
-                    $line = '<li>' . $line . '</li>';
+                    $line = '<li>'.$line.'</li>';
                     $prevLine = 'li';
                 } else {
                     if ($prevLine == 'li') {
                         $newHtml .= '</ul>';
                     }
-                    $line = '<p>' . $line . '</p>';
+                    $line = '<p>'.$line.'</p>';
                     $prevLine = 'p';
                 }
             } else {
@@ -154,7 +155,7 @@ class WP
                     $newHtml .= '</ul>';
                 }
             }
-            $newHtml .= $line . "\n";
+            $newHtml .= $line."\n";
         }
 
         if ($prevLine == 'li') {
@@ -189,7 +190,7 @@ class WP
         }
 
         if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
-            $result = WP::processAttachment($row, $newObject, $storageManager);
+            $result = self::processAttachment($row, $newObject, $storageManager);
             if (isset($result['message'])) {
                 $result['messages'][] = $result['message'];
             }
@@ -199,9 +200,9 @@ class WP
             $result['messages'][] = '[WARNING] There are comments that are not processed.';
         }
 
-        if (!array_key_exists('featured_image', $newData)) {
+        if (!\array_key_exists('featured_image', $newData)) {
             if (isset($row['meta_thumbnail_id'])) {
-                $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $row['meta_thumbnail_id'];
+                $href = $importDefinition->getWebsiteBaseUrl().'?attachment_id='.$row['meta_thumbnail_id'];
                 $checkResult = Create::createFileFromUrl(
                     $href,
                     $newObject,
@@ -222,18 +223,18 @@ class WP
         ];
     }
 
-
-    //TODO: Make use of file creation by URL
+    // TODO: Make use of file creation by URL
     public static function processAttachment($row, $newObject, $storageManager)
     {
         if (isset($row['wp:attachment_url']) && $newObject instanceof File) {
             $tmpBaseFile = tempnam('/tmp/', 'img');
-            $tmpfile = $tmpBaseFile . '.' . pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION);
+            $tmpfile = $tmpBaseFile.'.'.pathinfo($row['wp:attachment_url'], \PATHINFO_EXTENSION);
             rename($tmpBaseFile, $tmpfile);
             file_put_contents($tmpfile, @file_get_contents($row['wp:attachment_url']));
             if (filesize($tmpfile) == 0) {
-                $errorMessage = '[ERROR] Attachment ' . $row['wp:post_id'] . ' has 0 bytes';
+                $errorMessage = '[ERROR] Attachment '.$row['wp:post_id'].' has 0 bytes';
                 unlink($tmpfile);
+
                 return ['message' => $errorMessage];
             }
 
@@ -251,8 +252,10 @@ class WP
 
             $newObject->setFile($storage);
             unlink($tmpfile);
+
             return ['success' => true];
         }
+
         return ['message' => 'Invalid attachment or object type.'];
     }
 }

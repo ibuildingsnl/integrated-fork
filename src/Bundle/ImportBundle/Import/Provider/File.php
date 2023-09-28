@@ -155,11 +155,11 @@ class File
                     }
 
                     // Processing comment data
-                    if ($index2 == 'wp:comment' && is_array($value2)) {
+                    if ($index2 == 'wp:comment' && \is_array($value2)) {
 //                        unset($data[$index][$index2]);
-                        //TODO: Build support for comments
+                        // TODO: Build support for comments
                         $commentKeys = array_keys($value2);
-                        if (!is_int($commentKeys[0])) {
+                        if (!\is_int($commentKeys[0])) {
                             // Reorganize the single comment array to match the multiple comment format
                             $data[$index][$index2] = [0 => $value2];
                         }
@@ -221,7 +221,8 @@ class File
         return $data;
     }
 
-    public function getFilePath($importDefinition) {
+    public function getFilePath($importDefinition)
+    {
         $file = null;
         if ($importDefinition->getFileId()) {
             $file = $this->documentManager->find(

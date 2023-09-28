@@ -77,16 +77,18 @@ class Create
     }
 
     /**
-     * @param String $href
+     * @param string $href
+     *
      * @return StorageInterface|void
      */
-    public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false) {
-        //TODO: This needs to be made more dynamic for File and Image type.
+    public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false)
+    {
+        // TODO: This needs to be made more dynamic for File and Image type.
         $result = ExecuteImporter::initializeResult();
 
         $href = self::maybeFetchRedirectUrl($href);
 
-        $extension = pathinfo($href, PATHINFO_EXTENSION);
+        $extension = pathinfo($href, \PATHINFO_EXTENSION);
 
         if ($extension === '') {
             return [
@@ -95,7 +97,7 @@ class Create
             ];
         }
 
-        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
+        $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
@@ -120,12 +122,12 @@ class Create
         );
 
         if (!$title) {
-            $title = parse_url($href, PHP_URL_PATH);
+            $title = parse_url($href, \PHP_URL_PATH);
             $title = basename($title);
-            $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+            $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
         }
 
-        if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+        if (\in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
             $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getImageContentType());
             $contentType = $importDefinition->getImageContentType();
         } else {
@@ -133,7 +135,7 @@ class Create
             $contentType = $importDefinition->getFileContentType();
         }
 
-        //TODO: Add support for description
+        // TODO: Add support for description
         if (!$file = $documentManager->getRepository(Content::class)
                                      ->createQueryBuilder()->select()
                                      ->field('contentType')->equals($contentType)
@@ -173,20 +175,21 @@ class Create
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);  // Enable header (not strictly necessary)
+        curl_setopt($ch, \CURLOPT_URL, $url);
+        curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
+        curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, \CURLOPT_HEADER, true);  // Enable header (not strictly necessary)
 
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            echo 'Curl error: ' . curl_error($ch);
+            echo 'Curl error: '.curl_error($ch);
             curl_close($ch);
+
             return;
         }
 
-        $effectiveUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);  // Get the final URL after all redirects
+        $effectiveUrl = curl_getinfo($ch, \CURLINFO_EFFECTIVE_URL);  // Get the final URL after all redirects
         curl_close($ch);
 
         return $effectiveUrl;

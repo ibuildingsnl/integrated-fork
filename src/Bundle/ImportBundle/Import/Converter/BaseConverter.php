@@ -6,16 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
-use Integrated\Bundle\ImportBundle\Controller\ImportController;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
-use Integrated\Common\Channel\Connector\Config\Config;
 
 class BaseConverter
 {
@@ -47,15 +44,17 @@ class BaseConverter
 
     public static function formatDateTime($dateTime, $offset = '+2:00')
     {
-        return str_replace(' ', 'T', $dateTime) . $offset;
+        return str_replace(' ', 'T', $dateTime).$offset;
     }
 
     public static function formatDateString($dateString)
     {
         if (\strlen($dateString) == 10) {
             $date = new \DateTime($dateString);
+
             return $date->format(\DateTime::ISO8601);  // 'T00:00:00' can be added if needed
         }
+
         return $dateString;  // return original string if it doesn't meet the condition
     }
 
@@ -65,7 +64,7 @@ class BaseConverter
             'created_at' => 'formatDateTime',
             'updated_at' => 'formatDateTime',
             'start_date' => 'formatDateString',
-            'end_date' => 'formatDateString'
+            'end_date' => 'formatDateString',
         ];
 
         foreach ($dateFields as $field => $method) {
@@ -77,7 +76,7 @@ class BaseConverter
 
     public static function setPublished($newData, $newObject)
     {
-        if (array_key_exists('published', $newData)) {
+        if (\array_key_exists('published', $newData)) {
             if ($newData['published'] === true || $newData['published'] === 'published' || $newData['published'] === 'publish' || $newData['published'] === 1) {
                 $newObject->isPublished(true);
             }
@@ -124,10 +123,10 @@ class BaseConverter
         if (!empty($row['picture_src'])) {
             $path = false;
             foreach ($importDefinition->getChannels() as $channel) {
-                $path = '/home/testpi-integrated/importfiles/' . $channel->getId(
-                    ) . '/images/auteurfotos/' . $row['picture_src'];
+                $path = '/home/testpi-integrated/importfiles/'.$channel->getId(
+                ).'/images/auteurfotos/'.$row['picture_src'];
             }
-            //TODO: this seems highly specific and not usable in general
+            // TODO: this seems highly specific and not usable in general
             if ($path !== false && file_exists($path)) {
                 $storage = $storageManager->write(
                     new MemoryReader(
@@ -143,6 +142,7 @@ class BaseConverter
                 $newObject->setPicture($storage);
             }
         }
+
         return $newObject;  // Return the modified object
     }
 
@@ -164,7 +164,7 @@ class BaseConverter
                     if (!$importDefinition->getWebsiteBaseUrl()) {
                         continue;
                     }
-                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/') . $href;
+                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/').$href;
                 }
 
                 if (stripos($href, '.png') === false
@@ -187,7 +187,7 @@ class BaseConverter
 
                 if (!$title) {
                     $title = basename($href);
-                    $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+                    $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
                 }
 
                 if ($href) {
@@ -213,16 +213,15 @@ class BaseConverter
                     $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
 
                     $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') && array_search(
-                                                                                                             $image->getId(
-                                                                                                             ),
-                                                                                                             array_column(
-                                                                                                                 $newObject->getReferencesByRelationType(
-                                                                                                                     'embedded'
-                                                                                                                 ),
-                                                                                                                 'id'
-                                                                                                             )
-                                                                                                         ) !== false;
-
+                        $image->getId(
+                        ),
+                        array_column(
+                            $newObject->getReferencesByRelationType(
+                                'embedded'
+                            ),
+                            'id'
+                        )
+                    ) !== false;
 
                     $relation->setRelationType($relationType);
                     $relation->setRelationId($relationId);
@@ -232,17 +231,18 @@ class BaseConverter
 
                 // Updating the tag attributes based on the tag type
                 if ($tag == 'a') {
-                    $element->href = '/storage/' . $image->getId() . '.' . pathinfo($href, \PATHINFO_EXTENSION);
+                    $element->href = '/storage/'.$image->getId().'.'.pathinfo($href, \PATHINFO_EXTENSION);
                 } elseif ($tag == 'img') {
                     $element->outertext = '
-                    <img src="/storage/' . $image->getId() . '.jpg"
+                    <img src="/storage/'.$image->getId().'.jpg"
                     class="img-responsive"
-                    title="' . htmlspecialchars($title) . '"
-                    alt="' . htmlspecialchars($title) . '"
-                    data-integrated-id="' . $image->getId() . '" />';
+                    title="'.htmlspecialchars($title).'"
+                    alt="'.htmlspecialchars($title).'"
+                    data-integrated-id="'.$image->getId().'" />';
                 }
             }
         }
+
         return [
             'html' => $html,
             'result' => $result,
@@ -278,6 +278,7 @@ class BaseConverter
             );
             $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
         }
+
         return $result;
     }
 
@@ -380,7 +381,6 @@ class BaseConverter
                 $value = explode(',', $value);
             }
 
-
             foreach ($value as $valueName) {
                 $valueName = html_entity_decode($valueName);
                 $contentTypeFields = $targetContentType->getFields()->toArray();
@@ -395,7 +395,7 @@ class BaseConverter
 
                 if ($targetContentType->getClass() == Taxonomy::class && $parentId) {
                     foreach ($importDefinition->getChannels() as $channel) {
-                        //TODO: Move to seperate function
+                        // TODO: Move to seperate function
                         $title = str_ireplace(' Website', '', $channel->getName());
                         if (!$parent = $documentManager->getRepository(Content::class)
                                                        ->createQueryBuilder()->select()
@@ -416,7 +416,7 @@ class BaseConverter
                         }
 
                         if ($parent) {
-                            $result['messages'][] = '[INFO] Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
+                            $result['messages'][] = '[INFO] Parent '.$targetContentType.' found for: '.$title.' - Taxonomy ('.$valueName.') will be linked to it';
                         }
 
                         $valueName = trim($valueName);
@@ -425,7 +425,7 @@ class BaseConverter
                             [
                                 'title' => $valueName,
                                 'contentType' => $targetContentType->getId(),
-                                'parent_id' => $parent->getId()
+                                'parent_id' => $parent->getId(),
                             ]
                         );
 
@@ -433,7 +433,7 @@ class BaseConverter
                             $existingDocument = $targetContentType->create();
 
                             if (strpos($valueName, 'http') !== false) {
-                                $existingDocument->setTitle(basename($valueName)); //not sure we need this
+                                $existingDocument->setTitle(basename($valueName)); // not sure we need this
                             } else {
                                 $existingDocument->setTitle($valueName);
                             }
@@ -455,7 +455,7 @@ class BaseConverter
                 } else {
                     $valueName = trim($valueName);
                     if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass(
-                        ) == Article::class) {
+                    ) == Article::class) {
                         $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
                             ['title' => $valueName, 'contentType' => $targetContentType->getId()]
                         );
@@ -485,15 +485,15 @@ class BaseConverter
                         $documentManager->flush();
                     }
                 }
-                //TODO: This needs to be made better
+                // TODO: This needs to be made better
                 if ($existingDocument instanceof Image || $existingDocument instanceof File) {
                     $path = $valueName;
 
                     if (strpos($path, 'http') === 0) {
-                        $tmpfile = tempnam('/tmp/', 'file') . '.' . pathinfo(
-                                $path,
-                                \PATHINFO_EXTENSION
-                            );
+                        $tmpfile = tempnam('/tmp/', 'file').'.'.pathinfo(
+                            $path,
+                            \PATHINFO_EXTENSION
+                        );
                         file_put_contents($tmpfile, @file_get_contents($path));
                         $path = $tmpfile;
                     }
@@ -518,7 +518,7 @@ class BaseConverter
 
                         $documentManager->flush();
                     } else {
-                        $result['messages'][] = '[WARNING] File not found: ' . $path . ' for ' . $newObject->getTitle();
+                        $result['messages'][] = '[WARNING] File not found: '.$path.' for '.$newObject->getTitle();
                     }
                 }
 
@@ -556,29 +556,30 @@ class BaseConverter
             $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
 
             // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
-            $setterMethod = 'set' . $method;
+            $setterMethod = 'set'.$method;
 
             // Special handling for boolean fields
-            if (in_array($field, ['featured', 'premium'])) {
-                $setterMethod = 'is' . ucfirst($field);
+            if (\in_array($field, ['featured', 'premium'])) {
+                $setterMethod = 'is'.ucfirst($field);
             }
 
             if ($field === 'featured_image') {
-                //TODO: Add more options for example Drupal
+                // TODO: Add more options for example Drupal
                 if (preg_match('/^[0-9]+$/', $value)) {
                     if ($importType === 'WordPress') {
-                        $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
+                        $href = $importDefinition->getWebsiteBaseUrl().'?attachment_id='.$value;
                     }
                 } else {
-                    if (filter_var($value, FILTER_VALIDATE_URL) !== false) {
+                    if (filter_var($value, \FILTER_VALIDATE_URL) !== false) {
                         $href = $value;
                     } else {
                         $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
                     }
                 }
 
-                if (strlen($href) < 1) {
+                if ($href === '') {
                     $result['messages'][] = "[WARNING] {$field} {$value} does not contain a valid link or id";
+
                     return $result;
                 }
 
@@ -595,9 +596,10 @@ class BaseConverter
             }
 
             if (method_exists($newObject, $setterMethod)) {
-                call_user_func([$newObject, $setterMethod], $value);
+                \call_user_func([$newObject, $setterMethod], $value);
             }
         }
+
         return $result;
     }
 
@@ -605,11 +607,11 @@ class BaseConverter
     {
         $result = ExecuteImporter::initializeResult();
         $target = null;
-        //TODO: contentitem_id is an integrated id field
+        // TODO: contentitem_id is an integrated id field
         if ($importDefinition->getWebsiteBaseUrl()) {
             $fields = [
                 'contentitem_id' => 'contentitem_id',
-                'wp:post_id' => 'wpPostId'
+                'wp:post_id' => 'wpPostId',
             ];
 
             foreach ($fields as $field => $dbField) {
@@ -632,7 +634,7 @@ class BaseConverter
 
         return [
             'target' => $target,
-            'result' => $result
+            'result' => $result,
         ];
     }
 }

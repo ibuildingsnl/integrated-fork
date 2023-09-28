@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -30,6 +31,16 @@ class ImportDefinitionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class);
+//        $builder->add('importType', ChoiceType::class, [
+//            'label' => 'Import Source',
+//            'multiple' => false,
+//            'placeholder' => 'Select import source',
+//            'required' => false,
+//            'choices' => [
+//                'WordPress' => 'wp',
+//                'CSV' => 'csv',
+//            ],
+//        ]);
         $builder->add('contentType', ContentTypeChoice::class, ['label' => 'Content type', 'multiple' => false]);
         $builder->add('channels', DocumentType::class, [
             'label' => 'Channels',
@@ -49,7 +60,7 @@ class ImportDefinitionType extends AbstractType
             'label' => 'Base URL for website',
             'required' => false,
             'attr' => [
-                'help_text' => 'This will look like; https://yourwebsite.com/'
+                'help_text' => 'This will look like; https://yourwebsite.com/',
             ],
         ]);
         $builder->add('imageContentType', ContentTypeChoice::class, [
