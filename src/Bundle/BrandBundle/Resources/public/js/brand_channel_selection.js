@@ -37,15 +37,21 @@ function asideBrandSearch(el) {
     }
 }
 
-function openChannelList(input) {
+function openChannelList(input, toggle) {
     const brandContainer = input.closest('.brand-container');
+console.log(toggle);
+    console.log(brandContainer);
 
-    brandContainer.querySelectorAll('.brand-channels')
-    .forEach((brandChannels) => {
-        brandChannels.style.display = brandChannels.style.display === 'block' ? 'none' : 'block';
-    });
-
-    brandContainer.classList.toggle('show');
+    if (toggle === false) {
+        console.log('toggle is false');
+        if (!input.checked) {
+            brandContainer.classList.remove('show');
+        } else {
+            brandContainer.classList.add('show');
+        }
+    } else {
+        brandContainer.classList.toggle('show');
+    }
 }
 
 document.querySelectorAll('.brands input.brand-choice').forEach(function (input) {
@@ -56,14 +62,14 @@ document.querySelectorAll('.brands input.brand-choice').forEach(function (input)
     showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
     showChannels.className = 'publication-channel-toggle-button';
     showChannels.addEventListener('click', function (ev) {
-        openChannelList(input);
+        openChannelList(input, true);
         ev.preventDefault();
     });
     input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
     input.showChannels = showChannels;
 
     input.addEventListener('change', function() {
-        openChannelList(input);
+        openChannelList(input, false);
     })
 
 });
@@ -79,6 +85,11 @@ document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) 
     });
 
     if (brandCheckbox.checked) {
-        brandCheckbox.dispatchEvent(new Event('change'));
+        brandCheckbox
+        .closest('.brand-container')
+        .querySelectorAll('.publication-channel-toggle-button')
+        .forEach((brandChannelsToggle) => {
+            brandChannelsToggle.style.display = 'flex';
+        });
     }
 });
