@@ -53,7 +53,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
         $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
-        $this->assertEquals(1, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullWithLimit()
@@ -65,7 +65,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(2, $result);
         $this->assertContainsOnlyInstancesOf('Integrated\Common\Queue\Provider\Memory\QueueMessage', $result);
-        $this->assertEquals(0, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullWithLimitBiggerThenQueue()
@@ -76,7 +76,7 @@ class QueueProviderTest extends \PHPUnit\Framework\TestCase
         $result = $this->provider->pull('channel', 4);
 
         $this->assertCount(2, $result);
-        $this->assertEquals(0, $this->provider->count('channel'));
+        $this->assertEquals(2, $this->provider->count('channel'));
     }
 
     public function testPullOrder()

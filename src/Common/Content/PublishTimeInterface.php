@@ -18,26 +18,26 @@ interface PublishTimeInterface
      */
     public const DATE_MAX = '9999-12-31 00:00:00Z'; // @todo find a better way (INTEGRATED-429)
 
-    public function getStartDate(): ?\DateTime;
+    public function getStartDate(): ?\DateTimeInterface;
 
     /**
-     * @param \DateTime $startDate
+     * @param \DateTimeInterface $startDate
      *
      * @return $this
      */
-    public function setStartDate(\DateTime $startDate = null);
+    public function setStartDate(\DateTimeInterface $startDate = null);
 
-    public function getEndDate(): ?\DateTime;
+    public function getEndDate(): ?\DateTimeInterface;
 
     /**
-     * @param \DateTime $endDate
+     * @param \DateTimeInterface $endDate
      *
      * @return $this
      */
-    public function setEndDate(\DateTime $endDate = null);
+    public function setEndDate(\DateTimeInterface $endDate = null);
 
     /**
-     * @param \DateTime $date
+     * @param \DateTimeInterface $date
      */
-    public function isPublished(\DateTime $date = null): bool;
+    public function isPublished(\DateTimeInterface $date = null): bool;
 }
