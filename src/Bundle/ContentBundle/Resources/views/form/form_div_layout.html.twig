@@ -307,6 +307,77 @@
     </script>
 {% endblock %}
 
+
+{% block integrated_seo_meta_widget %}
+    {% apply spaceless %}
+
+{#        {{ dump(form.parent.vars) }}#}
+
+        {% set document = integrated_document(form.parent.vars.data.getId()) %}
+
+        {% set featuredImage = image(document.featuredImage.file).cropResize(104, 104) %}
+{#        {{ dump(document) }}#}
+
+        <div class="aside-options publication-settings-aside seo-settings">
+            <div class="publication-settings-popup aside-item-wrapper show">
+                <div class="aside-item-header">
+                    <h3 class="aside-item-title">
+                        <i class="iconoir-telegram"></i>
+                        <span class="aside-item-icon">SEO Settings</span>
+                    </h3>
+                </div>
+                <div class="aside-item-list-container">
+                    <div class="aside-item-list">
+                        <!-- GOOGLE SNIPPET -->
+                        <div id="snippet-preview-container" class="snippet-container">
+                            <div class="snippet-section">
+                                <span class="screen-reader-text" style="clip: rect(1px, 1px, 1px, 1px); position: absolute; height: 1px; width: 1px; overflow: hidden;">Url voorbeeld:</span>
+                                <div class="url-preview">
+                                    <div class="url-preview-inner">
+                                        <div class="favicon-container"><img src="{{ image(document.primaryChannel.favicon.file).cropResize(180, 180)|default }}" alt="" class="favicon-img"></div>
+                                        <span class="url-details">
+                                            <div class="site-name">{{ document.primaryChannel.name|default }}</div>
+                                            <span class="site-url">{{ document.primaryChannel.primaryDomain|default }}</span>
+                                            <span class="url-path"> › artikel › {{ document.slug|default }}</span>
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#70757a" style="width: 18px;">
+                                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="screen-reader-text" style="clip: rect(1px, 1px, 1px, 1px); position: absolute; height: 1px; width: 1px; overflow: hidden;">SEO titel voorbeeld:</span>
+                                <div class="seo-title-preview">
+                                    <div class="seo-title-inner"><span class="seo-title-text">{{ document.title|default }}</span></div>
+                                </div>
+                            </div>
+                            <div class="snippet-section">
+                                <span class="screen-reader-text" style="clip: rect(1px, 1px, 1px, 1px); position: absolute; height: 1px; width: 1px; overflow: hidden;">Voorvertoning metabeschrijving:</span>
+                                <div class="meta-description-preview">
+                                    <div class="meta-description-inner">
+                                        <div class="thumbnail-container"><img src="{{ featuredImage|default }}" alt="" class="thumbnail-img"></div>
+                                        <span class="meta-description-details">
+                    <span class="date">sep 26, 2023 － </span>{{ document.intro|default(document.content|striptags|u.truncate(156, '...')) }}
+                </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{ form_widget(form) }}
+                        <a class="btn btn-green" href="#">Ok</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% integrated_javascripts mode='append'
+            'bundles/integratedcontent/js/seo_settings.js' %}
+        {% endintegrated_javascripts %}
+
+    {% endapply %}
+{% endblock %}
+
 {% block integrated_publishtime_widget %}
     {% apply spaceless %}
         <div class="w-full sm:w-1/2">

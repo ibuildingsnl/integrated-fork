@@ -42,6 +42,9 @@
                         {% endif %}
                     </div>
                 {% endif %}
+                {% if content.seoMetadata is defined %}
+                    <a href="#" class="btn seo-button">SEO</a>
+                {% endif %}
             {% endblock %}
         </div>
         <button class="form-actions-extra-toggle toggle-data-target" data-target="form-actions-extra"

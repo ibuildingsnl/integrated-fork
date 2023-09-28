@@ -404,6 +404,7 @@ body.hide-options {
     margin-top: -1px;
     position: absolute;
     right: 0;
+    z-index: 1040;
 
     @include media(max-lg) {
         display: none;
