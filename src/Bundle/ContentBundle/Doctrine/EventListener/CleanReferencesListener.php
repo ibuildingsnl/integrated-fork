@@ -38,7 +38,7 @@ class CleanReferencesListener implements EventSubscriber
         $document = $args->getDocument();
         // Get document manager
         $dm = $args->getDocumentManager();
-        // Document must be instanceof Content
+        // Document must be instance of Content
         if ($document instanceof Content) {
             $dm->createQueryBuilder(Content::class)
                 ->updateMany()
