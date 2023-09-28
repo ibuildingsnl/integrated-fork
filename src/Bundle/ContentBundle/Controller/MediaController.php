@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-/*
+/* test
  * Goal for the user:
  *  - show files in a coherent manner
  *  - let the user filter / search for specific content
