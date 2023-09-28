@@ -96,11 +96,23 @@ class ContentImageListener
     {
         if ($file = $this->objectManager->find(Content::class, $matches[1])) {
             $class = '';
+            $width = '';
+            $height = '';
+            $style = '';
             if (preg_match('/class="(.*?)"/', $matches[0], $imgClass)) {
                 $class = $imgClass[1];
             }
+            if (preg_match('/width="(.*?)"/', $matches[0], $imgWidth)) {
+                $width = $imgWidth[1];
+            }
+            if (preg_match('/height="(.*?)"/', $matches[0], $imgHeight)) {
+                $height = $imgHeight[1];
+            }
+            if (preg_match('/style="(.*?)"/', $matches[0], $imgStyle)) {
+                $style = $imgStyle[1];
+            }
 
-            return $this->getTemplate($file, $class);
+            return $this->getTemplate($file, $class, $width, $height, $style);
         }
 
         return $matches[0];
@@ -111,12 +123,12 @@ class ContentImageListener
      *
      * @return string|null
      */
-    protected function getTemplate(Content $file, $class = '')
+    protected function getTemplate(Content $file, $class = '', $width = '', $height = '', $style = '')
     {
         if ($template = $this->getViewFromClass($class)) {
             return $this->templating->render(
                 $template,
-                ['document' => $file, 'class' => $class]
+                ['document' => $file, 'class' => $class, 'width' => $width, 'height' => $height, 'style' => $style]
             );
         }
 

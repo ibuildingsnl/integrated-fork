@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content\Relation;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
@@ -47,7 +48,7 @@ class Company extends Relation
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
+    #[Type\Field(type: MediaGalleryType::class, options: [
         'priority' => 500,
         'attr' => [
             'style' => 'sidebar',
@@ -116,7 +117,7 @@ class Company extends Relation
         return $this;
     }
 
-    public function getCover()
+    public function getCover(): ?StorageInterface
     {
         if ($this->getLogo() instanceof Image) {
             if ($this->getLogo()->getFile() instanceof StorageInterface) {
@@ -138,10 +139,7 @@ class Company extends Relation
         return null;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->name;
     }

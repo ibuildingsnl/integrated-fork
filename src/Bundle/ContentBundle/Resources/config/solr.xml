@@ -73,7 +73,11 @@
 
         <service id="integrated_content.solr.query.integrated_content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent">
             <argument type="service" id="integrated_content.solr.query.sorting_options" />
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="event_dispatcher" />
         </service>
+
+        <service id="integrated_content.solr.query.integrated_content_block" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContentBlock" />
 
         <service id="integrated_content.solr.query.sorting_options" class="Integrated\Bundle\ContentBundle\Solr\Query\SortOptions">
             <argument type="collection">
@@ -135,6 +139,10 @@
                 </argument>
             </argument>
         </service>
+
+        <service id="Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock" />
+
+        <service id="Integrated\Bundle\ContentBundle\Solr\Query\PublishedExtension" />
 
     </services>
 

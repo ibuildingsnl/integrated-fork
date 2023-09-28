@@ -1,0 +1,20 @@
+.brand-container .form-group {
+    margin-bottom: 0;
+}
+.brands .brand-channels {
+    margin-left: .5em;
+}
+.brands ul.brand-channels li.inline-block {
+    margin: 0;
+}
+.brands .brand-channels .checkbox {
+    display: inline-block;
+    width: 60%;
+}
+.brands .brand-channels .make-primary {
+    display: inline-block;
+    width: 20%;
+    font-size: xx-small;
+    line-height: 12px;
+    padding-left: .5em;
+}

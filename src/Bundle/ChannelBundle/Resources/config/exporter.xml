@@ -18,6 +18,7 @@
             <argument type="service" id="integrated_channel.queue" />
             <argument type="service" id="integrated_channel.queue.serializer" />
             <argument type="service" id="integrated_channel.exporter.simple" />
+            <argument type="expression">5</argument>
         </service>
 
         <service id="integrated_channel.exporter" alias="integrated_channel.exporter.queue" />

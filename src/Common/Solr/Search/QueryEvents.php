@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Solr\Search;
 
+use Integrated\Common\Solr\Search\Event\ConfigureOptionsEvent;
 use Integrated\Common\Solr\Search\Event\CreateEvent;
 use Integrated\Common\Solr\Search\Event\PostCreateEvent;
 use Integrated\Common\Solr\Search\Event\PreCreateEvent;
@@ -34,9 +35,15 @@ class QueryEvents
      */
     public const POST_CREATE = 'integrated.solr.search.post_create_query';
 
+    /**
+     * This event will allow you to add or change options.
+     */
+    public const CONFIGURE_OPTIONS = 'integrated.solr.search.configure_options';
+
     public const ALIASES = [
         PreCreateEvent::class => self::PRE_CREATE,
         CreateEvent::class => self::CREATE,
         PostCreateEvent::class => self::POST_CREATE,
+        ConfigureOptionsEvent::class => self::CONFIGURE_OPTIONS,
     ];
 }

@@ -77,10 +77,20 @@
                 then(response => response.json()).
                 then(data => {
                     $block.innerHTML = data.html;
+
+                    $block.className = '';
+
+                    if (data.cssClass) {
+                        $block.classList.add('integrated-website-sortable', ...data.cssClass.split(" "));
+                    } else {
+                        $block.classList.add('integrated-website-sortable');
+                    }
+
                     if (buttons) {
                         $block.prepend(createBlockButtons(), $block.firstChild);
                     }
                 });
+
         };
 
         /**
@@ -92,6 +102,10 @@
             element.dataset.blockType = 'row';
             element.classList.add('row');
             element.classList.add('integrated-website-sortable');
+            if (typeof framework !== 'undefined' && framework === 'tailwind') {
+                element.classList.add('flex');
+                element.classList.add('flex-wrap');
+            }
 
             return element;
         };

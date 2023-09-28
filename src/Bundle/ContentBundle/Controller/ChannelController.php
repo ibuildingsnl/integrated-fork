@@ -172,7 +172,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    public function delete(Request $request, Channel $channel): RedirectResponse
+    public function delete(Request $request, Channel $channel): Response
     {
         if (!$this->isGranted('ROLE_CHANNEL_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();

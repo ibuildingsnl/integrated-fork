@@ -59,7 +59,7 @@
                                         {% else %}
                                             {% if (content is defined and ((content.isPublished and content.getChannels|length > 0) or content.published == 'true')) %}
                                                 <div class="status published">
-                                                    <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                    <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                                 </div>
                                             {% elseif (content is defined and ('now'|date('U') < content.publishTime.startDate |date('U'))) %}
                                                 <div class="status planned">

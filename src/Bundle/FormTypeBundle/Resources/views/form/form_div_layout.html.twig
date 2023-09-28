@@ -199,11 +199,12 @@
                                         <i class="iconoir-line-space"></i>
                                         <span>
                                             {{ field.vars.value.title|
+                                            default(field.vars.value.name|
                                             default(field.vars.value.label|
                                             default(field.vars.value.block|
                                             default(field.vars.value.text|
                                             default(form.vars.default_title|
-                                            default('Item'))))) }}
+                                                                default('Item'))))))|raw }}
                                         </span>
                                     </a>
                                     {% if form.vars.allow_delete %}
@@ -308,12 +309,13 @@
                                             <i class="iconoir-nav-arrow-down"></i>
                                             <span class="capitalize">
                                                 {{ field.vars.value.title|
+                                                default(field.vars.value.name|
                                                 default(field.vars.value.label|
                                                 default(field.vars.value.block|
                                                 default(field.vars.value.text|
                                                 default(field.vars.value.frequency|
                                                 default(form.vars.default_title|
-                                                default('Item')))))) }}
+                                                                        default('Item')))))))|raw }}
                                             </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
@@ -538,7 +540,7 @@
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
-                <div class="w-full {{ widget_col }} widget">
+                <div class="w-full {% if style != 'inline' %}{{ widget_col }}{% endif%} widget">
                     {{ block('form_input_group') }}
                     {{ block('form_help') }}
                     {{ form_errors(form) }}
@@ -551,8 +553,8 @@
 
 {% block integrated_media_gallery_image_widget %}
     {% apply spaceless %}
-        <div class="mediagallery_selector" id="{{ form.vars.name }}">
-            <div class="previously_selected_images hidden">
+        <div class="mediagallery_selector" id="{{ form.vars.id }}">
+            <ul class="previously_selected_images hidden">
                 {% if form.vars.value is defined and form.vars.value is not empty %}
                     {% set imageArray = form.vars.value|split(',') %}
                     {% if imageArray|length > 0 %}
@@ -569,13 +571,13 @@
                         {% endfor %}
                     {% endif %}
                 {% endif %}
-            </div>
+            </ul>
 
             <div class="selected_images flex flex-wrap mb-4"
                  data-multiple="{{ form.vars.attr['data-multiple'] }}"
                  data-types="{{ form.vars.attr['data-types'] }}"
                  data-relationtype="embedded"
-                 data-relationid="{{ form.vars.name }}"
+                 data-relationid="{{ form.vars.id }}"
                  data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
                  data-fieldName="{{ form.vars.full_name }}">
             </div>
@@ -584,7 +586,7 @@
                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
                 data-types="{{ form.vars.attr['data-types'] }}"
                 data-relationtype="embedded"
-                data-relationid="{{ form.vars.name }}"
+                data-relationid="{{ form.vars.id }}"
                 class="select_multimedia_button btn btn-white">
                 {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
             </div>
@@ -594,6 +596,7 @@
                 </iframe>
             </div>
 
+            <ul class="selected_images hidden">
             <li id="selected_image" class="hidden media-item">
                 <div class="media-preview">
                     <div class="thumbnail relative">
@@ -604,76 +607,11 @@
                     </div>
                 </div>
             </li>
-        </div>
-
+            </ul>
         <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
         {{ form_errors(form) }}
         <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
-    {% endapply %}
-
-{% endblock %}
-
-
-{% block integrated_media_gallery_file_widget %}
-    {% apply spaceless %}
-        <div class="mediagallery_selector" id="{{ form.vars.name }}">
-            <div class="previously_selected_images hidden">
-                {% if form.vars.value is defined and form.vars.value is not empty %}
-                    {% set imageArray = form.vars.value|split(',') %}
-                    {% if imageArray|length > 0 %}
-                        {% for media in imageArray %}
-                            {% if integrated_document(media).file is defined %}
-                                {% set image = integrated_document(media).file %}
-                                {% set thumbnail = integrated_image(image).resize(200, 200) %}
-                                <li id="{{ media }}"
-                                    data-id="{{ media }}"
-                                    data-file="{{ image }}"
-                                    data-thumbnail="{{ thumbnail }}">
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}
             </div>
-
-            <div class="selected_images flex flex-wrap mb-4"
-                 data-multiple="{{ form.vars.attr['data-multiple'] }}"
-                 data-types="{{ form.vars.attr['data-types'] }}"
-                 data-relationtype="embedded"
-                 data-relationid="{{ form.vars.name }}"
-                 data-emptytext="{{ form.vars.attr['data-emptytext'] ?: 'Select ' ~ (form.vars.name) }}"
-                 data-fieldName="{{ form.vars.full_name }}">
-            </div>
-
-            <div
-                data-multiple="{{ form.vars.attr['data-multiple'] }}"
-                data-types="{{ form.vars.attr['data-types'] }}"
-                data-relationtype="embedded"
-                data-relationid="{{ form.vars.name }}"
-                class="select_multimedia_button btn btn-white">
-                {% trans %}Select{% endtrans %} {{ label ?: (form.vars.name) }}
-            </div>
-
-            <div class="wrap iframe-wrapper close-outside">
-                <iframe class="iframe media-library" src="">
-                </iframe>
-            </div>
-
-            <li id="selected_image" class="hidden media-item">
-                <div class="media-preview">
-                    <div class="thumbnail relative">
-                        <div class="centered">
-                            <img src="">
-                        </div>
-                        <a class="remove_link remove"><i class="iconoir-cancel"></i></a>
-                    </div>
-                </div>
-            </li>
-        </div>
-
-        <script src="{{ asset('bundles/integratedintegrated/mediagallery_selection.js') }}"></script>
-        {{ form_errors(form) }}
-        <input hidden type="text" class="w-full" name="{{ form.vars.full_name }}">
     {% endapply %}
 
 {% endblock %}
