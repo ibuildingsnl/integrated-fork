@@ -2,15 +2,12 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\SortableCollectionType;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SeoMetaType extends AbstractType
 {
@@ -34,6 +31,18 @@ class SeoMetaType extends AbstractType
         $builder->add('metaDescription', TextareaType::class, [
             'priority' => 970,
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => SeoMeta::class,
+            ]
+        );
     }
 
     /**

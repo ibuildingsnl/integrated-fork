@@ -308,7 +308,7 @@ class Article extends Content implements RankableInterface
         $this->seoMetadata = $seoMetadata;
     }
 
-    public function getSeoMetadata(): ?SeoMeta
+    public function getSeoMetadata(): ?Embedded\SeoMeta
     {
         return $this->seoMetadata;
     }
