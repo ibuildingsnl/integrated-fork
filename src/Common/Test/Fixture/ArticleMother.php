@@ -50,4 +50,35 @@ final class ArticleMother
         $this->publications->add(new Publication($a, $c, $publishTime, $publicationSettings));
         return $a;
     }
+
+    public function withPublications(
+        PublishTime|\DateTimeInterface ...$publishTimes,
+    ): Article {
+        $a = $this->withoutChannels();
+        $min = null;
+        $max = null;
+        foreach ($publishTimes as $publishTime) {
+            if ($publishTime instanceof \DateTimeInterface) {
+                $publishTime = (new PublishTime())->setStartDate($publishTime);
+            }
+            $c = ChannelMother::make();
+            $a->addChannel($c);
+            $this->publications->add(new Publication($a, $c, $publishTime, []));
+            if ($publishTime->getStartDate() && (!$min || $publishTime->getStartDate() < $min)) {
+                $min = $publishTime->getStartDate();
+            }
+            if ($publishTime->getEndDate() && (!$max || $publishTime->getEndDate() > $max)) {
+                $max = $publishTime->getEndDate();
+            }
+        }
+        $p = new PublishTime();
+        if ($min) {
+            $p->setStartDate($min);
+        }
+        if ($max) {
+            $p->setEndDate($max);
+        }
+        $a->setPublishTime($p);
+        return $a;
+    }
 }
