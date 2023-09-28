@@ -20,6 +20,9 @@ class ChannelDistributor
 
     public function distribute(Content $content): void
     {
+        if ($content->isDisabled()) {
+            return;
+        }
         foreach ($content->getChannels() as $channel) {
             $this->distributeTo($channel, $content, ...$this->publications->forContentOnChannel($content, $channel));
         }

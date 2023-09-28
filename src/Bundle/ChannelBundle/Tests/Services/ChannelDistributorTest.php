@@ -78,4 +78,11 @@ class ChannelDistributorTest extends TestCase
 
         self::assertCount(1, $this->queue);
     }
+
+    public function testNotDistributingUnpublishedMaterial()
+    {
+        $this->channelDistributor->distribute($this->articleMother->disabled());
+
+        self::assertEmpty($this->queue);
+    }
 }

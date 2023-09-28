@@ -81,4 +81,11 @@ final class ArticleMother
         $a->setPublishTime($p);
         return $a;
     }
+
+    public function disabled(): Article
+    {
+        $a = $this->withChannel();
+        $a->setDisabled(true);
+        return $a;
+    }
 }
