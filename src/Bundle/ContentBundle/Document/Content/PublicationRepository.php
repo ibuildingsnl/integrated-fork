@@ -21,6 +21,9 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
 
     public function forContentOnChannel(Content $content, ChannelInterface $channel): array
     {
+        if (!$content->getId()) {
+            return [];
+        }
         return $this->findBy(['content' => $content, 'channel' => $channel]);
     }
 
