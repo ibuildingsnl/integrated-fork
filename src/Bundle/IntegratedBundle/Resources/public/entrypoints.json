@@ -21,6 +21,11 @@
         "/bundles/integratedintegrated/collection.js"
       ]
     },
+    "seo_analyser": {
+      "js": [
+        "/bundles/integratedintegrated/seo_analyser.js"
+      ]
+    },
     "mediagallery": {
       "css": [
         "/bundles/integratedintegrated/mediagallery.css"

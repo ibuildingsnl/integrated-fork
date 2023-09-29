@@ -317,6 +317,31 @@
 
         {% set featuredImage = image(document.featuredImage.file).cropResize(104, 104) %}
 
+{#        {{ dump(document) }}#}
+
+        {% set documentNode = document %}
+
+<div class="yoast-seo__application" id="yoast-app" data-configuration="{{
+    title: documentNode.title,
+    titleOverride: documentNode.seoMetadata.metaTitle,
+    description: documentNode.seoMetadata.metaDescription,
+    focusKeyword: documentNode.seoMetadata.focusKeyphrase,
+    isCornerstone: false,
+    isAmp: false,
+    uiLocale: 'nl_NL',
+    translationsUrl: '/neosyoastseo/data/fetchTranslations',
+    workerUrl: asset('bundles/integratedcontent/js/webWorker.js')
+    baseUrl: document.primaryChannel.primaryDomain|default,
+    siteUrl: document.primaryChannel.primaryDomain|default,
+    pageUrl: {{ integrated_url(document) }},
+    faviconSrc: image(document.primaryChannel.favicon.file).cropResize(50, 50)|default,
+    twitterFallbackImage: asset('bundles/integratedcontent/twitter.svg'),
+    openGraphFallbackImage: asset('bundles/integratedcontent/facebook.svg'),
+    contentSelector: 'unknown'
+|json_encode }}">
+</div>
+
+
         <div class="aside-options publication-settings-aside seo-settings">
             <div class="publication-settings-popup aside-item-wrapper show">
                 <div class="aside-item-header">
@@ -487,12 +512,13 @@
 {#            </ul>#}
         </div>
 
-
-
         {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/seo_settings.js' %}
         {% endintegrated_javascripts %}
-
-        {% integrated_javascripts mode='append' 'bundles/integratedintegrated/seo_analyser.js' %}
+        {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/yoastSeoApp.js' %}
+        {% endintegrated_javascripts %}
+        {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/YoastSeo.js' %}
+        {% endintegrated_javascripts %}
+        {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/webWorker.js' %}
         {% endintegrated_javascripts %}
 
     {% endapply %}
