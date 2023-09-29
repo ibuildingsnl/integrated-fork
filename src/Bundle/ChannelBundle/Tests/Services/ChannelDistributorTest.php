@@ -127,4 +127,37 @@ class ChannelDistributorTest extends TestCase
         $message = $this->queue->pull(1)[0];
         self::assertNotEquals('delete', $message->state);
     }
+
+    public function testSchedulingImmediateRemovalForDeletions()
+    {
+        $this->channelDistributor->delete($this->articleMother->withChannel());
+
+        self::assertCount(1, $this->queue);
+        $message = $this->queue->pull(1)[0];
+        self::assertEquals('delete', $message->state);
+    }
+
+    public function testNotSchedulingRemovalsForDeletionWithoutChannels()
+    {
+        $this->channelDistributor->delete($this->articleMother->withoutChannels());
+
+        self::assertEmpty($this->queue);
+    }
+
+    public function testSchedulingMultipleRemovalsForDeletionWithMultipleChannels()
+    {
+        $this->channelDistributor->delete($this->articleMother->withPublications(
+            (new PublishTime())->setStartDate(
+                $this->clock->fastForward(\DateInterval::createFromDateString('+10 hours'))->now(),
+            ),
+            (new PublishTime())->setStartDate(
+                $this->clock->fastForward(\DateInterval::createFromDateString('+88 days'))->now(),
+            ),
+        ));
+
+        self::assertCount(2, $this->queue);
+        $message = $this->queue->pull(2);
+        self::assertEquals('delete', $message[0]->state);
+        self::assertEquals('delete', $message[1]->state);
+    }
 }

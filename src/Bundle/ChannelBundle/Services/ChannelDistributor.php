@@ -28,6 +28,13 @@ class ChannelDistributor
         }
     }
 
+    public function delete(Content $content): void
+    {
+        foreach ($content->getChannels() as $channel) {
+            $this->push($content, $channel, false, null);
+        }
+    }
+
     private function distributeTo(ChannelInterface $channel, Content $content, Publication $publication = null): void
     {
         if ($content->isDisabled()) {
