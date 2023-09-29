@@ -44,7 +44,7 @@ final class ArticleMother
             $publishTime = (new PublishTime())->setStartDate($publishTime);
         }
         $c = $channelId ? ChannelMother::withId($channelId) : ChannelMother::make();
-        $a = $this->withChannel($channelId);
+        $a = $this->withoutChannels();
         $a->setPublishTime($publishTime);
         $a->addChannel($c);
         $this->publications->add(new Publication($a, $c, $publishTime, $publicationSettings));

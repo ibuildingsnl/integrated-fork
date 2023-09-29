@@ -7,10 +7,13 @@ use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
+use Integrated\Common\Content\PublishTimeInterface;
 use Stratadox\Clock\Clock;
 
 class ChannelDistributor
 {
+    private static \DateTimeInterface $maxDate;
+
     public function __construct(
         private readonly DistributionQueue $queue,
         private readonly PublicationRepositoryInterface $publications,
@@ -28,20 +31,43 @@ class ChannelDistributor
     private function distributeTo(ChannelInterface $channel, Content $content, Publication $publication = null): void
     {
         if ($content->isDisabled()) {
-            $this->queue->push(new Request($content, 'delete', $channel), 0);
+            $this->push($content, $channel, false, null);
             return;
         }
-        $this->queue->push(new Request($content, 'add', $channel), $this->secondsUntil(
-            $publication ? $publication->getTime()->getStartDate() : $content->getPublishTime()->getStartDate(),
-            $this->clock->now(),
-        ));
+        $this->scheduleDistributionWindow(
+            $channel,
+            $content,
+            $publication ? $publication->getTime() : $content->getPublishTime()
+        );
+    }
+
+    private function scheduleDistributionWindow(ChannelInterface $channel, Content $content, PublishTimeInterface $window): void
+    {
+        $this->push($content, $channel, true, $window->getStartDate());
+
+        if ($window->getEndDate() && $window->getEndDate() < self::maxDate()) {
+            $this->push($content, $channel, false, $window->getEndDate());
+        }
+    }
+
+    private function push(Content $content, ChannelInterface $channel, bool $add, ?\DateTimeInterface $when): void
+    {
+        $this->queue->push(
+            new Request($content, $add ? 'add' : 'delete', $channel),
+            $this->secondsUntil($when, $this->clock->now()),
+        );
     }
 
     private function secondsUntil(?\DateTimeInterface $then, \DateTimeInterface $now): int
     {
-        if (!$then || $then < $now) {
-            return 0;
+        return max(0, $then?->getTimestamp() - $now->getTimestamp());
+    }
+
+    private static function maxDate(): \DateTimeInterface
+    {
+        if (!isset(self::$maxDate)) {
+            self::$maxDate = new \DateTimeImmutable(PublishTimeInterface::DATE_MAX);
         }
-        return $then->getTimestamp() - $now->getTimestamp();
+        return self::$maxDate;
     }
 }
