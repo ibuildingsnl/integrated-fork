@@ -316,7 +316,6 @@
         {% set document = integrated_document(form.parent.vars.data.getId()) %}
 
         {% set featuredImage = image(document.featuredImage.file).cropResize(104, 104) %}
-{#        {{ dump(document) }}#}
 
         <div class="aside-options publication-settings-aside seo-settings">
             <div class="publication-settings-popup aside-item-wrapper show">
@@ -356,23 +355,144 @@
                                     <div class="meta-description-inner">
                                         <div class="thumbnail-container"><img src="{{ featuredImage|default }}" alt="" class="thumbnail-img"></div>
                                         <span class="meta-description-details">
-                    <span class="date">sep 26, 2023 － </span>{{ document.intro|default(document.content|striptags|u.truncate(156, '...')) }}
-                </span>
+                                            <span class="date">sep 26, 2023 － </span>{{ document.intro|default(document.content|striptags|u.truncate(156, '...')) }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
                         {{ form_widget(form) }}
+
+                        <div id="seo-analysis-container" class="seo-analysis-container">
+                            <h2 class="seo-analysis-header">
+                                <button class="seo-analysis-toggle  button" id="seo-analysis-collapsible-metabox" aria-expanded="true" type="button">
+{#                                    <svg aria-hidden="true" role="img" focusable="false"#}
+{#                                         class="seo-score-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" fill="#ee7c1b">#}
+{#                                        <!-- SVG Path -->#}
+{#                                    </svg>#}
+                                    <span class="seo-analysis-label">
+                                        <span class="seo-analysis-title">SEO-analyse</span>
+                                        <span class="seo-focus-keyword">glastuinbouw</span>
+                                    </span>
+{#                                    <svg aria-hidden="true" role="img" focusable="false"#}
+{#                                         class="seo-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">#}
+{#                                        <!-- SVG Path -->#}
+{#                                    </svg>#}
+                                </button>
+                            </h2>
+                            <div class="seo-analysis-content">
+                                <span class="analysis-results-label">Analyse-resultaten</span>
+                                <div class="seo-issues-container">
+                                    <div class="seo-issue-group">
+                                        <h3 class="seo-issue-header">
+                                            <button class="seo-issue-toggle button" aria-expanded="true" type="button">
+                                                <div class="chevron"></div>
+                                                <span class="seo-issue-label">
+                                                    <span class="seo-issue-count">Problemen</span>
+                                                </span>
+                                            </button>
+                                        </h3>
+                                        <ul role="list" class="seo-issue-list">
+                                            <!-- List items for SEO issues -->
+                                        </ul>
+                                    </div>
+                                    <div class="seo-issue-group">
+                                        <h3 class="seo-issue-header">
+                                            <button class="seo-issue-toggle button" aria-expanded="true" type="button">
+                                                <div class="chevron"></div>
+                                                <span class="seo-issue-label">
+                                                    <span class="seo-issue-count">Verbeteringen</span>
+                                                </span>
+                                            </button>
+                                        </h3>
+                                        <ul role="list" class="seo-issue-list">
+                                            <!-- List items for SEO improvements -->
+                                        </ul>
+                                    </div>
+                                    <div class="seo-issue-group">
+                                        <h3 class="seo-issue-header">
+                                            <button class="seo-issue-toggle button" aria-expanded="true" type="button">
+                                                <div class="chevron"></div>
+                                                <span class="seo-issue-label">
+                                                    <span class="seo-issue-count">Goede resultaten</span>
+                                                </span>
+                                            </button>
+                                        </h3>
+                                        <ul role="list" class="seo-issue-list">
+                                            <!-- List items for good SEO results -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <a class="btn btn-green" href="#">Ok</a>
                     </div>
                 </div>
             </div>
+{#            <ul class="seo-issue-list-source">#}
+{#                <li class="seo-item outgoing-links">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Uitgaande links</a>: Geen uitgaande links op deze pagina. <a target="_blank">Voeg ze toe</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item internal-links">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Interne links</a>: er staan geen interne links op deze pagina, <a target="_blank">voeg er een aantal toe</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item keyphrase-density">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphrase dichtheid</a>: de focus keyphrase is 8 keer gevonden. Dat is meer dan het aanbevolen maximaal aantal van 7 keer voor een tekst van deze lengte. <a target="_blank">Probeer niet te over optimaliseren</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item meta-description-length">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Lengte van de metabeschrijving</a>: Er is geen meta-beschrijving. Zoekmachines tonen in plaats daarvan de tekst van het bericht. <a target="_blank">Geef een beschrijving</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item previous-keyphrase-usage">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Eerder gebruikte keyphrase</a>: je hebt deze keyphrase <a target="_blank"> al meerdere keren gebruikt</a>. <a target="_blank">Gebruik je keyphrase niet meer dan één keer</a>.</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item keyphrase-in-subheading">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphrase in subkop</a>: <a target="_blank">Gebruik meer keyphrases of synoniemen in je H2- en H3-subkoppen</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item image-keyphrase">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Afbeelding keyphrase</a>: Afbeeldingen op deze pagina hebben geen alt-attributen die het onderwerp van je tekst weergeven. <a target="_blank">Voeg je keyphrase of synoniemen toe aan de alt-tags van relevante afbeeldingen</a>!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item keyphrase-in-seo-title">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphrase in SEO titel</a>: de exacte overeenkomst met de focus keyphrase komt voor in de SEO-titel, maar niet aan het begin. <a target="_blank">Verplaats het naar het begin voor de beste resultaten</a>.</span></p></li>#}
+{#                <li class="seo-item text-length">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Tekstlengte</a>: De tekst bevat 262 woorden. Dit is iets lager dan het aanbevolen minimum van 300 woorden. <a target="_blank">Voeg wat meer tekst toe</a>.</span></p></li>#}
+{#                <li class="seo-item images">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Afbeeldingen</a>: er verschijnen geen afbeeldingen op deze pagina. <a href="#">Voeg er wat aan toe!</a></span></p></li>#}
+{#                <li class="seo-item keyphrase-in-introduction">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphrase in introductie</a>: je keyphrase of synoniemen staan niet in de eerste paragraaf. <a href="">Zorg ervoor dat het onderwerp direct duidelijk is.</a></span></p></li>#}
+{#                <li class="seo-item keyphrase-length">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphraselengte</a>: de keyphrase bevat X inhoudswoorden. Dat is meer dan het aanbevolen maximum van 4 inhoudswoorden.</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item keyphrase-in-slug">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank">Keyphrase in slug</a>: goed bezig!</span></p>#}
+{#                </li>#}
+{#                <li class="seo-item seo-title-width">#}
+{#                    <div class="analysis-status"></div>#}
+{#                    <p class="seo-feedback"><span><a target="_blank"> SEO-titel breedte</a>: Goed gedaan!</span></p>#}
+{#                </li>#}
+{#            </ul>#}
         </div>
 
-        {% integrated_javascripts mode='append'
-            'bundles/integratedcontent/js/seo_settings.js' %}
+
+
+        {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/seo_settings.js' %}
+        {% endintegrated_javascripts %}
+
+        {% integrated_javascripts mode='append' 'bundles/integratedintegrated/seo_analyser.js' %}
         {% endintegrated_javascripts %}
 
     {% endapply %}
