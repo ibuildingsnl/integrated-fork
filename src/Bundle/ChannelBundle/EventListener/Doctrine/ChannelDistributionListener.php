@@ -14,38 +14,21 @@ namespace Integrated\Bundle\ChannelBundle\EventListener\Doctrine;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events;
-use Integrated\Common\Channel\Exporter\Queue\Request;
-use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
-use Integrated\Common\Content\ChannelableInterface;
-use Integrated\Common\Content\PublishableInterface;
-use Integrated\Common\Content\PublishTimeInterface;
-use Integrated\Common\Queue\QueueInterface;
+use Integrated\Bundle\ChannelBundle\Services\ChannelDistributor;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 
 /**
- * @author Jan Sanne Mulder <jansanne@e-active.nl>
+ * @todo Move to either custom events or services, rather than triggering business logic in a lifecycle callback
+ * @see https://youtu.be/rzGeNYC3oz0?t=1507
  */
 class ChannelDistributionListener implements EventSubscriber
 {
-    /**
-     * @var QueueInterface
-     */
-    private $queue;
-
-    /**
-     * @var RequestSerializerInterface
-     */
-    private $serializer;
-
-    public function __construct(QueueInterface $queue, RequestSerializerInterface $serializer)
-    {
-        $this->queue = $queue;
-        $this->serializer = $serializer;
+    public function __construct(
+        private readonly ChannelDistributor $distributor
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postRemove,
@@ -58,11 +41,11 @@ class ChannelDistributionListener implements EventSubscriber
     {
         $document = $event->getDocument();
 
-        if (!$document instanceof ChannelableInterface) {
+        if (!$document instanceof Content) {
             return;
         }
 
-        $this->process($document, 'delete');
+        $this->distributor->delete($document);
     }
 
     public function postPersist(LifecycleEventArgs $event)
@@ -74,57 +57,10 @@ class ChannelDistributionListener implements EventSubscriber
     {
         $document = $event->getDocument();
 
-        if (!$document instanceof ChannelableInterface) {
+        if (!$document instanceof Content) {
             return;
         }
 
-        if (!$document instanceof PublishableInterface) {
-            $this->process($document, 'add');
-
-            return;
-        }
-
-        $publishTime = $document->getPublishTime();
-
-        if ($document->isPublished(false)) {
-            $this->process($document, 'add', $this->getDelay($publishTime->getStartDate()));
-
-            $maxDate = new \DateTime(PublishTimeInterface::DATE_MAX);
-
-            if ($publishTime->getEndDate() && $publishTime->getEndDate() != $maxDate) {
-                $this->process($document, 'delete', $this->getDelay($publishTime->getEndDate()));
-            }
-        } else {
-            $this->process($document, 'delete');
-        }
-    }
-
-    /**
-     * @param string $state
-     * @param int    $delay
-     */
-    protected function process(ChannelableInterface $document, $state, $delay = 0)
-    {
-        $request = new Request();
-
-        $request->content = $document;
-        $request->state = $state;
-
-        foreach ($document->getChannels() as $channel) {
-            $request->channel = $channel;
-
-            $this->queue->push($this->serializer->serialize($request), $delay);
-        }
-    }
-
-    private function getDelay(\DateTime $date = null): int
-    {
-        $now = \DateTime::createFromFormat('U', time()); // Needed for testing
-
-        if (!$date || $date <= $now) {
-            return 0;
-        }
-
-        return $date->getTimestamp() - $now->getTimestamp();
+        $this->distributor->distribute($document);
     }
 }

@@ -13,7 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Block;
 
 use Integrated\Bundle\BlockBundle\Block\BlockHandler;
 use Integrated\Bundle\ContentBundle\Document\Block\ContentBlock;
-use Integrated\Bundle\ContentBundle\Provider\SolariumProvider;
+use Integrated\Bundle\ContentBundle\Solr\Query\Provider\IntegratedContentBlock;
 use Integrated\Common\Block\BlockInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +22,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentBlockHandler extends BlockHandler
 {
-    public function __construct(
-        private readonly SolariumProvider $provider,
-        private readonly RequestStack $requestStack
-    ) {
+    /**
+     * @var IntegratedContentBlock
+     */
+    private $provider;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    public function __construct(IntegratedContentBlock $provider, RequestStack $requestStack)
+    {
+        $this->provider = $provider;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -34,19 +44,19 @@ class ContentBlockHandler extends BlockHandler
     public function execute(BlockInterface $block, array $options)
     {
         if (!$block instanceof ContentBlock) {
-            return null;
+            return;
         }
 
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request instanceof Request) {
-            return null;
+            return;
         }
 
         $pagination = $this->getPagination($block, $request, $options);
 
         if (!\count($pagination)) {
-            return null;
+            return;
         }
 
         return $this->render([
@@ -59,7 +69,7 @@ class ContentBlockHandler extends BlockHandler
 
     public function getPagination(ContentBlock $block, Request $request, array $options = []): PaginationInterface
     {
-        return $this->provider->execute($block, $request->duplicate(), $options);
+        return $this->provider->get($block, $request->duplicate(), $options);
     }
 
     /**
