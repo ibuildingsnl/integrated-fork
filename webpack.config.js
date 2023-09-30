@@ -22,9 +22,9 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .addEntry('collection', [
         './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
     ])
-    .addEntry('seo_analyser', [
-        './src/Bundle/ContentBundle/Resources/assets/js/seo_analyser/seo_analyser.js',
-    ])
+    // .addEntry('seo_analyser', [
+    //     './src/Bundle/ContentBundle/Resources/assets/js/seo_analyser/seo_analyser.js',
+    // ])
     .addEntry('mediagallery', [
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',

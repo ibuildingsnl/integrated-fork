@@ -17,7 +17,7 @@ const webpackConfig = [
         },
         output: {
             filename: 'YoastSeo.js',
-            path: path.resolve(__dirname, '../../../public/js'),
+            path: path.resolve(__dirname, '../Resources/public/js'),
         },
         resolve: {
             modules: ['node_modules'],
@@ -82,7 +82,7 @@ const webpackConfig = [
         },
         output: {
             filename: 'webWorker.js',
-            path: path.resolve(__dirname, '../../../public/js'),
+            path: path.resolve(__dirname, '../Resources/public/js'),
         },
         optimization: {
             minimizer: [new TerserPlugin()],
@@ -112,7 +112,7 @@ const webpackConfig = [
         },
         output: {
             filename: 'yoastSeoApp.js',
-            path: path.resolve(__dirname, '../../../public/js'),
+            path: path.resolve(__dirname, '../Resources/public/js'),
         },
         optimization: {
             minimizer: [new TerserPlugin()],

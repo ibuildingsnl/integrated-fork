@@ -155,6 +155,10 @@
             </call>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider">
+            <tag name="controller.service_arguments" />
+        </service>
+
     </services>
 
 </container>

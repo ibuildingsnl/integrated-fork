@@ -37,6 +37,7 @@ class JsonLDExtension extends AbstractExtension
     {
         return [
             new TwigFilter('json_ld', [$this, 'encode'], ['is_safe' => ['html']]),
+            new TwigFilter('json_encode', [$this, 'jsonEncode']),
         ];
     }
 
@@ -54,6 +55,11 @@ class JsonLDExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function jsonEncode($value)
+    {
+        return json_encode($value);
     }
 
     /**

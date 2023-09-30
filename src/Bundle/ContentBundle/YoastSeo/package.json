@@ -17,10 +17,12 @@
         "@yoast/style-guide": "^0.13.0",
         "lodash.debounce": "^4.0.8",
         "material-ui": "^0.20.2",
+        "po2json": "^0.4.5",
         "prop-types": "^15.8.1",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",
         "recoil": "^0.7.6",
+        "request": "^2.88.2",
         "styled-components": "^6.0.8",
         "yoast-components": "^5.24.1"
     },
