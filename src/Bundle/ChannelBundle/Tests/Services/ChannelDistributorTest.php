@@ -160,4 +160,20 @@ class ChannelDistributorTest extends TestCase
         self::assertEquals('delete', $message[0]->state);
         self::assertEquals('delete', $message[1]->state);
     }
+
+    public function testPublishingWithPublicationSettings()
+    {
+        $this->channelDistributor->distribute($this->articleMother->withPublication(
+            $this->clock->fastForward(\DateInterval::createFromDateString('+10 hour'))->now(),
+            null,
+            ['foo' => 'bar'],
+        ));
+
+        $this->clock->sneakForwards(\DateInterval::createFromDateString('+10 hour'));
+
+        self::assertNotEmpty($this->queue);
+        $message = $this->queue->pull(1)[0];
+        self::assertEquals('add', $message->state);
+        self::assertEquals(['foo' => 'bar'], $message->settings);
+    }
 }

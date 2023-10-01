@@ -38,36 +38,41 @@ class ChannelDistributor
     private function distributeTo(ChannelInterface $channel, Content $content, Publication $publication = null): void
     {
         if ($content->isDisabled()) {
-            $this->push($content, $channel, false, null);
+            $this->push($content, $channel, false);
             return;
         }
         $this->scheduleDistributionWindow(
             $channel,
             $content,
-            $publication ? $publication->getTime() : $content->getPublishTime()
+            $publication ? $publication->getTime() : $content->getPublishTime(),
+            $publication?->getSettings() ?: []
         );
     }
 
-    private function scheduleDistributionWindow(ChannelInterface $channel, Content $content, PublishTimeInterface $window): void
-    {
-        $this->push($content, $channel, true, $window->getStartDate());
+    private function scheduleDistributionWindow(
+        ChannelInterface $channel,
+        Content $content,
+        PublishTimeInterface $window,
+        array $settings,
+    ): void {
+        $this->push($content, $channel, true, $window->getStartDate(), $settings);
 
         if ($window->getEndDate() && $window->getEndDate() < self::maxDate()) {
-            $this->push($content, $channel, false, $window->getEndDate());
+            $this->push($content, $channel, false, $window->getEndDate(), $settings);
         }
     }
 
-    private function push(Content $content, ChannelInterface $channel, bool $add, ?\DateTimeInterface $when): void
-    {
+    private function push(
+        Content $content,
+        ChannelInterface $channel,
+        bool $add,
+        ?\DateTimeInterface $when = null,
+        array $settings = []
+    ): void {
         $this->queue->push(
-            new Request($content, $add ? 'add' : 'delete', $channel),
-            $this->secondsUntil($when, $this->clock->now()),
+            new Request($content, $add ? 'add' : 'delete', $channel, $settings),
+            max(0, $when?->getTimestamp() - $this->clock->now()->getTimestamp()),
         );
-    }
-
-    private function secondsUntil(?\DateTimeInterface $then, \DateTimeInterface $now): int
-    {
-        return max(0, $then?->getTimestamp() - $now->getTimestamp());
     }
 
     private static function maxDate(): \DateTimeInterface
