@@ -22,6 +22,7 @@ class Request
         public ?object $content = null,
         public ?string $state = null,
         public ?ChannelInterface $channel = null,
+        public ?array $settings = [],
     ) {
     }
 }

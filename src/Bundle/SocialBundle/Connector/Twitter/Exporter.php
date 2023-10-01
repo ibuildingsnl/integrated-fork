@@ -48,7 +48,7 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         if (!$content instanceof Article) {
             return;

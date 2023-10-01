@@ -179,6 +179,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
             ],
             'state' => self::TEST_STATE,
             'channel' => 'channel',
+            'settings' => [],
         ];
 
         return json_encode(array_merge($data, $overwrite));

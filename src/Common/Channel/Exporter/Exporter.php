@@ -56,7 +56,7 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {
@@ -69,7 +69,7 @@ class Exporter implements ExporterInterface
         }
 
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-            $response = $exporter->export($content, $state, $channel);
+            $response = $exporter->export($content, $state, $channel, $settings);
 
             if ($response instanceof ExporterResponse) {
                 $this->save($content, $response);
