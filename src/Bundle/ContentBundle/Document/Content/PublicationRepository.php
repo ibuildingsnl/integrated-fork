@@ -7,15 +7,19 @@ use Integrated\Common\Channel\ChannelInterface;
 
 class PublicationRepository extends DocumentRepository implements PublicationRepositoryInterface
 {
-    public function forContentByChannel(Content $content): array
+    public function forContent(Content $content): array
     {
         if (!$content->getId()) {
             return [];
         }
-        $publications = $this->findBy(['content' => $content]);
+        return $this->findBy(['content' => $content]);
+    }
+
+    public function forContentByChannel(Content $content): array
+    {
         return array_combine(
-            array_map(fn(Publication $p) => $p->getChannel()->getId(), $publications),
-            $publications,
+            array_map(fn(Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
+            $this->forContent($content),
         );
     }
 

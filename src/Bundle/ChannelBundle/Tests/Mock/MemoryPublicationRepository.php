@@ -11,12 +11,16 @@ class MemoryPublicationRepository implements PublicationRepositoryInterface
 {
     private array $publications = [];
 
+    public function forContent(Content $content): array
+    {
+        return array_filter($this->publications, fn (Publication $p) => $p->getContent() === $content);
+    }
+
     public function forContentByChannel(Content $content): array
     {
-        $publications = array_filter($this->publications, fn (Publication $p) => $p->getContent() === $content);
         return array_combine(
-            array_map(fn(Publication $p) => $p->getChannel()->getId(), $publications),
-            $publications,
+            array_map(fn(Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
+            $this->forContent($content),
         );
     }
 

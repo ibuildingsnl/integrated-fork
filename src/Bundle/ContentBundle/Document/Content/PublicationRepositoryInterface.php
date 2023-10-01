@@ -7,6 +7,9 @@ use Integrated\Common\Channel\ChannelInterface;
 interface PublicationRepositoryInterface
 {
     /** @return Publication[] */
+    public function forContent(Content $content): array;
+
+    /** @return Publication[] */
     public function forContentByChannel(Content $content): array;
 
     /** @return Publication[] */
