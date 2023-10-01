@@ -1,21 +1,9 @@
-@charset "UTF-8";
-
 body {
   --main-bg-color: #fff;
   --mark-bg-color: rgba(0, 173, 238, .75);
   --text-color: #222;
   --text-color-light: #666;
   --border-light: 1px solid rgb(226, 228, 231);
-
-  background-color: var(--main-bg-color);
-  color: var(--text-color);
-  font-family: 'Poppins', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  padding: 1rem;
-}
-
-.hidden {
-  display: none;
 }
 
 .yoast-seo {

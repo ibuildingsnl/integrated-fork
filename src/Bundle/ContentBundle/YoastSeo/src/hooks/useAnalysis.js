@@ -72,14 +72,15 @@ const useAnalysis = () => {
                         description: pageState.description || '',
                         title: pageState.title,
                         titleWidth: measureTextWidth(pageState.title),
-                        url: new URL(configuration.pageUrl).pathname,
+                        url: configuration.pageUrl,
                         locale: pageState.locale,
-                        permalink: '',
+                        permalink: configuration.siteUrl + configuration.pageUrl,
                     });
                     return worker.analyze(paper);
                 })
                 .then((results) => {
                     const seoResults = parseResults(results.result.seo[''].results);
+
                     const readabilityResults = parseResults(results.result.readability.results);
 
                     const groupedSeoResults = groupResultsByRating(seoResults);

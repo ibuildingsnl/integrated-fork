@@ -49,7 +49,8 @@ const SeoTab = () => {
         ({ title, description, url }) => {
             return {
                 title: titleTemplate.replace('{title}', title),
-                url: configuration.isHomepage ? configuration.baseUrl : url,
+                // url: configuration.isHomepage ? configuration.baseUrl : url,
+                url: url,
                 description: description,
             };
         },
