@@ -48,6 +48,11 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
             if (!$content instanceof Content) {
                 return;
             }
+            // Remove all existing publications, then add from the form data.
+            // Potential optimization might be to check for changes first.
+            foreach ($this->publications->forContent($content) as $previousPublication) {
+                $this->publications->remove($previousPublication);
+            }
             $form = $event->getForm()->get('publications');
             foreach ($content->getChannels() as $channel) {
                 $data = $form->get($channel->getId())->get('settings')->getData();
@@ -55,13 +60,6 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                 if (($data['time'] ?? null) instanceof PublishTimeInterface) {
                     $time = $data['time'];
                     unset($data['time']);
-                }
-                $previous = $this->publications->forContentOnChannel($content, $channel);
-                if (count($previous)) {
-                    // No duplicate publications
-                    foreach ($previous as $previousPublication) {
-                        $this->publications->remove($previousPublication);
-                    }
                 }
                 $this->publications->add(
                     new Publication($content, $channel, $time, is_array($data) ? $data : [])
