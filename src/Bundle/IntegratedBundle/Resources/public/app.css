@@ -4740,6 +4740,9 @@ video {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
+.underline{
+  text-decoration-line: underline;
+}
 .antialiased{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -10954,7 +10957,7 @@ body.tox-fullscreen .content-wrapper {
   position: absolute;
   top: 0;
   border-bottom: 1px solid #DEE3E9;
-  z-index: 100;
+  z-index: 1050;
 }
 #toolbar .options {
   display: flex;
@@ -11057,7 +11060,7 @@ body.tox-fullscreen .content-wrapper {
   min-width: 25vw;
   padding: 1rem 3rem 1rem 1rem;
   right: 1rem;
-  z-index: 1040;
+  z-index: 1050;
   border-radius: 4px;
   position: absolute;
 }
@@ -12961,8 +12964,8 @@ table.table .favicon-wrapper .channel-favicons.popout {
 }
 
 .publication-settings-aside.seo-settings {
-  width: 445px;
-  transform: translateX(445px);
+  width: 700px;
+  transform: translateX(700px);
 }
 .publication-settings-aside.seo-settings.show {
   transform: translateX(0px);

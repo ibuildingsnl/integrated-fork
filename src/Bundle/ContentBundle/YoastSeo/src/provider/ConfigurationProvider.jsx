@@ -23,7 +23,7 @@ ConfigurationProvider.propTypes = {
     }).isRequired,
     configuration: PropTypes.shape({
         baseUrl: PropTypes.string.isRequired,
-        // breadcrumbs: PropTypes.array.isRequired,
+        breadcrumbs: PropTypes.array.isRequired,
         description: PropTypes.string,
         faviconSrc: PropTypes.string.isRequired,
         featuredImageSrc: PropTypes.string.isRequired,

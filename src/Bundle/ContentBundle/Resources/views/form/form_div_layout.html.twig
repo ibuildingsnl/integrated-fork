@@ -315,7 +315,7 @@
     {% set documentNode = form.parent.vars.data %}
 
     {% if documentNode.featuredImage.file is defined and documentNode.featuredImage.file is not null %}
-        {% set featuredImage = image(documentNode.featuredImage.file).cropResize(104, 104).__toString %}
+        {% set featuredImage = image(documentNode.featuredImage.file).cropResize(512, 512).__toString %}
     {% else %}
         {% set featuredImage = asset('bundles/integratedintegrated/images/favicon/apple-touch-icon.png') %}
     {% endif %}
@@ -347,7 +347,7 @@
                 'siteUrl': '//' ~ documentNode.primaryChannel.primaryDomain|default,
                 'brandName': documentNode.primaryChannel.name|default|replace({' Website': ''}),
                 'pageUrl': documentUrl|default(""),
-                'uriPathSegment': 'artikel',
+                'uriPathSegment': documentNode.slug|default("/"),
                 'faviconSrc': faviconSrc,
                 'featuredImageSrc': featuredImage,
                 'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
@@ -404,8 +404,9 @@
                     padding-right: 0 !important;
                     padding-top: 0 !important;
                 }
-                .yoast-seo-analysis a {
-                    text-decoration: none;
+
+                .seo-snippet-editor {
+                    display: none;
                 }
                 .yoast-seo-analysis a:hover {
                     text-decoration: underline;
@@ -460,9 +461,6 @@
                         transform: rotate(270deg);
                     }
                 }
-                .snippet-editor {
-                    display: none;
-                }
                 .ReactModal__Content {
                     box-shadow: 0 2px 7px -1px rgba(0, 0, 0, .15);
                 }
@@ -482,6 +480,26 @@
                     display: none;
                 }
 
+                .yoast-seo-analysis a {
+                    text-decoration: underline;
+                    color: #0368ae;
+                }
+
+                .yoast-seo__application .react-tabs__tab-panel {
+                    padding: 20px;
+                }
+
+                .yoast-seo__application .react-tabs__tab {
+                    display: flex;
+                }
+
+                .yoast-seo__application .react-tabs__tab svg {
+                    margin-right: .5rem;
+                }
+
+                .yoast-seo-analysis button svg {
+                    margin: 0 auto;
+                }
             </style>
         </div>
     </div>

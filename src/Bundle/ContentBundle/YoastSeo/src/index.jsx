@@ -14,12 +14,12 @@ import { ConfigurationProvider } from './provider/ConfigurationProvider';
 ((document, window) => {
     const applicationContainer = document.querySelector('#yoast-app');
     const modalContainer = document.querySelector('.publication-settings-aside.seo-settings');
-    const snippetEditorContainer = document.querySelector('.seo-analysis-container');
-    const titleField = snippetEditorContainer.getElementById('#integrated_content_title');
-    const titleOverrideField = snippetEditorContainer.getElementById('#integrated_content_seoMetadata_metaTitle');
-    const descriptionField = snippetEditorContainer.getElementById('#integrated_content_seoMetadata_metaDescription');
-    const uriPathSegmentField = snippetEditorContainer.getElementById('#integrated_content_seoMetadata_metaSlug');
-    const focusKeywordField = snippetEditorContainer.getElementById('#integrated_content_seoMetadata_focusKeyphrase');
+    const snippetEditorContainer = document.querySelector('.seo-snippet-editor');
+    const titleField = document.querySelector('#integrated_content_title');
+    const uriPathSegmentField = document.querySelector('#integrated_content_slug');
+    const titleOverrideField = snippetEditorContainer.querySelector('#integrated_content_seoMetadata_metaTitle');
+    const descriptionField = snippetEditorContainer.querySelector('#integrated_content_seoMetadata_metaDescription');
+    const focusKeywordField = snippetEditorContainer.querySelector('#integrated_content_seoMetadata_focusKeyphrase');
 
     const editorFieldMapping = {
         title: titleField,
