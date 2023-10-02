@@ -17,7 +17,7 @@ use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
-use Integrated\Common\Content\ConnectorInterface;
+use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\PublishableInterface;
 
@@ -115,7 +115,7 @@ class Exporter implements ExporterInterface
             return;
         }
 
-        if (!$content instanceof ConnectorInterface) {
+        if (!$content instanceof ConnectableInterface) {
             return;
         }
 
