@@ -2,49 +2,57 @@
 {% block title %} Dashboard Analytics {% endblock title %}
 
 {% block content %}
-    <div class="dashboard-container">
-        <div class="articles">
-            <h1>Dashboard Analytics {{ channelName }} <br> Articles (total: {{ nbrOfArticles }})</h1>
-            <nav>
-                <ul>
-                    {% for article in mostRecentArticles %}
-                        <li>{{ article.title }}{{ article.publishTime.startDate | date("d/m/Y") }}</li>
-                    {% endfor %}
-                </ul>
-            </nav>
-        </div>
-        <div class="channels">
+        <div class="dashboard-container">
+            <div class="articles">
+                <h1>Dashboard Analytics {{ channelName }} <br> Articles (total: {{ nbrOfArticles }})</h1>
+                <nav>
+                    <ul>
+                        {% for article in mostRecentArticles %}
+                            <li>{{ article.title }} | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+            <div class="channels">
 
-            <h2>Select Channel</h2>
-            {# Afficher le formulaire de choix de canal #}
-            {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index'), 'attr': {'id': 'channelSelect'}}) }}
-            {{ form_widget(channelForm) }}
-            <button id="submitButton" style="display: none;" type="submit">Submit</button>
-            {{ form_end(channelForm) }}
+                <h2>Select Channel</h2>
+                {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index'), 'attr': {'id': 'channelSelect'}}) }}
+                {{ form_widget(channelForm) }}
+                <button id="submitButton" style="display: none;" type="submit">Submit</button>
+                {{ form_end(channelForm) }}
+            </div>
+            <div class="analytics">
+
+            </div>
         </div>
-    </div>
     <script>
         var channelSelect = document.getElementById("channelSelect");
         var submitButton = document.getElementById("submitButton");
         channelSelect.addEventListener("change", function()
         {
-            document.getElementById('submitButton').click();
+            document.getElementById('submitButton').click()
         });
+
     </script>
     <style>
         .dashboard-container {
             display: flex;
-            align-items: flex-start; /* Aligner les éléments en haut de la div parente */
+            align-items: flex-start;
         }
 
         .articles {
-            flex: 2; /* La liste d'articles prend 2 fois plus de place */
+            flex: 1;
             padding: 10px;
-            overflow-y: auto; /* Activer la barre de défilement vertical si nécessaire */
+            overflow-y: visible;
         }
 
         .channels {
-            flex: 1; /* Le formulaire prend 1 fois plus de place */
+            flex: 1;
+            padding: 10px;
+        }
+
+        .analytics {
+            flex: 1;
             padding: 10px;
         }
     </style>

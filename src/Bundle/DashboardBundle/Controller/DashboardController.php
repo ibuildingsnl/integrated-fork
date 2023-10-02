@@ -32,17 +32,22 @@ class DashboardController extends AbstractController
 
     public function index(Request $request): Response
     {
-        // Get the list of articles
-        $mostRecentArticles = $this->manager->getRepository(Article::class)->findBy([], ['publishTime.startDate' => 'DESC'], limit: 10);
-
         $selectChannelForm = $this->createForm(ChannelChoiceType::class, null, [
             'multiple' => false,
             'return_object' => true, // true = object, false = ID
         ]);
-
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
         $objectChannel = $this->manager->getRepository(Channel::class)->find($selectedByFormChannel);
         $objectChannel !== null ? $this->channelContext->setChannel($objectChannel) : null;
+        $channelName = $this->channelContext->getChannel()->getId();
+
+
+        $queryBuilder = $this->manager->createQueryBuilder(Article::class)
+            ->field('channels.id')->equals($channelName)
+            ->sort('publishTime.startDate', 'desc')
+            ->limit(10);
+
+        $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
         // Render the view with the data
         return $this->render('@IntegratedDashboard/index.html.twig', [
