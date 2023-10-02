@@ -6,9 +6,10 @@
     <embedded-document name="Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta">
 
         <field field-name="metaTitle" type="string" />
-        <field field-name="metaSlug" type="string" />
         <field field-name="metaDescription" type="string" />
         <field field-name="focusKeyphrase" type="string" />
+        <field field-name="seoScore" type="string" />
+        <field field-name="readabilityScore" type="string" />
 
     </embedded-document>
 

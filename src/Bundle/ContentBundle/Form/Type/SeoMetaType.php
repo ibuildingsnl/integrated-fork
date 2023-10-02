@@ -24,12 +24,16 @@ class SeoMetaType extends AbstractType
             'priority' => 990,
         ]);
 
-        $builder->add('metaSlug', TextType::class, [
+        $builder->add('metaDescription', TextareaType::class, [
+            'priority' => 970,
+        ]);
+
+        $builder->add('seoScore', TextType::class, [
             'priority' => 980,
         ]);
 
-        $builder->add('metaDescription', TextareaType::class, [
-            'priority' => 970,
+        $builder->add('readabilityScore', TextType::class, [
+            'priority' => 980,
         ]);
     }
 

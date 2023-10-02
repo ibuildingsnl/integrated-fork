@@ -6,11 +6,13 @@ class SeoMeta
 {
     protected string $metaTitle;
 
-    protected string $metaSlug;
-
     protected string $metaDescription;
 
     protected string $focusKeyphrase;
+
+    protected string $seoScore;
+
+    protected string $readabilityScore;
 
     public function getFocuskeyphrase(): string
     {
@@ -32,16 +34,6 @@ class SeoMeta
         $this->metaTitle = $metaTitle;
     }
 
-    public function getMetaslug(): string
-    {
-        return $this->metaSlug;
-    }
-
-    public function setMetaslug(string $metaSlug): void
-    {
-        $this->metaSlug = $metaSlug;
-    }
-
     public function getMetadescription(): string
     {
         return $this->metaDescription;
@@ -52,4 +44,23 @@ class SeoMeta
         $this->metaDescription = $metaDescription;
     }
 
+    public function getSeoScore(): string
+    {
+        return $this->seoScore;
+    }
+
+    public function setSeoScore(string $seoScore): void
+    {
+        $this->seoScore = $seoScore;
+    }
+
+    public function getReadabilityScore(): string
+    {
+        return $this->readabilityScore;
+    }
+
+    public function setReadabilityScore(string $readabilityScore): void
+    {
+        $this->readabilityScore = $readabilityScore;
+    }
 }
