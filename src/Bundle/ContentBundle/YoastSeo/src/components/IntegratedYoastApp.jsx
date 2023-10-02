@@ -36,7 +36,7 @@ const IntegratedYoastApp = () => {
             title: configuration.titleOverride || configuration.title,
             description: configuration.description || '',
             slug: configuration.uriPathSegment,
-            url: configuration.pageUrl,
+            url: configuration.pageUrl + configuration.pageUrl,
             focusKeyword: configuration.focusKeyword,
         });
         loadPageContent();

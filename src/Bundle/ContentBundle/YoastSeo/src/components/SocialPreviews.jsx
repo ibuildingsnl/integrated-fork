@@ -26,7 +26,7 @@ const SocialPreviews = () => {
                     description={pageState.openGraph.description}
                     imageUrl={pageState.openGraph.image}
                     alt={pageState.openGraph['image:alt']}
-                    authorName={pageState.openGraph['article:author']}
+                    authorName={pageState.openGraph.site_name}
                     imageFallbackUrl={configuration.openGraphFallbackImage}
                 />
             </Collapsible>

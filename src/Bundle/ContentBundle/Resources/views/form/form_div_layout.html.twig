@@ -310,8 +310,6 @@
 
 {% block integrated_seo_meta_widget %}
 
-    {#        {{ dump(form.parent.vars.data) }} #}
-
     {% set documentNode = form.parent.vars.data %}
 
     {% if documentNode.featuredImage.file is defined and documentNode.featuredImage.file is not null %}
@@ -320,9 +318,6 @@
         {% set featuredImage = asset('bundles/integratedintegrated/images/favicon/apple-touch-icon.png') %}
     {% endif %}
 
-
-    {# 'description': documentNode.seoMetadata.metaDescription|default(documentNode.intro|default(documentNode.content|striptags|u.truncate(156, '...'))), #}
-
     {% if documentNode.primaryChannel.favicon.file is defined and documentNode.primaryChannel.favicon.file is not null %}
         {% set faviconSrc = image(documentNode.primaryChannel.favicon.file).cropResize(50, 50).__toString %}
     {% else %}
@@ -330,6 +325,7 @@
     {% endif %}
 
     {% set documentUrl = integrated_url(documentNode) %}
+    {% set documentSlug = documentNode.slug|default("") %}
 
     <div class="aside-options publication-settings-aside seo-settings">
         <div class="publication-settings-popup aside-item-wrapper show">
@@ -343,8 +339,8 @@
                 'uiLocale': 'nl_NL',
                 'translationsUrl': '/admin/yoastseo/fetch-translations',
                 'workerUrl': asset('bundles/integratedcontent/js/webWorker.js'),
-                'baseUrl': '//' ~ documentNode.primaryChannel.primaryDomain|default,
-                'siteUrl': '//' ~ documentNode.primaryChannel.primaryDomain|default,
+                'baseUrl': 'https://' ~ documentNode.primaryChannel.primaryDomain|default,
+                'siteUrl': 'https://' ~ documentNode.primaryChannel.primaryDomain|default,
                 'brandName': documentNode.primaryChannel.name|default|replace({' Website': ''}),
                 'pageUrl': documentUrl|default(""),
                 'uriPathSegment': documentNode.slug|default("/"),
@@ -357,7 +353,6 @@
 
             <div class="seo-snippet-editor">
                 {{ form_widget(form) }}
-
             </div>
             <style>
                 body {
@@ -510,9 +505,6 @@
     {% endintegrated_javascripts %}
     {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/YoastSeo.js' %}
     {% endintegrated_javascripts %}
-    {#            {% integrated_javascripts mode='append' 'bundles/integratedcontent/js/webWorker.js' %} #}
-    {#            {% endintegrated_javascripts %} #}
-
 {% endblock %}
 
 {% block integrated_publishtime_widget %}

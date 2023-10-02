@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from 'styled-components';
 import { RecoilRoot } from 'recoil';
@@ -8,12 +8,10 @@ import IntegratedYoastApp from './components/IntegratedYoastApp';
 import { I18nProvider } from './provider/I18nProvider';
 import { ConfigurationProvider } from './provider/ConfigurationProvider';
 
-/**
- * This script creates the app for the Yoast preview mode in Integrated CMS
- */
-((document, window) => {
-    const applicationContainer = document.querySelector('#yoast-app');
+function AppInitializer() {
+    const [isReady, setIsReady] = useState(false);
     const modalContainer = document.querySelector('.publication-settings-aside.seo-settings');
+    const applicationContainer = document.querySelector('#yoast-app');
     const snippetEditorContainer = document.querySelector('.seo-snippet-editor');
     const titleField = document.querySelector('#integrated_content_title');
     const uriPathSegmentField = document.querySelector('#integrated_content_slug');
@@ -29,27 +27,41 @@ import { ConfigurationProvider } from './provider/ConfigurationProvider';
         slug: uriPathSegmentField,
     };
 
-    /**
-     * After everything is loaded initialize providers and app
-     */
-    window.onload = () => {
-        const configuration = JSON.parse(applicationContainer.dataset.configuration);
+    useEffect(() => {
+        function handleTinyMCELoaded() {
+            setIsReady(true);
+        }
 
-        ReactDOM.render(
-            <I18nProvider translationsUrl={configuration.translationsUrl}>
-                <ConfigurationProvider
-                    modalContainer={modalContainer}
-                    editorFieldMapping={editorFieldMapping}
-                    configuration={configuration}
-                >
-                    <ThemeProvider theme={{ isRtl: false }}>
-                        <RecoilRoot>
-                            <IntegratedYoastApp />
-                        </RecoilRoot>
-                    </ThemeProvider>
-                </ConfigurationProvider>
-            </I18nProvider>,
-            applicationContainer
-        );
-    };
-})(document, window);
+        window.addEventListener('tinyMCEInitialized', handleTinyMCELoaded);
+
+        return () => {
+            // Cleanup
+            window.removeEventListener('tinyMCEInitialized', handleTinyMCELoaded);
+        };
+    }, []);
+
+    if (!isReady) {
+        return null; // or render a loading spinner, etc.
+    }
+
+    const configuration = JSON.parse(applicationContainer.dataset.configuration);
+
+    return (
+        <I18nProvider translationsUrl={configuration.translationsUrl}>
+            <ConfigurationProvider
+                modalContainer={modalContainer}
+                editorFieldMapping={editorFieldMapping}
+                configuration={configuration}
+            >
+                <ThemeProvider theme={{ isRtl: false }}>
+                    <RecoilRoot>
+                        <IntegratedYoastApp />
+                    </RecoilRoot>
+                </ThemeProvider>
+            </ConfigurationProvider>
+        </I18nProvider>
+    );
+}
+
+const applicationContainer = document.querySelector('#yoast-app');
+ReactDOM.render(<AppInitializer />, applicationContainer);

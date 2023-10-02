@@ -19,8 +19,6 @@ const usePageContent = () => {
     const setTitleTemplate = useSetRecoilState(titleTemplateState);
     const setError = useSetRecoilState(errorState);
 
-    console.log(configuration);
-
     const loadPageContent = useCallback(() => {
         if (isLoading) return;
 

@@ -58,6 +58,9 @@ const SeoTab = () => {
         [titleTemplate]
     );
 
+    const urlBreadcrumb = configuration.pageUrl.replace(configuration.uriPathSegment, '');
+    const urlBreadcrumbArray = urlBreadcrumb.split('/').filter(Boolean);
+
     return (
         <React.Fragment>
             <div className="yoast-seo-keyphrase-editor-wrapper">
@@ -80,7 +83,7 @@ const SeoTab = () => {
                         slug: editorData.slug,
                     }}
                     locale={configuration.uiLocale}
-                    breadcrumbs={configuration.breadcrumbs}
+                    breadcrumbs={urlBreadcrumbArray}
                     keyword={editorData.focusKeyword}
                     onChange={onEditorChange}
                     hasPaperStyle={false}

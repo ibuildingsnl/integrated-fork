@@ -67,10 +67,18 @@ function populateFormRelations() {
       types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
       input_selector: "input[name=\"".concat(inputIdentifier, "\"]"),
       selected_images_selector: "#".concat(id, " .selected_images"),
-      wrap_selector: "#".concat(id, " .wrap"),
-      iframe_selector: "#".concat(id, " iframe")
+      wrap_selector: ".".concat(id, ".wrap"),
+      iframe_selector: ".".concat(id, ".iframe")
     };
     form_relations[id].types_url = getTypesUrl(form_relations[id].types);
+    var wrap = document.createElement('div');
+    wrap.className = "wrap media-library iframe-wrapper close-outside ".concat(id);
+
+    // Create iframe element
+    var iframe = document.createElement('iframe');
+    iframe.className = "iframe ".concat(id);
+    wrap.appendChild(iframe);
+    document.body.appendChild(wrap);
   });
 }
 function getTypesUrl(types) {
@@ -171,7 +179,7 @@ window.addEventListener('message', function (e) {
     closeMediaGallery();
     return;
   }
-  if (typeof e.data === 'string') {
+  if (typeof e.data === 'string' && e.data.length > 0) {
     var response_from_iframe = filterImages(JSON.parse(e.data));
     if (response_from_iframe.length > 0) {
       selectImagesToShow(response_from_iframe);

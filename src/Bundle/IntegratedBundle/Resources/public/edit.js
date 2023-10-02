@@ -7860,6 +7860,12 @@ $('.integrated_tinymce').each(function (key, elem) {
         });
       }
       editor.on('init', function () {
+        var event = new CustomEvent('tinyMCEInitialized', {
+          detail: {
+            editor: editor
+          }
+        });
+        window.dispatchEvent(event);
         var swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
         var articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
         articleSwiper.forEach(function (swiper) {

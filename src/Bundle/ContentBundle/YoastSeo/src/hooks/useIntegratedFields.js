@@ -16,8 +16,6 @@ const useIntegratedFields = () => {
      */
     const updateIntegratedFields = useCallback(
         (key, data) => {
-            console.log(key);
-            console.log(data);
 
             if (key === 'title') {
                 key = 'titleOverride';

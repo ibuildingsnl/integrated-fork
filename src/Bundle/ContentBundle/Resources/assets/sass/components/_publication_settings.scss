@@ -3,8 +3,12 @@
     overflow: hidden;
 }
 
+body.hide-options .aside-options.publication-settings-aside.seo-settings {
+    display: flex;
+    right: 0;
+}
+
 .publication-settings-aside {
-    z-index: 1030;
     background-color: #ffffff;
     border-left: 1px solid #dee3e9;
     height: calc(100vh - 110px);
@@ -17,11 +21,12 @@
     width: 350px;
     visibility: hidden;
     transform: translateX(350px);
-    transition: all 0.3s linear;
+    transition: all 0.3s ease-in-out;
+    z-index: 20;
 
     &.show {
         transform: translateX(0px);
-        transition: all 0.3s linear;
+        transition: all 0.3s ease-in-out;
         visibility: visible;
     }
 
@@ -47,7 +52,7 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 79;
+    z-index: 20;
     -webkit-transition: opacity .15s linear, visibility .15s linear;
     -o-transition: opacity .15s linear, visibility .15s linear;
     transition: opacity .15s linear, visibility .15s linear;

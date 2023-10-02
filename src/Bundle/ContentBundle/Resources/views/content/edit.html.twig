@@ -363,12 +363,17 @@
         autoResize();
 
         function autoResize() {
+            textarea.style.height = 'auto';
+
             if (textarea.scrollHeight > 0) {
+                console.log(textarea.scrollHeight)
                 textarea.style.height = textarea.scrollHeight + 'px';
             }
         }
 
-        setTimeout(function() {
+        window.addEventListener('tinyMCEInitialized', observeResize);
+
+        function observeResize() {
             const resize_ob = new ResizeObserver(function(entries) {
                 // since we are observing only a single element, so we access the first element in entries array
                 const rect = entries[0].contentRect;
@@ -385,7 +390,7 @@
 
             // start observing for resize
             resize_ob.observe(document.querySelector('.title_tinymce_input'));
-        }, 1000);
+        }
     }
 </script>
 
