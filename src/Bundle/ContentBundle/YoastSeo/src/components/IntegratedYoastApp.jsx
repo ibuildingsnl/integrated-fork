@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -30,6 +31,8 @@ const IntegratedYoastApp = () => {
     const ReadabilityTabContent = useMemo(() => <ReadabilityAnalysis />, []);
     const SocialPreviewsTabContent = useMemo(() => <SocialPreviews />, []);
 
+    const debouncedLoadPageContent = useMemo(() => debounce(loadPageContent, 300), [loadPageContent]); // 300ms delay
+
     // Trigger initial page load for analysis
     useEffect(() => {
         setEditorData({
@@ -37,11 +40,30 @@ const IntegratedYoastApp = () => {
             description: configuration.description || '',
             slug: configuration.uriPathSegment,
             url: configuration.pageUrl + configuration.pageUrl,
-            focusKeyword: configuration.focusKeyword,
+            focusKeyword: configuration.focusKeyword
         });
         loadPageContent();
+
+        function handleEditorChange() {
+            debouncedLoadPageContent();
+        }
+
+        const editor = tinymce.get('integrated_content_content');
+        if (editor) {
+            editor.on('Change', handleEditorChange);
+            editor.on('KeyUp', handleEditorChange);  // You might also want to reload content on key up
+        }
+
+        return () => {
+            if (editor) {
+                editor.off('Change', handleEditorChange);
+                editor.off('KeyUp', handleEditorChange);
+            }
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+
 
     return (
         <React.Fragment>
