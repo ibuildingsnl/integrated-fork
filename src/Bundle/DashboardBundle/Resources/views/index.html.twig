@@ -2,5 +2,42 @@
 {% block title %} Dashboard Analytics {% endblock title %}
 
 {% block content %}
-    <h1> Dashboard Analytics {{ channel }}  </h1>
+    <div class="dashboard-container">
+        <div class="articles">
+            <h1>Dashboard Analytics {{ channelName }} <br> Articles (total: {{ nbrOfArticles }})</h1>
+            <nav>
+                <ul>
+                    {% for article in mostRecentArticles %}
+                        <li>{{ article.title }}{{ article.publishTime.startDate | date("d/m/Y") }}</li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+        <div class="channels">
+
+            <h2>Select Channel</h2>
+            {# Afficher le formulaire de choix de canal #}
+            {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index')}) }}
+            {{ form_widget(channelForm) }}
+            <button type="submit">Submit</button>
+            {{ form_end(channelForm) }}
+        </div>
+    </div>
+    <style>
+        .dashboard-container {
+            display: flex;
+            align-items: flex-start; /* Aligner les éléments en haut de la div parente */
+        }
+
+        .articles {
+            flex: 2; /* La liste d'articles prend 2 fois plus de place */
+            padding: 10px;
+            overflow-y: auto; /* Activer la barre de défilement vertical si nécessaire */
+        }
+
+        .channels {
+            flex: 1; /* Le formulaire prend 1 fois plus de place */
+            padding: 10px;
+        }
+    </style>
 {% endblock content %}
