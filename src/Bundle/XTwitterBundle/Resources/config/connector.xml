@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
+            <argument>twitter</argument>
+            <argument>X (Twitter)</argument>
+            <argument type="expression">false</argument>
+            <argument>X (Twitter)</argument>
+            <argument>\Integrated\Bundle\XTwitterBundle\Form\TwitterPublicationType</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="Integrated\Bundle\XTwitterBundle\Connector\TwitterFactory">
+            <argument>%env(resolve:TWITTER_CONSUMER_KEY)%</argument>
+            <argument>%env(resolve:TWITTER_CONSUMER_SECRET)%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConnector" />
+
+        <service id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConfiguration" />
+
+        <service id="td_connector.twitter" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
+            <argument type="service" id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConnector" />
+            <argument type="service" id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConfiguration" />
+            <argument type="service" id="integrated_content.services.flusher" />
+            <tag name="integrated_channel.connector" />
+        </service>
+
+        <service id="td_connector.listener.twitter" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorConfigSubscriber">
+            <argument type="service" id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConfiguration" />
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+    </services>
+
+</container>

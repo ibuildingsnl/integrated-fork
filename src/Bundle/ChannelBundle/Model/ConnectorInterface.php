@@ -11,5 +11,5 @@ interface ConnectorInterface
     public function getName(): string;
 
     /** @throws CouldNotPublish */
-    public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options): ?string;
+    public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options, array $settings): ?string;
 }
