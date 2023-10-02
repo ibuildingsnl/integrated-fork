@@ -91,6 +91,9 @@ const useAnalysis = () => {
                     const readabilityScore = results.result.readability.score;
                     const readabilityRating = isNaN(readabilityScore) ? 'none' : scoreToRating(readabilityScore / 10);
 
+                    document.querySelector('#integrated_content_seoMetadata_readabilityScore').value = readabilityRating;
+                    document.querySelector('#integrated_content_seoMetadata_seoScore').value = seoRating;
+
                     setAnalysisResults((prev) => ({
                         ...prev,
                         allResults: { ...seoResults, ...readabilityResults },
