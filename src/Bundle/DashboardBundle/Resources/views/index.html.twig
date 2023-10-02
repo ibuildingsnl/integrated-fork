@@ -17,12 +17,20 @@
 
             <h2>Select Channel</h2>
             {# Afficher le formulaire de choix de canal #}
-            {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index')}) }}
+            {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index'), 'attr': {'id': 'channelSelect'}}) }}
             {{ form_widget(channelForm) }}
-            <button type="submit">Submit</button>
+            <button id="submitButton" style="display: none;" type="submit">Submit</button>
             {{ form_end(channelForm) }}
         </div>
     </div>
+    <script>
+        var channelSelect = document.getElementById("channelSelect");
+        var submitButton = document.getElementById("submitButton");
+        channelSelect.addEventListener("change", function()
+        {
+            document.getElementById('submitButton').click();
+        });
+    </script>
     <style>
         .dashboard-container {
             display: flex;
