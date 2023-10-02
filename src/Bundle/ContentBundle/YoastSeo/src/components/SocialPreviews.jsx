@@ -21,7 +21,7 @@ const SocialPreviews = () => {
         <div className="yoast-seo-social-preview">
             <Collapsible title={__('Facebook preview', 'yoast-components')} initialIsOpen={true}>
                 <FacebookPreview
-                    siteUrl={editorData.url}
+                    siteUrl={configuration.baseUrl}
                     title={pageState.openGraph.title || 'N/A'}
                     description={pageState.openGraph.description}
                     imageUrl={pageState.openGraph.image}
@@ -32,7 +32,7 @@ const SocialPreviews = () => {
             </Collapsible>
             <Collapsible title={__('Twitter preview', 'yoast-components')} initialIsOpen={true}>
                 <TwitterPreview
-                    siteUrl={editorData.url}
+                    siteUrl={configuration.baseUrl}
                     title={pageState.twitterCard.title || 'N/A'}
                     description={pageState.twitterCard.description}
                     imageUrl={pageState.twitterCard.image}

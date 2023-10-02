@@ -5,7 +5,10 @@ import { __ } from '@wordpress/i18n';
 // Yoast dependencies
 import KeywordInput from 'yoast-components/composites/Plugin/Shared/components/KeywordInput';
 import SnippetEditor from '@yoast/search-metadata-previews/snippet-editor/SnippetEditor';
-import { MODE_DESKTOP } from '@yoast/search-metadata-previews/snippet-preview/constants';
+import {
+    DEFAULT_MODE,
+    MODE_DESKTOP,
+} from '@yoast/search-metadata-previews/snippet-preview/constants';
 
 // Internal dependencies
 import SeoAnalysis from './SeoAnalysis';
@@ -21,7 +24,7 @@ const SeoTab = () => {
     const faviconSrc = useRecoilValue(faviconSrcState);
     const editorData = useRecoilValue(editorState);
     const { updateEditorData } = useIntegratedFields();
-    const [mode, setMode] = useState(MODE_DESKTOP);
+    const [mode, setMode] = useState(DEFAULT_MODE);
 
     const onUpdateKeyword = useCallback(
         (value = '') => {
@@ -46,20 +49,17 @@ const SeoTab = () => {
      * We modify the title in the preview according to the template we generated in the constructor.
      */
     const mapEditorDataToPreview = useCallback(
-        ({ title, description, url }) => {
+        ({ title, description, url}) => {
             return {
                 title: titleTemplate.replace('{title}', title),
                 // url: configuration.isHomepage ? configuration.baseUrl : url,
-                url: url,
-                description: description,
+                url: configuration.baseUrl + url,
+                description: description
             };
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [titleTemplate]
     );
-
-    const urlBreadcrumb = configuration.pageUrl.replace(configuration.uriPathSegment, '');
-    const urlBreadcrumbArray = urlBreadcrumb.split('/').filter(Boolean);
 
     return (
         <React.Fragment>
@@ -80,13 +80,12 @@ const SeoTab = () => {
                     data={{
                         title: editorData.title,
                         description: editorData.description,
-                        slug: editorData.slug,
+                        slug: editorData.slug
                     }}
                     locale={configuration.uiLocale}
-                    breadcrumbs={urlBreadcrumbArray}
                     keyword={editorData.focusKeyword}
                     onChange={onEditorChange}
-                    hasPaperStyle={false}
+                    hasPaperStyle={true}
                     mode={mode}
                     baseUrl={configuration.baseUrl}
                     faviconSrc={faviconSrc}

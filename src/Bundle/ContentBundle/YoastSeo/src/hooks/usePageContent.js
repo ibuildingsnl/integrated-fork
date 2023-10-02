@@ -44,8 +44,8 @@ const usePageContent = () => {
             }
         }
 
-        // Access TinyMCE content
-        const content = tinymce.get('integrated_content_content').getContent();
+        // Access TinyMCE content with h1 title
+        const content = '<h1>' + title + '</h1>' + tinymce.get('integrated_content_content').getContent();
 
         setPageState((prev) => ({
             ...prev,
@@ -73,7 +73,7 @@ function twitterCard(configuration, title, titleOverride, description) {
         title: titleOverride ? titleOverride : title,
         site: configuration.baseUrl,
         description: description,
-        creator: null,
+        creator: configuration.brandName,
         url: configuration.baseUrl + configuration.pageUrl,
         image: configuration.featuredImageSrc,
     };
@@ -83,7 +83,7 @@ function openGraph(configuration, title, titleOverride, description) {
     return {
         type: null,
         title: titleOverride ? titleOverride : title,
-        site_name: configuration.brandName.replace(" Website", ""),
+        site_name: configuration.brandName,
         locale: configuration.uiLocale,
         description: description,
         url: configuration.baseUrl + configuration.pageUrl,
@@ -94,79 +94,5 @@ function openGraph(configuration, title, titleOverride, description) {
     };
 }
 
-//
-//
-// /**
-//  * Checks the page content for a favicon meta tag and will try to retrieve it.
-//  * If it fails it will try to load the favicon from the default src.
-//  * If it fails it will instruct the yoast component to use it's default.
-//  *
-//  * @returns {Promise<void>}
-//  */
-// const updateFavicon = useCallback(async (faviconMetaTagSrc) => {
-//     if (faviconMetaTagSrc) {
-//         let response = await fetch(faviconMetaTagSrc);
-//
-//         if (response.ok) return setFaviconSrc(faviconMetaTagSrc);
-//     }
-//
-//     let response = await fetch(faviconSrc);
-//     if (response.ok) setFaviconSrc(faviconSrc);
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, []);
-//
-// /**
-//  * Fetch new content from page preview and trigger analysis at the end.
-//  */
-// const loadPageContent = useCallback(() => {
-//     if (isLoading) return;
-//
-//     setIsLoading(true);
-//
-//     fetch(configuration.previewUrl)
-//         .then((response) => {
-//             if (!response || !response.ok) {
-//                 throw new Error(
-//                     `Failed fetching preview for Yoast SEO analysis: ${response.status} ${response.statusText}`
-//                 );
-//             }
-//             return response.text();
-//         })
-//         .then((documentContent) => {
-//             const pageParser = new PageParser(documentContent, configuration.contentSelector);
-//
-//             if (!firstPageLoadComplete) {
-//                 updateFavicon(pageParser.faviconSrc);
-//                 setFirstPageLoadComplete(true);
-//
-//                 const pageTitle = configuration.titleOverride || configuration.title;
-//                 if (pageParser.title.indexOf(pageTitle) >= 0) {
-//                     setTitleTemplate(pageParser.title.replace(pageTitle, '{title}'));
-//                 }
-//             }
-//             setPageState((prev) => ({
-//                 ...prev,
-//                 title: pageParser.title,
-//                 description: pageParser.description,
-//                 locale: pageParser.locale,
-//                 content: pageParser.pageContent,
-//                 twitterCard: pageParser.twitterCard,
-//                 openGraph: pageParser.openGraph,
-//             }));
-//         })
-//         .catch((error) => {
-//             setError(error.message);
-//             console.error(error, 'An error occurred while loading the preview');
-//         })
-//         .finally(() => {
-//             setIsLoading(false);
-//         });
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, [isLoading, firstPageLoadComplete]);
-//
-// const debouncedLoadPageContent = useRef(debounce(() => loadPageContent(), 3000)).current;
-//
-// return { loadPageContent: debouncedLoadPageContent };
-// };
 
 export default usePageContent;

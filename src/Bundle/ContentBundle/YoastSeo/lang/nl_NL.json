@@ -1392,8 +1392,8 @@
             "%1$s: The focus keyphrase appears at the beginning of the SEO title. Good job!": [
                 "%1$s: de focus keyphrase staat aan het begin van de SEO-titel. Goed gedaan!"
             ],
-            "Keyphrase in SEO title": [
-                "Keyphrase in SEO titel"
+            "Keyphrase in title": [
+                "Keyphrase in titel"
             ],
             "Contact %s support.": [
                 "Contacteer %s ondersteuning."
@@ -1915,8 +1915,7 @@
                 "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is iets lager dan het aanbevolen minimum van %5$d %6$s. %3$sVoeg wat meer tekst toe%4$s."
             ],
             "%2$sText length%4$s: The text contains %1$d %6$s. This is far below the recommended minimum of %5$d %7$s. %3$sAdd more content%4$s.": [
-                "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is veel minder dan het aanbevolen minimum van %5$d %7$s. %3$sVoeg meer tekst toe%4$s.",
-                "%2$sTekstlengte%4$s: De tekst bevat %1$d %7$s. Dit is veel minder dan het aanbevolen minimum van %5$d %7$s. %3$sVoeg meer tekst toe%4$s."
+                "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is veel minder dan het aanbevolen minimum van %5$d %7$s. %3$sVoeg meer tekst toe%4$s."
             ],
             "character": [
                 "karakter",
@@ -3519,18 +3518,18 @@
             "Keyphrase": [
                 "Keyphrase"
             ],
-            "%3$sImage Keyphrase%5$s: Out of %2$d images on this page, %1$d have alt attributes with words from your keyphrase or synonyms. That's a bit much. %4$sOnly include the keyphrase or its synonyms when it really fits the image%5$s.": [
-                "%3$sAfbeelding keyphrase%5$s: Van de %2$d afbeeldingen op deze pagina hebben %1$d alt attributen met woorden uit je keyphrases of synoniemen. Dat is een beetje veel. %4$sNeem de keyphrase of zijn synoniemen alleen op als het echt bij de afbeelding past%5$s."
+            "%1$sImage alt attributes%3$s: Out of %2$d images on this page, %1$d have alt attributes with words from your keyphrase or synonyms. That's a bit much. %4$sOnly include the keyphrase or its synonyms when it really fits the image%5$s.": [
+                "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina hebben %1$d alt attributen met woorden uit je keyphrases of synoniemen. Dat is een beetje veel. %4$sNeem de keyphrase of zijn synoniemen alleen op als het echt bij de afbeelding past%5$s."
             ],
-            "%3$sImage Keyphrase%5$s: Out of %2$d images on this page, only %1$d has an alt attribute that reflects the topic of your text. %4$sAdd your keyphrase or synonyms to the alt tags of more relevant images%5$s!": [
-                "%3$sAfbeelding keyphrase%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!",
-                "%3$sAfbeelding keyphrase%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!"
+            "%1$sImage alt attributes%3$s: Out of %2$d images on this page, only %1$d has an alt attribute that reflects the topic of your text. %4$sAdd your keyphrase or synonyms to the alt tags of more relevant images%5$s!": [
+                "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!",
+                "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!"
             ],
-            "%1$sImage Keyphrase%3$s: Images on this page do not have alt attributes that reflect the topic of your text. %2$sAdd your keyphrase or synonyms to the alt tags of relevant images%3$s!": [
-                "%1$sAfbeelding keyphrase%3$s: Afbeeldingen op deze pagina hebben geen alt-attributen die het onderwerp van je tekst weergeven. %2$sVoeg je keyphrase of synoniemen toe aan de alt-tags van relevante afbeeldingen%3$s!"
+            "%1$sImage alt attributes%3$s: Images on this page do not have alt attributes that reflect the topic of your text. %2$sAdd your keyphrase or synonyms to the alt tags of relevant images%3$s!": [
+                "%1$sAfbeelding alt atribuut%3$s: Afbeeldingen op deze pagina hebben geen alt-attributen die het onderwerp van je tekst weergeven. %2$sVoeg je keyphrase of synoniemen toe aan de alt-tags van relevante afbeeldingen%3$s!"
             ],
-            "%1$sImage Keyphrase%3$s: Images on this page have alt attributes, but you have not set your keyphrase. %2$sFix that%3$s!": [
-                "%1$sAafbeelding keyphrase%3$s: Afbeeldingen op deze pagina hebben alt attributen, maar je hebt je keyphrase niet ingesteld. %2$sRepareer dat%3$s!"
+            "%1$sImage alt attributes%3$s: Images on this page have alt attributes, but you have not set your keyphrase. %2$sFix that%3$s!": [
+                "%1$sAfbeelding alt atribuut%3$s: Afbeeldingen op deze pagina hebben alt attributen, maar je hebt je keyphrase niet ingesteld. %2$sRepareer dat%3$s!"
             ],
             "%1$sKeyphrase in subheading%2$s: %3$s of your H2 and H3 subheadings reflects the topic of your copy. Good job!": [
                 "%1$sKeyphrase in subkoppen%2$s: %3$s van je H2- en H3-subkoppen laat de inhoud van je tekst zien. Goed gedaan!",
