@@ -1,3 +1,12 @@
+
+
+$state-colors: (
+    good: #7ad03a,
+    ok: #ee7c1b,
+    bad: #dc3232,
+    feedback: #888888,
+);
+
 .publication-settings-container {
     height: 0;
     overflow: hidden;
@@ -6,6 +15,38 @@
 body.hide-options .aside-options.publication-settings-aside.seo-settings {
     display: flex;
     right: 0;
+}
+
+.seo-button {
+    position: relative;
+    padding-right: 40px;
+
+    @each $state, $color in $state-colors {
+        &.seo-#{$state}::before,
+        &.readability-#{$state}::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50px;
+            position: absolute;
+            background-color: $color;
+        }
+    }
+
+    &.readability-good::before,
+    &.readability-ok::before,
+    &.readability-bad::before,
+    &.readability-feedback::before{
+        right: 10px;
+    }
+
+    &.seo-good::after,
+    &.seo-ok::after,
+    &.seo-bad::after,
+    &.seo-feedback::after{
+        margin-left: -5px;
+        right: 25px;
+    }
 }
 
 .publication-settings-aside {

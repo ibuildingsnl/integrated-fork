@@ -11045,7 +11045,7 @@ body.tox-fullscreen .content-wrapper {
     display: none;
   }
 }
-#toolbar a {
+#toolbar a:not(.btn) {
   color: #00AE93;
 }
 #toolbar .toggle-settings {
@@ -12810,6 +12810,50 @@ table.table .favicon-wrapper .channel-favicons.popout {
 body.hide-options .aside-options.publication-settings-aside.seo-settings {
   display: flex;
   right: 0;
+}
+
+.seo-button {
+  position: relative;
+  padding-right: 40px;
+}
+.seo-button.seo-good::before, .seo-button.readability-good::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  position: absolute;
+  background-color: #7ad03a;
+}
+.seo-button.seo-ok::before, .seo-button.readability-ok::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  position: absolute;
+  background-color: #ee7c1b;
+}
+.seo-button.seo-bad::before, .seo-button.readability-bad::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  position: absolute;
+  background-color: #dc3232;
+}
+.seo-button.seo-feedback::before, .seo-button.readability-feedback::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  position: absolute;
+  background-color: #888888;
+}
+.seo-button.readability-good::before, .seo-button.readability-ok::before, .seo-button.readability-bad::before, .seo-button.readability-feedback::before {
+  right: 10px;
+}
+.seo-button.seo-good::after, .seo-button.seo-ok::after, .seo-button.seo-bad::after, .seo-button.seo-feedback::after {
+  margin-left: -5px;
+  right: 25px;
 }
 
 .publication-settings-aside {

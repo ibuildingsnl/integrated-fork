@@ -93,6 +93,7 @@ const useAnalysis = () => {
 
                     document.querySelector('#integrated_content_seoMetadata_readabilityScore').value = readabilityRating;
                     document.querySelector('#integrated_content_seoMetadata_seoScore').value = seoRating;
+                    document.querySelector('.seo-button').className = 'btn btn-white seo-button readability-' + readabilityRating + ' seo-' + seoRating;
 
                     setAnalysisResults((prev) => ({
                         ...prev,
