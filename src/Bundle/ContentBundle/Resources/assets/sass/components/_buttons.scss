@@ -291,4 +291,14 @@ button * {
                 border-color: darken(#c6422f, 20%);
             }
     }
+    &.btn-light-red {
+        background: #f6e9e5;
+        border-color: #f6e9e5;
+        color: #4e150d;
+        &:hover, &:focus {
+            color: #4e150d;
+            background: darken(#f6e9e5, 20%);
+            border-color: darken(#f6e9e5, 20%);
+        }
+    }
 }

@@ -11,7 +11,9 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\ContentBundle\Bulk\DeleteHandler;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
@@ -20,6 +22,7 @@ use Integrated\Bundle\ContentBundle\Provider\ContentProvider;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryEditFile;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryMenu;
 use Integrated\Bundle\ContentBundle\Services\MediaGalleryUploadFile;
+use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\ContentBundle\Services\TaxonomyRelationManager;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Security\PermissionInterface;
@@ -235,6 +238,76 @@ class MediaController extends AbstractController
         } catch (\Exception $e) {
             return (new JsonResponse(['error' => 'This file is not uploaded. Is this filetype allowed? Is the file too big?']))
                 ->setStatusCode(422);
+        }
+    }
+
+    public function bulkDelete(Request $request, DeleteHandler $deleteHandler = null): Response
+    {
+        $jsonContent = json_decode($request->getContent(), true);
+
+        if (false === $jsonContent['confirmed_by_user']) {
+            return $this->getUsedBy($jsonContent['bulkselection']);
+        }
+
+        return $this->removeRelations($jsonContent['bulkselection']);
+    }
+
+    private function removeRelations(array $bulkselection): Response
+    {
+        $deletedIds = [];
+        $toBeDeletedArray = $this->documentManager->getRepository(Content::class)->findBy(['_id' => ['$in' => $bulkselection]]);
+
+        $searchReferenced = new SearchContentReferenced($this->documentManager);
+        $deleteHandler = new DeleteHandler($this->documentManager, $searchReferenced, true);
+        $deleteHandler->multiExecute($toBeDeletedArray, $bulkselection);
+
+        $this->taxonomyRelationManager->runSolrQueue();
+
+        return new JsonResponse([
+            'message' => 'Removed some items',
+            'ids' => $deletedIds,
+        ]);
+    }
+
+    private function getUsedBy(array $idSelection): Response
+    {
+        $usesByTitles = [];
+        foreach ($idSelection as $id) {
+            $content = $this->documentManager->getRepository(Content::class)->find($id);
+
+            if ($content) {
+                // get the usedby, is there an easier way?
+                $usedByItems = $this->documentManager->getRepository(Content::class)
+                    ->getUsedBy(new ArrayCollection([$content]), null, null, false)
+                    ->getQuery()
+                    ->execute();
+
+                if (\count($usedByItems) > 0) {
+                    $usedByResult = [];
+                    foreach ($usedByItems as $usedByItem) {
+                        $usedByResult[] = [
+                            'id' => $usedByItem->getId(),
+                            'title' => $usedByItem->getTitle(),
+                        ];
+                    }
+
+                    $usesByTitles[] =
+                        [
+                            'usedBy' => $usedByResult,
+                            'id' => $content->getId(),
+                            'title' => $content->getTitle(),
+                        ];
+                }
+            }
+        }
+
+        if (\count($usesByTitles) > 0) {
+            return new JsonResponse([
+                'message' => 'There exist some relations. Are you SURE?',
+                'used_by' => $usesByTitles,
+            ]);
+        } else {
+            return new JsonResponse(['message' => 'Ok to delete, go for it!']);
         }
     }
 

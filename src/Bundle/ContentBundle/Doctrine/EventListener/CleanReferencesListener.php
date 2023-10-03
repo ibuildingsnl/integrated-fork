@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the Integrated package.
  *
@@ -37,11 +36,9 @@ class CleanReferencesListener implements EventSubscriber
     {
         // Get document
         $document = $args->getDocument();
-
         // Get document manager
         $dm = $args->getDocumentManager();
-
-        // Document must be instanceof Content
+        // Document must be instance of Content
         if ($document instanceof Content) {
             $dm->createQueryBuilder(Content::class)
                 ->updateMany()
