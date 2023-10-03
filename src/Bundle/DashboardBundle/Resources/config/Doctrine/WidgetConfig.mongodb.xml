@@ -1,0 +1,10 @@
+
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Integrated\Bundle\DashboardBundle\Document\WidgetConfig" collection="Widget_Config">
+        <id field-name="id" strategy="auto" />
+    </document>
+</doctrine-mongo-mapping>

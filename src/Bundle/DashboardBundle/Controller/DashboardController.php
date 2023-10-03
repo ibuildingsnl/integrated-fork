@@ -46,7 +46,6 @@ class DashboardController extends AbstractController
             ->field('channels.id')->equals($channelName)
             ->sort('publishTime.startDate', 'desc')
             ->limit(10);
-
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
         // Render the view with the data
