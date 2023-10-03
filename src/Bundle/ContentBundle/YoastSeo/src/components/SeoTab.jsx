@@ -80,12 +80,12 @@ const SeoTab = () => {
                     data={{
                         title: editorData.title,
                         description: editorData.description,
-                        slug: editorData.slug
+                        slug: editorData.slug,
                     }}
                     locale={configuration.uiLocale}
                     keyword={editorData.focusKeyword}
                     onChange={onEditorChange}
-                    hasPaperStyle={true}
+                    hasPaperStyle={false}
                     mode={mode}
                     baseUrl={configuration.baseUrl}
                     faviconSrc={faviconSrc}

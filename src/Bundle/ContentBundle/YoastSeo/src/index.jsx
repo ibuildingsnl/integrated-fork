@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from 'styled-components';
 import { RecoilRoot } from 'recoil';
 
-import './Main.scss';
 import IntegratedYoastApp from './components/IntegratedYoastApp';
 import { I18nProvider } from './provider/I18nProvider';
 import { ConfigurationProvider } from './provider/ConfigurationProvider';
@@ -12,7 +11,7 @@ function AppInitializer() {
     const [isReady, setIsReady] = useState(false);
     const modalContainer = document.querySelector('.publication-settings-aside.seo-settings');
     const applicationContainer = document.querySelector('#yoast-app');
-    const snippetEditorContainer = document.querySelector('.seo-snippet-editor');
+    const snippetEditorContainer = document.querySelector('.seo-metadata-fields');
     const titleField = document.querySelector('#integrated_content_title');
     const uriPathSegmentField = document.querySelector('#integrated_content_slug');
     const titleOverrideField = snippetEditorContainer.querySelector('#integrated_content_seoMetadata_metaTitle');

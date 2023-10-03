@@ -324,26 +324,50 @@
         {% set faviconSrc = asset('bundles/integratedintegrated/images/favicon/favicon-32x32.png') %}
     {% endif %}
 
-    {% set documentUrl = integrated_url(documentNode) %}
-    {% set documentSlug = documentNode.slug|default("") %}
+    {% if documentNode.primaryChannel is defined and documentNode.primaryChannel is not null %}
+        {% set primaryDomain = documentNode.primaryChannel.primaryDomain %}
+        {% set brandName = documentNode.primaryChannel.name|default|replace({' Website': ''}) %}
+    {% else %}
+        {% set primaryDomain = '' %}
+        {% set brandName = '' %}
+    {% endif %}
+
+    {% if documentNode.id is defined and documentNode.id is not null %}
+        {% set documentUrl = integrated_url(documentNode)|default("") %}
+        {% set documentSlug = documentNode.slug|default("") %}
+        {% set articleTitle = documentNode.title|default("") %}
+        {% set titleOverride = documentNode.seoMetadata.metaTitle|default(documentNode.title|default("")) %}
+        {% set description = documentNode.seoMetadata.metaDescription|default(documentNode.intro|default(documentNode.content|striptags|u.truncate(156, '...'))) %}
+        {% set focusKeyword = documentNode.seoMetadata.focusKeyphrase|default("") %}
+        {% set uriPathSegment = documentNode.slug|default("/") %}
+    {% else %}
+        {% set documentUrl = 'https://temporary.domain/temporary-slug' %}
+        {% set documentSlug = 'sla-het-artikel-op-om-een-slug-te-genereren' %}
+        {% set articleTitle = '%%title%% %%sep%% %%sitename%%' %}
+        {% set titleOverride = '' %}
+        {% set description = '' %}
+        {% set focusKeyword = '' %}
+        {% set uriPathSegment = '' %}
+    {% endif %}
 
     <div class="aside-options publication-settings-aside seo-settings">
         <div class="publication-settings-popup aside-item-wrapper show">
-            <div class="yoast-seo__application" id="yoast-app" data-configuration="{{ {
-                'title': documentNode.title|default,
-                'titleOverride': documentNode.seoMetadata.metaTitle|default(documentNode.title),
-                'description': documentNode.seoMetadata.metaDescription|default(documentNode.intro|default(documentNode.content|striptags|u.truncate(156, '...'))),
-                'focusKeyword': documentNode.seoMetadata.focusKeyphrase|default,
+            <div class="yoast-seo__application" id="yoast-app"
+                 data-configuration="{{ {
+                'title': articleTitle,
+                'titleOverride': titleOverride,
+                'description': description,
+                'focusKeyword': focusKeyword,
                 'isCornerstone': false,
                 'isAmp': false,
                 'uiLocale': 'nl_NL',
                 'translationsUrl': '/admin/yoastseo/fetch-translations',
                 'workerUrl': asset('bundles/integratedcontent/js/webWorker.js'),
-                'baseUrl': 'https://' ~ documentNode.primaryChannel.primaryDomain|default,
-                'siteUrl': 'https://' ~ documentNode.primaryChannel.primaryDomain|default,
-                'brandName': documentNode.primaryChannel.name|default|replace({' Website': ''}),
-                'pageUrl': documentUrl|default(""),
-                'uriPathSegment': documentNode.slug|default("/"),
+                'baseUrl': 'https://' ~ primaryDomain,
+                'siteUrl': 'https://' ~ primaryDomain,
+                'brandName': brandName,
+                'pageUrl': documentUrl,
+                'uriPathSegment': uriPathSegment,
                 'faviconSrc': faviconSrc,
                 'featuredImageSrc': featuredImage,
                 'twitterFallbackImage': asset('bundles/integratedcontent/twitter.svg'),
@@ -351,205 +375,9 @@
             }|json_encode }}">
             </div>
 
-            <div class="seo-snippet-editor">
+            <div class="seo-metadata-fields">
                 {{ form_widget(form) }}
             </div>
-            <style>
-                body {
-                    --main-bg-color: #fff;
-                    --mark-bg-color: rgba(0, 173, 238, .75);
-                    --text-color: #222;
-                    --text-color-light: #666;
-                    --border-light: 1px solid #e2e4e7;
-                }
-
-                .ReactModal__Content ul li {
-                    list-style: auto;
-                    margin-left: 1.5rem;
-                }
-
-                .yoast-modal__content button {
-                    align-items: center;
-                    background-color: #c6422f;
-                    border-radius: 4px;
-                    color: #fff;
-                    display: flex;
-                    height: 20px;
-                    justify-content: center;
-                    width: 20px;
-                    position: absolute;
-                    top: 2rem;
-                    right: 2rem;
-                    cursor: pointer;
-                }
-
-                .yoast-modal__content button svg {
-                    display: none;
-                }
-
-                .yoast-modal__content button::before {
-                    mask-image: url("data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>");
-                    -webkit-mask-image: url("data:image/svg+xml;charset=utf-8,<svg width=\"24\" height=\"24\" stroke-width=\"1.5\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>");
-                    display: block;
-                    height: 20px;
-                    width: 20px;
-                    content: "";
-                    fill: white;
-                    color: white;
-                    background: currentColor;
-                    mask-size: cover;
-                    -webkit-mask-size: cover;
-                }
-
-                .yoast-modal__content button svg path {
-                    fill: white;
-                    background-color: white;
-                    width: 20px;
-                    height: 20px;
-                }
-
-                .yoast-seo__container {
-                    max-width: 800px;
-                }
-                .yoast-seo__container h1 {
-                    margin: 0 1rem 1rem;
-                    font-size: 20px;
-                }
-                .yoast-seo__container .react-tabs__tab svg {
-                    margin-right: 0.5rem;
-                }
-                .yoast-seo-keyphrase-editor-wrapper {
-                    margin-bottom: 1rem;
-                    font-size: 13px;
-                }
-                .yoast-seo-snippet-editor-wrapper {
-                    margin: 1rem 0;
-                    padding: 1rem 0;
-                    border-top: 1px solid var(--border-light);
-                    border-bottom: 1px solid var(--border-light);
-                }
-                .yoast-seo-snippet-editor-wrapper section button {
-                    display: none;
-                }
-                .yoast-seo-social-preview > * {
-                    margin-bottom: 1rem;
-                }
-                .yoast-seo-analysis {
-                    font-size: 13px;
-                }
-                .yoast-seo-analysis h2 {
-                    font-size: 16px;
-                }
-                .yoast-seo-analysis h2 button {
-                    padding-left: 0 !important;
-                    padding-right: 0 !important;
-                    padding-top: 0 !important;
-                }
-
-                .seo-snippet-editor {
-                    display: none;
-                }
-                .yoast-seo-analysis a:hover {
-                    text-decoration: underline;
-                }
-                .yoast-seo-analysis li {
-                    margin: 0.3rem 0;
-                }
-                .yoast-seo-analysis p {
-                    line-height: 1.5;
-                }
-                .yoast-seo-analysis__header {
-                    margin-bottom: 0.5rem;
-                    display: block;
-                }
-                .yoast-loader {
-                    position: fixed;
-                    top: 1rem;
-                    right: 1rem;
-                    width: 2rem;
-                }
-                .yoast-loader--stop {
-                    animation: none !important;
-                }
-                .yoast-svg-icon-loading-spinner {
-                    animation: rotator 1.4s linear infinite;
-                }
-                .yoast-svg-icon-loading-spinner .path {
-                    stroke: #64a60a;
-                    stroke-dasharray: 187;
-                    stroke-dashoffset: 0;
-                    transform-origin: center;
-                    animation: dash 1.4s ease-in-out infinite;
-                }
-                @keyframes dash {
-                    0% {
-                        stroke-dashoffset: 187;
-                    }
-                    50% {
-                        stroke-dashoffset: 46.75;
-                        transform: rotate(135deg);
-                    }
-                    to {
-                        stroke-dashoffset: 187;
-                        transform: rotate(450deg);
-                    }
-                }
-                @keyframes rotator {
-                    0% {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(270deg);
-                    }
-                }
-                .ReactModal__Content {
-                    box-shadow: 0 2px 7px -1px rgba(0, 0, 0, .15);
-                }
-                .ReactModal__Content strong {
-                    font-size: 14px;
-                }
-                .ReactModal__Content .yoast-seo__mark {
-                    color: var(--text-color-light);
-                    font-size: 13px;
-                }
-                .ReactModal__Content .yoast-text-mark {
-                    color: var(--text-color);
-                    font-size: 13px;
-                    line-height: 1.5;
-                    font-weight: bold;
-                }
-                #integrated-backend-container, #integrated-new-backend-container {
-                    display: none;
-                }
-
-                .yoast-seo-analysis a {
-                    text-decoration: underline;
-                    color: #0368ae;
-                }
-
-                .yoast-seo__application .react-tabs__tab-panel {
-                    padding: 20px;
-                }
-
-                .yoast-seo__application .react-tabs__tab-list .react-tabs__tab {
-                    display: flex;
-                    font-weight: bold;
-                    font-family: 'Poppins';
-                    font-size: 1.1rem;
-                }
-
-                .yoast-seo__application .react-tabs__tab {
-                    display: flex;
-                }
-
-                .yoast-seo__application .react-tabs__tab svg {
-                    margin-right: .5rem;
-                }
-
-                .yoast-seo-analysis button svg {
-                    margin: 0 auto;
-                }
-            </style>
         </div>
     </div>
 
