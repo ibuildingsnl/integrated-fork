@@ -23,6 +23,7 @@ const usePageContent = () => {
         if (isLoading) return;
 
         setIsLoading(true);
+        // TODO: add loading indicator
 
         // Access content directly from the fields
         const title = document.querySelector('#integrated_content_title').value;
@@ -45,18 +46,20 @@ const usePageContent = () => {
 
         // Access TinyMCE content with h1 title
         const content = '<h1>' + title + '</h1>' + tinymce.get('integrated_content_content').getContent();
+        const noDivContent = content.replace(/<div/g, '<p').replace(/<\/div>/g, '</p>');
 
         setPageState((prev) => ({
             ...prev,
             title: titleOverride ? titleOverride : title,
             description: description,
             locale: 'nl_NL',
-            content: content,
+            content: noDivContent,
             twitterCard: twitterCard(configuration, title, titleOverride, description),
             openGraph: openGraph(configuration, title, titleOverride, description)
         }));
 
 
+        // TODO: Turn off loading indicator
         setIsLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoading, firstPageLoadComplete]);
