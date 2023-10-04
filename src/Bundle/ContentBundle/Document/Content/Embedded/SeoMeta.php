@@ -4,17 +4,17 @@ namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
 class SeoMeta
 {
+    protected string $focusKeyphrase;
+
     protected string $metaTitle;
 
     protected string $metaDescription;
-
-    protected string $focusKeyphrase;
 
     protected string $seoScore;
 
     protected string $readabilityScore;
 
-    public function getFocuskeyphrase(): string
+    public function getFocuskeyphrase(): ?string
     {
         return $this->focusKeyphrase;
     }
@@ -24,7 +24,7 @@ class SeoMeta
         $this->focusKeyphrase = $focusKeyphrase;
     }
 
-    public function getMetatitle(): string
+    public function getMetatitle(): ?string
     {
         return $this->metaTitle;
     }
@@ -34,7 +34,7 @@ class SeoMeta
         $this->metaTitle = $metaTitle;
     }
 
-    public function getMetadescription(): string
+    public function getMetadescription(): ?string
     {
         return $this->metaDescription;
     }
@@ -44,7 +44,7 @@ class SeoMeta
         $this->metaDescription = $metaDescription;
     }
 
-    public function getSeoScore(): string
+    public function getSeoScore(): ?string
     {
         return $this->seoScore;
     }
@@ -54,7 +54,7 @@ class SeoMeta
         $this->seoScore = $seoScore;
     }
 
-    public function getReadabilityScore(): string
+    public function getReadabilityScore(): ?string
     {
         return $this->readabilityScore;
     }

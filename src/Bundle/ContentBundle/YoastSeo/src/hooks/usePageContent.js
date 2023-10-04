@@ -26,10 +26,9 @@ const usePageContent = () => {
 
         // Access content directly from the fields
         const title = document.querySelector('#integrated_content_title').value;
-        const titleOverride = document.querySelector(
-            '#integrated_content_seoMetadata_metaTitle').value;
-        const description = document.querySelector(
-            '#integrated_content_seoMetadata_metaDescription').value;
+        const titleOverride = document.querySelector('#integrated_content_seoMetadata_metaTitle').value;
+        const description = document.querySelector('#integrated_content_seoMetadata_metaDescription').value;
+
 
         if (!firstPageLoadComplete) {
             setFaviconSrc(configuration.faviconSrc);
@@ -37,7 +36,7 @@ const usePageContent = () => {
 
             const pageTitle = configuration.titleOverride || configuration.title;
             const brandName = configuration.brandName;
-            const fullTitle = pageTitle + ' - ' + brandName.replace(" Website", "");
+            const fullTitle = pageTitle + ' - ' + brandName;
 
             if (fullTitle.indexOf(pageTitle) >= 0) {
                 setTitleTemplate(fullTitle.replace(pageTitle, '{title}'));
@@ -56,6 +55,7 @@ const usePageContent = () => {
             twitterCard: twitterCard(configuration, title, titleOverride, description),
             openGraph: openGraph(configuration, title, titleOverride, description)
         }));
+
 
         setIsLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps

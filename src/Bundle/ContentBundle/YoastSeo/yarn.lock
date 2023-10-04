@@ -1757,7 +1757,7 @@
     styled-components "^4.4.1"
     yoastseo "^1.91.0"
 
-"@yoast/search-metadata-previews@^2.24.0", "@yoast/search-metadata-previews@^2.24.1":
+"@yoast/search-metadata-previews@^2.24.1":
   version "2.24.1"
   resolved "https://registry.yarnpkg.com/@yoast/search-metadata-previews/-/search-metadata-previews-2.24.1.tgz#4da8459dccfe0e2909978dc0052cb2f39e29ca3d"
   integrity sha512-Hb56Mg2xzBQChs+QKJdCxaO1XqzFUN1UMSIs0qITI11O0xLCrr2miI+2S7RudP7GZpuXobFhK8HK/i3jqedz+w==

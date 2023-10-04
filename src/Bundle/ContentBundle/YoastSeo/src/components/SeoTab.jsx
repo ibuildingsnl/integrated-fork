@@ -1,10 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { __ } from '@wordpress/i18n';
+import React, {useCallback, useState} from 'react';
+import {useRecoilValue} from 'recoil';
+import {__} from '@wordpress/i18n';
 
 // Yoast dependencies
-import KeywordInput from 'yoast-components/composites/Plugin/Shared/components/KeywordInput';
-import SnippetEditor from '@yoast/search-metadata-previews/snippet-editor/SnippetEditor';
+import KeywordInput
+    from 'yoast-components/composites/Plugin/Shared/components/KeywordInput';
+import SnippetEditor
+    from '@yoast/search-metadata-previews/snippet-editor/SnippetEditor';
 import {
     DEFAULT_MODE,
     MODE_DESKTOP,
@@ -12,25 +14,25 @@ import {
 
 // Internal dependencies
 import SeoAnalysis from './SeoAnalysis';
-import { useConfiguration } from '../provider/ConfigurationProvider';
+import {useConfiguration} from '../provider/ConfigurationProvider';
 import useIntegratedFields from '../hooks/useIntegratedFields';
 import titleTemplateState from '../state/titleTemplateState';
 import faviconSrcState from '../state/faviconSrcState';
 import editorState from '../state/editorState';
 
 const SeoTab = () => {
-    const { configuration } = useConfiguration();
+    const {configuration} = useConfiguration();
     const titleTemplate = useRecoilValue(titleTemplateState);
     const faviconSrc = useRecoilValue(faviconSrcState);
     const editorData = useRecoilValue(editorState);
-    const { updateEditorData } = useIntegratedFields();
+    const {updateEditorData} = useIntegratedFields();
     const [mode, setMode] = useState(DEFAULT_MODE);
 
     const onUpdateKeyword = useCallback(
         (value = '') => {
             updateEditorData('focusKeyword', value);
         },
-        [updateEditorData]
+        [updateEditorData],
     );
 
     const onEditorChange = useCallback(
@@ -40,8 +42,11 @@ const SeoTab = () => {
             } else {
                 updateEditorData(key, data);
             }
+
+            const event = new CustomEvent('editorChange');
+            document.dispatchEvent(event);
         },
-        [updateEditorData]
+        [updateEditorData],
     );
 
     /**
@@ -49,16 +54,16 @@ const SeoTab = () => {
      * We modify the title in the preview according to the template we generated in the constructor.
      */
     const mapEditorDataToPreview = useCallback(
-        ({ title, description, url}) => {
+        ({title, description, url}) => {
             return {
                 title: titleTemplate.replace('{title}', title),
                 // url: configuration.isHomepage ? configuration.baseUrl : url,
                 url: configuration.baseUrl + configuration.pageUrl,
-                description: description
+                description: description,
             };
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [titleTemplate]
+        [titleTemplate],
     );
 
     return (
@@ -93,7 +98,7 @@ const SeoTab = () => {
                     mapEditorDataToPreview={mapEditorDataToPreview}
                 />
             </div>
-            <SeoAnalysis />
+            <SeoAnalysis/>
         </React.Fragment>
     );
 };

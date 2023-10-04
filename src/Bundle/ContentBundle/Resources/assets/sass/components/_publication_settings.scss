@@ -33,17 +33,17 @@ body.hide-options .aside-options.publication-settings-aside.seo-settings {
         }
     }
 
-    &.readability-good::before,
-    &.readability-ok::before,
-    &.readability-bad::before,
-    &.readability-feedback::before{
+    &.seo-good::before,
+    &.seo-ok::before,
+    &.seo-bad::before,
+    &.seo-feedback::before{
         right: 10px;
     }
 
-    &.seo-good::after,
-    &.seo-ok::after,
-    &.seo-bad::after,
-    &.seo-feedback::after{
+    &.readability-good::after,
+    &.readability-ok::after,
+    &.readability-bad::after,
+    &.readability-feedback::after{
         margin-left: -5px;
         right: 25px;
     }
