@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class YoastSeoLanguageProvider
 {
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
     /**
@@ -33,7 +33,8 @@ class YoastSeoLanguageProvider
     ];
 
     /**
-     * Returns json data containing the Yoast SEO translations for the current users backend language
+     * Returns json data containing the Yoast SEO translations for the current users backend language.
+     *
      * @throws InvalidArgumentException
      */
     public function fetchTranslations(): JsonResponse
@@ -43,12 +44,12 @@ class YoastSeoLanguageProvider
 
         $cache = new FilesystemAdapter();
 
-        $translationData = $cache->getItem('translations.' . $locale);
+        $translationData = $cache->getItem('translations.'.$locale);
 
         if (!$translationData->isHit()) {
             $reflection = new \ReflectionClass('Integrated\Bundle\ContentBundle\Document\Content\Article');
-            //TODO: this is not the nicest way i think to link to the file
-            $filePath = sprintf('%s/../../YoastSeo/lang/%s.json', dirname($reflection->getFilename()), $locale);
+            // TODO: this is not the nicest way i think to link to the file
+            $filePath = sprintf('%s/../../YoastSeo/lang/%s.json', \dirname($reflection->getFilename()), $locale);
 
             if (file_exists($filePath)) {
                 $rawTranslationData = file_get_contents($filePath);
@@ -65,16 +66,14 @@ class YoastSeoLanguageProvider
     }
 
     /**
-     * Returns a locale based on the given interface language
-     *
-     * @param string $interfaceLanguage
-     * @return string
+     * Returns a locale based on the given interface language.
      */
     protected function getValidLocale(string $interfaceLanguage): string
     {
-        if (array_key_exists($interfaceLanguage, $this->languageToLocaleMapping)) {
+        if (\array_key_exists($interfaceLanguage, $this->languageToLocaleMapping)) {
             return $this->languageToLocaleMapping[$interfaceLanguage];
         }
+
         return $interfaceLanguage;
     }
 }
