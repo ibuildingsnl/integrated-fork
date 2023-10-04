@@ -1,53 +1,8 @@
-
-
-$state-colors: (
-    good: #7ad03a,
-    ok: #ee7c1b,
-    bad: #dc3232,
-    feedback: #888888,
-);
-
 .publication-settings-container {
     height: 0;
     overflow: hidden;
 }
 
-body.hide-options .aside-options.publication-settings-aside.seo-settings {
-    display: flex;
-    right: 0;
-}
-
-.seo-button {
-    position: relative;
-    padding-right: 40px;
-
-    @each $state, $color in $state-colors {
-        &.seo-#{$state}::before,
-        &.readability-#{$state}::after {
-            content: "";
-            width: 10px;
-            height: 10px;
-            border-radius: 50px;
-            position: absolute;
-            background-color: $color;
-        }
-    }
-
-    &.seo-good::before,
-    &.seo-ok::before,
-    &.seo-bad::before,
-    &.seo-feedback::before{
-        right: 10px;
-    }
-
-    &.readability-good::after,
-    &.readability-ok::after,
-    &.readability-bad::after,
-    &.readability-feedback::after{
-        margin-left: -5px;
-        right: 25px;
-    }
-}
 
 .publication-settings-aside {
     background-color: #ffffff;

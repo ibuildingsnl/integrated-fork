@@ -3,10 +3,8 @@ import {useRecoilValue} from 'recoil';
 import {__} from '@wordpress/i18n';
 
 // Yoast dependencies
-import KeywordInput
-    from 'yoast-components/composites/Plugin/Shared/components/KeywordInput';
-import SnippetEditor
-    from '@yoast/search-metadata-previews/snippet-editor/SnippetEditor';
+import KeywordInput from 'yoast-components/composites/Plugin/Shared/components/KeywordInput';
+import SnippetEditor from '@yoast/search-metadata-previews/snippet-editor/SnippetEditor';
 import {
     DEFAULT_MODE,
     MODE_DESKTOP,
@@ -87,6 +85,7 @@ const SeoTab = () => {
                         description: editorData.description,
                         slug: editorData.slug,
                     }}
+                    siteName={configuration.brandName}
                     locale={configuration.uiLocale}
                     keyword={editorData.focusKeyword}
                     onChange={onEditorChange}

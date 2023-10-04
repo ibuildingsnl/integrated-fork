@@ -332,13 +332,14 @@
         {% set brandName = '' %}
     {% endif %}
 
+
     {% if documentNode.id is defined and documentNode.id is not null %}
         {% set documentUrl = integrated_url(documentNode)|default("") %}
         {% set documentSlug = documentNode.slug|default("") %}
         {% set articleTitle = documentNode.title|default("") %}
-        {% set titleOverride = documentNode.metaTitle|default(documentNode.title|default("")) %}
-        {% set description = documentNode.metaDescription|default(documentNode.intro|default(documentNode.content|striptags|u.truncate(156, '...'))) %}
-        {% set focusKeyword = documentNode.focusKeyphrase|default("") %}
+        {% set titleOverride = documentNode.seoMetadata.metaTitle|default(documentNode.title|default("")) %}
+        {% set description = documentNode.seoMetadata.metaDescription|default(documentNode.intro|default(documentNode.content|striptags|u.truncate(156, '...'))) %}
+        {% set focusKeyword = documentNode.seoMetadata.focusKeyphrase|default("") %}
         {% set uriPathSegment = documentNode.slug|default("/") %}
     {% else %}
         {% set documentUrl = 'https://temporary.domain/temporary-slug' %}
