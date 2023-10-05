@@ -42,6 +42,6 @@ final class ConnectorAdapter implements AdapterInterface, ConfigurableInterface,
     public function getExporter(ConfigInterface $config): ExporterInterface
     {
         assert($config instanceof ModelConfigInterface);
-        return new Exporter($this->connector, $config, $this->flusher, $this->logger);
+        return new Exporter($this->connector, $config, $this->logger);
     }
 }
