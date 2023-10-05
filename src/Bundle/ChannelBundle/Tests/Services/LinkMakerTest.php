@@ -27,8 +27,7 @@ final class LinkMakerTest extends TestCase
         $this->linkMaker = new ChannelAddingLinkMaker(new NaiveLinkMaker());
     }
 
-    /** @test */
-    public function linking_to_an_article_on_the_same_channel()
+    public function testLinkingToAnArticleOnTheSameChannel()
     {
         $article = (new Article())->setId('id')->setContentType('type');
         $article->addChannel($this->channels['a']);
@@ -36,8 +35,7 @@ final class LinkMakerTest extends TestCase
         self::assertSame('channel.a/type/id', $this->linkMaker->urlFor($article, $this->channels['a']));
     }
 
-    /** @test */
-    public function linking_to_an_article_on_one_of_its_channels()
+    public function testLinkingToAnArticleOnOneOfItsChannels()
     {
         $article = (new Article())->setId('id')->setContentType('type');
         $article->addChannel($this->channels['a']);
@@ -46,8 +44,7 @@ final class LinkMakerTest extends TestCase
         self::assertSame('channel.b/type/id', $this->linkMaker->urlFor($article, $this->channels['b']));
     }
 
-    /** @test */
-    public function linking_to_an_article_on_a_different_channel()
+    public function testLinkingToAnArticleOnADifferentChannel()
     {
         $article = (new Article())->setId('id')->setContentType('type');
         $article->addChannel($this->channels['a']);

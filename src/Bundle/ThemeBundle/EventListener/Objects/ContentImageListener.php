@@ -81,8 +81,7 @@ class ContentImageListener
         string $width = '',
         string $height = '',
         string $style = ''
-    ): ?string
-    {
+    ): ?string {
         if ($template = $this->getViewFromClass($class)) {
             return $this->templating->render(
                 $template,

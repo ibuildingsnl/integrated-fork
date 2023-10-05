@@ -14,7 +14,8 @@ final class TwitterConfiguration implements OauthConfigInterface
     public function __construct(
         private readonly TwitterFactory $factory,
         private readonly UrlGeneratorInterface $generator,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {

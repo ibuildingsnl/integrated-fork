@@ -19,7 +19,8 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
         private readonly OauthConfigInterface $config,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $em,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {

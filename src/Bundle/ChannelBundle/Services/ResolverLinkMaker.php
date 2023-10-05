@@ -10,7 +10,8 @@ final class ResolverLinkMaker implements LinkMaker
 {
     public function __construct(
         private readonly UrlResolver $urlResolver,
-    ) {}
+    ) {
+    }
 
     public function urlFor(Content $content, ChannelInterface $preferredChannel): string
     {

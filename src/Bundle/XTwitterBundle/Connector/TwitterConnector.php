@@ -16,7 +16,8 @@ final class TwitterConnector implements ConnectorInterface
     public function __construct(
         private readonly TwitterFactory $factory,
         private readonly LinkMaker $linkMaker,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
