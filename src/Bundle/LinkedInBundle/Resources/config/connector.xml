@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
+            <argument>linkedin</argument>
+            <argument>LinkedIn</argument>
+            <argument type="expression">false</argument>
+            <argument>LinkedIn</argument>
+            <argument>\Integrated\Bundle\LinkedInBundle\Form\LinkedInPublicationType</argument>
+
+            <tag name="integrated_brand.type" />
+        </service>
+
+        <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory">
+            <argument>%env(resolve:LINKEDIN_CONSUMER_KEY)%</argument>
+            <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>
+        </service>
+
+        <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector" />
+
+        <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfiguration" />
+
+        <service id="td_connector.linkdin" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
+            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector" />
+            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfiguration" />
+            <argument type="service" id="integrated_content.services.flusher" />
+            <tag name="integrated_channel.connector" />
+        </service>
+
+        <service id="td_connector.listener.linkedin" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorConfigSubscriber">
+            <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfiguration" />
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+    </services>
+
+</container>
