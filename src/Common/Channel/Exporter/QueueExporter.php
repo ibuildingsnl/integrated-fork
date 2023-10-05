@@ -101,7 +101,7 @@ class QueueExporter implements ExporterInterface, QueueExporterInterface
             throw new \InvalidArgumentException('Failed to deserialize the request message.');
         }
 
-        $this->export($request->content, $request->state, $request->channel);
+        $this->export($request->content, $request->state, $request->channel, $request->settings);
 
         return $message;
     }
