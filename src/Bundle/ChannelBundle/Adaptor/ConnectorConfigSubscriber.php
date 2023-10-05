@@ -50,11 +50,11 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
 
         $url = $this->config->prepareAuthLink($event, $options);
 
-        dd($options, $url);
         if (null === $url) {
             return;
         }
 
+        $config->setOptions(clone $config->getOptions());
         $event->setResponse(new RedirectResponse($url));
     }
 
@@ -69,7 +69,6 @@ final class ConnectorConfigSubscriber implements EventSubscriberInterface
 
         if ($this->config->handleCallback($event, $config->getOptions())) {
             $config->setOptions(clone $config->getOptions());
-            dd($config);
             $this->em->flush();
 
             $event->setResponse(new RedirectResponse(
