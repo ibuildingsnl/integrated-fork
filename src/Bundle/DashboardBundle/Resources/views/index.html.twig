@@ -2,58 +2,81 @@
 {% block title %} Dashboard Analytics {% endblock title %}
 
 {% block content %}
-        <div class="dashboard-container">
-            <div class="articles">
-                <h1>Dashboard Analytics {{ channelName }} <br> Articles (total: {{ nbrOfArticles }})</h1>
-                <nav>
-                    <ul>
-                        {% for article in mostRecentArticles %}
-                            <li>{{ article.title }} | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
-                        {% endfor %}
-                    </ul>
-                </nav>
+    <div class="dashboard-container">
+        <div class="channels">
+            <div class="channel-info">
+                <h1>Dashboard Analytics {{ channelName }}</h1>
             </div>
-            <div class="channels">
-
-                <h2>Select Channel</h2>
+            <h2>Select Channel {{ channelName }}</h2>
+            <div class="channel-form">
                 {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index'), 'attr': {'id': 'channelSelect'}}) }}
                 {{ form_widget(channelForm) }}
                 <button id="submitButton" style="display: none;" type="submit">Submit</button>
                 {{ form_end(channelForm) }}
             </div>
-            <div class="analytics">
-
-            </div>
         </div>
+        <div class="widget-container">
+            {% for widget in widgets %}
+                <div class="widget">
+                    {{ widget | raw }}
+                </div>
+                {% if loop.index % 3 == 0 %}
+                    <div class="clear"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+        .dashboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .channels {
+            flex-basis: 100%; /* Prend toute la largeur sur la première ligne */
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-form {
+            flex: 1;
+        }
+
+        .widget-container {
+            flex: 1; /* Prend le reste de l'espace sur les lignes suivantes */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .widget {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .clear {
+            flex-basis: 100%; /* Force un saut de ligne */
+            height: 0; /* Efface la hauteur générée par flex */
+            content: "";
+        }
+    </style>
+
+
+
     <script>
         var channelSelect = document.getElementById("channelSelect");
         var submitButton = document.getElementById("submitButton");
-        channelSelect.addEventListener("change", function()
-        {
+        channelSelect.addEventListener("change", function () {
             document.getElementById('submitButton').click()
         });
 
     </script>
-    <style>
-        .dashboard-container {
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .articles {
-            flex: 1;
-            padding: 10px;
-            overflow-y: visible;
-        }
-
-        .channels {
-            flex: 1;
-            padding: 10px;
-        }
-
-        .analytics {
-            flex: 1;
-            padding: 10px;
-        }
-    </style>
 {% endblock content %}

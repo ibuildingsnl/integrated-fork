@@ -1,23 +1,14 @@
 <?php
 
-namespace Bundle\DashboardBundle\Document;
-
-
+namespace Integrated\Bundle\DashboardBundle\Document;
 
 class WidgetConfig
 {
-
-    private string $id;
-
-    private string $widgetName;
-
-    private int $order;
-
-    public function __construct(string $id, string $widgetName, string $order)
-    {
-        $this->id = $id;
-        $this->widgetName = $widgetName;
-        $this->order = $order;
+    public function __construct(
+        private readonly string $id,
+        private readonly string $widgetName,
+        private readonly int $order
+    ) {
     }
 
     public function getId(): string
@@ -32,6 +23,6 @@ class WidgetConfig
 
     public function getOrder(): int
     {
-        return $this->Order;
+        return $this->order;
     }
 }

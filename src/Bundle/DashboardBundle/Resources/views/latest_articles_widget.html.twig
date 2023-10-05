@@ -1,0 +1,18 @@
+<div>
+    <h1> <br> Articles (total: {{ mostRecentArticles | length }})</h1>
+    <nav class="article-list">
+        <ul>
+            {% for article in mostRecentArticles %}
+                <li>{{ article.title }} | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .article-list {
+        max-height: 300px; /* Définissez la hauteur maximale souhaitée */
+        overflow-y: auto; /* Ajoutez la barre de défilement verticale si nécessaire */
+        /*width: 33%;*/
+    }
+</style>

@@ -12,22 +12,28 @@
 namespace Integrated\Bundle\DashboardBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
+use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
-use Symfony\Component\HttpFoundation\Response;
-use \Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
-
+use Symfony\Component\HttpFoundation\Response;
 
 class DashboardController extends AbstractController
 {
+    private array $widgets;
 
-    public function __construct(private readonly ChannelContextInterface $channelContext, private readonly DocumentManager $manager)
-    {
+    public function __construct(
+        private readonly ChannelContextInterface $channelContext,
+        private readonly DocumentManager $manager,
+        private readonly iterable $allWidgets,
+    ) {
+        /** @var WidgetInterface $widget */
+        foreach ($this->allWidgets as $widget) {
+            $this->widgets[$widget->name()] = $widget;
+        }
     }
 
     public function index(Request $request): Response
@@ -37,22 +43,22 @@ class DashboardController extends AbstractController
             'return_object' => true, // true = object, false = ID
         ]);
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
-        $objectChannel = $this->manager->getRepository(Channel::class)->find($selectedByFormChannel);
-        $objectChannel !== null ? $this->channelContext->setChannel($objectChannel) : null;
-        $channelName = $this->channelContext->getChannel()->getId();
+        $channel = $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
 
-
-        $queryBuilder = $this->manager->createQueryBuilder(Article::class)
-            ->field('channels.id')->equals($channelName)
-            ->sort('publishTime.startDate', 'desc')
-            ->limit(10);
-        $mostRecentArticles = $queryBuilder->getQuery()->execute();
+        $renderedWidgets = [];
+        foreach ($this->manager->getRepository(WidgetConfig::class)->findAll() as $config) {
+            /** @var WidgetInterface $widget */
+            $widget = $this->widgets[$config->getWidgetName()] ?? null;
+            if (!$widget) {
+                continue;
+            }
+            $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel));
+        }
 
         // Render the view with the data
         return $this->render('@IntegratedDashboard/index.html.twig', [
-            "channelName" => $this->channelContext->getChannel()->getName(),
-            "mostRecentArticles" => $mostRecentArticles,
-            "nbrOfArticles" => count($mostRecentArticles),
+            "channelName" => $channel->getName(),
+            'widgets' => $renderedWidgets,
             "channelForm" => $selectChannelForm->createView(),
         ]);
     }

@@ -1,6 +1,7 @@
 <?php
 
-namespace Bundle\DashboardBundle\Widgets;
+namespace Integrated\Bundle\DashboardBundle\Widgets;
+
 use Integrated\Common\Channel\ChannelInterface;
 
 interface WidgetInterface
