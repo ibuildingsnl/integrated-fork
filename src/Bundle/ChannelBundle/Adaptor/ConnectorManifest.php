@@ -9,7 +9,8 @@ final class ConnectorManifest implements ManifestInterface
 {
     public function __construct(
         private readonly ConnectorInterface $connector,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {

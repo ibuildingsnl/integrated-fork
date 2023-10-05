@@ -11,7 +11,7 @@ final class LinkTypeSettingsProvider implements PublicationSettingsProvider
     public function __construct(
         private readonly BrandRepository $brands,
         private readonly PublicationSettingsProvider $fallback,
-    ){
+    ) {
     }
 
     public function settingTypeFor(ChannelInterface $channel): string

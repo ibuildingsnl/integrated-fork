@@ -16,7 +16,8 @@ final class TwitterConnector implements ConnectorInterface
     public function __construct(
         private readonly TwitterFactory $factory,
         private readonly LinkMaker $linkMaker,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
@@ -29,16 +30,15 @@ final class TwitterConnector implements ConnectorInterface
             throw new CouldNotPublish('An access token and secret are required to create a twitter exporter');
         }
 
-        dd($settings, $content);
         $client = $this->factory->createClient($options->get('token'), $options->get('token_secret'));
 
-        $message = $settings['foo'] ?? '';
-        if (!empty($message)) {
-            $message .= "\n\n";
-        }
-        $message .= "https://".$this->linkMaker->urlFor($content, $channel);
+        $message = [
+            $settings['title'] ?? null,
+            $settings['text'] ?? null,
+            $this->linkMaker->urlFor($content, $channel),
+        ];
 
-        $response = $client->post('tweets', ['text' => $message], true);
+        $response = $client->post('tweets', ['text' => implode("\n\n", $message)], true);
 
         if (!isset($response['data']['id'])) {
             throw new CouldNotPublish('Could not publish to twitter: ' . $this->getErrorFromResponse($response));

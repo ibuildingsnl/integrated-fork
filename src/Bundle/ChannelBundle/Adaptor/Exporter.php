@@ -17,7 +17,8 @@ final class Exporter implements ExporterInterface
         private readonly ConnectorInterface $connector,
         private readonly ConfigInterface $config,
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function export($content, $state, ChannelInterface $channel, array $settings = []): ?ExporterResponse
     {
