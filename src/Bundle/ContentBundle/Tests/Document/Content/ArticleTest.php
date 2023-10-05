@@ -41,8 +41,10 @@ class ArticleTest extends ContentTest
     public function testGetAndSetTitleFunction()
     {
         $title = 'title';
-        $this->assertSame($title, $this->article->setTitle($title)->getTitle());
+        $this->article->setTitle($title);
+        $this->assertSame($title, $this->article->getTitle());
     }
+
 
     /**
      * Test get- and setSubtitle function.
@@ -50,7 +52,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetSubtitleFunction()
     {
         $subtitle = 'subtitle';
-        $this->assertEquals($subtitle, $this->article->setSubtitle($subtitle)->getSubtitle());
+        $this->article->setSubtitle($subtitle);
+        $this->assertEquals($subtitle, $this->article->getSubtitle());
     }
 
     /**
@@ -59,7 +62,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetAuthorsFunction()
     {
         $authors = new ArrayCollection(['key' => 'value']);
-        $this->assertSame($authors, $this->article->setAuthors($authors)->getAuthors());
+        $this->article->setAuthors($authors);
+        $this->assertSame($authors, $this->article->getAuthors());
     }
 
     /**
@@ -70,8 +74,10 @@ class ArticleTest extends ContentTest
         /* @var $author \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author | MockObject */
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
+        // Action
+        $this->article->addAuthor($author);
+
         // Asserts
-        $this->assertSame($this->article, $this->article->addAuthor($author));
         $this->assertCount(1, $this->article->getAuthors());
     }
 
@@ -84,7 +90,8 @@ class ArticleTest extends ContentTest
         $author = $this->createMock('Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author');
 
         // Add author two times
-        $this->article->addAuthor($author)->addAuthor($author);
+        $this->article->addAuthor($author);
+        $this->article->addAuthor($author);
 
         // Asserts
         $this->assertCount(1, $this->article->getAuthors());
@@ -123,7 +130,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetSourceFunction()
     {
         $source = 'source';
-        $this->assertEquals($source, $this->article->setSource($source)->getSource());
+        $this->article->setSource($source);
+        $this->assertEquals($source, $this->article->getSource());
     }
 
     /**
@@ -132,7 +140,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetSourceUrlFunction()
     {
         $sourceUrl = 'sourceUrl';
-        $this->assertEquals($sourceUrl, $this->article->setSourceUrl($sourceUrl)->getSourceUrl());
+        $this->article->setSourceUrl($sourceUrl);
+        $this->assertEquals($sourceUrl, $this->article->getSourceUrl());
     }
 
     /**
@@ -141,7 +150,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetLocaleFunction()
     {
         $locale = 'locale';
-        $this->assertEquals($locale, $this->article->setLocale($locale)->getLocale());
+        $this->article->setLocale($locale);
+        $this->assertEquals($locale, $this->article->getLocale());
     }
 
     /**
@@ -150,7 +160,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetIntroFunction()
     {
         $intro = 'intro';
-        $this->assertEquals($intro, $this->article->setIntro($intro)->getIntro());
+        $this->article->setIntro($intro);
+        $this->assertEquals($intro, $this->article->getIntro());
     }
 
     /**
@@ -159,7 +170,8 @@ class ArticleTest extends ContentTest
     public function testGetAndSetContentFunction()
     {
         $content = 'content';
-        $this->assertEquals($content, $this->article->setContent($content)->getContent());
+        $this->article->setContent($content);
+        $this->assertEquals($content, $this->article->getContent());
     }
 
     /**
@@ -181,7 +193,8 @@ class ArticleTest extends ContentTest
     public function testToStringFunction()
     {
         $title = 'Title';
-        $this->assertEquals($title, (string) $this->article->setTitle($title));
+        $this->article->setTitle($title);
+        $this->assertEquals($title, (string) $this->article);
     }
 
     /**

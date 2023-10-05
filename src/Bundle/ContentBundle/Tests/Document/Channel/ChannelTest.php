@@ -42,7 +42,8 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetIdFunction()
     {
         $id = 'id';
-        $this->assertSame($id, $this->channel->setId($id)->getId());
+        $this->channel->setId($id);
+        $this->assertSame($id, $this->channel->getId());
     }
 
     /**
@@ -51,7 +52,8 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetNameFunction()
     {
         $name = 'name';
-        $this->assertEquals($name, $this->channel->setName($name)->getName());
+        $this->channel->setName($name);
+        $this->assertEquals($name, $this->channel->getName());
     }
 
     /**
@@ -63,8 +65,8 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
             'domain1',
             'domain2',
         ];
-
-        $this->assertSame($domains, $this->channel->setDomains($domains)->getDomains());
+        $this->channel->setDomains($domains);
+        $this->assertSame($domains, $this->channel->getDomains());
     }
 
     /**
@@ -73,6 +75,7 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetCreatedAtFunction()
     {
         $createdAt = new \DateTime();
-        $this->assertSame($createdAt, $this->channel->setCreatedAt($createdAt)->getCreatedAt());
+        $this->channel->setCreatedAt($createdAt);
+        $this->assertSame($createdAt, $this->channel->getCreatedAt());
     }
 }
