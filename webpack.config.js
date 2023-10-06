@@ -22,9 +22,6 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     .addEntry('collection', [
         './src/Bundle/ContentBundle/Resources/assets/js/collection.js',
     ])
-    // .addEntry('seo_analyser', [
-    //     './src/Bundle/ContentBundle/Resources/assets/js/seo_analyser/seo_analyser.js',
-    // ])
     .addEntry('mediagallery', [
         './src/Bundle/ContentBundle/Resources/assets/js/jqueryui.js',
         './src/Bundle/ContentBundle/Resources/assets/js/mediaGallery.js',
@@ -78,18 +75,19 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
-    .enableSassLoader()
-    .enableSourceMaps(false)
-    .enableVersioning(false)
-    .disableSingleRuntimeChunk()
     .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
         };
     })
+    .enableSassLoader(options => {
+        options.implementation = require('sass');
+    })
+    .enableSourceMaps(false)
+    .enableVersioning(false)
+    .disableSingleRuntimeChunk()
     .addLoader({ test: /\.handlebars$/, loader: 'handlebars-loader' })
     .getWebpackConfig();
-
 
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname, 'node_modules/typeahead.js/dist/typeahead.bundle.js'),
@@ -97,12 +95,5 @@ webpackConfig.resolve.alias = {
 };
 
 webpackConfig.resolve.fallback = {'fs': false};
-
-// webpackConfig.plugins.push(
-//     new webpack.DefinePlugin({
-//         'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
-//         'process.env.NODE_PROD': JSON.stringify(process.env.NODE_PROD),
-//     })
-// );
 
 module.exports = webpackConfig;
