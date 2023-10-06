@@ -42,7 +42,10 @@
         "testcafe": "^1.1.0",
         "testcafe-react-selectors": "^4.0.0",
         "yoast-components": "^5.24.0",
-        "yoastseo": "^1.91.2"
+        "yoastseo": "^1.91.2",
+        "uppy": "^3.3.1",
+        "url": "^0.11.3",
+        "util": "^0.12.5"
     },
     "devDependencies": {
         "@babel/core": "^7.14.0",
