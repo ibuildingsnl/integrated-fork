@@ -1395,6 +1395,18 @@
             "Keyphrase in title": [
                 "Keyphrase in titel"
             ],
+            "%1$sKeyphrase in title%3$s: Not all the words from your keyphrase \"%4$s\" appear in the SEO title. %2$sFor the best SEO results write the exact match of your keyphrase in the SEO title, and put the keyphrase at the beginning of the title%3$s.": [
+                "%1$sKeyphrase in titel%3$s: niet alle woorden van je keyphrase \"%4$s\" komen voor in de SEO titel. %2$sPlaats een exacte match van je keyphrase in de SEO-titel en plaats je keyphrase aan het begin van de titel voor de beste SEO-resultaten%3$s."
+            ],
+            "%1$sKeyphrase in title%3$s: Does not contain the exact match. %2$sTry to write the exact match of your keyphrase in the SEO title and put it at the beginning of the title%3$s.": [
+                "%1$sKeyphrase in titel%3$s: bevat niet de exacte overeenkomst. %2$sProbeer de exacte overeenkomst van je keyphrase in de SEO titel te schrijven en plaats deze aan het begin van de titel%3$s"
+            ],
+            "%1$sKeyphrase in title%3$s: The exact match of the focus keyphrase appears in the SEO title, but not at the beginning. %2$sMove it to the beginning for the best results%3$s.": [
+                "%1$sKeyphrase in titel%3$s: de exacte overeenkomst met de focus keyphrase komt voor in de SEO-titel, maar niet aan het begin. %2$sVerplaats het naar het begin voor de beste resultaten%3$s."
+            ],
+            "%1$sKeyphrase in title%2$s: The exact match of the focus keyphrase appears at the beginning of the SEO title. Good job!": [
+                "%1$sKeyphrase in titel%3$s: de focus keyphrase staat aan het begin van de SEO-titel. Goed gedaan!"
+            ],
             "Contact %s support.": [
                 "Contacteer %s ondersteuning."
             ],
@@ -1908,22 +1920,29 @@
             "%1$s: The exact match of the focus keyphrase appears at the beginning of the SEO title. Good job!": [
                 "%1$s: de focus keyphrase staat aan het begin van de SEO-titel. Goed gedaan!"
             ],
-            "%2$sText length%4$s: The text contains %1$d %6$s. This is below the recommended minimum of %5$d %6$s. %3$sAdd more content%4$s.": [
-                "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is lager dan het aanbevolen minimum van %5$d %6$s. %3$sVoeg meer tekst toe%4$s."
+            "%2$sText length%3$s: The text contains %1$d words. Good job!": [
+                "%2$sTekstlengte%3$s: De tekst bevat %1$d woorden. Goed gedaan!"
             ],
-            "%2$sText length%4$s: The text contains %1$d %6$s. This is slightly below the recommended minimum of %5$d %6$s. %3$sAdd a bit more copy%4$s.": [
-                "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is iets lager dan het aanbevolen minimum van %5$d %6$s. %3$sVoeg wat meer tekst toe%4$s."
+            "%2$sText length%4$s: The text contains %1$d words.": [
+                "%2$sTekstlengte%4$s: De tekst bevat %1$d woorden."
             ],
-            "%2$sText length%4$s: The text contains %1$d %6$s. This is far below the recommended minimum of %5$d %7$s. %3$sAdd more content%4$s.": [
-                "%2$sTekstlengte%4$s: De tekst bevat %1$d %6$s. Dit is veel minder dan het aanbevolen minimum van %5$d %7$s. %3$sVoeg meer tekst toe%4$s."
+            "%2$sText length%4$s": [
+                "%2$sTekstlengte%4$s"
+            ],
+            "This is below the recommended minimum of %5$d words. %3$sAdd more content%4$s.": [
+                "Dit is lager dan het aanbevolen minimum van %5$d woorden. %3$sVoeg meer tekst toe%4$s."
+            ],
+            "This is slightly below the recommended minimum of %5$d words. %3$sAdd a bit more copy%4$s.": [
+                "Dit is iets lager dan het aanbevolen minimum van %5$d woorden. %3$sVoeg wat meer tekst toe%4$s."
+            ],
+            "This is far below the recommended minimum of %5$d words. %3$sAdd more content%4$s.": [
+                "Dit is veel minder dan het aanbevolen minimum van %5$d woorden. %3$sVoeg meer tekst toe%4$s."
             ],
             "character": [
-                "karakter",
-                "karakters"
+                "karakter"
             ],
             "word": [
-                "woord",
-                "woorden"
+                "woord"
             ],
             "words": [
                 "woorden"
@@ -3522,7 +3541,9 @@
                 "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina hebben %1$d alt attributen met woorden uit je keyphrases of synoniemen. Dat is een beetje veel. %4$sNeem de keyphrase of zijn synoniemen alleen op als het echt bij de afbeelding past%5$s."
             ],
             "%1$sImage alt attributes%3$s: Out of %2$d images on this page, only %1$d has an alt attribute that reflects the topic of your text. %4$sAdd your keyphrase or synonyms to the alt tags of more relevant images%5$s!": [
-                "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!",
+                "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!"
+            ],
+            "\"%3$sImage alt attributes%5$s: Out of %2$d images on this page, only %1$d have alt attributes that reflect the topic of your text. %4$sAdd your keyphrase or synonyms to the alt tags of more relevant images%5$s!": [
                 "%3$sAfbeelding alt atribuut%5$s: Van de %2$d afbeeldingen op deze pagina heeft alleen %1$d een alt-attribuut dat het onderwerp van je tekst weergeeft. %4$sVoeg je keyphrase of synoniemen toe aan de alt-tags van meer relevante afbeeldingen%5$s!"
             ],
             "%1$sImage alt attributes%3$s: Images on this page do not have alt attributes that reflect the topic of your text. %2$sAdd your keyphrase or synonyms to the alt tags of relevant images%3$s!": [
@@ -3531,9 +3552,14 @@
             "%1$sImage alt attributes%3$s: Images on this page have alt attributes, but you have not set your keyphrase. %2$sFix that%3$s!": [
                 "%1$sAfbeelding alt atribuut%3$s: Afbeeldingen op deze pagina hebben alt attributen, maar je hebt je keyphrase niet ingesteld. %2$sRepareer dat%3$s!"
             ],
+            "%1$sImage alt attributes%2$s: Good job!" : [
+                "%1$sAfbeelding alt atribuut%2$s: Lekker bezig!"
+            ],
             "%1$sKeyphrase in subheading%2$s: %3$s of your H2 and H3 subheadings reflects the topic of your copy. Good job!": [
-                "%1$sKeyphrase in subkoppen%2$s: %3$s van je H2- en H3-subkoppen laat de inhoud van je tekst zien. Goed gedaan!",
                 "%1$sKeyphrase in subkoppen%2$s: %3$s van je H2- en H3-subkoppen laten de inhoud van je tekst zien. Goed gedaan!"
+            ],
+            "%1$sKeyphrase in subheading%2$s: %3$s of your H2 and H3 subheadings reflect the topic of your copy. Good job!": [
+                "%1$sKeyphrase in subkoppen%2$s: %3$s van je H2- en H3-subkoppen laat de inhoud van je tekst zien. Goed gedaan!"
             ],
             "%1$sKeyphrase in subheading%2$s: Your H2 or H3 subheading reflects the topic of your copy. Good job!": [
                 "%1$sKeyphrase in subkop%2$s: Je H2- en H3-subkop geven het onderwerp van je tekst weer. Goed gedaan!"
@@ -3689,9 +3715,6 @@
             "%1$sLink keyphrase%3$s: You're linking to another page with the words you want this page to rank for. %2$sDon't do that%3$s!": [
                 "%1$sKeyphrase-links%3$s: Je linkt naar een andere pagina met de woorden waarvan je wil dat deze pagina er op gevonden wordt. %2$sDat moet je niet doen%3$s!"
             ],
-            "%2$sText length%3$s: The text contains %1$d %4$s. Good job!": [
-                "%2$sTekstlengte%3$s: De tekst bevat %1$d %4$s. Goed gedaan!"
-            ],
             "%1$sKeyphrase in subheading%3$s: More than 75%% of your H2 and H3 subheadings reflect the topic of your copy. That's too much. %2$sDon't over-optimize%3$s!": [
                 "%1$sKeyphrase in subkop%3$s: Meer dan 75 %% van je H2- en H3-subkoppen geven het onderwerp van je tekst weer. Dat is te veel. %2$sOveroptimaliseer niet%3$s!"
             ],
@@ -3755,7 +3778,7 @@
             "%1$sKeyphrase in introduction%3$s: Your keyphrase or its synonyms do not appear in the first paragraph. %2$sMake sure the topic is clear immediately%3$s.": [
                 "%1$sKeyphrase in introductie%3$s: je keyphrase of synoniemen staan niet in de eerste paragraaf. %2$sZorg ervoor dat het onderwerp direct duidelijk is%3$s."
             ],
-            "%1$sKeyphrase in introduction%3$s: Your keyphrase or its synonyms appear in the first paragraph of the copy, but not within one sentence. %2$sFix that%3$s!": [
+            "%1$sKeyphrase in introduction%3$s:Your keyphrase or its synonyms appear in the first paragraph of the copy, but not within one sentence. %2$sFix that%3$s!": [
                 "%1$sKeyphrase in introductie%3$s: Je keyphrase of de bijbehorende synoniemen worden weergegeven in de eerste paragraaf van de kopie, maar niet binnen één zin. %2$sLos dat op%3$s!"
             ],
             "%1$sKeyphrase in introduction%2$s: Well done!": [
@@ -3791,9 +3814,11 @@
             "%1$sSubheading distribution%2$s: You are not using any subheadings, although your text is rather long. %3$sTry and add some subheadings%2$s.": [
                 "%1$sKoptekst-verdeling%2$s: je gebruikt geen kopteksten, hoewel je tekst vrij lang is. %3$sProbeer wat kopteksten toe te voegen%2$s."
             ],
-            "%1$sSubheading distribution%2$s: %3$d section of your text is longer than %4$d %6$s and is not separated by any subheadings. %5$sAdd subheadings to improve readability%2$s.": [
-                "%1$sSubkoptekst verdeling%2$s: %3$d sectie van je tekst is langer dan %4$d %6$s, en wordt niet verdeeld door subkopteksten. %5$sVoeg subkopteksten toe om de leesbaarheid te verbeteren%2$s.",
-                "%1$sSubkoptekst verdeling%2$s: %3$d secties van je tekst zijn langer dan %4$d %6$s, en worden niet verdeeld door subkopteksten. %5$sVoeg subkopteksten toe om de leesbaarheid te verbeteren%2$s."
+            "%1$sSubheading distribution%2$s: %3$d section of your text is longer than %4$d words and is not separated by any subheadings. %5$sAdd subheadings to improve readability%2$s.": [
+                "%1$sSubkoptekst verdeling%2$s: %3$d sectie van je tekst is langer dan %4$d woorden, en wordt niet verdeeld door subkopteksten. %5$sVoeg subkopteksten toe om de leesbaarheid te verbeteren%2$s."
+            ],
+            "%1$sSubheading distribution%2$s: %3$d sections of your text are longer than %4$d words and are not separated by any subheadings. %5$sAdd subheadings to improve readability%2$s.": [
+                "%1$sSubkoptekst verdeling%2$s: %3$d secties van je tekst zijn langer dan %4$d woorden, en worden niet verdeeld door subkopteksten. %5$sVoeg subkopteksten toe om de leesbaarheid te verbeteren%2$s."
             ],
             "%1$sSubheading distribution%2$s: Great job!": [
                 "%1$sKoptekst-verdeling%2$s: goed gedaan!"
@@ -3808,8 +3833,10 @@
                 "%1$sOpeenvolgende zinnen%2$s: er zit voldoende variatie in je zinnen. Dat is goed!"
             ],
             "%1$sConsecutive sentences%2$s: The text contains %3$d consecutive sentences starting with the same word. %5$sTry to mix things up%2$s!": [
-                "%1$sOpeenvolgende zinnen%2$s: de tekst bevat %3$d opeenvolgende zinnen die beginnen met hetzelfde woord. %5$sProbeer het te variëren%2$s!",
-                "%1$sOpeenvolgende zinnen%2$s: de tekst bevat %4$d plaatsen waar %3$d of meer opeenvolgende zinnen die beginnen met hetzelfde woord. %5$sTry to mix things up%2$s!"
+                "%1$sOpeenvolgende zinnen%2$s: de tekst bevat %3$d opeenvolgende zinnen die beginnen met hetzelfde woord. %5$sProbeer het te variëren%2$s!"
+            ],
+            "%1$sConsecutive sentences%2$s: The text contains %4$d instances where %3$d or more consecutive sentences start with the same word. %5$sTry to mix things up%2$s!": [
+                "%1$sOpeenvolgende zinnen%2$s: de tekst bevat %4$d plaatsen waar %3$d of meer opeenvolgende zinnen die beginnen met hetzelfde woord. %5$sProbeer wat meer te variëren%2$s!"
             ],
             "%1$sPassive voice%2$s: %3$s of the sentences contain passive voice, which is more than the recommended maximum of %4$s. %5$sTry to use their active counterparts%2$s.": [
                 "%1$sLijdende vorm%2$s: %3$s van de zinnen bevat lijdende vorm, wat meer is dan het aangeraden maximum van %4$s. %5$sProbeer hun actieve tegenhangers te gebruiken%2$s."
@@ -3817,9 +3844,11 @@
             "%1$sPassive voice%2$s: You're using enough active voice. That's great!": [
                 "%1$sLijdende vorm%2$s: je gebruikt voldoende actieve vorm. Dat is goed!"
             ],
-            "%1$sParagraph length%2$s: %3$d of the paragraphs contains more than the recommended maximum of %4$d %6$s. %5$sShorten your paragraphs%2$s!": [
-                "%1$sAlinealengte%2$s: %3$d van de alinea's bevat meer dan het aanbevolen aantal van %4$d %6$s. %5$sMaak je alinea's korter%2$s!",
+            "%1$sParagraph length%2$s: %3$d of the paragraphs contains more than the recommended maximum of %4$d words. %5$sShorten your paragraphs%2$s!": [
                 "%1$sAlinealengte%2$s: %3$d van de alinea's bevatten meer dan het aanbevolen aantal van %4$d %6$s. %5$sMaak je alinea's korter%2$s!"
+            ],
+            "%1$sParagraph length%2$s: %3$d of the paragraphs contain more than the recommended maximum of %4$d words. %5$sShorten your paragraphs%2$s!": [
+                "%1$sAlinealengte%2$s: %3$d van de alinea's bevat meer dan het aanbevolen aantal van %4$d woorden. %5$sMaak je alinea's korter%2$s!"
             ],
             "%1$sParagraph length%2$s: None of the paragraphs are too long. Great job!": [
                 "%1$sAlinealengte%2$s: geen van de alinea's is te lang. Goed werk!"
@@ -5756,11 +5785,11 @@
             "very easy": [
                 "heel eenvoudig"
             ],
-            "The copy scores %1$s in the test, which is considered %2$s to read.": [
-                "Het exemplaar scoort %1$s in de test, die als %2$s wordt beschouwd om te lezen."
+            "%1$sFlesch Reading Ease%2$s: The copy scores %3$s in the test, which is considered %4$s to read. %5$s%6$s%7$s": [
+                "%1$sFlesch Reading Ease%2$s: Jouw tekst scoort %3$s in de test, wat gezien wordt als %4$s om te lezen. %5$s%6$s%7$s"
             ],
-            "Flesch reading ease": [
-                "Flesch reading ease"
+            "%1$sFlesch Reading Ease%2$s: The copy scores %3$s in the test, which is considered %4$s to read. %5$s": [
+                "%1$sFlesch Reading Ease%2$s: Jouw tekst scoort %3$s in de test, wat gezien wordt als %4$s om te lezen. %5$s"
             ],
             "Meta Desc.": [
                 "Meta beschrijving."
@@ -5965,14 +5994,6 @@
             ],
             "Post doesn't exist.": [
                 "Dit bericht bestaat niet."
-            ],
-            "posts\u0004Trash <span class=\"count\">(%s)</span>": [
-                "Prullenbak <span class=\"count\">(%s)</span>",
-                "Prullenbak <span class=\"count\">(%s)</span>"
-            ],
-            "posts\u0004All <span class=\"count\">(%s)</span>": [
-                "Alle <span class=\"count\">(%s)</span>",
-                "Alle <span class=\"count\">(%s)</span>"
             ]
         }
     }
