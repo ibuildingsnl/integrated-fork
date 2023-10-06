@@ -12,13 +12,14 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         if (!$content->getId()) {
             return [];
         }
+
         return $this->findBy(['content' => $content]);
     }
 
     public function forContentByChannel(Content $content): array
     {
         return array_combine(
-            array_map(fn(Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
+            array_map(fn (Publication $p) => $p->getChannel()->getId(), $this->forContent($content)),
             $this->forContent($content),
         );
     }
@@ -28,6 +29,7 @@ class PublicationRepository extends DocumentRepository implements PublicationRep
         if (!$content->getId()) {
             return [];
         }
+
         return $this->findBy(['content' => $content, 'channel' => $channel]);
     }
 

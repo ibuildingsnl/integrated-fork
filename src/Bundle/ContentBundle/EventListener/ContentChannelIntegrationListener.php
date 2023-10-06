@@ -153,6 +153,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                             if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value)) {
                                 return ['disabled' => 'disabled'];
                             }
+
                             return [
                                 'data-channel-selector' => $value->getId(),
                                 'data-channel-name' => $value->getName(),

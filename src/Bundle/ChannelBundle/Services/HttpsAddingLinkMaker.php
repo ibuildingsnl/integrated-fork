@@ -14,6 +14,6 @@ final class HttpsAddingLinkMaker implements LinkMaker
 
     public function urlFor(Content $content, ChannelInterface $preferredChannel): string
     {
-        return 'https://' . $this->linkMaker->urlFor($content, $preferredChannel);
+        return 'https://'.$this->linkMaker->urlFor($content, $preferredChannel);
     }
 }

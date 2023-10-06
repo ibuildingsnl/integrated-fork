@@ -17,6 +17,7 @@ final class TwitterFactory
         $twitter = new TwitterOAuth($this->key, $this->secret, $token, $secret);
         $twitter->setApiVersion('2');
         $twitter->setDecodeJsonAsArray(true);
+
         return $twitter;
     }
 }

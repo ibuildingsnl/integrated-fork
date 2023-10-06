@@ -39,6 +39,7 @@ class ChannelDistributor
     {
         if ($content->isDisabled()) {
             $this->push($content, $channel, false);
+
             return;
         }
         $this->scheduleDistributionWindow(
@@ -80,6 +81,7 @@ class ChannelDistributor
         if (!isset(self::$maxDate)) {
             self::$maxDate = new \DateTimeImmutable(PublishTimeInterface::DATE_MAX);
         }
+
         return self::$maxDate;
     }
 }

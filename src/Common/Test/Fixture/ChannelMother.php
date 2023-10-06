@@ -16,6 +16,7 @@ final class ChannelMother
         $c = new Channel();
         $c->setId($id);
         $c->setName($id);
+
         return $c;
     }
 

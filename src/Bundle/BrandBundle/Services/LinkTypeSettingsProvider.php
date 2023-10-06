@@ -21,6 +21,7 @@ final class LinkTypeSettingsProvider implements PublicationSettingsProvider
                 return $form;
             }
         }
+
         return $this->fallback->settingTypeFor($channel);
     }
 }

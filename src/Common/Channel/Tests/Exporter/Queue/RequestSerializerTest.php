@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializer;

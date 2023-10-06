@@ -21,8 +21,6 @@ interface ExporterInterface
     /**
      * @param object $content
      * @param string $state
-     * @param ChannelInterface $channel
-     * @param array $settings
      */
     public function export($content, $state, ChannelInterface $channel, array $settings = []);
 }

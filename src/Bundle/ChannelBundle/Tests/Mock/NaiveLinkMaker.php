@@ -10,6 +10,6 @@ final class NaiveLinkMaker implements LinkMaker
 {
     public function urlFor(Content $content, ChannelInterface $preferredChannel): string
     {
-        return $content->getContentType() . '/' . $content->getId();
+        return $content->getContentType().'/'.$content->getId();
     }
 }

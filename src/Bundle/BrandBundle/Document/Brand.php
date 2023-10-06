@@ -4,7 +4,6 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Channel\ChannelInterface;

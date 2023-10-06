@@ -8,6 +8,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 class Publication
 {
     private string $id;
+
     public function __construct(
         private readonly Content $content,
         private readonly ChannelInterface $channel,
