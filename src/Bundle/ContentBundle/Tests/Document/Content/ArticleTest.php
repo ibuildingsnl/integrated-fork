@@ -45,7 +45,6 @@ class ArticleTest extends ContentTest
         $this->assertSame($title, $this->article->getTitle());
     }
 
-
     /**
      * Test get- and setSubtitle function.
      */
