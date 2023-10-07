@@ -4,7 +4,7 @@ namespace Integrated\Bundle\ChannelBundle\Services;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 final class ResolverLinkMaker implements LinkMaker
 {

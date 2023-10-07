@@ -2,7 +2,8 @@
 
 namespace Integrated\Bundle\ContentBundle\Services;
 
-use Integrated\Common\Channel\ChannelInterface;
+
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface PublicationSettingsProvider
 {

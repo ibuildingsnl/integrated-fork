@@ -3,7 +3,7 @@
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class PublicationRepository extends DocumentRepository implements PublicationRepositoryInterface
 {

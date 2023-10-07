@@ -13,7 +13,6 @@ namespace Integrated\Common\Channel\Tests\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\AdapterInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
@@ -24,6 +23,7 @@ use Integrated\Common\Channel\Exporter\Exporter;
 use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
 use Integrated\Common\Channel\Tests\Exporter\Mock\NonContentDocument;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ConnectableInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -268,7 +268,7 @@ class ExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($id);

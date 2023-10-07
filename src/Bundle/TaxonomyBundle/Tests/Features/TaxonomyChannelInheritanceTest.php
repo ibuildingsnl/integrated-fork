@@ -10,13 +10,14 @@ use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\TaxonomyBundle\Domain\TaxonomyRepositoryInterface;
 use Integrated\Bundle\TaxonomyBundle\EventListener\TaxonomyChannelInheritanceListener;
 use Integrated\Bundle\TaxonomyBundle\Tests\Features\Doubles\MemoryTaxonomyRepository;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Form\Mapping\Metadata\Document;
 use PHPUnit\Framework\TestCase;
 
 final class TaxonomyChannelInheritanceTest extends TestCase
 {
-    /** @var Channel[] */
+    /** @var ChannelInterface[] */
     public array $channels;
     private TaxonomyRepositoryInterface $taxonomies;
     private TaxonomyChannelInheritanceListener $listener;

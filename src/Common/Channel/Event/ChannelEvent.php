@@ -11,7 +11,7 @@
 
 namespace Integrated\Common\Channel\Event;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -20,17 +20,17 @@ use Symfony\Contracts\EventDispatcher\Event;
 class ChannelEvent extends Event
 {
     /**
-     * @var Channel
+     * @var ChannelInterface
      */
     protected $channel;
 
-    public function __construct(Channel $channel)
+    public function __construct(ChannelInterface $channel)
     {
         $this->channel = $channel;
     }
 
     /**
-     * @return Channel
+     * @return ChannelInterface
      */
     public function getChannel()
     {

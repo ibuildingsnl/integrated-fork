@@ -14,9 +14,9 @@ namespace Integrated\Bundle\SocialBundle\Connector\Facebook;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use JanuSoftware\Facebook\Facebook;
 
 /**

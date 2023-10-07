@@ -3,7 +3,7 @@
 namespace Integrated\Bundle\ChannelBundle\Services;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 final class HttpsAddingLinkMaker implements LinkMaker
 {

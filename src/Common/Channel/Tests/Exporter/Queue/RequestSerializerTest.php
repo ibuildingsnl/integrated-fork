@@ -158,7 +158,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($id);

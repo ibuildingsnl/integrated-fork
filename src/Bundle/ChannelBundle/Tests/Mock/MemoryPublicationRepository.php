@@ -5,7 +5,7 @@ namespace Integrated\Bundle\ChannelBundle\Tests\Mock;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class MemoryPublicationRepository implements PublicationRepositoryInterface
 {

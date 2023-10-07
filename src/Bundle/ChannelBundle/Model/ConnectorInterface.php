@@ -3,8 +3,8 @@
 namespace Integrated\Bundle\ChannelBundle\Model;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface ConnectorInterface
 {

@@ -13,10 +13,10 @@ namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\PublishableInterface;

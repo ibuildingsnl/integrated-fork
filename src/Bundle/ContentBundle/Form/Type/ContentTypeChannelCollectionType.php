@@ -13,6 +13,7 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -55,7 +56,7 @@ class ContentTypeChannelCollectionType extends AbstractType
     }
 
     /**
-     * @return Channel[]
+     * @return ChannelInterface[]
      */
     public function getChannels()
     {

@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Document\Content;
 
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 
 class Publication

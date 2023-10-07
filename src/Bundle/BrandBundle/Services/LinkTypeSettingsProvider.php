@@ -4,7 +4,7 @@ namespace Integrated\Bundle\BrandBundle\Services;
 
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 final class LinkTypeSettingsProvider implements PublicationSettingsProvider
 {

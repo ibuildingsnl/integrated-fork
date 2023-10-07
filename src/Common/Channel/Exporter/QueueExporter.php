@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Channel\Exporter;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 
