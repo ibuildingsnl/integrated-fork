@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
 class DashboardController extends AbstractController
 {
     private array $widgets;
-
     public function __construct(
         private readonly ChannelContextInterface $channelContext,
         private readonly DocumentManager $manager,
@@ -38,13 +37,14 @@ class DashboardController extends AbstractController
 
     public function index(Request $request): Response
     {
+        $user = $this->getUser();
+
         $selectChannelForm = $this->createForm(ChannelChoiceType::class, null, [
             'multiple' => false,
             'return_object' => true, // true = object, false = ID
         ]);
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
         $channel = $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
-
         $renderedWidgets = [];
         foreach ($this->manager->getRepository(WidgetConfig::class)->findAll() as $config) {
             /** @var WidgetInterface $widget */
@@ -52,8 +52,9 @@ class DashboardController extends AbstractController
             if (!$widget) {
                 continue;
             }
-            $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel));
+            $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel,$user));
         }
+        //dd($renderedWidgets);
 
         // Render the view with the data
         return $this->render('@IntegratedDashboard/index.html.twig', [
@@ -62,4 +63,6 @@ class DashboardController extends AbstractController
             "channelForm" => $selectChannelForm->createView(),
         ]);
     }
+
+
 }

@@ -20,7 +20,11 @@
         <service id="Integrated\Bundle\DashboardBundle\Widgets\LatestArticleWidget">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="expression">15</argument>
-
+            <tag name="integrated_dashboard.widget" />
+        </service>
+        <service id="Integrated\Bundle\DashboardBundle\Widgets\SitePerformancesWidget">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="guzzle" />
             <tag name="integrated_dashboard.widget" />
         </service>
     </services>
