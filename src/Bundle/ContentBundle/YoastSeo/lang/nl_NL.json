@@ -3823,8 +3823,8 @@
             "%1$sSubheading distribution%2$s: Great job!": [
                 "%1$sKoptekst-verdeling%2$s: goed gedaan!"
             ],
-            "%1$sSentence length%2$s: %3$s of the sentences contain more than %4$s %7$s, which is more than the recommended maximum of %5$s. %6$sTry to shorten the sentences%2$s.": [
-                "%1$sZinslengte%2$s: %3$s van de zinnen bevat meer dan %4$s %7$s, wat meer is dan het aanbevolen maximum van %5$s. %6$sProbeer de zinnen in te korten%2$s."
+            "%1$sSentence length%2$s: %3$s of the sentences contain more than %4$s words, which is more than the recommended maximum of %5$s. %6$sTry to shorten the sentences%2$s.": [
+                "%1$sZinslengte%2$s: %3$s van de zinnen bevat meer dan %4$s woorden, wat meer is dan het aanbevolen maximum van %5$s. %6$sProbeer de zinnen in te korten%2$s."
             ],
             "%1$sSentence length%2$s: Great!": [
                 "%1$sZinslengte%2$s: Fantastisch!"
