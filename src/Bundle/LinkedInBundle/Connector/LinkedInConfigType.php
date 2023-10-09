@@ -11,11 +11,11 @@ class LinkedInConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('token', TextType::class, ['attr' => ['readonly' => 'true']]);
-        $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
+//        $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
     }
 
     public function getBlockPrefix(): string
     {
-        return 'integrated_social_twitter';
+        return 'integrated_social_linkedin';
     }
 }

@@ -39,9 +39,9 @@ final class LinkedInConfiguration implements OauthConfigInterface
             'scope' => 'w_organization_social' // array or string
         ];
 
-        return $client->getAuthorizationUrl($options);;
+//        return $client->getAuthorizationUrl($options);;
 
-        dd($client);
+//        dd($client);
 
         try {
             $response = $client->oauth(
@@ -57,7 +57,7 @@ final class LinkedInConfiguration implements OauthConfigInterface
         }
 
         $options->set('request_token', $response['oauth_token']);
-        $options->set('request_token_secret', $response['oauth_token_secret']);
+//        $options->set('request_token_secret', $response['oauth_token_secret']);
 
         return $client->url('oauth/authorize', ['oauth_token' => $response['oauth_token']]);
     }

@@ -21,6 +21,7 @@
         <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory">
             <argument>%env(resolve:LINKEDIN_CONSUMER_KEY)%</argument>
             <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>
+            <argument type="service" id="integrated_content.routing.generator" ></argument>
         </service>
 
         <service id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector" />
