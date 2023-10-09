@@ -17,7 +17,7 @@
         <service id="integrated_channel.repository.channel" class="Doctrine\Persistence\ObjectRepository">
             <factory service="integrated_channel.odm.doctrine" method="getRepository" />
 
-            <argument type="string">Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel</argument>
+            <argument type="string">Integrated\Bundle\ContentBundle\Document\Channel\Channel</argument>
         </service>
 
     </services>

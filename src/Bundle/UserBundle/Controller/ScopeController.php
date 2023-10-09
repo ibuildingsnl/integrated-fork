@@ -11,14 +11,16 @@
 
 namespace Integrated\Bundle\UserBundle\Controller;
 
-use Doctrine\ORM\EntityRepository;
-use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ORM\EntityManager;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\UserBundle\Form\Type\DeleteFormType;
 use Integrated\Bundle\UserBundle\Form\Type\ScopeFormType;
 use Integrated\Bundle\UserBundle\Model\Scope;
 use Integrated\Bundle\UserBundle\Model\ScopeManagerInterface;
+use Integrated\Bundle\UserBundle\Model\User;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,14 +32,32 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ScopeController extends AbstractController
 {
-    public function __construct(
-        private readonly ScopeManagerInterface $scopeManager,
-        private readonly ChannelRepository $channelRepository,
-        private readonly EntityRepository $userRepository,
-    ) {
+    /**
+     * @var DocumentManager
+     */
+    private $documentManager;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var ScopeManagerInterface
+     */
+    private $scopeManager;
+
+    public function __construct(DocumentManager $documentManager, EntityManager $entityManager, ScopeManagerInterface $scopeManager)
+    {
+        $this->documentManager = $documentManager;
+        $this->entityManager = $entityManager;
+        $this->scopeManager = $scopeManager;
     }
 
-    public function index(Request $request): Response
+    /**
+     * @return Response
+     */
+    public function index(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -54,7 +74,10 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    public function new(Request $request): Response
+    /**
+     * @return Response
+     */
+    public function new(Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -83,8 +106,12 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    /** @throws NotFoundHttpException */
-    public function edit(Scope $scope, Request $request): Response
+    /**
+     * @return Response
+     *
+     * @throws NotFoundHttpException
+     */
+    public function edit(Scope $scope, Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
@@ -112,13 +139,16 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    public function delete(Scope $scope, Request $request): Response
+    /**
+     * @return Response
+     */
+    public function delete(Scope $scope, Request $request)
     {
         if (!$this->isGranted('ROLE_USER_MANAGER') && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
-        if ($scope->isAdmin()) {
+        if (!$scope || $scope->isAdmin()) {
             return $this->redirectToRoute('integrated_user_scope_index');
         }
 
@@ -134,7 +164,7 @@ class ScopeController extends AbstractController
 
             $hasRelations = false;
 
-            if ($this->channelRepository->findBy(['scope' => $scope->getId()])) {
+            if ($channels = $this->documentManager->getRepository(Channel::class)->findBy(['scope' => (string) $scope->getId()])) {
                 $form->addError(
                     new FormError('This scope is in use by channels.')
                 );
@@ -142,7 +172,7 @@ class ScopeController extends AbstractController
                 $hasRelations = true;
             }
 
-            if ($this->userRepository->findBy(['scope' => $scope])) {
+            if ($users = $this->entityManager->getRepository(User::class)->findBy(['scope' => $scope])) {
                 $form->addError(
                     new FormError('This scope is in use by users.')
                 );
@@ -164,7 +194,10 @@ class ScopeController extends AbstractController
         ]);
     }
 
-    protected function createNewForm(): FormInterface
+    /**
+     * @return FormInterface
+     */
+    protected function createNewForm()
     {
         $form = $this->createForm(
             ScopeFormType::class,
@@ -180,7 +213,10 @@ class ScopeController extends AbstractController
         return $form;
     }
 
-    protected function createEditForm(Scope $scope): FormInterface
+    /**
+     * @return FormInterface
+     */
+    protected function createEditForm(Scope $scope)
     {
         $form = $this->createForm(
             ScopeFormType::class,
@@ -196,7 +232,10 @@ class ScopeController extends AbstractController
         return $form;
     }
 
-    protected function createDeleteForm(Scope $scope): FormInterface
+    /**
+     * @return FormInterface
+     */
+    protected function createDeleteForm(Scope $scope)
     {
         $form = $this->createForm(
             DeleteFormType::class,

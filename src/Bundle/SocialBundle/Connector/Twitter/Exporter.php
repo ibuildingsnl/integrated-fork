@@ -13,7 +13,6 @@ namespace Integrated\Bundle\SocialBundle\Connector\Twitter;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Channel\Connector\ExporterInterface;
@@ -52,20 +51,16 @@ class Exporter implements ExporterInterface
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         if (!$content instanceof Article) {
-            return null;
-        }
-
-        if (!$channel instanceof WebsiteChannel) {
-            return null;
+            return;
         }
 
         if ($state != self::STATE_ADD) {
-            return null;
+            return;
         }
 
         if ($content->hasConnector($this->config->getId())) {
             // already posted
-            return null;
+            return;
         }
 
         $response = null;
@@ -83,7 +78,7 @@ class Exporter implements ExporterInterface
             );
         } catch (\Exception $e) {
             // @todo probably should log this somewhere INTEGRATED-995
-            return null;
+            return;
         }
 
         if (isset($postResponse->id) && $postResponse->id) {

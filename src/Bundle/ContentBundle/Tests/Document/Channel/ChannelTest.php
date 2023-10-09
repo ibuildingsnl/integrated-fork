@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Tests\Document\Channel;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
@@ -29,7 +29,7 @@ class ChannelTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->channel = new WebsiteChannel();
+        $this->channel = new Channel();
     }
 
     public function testDefaultValues()

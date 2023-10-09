@@ -2,8 +2,7 @@
 
 namespace Integrated\Common\Test\Fixture;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
-use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 
 /**
  * An object mother is a kind of class used in testing to help create example objects that you use for testing.
@@ -12,16 +11,16 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 final class ChannelMother
 {
-    public static function withId(string $id): ChannelInterface
+    public static function withId(string $id): Channel
     {
-        $c = new WebsiteChannel();
+        $c = new Channel();
         $c->setId($id);
         $c->setName($id);
 
         return $c;
     }
 
-    public static function make(): ChannelInterface
+    public static function make(): Channel
     {
         return self::withId((string) rand());
     }

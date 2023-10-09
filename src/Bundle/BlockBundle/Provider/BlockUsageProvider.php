@@ -11,8 +11,8 @@
 
 namespace Integrated\Bundle\BlockBundle\Provider;
 
-use Doctrine\Persistence\ObjectManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
@@ -21,6 +21,11 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 class BlockUsageProvider
 {
+    /**
+     * @var ManagerRegistry
+     */
+    protected $mr;
+
     /**
      * @var array|null
      */
@@ -46,10 +51,9 @@ class BlockUsageProvider
      */
     protected $channels = [];
 
-    public function __construct(
-        private readonly ChannelRepository $channelRepository,
-        private readonly ObjectManager $objectManager,
-    ) {
+    public function __construct(ManagerRegistry $mr)
+    {
+        $this->mr = $mr;
     }
 
     /**
@@ -108,7 +112,7 @@ class BlockUsageProvider
     public function getChannel($id)
     {
         if (!\array_key_exists($id, $this->channels)) {
-            $this->channels[$id] = $this->channelRepository->find($id);
+            $this->channels[$id] = $this->mr->getRepository(Channel::class)->find($id);
         }
 
         return $this->channels[$id];
@@ -119,7 +123,7 @@ class BlockUsageProvider
      */
     protected function convertPages()
     {
-        $pages = $this->objectManager->createQueryBuilder(Page::class)
+        $pages = $this->mr->getManager()->createQueryBuilder(Page::class)
             ->hydrate(false)
             ->select(['title', 'channel', 'locked', 'grids'])
             ->getQuery()

@@ -12,8 +12,9 @@
 namespace Integrated\Bundle\PageBundle\Document\Page;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Grid;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -58,7 +59,7 @@ abstract class AbstractPage
     protected $updatedAt;
 
     /**
-     * @var WebsiteChannel
+     * @var ChannelInterface
      */
     protected $channel;
 
@@ -216,7 +217,7 @@ abstract class AbstractPage
     }
 
     /**
-     * @return WebsiteChannel
+     * @return ChannelInterface
      */
     public function getChannel()
     {
@@ -226,7 +227,7 @@ abstract class AbstractPage
     /**
      * @return $this
      */
-    public function setChannel(WebsiteChannel $channel)
+    public function setChannel(ChannelInterface $channel)
     {
         $this->channel = $channel;
 

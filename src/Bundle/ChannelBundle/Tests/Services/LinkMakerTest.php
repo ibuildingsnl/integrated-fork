@@ -5,7 +5,7 @@ namespace Integrated\Bundle\ChannelBundle\Tests\Services;
 use Integrated\Bundle\ChannelBundle\Services\ChannelAddingLinkMaker;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ChannelBundle\Tests\Mock\NaiveLinkMaker;
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use PHPUnit\Framework\TestCase;
 
@@ -17,9 +17,9 @@ final class LinkMakerTest extends TestCase
     protected function setUp(): void
     {
         $this->channels = [
-            'a' => (new WebsiteChannel())->setId('a')->setName('a'),
-            'b' => (new WebsiteChannel())->setId('b')->setName('b'),
-            'c' => (new WebsiteChannel())->setId('c')->setName('c'),
+            'a' => (new Channel())->setId('a')->setName('a'),
+            'b' => (new Channel())->setId('b')->setName('b'),
+            'c' => (new Channel())->setId('c')->setName('c'),
         ];
         foreach ($this->channels as $tld => $channel) {
             $channel->setPrimaryDomain('channel.'.$tld);

@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
@@ -28,9 +28,9 @@ final class TaxonomyChannelInheritanceTest extends TestCase
         $this->listener = new TaxonomyChannelInheritanceListener($this->taxonomies);
 
         $this->channels = [
-            'hobbits' => (new WebsiteChannel())->setId('hobbits'),
-            'elves' => (new WebsiteChannel())->setId('elves'),
-            'wizards' => (new WebsiteChannel())->setId('wizards'),
+            'hobbits' => (new Channel())->setId('hobbits'),
+            'elves' => (new Channel())->setId('elves'),
+            'wizards' => (new Channel())->setId('wizards'),
         ];
     }
 

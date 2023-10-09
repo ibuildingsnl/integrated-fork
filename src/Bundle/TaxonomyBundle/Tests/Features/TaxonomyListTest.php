@@ -2,7 +2,7 @@
 
 namespace Integrated\Bundle\TaxonomyBundle\Tests\Features;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Security\ChannelVoter;
 use Integrated\Bundle\ContentBundle\Security\ContentChannelVoter;
@@ -50,9 +50,9 @@ final class TaxonomyListTest extends TestCase
         ];
         $this->tokenStorage->setToken($this->users['admin']);
         $this->channels = [
-            'brood' => (new WebsiteChannel())->setId('brood')->addPermission((new Permission())->setGroup('group_1')->setMask(3)),
-            'vis' => (new WebsiteChannel())->setId('vis')->addPermission((new Permission())->setGroup('group_2')->setMask(1)),
-            'kip' => (new WebsiteChannel())->setId('kip')->addPermission((new Permission())->setGroup('group_3')->setMask(3)),
+            'brood' => (new Channel())->setId('brood')->addPermission((new Permission())->setGroup('group_1')->setMask(3)),
+            'vis' => (new Channel())->setId('vis')->addPermission((new Permission())->setGroup('group_2')->setMask(1)),
+            'kip' => (new Channel())->setId('kip')->addPermission((new Permission())->setGroup('group_3')->setMask(3)),
         ];
     }
 

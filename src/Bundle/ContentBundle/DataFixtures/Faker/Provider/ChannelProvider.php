@@ -11,22 +11,33 @@
 
 namespace Integrated\Bundle\ContentBundle\DataFixtures\Faker\Provider;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentNotFoundException;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelProvider
 {
-    public function __construct(
-        private readonly ChannelRepository $channels,
-    ) {
+    /**
+     * @var DocumentManager
+     */
+    private $dm;
+
+    public function __construct(DocumentManager $dm)
+    {
+        $this->dm = $dm;
     }
 
-    /** @throws DocumentNotFoundException */
-    public function channel(string $id): ChannelInterface
+    /**
+     * @param string $id
+     *
+     * @return ChannelInterface
+     *
+     * @throws DocumentNotFoundException
+     */
+    public function channel($id)
     {
-        $channel = $this->channels->find($id);
+        $channel = $this->dm->getRepository(Channel::class)->find($id);
 
         if (!$channel) {
             throw DocumentNotFoundException::documentNotFound(Channel::class, $id);
