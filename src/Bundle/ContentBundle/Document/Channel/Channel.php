@@ -19,135 +19,62 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Security\PermissionTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Channel document.
- *
- * @author Jeroen van Leeuwen <jeroen@e-active.nl>
- *
- * @MongoDBUnique(fields="id")
- */
-class Channel implements ChannelInterface
+/** @MongoDBUnique(fields="id") */
+abstract class Channel implements ChannelInterface
 {
     use PermissionTrait;
 
-    /**
-     * @var string
-     */
     #[Slug(fields: ['name'], separator: '_')]
-    protected $id;
-
-    /**
-     * @var string the name of the channel
-     */
+    protected ?string $id = null;
     #[Assert\NotBlank]
-    protected $name;
+    protected ?string $name = '';
+    protected ?Image $logo = null;
+    protected ?string $color = null;
+    protected ?array $options = [];
+    protected ?\DateTime $createdAt;
+    protected ?bool $ipProtected = false;
+    protected ?Scope $scopeInstance = null;
+    protected ?string $scope = null;
 
-    /**
-     * @var Image
-     */
-    protected $logo;
-
-    /**
-     * @var Image
-     */
-    protected $favicon;
-
-    /**
-     * @var string
-     */
-    protected $color;
-
-    /**
-     * @var string
-     */
-    protected $secondarycolor;
-
-    /**
-     * @var array
-     */
-    protected $domains;
-
-    /**
-     * @var string
-     */
-    protected $primaryDomain;
-
-    /**
-     * @var bool
-     */
-    protected $primaryDomainRedirect;
-
-    /**
-     * @var mixed[]
-     */
-    protected $options = [];
-
-    /**
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     * @var bool
-     */
-    protected $ipProtected = false;
-
-    /**
-     * @var Scope
-     */
-    protected $scopeInstance = null;
-
-    /**
-     * @var null
-     */
-    protected $scope = null;
-
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
     }
 
     public function getLogo(): ?Image
@@ -155,104 +82,19 @@ class Channel implements ChannelInterface
         return $this->logo;
     }
 
-    /**
-     * @return $this
-     */
-    public function setLogo(?Image $logo)
+    public function setLogo(?Image $logo): static
     {
         $this->logo = $logo;
 
         return $this;
     }
 
-    /**
-     * @return Image|null
-     */
-    public function getFavicon()
-    {
-        return $this->favicon;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setFavicon(?Image $favicon)
-    {
-        $this->favicon = $favicon;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setColor(?string $color)
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSecondaryColor()
-    {
-        return $this->secondarycolor;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setSecondaryColor(?string $secondarycolor)
-    {
-        $this->secondarycolor = $secondarycolor;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setDomains(array $domains)
-    {
-        $this->domains = $domains;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDomains()
-    {
-        return $this->domains ?: [];
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * Overrider all the option with a new set of values for this content type.
-     *
-     * @param string[] $options
-     *
-     * @return $this
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $this->options = [];
 
@@ -263,10 +105,7 @@ class Channel implements ChannelInterface
         return $this;
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getOption($name)
+    public function getOption(string $name): mixed
     {
         if (isset($this->options[$name])) {
             return $this->options[$name];
@@ -275,15 +114,7 @@ class Channel implements ChannelInterface
         return null;
     }
 
-    /**
-     * Set the value of the specified key.
-     *
-     * @param string     $name
-     * @param mixed|null $value
-     *
-     * @return $this
-     */
-    public function setOption($name, $value = null)
+    public function setOption(string $name, mixed $value = null): static
     {
         if ($value === null) {
             unset($this->options[$name]);
@@ -294,101 +125,44 @@ class Channel implements ChannelInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOption($name)
+    public function hasOption(string $name): bool
     {
         return isset($this->options[$name]);
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPrimaryDomain(): ?string
-    {
-        return $this->primaryDomain;
-    }
-
-    /**
-     * @param string $primaryDomain
-     */
-    public function setPrimaryDomain($primaryDomain)
-    {
-        $this->primaryDomain = $primaryDomain;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getPrimaryDomainRedirect(): bool
-    {
-        return $this->primaryDomainRedirect;
-    }
-
-    /**
-     * @param bool $primaryDomainRedirect
-     */
-    public function setPrimaryDomainRedirect($primaryDomainRedirect)
-    {
-        $this->primaryDomainRedirect = $primaryDomainRedirect;
-    }
-
-    public function defaultPrimaryDomain()
-    {
-        if (!$this->primaryDomain && $this->domains) {
-            $this->primaryDomain = reset($this->domains);
-        }
-    }
-
     public function isIpProtected(): bool
     {
-        return (bool) $this->ipProtected;
+        return $this->ipProtected;
     }
 
-    /**
-     * @return $this
-     */
-    public function setIpProtected(bool $protected)
+    public function setIpProtected(bool $protected = true): static
     {
         $this->ipProtected = $protected ? true : null;
 
         return $this;
     }
 
-    /**
-     * @return Scope
-     */
-    public function getScope()
+    public function getScope(): ?Scope
     {
         return $this->scopeInstance;
     }
 
-    /**
-     * @return $this
-     */
-    public function setScope(Scope $scope = null)
+    public function setScope(Scope $scope = null): static
     {
         $this->scopeInstance = $scope;
-        $this->scope = $scope ? $scope->getId() : null;
+        $this->scope = $scope?->getId();
 
         return $this;
     }

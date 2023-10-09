@@ -20,14 +20,18 @@ interface ChannelInterface
 
     public function getName(): string;
 
+    public function getType(): string;
+
+    public function canBePrimary(): bool;
+
     /** @return PermissionInterface[] */
     public function getPermissions(): iterable;
-
-    public function getPrimaryDomain(): ?string;
-
-    public function getPrimaryDomainRedirect(): bool;
 
     public function getLogo(): ?Image;
 
     public function getColor(): ?string;
+
+    public function getOptions(): array;
+
+    public function getOption(string $name): mixed;
 }

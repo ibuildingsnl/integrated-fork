@@ -11,8 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Bulk;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Common\Bulk\Action\HandlerFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
@@ -20,41 +19,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 class ChannelHandlerFactory implements HandlerFactoryInterface
 {
     /**
-     * @var string
-     */
-    private $class;
-
-    /**
      * @var OptionsResolver
      */
-    private $resolver;
+    private OptionsResolver $resolver;
 
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var AuthorizationChecker
-     */
-    private $authorizationChecker;
-
-    /**
-     * Constructor.
-     *
-     * @param string $class
-     */
-    public function __construct($class, DocumentManager $documentManager, AuthorizationChecker $authorizationChecker)
-    {
-        $this->class = $class;
-
-        $this->resolver = new OptionsResolver();
-        $this->resolver
-            ->setRequired(['channel'])
-            ->addAllowedTypes('channel', 'string');
-
-        $this->documentManager = $documentManager;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(
+        private readonly string $class,
+        private readonly ChannelRepository $channelRepository,
+        private readonly AuthorizationChecker $authorizationChecker
+    ) {
+        $this->resolver = (new OptionsResolver())->setRequired(['channel'])->addAllowedTypes('channel', 'string');
     }
 
     /**
@@ -65,6 +39,6 @@ class ChannelHandlerFactory implements HandlerFactoryInterface
         $options = $this->resolver->resolve($options);
         $class = $this->class;
 
-        return new $class($options['channel'], $this->documentManager->getRepository(Channel::class), $this->authorizationChecker);
+        return new $class($options['channel'], $this->channelRepository, $this->authorizationChecker);
     }
 }

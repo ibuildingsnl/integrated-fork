@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\JsonLD;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -55,7 +56,9 @@ class UrlGenerator
             return null;
         }
 
-        if ($channel = $content->getPrimaryChannel()) {
+        $channel = $content->getPrimaryChannel();
+
+        if ($channel instanceof WebsiteChannel) {
             $domain = $channel->getPrimaryDomain();
 
             if (!$domain && \count($channel->getDomains())) {

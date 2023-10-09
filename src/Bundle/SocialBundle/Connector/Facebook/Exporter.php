@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\SocialBundle\Connector\Facebook;
 
 use Integrated\Bundle\ChannelBundle\Model\ConfigInterface;
+use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\PageBundle\Services\UrlResolver;
 use Integrated\Common\Channel\Connector\ExporterInterface;
@@ -43,6 +44,10 @@ class Exporter implements ExporterInterface
     public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         if (!$content instanceof Article) {
+            return null;
+        }
+
+        if (!$channel instanceof WebsiteChannel) {
             return null;
         }
 

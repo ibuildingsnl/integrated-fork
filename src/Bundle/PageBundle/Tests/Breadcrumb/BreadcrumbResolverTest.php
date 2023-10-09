@@ -12,7 +12,7 @@ namespace Integrated\Bundle\PageBundle\Tests\Breadcrumb;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\PageBundle\Breadcrumb\BreadcrumbItem;
@@ -82,7 +82,7 @@ class BreadcrumbResolverTest extends TestCase
     {
         self::markTestSkipped('Todo: rewrite test case to be less mock-dependent');
 
-        $channel = new Channel();
+        $channel = new WebsiteChannel();
         $channel->setId('my_channel');
 
         $this->request->method('getPathInfo')->willReturn('/my/page/my-article');

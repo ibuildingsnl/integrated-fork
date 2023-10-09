@@ -18,7 +18,8 @@
         </service>
 
         <service id="integrated_content.twig.channel_extension" class="Integrated\Bundle\ContentBundle\Twig\Extension\ChannelExtension">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="service" id="channel.context" />
             <tag name="twig.extension" />
         </service>
 

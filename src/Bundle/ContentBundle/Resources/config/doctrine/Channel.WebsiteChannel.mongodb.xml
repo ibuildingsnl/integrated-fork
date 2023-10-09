@@ -3,13 +3,15 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document
-        name="Integrated\Bundle\ContentBundle\Document\Channel\Channel"
-        inheritance-type="COLLECTION_PER_CLASS">
+    <document name="Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel" collection="channel">
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
         <field field-name="color" type="string" />
+        <field field-name="secondarycolor" type="string" />
+        <field field-name="domains" type="collection" />
+        <field field-name="primaryDomain" type="string" />
+        <field field-name="primaryDomainRedirect" type="bool" />
         <field field-name="ipProtected" type="bool" />
         <field field-name="options" type="hash" />
         <field field-name="createdAt" type="date" />
@@ -19,6 +21,11 @@
         <reference-one
                 field="logo"
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+        />
+
+        <reference-one
+            field="favicon"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
         <embed-many

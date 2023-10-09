@@ -11,15 +11,18 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelFactoryInterface;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type as Form;
 use Integrated\Bundle\ContentBundle\Services\SearchContentReferenced;
 use Integrated\Bundle\UserBundle\Model\UserInterface;
 use Integrated\Common\Channel\Event\ChannelEvent;
 use Integrated\Common\Channel\Events;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Security\Resolver\PermissionResolver;
+use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -34,29 +37,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ChannelController extends AbstractController
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
-     * @var SearchContentReferenced
-     */
-    protected $searchContentReferenced;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
     public function __construct(
-        DocumentManager $documentManager,
-        SearchContentReferenced $searchContentReferenced,
-        EventDispatcherInterface $dispatcher
+        private readonly ChannelRepository $channelRepository,
+        private readonly SearchContentReferenced $searchContentReferenced,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly ChannelFactoryInterface $channelFactory,
+        private readonly Flusher $flusher,
     ) {
-        $this->searchContentReferenced = $searchContentReferenced;
-        $this->documentManager = $documentManager;
-        $this->dispatcher = $dispatcher;
     }
 
     public function index(): Response
@@ -65,7 +52,7 @@ class ChannelController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $documents = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        $documents = $this->channelRepository->findBy([], ['name' => 1]);
 
         return $this->render('@IntegratedContent/channel/index.html.twig', [
             'documents' => $documents,
@@ -89,7 +76,7 @@ class ChannelController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $channel = new Channel();
+        $channel = $this->channelFactory->create('website');
 
         $form = $this->createCreateForm($channel);
 
@@ -104,7 +91,7 @@ class ChannelController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $channel = new Channel();
+        $channel = $this->channelFactory->create('website');
 
         $form = $this->createCreateForm($channel);
         $form->handleRequest($request);
@@ -114,8 +101,8 @@ class ChannelController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->persist($channel);
-            $this->documentManager->flush();
+            $this->channelRepository->add($channel);
+            $this->flusher->flush();
 
             $this->addFlash('success', 'Item created');
 
@@ -157,7 +144,7 @@ class ChannelController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->documentManager->flush();
+            $this->flusher->flush();
 
             $this->addFlash('success', 'Item updated');
 
@@ -188,8 +175,8 @@ class ChannelController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid() && $form->has('submit') && $form->get('submit')->isClicked()) {
-            $this->documentManager->remove($channel);
-            $this->documentManager->flush();
+            $this->channelRepository->remove($channel);
+            $this->flusher->flush();
 
             $this->dispatcher->dispatch(new ChannelEvent($channel), Events::CHANNEL_DELETED);
 
@@ -205,7 +192,7 @@ class ChannelController extends AbstractController
         ]);
     }
 
-    protected function createCreateForm(Channel $channel): FormInterface
+    protected function createCreateForm(ChannelInterface $channel): FormInterface
     {
         $form = $this->createForm(
             Form\ChannelType::class,
@@ -221,7 +208,7 @@ class ChannelController extends AbstractController
         return $form;
     }
 
-    protected function createEditForm(Channel $channel): FormInterface
+    protected function createEditForm(ChannelInterface $channel): FormInterface
     {
         $form = $this->createForm(Form\ChannelType::class, $channel, [
             'action' => $this->generateUrl('integrated_content_channel_update', ['id' => $channel->getId()]),
@@ -252,7 +239,7 @@ class ChannelController extends AbstractController
 
     public function getchannels(): Response
     {
-        $channels = $this->documentManager->getRepository(Channel::class)->findBy([], ['name' => 1]);
+        $channels = $this->channelRepository->findBy([], ['name' => 1]);
 
         $user = $this->getUser();
 

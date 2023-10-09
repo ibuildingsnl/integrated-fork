@@ -60,16 +60,6 @@ class ChannelManager implements ChannelManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function create()
-    {
-        $class = $this->getClassName();
-
-        return new $class();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function persist(ChannelInterface $channel, $flush = true)
     {
         $this->om->persist($channel);

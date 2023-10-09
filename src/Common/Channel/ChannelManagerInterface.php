@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Channel;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\WebsiteChannel;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
@@ -18,13 +19,6 @@ use Integrated\Common\Content\Channel\ChannelInterface;
  */
 interface ChannelManagerInterface
 {
-    /**
-     * Create a channel object.
-     *
-     * @return ChannelInterface
-     */
-    public function create();
-
     /**
      * Change or add the channel to the manager.
      *
@@ -65,7 +59,7 @@ interface ChannelManagerInterface
      *
      * @param string $criteria
      *
-     * @return ChannelInterface
+     * @return WebsiteChannel|null
      */
     public function findByDomain($criteria);
 
@@ -74,7 +68,7 @@ interface ChannelManagerInterface
      *
      * @param string $criteria
      *
-     * @return ChannelInterface
+     * @return ChannelInterface|null
      */
     public function findByName($criteria);
 

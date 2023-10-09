@@ -140,14 +140,6 @@ class ChannelChangedListener implements EventSubscriberInterface
     /**
      * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
      */
-    protected function getChannelRepository()
-    {
-        return $this->dm->getRepository(Channel::class);
-    }
-
-    /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
-     */
     protected function getContentTypeRepository()
     {
         return $this->dm->getRepository(ContentType::class);

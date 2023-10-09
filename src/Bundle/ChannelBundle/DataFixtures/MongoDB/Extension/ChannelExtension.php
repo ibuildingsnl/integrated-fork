@@ -36,9 +36,8 @@ trait ChannelExtension
     public function channel($id)
     {
         $channel = $this->getContainer()
-            ->get('doctrine_mongodb')
-            ->getManager()
-            ->getRepository(Channel::class)->find($id);
+            ->get('integrated_channel.repository.channel')
+            ->find($id);
 
         if (!$channel) {
             throw DocumentNotFoundException::documentNotFound(Channel::class, $id);

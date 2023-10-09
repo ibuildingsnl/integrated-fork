@@ -13,6 +13,7 @@ namespace Integrated\Bundle\PageBundle\EventListener;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Services\ContentTypeInformation;
 use Integrated\Bundle\PageBundle\Document\Page\ContentTypePage;
@@ -27,36 +28,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ContentTypeChangedListener implements EventSubscriberInterface
 {
-    /**
-     * @var DocumentManager
-     */
-    protected $dm;
-
-    /**
-     * @var ContentTypePageService
-     */
-    protected $contentTypePageService;
-
-    /**
-     * @var RouteCache
-     */
-    protected $routeCache;
-
-    /**
-     * @var ContentTypeInformation
-     */
-    private $contentTypeInformation;
-
     public function __construct(
-        DocumentManager $dm,
-        ContentTypePageService $contentTypePageService,
-        RouteCache $routeCache,
-        ContentTypeInformation $contentTypeInformation
+        private readonly DocumentManager $dm,
+        private readonly ContentTypePageService $contentTypePageService,
+        private readonly RouteCache $routeCache,
+        private readonly ContentTypeInformation $contentTypeInformation,
+        private readonly ChannelRepository $channelRepository,
     ) {
-        $this->dm = $dm;
-        $this->contentTypePageService = $contentTypePageService;
-        $this->routeCache = $routeCache;
-        $this->contentTypeInformation = $contentTypeInformation;
     }
 
     /**
@@ -76,7 +54,7 @@ class ContentTypeChangedListener implements EventSubscriberInterface
         $contentType = $event->getContentType();
         $newContentTypePage = false;
 
-        $channels = $this->getChannelRepository()->findAll();
+        $channels = $this->channelRepository->findAll();
 
         foreach ($channels as $channel) {
             if (!\in_array($contentType->getId(), $this->contentTypeInformation->getPublishingAllowedContentTypes($channel->getId()))) {
@@ -123,13 +101,5 @@ class ContentTypeChangedListener implements EventSubscriberInterface
     protected function getPageRepository()
     {
         return $this->dm->getRepository(ContentTypePage::class);
-    }
-
-    /**
-     * @return \Doctrine\ODM\MongoDB\Repository\DocumentRepository
-     */
-    protected function getChannelRepository()
-    {
-        return $this->dm->getRepository(Channel::class);
     }
 }

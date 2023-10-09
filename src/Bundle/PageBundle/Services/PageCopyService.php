@@ -12,44 +12,36 @@
 namespace Integrated\Bundle\PageBundle\Services;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\MappingException as MappingExceptionAlias;
 use Doctrine\ODM\MongoDB\MongoDBException as MongoDBExceptionAlias;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\Item;
 use Integrated\Bundle\PageBundle\Document\Page\Grid\ItemsInterface;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
 
 class PageCopyService
 {
-    /**
-     * @var DocumentManager
-     */
-    private $documentManager;
-
-    /**
-     * @var RouteCache
-     */
-    private $routeCache;
-
-    public function __construct(DocumentManager $documentManager, RouteCache $routeCache)
-    {
-        $this->documentManager = $documentManager;
-        $this->routeCache = $routeCache;
+    public function __construct(
+        private readonly DocumentManager $documentManager,
+        private readonly ChannelRepository $channelRepository,
+        private readonly DocumentRepository $pageRepository,
+        private readonly RouteCache $routeCache
+    ) {
     }
 
     /**
      * @throws MongoDBExceptionAlias
-     * @throws MappingExceptionAlias
+     * @throws \Exception
      */
-    public function copyPages(array $data)
+    public function copyPages(array $data): void
     {
-        $targetChannel = $this->documentManager->getRepository(Channel::class)->find($data['targetChannel']);
+        $targetChannel = $this->channelRepository->find($data['targetChannel']);
         if ($targetChannel === null) {
             throw new \Exception('Channel not found');
         }
 
-        $result = $this->documentManager->getRepository(Page::class)->findBy(
+        $result = $this->pageRepository->findBy(
             [
                 'channel.$id' => $data['sourceChannel'],
             ]
@@ -58,7 +50,7 @@ class PageCopyService
         /** @var Page $page */
         foreach ($result as $page) {
             if (isset($data['pages']['page'.$page->getId()]['selected']) && $data['pages']['page'.$page->getId()]['selected'] === true) {
-                $existingPage = $this->documentManager->getRepository(Page::class)->findOneBy(
+                $existingPage = $this->pageRepository->findOneBy(
                     [
                         'channel.$id' => $targetChannel->getId(),
                         'path' => $page->getPath(),
@@ -91,10 +83,10 @@ class PageCopyService
     /**
      * @throws \Exception
      */
-    private function copyGridBlocks(ItemsInterface $grid, array $data)
+    private function copyGridBlocks(ItemsInterface $grid, array $data): void
     {
         $gridItems = $grid->getItems();
-        foreach ($gridItems as $key => $item) {
+        foreach ($gridItems as $item) {
             if (!$item instanceof Item) {
                 continue;
             }
@@ -115,7 +107,7 @@ class PageCopyService
             }
 
             if ($item->getRow()) {
-                foreach ($item->getRow()->getColumns() as $columnKey => $column) {
+                foreach ($item->getRow()->getColumns() as $column) {
                     $this->copyGridBlocks($column, $data);
                 }
             }

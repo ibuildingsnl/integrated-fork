@@ -9,6 +9,7 @@ use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
 use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelFactoryInterface;
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Bundle\ContentBundle\Form\Type\ChannelType;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ChannelLinkController extends AbstractController
 {
     public function __construct(
+        private readonly ChannelFactoryInterface $channelFactory,
         private readonly ChannelRepository $channels,
         private readonly LinkTypeRegistry $linkTypeRegistry,
         private readonly EventDispatcherInterface $dispatcher,
@@ -39,7 +41,7 @@ class ChannelLinkController extends AbstractController
             return $this->redirectToRoute('integrated_content_brand_edit', ['id' => $brand->getId()]);
         }
 
-        $channel = new Channel();
+        $channel = $this->channelFactory->create($type);
         $channel->setColor($brand->profile->color);
         $channel->setSecondaryColor($brand->profile->secondaryColor);
         $channel->setLogo($brand->profile->logo);
@@ -61,7 +63,7 @@ class ChannelLinkController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $brand->addChannelLink($link);
-            $this->channels->getDocumentManager()->persist($link->channel);
+            $this->channels->add($link->channel);
 
             $this->flusher->flush(); // flush here too, because it doesn't get a uuid on create
             $this->dispatcher->dispatch(new BrandUpdatedEvent($brand));

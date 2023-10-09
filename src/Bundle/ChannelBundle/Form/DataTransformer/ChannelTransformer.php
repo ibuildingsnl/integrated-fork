@@ -45,7 +45,7 @@ class ChannelTransformer implements DataTransformerInterface
     public function transform($value)
     {
         if (!$this->multiple) {
-            return $this->repository->findOneBy(['id' => $value]);
+            return $this->repository->find($value);
         }
 
         if (!\is_array($value)) {

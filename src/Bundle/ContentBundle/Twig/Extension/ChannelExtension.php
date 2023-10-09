@@ -11,21 +11,19 @@
 
 namespace Integrated\Bundle\ContentBundle\Twig\Extension;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 
 class ChannelExtension extends AbstractExtension implements GlobalsInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ChannelRepository $channelRepository,
+        private readonly ChannelContextInterface $context,
+    ) {
     }
 
     public function getFilters()
@@ -44,17 +42,11 @@ class ChannelExtension extends AbstractExtension implements GlobalsInterface
 
     public function getChannel(string $id): ?ChannelInterface
     {
-        return $this->container->get('doctrine_mongodb')->getRepository(Channel::class)->find($id);
+        return $this->channelRepository->find($id);
     }
 
     private function getChannelFromContext(): ?ChannelInterface
     {
-        $context = $this->container->get('channel.context');
-
-        if (!$context instanceof ChannelContextInterface) {
-            throw new \RuntimeException('Unable to get channel context.');
-        }
-
-        return $context->getChannel();
+        return $this->context->getChannel();
     }
 }
