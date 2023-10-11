@@ -9,6 +9,7 @@ use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\FormActionsType;
 use Integrated\Bundle\ImportBundle\Document\Embedded\ImportField;
@@ -18,6 +19,7 @@ use Integrated\Bundle\ImportBundle\Import\Converter\BaseConverter;
 use Integrated\Bundle\ImportBundle\Import\Converter\DefinitionComposer;
 use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
 use Integrated\Bundle\ImportBundle\Import\Converter\WP;
+use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\ImportBundle\Import\ImportProcessor;
 use Integrated\Bundle\ImportBundle\Import\Provider\Doctrine;
 use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
@@ -344,7 +346,7 @@ class ImportController extends AbstractController
 
         if ($start <= 1) {
             $start = 0;
-            $rowsPerRequest = 1;
+            $rowsPerRequest = 10;
         }
 
         $rowNumber = -1;
@@ -375,7 +377,7 @@ class ImportController extends AbstractController
             if (\count($newData)) {
                 $newObject = $contentType->create();
                 $updating = false;
-                $checkResult = BaseConverter::checkForExistingContent($importDefinition, $row, $this->documentManager);
+                $checkResult = BaseConverter::checkForExistingContent($importDefinition, $row, $newData, $this->documentManager);
                 $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
                 if ($checkResult['target'] != null) {
                     $newObject = $checkResult['target'];
@@ -416,6 +418,21 @@ class ImportController extends AbstractController
                         $importDefinition,
                         $this->storageManager
                     );
+                }
+
+                if ($newObject instanceof Taxonomy) {
+                    $checkResult = Create::maybeCreateParent(
+                        $newData['parent_id'],
+                        $contentType,
+                        $this->documentManager,
+                        $importDefinition
+                    );
+                    if ($checkResult['parent'] !== false) {
+                        $newObject->setParentId($checkResult['parent']->getId());
+                    } else {
+                        $newObject->setParentId($checkResult['brandParent']->getId());
+                    }
+                    $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
                 }
 
                 try {

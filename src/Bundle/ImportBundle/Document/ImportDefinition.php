@@ -224,7 +224,7 @@ class ImportDefinition
         return false;
     }
 
-    public function setFields(PersistentCollection $fields)
+    public function setFields(array $fields)
     {
         $this->fields = $fields;
     }
@@ -249,7 +249,7 @@ class ImportDefinition
         $this->imageContentType = $imageContentType;
     }
 
-    public function getImageRelation(): Relation
+    public function getImageRelation(): ?Relation
     {
         return $this->imageRelation;
     }

@@ -113,7 +113,17 @@ class File
             default:
                 $spreadsheet = IOFactory::load($filePath);
                 $worksheet = $spreadsheet->getActiveSheet();
-                $data = $worksheet->toArray();
+                $data = $worksheet->toArray(null, true, true, true);
+                $headers = array_shift($data);
+                $newData = [];
+                foreach ($data as $rowIndex => $row) {
+                    $newRow = [];
+                    foreach ($headers as $columnIndex => $columnName) {
+                        $newRow[$columnName] = $row[$columnIndex] ?? null;
+                    }
+                    $newData[] = $newRow;
+                }
+                $data = $newData;
         }
 
         if (isset($data['rss']['channel']['item'])) {
@@ -156,13 +166,13 @@ class File
 
                     // Processing comment data
                     if ($index2 == 'wp:comment' && \is_array($value2)) {
-//                        unset($data[$index][$index2]);
+                        unset($data[$index][$index2]);
                         // TODO: Build support for comments
-                        $commentKeys = array_keys($value2);
-                        if (!\is_int($commentKeys[0])) {
-                            // Reorganize the single comment array to match the multiple comment format
-                            $data[$index][$index2] = [0 => $value2];
-                        }
+//                        $commentKeys = array_keys($value2);
+//                        if (!\is_int($commentKeys[0])) {
+//                            // Reorganize the single comment array to match the multiple comment format
+//                            $data[$index][$index2] = [0 => $value2];
+//                        }
                     }
 
                     if ($unset) {

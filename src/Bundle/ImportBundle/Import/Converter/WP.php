@@ -184,6 +184,16 @@ class WP
             $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
         }
 
+        if (isset($row['id'])) {
+            $newObject->getMetadata()->set('PostId', $row['id']);
+            $newObject->getMetadata()->set(
+                'wpUrl',
+                (isset($row['Permalink'])) ? $row['Permalink'] : $row['Permalink']
+            );
+            $newObject->getMetadata()->set('importDate', date('Ymd'));
+            $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
+        }
+
         if (isset($row['meta_yoast_wpseo_canonical']) && $newObject instanceof Article) {
             $newObject->setSourceUrl($row['meta_yoast_wpseo_canonical']);
         }

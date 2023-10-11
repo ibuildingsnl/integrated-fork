@@ -171,6 +171,62 @@ class Create
         ];
     }
 
+    public static function maybeCreateParent($title, $contentType, $documentManager, $importDefinition) {
+        //TODO: This will be problematic when importing content into multiple channels.
+        $result = ExecuteImporter::initializeResult();
+        foreach ($importDefinition->getChannels() as $channel) {
+            $brandName = str_ireplace(' Website', '', $channel->getName());
+            if (!$parentBrandTaxonomy = $documentManager->getRepository(Content::class)
+                                           ->createQueryBuilder()->select()
+                                           ->field('title')->equals($brandName)
+                                           ->field('parent_id')->exists(false)
+                                           ->limit(1)->getQuery()
+                                           ->getSingleResult()) {
+                $parentBrandTaxonomy = $contentType->create();
+                $parentBrandTaxonomy->setTitle($brandName);
+                $parentBrandTaxonomy->setSlug($brandName);
+                $parentBrandTaxonomy->addChannel($channel);
+                $parentBrandTaxonomy->setDisabled(true);
+
+                $result['messages'][] = "[INFO] Parent Brand Dossier created with the name: {$brandName}";
+
+                $documentManager->persist($parentBrandTaxonomy);
+                $documentManager->flush();
+            }
+
+            $parent = false;
+
+            if (strlen($title) > 0 && !$parent = $documentManager->getRepository(Content::class)
+                                           ->createQueryBuilder()->select()
+                                           ->field('title')->equals($title)
+                                           ->field('parent_id')->equals($parentBrandTaxonomy->getId())
+                                           ->field('channels.$id')->equals($channel->getId())
+                                           ->limit(1)->getQuery()
+                                           ->getSingleResult()) {
+                $parent = $contentType->create();
+                $parent->setTitle($title);
+                $parent->setSlug($title);
+                $parent->setParentId($parentBrandTaxonomy->getId());
+                $parent->addChannel($channel);
+                $parent->setDisabled(true);
+
+                $result['messages'][] = "[INFO] Parent Dossier created with the name: {$title}";
+
+                $documentManager->persist($parent);
+                $documentManager->flush();
+            }
+
+            if ($parent) {
+                $result['messages'][] = '[INFO] Parent ' . $parent->getTitle() . ' found for: ' . $title . ' - Taxonomy (' . $title . ') will be linked to it';
+            }
+        }
+        return [
+            'brandParent' => $parentBrandTaxonomy,
+            'parent' => $parent,
+            'result' => $result,
+        ];
+    }
+
     private static function maybeFetchRedirectUrl($url)
     {
         $ch = curl_init();

@@ -563,6 +563,11 @@ class BaseConverter
                 $setterMethod = 'is'.ucfirst($field);
             }
 
+            if ($field === 'parent_id' && strlen($value) != 32) {
+                //TODO: add support for existing id's
+                continue;
+            }
+
             if ($field === 'featured_image') {
                 // TODO: Add more options for example Drupal
                 if (preg_match('/^[0-9]+$/', $value)) {
@@ -603,7 +608,7 @@ class BaseConverter
         return $result;
     }
 
-    public static function checkForExistingContent($importDefinition, $row, $documentManager)
+    public static function checkForExistingContent($importDefinition, $row, $newData, $documentManager)
     {
         $result = ExecuteImporter::initializeResult();
         $target = null;
@@ -612,6 +617,7 @@ class BaseConverter
             $fields = [
                 'contentitem_id' => 'contentitem_id',
                 'wp:post_id' => 'wpPostId',
+                'id' => 'PostId',
             ];
 
             foreach ($fields as $field => $dbField) {
@@ -629,6 +635,19 @@ class BaseConverter
                         $target = $doubleArticle;
                     }
                 }
+            }
+        }
+
+        foreach ($importDefinition->getChannels() as $channel) {
+            $parent = $documentManager->getRepository(Content::class)
+                                      ->createQueryBuilder()->select()
+                                      ->field('title')->equals($newData['title'])
+                                      ->field('channels.$id')->equals($channel->getId())
+                                      ->limit(1)->getQuery()
+                                      ->getSingleResult();
+            if ($parent) {
+                $result['messages'][] = "[UPDATING] Taxonomy with title: {$newData['title']} for {$channel->getName()} already imported - updating";
+                $target = $parent;
             }
         }
 
