@@ -1,8 +1,8 @@
 <?php
 
-namespace Integrated\Bundle\BrandBundle\Document;
+namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
-class LinkType
+class ChannelType
 {
     public function __construct(
         public readonly string $id,

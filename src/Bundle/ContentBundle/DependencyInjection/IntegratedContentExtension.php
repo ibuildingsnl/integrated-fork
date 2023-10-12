@@ -67,5 +67,6 @@ class IntegratedContentExtension extends Extension
         $loader->load('mailer.xml');
 
         $loader->load('data_fixtures.xml');
+        $loader->load('infrastructure.xml');
     }
 }

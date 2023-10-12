@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Content\Channel;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Security\PermissionInterface;
 
@@ -19,6 +20,8 @@ interface ChannelInterface
     public function getId(): ?string;
 
     public function getName(): string;
+
+    public function getType(): ?ChannelType;
 
     /** @return PermissionInterface[] */
     public function getPermissions(): iterable;

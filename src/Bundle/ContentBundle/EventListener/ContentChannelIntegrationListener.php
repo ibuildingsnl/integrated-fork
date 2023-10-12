@@ -197,7 +197,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
      *
      * @return ChannelInterface[]
      */
-    protected function getChannels(array $ids = []): array
+    protected function getChannels(array $ids = null): array
     {
         if ($ids === []) {
             return [];
@@ -205,7 +205,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
 
         $criteria = ['$or' => []];
 
-        foreach ($ids as $id) {
+        foreach ($ids ?: [] as $id) {
             $criteria['$or'][] = ['id' => $id];
         }
 
