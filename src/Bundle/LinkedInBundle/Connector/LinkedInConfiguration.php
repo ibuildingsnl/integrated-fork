@@ -28,7 +28,7 @@ final class LinkedInConfiguration implements OauthConfigInterface
 
     public function prepareAuthLink(ConfigEvent $event, OptionsInterface $options): ?string
     {
-        if ($options->has('token') && $options->has('token_secret')) {
+        if ($options->has('token')) {
             return null;
         }
 
@@ -39,9 +39,13 @@ final class LinkedInConfiguration implements OauthConfigInterface
             'scope' => 'w_organization_social' // array or string
         ];
 
-//        return $client->getAuthorizationUrl($options);;
-
-//        dd($client);
+        if (!isset($_GET['code'])) {
+            // If we don't have an authorization code then get one
+            $authUrl = $client->getAuthorizationUrl($options);
+            $_SESSION['oauth2state'] = $client->getState();
+            header('Location: ' . $authUrl);
+            exit;
+        }
 
         try {
             $response = $client->oauth(
@@ -56,38 +60,31 @@ final class LinkedInConfiguration implements OauthConfigInterface
             throw ConfigurationException::encountered($e);
         }
 
-        $options->set('request_token', $response['oauth_token']);
-//        $options->set('request_token_secret', $response['oauth_token_secret']);
-
         return $client->url('oauth/authorize', ['oauth_token' => $response['oauth_token']]);
     }
 
     public function handleCallback(ConfigEvent $event, OptionsInterface $options): bool
     {
-        dd($event, $options);
+        $client = $this->factory->createClient();
 
-        if (!$options->has('request_token') || !$options->has('request_token_secret')) {
-            return false;
-        }
+        // Try to get an access token (using the authorization code grant)
+        $token = $client->getAccessToken('authorization_code', [
+            'code' => $_GET['code']
+        ]);
 
-        $verifier = $event->getRequest()->get('oauth_verifier');
-
-        if (!$verifier) {
+        if (!$token) {
             return false;
         }
 
         try {
-            $response = $this->factory->createClient($options->get('request_token'), $options->get('request_token_secret'))
-                ->oauth('oauth/access_token', ['oauth_verifier' => $verifier]);
+            $response = $this->factory->createClient($token->getToken());
         } catch (LinkedInOAuthException $e) {
             throw ConfigurationException::encountered($e);
         }
 
         $options
-            ->set('token', $response['oauth_token'])
-            ->set('token_secret', $response['oauth_token_secret'])
-            ->remove('request_token')
-            ->remove('request_token_secret');
+            ->set('token', $token)
+            ->remove('request_token');
 
         return true;
     }
