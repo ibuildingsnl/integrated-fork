@@ -81,7 +81,7 @@ class Create
      *
      * @return StorageInterface|void
      */
-    public static function createFileFromUrl($href, $newObject, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false)
+    public static function createFileFromUrl($href, $newObject, $newData, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false)
     {
         // TODO: This needs to be made more dynamic for File and Image type.
         $result = ExecuteImporter::initializeResult();
@@ -149,6 +149,14 @@ class Create
             $newFile->setFile($storage);
             $newFile->setTitle($title);
             $newFile->getMetadata()->set('importDate', date('Ymd'));
+
+            if (array_key_exists('Image Title', $newData) && strlen($newData['Image Title']) > 0) {
+                $newFile->setTitle($newData['Image Title']);
+            }
+
+            if (array_key_exists('Image Description', $newData) && strlen($newData['Image Description']) > 0) {
+                $newFile->setDescription($newData['Image Description']);
+            }
 
             $file = $newFile;
 

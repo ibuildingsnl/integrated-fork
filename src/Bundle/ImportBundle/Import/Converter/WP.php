@@ -15,6 +15,9 @@ class WP
     {
         $imgIds = [];
 
+        $content = str_ireplace('alt=" width', 'alt="" width', $content);
+        $content = str_ireplace('<p>&nbsp;</p>', '', $content);
+
         // TODO: Add support for gallery.
         $content = preg_replace_callback(
             '/\[gallery ids\="(.+?)".*?\]/',
@@ -26,6 +29,8 @@ class WP
             $content
         );
 
+
+
         $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
             if (\strlen(trim($matches[1])) == 11) {
@@ -34,7 +39,7 @@ class WP
 
             return $matches[0];
         }, $content);
-
+        //TODO: Fix support for caption with anchor that has space in it.
         $content = preg_replace_callback(
             '/\[caption.*?\].*?<\/a>\s*(.*?)\[\/caption\]/',
             function ($matches) {
@@ -61,8 +66,18 @@ class WP
             $content
         );
 
+        $content = preg_replace_callback(
+            '/<a href="([^"]+)"><img(.*?)src="([^"]+)-\d+x\d+\.([a-zA-Z]+)"(.*?)<\/a>/',
+            function ($matches) {
+                $imgAttributes = $matches[2] . 'src="' . $matches[3] . '.' . $matches[4] . '"' . $matches[5];
+                return '<img' . $imgAttributes . '>';  // return the updated content
+            },
+            $content
+        );
+
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
+        $content = str_ireplace('<h4>Wil je meer te weten komen over woningaanpassingen? <a href="https://supportmagazine.nl/abonneren/" target="_blank" rel="noopener">Neem dan nu extra voordelig een abonnement op Support Magazine!</a></h4>', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
 
@@ -216,6 +231,7 @@ class WP
                 $checkResult = Create::createFileFromUrl(
                     $href,
                     $newObject,
+                    $newData,
                     $importDefinition,
                     $storageManager,
                     $documentManager,

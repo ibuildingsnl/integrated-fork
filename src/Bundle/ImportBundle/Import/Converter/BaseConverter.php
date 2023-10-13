@@ -9,7 +9,9 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ImportBundle\Import\Create\Create;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
@@ -44,7 +46,7 @@ class BaseConverter
 
     public static function formatDateTime($dateTime, $offset = '+2:00')
     {
-        return str_replace(' ', 'T', $dateTime).$offset;
+        return str_replace(' ', 'T', $dateTime) . $offset;
     }
 
     public static function formatDateString($dateString)
@@ -123,8 +125,8 @@ class BaseConverter
         if (!empty($row['picture_src'])) {
             $path = false;
             foreach ($importDefinition->getChannels() as $channel) {
-                $path = '/home/testpi-integrated/importfiles/'.$channel->getId(
-                ).'/images/auteurfotos/'.$row['picture_src'];
+                $path = '/home/testpi-integrated/importfiles/' . $channel->getId(
+                    ) . '/images/auteurfotos/' . $row['picture_src'];
             }
             // TODO: this seems highly specific and not usable in general
             if ($path !== false && file_exists($path)) {
@@ -146,8 +148,14 @@ class BaseConverter
         return $newObject;  // Return the modified object
     }
 
-    public static function processImageElements($html, $newObject, $importDefinition, $documentManager, $storageManager)
-    {
+    public static function processImageElements(
+        $html,
+        $newObject,
+        $newData,
+        $importDefinition,
+        $documentManager,
+        $storageManager
+    ) {
         $result = ExecuteImporter::initializeResult();
 
         $tags = ['a', 'img'];
@@ -164,7 +172,7 @@ class BaseConverter
                     if (!$importDefinition->getWebsiteBaseUrl()) {
                         continue;
                     }
-                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/').$href;
+                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/') . $href;
                 }
 
                 if (stripos($href, '.png') === false
@@ -187,13 +195,22 @@ class BaseConverter
 
                 if (!$title) {
                     $title = basename($href);
-                    $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+                    $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+                }
+
+                if (strlen($element->alt) > 0) {
+                    $newData['Image Description'] = $element->alt;
+                }
+
+                if (strlen($element->title) > 0) {
+                    $newData['Image Title'] = $element->title;
                 }
 
                 if ($href) {
                     $checkResult = Create::createFileFromUrl(
                         $href,
                         $newObject,
+                        $newData,
                         $importDefinition,
                         $storageManager,
                         $documentManager,
@@ -213,15 +230,15 @@ class BaseConverter
                     $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
 
                     $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') && array_search(
-                        $image->getId(
-                        ),
-                        array_column(
-                            $newObject->getReferencesByRelationType(
-                                'embedded'
-                            ),
-                            'id'
-                        )
-                    ) !== false;
+                                                                                                             $image->getId(
+                                                                                                             ),
+                                                                                                             array_column(
+                                                                                                                 $newObject->getReferencesByRelationType(
+                                                                                                                     'embedded'
+                                                                                                                 ),
+                                                                                                                 'id'
+                                                                                                             )
+                                                                                                         ) !== false;
 
                     $relation->setRelationType($relationType);
                     $relation->setRelationId($relationId);
@@ -231,14 +248,14 @@ class BaseConverter
 
                 // Updating the tag attributes based on the tag type
                 if ($tag == 'a') {
-                    $element->href = '/storage/'.$image->getId().'.'.pathinfo($href, \PATHINFO_EXTENSION);
+                    $element->href = '/storage/' . $image->getId() . '.' . pathinfo($href, \PATHINFO_EXTENSION);
                 } elseif ($tag == 'img') {
                     $element->outertext = '
-                    <img src="/storage/'.$image->getId().'.jpg"
+                    <img src="/storage/' . $image->getId() . '.jpg"
                     class="img-responsive"
-                    title="'.htmlspecialchars($title).'"
-                    alt="'.htmlspecialchars($title).'"
-                    data-integrated-id="'.$image->getId().'" />';
+                    title="' . htmlspecialchars($title) . '"
+                    alt="' . htmlspecialchars($title) . '"
+                    data-integrated-id="' . $image->getId() . '" />';
                 }
             }
         }
@@ -416,7 +433,7 @@ class BaseConverter
                         }
 
                         if ($parent) {
-                            $result['messages'][] = '[INFO] Parent '.$targetContentType.' found for: '.$title.' - Taxonomy ('.$valueName.') will be linked to it';
+                            $result['messages'][] = '[INFO] Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
                         }
 
                         $valueName = trim($valueName);
@@ -455,7 +472,7 @@ class BaseConverter
                 } else {
                     $valueName = trim($valueName);
                     if ($targetContentType->getClass() == Taxonomy::class || $targetContentType->getClass(
-                    ) == Article::class) {
+                        ) == Article::class) {
                         $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
                             ['title' => $valueName, 'contentType' => $targetContentType->getId()]
                         );
@@ -490,10 +507,10 @@ class BaseConverter
                     $path = $valueName;
 
                     if (strpos($path, 'http') === 0) {
-                        $tmpfile = tempnam('/tmp/', 'file').'.'.pathinfo(
-                            $path,
-                            \PATHINFO_EXTENSION
-                        );
+                        $tmpfile = tempnam('/tmp/', 'file') . '.' . pathinfo(
+                                $path,
+                                \PATHINFO_EXTENSION
+                            );
                         file_put_contents($tmpfile, @file_get_contents($path));
                         $path = $tmpfile;
                     }
@@ -518,7 +535,7 @@ class BaseConverter
 
                         $documentManager->flush();
                     } else {
-                        $result['messages'][] = '[WARNING] File not found: '.$path.' for '.$newObject->getTitle();
+                        $result['messages'][] = '[WARNING] File not found: ' . $path . ' for ' . $newObject->getTitle();
                     }
                 }
 
@@ -556,23 +573,25 @@ class BaseConverter
             $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
 
             // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
-            $setterMethod = 'set'.$method;
+            $setterMethod = 'set' . $method;
 
             // Special handling for boolean fields
             if (\in_array($field, ['featured', 'premium'])) {
-                $setterMethod = 'is'.ucfirst($field);
+                $setterMethod = 'is' . ucfirst($field);
             }
 
             if ($field === 'parent_id' && strlen($value) != 32) {
-                //TODO: add support for existing id's
-                continue;
+                if (method_exists($newObject, 'setParentId')) {
+                    \call_user_func([$newObject, 'setParentId'], $value);
+                }
             }
 
             if ($field === 'featured_image') {
                 // TODO: Add more options for example Drupal
+                $href = '';
                 if (preg_match('/^[0-9]+$/', $value)) {
                     if ($importType === 'WordPress') {
-                        $href = $importDefinition->getWebsiteBaseUrl().'?attachment_id='.$value;
+                        $href = $importDefinition->getWebsiteBaseUrl() . '?attachment_id=' . $value;
                     }
                 } else {
                     if (filter_var($value, \FILTER_VALIDATE_URL) !== false) {
@@ -591,13 +610,16 @@ class BaseConverter
                 $checkResult = Create::createFileFromUrl(
                     $href,
                     $newObject,
+                    $newData,
                     $importDefinition,
                     $storageManager,
                     $documentManager,
                     false,
                     true
                 );
-                $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
+                $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+                $newObject->setFeaturedImage($checkResult['file']);
+                continue;
             }
 
             if (method_exists($newObject, $setterMethod)) {
@@ -646,7 +668,7 @@ class BaseConverter
                                       ->limit(1)->getQuery()
                                       ->getSingleResult();
             if ($parent) {
-                $result['messages'][] = "[UPDATING] Taxonomy with title: {$newData['title']} for {$channel->getName()} already imported - updating";
+                $result['messages'][] = "[UPDATING] {$importDefinition->getContentType()} with title: {$newData['title']} for {$channel->getName()} already imported - updating";
                 $target = $parent;
             }
         }
@@ -655,5 +677,69 @@ class BaseConverter
             'target' => $target,
             'result' => $result,
         ];
+    }
+
+    public static function authorProcessor(
+        $row,
+        $newObject,
+        $importDefinition,
+        $documentManager
+    ) {
+        $result = ExecuteImporter::initializeResult();
+
+        if (array_key_exists('Author ID', $row)) {
+            $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getAuthorContentType());
+            $authorId = $row['Author ID'];
+            $firstName = $row['Author First Name'];
+            $lastName = $row['Author Last Name'];
+            $email = $row['Author Email'];
+            $baseUrl = $importDefinition->getWebsiteBaseUrl();
+
+            $person = $documentManager
+                ->getRepository(Content::class)
+                ->createQueryBuilder()->select()
+                ->field('contentType')->equals($targetContentType->getId())
+                ->field('firstName')->equals($firstName)
+                ->field('lastName')->equals($lastName)
+                ->field('metadata.data.importWebsiteBaseUrl')->equals($baseUrl)
+                ->field('metadata.data.wpAuthorId')->equals($authorId)
+                ->limit(1)->getQuery()
+                ->getSingleResult();
+
+            if (!$person) {
+                $person = $documentManager
+                    ->getRepository(Content::class)
+                    ->createQueryBuilder()->select()
+                    ->field('contentType')->equals($targetContentType->getId())
+                    ->field('firstName')->equals($firstName)
+                    ->field('lastName')->equals($lastName)
+                    ->limit(1)->getQuery()
+                    ->getSingleResult();
+            } else {
+                $result['messages'][] = "[NOTICE] Author {$firstName} {$lastName} was found and will be used as author";
+            }
+
+            if (!$person) {
+                $person = $targetContentType->create();
+
+                $person->setFirstname($firstName);
+                $person->setLastname($lastName);
+                $person->setEmail($email);
+                $person->getMetadata()->set('wpAuthorId', $authorId);
+                $person->getMetadata()->set('importWebsiteBaseUrl', $baseUrl);
+
+                $documentManager->persist($person);
+
+                $result['messages'][] = "[NOTICE] Author {$firstName} {$lastName} has been created and will be used as author";
+            }
+
+            $author = new Author();
+            $author->setPerson($person);
+            $newObject->addAuthor($author);
+        } else {
+            $result['messages'][] = "[WARNING] Author ID was not found, no author will be linked.";
+        }
+
+        return $result;
     }
 }
