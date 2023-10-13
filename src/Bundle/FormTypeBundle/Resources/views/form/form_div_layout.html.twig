@@ -497,7 +497,9 @@
         {% endif %}
         {% if style == 'sidebar' %}
             <div
-                class="aside-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="aside-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"
+                {{ block('attributes') }}
+            >
                 <div class="aside-item-header">
                     <h3 class="aside-item-title">
                         <i class="iconoir-{% if icon is not empty %}{{ icon }}{% else %}folder{% endif %}"></i>
@@ -517,7 +519,9 @@
             </div>
         {% elseif style == 'editor' %}
             <div
-                class="editor-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="editor-item-wrapper {{ form.vars.name }}{% if form.vars.errors|length > 0 %} has-error show{% endif %} {% if state is not empty %}{{ state }}{% endif %}"
+                {{ block('attributes') }}
+            >
                 <div class="editor-item-header">
                     <h3 class="editor-item-title">
                         <span class="editor-item-icon">
@@ -536,7 +540,9 @@
             </div>
         {% else %}
             <div
-                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}">
+                class="form-item w-full flex flex-wrap {{ form.vars.name }} {{ original_type ~ form.vars.label|lower }}{% if form.vars.errors|length > 0 %} has-error{% endif %} {% if state is not empty %}{{ state }}{% endif %}"
+                {{ block('attributes') }}
+            >
                 {% if show_label is not same as ('false') %}
                     {{ form_label(form) }}
                 {% endif %}
