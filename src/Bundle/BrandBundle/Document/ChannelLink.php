@@ -9,6 +9,7 @@ class ChannelLink
 {
     private ?string $id = null;
 
+    // @todo remove type, use channel's type
     public function __construct(
         public ChannelType $type,
         public ?ChannelInterface $channel,

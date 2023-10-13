@@ -1,4 +1,4 @@
-const channelTypeElement = document.querySelector('[name$="[channel][type]"]');
+const channelTypeElement = document.querySelector('[id$="channel_type"]');
 function showHideExclusiveElements()
 {
     const type = channelTypeElement?.value;

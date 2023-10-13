@@ -6,6 +6,10 @@ use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
+/**
+ * @deprecated
+ * @todo Use channel type instead
+ */
 final class LinkTypeSettingsProvider implements PublicationSettingsProvider
 {
     public function __construct(

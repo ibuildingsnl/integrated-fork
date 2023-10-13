@@ -28,23 +28,22 @@ function openPublishingSettings(channelId, input) {
             div.classList.remove('show');
         });
     });
-    setChannelChoices(settings.querySelector('.settings-apply-to-multiple'));
 }
 
+// Add publication settings buttons
 document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     const settings = document.querySelector(
         '.publication-settings[data-publication-channel="'+input.dataset.channelSelector+'"]'
-    ).closest('.publication-settings-aside');
+    );
     if (!settings) {
         return;
     }
 
-    settings.channelType = input.dataset.channelType;
-    if (settings.channelType) {
+    if (settings.dataset.channelType) {
         const opt = document.createElement('option');
         opt.value = 'type';
-        opt.text = 'all ' + settings.channelType + ' channels';
-        settings.querySelector('[data-apply-to]')?.append(opt);
+        opt.text = 'all ' + settings.dataset.channelType + ' channels';
+        settings.closest('.publication-settings-aside').querySelector('[data-apply-to]')?.append(opt);
     }
 
     const openSettings = document.createElement('a');
@@ -64,20 +63,22 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     showHidePublicationSettingsButton(input);
 });
 
+// Save & exit publication settings
 document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
-    settings.querySelectorAll('[data-apply-to]').forEach(
-        (s) => s.addEventListener('change', function (ev) {
-            settings.querySelectorAll('.settings-apply-to-multiple').forEach(
-                (e) => e.style.display = s.value === 'multiple' ? 'block' : 'none'
-            );
-        }) || s.dispatchEvent(new Event('change'))
-    );
     settings.querySelectorAll('a.btn').forEach(function(a) {
         a.addEventListener('click', function (ev) {
             a.closest('.publication-settings-aside').classList.remove('show');
             document.querySelectorAll('.editor-overlay').forEach(div => {
                 div.classList.remove('show');
             });
+            if (settings.querySelector('[data-apply-to]')?.value === 'type') {
+                // apply to all of this type
+                alert(
+                    '@todo: apply to all '+
+                    settings.querySelector('[data-channel-type]')?.dataset.channelType+
+                    ' channels'
+                )
+            }
             ev.preventDefault();
         });
     });
@@ -105,7 +106,3 @@ document.addEventListener('click', function (ev) {
     }
 });
 
-function setChannelChoices(element)
-{
-    // @todo
-}
