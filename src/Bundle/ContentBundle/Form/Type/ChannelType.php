@@ -156,16 +156,6 @@ class ChannelType extends AbstractType
                 'state' => 'show',
                 'data-exclusive-to' => 'website',
             ],
-            'row_attr' => [
-                'data-exclusive-to' => 'website',
-            ],
-            'label_attr' => [
-                'data-exclusive-to' => 'website',
-            ],
-            'help_attr' => [
-
-                'data-exclusive-to' => 'website',
-            ]
         ]);
 
         $builder->add('primaryDomain', HiddenType::class, [
