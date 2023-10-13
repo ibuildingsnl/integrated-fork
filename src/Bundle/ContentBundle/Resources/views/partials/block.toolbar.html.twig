@@ -46,11 +46,13 @@
             {% block seo_meta_button %}
                 {% set hasSeoMetadata = false %}
 
-                {% for field in type.fields %}
-                    {% if field.name == 'seoMetadata' %}
-                        {% set hasSeoMetadata = true %}
-                    {% endif %}
-                {% endfor %}
+                {% if type is defined %}
+                    {% for field in type.fields %}
+                        {% if field.name == 'seoMetadata' %}
+                            {% set hasSeoMetadata = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 
                 {% if hasSeoMetadata %}
                     <a href="#"
