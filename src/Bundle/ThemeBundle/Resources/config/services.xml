@@ -26,15 +26,6 @@
             <tag name="twig.extension" />
         </service>
 
-        <service id="integrated_theme.event_listener.content_image_listener" class="Integrated\Bundle\ThemeBundle\EventListener\Objects\ContentImageListener">
-            <argument type="service" id="integrated_theme.templating.theme_manager" />
-            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
-            <argument type="service" id="twig" />
-            <argument type="service" id="integrated_slug.slugger" />
-            <argument>%kernel.environment%</argument>
-            <tag name="kernel.event_listener" event="content.event" method="replaceImages" />
-        </service>
-
         <service id="Integrated\Bundle\ThemeBundle\Command\ScraperRunCommand">
             <argument type="service" id="Integrated\Bundle\ThemeBundle\Scraper\Scraper" />
 

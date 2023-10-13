@@ -16,7 +16,7 @@
 
         <service id="Integrated\Bundle\BrandBundle\Controller\BrandController">
             <argument type="service" id="integrated_brand.brand.repository" />
-            <argument type="service" id="integrated_brand.link_type.registry" />
+            <argument type="service" id="integrated_channel.channel_type.registry" />
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
             <argument type="service" id="integrated_content.services.flusher"/>
 
@@ -30,7 +30,7 @@
 
         <service id="Integrated\Bundle\BrandBundle\Controller\ChannelLinkController">
             <argument type="service" id="integrated_channel.repository.channel" />
-            <argument type="service" id="integrated_brand.link_type.registry" />
+            <argument type="service" id="integrated_channel.channel_type.registry" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="integrated_content.services.flusher"/>
 
@@ -61,13 +61,9 @@
             <tag name="form.type" />
         </service>
 
-        <service id="integrated_brand.link_type.registry" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry">
-            <argument type="tagged_iterator" tag="integrated_brand.type" />
-        </service>
-
         <service id="integrated_brand.form.channel.link.type" class="Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType">
             <argument type="service" id="translator"/>
-            <argument type="service" id="integrated_brand.link_type.registry" />
+            <argument type="service" id="integrated_channel.channel_type.registry" />
 
             <tag name="form.type" />
         </service>
@@ -123,58 +119,11 @@
             <tag name="integrated_content.facet_setting" />
         </service>
 
-        <!-- Note: the types below are mainly here for demo purposes, they can and should be moved to bundles/plugins -->
-
-        <service id="integrated_brand.type.website" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>website</argument>
-            <argument>Website</argument>
-            <argument type="expression">true</argument>
-            <argument>website</argument>
-
-            <tag name="integrated_brand.type" />
+        <service id="Integrated\Bundle\BrandBundle\Services\LinkTypeSettingsProvider"
+                 decorates="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider">
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id=".inner"/>
         </service>
 
-        <service id="integrated_brand.type.newsletter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>newsletter</argument>
-            <argument>Newsletter</argument>
-            <argument type="expression">true</argument>
-
-            <tag name="integrated_brand.type" />
-        </service>
-
-        <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>woodwing</argument>
-            <argument>Woodwing</argument>
-            <argument type="expression">true</argument>
-
-            <tag name="integrated_brand.type" />
-        </service>
-
-        <service id="integrated_brand.type.twitter" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>twitter</argument>
-            <argument>Twitter (X)</argument>
-            <argument type="expression">false</argument>
-            <argument>twitter</argument>
-
-            <tag name="integrated_brand.type" />
-        </service>
-
-        <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>linkedin</argument>
-            <argument>LinkedIn</argument>
-            <argument type="expression">false</argument>
-            <argument>linkedin</argument>
-
-            <tag name="integrated_brand.type" />
-        </service>
-
-        <service id="integrated_brand.type.facebook" class="Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeFactory">
-            <argument>facebook</argument>
-            <argument>Facebook (meta)</argument>
-            <argument type="expression">false</argument>
-            <argument>facebook</argument>
-
-            <tag name="integrated_brand.type" />
-        </service>
     </services>
 </container>

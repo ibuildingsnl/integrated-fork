@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,7 +28,7 @@ class ContentTypeChannelType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var Channel $channel */
+        /** @var ChannelInterface $channel */
         $channel = $options['channel'];
 
         $builder->add('selected', CheckboxType::class, [

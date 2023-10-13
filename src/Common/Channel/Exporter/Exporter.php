@@ -13,11 +13,11 @@ namespace Integrated\Common\Channel\Exporter;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Connector;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Adapter\RegistryInterface;
 use Integrated\Common\Channel\Connector\Config\ResolverInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface as ConnectorExporterInterface;
-use Integrated\Common\Content\ConnectorInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\PublishableInterface;
 
@@ -56,7 +56,7 @@ class Exporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($content, $state, ChannelInterface $channel)
+    public function export($content, $state, ChannelInterface $channel, array $settings = [])
     {
         $publicationDate = null;
         if ($content instanceof PublishableInterface) {
@@ -69,7 +69,7 @@ class Exporter implements ExporterInterface
         }
 
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-            $response = $exporter->export($content, $state, $channel);
+            $response = $exporter->export($content, $state, $channel, $settings);
 
             if ($response instanceof ExporterResponse) {
                 $this->save($content, $response);
@@ -115,7 +115,7 @@ class Exporter implements ExporterInterface
             return;
         }
 
-        if (!$content instanceof ConnectorInterface) {
+        if (!$content instanceof ConnectableInterface) {
             return;
         }
 

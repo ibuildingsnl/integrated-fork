@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
 use Integrated\Common\Content\ContentInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,12 +25,12 @@ use Symfony\Component\Form\FormEvents;
 class ChannelDefaultDataListener implements EventSubscriberInterface
 {
     /**
-     * @var Channel[]
+     * @var ChannelInterface[]
      */
     private $channels;
 
     /**
-     * @param Channel[] $channels
+     * @param ChannelInterface[] $channels
      */
     public function __construct(array $channels)
     {

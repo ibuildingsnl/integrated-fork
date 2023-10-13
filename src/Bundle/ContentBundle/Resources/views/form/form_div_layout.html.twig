@@ -497,6 +497,47 @@
     {{ block('integrated_collection_widget') }}
 {% endblock %}
 
+{% block integrated_publication_settings_container_row %}
+
+    <div class="publication-settings-container">
+        {{ form_widget(form) }}
+    </div>
+
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_settings.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
+{% block integrated_publication_settings_row %}
+    <div class="aside-options publication-settings-aside">
+        <div class="publication-settings-popup aside-item-wrapper show">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <i class="iconoir-telegram"></i>
+                    <span class="aside-item-icon">Publish to {{ form_label(form) }}</span>
+                </h3>
+            </div>
+            <div class="aside-item-list-container">
+                <div class="aside-item-list">
+                    {{ form_widget(form) }}
+
+                    <div class="settings-apply-to-menu">
+                        Apply to
+                        <select data-apply-to>
+                            <option value="this">{{ form_label(form) }}</option>
+                            <option value="multiple">specific channels</option>
+                        </select>
+                        <div class="settings-apply-to-multiple">
+
+                        </div>
+                    </div>
+                    <a class="btn btn-green" href="#">Ok</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block integrated_content_bulk_actions_row %}
     {{ form_widget(form) }}
 {% endblock %}

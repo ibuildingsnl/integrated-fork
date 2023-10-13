@@ -1218,6 +1218,14 @@
                 <source>These images are currently used in other content</source>
                 <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
             </trans-unit>
+            <trans-unit id="309">
+                <source>New brand</source>
+                <target>Nieuw merk</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>Brands</source>
+                <target>Merken</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

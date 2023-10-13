@@ -42,6 +42,8 @@ class Channel implements ChannelInterface
     #[Assert\NotBlank]
     protected $name;
 
+    protected ?ChannelType $type;
+
     /**
      * @var Image
      */
@@ -127,7 +129,19 @@ class Channel implements ChannelInterface
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?: '';
+    }
+
+    public function getType(): ?ChannelType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ChannelType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getLogo(): ?Image

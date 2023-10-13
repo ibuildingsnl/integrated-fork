@@ -12,7 +12,7 @@
 namespace Integrated\Bundle\ChannelBundle\Form\DataTransformer;
 
 use Integrated\Bundle\ContentBundle\Document\Channel\ChannelRepository;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**

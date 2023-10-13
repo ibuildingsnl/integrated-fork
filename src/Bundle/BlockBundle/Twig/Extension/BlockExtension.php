@@ -18,6 +18,7 @@ use Integrated\Bundle\ThemeBundle\Exception\CircularFallbackException;
 use Integrated\Bundle\ThemeBundle\Templating\ThemeManager;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
@@ -193,7 +194,7 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @return Channel[]
+     * @return ChannelInterface[]
      */
     public function findChannels(BlockInterface $block)
     {

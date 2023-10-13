@@ -30,6 +30,7 @@ class BrandChannelChoiceType extends AbstractType
                 [
                     'class' => 'brand-channel-choice',
                     'data-can-be-primary' => $link->type->canBePrimary ? 'yes' : 'no',
+                    'data-channel-type' => $link->getName(),
                 ],
                 \is_array($options['choice_attr']) ? $options['choice_attr'] : $options['choice_attr']($link->channel),
             ),

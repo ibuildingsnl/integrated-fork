@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ChannelBundle\Command;
 
-use Integrated\Common\Channel\Exporter\QueueExporter;
+use Integrated\Common\Channel\Exporter\QueueExporterInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +29,7 @@ class ExportCommand extends Command
      * Constructor.
      */
     public function __construct(
-        private readonly QueueExporter $exporter,
+        private readonly QueueExporterInterface $exporter,
         private readonly KernelInterface $kernel,
         private readonly LoggerInterface $logger,
         private readonly string $workingDirectory,
@@ -81,7 +81,7 @@ class ExportCommand extends Command
     private function runInternal(InputInterface $input, OutputInterface $output)
     {
         try {
-            $n = $this->exporter->execute();
+            $n = $this->exporter->exportMessages();
         } catch (\Exception $e) {
             $this->logger->error('Channel Export Error: '.$e->getMessage());
             $output->writeln('Aborting: '.$e->getMessage());
@@ -119,7 +119,7 @@ class ExportCommand extends Command
             }
 
             if (!$input->getOption('daemon')) {
-                if (!$this->exporter->getQueue()->count()) {
+                if (!$this->exporter->hasMessages()) {
                     break;
                 }
             }
