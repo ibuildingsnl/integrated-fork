@@ -19,8 +19,9 @@ final class ConnectorAdapter implements AdapterInterface, ConfigurableInterface,
     public function __construct(
         private readonly ConnectorInterface $connector,
         private readonly ConnectorConfigInterface $config,
-        private readonly LoggerInterface $logger,
+//        private readonly LoggerInterface $logger,
     ) {
+//        dd($logger);
     }
 
     public function getManifest(): ManifestInterface
