@@ -48,11 +48,27 @@ final class TaxonomyListTest extends TestCase
             'user 1' => $this->user('group_1'),
             'user 2' => $this->user('group_2'),
         ];
+
         $this->tokenStorage->setToken($this->users['admin']);
+        $broodPermission = (new Permission())->setGroup('group_1')->setMask(3);
+        $broodChannel = (new Channel());
+        $broodChannel->setId('brood');
+        $broodChannel->addPermission($broodPermission);
+
+        $visPermission = (new Permission())->setGroup('group_2')->setMask(1);
+        $visChannel = (new Channel());
+        $visChannel->setId('vis');
+        $visChannel->addPermission($visPermission);
+
+        $kipPermission = (new Permission())->setGroup('group_3')->setMask(3);
+        $kipChannel = (new Channel());
+        $kipChannel->setId('kip');
+        $kipChannel->addPermission($kipPermission);
+
         $this->channels = [
-            'brood' => (new Channel())->setId('brood')->addPermission((new Permission())->setGroup('group_1')->setMask(3)),
-            'vis' => (new Channel())->setId('vis')->addPermission((new Permission())->setGroup('group_2')->setMask(1)),
-            'kip' => (new Channel())->setId('kip')->addPermission((new Permission())->setGroup('group_3')->setMask(3)),
+            'brood' => $broodChannel,
+            'vis' => $visChannel,
+            'kip' => $kipChannel,
         ];
     }
 

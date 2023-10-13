@@ -1,4 +1,4 @@
-<div class="flex flex-wrap media-library" data-selected-modus="{{ selected_modus }}">
+<div class="flex flex-wrap media-library">
     {% if selected_modus != 'media_gallery' %}
         {% block toolbar %}
             <div id="toolbar" class="w-full flex justify-between">
@@ -15,6 +15,34 @@
             </div>
         {% endblock toolbar %}
     {% endif %}
+
+    <div class="modal fade" id="bulkdelete_confirm_popup" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{% trans %}Delete images{% endtrans %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans %}Are you sure you want to delete these files?{% endtrans %}</p>
+
+                    <p id="used_images_message" style="display:none;">{% trans %}These images are currently used in other content{% endtrans %}</p>
+                    <p id="used_images"></p>
+                    <div id="used_image" class="used_image">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-modal-hide="popup-modal" id="cancel_delete" class="btn btn-white"
+                            data-dismiss="modal">{% trans %}Cancel{% endtrans %}
+                    </button>
+                    <button type="button" data-modal-hide="popup-modal" id="confirm_delete"
+                            class="btn btn-dark-green live-page">{% trans %}Remove images{% endtrans %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="aside-filters close-outside media-sidebar">
         <aside>
             {% include '@IntegratedContent/media/partial/menu_component.html.twig' %}

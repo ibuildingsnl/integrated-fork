@@ -43,6 +43,20 @@
                     </div>
                 {% endif %}
             {% endblock %}
+            {% block seo_meta_button %}
+                {% set hasSeoMetadata = false %}
+
+                {% for field in type.fields %}
+                    {% if field.name == 'seoMetadata' %}
+                        {% set hasSeoMetadata = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if hasSeoMetadata %}
+                    <a href="#"
+                       class="btn btn-white seo-button readability-{{ content.seoMetadata.readabilityScore|default('feedback') }} seo-{{ content.seoMetadata.seoScore|default('feedback') }}">SEO</a>
+                {% endif %}
+            {% endblock %}
         </div>
         <button class="form-actions-extra-toggle toggle-data-target" data-target="form-actions-extra"
                 data-underlay="no" type="button">
