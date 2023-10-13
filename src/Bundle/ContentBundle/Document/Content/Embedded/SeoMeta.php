@@ -4,22 +4,37 @@ namespace Integrated\Bundle\ContentBundle\Document\Content\Embedded;
 
 class SeoMeta
 {
-    protected ?string $metaTitle = '';
+    /**
+     * @var string
+     */
+    protected $metaTitle;
 
-    protected ?string $metaDescription = '';
+    /**
+     * @var string
+     */
+    protected $metaDescription;
 
-    protected ?string $focusKeyphrase = '';
+    /**
+     * @var string
+     */
+    protected $focusKeyphrase;
 
-    protected ?string $seoScore = '';
+    /**
+     * @var string
+     */
+    protected $seoScore;
 
-    protected ?string $readabilityScore = '';
+    /**
+     * @var string
+     */
+    protected $readabilityScore;
 
     public function getFocuskeyphrase(): ?string
     {
         return $this->focusKeyphrase;
     }
 
-    public function setFocuskeyphrase(?string $focusKeyphrase): void
+    public function setFocuskeyphrase($focusKeyphrase): void
     {
         $this->focusKeyphrase = $focusKeyphrase;
     }
@@ -29,7 +44,7 @@ class SeoMeta
         return $this->metaTitle;
     }
 
-    public function setMetatitle(?string $metaTitle): void
+    public function setMetatitle($metaTitle): void
     {
         $this->metaTitle = $metaTitle;
     }
@@ -39,7 +54,7 @@ class SeoMeta
         return $this->metaDescription;
     }
 
-    public function setMetadescription(?string $metaDescription): void
+    public function setMetadescription($metaDescription): void
     {
         $this->metaDescription = $metaDescription;
     }
@@ -49,7 +64,7 @@ class SeoMeta
         return $this->seoScore;
     }
 
-    public function setSeoScore(?string $seoScore): void
+    public function setSeoScore($seoScore): void
     {
         $this->seoScore = $seoScore;
     }
@@ -59,7 +74,7 @@ class SeoMeta
         return $this->readabilityScore;
     }
 
-    public function setReadabilityScore(?string $readabilityScore): void
+    public function setReadabilityScore($readabilityScore): void
     {
         $this->readabilityScore = $readabilityScore;
     }
