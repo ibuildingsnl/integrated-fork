@@ -326,7 +326,7 @@ class ImportController extends AbstractController
 
         $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
 
-        $importType = ExecuteImporter::getImportType($importDefinition, $this->importFile);
+        $importType = ExecuteImporter::getImportType($importDefinition, $data, $this->importFile);
 
         $result = ExecuteImporter::initializeResult();
 
