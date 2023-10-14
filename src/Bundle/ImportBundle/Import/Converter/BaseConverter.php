@@ -570,6 +570,20 @@ class BaseConverter
                 continue;  // Skip processing for the specified fields
             }
 
+            if ($field === 'seo_metadata' || $field === 'address') {
+                foreach ($value as $childField => $childValue) {
+                    $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $childField)));
+
+                    // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
+                    $setterMethod = 'set' . $method;
+
+                    if (method_exists($newObject, $setterMethod)) {
+                        \call_user_func([$newObject, $setterMethod], $childValue);
+                    }
+                }
+                continue;
+            }
+
             $method = str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
 
             // Prefix with 'set' for setter methods, e.g., 'Title' becomes 'setTitle'
