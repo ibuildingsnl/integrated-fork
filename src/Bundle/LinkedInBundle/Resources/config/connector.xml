@@ -31,7 +31,7 @@
         <service id="td_connector.linkdin" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
             <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector" />
             <argument type="service" id="Integrated\Bundle\LinkedInBundle\Connector\LinkedInConfiguration" />
-            <argument type="service" id="integrated_content.services.flusher" />
+<!--            <argument type="service" id="logger" />-->
             <tag name="integrated_channel.connector" />
         </service>
 

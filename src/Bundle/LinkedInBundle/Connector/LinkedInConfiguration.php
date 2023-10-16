@@ -69,7 +69,7 @@ final class LinkedInConfiguration implements OauthConfigInterface
 
         // Try to get an access token (using the authorization code grant)
         $token = $client->getAccessToken('authorization_code', [
-            'code' => $_GET['code']
+            'code' => $event->getRequest()->get('code')
         ]);
 
         if (!$token) {

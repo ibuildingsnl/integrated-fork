@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\LinkedInBundle\Connector;
 
+use GuzzleHttp\Exception\ClientException;
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
@@ -36,10 +37,17 @@ final class LinkedInConnector implements ConnectorInterface
 
         $client = $this->factory->createClient($options->get('token'));
 
-        $message = $settings['foo'] ?? '';
-        if (!empty($message)) {
-            $message .= "\n\n";
-        }
+        $message = [
+            $settings['title'] ?? null,
+            $settings['text'] ?? null,
+            $this->linkMaker->urlFor($content, $channel),
+        ];
+
+        $message = implode("\n\n", $message);
+
+        $message2 = $settings["title"] . "\n\n" . $settings["text"] . "\n\n" . $this->linkMaker->urlFor($content, $channel);
+
+        $message3 = "We will share the complete journey from start to finish";
 
         $requestOptions['headers'] = [
             'LinkedIn-Version' => $linkedinVersion,
@@ -49,7 +57,7 @@ final class LinkedInConnector implements ConnectorInterface
 
         $requestOptions['body'] = '{
             "author": "urn:li:organization:' . $linkedinAuthor . '",
-            "commentary": ' . $message . ',
+            "commentary": "'. $message3 .'",
             "visibility": "LOGGED_IN",
             "distribution": {
               "feedDistribution": "MAIN_FEED",
@@ -60,18 +68,22 @@ final class LinkedInConnector implements ConnectorInterface
             "isReshareDisabledByAuthor": false
         }';
 
-        //to add a link to the article, turn it off for now:
-        //$message .= "https://".$this->linkMaker->urlFor($content, $channel);
+        $request = $client->getAuthenticatedRequest('POST', $linkedinPostArticleUrl, $options->get('token'), $requestOptions);
 
-        $response = $client->getAuthenticatedRequest('POST', $linkedinPostArticleUrl, $options->get('token'), $requestOptions);
+        try {
+            $response = $client->getResponse($request);
+        } catch (ClientException $e) {
+            dump('Code:');
+            dump($e->getCode());
+            dump('Message:');
+            dump($e->getMessage());
+        }
 
-        dd($response);
-
-        if (!isset($response['data']['id'])) {
+        if (!isset($response->getHeaders()["x-restli-id"][0])) {
             throw new CouldNotPublish('Could not publish to LinkedIn: ' . $this->getErrorFromResponse($response));
         }
 
-        return $response['data']['id'];
+        return str_replace("urn:li:share:", "", $response->getHeaders()["x-restli-id"][0]);
     }
 
     private function getErrorFromResponse(array $response): string
