@@ -29,6 +29,7 @@ class LatestArticleWidget implements WidgetInterface
     {
         $queryBuilder = $this->manager->createQueryBuilder(Article::class)
             ->field('channels.id')->equals($channel->getId())
+            //->field('authors')->equals($user->getId())
             ->sort('publishTime.startDate', 'desc')
             ->limit($this->amount);
         $mostRecentArticles = $queryBuilder->getQuery()->execute();

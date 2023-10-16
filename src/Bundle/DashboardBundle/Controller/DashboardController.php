@@ -38,31 +38,41 @@ class DashboardController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-
         $selectChannelForm = $this->createForm(ChannelChoiceType::class, null, [
             'multiple' => false,
             'return_object' => true, // true = object, false = ID
         ]);
+
+        $channel = $this->getChannel($request);
+        $renderedWidgets = $this->renderWidgets($channel, $user);
+
+        return $this->renderDashboardView($channel->getName(), $renderedWidgets, $selectChannelForm);
+    }
+
+    private function getChannel($request): \Integrated\Common\Content\Channel\ChannelInterface
+    {
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
-        $channel = $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
+        return $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
+    }
+
+    private function renderWidgets(Channel $channel, $user): array
+    {
         $renderedWidgets = [];
         foreach ($this->manager->getRepository(WidgetConfig::class)->findAll() as $config) {
-            /** @var WidgetInterface $widget */
             $widget = $this->widgets[$config->getWidgetName()] ?? null;
-            if (!$widget) {
-                continue;
+            if ($widget) {
+                $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel, $user));
             }
-            $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel,$user));
         }
-        //dd($renderedWidgets);
+        return $renderedWidgets;
+    }
 
-        // Render the view with the data
+    private function renderDashboardView(string $channelName, array $widgets, $selectChannelForm): Response
+    {
         return $this->render('@IntegratedDashboard/index.html.twig', [
-            "channelName" => $channel->getName(),
-            'widgets' => $renderedWidgets,
+            "channelName" => $channelName,
+            'widgets' => $widgets,
             "channelForm" => $selectChannelForm->createView(),
         ]);
     }
-
-
 }

@@ -24,8 +24,10 @@
         </service>
         <service id="Integrated\Bundle\DashboardBundle\Widgets\SitePerformancesWidget">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="guzzle" />
             <tag name="integrated_dashboard.widget" />
         </service>
+
     </services>
 </container>
