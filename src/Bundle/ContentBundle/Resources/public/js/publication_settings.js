@@ -73,11 +73,23 @@ document.querySelectorAll('.publication-settings-popup').forEach(function (setti
             });
             if (settings.querySelector('[data-apply-to]')?.value === 'type') {
                 // apply to all of this type
-                alert(
-                    '@todo: apply to all '+
-                    settings.querySelector('[data-channel-type]')?.dataset.channelType+
-                    ' channels'
-                )
+                const pubInputSelector = 'input,select,textarea';
+                const data = {};
+                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                    data[i] = input.value;
+                });
+                document.querySelectorAll(
+                    '.publication-settings[data-channel-type="' +
+                    settings.querySelector('[data-channel-type]')?.dataset.channelType +
+                    '"]'
+                ).forEach(function (container) {
+                    if (settings.contains(container)) {
+                        return;
+                    }
+                    container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                        input.value = data[i];
+                    });
+                });
             }
             ev.preventDefault();
         });
