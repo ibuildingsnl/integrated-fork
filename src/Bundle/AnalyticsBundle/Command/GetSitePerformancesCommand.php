@@ -80,7 +80,8 @@ class GetSitePerformancesCommand extends Command
             }
             $encodedUrl = urlencode($url);
             try {
-                $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$encodedUrl&category=PERFORMANCE";
+                $ApiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
+                $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$encodedUrl&category=PERFORMANCE&key=$ApiKey";
                 $response = $this->client->get($request);
                 if ($response->getStatusCode() === 200) {
                     $content = $response->getBody()->getContents();

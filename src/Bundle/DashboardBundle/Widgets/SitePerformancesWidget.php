@@ -41,19 +41,45 @@ class SitePerformancesWidget implements WidgetInterface
      */
     public function params(ChannelInterface $channel, User $user): array
     {
-        $channelPerformance = $this->manager->getRepository(SitePerformance::class)
-            ->findOneBy(
+        $channelPerformances = [];
+        $channelPerformances = $this->manager->getRepository(SitePerformance::class)
+            ->findBy(
                 ['channelID' => $channel->getId()],
-                ['dateTime' => 'DESC']
+                ['dateTime' => 'DESC'],
+                7
             );
-        if ($channelPerformance !== null) {
-            $siteSpeed = $channelPerformance->getSiteSpeed() ?? "No speed found";
-        } else {
-            $siteSpeed = "No performance data found";
+        if($channelPerformances != null)
+        {
+            $mostRecentSpeed = $this->MilliToSecond($channelPerformances[0]->getSiteSpeed());
+            $averageSpeed = $this->getAverageSpeed($channelPerformances);
         }
         return [
-            'siteSpeed' => $siteSpeed
+            'mostRecentSpeed' => $mostRecentSpeed ?? "Data not found",
+            'averageSpeed' => $averageSpeed ?? "Data not found"
         ];
 
+    }
+
+    private function getAverageSpeed(array $channelPerformances): float
+    {
+        $totalSpeed = 0;
+        $count = 0;
+        $averageSpeed = 0;
+        foreach ($channelPerformances as $performance) {
+            $speed = $performance->getSiteSpeed();
+            if ($speed !== null) {
+                $totalSpeed += $speed;
+                $count++;
+            }
+        }
+        if ($count > 0) {
+            $averageSpeed = $totalSpeed / $count;
+        }
+        return $this->MilliToSecond($averageSpeed) ?? "No data found";
+    }
+
+    private function MilliToSecond(float $milliValue): float
+    {
+        return round($milliValue / 1000, 2);
     }
 }
