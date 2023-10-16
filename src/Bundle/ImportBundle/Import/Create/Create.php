@@ -81,23 +81,42 @@ class Create
      *
      * @return StorageInterface|void
      */
-    public static function createFileFromUrl($href, $newObject, $newData, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false)
-    {
+    public static function createFileFromUrl(
+        $href,
+        $newObject,
+        $newData,
+        $importDefinition,
+        $storageManager,
+        $documentManager,
+        $title = false,
+        $setFeatured = false
+    ) {
         // TODO: This needs to be made more dynamic for File and Image type.
         $result = ExecuteImporter::initializeResult();
 
-        $href = self::maybeFetchRedirectUrl($href);
+        try {
+            $checkResult = self::maybeFetchRedirectUrl($href);
+        } catch (\Exception $e) {
+            $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br(
+                    $e->getTraceAsString()
+                ) . ' ' . $e->getFile() . ' ' . $e->getLine();
+        }
+
+        $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+        $href = $checkResult['url'];
 
         $extension = pathinfo($href, \PATHINFO_EXTENSION);
 
-        if ($extension === '') {
+        if ($extension === '' || !in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf'])) {
+            $result['messages'][] = "[INFO] No valid image has been found at {$href}";
+
             return [
                 'file' => false,
                 'result' => $result,
             ];
         }
 
-        $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
+        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
@@ -124,14 +143,20 @@ class Create
         if (!$title) {
             $title = parse_url($href, \PHP_URL_PATH);
             $title = basename($title);
-            $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+            $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
         }
 
         if (\in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
-            $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getImageContentType());
+            $targetContentType = $documentManager->find(
+                ContentType::class,
+                $importDefinition->getImageContentType()
+            );
             $contentType = $importDefinition->getImageContentType();
         } else {
-            $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getFileContentType());
+            $targetContentType = $documentManager->find(
+                ContentType::class,
+                $importDefinition->getFileContentType()
+            );
             $contentType = $importDefinition->getFileContentType();
         }
 
@@ -145,7 +170,7 @@ class Create
             $newFile = $targetContentType->create();
 
             $documentManager->persist($newFile);
-
+            //TODO Set Category for channel :)
             $newFile->setFile($storage);
             $newFile->setTitle($title);
             $newFile->getMetadata()->set('importDate', date('Ymd'));
@@ -179,17 +204,24 @@ class Create
         ];
     }
 
-    public static function maybeCreateParent($title, $contentType, $documentManager, $importDefinition) {
+    public
+    static function maybeCreateParent(
+        $title,
+        $contentType,
+        $documentManager,
+        $importDefinition
+    ) {
         //TODO: This will be problematic when importing content into multiple channels.
         $result = ExecuteImporter::initializeResult();
         foreach ($importDefinition->getChannels() as $channel) {
             $brandName = str_ireplace(' Website', '', $channel->getName());
             if (!$parentBrandTaxonomy = $documentManager->getRepository(Content::class)
-                                           ->createQueryBuilder()->select()
-                                           ->field('title')->equals($brandName)
-                                           ->field('parent_id')->exists(false)
-                                           ->limit(1)->getQuery()
-                                           ->getSingleResult()) {
+                                                        ->createQueryBuilder()->select()
+                                                        ->field('title')->equals($brandName)
+                                                        ->field('contentType')->equals($contentType->getId())
+                                                        ->field('parent_id')->exists(false)
+                                                        ->limit(1)->getQuery()
+                                                        ->getSingleResult()) {
                 $parentBrandTaxonomy = $contentType->create();
                 $parentBrandTaxonomy->setTitle($brandName);
                 $parentBrandTaxonomy->setSlug($brandName);
@@ -205,12 +237,14 @@ class Create
             $parent = false;
 
             if (strlen($title) > 0 && !$parent = $documentManager->getRepository(Content::class)
-                                           ->createQueryBuilder()->select()
-                                           ->field('title')->equals($title)
-                                           ->field('parent_id')->equals($parentBrandTaxonomy->getId())
-                                           ->field('channels.$id')->equals($channel->getId())
-                                           ->limit(1)->getQuery()
-                                           ->getSingleResult()) {
+                                                                 ->createQueryBuilder()->select()
+                                                                 ->field('title')->equals($title)
+                                                                 ->field('parent_id')->equals(
+                        $parentBrandTaxonomy->getId()
+                    )
+                                                                 ->field('channels.$id')->equals($channel->getId())
+                                                                 ->limit(1)->getQuery()
+                                                                 ->getSingleResult()) {
                 $parent = $contentType->create();
                 $parent->setTitle($title);
                 $parent->setSlug($title);
@@ -225,7 +259,8 @@ class Create
             }
 
             if ($parent) {
-                $result['messages'][] = '[INFO] Parent ' . $parent->getTitle() . ' found for: ' . $title . ' - Taxonomy (' . $title . ') will be linked to it';
+                $result['messages'][] = '[INFO] Parent ' . $parent->getTitle(
+                    ) . ' found for: ' . $title . ' - Taxonomy (' . $title . ') will be linked to it';
             }
         }
         return [
@@ -237,6 +272,8 @@ class Create
 
     private static function maybeFetchRedirectUrl($url)
     {
+        $result = ExecuteImporter::initializeResult();
+
         $ch = curl_init();
 
         curl_setopt($ch, \CURLOPT_URL, $url);
@@ -247,15 +284,21 @@ class Create
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            echo 'Curl error: '.curl_error($ch);
+            $result['messages'][] = "[WARNING] Curl error when trying to fetch: " . curl_error($ch);
             curl_close($ch);
 
-            return;
+            return [
+                'url' => $url,
+                'result' => $result,
+            ];
         }
 
         $effectiveUrl = curl_getinfo($ch, \CURLINFO_EFFECTIVE_URL);  // Get the final URL after all redirects
         curl_close($ch);
 
-        return $effectiveUrl;
+        return [
+            'url' => $effectiveUrl,
+            'result' => $result,
+        ];
     }
 }

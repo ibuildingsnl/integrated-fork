@@ -16,7 +16,6 @@ class WP
         $imgIds = [];
 
         $content = str_ireplace('alt=" width', 'alt="" width', $content);
-        $content = str_ireplace('<p>&nbsp;</p>', '', $content);
 
         // TODO: Add support for gallery.
         $content = preg_replace_callback(
@@ -80,6 +79,8 @@ class WP
         $content = str_ireplace('<h4>Wil je meer te weten komen over woningaanpassingen? <a href="https://supportmagazine.nl/abonneren/" target="_blank" rel="noopener">Neem dan nu extra voordelig een abonnement op Support Magazine!</a></h4>', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
+        $content = str_ireplace('<p>&nbsp;</p>', '', $content);
+        $content = str_ireplace('<p> </p>', '', $content);
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
 

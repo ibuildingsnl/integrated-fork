@@ -324,29 +324,50 @@ class ImportController extends AbstractController
 
         $start = $request->get('start', 1);
 
-        $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+        if ($request->getSession()->has('import_data')) {
+            $data = $request->getSession()->get('import_data');
+        } else {
+            $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+            $request->getSession()->set('import_data', $data);
+        }
 
-        $importType = ExecuteImporter::getImportType($importDefinition, $data, $this->importFile);
+        if ($start < 1 || !$request->getSession()->has('import_type')) {
+            $importType = ExecuteImporter::getImportType($importDefinition, $data, $this->importFile);
+            $request->getSession()->set('import_type', $importType);
+        } else {
+            $importType = $request->getSession()->get('import_type');
+        }
+
+        if ($start < 1 || !$request->getSession()->has('content_type')) {
+            $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
+            $request->getSession()->set('content_type', $contentType);
+        } else {
+            $contentType = $request->getSession()->get('content_type');
+        }
+
+        if ($start < 1 || !$request->getSession()->has('field_mapping')) {
+            $fieldMapping = [];
+            foreach ($importDefinition->getFields() as $field) {
+                $fieldMapping[$field->getSourceField()] = $field->getMappedField();
+            }
+            $request->getSession()->set('field_mapping', $fieldMapping);
+        } else {
+            $fieldMapping = $request->getSession()->get('field_mapping');
+        }
 
         $result = ExecuteImporter::initializeResult();
 
-        if ($start < 1) {
-            $result['messages'][] = "[STARTING IMPORT] New import, recognized format is {$importType}";
-        }
-
-        $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
-
-        $fieldMapping = [];
-        foreach ($importDefinition->getFields() as $field) {
-            $fieldMapping[$field->getSourceField()] = $field->getMappedField();
-        }
-
         $totalRowNumber = \count($data);
-        $rowsPerRequest = max(10, min(500, (int)$totalRowNumber / 10));
+        $rowsPerRequest = min(100, max(10, min(500, (int)$totalRowNumber / 10)));
 
         if ($start <= 1) {
             $start = 0;
             $rowsPerRequest = 10;
+            $request->getSession()->remove('import_data');
+            $request->getSession()->remove('import_type');
+            $request->getSession()->remove('field_mapping');
+            $request->getSession()->remove('content_type');
+            $result['messages'][] = "[STARTING IMPORT] New import, recognized format is {$importType}";
         }
 
         $rowNumber = -1;
@@ -375,7 +396,6 @@ class ImportController extends AbstractController
             BaseConverter::processDateFields($newData);
 
             if (\count($newData)) {
-                $newObject = $contentType->create();
                 $updating = false;
                 $checkResult = BaseConverter::checkForExistingContent(
                     $importDefinition,
@@ -387,7 +407,11 @@ class ImportController extends AbstractController
                 if ($checkResult['target'] != null) {
                     $newObject = $checkResult['target'];
                     $updating = true;
+                    //TODO: Make skipping existing data optional
+                    $result['messages'][] = "[EXISTING ITEM] Existing item found, skipping: {$newData['title']}";
+                    continue;
                 } else {
+                    $newObject = $contentType->create();
                     if (\array_key_exists('title', $newData)) {
                         $result['messages'][] = "[NEW ITEM] New item found, creating: {$newData['title']}";
                     }
@@ -474,7 +498,7 @@ class ImportController extends AbstractController
                         ++$col;
                     }
 
-                    if (!in_array('field-author', $fieldMapping)) {
+                    if (!in_array('author-author', $fieldMapping)) {
                         $checkResult = BaseConverter::authorProcessor(
                             $row,
                             $newObject,

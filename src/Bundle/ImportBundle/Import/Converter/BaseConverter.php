@@ -161,12 +161,29 @@ class BaseConverter
         $tags = ['a', 'img'];
         foreach ($tags as $tag) {
             foreach ($html->find($tag) as $element) {
-                if (!$importDefinition->getImageContentType() || !$importDefinition->getImageRelation()) {
-                    continue;
-                }
-
                 $href = ($tag == 'a') ? $element->href : $element->src;
                 $title = ($tag == 'a') ? false : $element->title;
+
+                if (!$importDefinition->getImageContentType()) {
+                    $fileContentType = 'image';
+                } else {
+                    $fileContentType = $importDefinition->getImageContentType();
+                }
+
+                if (!$importDefinition->getImageRelation()) {
+                    $fileRelationId = '__editor_image';
+                    $fileRelationType = 'embedded';
+                } else {
+                    $fileRelationId = $importDefinition->getImageRelation()->getId();
+                    $fileRelationType = $importDefinition->getImageRelation()->getType();
+                }
+
+                if (stripos($href, '.pdf')) {
+                    $fileContentType = $importDefinition->getFileContentType();
+                    $fileRelationId = $importDefinition->getFileRelation()->getId();
+                    $fileRelationType = $importDefinition->getFileRelation()->getType();
+                }
+
 
                 if (strpos($href, '/') === 0) {
                     if (!$importDefinition->getWebsiteBaseUrl()) {
@@ -226,19 +243,20 @@ class BaseConverter
                     }
 
                     $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
-                    $relationType = $tag == 'img' ? 'embedded' : $importDefinition->getImageRelation()->getType();
-                    $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
+                    $relationType = $tag == 'img' ? 'embedded' : $fileRelationType;
+                    $relationId = $tag == 'img' ? '__editor_image' : $fileRelationId;
 
-                    $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') && array_search(
-                                                                                                             $image->getId(
-                                                                                                             ),
-                                                                                                             array_column(
-                                                                                                                 $newObject->getReferencesByRelationType(
-                                                                                                                     'embedded'
-                                                                                                                 ),
-                                                                                                                 'id'
-                                                                                                             )
-                                                                                                         ) !== false;
+                    $skipImage = $tag == 'img'
+                                 && $newObject->getReferencesByRelationType('embedded')
+                                 && array_search(
+                                        $image->getId(),
+                                        array_column(
+                                            $newObject->getReferencesByRelationType(
+                                                'embedded'
+                                            ),
+                                            'id'
+                                        )
+                                    ) !== false;
 
                     $relation->setRelationType($relationType);
                     $relation->setRelationId($relationId);
@@ -276,6 +294,7 @@ class BaseConverter
     ) {
         $result = ExecuteImporter::initializeResult();
 
+        //Should only be mapped if there is a list of authors which is comma seperated
         if (strpos($mappedField, 'author-') === 0) {
             self::processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager);
         }
@@ -416,6 +435,7 @@ class BaseConverter
                         $title = str_ireplace(' Website', '', $channel->getName());
                         if (!$parent = $documentManager->getRepository(Content::class)
                                                        ->createQueryBuilder()->select()
+                                                       ->field('contentType')->equals($targetContentType->getId())
                                                        ->field('title')->equals($title)
                                                        ->field('parent_id')->exists(false)
                                                        ->limit(1)->getQuery()
@@ -438,35 +458,47 @@ class BaseConverter
 
                         $valueName = trim($valueName);
 
-                        $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
-                            [
-                                'title' => $valueName,
-                                'contentType' => $targetContentType->getId(),
-                                'parent_id' => $parent->getId(),
-                            ]
-                        );
+                        $allCategories = preg_split('/[|,]/', $valueName);
 
-                        if (!$existingDocument) {
-                            $existingDocument = $targetContentType->create();
+                        foreach ($allCategories as $categoryPath) {
 
-                            if (strpos($valueName, 'http') !== false) {
-                                $existingDocument->setTitle(basename($valueName)); // not sure we need this
-                            } else {
-                                $existingDocument->setTitle($valueName);
+                            $categories = explode('>', $categoryPath);
+
+                            $parent = null;
+
+                            foreach ($categories as $categoryName) {
+                                $categoryName = trim($categoryName);
+
+                                $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
+                                    [
+                                        'title' => $categoryName,
+                                        'contentType' => $targetContentType->getId(),
+                                        'parent_id' => $parent ? $parent->getId() : null,
+                                    ]
+                                );
+
+                                if (!$existingDocument) {
+                                    $existingDocument = $targetContentType->create();
+
+                                    $existingDocument->setTitle(ucfirst($categoryName));
+                                    $existingDocument->setParentId($parent ? $parent->getId() : null);
+                                    $existingDocument->getMetadata()->set('importDate', date('Ymd'));
+                                    $existingDocument->getMetadata()->set('externalId', $categoryName);
+                                    $existingDocument->getMetadata()->set(
+                                        'importWebsiteBaseUrl',
+                                        $importDefinition->getWebsiteBaseUrl()
+                                    );
+
+                                    $existingDocument->addChannel($channel);
+
+                                    $documentManager->persist($existingDocument);
+                                    $documentManager->flush();
+                                }
+
+                                $parent = $existingDocument;
+
+                                $newRelation->addReference($existingDocument);
                             }
-
-                            $existingDocument->setParentId($parent->getId());
-                            $existingDocument->getMetadata()->set('importDate', date('Ymd'));
-                            $existingDocument->getMetadata()->set('externalId', $valueName);
-                            $existingDocument->getMetadata()->set(
-                                'importWebsiteBaseUrl',
-                                $importDefinition->getWebsiteBaseUrl()
-                            );
-
-                            $existingDocument->addChannel($channel);
-
-                            $documentManager->persist($existingDocument);
-                            $documentManager->flush();
                         }
                     }
                 } else {
@@ -566,7 +598,7 @@ class BaseConverter
         $result = ExecuteImporter::initializeResult();
 
         foreach ($newData as $field => $value) {
-            if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
+            if ($field === 'created_at' || $field === 'updated_at' || $field === 'publish_time.start_date' || $field === 'publish_time.end_date') {
                 continue;  // Skip processing for the specified fields
             }
 
@@ -594,7 +626,7 @@ class BaseConverter
                 $setterMethod = 'is' . ucfirst($field);
             }
 
-            if ($field === 'parent_id' && strlen($value) != 32) {
+            if ($field === 'parent_id' && strlen($value) === 32) {
                 if (method_exists($newObject, 'setParentId')) {
                     \call_user_func([$newObject, 'setParentId'], $value);
                 }
@@ -632,9 +664,13 @@ class BaseConverter
                     true
                 );
                 $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
-                $newObject->setFeaturedImage($checkResult['file']);
+
+                if ($checkResult['file']) {
+                    $newObject->setFeaturedImage($checkResult['file']);
+                }
                 continue;
             }
+
 
             if (method_exists($newObject, $setterMethod)) {
                 \call_user_func([$newObject, $setterMethod], $value);
@@ -702,6 +738,7 @@ class BaseConverter
         $result = ExecuteImporter::initializeResult();
 
         if (array_key_exists('Author ID', $row)) {
+            $newObject->getAuthors()->clear();
             $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getAuthorContentType());
             $authorId = $row['Author ID'];
             $firstName = $row['Author First Name'];
