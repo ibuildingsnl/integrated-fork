@@ -35,6 +35,7 @@
         "doctrine/orm": "^2.13.0",
         "endroid/qr-code-bundle": "^4.0",
         "excelwebzone/recaptcha-bundle": "^1.5",
+        "google/apiclient": "^2.15.0",
         "gregwar/image": ">=2.0.25",
         "gregwar/image-bundle": "^v3.0.1",
         "guzzlehttp/guzzle": "^7.5",
