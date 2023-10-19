@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\EventListener;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -19,12 +19,12 @@ use Symfony\Component\Form\FormEvents;
 class ChannelPermissionListener implements EventSubscriberInterface
 {
     /**
-     * @var Channel[]
+     * @var ChannelInterface[]
      */
     private $notPermittedChannels;
 
     /**
-     * @param Channel[] $notPermittedChannels
+     * @param ChannelInterface[] $notPermittedChannels
      */
     public function __construct(array $notPermittedChannels)
     {

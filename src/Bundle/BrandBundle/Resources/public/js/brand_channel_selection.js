@@ -39,8 +39,6 @@ function asideBrandSearch(el) {
 
 function openChannelList(input, toggle) {
     const brandContainer = input.closest('.brand-container');
-console.log(toggle);
-    console.log(brandContainer);
 
     if (toggle === false) {
         console.log('toggle is false');

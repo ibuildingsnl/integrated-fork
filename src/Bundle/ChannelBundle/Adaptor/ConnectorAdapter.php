@@ -12,7 +12,6 @@ use Integrated\Common\Channel\Connector\ConfigurableInterface;
 use Integrated\Common\Channel\Connector\ConfigurationInterface;
 use Integrated\Common\Channel\Connector\ExporterInterface;
 use Integrated\Common\Channel\Exporter\ExportableInterface;
-use Integrated\Common\Services\Flusher;
 use Psr\Log\LoggerInterface;
 
 final class ConnectorAdapter implements AdapterInterface, ConfigurableInterface, ConfigurationInterface, ExportableInterface
@@ -42,7 +41,8 @@ final class ConnectorAdapter implements AdapterInterface, ConfigurableInterface,
 
     public function getExporter(ConfigInterface $config): ExporterInterface
     {
-        assert($config instanceof ModelConfigInterface);
+        \assert($config instanceof ModelConfigInterface);
+
         return new Exporter($this->connector, $config, $this->logger);
     }
 }

@@ -11,7 +11,6 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter\Queue;
 
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Common\Channel\ChannelManagerInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializer;
@@ -159,7 +158,7 @@ class RequestSerializerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel($id)
     {
-        $mock = $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        $mock = $this->createMock(ChannelInterface::class);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($id);

@@ -5,8 +5,8 @@ namespace Integrated\Bundle\ChannelBundle\Services;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\PublishTimeInterface;
 use Stratadox\Clock\Clock;
 
@@ -39,6 +39,7 @@ class ChannelDistributor
     {
         if ($content->isDisabled()) {
             $this->push($content, $channel, false);
+
             return;
         }
         $this->scheduleDistributionWindow(
@@ -80,6 +81,7 @@ class ChannelDistributor
         if (!isset(self::$maxDate)) {
             self::$maxDate = new \DateTimeImmutable(PublishTimeInterface::DATE_MAX);
         }
+
         return self::$maxDate;
     }
 }

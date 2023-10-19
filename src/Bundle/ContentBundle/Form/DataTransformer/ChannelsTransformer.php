@@ -52,8 +52,8 @@ class ChannelsTransformer implements DataTransformerInterface
 
             foreach ($value['defaults'] as $channel) {
                 $defaults[$channel['id']]['selected'] = true;
-                $defaults[$channel['id']]['restrict'] = isset($channel['restrict']) ? (bool) $channel['restrict'] : false;
-                $defaults[$channel['id']]['enforce'] = isset($channel['enforce']) ? (bool) $channel['enforce'] : false;
+                $defaults[$channel['id']]['restrict'] = isset($channel['restrict']) && $channel['restrict'];
+                $defaults[$channel['id']]['enforce'] = isset($channel['enforce']) && $channel['enforce'];
             }
         }
 
@@ -95,14 +95,14 @@ class ChannelsTransformer implements DataTransformerInterface
         }
 
         foreach ($value['defaults'] as $id => $options) {
-            if ($options['selected']) {
+            if ($options['selected'] ?? false) {
                 $result['defaults'][$id] = [
                     'id' => $id,
-                    'restrict' => $options['restrict'] ? true : false,
-                    'enforce' => $options['enforce'] ? true : false,
+                    'restrict' => (bool)$options['restrict'],
+                    'enforce' => (bool)$options['enforce'],
                 ];
             }
-            if ($options['restrict'] == true) {
+            if ($options['restrict'] ?? false) {
                 $result['restricted'][] = $id;
             }
         }

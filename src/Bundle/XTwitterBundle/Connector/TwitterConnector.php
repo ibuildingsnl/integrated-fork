@@ -6,7 +6,7 @@ use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 
 final class TwitterConnector implements ConnectorInterface
@@ -41,7 +41,7 @@ final class TwitterConnector implements ConnectorInterface
         $response = $client->post('tweets', ['text' => implode("\n\n", $message)], true);
 
         if (!isset($response['data']['id'])) {
-            throw new CouldNotPublish('Could not publish to twitter: ' . $this->getErrorFromResponse($response));
+            throw new CouldNotPublish('Could not publish to twitter: '.$this->getErrorFromResponse($response));
         }
 
         return $response['data']['id'];

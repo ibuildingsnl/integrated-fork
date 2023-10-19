@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Channel\Exporter\Queue;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\ChannelManagerInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 

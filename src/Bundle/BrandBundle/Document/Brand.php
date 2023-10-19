@@ -4,10 +4,10 @@ namespace Integrated\Bundle\BrandBundle\Document;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\BrandBundle\Form\Type\ChannelLinkType;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class Brand
 {
@@ -59,7 +59,8 @@ class Brand
         return false;
     }
 
-    public function linkTypeForChannel(ChannelInterface $channel): ?LinkType
+    /** @deprecated */
+    public function linkTypeForChannel(ChannelInterface $channel): ?ChannelType
     {
         foreach ($this->channelLinks as $link) {
             if ($link->channel->getId() === $channel->getId()) {

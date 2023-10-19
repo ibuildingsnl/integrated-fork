@@ -25,6 +25,7 @@ final class ArticleMother
         $a->setTitle('title');
         $a->setContent('content');
         $a->setId(random_bytes(32));
+
         return $a;
     }
 
@@ -32,6 +33,7 @@ final class ArticleMother
     {
         $a = $this->withoutChannels();
         $a->addChannel($id ? ChannelMother::withId($id) : ChannelMother::make());
+
         return $a;
     }
 
@@ -48,6 +50,7 @@ final class ArticleMother
         $a->setPublishTime($publishTime);
         $a->addChannel($c);
         $this->publications->add(new Publication($a, $c, $publishTime, $publicationSettings));
+
         return $a;
     }
 
@@ -79,6 +82,7 @@ final class ArticleMother
             $p->setEndDate($max);
         }
         $a->setPublishTime($p);
+
         return $a;
     }
 
@@ -86,6 +90,7 @@ final class ArticleMother
     {
         $a = $this->withChannel();
         $a->setDisabled(true);
+
         return $a;
     }
 }

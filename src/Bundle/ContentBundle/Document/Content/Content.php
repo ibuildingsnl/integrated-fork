@@ -13,7 +13,6 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
@@ -49,7 +48,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $channels;
 
     /**
-     * @var Channel
+     * @var ChannelInterface
      */
     protected $primaryChannel;
 
@@ -585,7 +584,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return Channel|null
+     * @return ChannelInterface|null
      */
     public function getPrimaryChannel()
     {

@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ChannelBundle\Command;
 
-use Integrated\Common\Channel\Exporter\QueueExporter;
 use Integrated\Common\Channel\Exporter\QueueExporterInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;

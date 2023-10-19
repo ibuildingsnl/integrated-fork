@@ -11,11 +11,11 @@
 
 namespace Integrated\Common\Channel\Tests\Exporter;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterInterface;
 use Integrated\Common\Channel\Exporter\Queue\Request;
 use Integrated\Common\Channel\Exporter\Queue\RequestSerializerInterface;
 use Integrated\Common\Channel\Exporter\QueueExporter;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Queue\QueueInterface;
 use Integrated\Common\Queue\QueueMessageInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -218,6 +218,6 @@ class QueueExporterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        return $this->createMock(ChannelInterface::class);
     }
 }

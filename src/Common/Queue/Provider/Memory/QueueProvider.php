@@ -68,7 +68,7 @@ class QueueProvider implements QueueProviderInterface
         $limit = (int) $limit;
         $limit = $limit > 1 ? $limit : 1;
 
-        return array_slice($this->currentlyAvailable($channel), 0, $limit);
+        return \array_slice($this->currentlyAvailable($channel), 0, $limit);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,6 +23,7 @@ class PublicationsType extends AbstractType
                 'attr' => [
                     'class' => 'publication-settings',
                     'data-publication-channel' => $channel->getId(),
+                    'data-channel-type' => $channel->getType()?->getName() ?: 'N/A',
                 ],
                 'settings' => $this->publicationSettings->settingTypeFor($channel),
                 'label' => $channel->getName(),

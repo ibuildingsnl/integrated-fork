@@ -8,7 +8,7 @@ use Integrated\Bundle\BrandBundle\Event\BrandAddedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandRemovedEvent;
 use Integrated\Bundle\BrandBundle\Event\BrandUpdatedEvent;
 use Integrated\Bundle\BrandBundle\Form\Type\BrandType;
-use Integrated\Bundle\BrandBundle\Infrastructure\LinkTypeRegistry;
+use Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeRegistry;
 use Integrated\Bundle\ContentBundle\Form\Type\ActionsType;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +20,7 @@ class BrandController extends AbstractController
 {
     public function __construct(
         private readonly BrandRepository $brands,
-        private readonly LinkTypeRegistry $linkTypeRegistry,
+        private readonly ChannelTypeRegistry $linkTypeRegistry,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly Flusher $flusher,
     ) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Integrated\Bundle\BrandBundle\Infrastructure;
+namespace Integrated\Bundle\ContentBundle\Infrastructure;
 
-use Integrated\Bundle\BrandBundle\Document\LinkType;
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 
-class LinkTypeFactory
+class ChannelTypeFactory
 {
     public function __construct(
         public readonly string $id,
@@ -15,9 +15,9 @@ class LinkTypeFactory
     ) {
     }
 
-    public function create(): LinkType
+    public function create(): ChannelType
     {
-        return new LinkType(
+        return new ChannelType(
             $this->id,
             $this->name,
             $this->canBePrimary,

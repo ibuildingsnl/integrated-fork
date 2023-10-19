@@ -2,14 +2,16 @@
 
 namespace Integrated\Bundle\BrandBundle\Document;
 
+use Integrated\Bundle\ContentBundle\Document\Channel\ChannelType;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 class ChannelLink
 {
     private ?string $id = null;
 
+    // @todo remove type, use channel's type
     public function __construct(
-        public LinkType $type,
+        public ChannelType $type,
         public ?ChannelInterface $channel,
         public bool $default,
     ) {

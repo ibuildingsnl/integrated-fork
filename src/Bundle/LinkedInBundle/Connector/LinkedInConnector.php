@@ -7,9 +7,9 @@ use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use PHPUnit\Util\Xml\Exception;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 final class LinkedInConnector implements ConnectorInterface
 {

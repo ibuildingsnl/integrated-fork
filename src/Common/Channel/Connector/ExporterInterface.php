@@ -11,8 +11,8 @@
 
 namespace Integrated\Common\Channel\Connector;
 
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Exporter\ExporterResponse;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 interface ExporterInterface
 {

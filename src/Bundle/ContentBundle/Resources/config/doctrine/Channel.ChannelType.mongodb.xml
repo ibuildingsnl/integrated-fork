@@ -3,7 +3,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Integrated\Bundle\BrandBundle\Document\LinkType">
+    <document name="Integrated\Bundle\ContentBundle\Document\Channel\ChannelType">
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />

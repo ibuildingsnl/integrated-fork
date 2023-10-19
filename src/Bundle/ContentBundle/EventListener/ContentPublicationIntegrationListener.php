@@ -62,7 +62,7 @@ class ContentPublicationIntegrationListener implements EventSubscriberInterface
                     unset($data['time']);
                 }
                 $this->publications->add(
-                    new Publication($content, $channel, $time, is_array($data) ? $data : [])
+                    new Publication($content, $channel, $time, \is_array($data) ? $data : [])
                 );
             }
         });

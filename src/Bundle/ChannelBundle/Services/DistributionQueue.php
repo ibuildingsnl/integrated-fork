@@ -27,8 +27,10 @@ class DistributionQueue implements \Countable
             $request = $this->serializer->deserialize($message->getPayload());
             if ($request instanceof Request) {
                 $message->delete();
+
                 return $request;
             }
+
             return null;
         }, $this->queue->pull($limit)));
     }

@@ -42,6 +42,8 @@ class Channel implements ChannelInterface
     #[Assert\NotBlank]
     protected $name;
 
+    protected ?ChannelType $type;
+
     /**
      * @var Image
      */
@@ -125,7 +127,7 @@ class Channel implements ChannelInterface
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -145,9 +147,21 @@ class Channel implements ChannelInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this->name;
+        return $this->name ?: '';
+    }
+
+    public function getType(): ?ChannelType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ChannelType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getLogo(): ?Image
@@ -323,7 +337,7 @@ class Channel implements ChannelInterface
     /**
      * @return string
      */
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?string
     {
         return $this->primaryDomain;
     }
@@ -339,7 +353,7 @@ class Channel implements ChannelInterface
     /**
      * @return bool
      */
-    public function getPrimaryDomainRedirect()
+    public function getPrimaryDomainRedirect(): bool
     {
         return $this->primaryDomainRedirect;
     }

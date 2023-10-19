@@ -19,6 +19,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Content;
 
 /**
  * @todo Move to either custom events or services, rather than triggering business logic in a lifecycle callback
+ *
  * @see https://youtu.be/rzGeNYC3oz0?t=1507
  */
 class ChannelDistributionListener implements EventSubscriber
