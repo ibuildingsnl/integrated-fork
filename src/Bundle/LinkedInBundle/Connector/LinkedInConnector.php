@@ -9,6 +9,7 @@ use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
+use PHPUnit\Util\Xml\Exception;
 
 final class LinkedInConnector implements ConnectorInterface
 {
@@ -37,6 +38,14 @@ final class LinkedInConnector implements ConnectorInterface
 
         $client = $this->factory->createClient($options->get('token'));
 
+        try {
+            dd($client->getResourceOwner($options->get('token')));
+        } catch (Exception $e) {
+            dd($e);
+        }
+
+//        $options->set('user', $user);
+
         $message = [
             $settings['title'] ?? null,
             $settings['text'] ?? null,
@@ -47,7 +56,7 @@ final class LinkedInConnector implements ConnectorInterface
 
         $message2 = $settings["title"] . "\n\n" . $settings["text"] . "\n\n" . $this->linkMaker->urlFor($content, $channel);
 
-        $message3 = "We will share the complete journey from start to finish";
+//        $message3 = "We will share the complete journey from start to finish";
 
         $requestOptions['headers'] = [
             'LinkedIn-Version' => $linkedinVersion,
@@ -57,7 +66,7 @@ final class LinkedInConnector implements ConnectorInterface
 
         $requestOptions['body'] = '{
             "author": "urn:li:organization:' . $linkedinAuthor . '",
-            "commentary": "'. $message3 .'",
+            "commentary": "'. $message2 .'",
             "visibility": "LOGGED_IN",
             "distribution": {
               "feedDistribution": "MAIN_FEED",
