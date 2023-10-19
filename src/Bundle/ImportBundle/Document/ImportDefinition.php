@@ -101,6 +101,16 @@ class ImportDefinition
     private $connectionQuery;
 
     /**
+     * @var bool
+     */
+    private $updateExisting;
+
+    /**
+     * @var bool
+     */
+    private $removeFirstImage;
+
+    /**
      * ImportDefition constructor.
      */
     public function __construct()
@@ -277,6 +287,26 @@ class ImportDefinition
     public function setFileRelation(?Relation $fileRelation): void
     {
         $this->fileRelation = $fileRelation;
+    }
+
+    public function getUpdateExisting(): ?bool
+    {
+        return $this->updateExisting;
+    }
+
+    public function setUpdateExisting(bool $updateExisting): void
+    {
+        $this->updateExisting = $updateExisting;
+    }
+
+    public function getRemoveFirstImage(): ?bool
+    {
+        return $this->removeFirstImage;
+    }
+
+    public function setRemoveFirstImage(bool $removeFirstImage): void
+    {
+        $this->removeFirstImage = $removeFirstImage;
     }
 
     public function getAuthorContentType(): ?string

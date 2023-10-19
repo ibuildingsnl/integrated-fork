@@ -41,10 +41,8 @@ class ExecuteImporter
             foreach ($value as $columnKey => $columnValue) {
                 if (strpos($columnValue, 'wp-content') !== false) {
                     $is_wordpress_export = true;
+                    break;
                 }
-            }
-            if ($key > 5) {
-                break;
             }
         }
 
