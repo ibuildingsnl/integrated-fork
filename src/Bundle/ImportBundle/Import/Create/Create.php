@@ -9,6 +9,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
+use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\ImportBundle\Import\Converter\ExecuteImporter;
 use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
@@ -81,23 +82,32 @@ class Create
      *
      * @return StorageInterface|void
      */
-    public static function createFileFromUrl($href, $newObject, $newData, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false)
-    {
-        // TODO: This needs to be made more dynamic for File and Image type.
+    public static function createFileFromUrl($href, $newObject, $newData, $importDefinition, $storageManager, $documentManager, $title = false, $setFeatured = false) {
         $result = ExecuteImporter::initializeResult();
 
-        $href = self::maybeFetchRedirectUrl($href);
+        try {
+            $checkResult = self::maybeFetchRedirectUrl($href);
+        } catch (\Exception $e) {
+            $result['errors'][] = 'Item ' . (string)$newObject . ' failed: ' . $e->getMessage() . ' ' . nl2br(
+                    $e->getTraceAsString()
+                ) . ' ' . $e->getFile() . ' ' . $e->getLine();
+        }
+
+        $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+        $href = $checkResult['url'];
 
         $extension = pathinfo($href, \PATHINFO_EXTENSION);
 
-        if ($extension === '') {
+        if ($extension === '' || !in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf'])) {
+            $result['messages'][] = "[INFO] No valid image or file has been found at {$href}";
+
             return [
                 'file' => false,
                 'result' => $result,
             ];
         }
 
-        $tmpfile = tempnam('/tmp/', 'img').'.'.pathinfo($href, \PATHINFO_EXTENSION);
+        $tmpfile = tempnam('/tmp/', 'img') . '.' . pathinfo($href, \PATHINFO_EXTENSION);
         file_put_contents($tmpfile, @file_get_contents($href));
         if (filesize($tmpfile) == 0) {
             unlink($tmpfile);
@@ -121,10 +131,12 @@ class Create
             )
         );
 
+        unlink($tmpfile);
+
         if (!$title) {
             $title = parse_url($href, \PHP_URL_PATH);
             $title = basename($title);
-            $title = str_replace('.'.pathinfo($href, \PATHINFO_EXTENSION), '', $title);
+            $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
         }
 
         if (\in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
@@ -135,7 +147,6 @@ class Create
             $contentType = $importDefinition->getFileContentType();
         }
 
-        // TODO: Add support for description
         if (!$file = $documentManager->getRepository(Content::class)
                                      ->createQueryBuilder()->select()
                                      ->field('contentType')->equals($contentType)
@@ -144,33 +155,68 @@ class Create
                                      ->getSingleResult()) {
             $newFile = $targetContentType->create();
 
-            $documentManager->persist($newFile);
+            $relation = $documentManager->getRepository(Relation::class)->find('media_taxonomy');
+            $newRelation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
+            $newRelation->setRelationId($relation->getId());
+            $newRelation->setRelationType($relation->getType());
 
+            $documentManager->persist($newFile);
             $newFile->setFile($storage);
             $newFile->setTitle($title);
             $newFile->getMetadata()->set('importDate', date('Ymd'));
 
-            if (array_key_exists('Image Title', $newData) && strlen($newData['Image Title']) > 0) {
-                $newFile->setTitle($newData['Image Title']);
+            $mediaTaxonomy = $documentManager->find(ContentType::class, 'media_taxonomy');
+
+            foreach ($importDefinition->getChannels() as $channel) {
+                $brandName = str_ireplace(' Website', '', $channel->getName());
+                if (!$parentBrandTaxonomy = $documentManager->getRepository(Content::class)
+                                                            ->createQueryBuilder()->select()
+                                                            ->field('title')->equals($brandName)
+                                                            ->field('contentType')->equals('media_taxonomy')
+                                                            ->field('parent_id')->exists(false)
+                                                            ->limit(1)->getQuery()
+                                                            ->getSingleResult()) {
+                    $parentBrandTaxonomy = $mediaTaxonomy->create();
+                    $parentBrandTaxonomy->setTitle($brandName);
+                    $parentBrandTaxonomy->setSlug($brandName);
+                    $parentBrandTaxonomy->addChannel($channel);
+                    $parentBrandTaxonomy->setDisabled(true);
+
+                    $result['messages'][] = "[INFO] Parent Brand Dossier created with the name: {$brandName}";
+
+                    $documentManager->persist($parentBrandTaxonomy);
+                    $documentManager->flush();
+                }
+                $newRelation->addReference($parentBrandTaxonomy);
             }
 
-            if (array_key_exists('Image Description', $newData) && strlen($newData['Image Description']) > 0) {
-                $newFile->setDescription($newData['Image Description']);
+            if (array_key_exists('Image Caption', $newData) && strlen($newData['Image Caption']) > 0) {
+                $caption = html_entity_decode($newData['Image Caption']);
+                $file->setDescription($caption);
+                $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
             }
+
+            $newFile->addRelation($newRelation);
 
             $file = $newFile;
 
-            $result['messages'][] = "[INFO] Image imported with title {$title}";
+            $result['messages'][] = "[INFO] {$targetContentType->getName()} imported with title {$title}";
 
             $documentManager->flush();
         } else {
-            $result['messages'][] = "[INFO] Image {$title} already existed";
+            if (array_key_exists('Image Caption', $newData) && strlen($newData['Image Caption']) > 0) {
+                $caption = html_entity_decode($newData['Image Caption']);
+                $file->setDescription($caption);
+                $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
+            }
+
+            $result['messages'][] = "[INFO] {$targetContentType->getName()} {$title} already existed";
         }
+
         if ($setFeatured === true) {
             $newObject->setFeaturedImage($file);
 
-            $result['messages'][] = "[INFO] Image {$title} set as featured image";
-            $documentManager->flush();
+            $result['messages'][] = "[INFO] {$targetContentType->getName()} {$title} set as featured image";
         }
 
         return [
@@ -185,11 +231,12 @@ class Create
         foreach ($importDefinition->getChannels() as $channel) {
             $brandName = str_ireplace(' Website', '', $channel->getName());
             if (!$parentBrandTaxonomy = $documentManager->getRepository(Content::class)
-                                           ->createQueryBuilder()->select()
-                                           ->field('title')->equals($brandName)
-                                           ->field('parent_id')->exists(false)
-                                           ->limit(1)->getQuery()
-                                           ->getSingleResult()) {
+                                                        ->createQueryBuilder()->select()
+                                                        ->field('title')->equals($brandName)
+                                                        ->field('contentType')->equals($contentType->getId())
+                                                        ->field('parent_id')->exists(false)
+                                                        ->limit(1)->getQuery()
+                                                        ->getSingleResult()) {
                 $parentBrandTaxonomy = $contentType->create();
                 $parentBrandTaxonomy->setTitle($brandName);
                 $parentBrandTaxonomy->setSlug($brandName);
@@ -205,12 +252,14 @@ class Create
             $parent = false;
 
             if (strlen($title) > 0 && !$parent = $documentManager->getRepository(Content::class)
-                                           ->createQueryBuilder()->select()
-                                           ->field('title')->equals($title)
-                                           ->field('parent_id')->equals($parentBrandTaxonomy->getId())
-                                           ->field('channels.$id')->equals($channel->getId())
-                                           ->limit(1)->getQuery()
-                                           ->getSingleResult()) {
+                                                                 ->createQueryBuilder()->select()
+                                                                 ->field('title')->equals($title)
+                                                                 ->field('parent_id')->equals(
+                        $parentBrandTaxonomy->getId()
+                    )
+                                                                 ->field('channels.$id')->equals($channel->getId())
+                                                                 ->limit(1)->getQuery()
+                                                                 ->getSingleResult()) {
                 $parent = $contentType->create();
                 $parent->setTitle($title);
                 $parent->setSlug($title);
@@ -225,7 +274,8 @@ class Create
             }
 
             if ($parent) {
-                $result['messages'][] = '[INFO] Parent ' . $parent->getTitle() . ' found for: ' . $title . ' - Taxonomy (' . $title . ') will be linked to it';
+                $result['messages'][] = '[INFO] Parent ' . $parent->getTitle(
+                    ) . ' found for: ' . $title . ' - Taxonomy (' . $title . ') will be linked to it';
             }
         }
         return [
@@ -237,6 +287,8 @@ class Create
 
     private static function maybeFetchRedirectUrl($url)
     {
+        $result = ExecuteImporter::initializeResult();
+
         $ch = curl_init();
 
         curl_setopt($ch, \CURLOPT_URL, $url);
@@ -247,15 +299,21 @@ class Create
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            echo 'Curl error: '.curl_error($ch);
+            $result['messages'][] = "[WARNING] Curl error when trying to fetch: " . curl_error($ch);
             curl_close($ch);
 
-            return;
+            return [
+                'url' => $url,
+                'result' => $result,
+            ];
         }
 
         $effectiveUrl = curl_getinfo($ch, \CURLINFO_EFFECTIVE_URL);  // Get the final URL after all redirects
         curl_close($ch);
 
-        return $effectiveUrl;
+        return [
+            'url' => $effectiveUrl,
+            'result' => $result,
+        ];
     }
 }

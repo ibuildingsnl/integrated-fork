@@ -9,7 +9,6 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Storage\Metadata as StorageMetadata;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
-use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Bundle\ContentBundle\Document\ContentType\ContentType;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
@@ -65,8 +64,8 @@ class BaseConverter
         $dateFields = [
             'created_at' => 'formatDateTime',
             'updated_at' => 'formatDateTime',
-            'start_date' => 'formatDateString',
-            'end_date' => 'formatDateString',
+            'start_date' => 'formatDateTime',
+            'end_date' => 'formatDateTime',
         ];
 
         foreach ($dateFields as $field => $method) {
@@ -76,13 +75,38 @@ class BaseConverter
         }
     }
 
-    public static function setPublished($newData, $newObject)
+    public static function setPublished($newData, $newObject, $importDefinition, $documentManager, $entityManager)
     {
+        $result = ExecuteImporter::initializeResult();
+
         if (\array_key_exists('published', $newData)) {
             if ($newData['published'] === true || $newData['published'] === 'published' || $newData['published'] === 'publish' || $newData['published'] === 1) {
-                $newObject->isPublished(true);
+//                $newObject->isPublished(true);
+//                $newObject->setDisabled(false);
+//
+//                $type = $documentManager->find(ContentType::class, $importDefinition->getContentType());
+//
+//                if ($workflow = $type->getOption('workflow')) {
+//
+//                    $repository = $entityManager->getRepository(Definition::class);
+//
+//                    if ($entity = $repository->find($workflow)) {
+//                        $states = $entity->getStates();
+//                        $stateId = $states[0]->getId();
+//
+//                        if ($newObject instanceof MetadataInterface) {
+//                            $result['messages'][] = "[WORKFLOW] Content item has a workflow, and will be mapped to the state {$states[0]->getName()}";
+//
+//                            $newObject->getMetadata()->set('workflow', $workflow);
+//                            $newObject->getMetadata()->set('workflow_state', $stateId);
+//                        }
+//                    }
+//                }
+//TODO: This does not yet work as expected due to ContentSubscriber.php
             }
         }
+
+        return $result;
     }
 
     public static function setPublicationDate($row, $newData, $newObject)
@@ -160,102 +184,101 @@ class BaseConverter
 
         $tags = ['a', 'img'];
         foreach ($tags as $tag) {
-            foreach ($html->find($tag) as $element) {
-                if (!$importDefinition->getImageContentType() || !$importDefinition->getImageRelation()) {
-                    continue;
-                }
+            if (!is_bool($html)) {
+                foreach ($html->find($tag) as $element) {
+                    $href = ($tag == 'a') ? $element->href : $element->src;
+                    $title = ($tag == 'a') ? false : $element->title;
 
-                $href = ($tag == 'a') ? $element->href : $element->src;
-                $title = ($tag == 'a') ? false : $element->title;
+                    if (!$importDefinition->getImageContentType()) {
+                        $fileContentType = 'image';
+                    } else {
+                        $fileContentType = $importDefinition->getImageContentType();
+                    }
 
-                if (strpos($href, '/') === 0) {
-                    if (!$importDefinition->getWebsiteBaseUrl()) {
+                    if (!$importDefinition->getImageRelation()) {
+                        $fileRelationId = '__editor_image';
+                        $fileRelationType = 'embedded';
+                    } else {
+                        $fileRelationId = $importDefinition->getImageRelation()->getId();
+                        $fileRelationType = $importDefinition->getImageRelation()->getType();
+                    }
+
+                    if (stripos($href, '.pdf')) {
+                        $fileContentType = $importDefinition->getFileContentType();
+                        $fileRelationId = $importDefinition->getFileRelation()->getId();
+                        $fileRelationType = $importDefinition->getFileRelation()->getType();
+                    }
+
+
+                    if (strpos($href, '/') === 0) {
+                        if (!$importDefinition->getWebsiteBaseUrl()) {
+                            continue;
+                        }
+                        $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/') . $href;
+                    }
+
+                    if (stripos($href, '.png') === false
+                        && stripos($href, '.jpg') === false
+                        && stripos($href, '.jpeg') === false
+                        && stripos($href, '.gif') === false
+                        && stripos($href, '.pdf') === false) {
                         continue;
                     }
-                    $href = rtrim($importDefinition->getWebsiteBaseUrl(), '/') . $href;
-                }
 
-                if (stripos($href, '.png') === false
-                    && stripos($href, '.jpg') === false
-                    && stripos($href, '.jpeg') === false
-                    && stripos($href, '.gif') === false
-                    && stripos($href, '.pdf') === false) {
-                    continue;
-                }
-
-                if (!$title && $tag == 'a') {
-                    foreach ($element->find('img') as $img) {
-                        $title = $img->title;
-                        if (!$title) {
-                            $title = basename($img->src);
-                            $title = str_replace(['.png', '.jpg', '.jpeg', '.gif'], '', $title);
+                    if (!$title && $tag == 'a') {
+                        foreach ($element->find('img') as $img) {
+                            $title = $img->title;
+                            if (!$title) {
+                                $title = basename($img->src);
+                                $title = str_replace(['.png', '.jpg', '.jpeg', '.gif'], '', $title);
+                            }
                         }
                     }
-                }
 
-                if (!$title) {
-                    $title = basename($href);
-                    $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
-                }
-
-                if (strlen($element->alt) > 0) {
-                    $newData['Image Description'] = $element->alt;
-                }
-
-                if (strlen($element->title) > 0) {
-                    $newData['Image Title'] = $element->title;
-                }
-
-                if ($href) {
-                    $checkResult = Create::createFileFromUrl(
-                        $href,
-                        $newObject,
-                        $newData,
-                        $importDefinition,
-                        $storageManager,
-                        $documentManager,
-                        $title
-                    );
-
-                    $image = $checkResult['file'];
-
-                    $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
-
-                    if ($image === false) {
-                        continue;
+                    if (!$title) {
+                        $title = basename($href);
+                        $title = str_replace('.' . pathinfo($href, \PATHINFO_EXTENSION), '', $title);
                     }
 
-                    $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
-                    $relationType = $tag == 'img' ? 'embedded' : $importDefinition->getImageRelation()->getType();
-                    $relationId = $tag == 'img' ? '__editor_image' : $importDefinition->getImageRelation()->getId();
+                    if (strlen($element->caption) > 0) {
+                        $newData['Image Caption'] = $element->caption;
+                    }
 
-                    $skipImage = $tag == 'img' && $newObject->getReferencesByRelationType('embedded') && array_search(
-                                                                                                             $image->getId(
-                                                                                                             ),
-                                                                                                             array_column(
-                                                                                                                 $newObject->getReferencesByRelationType(
-                                                                                                                     'embedded'
-                                                                                                                 ),
-                                                                                                                 'id'
-                                                                                                             )
-                                                                                                         ) !== false;
+                    if ($href) {
+                        $checkResult = Create::createFileFromUrl(
+                            $href,
+                            $newObject,
+                            $newData,
+                            $importDefinition,
+                            $storageManager,
+                            $documentManager,
+                            $title
+                        );
 
-                    $relation->setRelationType($relationType);
-                    $relation->setRelationId($relationId);
-                    $relation->addReference($image);
-                    $newObject->addRelation($relation);
-                }
+                        $image = $checkResult['file'];
 
-                // Updating the tag attributes based on the tag type
-                if ($tag == 'a') {
-                    $element->href = '/storage/' . $image->getId() . '.' . pathinfo($href, \PATHINFO_EXTENSION);
-                } elseif ($tag == 'img') {
-                    $element->outertext = '
-                    <img src="/storage/' . $image->getId() . '.jpg"
-                    class="img-responsive"
-                    title="' . htmlspecialchars($title) . '"
-                    alt="' . htmlspecialchars($title) . '"
-                    data-integrated-id="' . $image->getId() . '" />';
+                        $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
+
+                        if ($image === false) {
+                            continue;
+                        }
+
+                        $relation = new \Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation();
+                        $relationType = $tag == 'img' ? 'embedded' : $fileRelationType;
+                        $relationId = $tag == 'img' ? '__editor_image' : $fileRelationId;
+
+                        $relation->setRelationType($relationType);
+                        $relation->setRelationId($relationId);
+                        $relation->addReference($image);
+                        $newObject->addRelation($relation);
+                    }
+
+                    // Updating the tag attributes based on the tag type
+                    if ($tag == 'a') {
+                        $element->href = '/storage/' . $image->getId() . '.' . pathinfo($href, \PATHINFO_EXTENSION);
+                    } elseif ($tag == 'img') {
+                        $element->outertext = '<img src="/storage/' . $image->getId() . '.jpg" data-integrated-id="' . $image->getId() . '" class="img-responsive" title="' . htmlspecialchars($title) . '" alt="' . htmlspecialchars($title) . '" />';
+                    }
                 }
             }
         }
@@ -276,6 +299,7 @@ class BaseConverter
     ) {
         $result = ExecuteImporter::initializeResult();
 
+        //Should only be mapped if there is a list of authors which is comma seperated
         if (strpos($mappedField, 'author-') === 0) {
             self::processAuthorField($mappedField, $value, $newObject, $importDefinition, $documentManager);
         }
@@ -334,7 +358,6 @@ class BaseConverter
             $newObject->isPremium(true);
         }
 
-//        return $newObject;
         return [
             'result' => $result,
             'newObject' => $newObject,
@@ -395,10 +418,13 @@ class BaseConverter
             $newRelation->setRelationType($relation->getType());
 
             if (!\is_array($value)) {
-                $value = explode(',', $value);
+                $value = preg_split('/[|,]/', $value);
             }
 
             foreach ($value as $valueName) {
+                if ($valueName === "" | $valueName === " ") {
+                    continue;
+                }
                 $valueName = html_entity_decode($valueName);
                 $contentTypeFields = $targetContentType->getFields()->toArray();
                 $parentId = false;
@@ -414,59 +440,65 @@ class BaseConverter
                     foreach ($importDefinition->getChannels() as $channel) {
                         // TODO: Move to seperate function
                         $title = str_ireplace(' Website', '', $channel->getName());
-                        if (!$parent = $documentManager->getRepository(Content::class)
-                                                       ->createQueryBuilder()->select()
-                                                       ->field('title')->equals($title)
-                                                       ->field('parent_id')->exists(false)
-                                                       ->limit(1)->getQuery()
-                                                       ->getSingleResult()) {
-                            $parent = $targetContentType->create();
-                            $parent->setTitle($title);
-                            $parent->setSlug($title);
-                            $parent->addChannel($channel);
-                            $parent->setDisabled(true);
+                        if (!$brandParent = $documentManager->getRepository(Content::class)
+                                                            ->createQueryBuilder()->select()
+                                                            ->field('contentType')->equals($targetContentType->getId())
+                                                            ->field('title')->equals($title)
+                                                            ->field('parent_id')->exists(false)
+                                                            ->limit(1)->getQuery()
+                                                            ->getSingleResult()) {
+                            $brandParent = $targetContentType->create();
+                            $brandParent->setTitle($title);
+                            $brandParent->setSlug($title);
+                            $brandParent->addChannel($channel);
+                            $brandParent->setDisabled(true);
 
                             $result['messages'][] = "[INFO] Parent Dossier created with the name: {$title}";
 
-                            $documentManager->persist($parent);
+                            $documentManager->persist($brandParent);
                             $documentManager->flush();
                         }
 
-                        if ($parent) {
+                        if ($brandParent) {
                             $result['messages'][] = '[INFO] Parent ' . $targetContentType . ' found for: ' . $title . ' - Taxonomy (' . $valueName . ') will be linked to it';
                         }
 
                         $valueName = trim($valueName);
 
-                        $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
-                            [
-                                'title' => $valueName,
-                                'contentType' => $targetContentType->getId(),
-                                'parent_id' => $parent->getId(),
-                            ]
-                        );
+                        $categories = explode('>', $valueName);
 
-                        if (!$existingDocument) {
-                            $existingDocument = $targetContentType->create();
+                        foreach ($categories as $categoryName) {
+                            $categoryName = trim($categoryName);
+                            $categoryName = ucfirst($categoryName);
 
-                            if (strpos($valueName, 'http') !== false) {
-                                $existingDocument->setTitle(basename($valueName)); // not sure we need this
-                            } else {
-                                $existingDocument->setTitle($valueName);
-                            }
-
-                            $existingDocument->setParentId($parent->getId());
-                            $existingDocument->getMetadata()->set('importDate', date('Ymd'));
-                            $existingDocument->getMetadata()->set('externalId', $valueName);
-                            $existingDocument->getMetadata()->set(
-                                'importWebsiteBaseUrl',
-                                $importDefinition->getWebsiteBaseUrl()
+                            $existingDocument = $documentManager->getRepository(Content::class)->findOneBy(
+                                [
+                                    'title' => $categoryName,
+                                    'contentType' => $targetContentType->getId(),
+                                    'channels.$id' => $channel->getId(),
+                                ]
                             );
 
-                            $existingDocument->addChannel($channel);
+                            if (!$existingDocument) {
+                                $existingDocument = $targetContentType->create();
 
-                            $documentManager->persist($existingDocument);
-                            $documentManager->flush();
+                                $existingDocument->setTitle(ucfirst($categoryName));
+                                //Add functionality to support other parents also
+                                $existingDocument->setParentId($brandParent ? $brandParent->getId() : null);
+                                $existingDocument->getMetadata()->set('importDate', date('Ymd'));
+                                $existingDocument->getMetadata()->set('externalId', $categoryName);
+                                $existingDocument->getMetadata()->set(
+                                    'importWebsiteBaseUrl',
+                                    $importDefinition->getWebsiteBaseUrl()
+                                );
+
+                                $existingDocument->addChannel($channel);
+
+                                $documentManager->persist($existingDocument);
+                                $documentManager->flush();
+                            }
+
+                            $newRelation->addReference($existingDocument);
                         }
                     }
                 } else {
@@ -480,11 +512,7 @@ class BaseConverter
 
                     if (!$existingDocument) {
                         $existingDocument = $targetContentType->create();
-                        if (strpos($valueName, 'http') !== false) {
-                            $existingDocument->setTitle(basename($valueName));
-                        } else {
-                            $existingDocument->setTitle($valueName);
-                        }
+                        $existingDocument->setTitle($valueName);
                         $existingDocument->getMetadata()->set('importDate', date('Ymd'));
                         $existingDocument->getMetadata()->set('externalId', $valueName);
                         $existingDocument->getMetadata()->set(
@@ -566,8 +594,12 @@ class BaseConverter
         $result = ExecuteImporter::initializeResult();
 
         foreach ($newData as $field => $value) {
-            if ($field == 'created_at' || $field == 'updated_at' || $field == 'publish_time.start_date' || $field == 'publish_time.end_date') {
+            if ($field === 'created_at' || $field === 'updated_at') {
                 continue;  // Skip processing for the specified fields
+            }
+
+            if ($field === 'start_date' || $field === 'end_date') {
+                $value = new \DateTime($value);
             }
 
             if ($field === 'seo_metadata' || $field === 'address') {
@@ -594,7 +626,7 @@ class BaseConverter
                 $setterMethod = 'is' . ucfirst($field);
             }
 
-            if ($field === 'parent_id' && strlen($value) != 32) {
+            if ($field === 'parent_id' && strlen($value) === 32) {
                 if (method_exists($newObject, 'setParentId')) {
                     \call_user_func([$newObject, 'setParentId'], $value);
                 }
@@ -632,9 +664,13 @@ class BaseConverter
                     true
                 );
                 $result['messages'] = array_merge($result['messages'], $checkResult['result']['messages']);
-                $newObject->setFeaturedImage($checkResult['file']);
+
+                if ($checkResult['file']) {
+                    $newObject->setFeaturedImage($checkResult['file']);
+                }
                 continue;
             }
+
 
             if (method_exists($newObject, $setterMethod)) {
                 \call_user_func([$newObject, $setterMethod], $value);
@@ -702,12 +738,18 @@ class BaseConverter
         $result = ExecuteImporter::initializeResult();
 
         if (array_key_exists('Author ID', $row)) {
+            $newObject->getAuthors()->clear();
             $targetContentType = $documentManager->find(ContentType::class, $importDefinition->getAuthorContentType());
             $authorId = $row['Author ID'];
             $firstName = $row['Author First Name'];
             $lastName = $row['Author Last Name'];
             $email = $row['Author Email'];
             $baseUrl = $importDefinition->getWebsiteBaseUrl();
+
+            if ($firstName === '' && $lastName === '') {
+                $result['messages'][] = "[NOTICE] Author does not have a name can not be created without it.";
+                return $result;
+            }
 
             $person = $documentManager
                 ->getRepository(Content::class)

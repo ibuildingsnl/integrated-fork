@@ -11,12 +11,11 @@ use Integrated\Bundle\StorageBundle\Storage\Reader\MemoryReader;
 
 class WP
 {
-    public static function processContent($content, $importType)
+    public static function processContent($content, $importType, $importDefinition)
     {
         $imgIds = [];
 
         $content = str_ireplace('alt=" width', 'alt="" width', $content);
-        $content = str_ireplace('<p>&nbsp;</p>', '', $content);
 
         // TODO: Add support for gallery.
         $content = preg_replace_callback(
@@ -29,8 +28,6 @@ class WP
             $content
         );
 
-
-
         $youtubeRexEg = '/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)/';
         $content = preg_replace_callback($youtubeRexEg, function ($matches) {
             if (\strlen(trim($matches[1])) == 11) {
@@ -41,45 +38,57 @@ class WP
         }, $content);
         //TODO: Fix support for caption with anchor that has space in it.
         $content = preg_replace_callback(
-            '/\[caption.*?\].*?<\/a>\s*(.*?)\[\/caption\]/',
+            '/\[caption.*?\](?:<a href="[^"]+"[^>]*>)?(<img[^>]+>)(?:<\/a>)?\s*(.*?)\[\/caption\]/',
             function ($matches) {
-                $captionText = $matches[1];  // extract caption text
+                $imageContent = $matches[1];  // Extracts the img tag
+                $captionText = trim($matches[2]);  // Extracts the caption text and trims any whitespace
 
-                // Remove the original caption text from the updated caption content
-                $updatedContent = str_replace($captionText, '', $matches[0]);
+                // Convert the caption text into a format suitable for an HTML attribute
+                $captionAttribute = htmlspecialchars($captionText, ENT_QUOTES);
 
-                // Remove the anchor tags surrounding the img tag
-                $updatedContent = preg_replace('/<a[^>]*>(.*?)<\/a>/', '$1', $updatedContent);
-
-                // Update the alt attribute of the img tag
-                $updatedContent = preg_replace('/(<img.*?alt=")(.*?)(".*?>)/', "$1$captionText$3", $updatedContent);
+                // Add or replace the description attribute in the img tag with the new caption text
+                if (strpos($imageContent, 'caption=') !== false) {
+                    // If description attribute already exists, replace its value
+                    $imageContent = preg_replace('/caption="[^"]*"/', 'caption="' . $captionAttribute . '"', $imageContent);
+                } else {
+                    // If no description attribute exists, add one
+                    $imageContent = preg_replace('/<img/', '<img caption="' . $captionAttribute . '"', $imageContent);
+                }
 
                 // Remove the size attribute from the src URL of the img tag
-                $updatedContent = preg_replace(
+                $imageContent = preg_replace(
                     '/(<img.*?src=")([^"]+)-\d+x\d+(\.[a-zA-Z]+)(".*?>)/',
                     '$1$2$3$4',
-                    $updatedContent
+                    $imageContent
                 );
 
-                return $updatedContent;  // return the updated content
+                return $imageContent;  // return the updated image content with the updated alt attribute
             },
             $content
         );
 
         $content = preg_replace_callback(
-            '/<a href="([^"]+)"><img(.*?)src="([^"]+)-\d+x\d+\.([a-zA-Z]+)"(.*?)<\/a>/',
+            '/<a href="([^"]+)"><img(.*?)src="([^"]+)-\d+x\d+\.([a-zA-Z]+)"(.*?)\/><\/a>/',
             function ($matches) {
-                $imgAttributes = $matches[2] . 'src="' . $matches[3] . '.' . $matches[4] . '"' . $matches[5];
-                return '<img' . $imgAttributes . '>';  // return the updated content
+                $imgAttributes = $matches[2] . ' src="' . $matches[3] . '.' . $matches[4] . '"' . $matches[5];
+                return '<img' . $imgAttributes . '>';
             },
             $content
         );
 
+        if ($importDefinition->getRemoveFirstImage()) {
+            $content = preg_replace('/<img[^>]+>/', '', $content, 1);
+        }
+
+        $content = preg_replace('/<a[^>]*>\s*<\/a>/', '', $content);
         $content = preg_replace('/\[caption.*?\]/', '', $content);
         $content = str_ireplace('[/caption]', '', $content);
+        $content = str_ireplace(' ', ' ', $content);
         $content = str_ireplace('<h4>Wil je meer te weten komen over woningaanpassingen? <a href="https://supportmagazine.nl/abonneren/" target="_blank" rel="noopener">Neem dan nu extra voordelig een abonnement op Support Magazine!</a></h4>', '', $content);
         $content = str_ireplace('IK WORD ABONNEE[/su_button]', '[/su_button]', $content);
         $content = preg_replace('/\[(\/)?su_.*?\]/', '', $content); // Strip shortcodes
+        $content = str_ireplace('<p>&nbsp;</p>', '', $content);
+        $content = str_ireplace('<p> </p>', '', $content);
 
         $content = str_ireplace('<div class="well">', '<div class="frame-general">', $content);
 
@@ -201,10 +210,7 @@ class WP
 
         if (isset($row['id'])) {
             $newObject->getMetadata()->set('PostId', $row['id']);
-            $newObject->getMetadata()->set(
-                'wpUrl',
-                (isset($row['Permalink'])) ? $row['Permalink'] : $row['Permalink']
-            );
+            $newObject->getMetadata()->set('wpUrl', (isset($row['Permalink'])) ? $row['Permalink'] : '');
             $newObject->getMetadata()->set('importDate', date('Ymd'));
             $newObject->getMetadata()->set('importWebsiteBaseUrl', $importDefinition->getWebsiteBaseUrl());
         }

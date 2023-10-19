@@ -15,6 +15,7 @@ use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
+use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
 use Integrated\Bundle\ContentBundle\Form\Type\ContentTypeChoice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -31,16 +32,6 @@ class ImportDefinitionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class);
-//        $builder->add('importType', ChoiceType::class, [
-//            'label' => 'Import Source',
-//            'multiple' => false,
-//            'placeholder' => 'Select import source',
-//            'required' => false,
-//            'choices' => [
-//                'WordPress' => 'wp',
-//                'CSV' => 'csv',
-//            ],
-//        ]);
         $builder->add('contentType', ContentTypeChoice::class, ['label' => 'Content type', 'multiple' => false]);
         $builder->add('channels', DocumentType::class, [
             'label' => 'Channels',
@@ -137,5 +128,7 @@ class ImportDefinitionType extends AbstractType
         ]);
         $builder->add('connection_url', TextType::class, ['label' => 'Database connection URL', 'required' => false]);
         $builder->add('connection_query', TextareaType::class, ['label' => 'Database query', 'required' => false]);
+        $builder->add('updateExisting', CheckboxSwitcherType::class, ['label' => 'Update existing', 'required' => false]);
+        $builder->add('removeFirstImage', CheckboxSwitcherType::class, ['label' => 'Remove first img tag from content', 'required' => false]);
     }
 }

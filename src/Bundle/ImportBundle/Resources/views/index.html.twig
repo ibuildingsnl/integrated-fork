@@ -46,8 +46,16 @@
                                 </strong>
                                 <div class="row-options">
                                     <a href="{{ path('integrated_import_file', {'importDefinition': document.id}) }}"
-                                       title="{% trans %}Start import{% endtrans %}">
-                                        {% trans %}Start import{% endtrans %}
+                                       title="{% trans %}Change file{% endtrans %}">
+                                        {% trans %}Change file{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_import_definition', {'importDefinition': document.id}) }}"
+                                       title="{% trans %}Change mapping{% endtrans %}">
+                                        {% trans %}Change mapping{% endtrans %}
+                                    </a> |
+                                    <a href="{{ path('integrated_import_summary', {'importDefinition': document.id}) }}"
+                                       title="{% trans %}Run import{% endtrans %}">
+                                        {% trans %}Run import{% endtrans %}
                                     </a> |
                                     <a href="{{ path('integrated_import_edit', {'importDefinition': document.id}) }}"
                                        title="{% trans %}Edit{% endtrans %}">

@@ -30,6 +30,7 @@ use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class ImportController extends AbstractController
 {
@@ -320,36 +321,66 @@ class ImportController extends AbstractController
     public function runExecute(Request $request, ImportDefinition $importDefinition)
     {
         ExecuteImporter::configureExecutionEnvironment();
-        ExecuteImporter::handleSession();
+
+        $session = new Session();
+        $session->save();
 
         $start = $request->get('start', 1);
 
-        $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+        if (!$session->isStarted()) {
+            $session->start();
+        }
 
-        $importType = ExecuteImporter::getImportType($importDefinition, $data, $this->importFile);
+        if ($start <= 1) {
+            $session->remove('import_data');
+            $session->remove('import_type');
+            $session->remove('content_type');
+            $session->remove('field_mapping');
+        }
+
+        if ($start < 1 || !$session->has('import_data')) {
+            $data = ExecuteImporter::getData($importDefinition, $this->doctrine, $this->importFile);
+            $session->set('import_data', $data);
+        } else {
+            $data = $session->get('import_data');
+        }
+
+        if ($start < 1 || !$session->has('import_type')) {
+            $importType = ExecuteImporter::getImportType($importDefinition, $data, $this->importFile);
+            $session->set('import_type', $importType);
+        } else {
+            $importType = $session->get('import_type');
+        }
+
+        if ($start < 1 || !$session->has('content_type')) {
+            $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
+            $session->set('content_type', $contentType);
+        } else {
+            $contentType = $session->get('content_type');
+        }
+
+        if ($start < 1 || !$session->has('field_mapping')) {
+            $fieldMapping = [];
+            foreach ($importDefinition->getFields() as $field) {
+                $fieldMapping[$field->getSourceField()] = $field->getMappedField();
+            }
+            $session->set('field_mapping', $fieldMapping);
+        } else {
+            $fieldMapping = $session->get('field_mapping');
+        }
 
         $result = ExecuteImporter::initializeResult();
 
-        if ($start < 1) {
-            $result['messages'][] = "[STARTING IMPORT] New import, recognized format is {$importType}";
-        }
-
-        $contentType = $this->documentManager->find(ContentType::class, $importDefinition->getContentType());
-
-        $fieldMapping = [];
-        foreach ($importDefinition->getFields() as $field) {
-            $fieldMapping[$field->getSourceField()] = $field->getMappedField();
-        }
-
         $totalRowNumber = \count($data);
-        $rowsPerRequest = max(10, min(500, (int)$totalRowNumber / 10));
+        $rowsPerRequest = min(25, max(10, min(500, (int)$totalRowNumber / 10)));
+
+        $rowNumber = -1;
 
         if ($start <= 1) {
             $start = 0;
             $rowsPerRequest = 10;
+            $result['messages'][] = "[STARTING IMPORT] New import, recognized format is {$importType}";
         }
-
-        $rowNumber = -1;
 
         $newStart = $start;
         foreach ($data as $row) {
@@ -375,7 +406,6 @@ class ImportController extends AbstractController
             BaseConverter::processDateFields($newData);
 
             if (\count($newData)) {
-                $newObject = $contentType->create();
                 $updating = false;
                 $checkResult = BaseConverter::checkForExistingContent(
                     $importDefinition,
@@ -387,7 +417,12 @@ class ImportController extends AbstractController
                 if ($checkResult['target'] != null) {
                     $newObject = $checkResult['target'];
                     $updating = true;
+                    if (!$importDefinition->getUpdateExisting()) {
+                        $result['messages'][] = "[EXISTING ITEM] Existing item found, skipping: {$newData['title']}";
+                        continue;
+                    }
                 } else {
+                    $newObject = $contentType->create();
                     if (\array_key_exists('title', $newData)) {
                         $result['messages'][] = "[NEW ITEM] New item found, creating: {$newData['title']}";
                     }
@@ -395,7 +430,10 @@ class ImportController extends AbstractController
 
                 BaseConverter::setPublicationDate($row, $newData, $newObject);
 
-                BaseConverter::setPublished($newData, $newObject);
+//TODO: This does not yet work as expected due to ContentSubscriber.php
+//                $checkResult = BaseConverter::setPublished($newData, $newObject, $importDefinition, $this->documentManager, $this->entityManager);
+//
+//                $result['messages'] = array_merge($result['messages'], $checkResult['messages']);
 
                 BaseConverter::setObjectProperties(
                     $newData,
@@ -413,6 +451,10 @@ class ImportController extends AbstractController
                     if ($relation = $newObject->getRelation('__editor_image')) {
                         $newObject->removeRelation($relation);
                     }
+                }
+
+                if ($relation = $newObject->getRelation('__editor_image')) {
+                    $newObject->removeRelation($relation);
                 }
 
                 // Process Person Object
@@ -474,7 +516,7 @@ class ImportController extends AbstractController
                         ++$col;
                     }
 
-                    if (!in_array('field-author', $fieldMapping)) {
+                    if (!in_array('author-author', $fieldMapping) && $newObject instanceof Article) {
                         $checkResult = BaseConverter::authorProcessor(
                             $row,
                             $newObject,
@@ -492,7 +534,7 @@ class ImportController extends AbstractController
                             $content = $newObject->getDescription();
                         }
 
-                        $content = WP::processContent($content, $importType);
+                        $content = WP::processContent($content, $importType, $importDefinition);
 
                         $html = HtmlDomParser::str_get_html($content);
 

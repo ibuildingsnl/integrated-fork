@@ -17,6 +17,8 @@
         <field field-name="authorContentType" type="string"/>
         <field field-name="connectionUrl" type="string"/>
         <field field-name="connectionQuery" type="string"/>
+        <field field-name="updateExisting" type="string"/>
+        <field field-name="removeFirstImage" type="string"/>
 
         <embed-many field="fields" target-document="Integrated\Bundle\ImportBundle\Document\Embedded\ImportField" />
 
