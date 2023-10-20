@@ -40,11 +40,24 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     }
 
     if (settings.dataset.channelType) {
-        const opt = document.createElement('option');
-        opt.value = 'type';
-        opt.text = 'all ' + settings.dataset.channelType + ' channels';
-        settings.closest('.publication-settings-aside').querySelector('[data-apply-to]')?.append(opt);
+        const allOption = document.createElement('option');
+        allOption.value = 'type';
+        allOption.text = 'all ' + settings.dataset.channelType + ' channels';
+        const someOption = document.createElement('option');
+        someOption.value = 'choose';
+        someOption.text = 'specific ' + settings.dataset.channelType + ' channels';
+        settings.closest('.publication-settings-aside').querySelector('[data-apply-to]')?.append(someOption);//, allOption);
     }
+
+    // const type = settings.dataset.channelType;
+    // document.querySelectorAll('.publication-settings[data-channel-type="'+type+'"]').forEach(function (other) {
+    //     const opt = document.createElement('option');
+    //     opt.value = other.dataset.publicationChannel;
+    //     opt.text = other.dataset.channelName;
+    //     opt.selected = (other === settings);
+    //     settings.closest('.publication-settings-aside').querySelector('[data-apply-channels]')?.append(opt);
+    //     // alert(type + ' / ' + settings.dataset.channelName + ' / ' + other.dataset.channelName);
+    // });
 
     const openSettings = document.createElement('a');
     openSettings.href = '#';
