@@ -35,7 +35,7 @@ class ContentBlockConverter
         $settings['filters'] = $options['filters'] ?? [];
         $settings['relation'] = $request->query->get('relation', []);
 
-        if ($options['exclude'] && !$settings['q'] && 0 === \count(array_filter($settings['facets']))) {
+        if (array_key_exists('exclude', $options) && $options['exclude'] && !$settings['q'] && 0 === \count(array_filter($settings['facets']))) {
             $settings['exclude'] = true;
         }
 
