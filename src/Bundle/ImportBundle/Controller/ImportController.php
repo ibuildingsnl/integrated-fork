@@ -490,6 +490,7 @@ class ImportController extends AbstractController
                             }
                         }
                         $newObject->addChannel($channel);
+                        $newObject->setPrimaryChannel($channel);
                         $result['messages'][] = "[INFO] Linked to channel: {$channel->getName()}";
                     }
 
