@@ -19,11 +19,7 @@ class SitePerformancesWidget implements WidgetInterface
 {
     public function __construct(
         private readonly DocumentManager  $manager,
-        private readonly ObjectRepository $channelRepository,
-        private readonly Client           $client,
-    )
-    {
-    }
+    ){}
 
     public function name(): string
     {
@@ -35,13 +31,8 @@ class SitePerformancesWidget implements WidgetInterface
         return '@IntegratedDashboard/site_performance.html.twig';
     }
 
-    /**
-     * @throws MongoDBException
-     * @throws GuzzleException
-     */
     public function params(ChannelInterface $channel, User $user): array
     {
-        $channelPerformances = [];
         $channelPerformances = $this->manager->getRepository(SitePerformance::class)
             ->findBy(
                 ['channelID' => $channel->getId()],
