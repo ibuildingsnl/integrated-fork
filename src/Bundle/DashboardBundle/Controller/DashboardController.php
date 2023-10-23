@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\DashboardBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Integrated\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
@@ -55,10 +56,19 @@ class DashboardController extends AbstractController
         return $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
     }
 
+    /**
+     * @throws MongoDBException
+     */
     private function renderWidgets(Channel $channel, $user): array
     {
         $renderedWidgets = [];
-        foreach ($this->manager->getRepository(WidgetConfig::class)->findAll() as $config) {
+        $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)
+            ->createQueryBuilder()
+            ->sort('order', 'asc')
+            ->getQuery()
+            ->execute();
+
+        foreach ($widgetConfigs as $config) {
             $widget = $this->widgets[$config->getWidgetName()] ?? null;
             if ($widget) {
                 $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel, $user));
