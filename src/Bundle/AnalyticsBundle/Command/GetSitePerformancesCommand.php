@@ -49,18 +49,27 @@ class GetSitePerformancesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $websites = $this->getWebsites();
 
+        foreach ($websites as $website) {
+            $url = $website['domain'];
+            if (!$this->isValidUrl($url)) {
+                continue;
+            }
+            $encodedUrl = urlencode($url);
+            try {
+                $this->getSitePerformance($encodedUrl, $website['id']);
+                $this->saveSitePerformance();
+            } catch (\InvalidArgumentException $e) {
+                $dateTime = new \DateTimeImmutable();
+                $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
+            }
+        }
 
-//        $websites = [
-//            ['id' => 'vakbladijs', 'domain' => 'https://www.vakbladijs.nl'],
-//            ['id' => 'vismagazine', 'domain' => 'https://www.vismagazine.nl'],
-//            ['id' => 'vleesmagazine', 'domain' => 'https://www.vleesmagazine.nl'],
-//            ['id' => 'evmi', 'domain' => 'https://www.evmi.nl'],
-//            ['id' => 'beveragenl', 'domain' => 'https://www.morethandrinks.nl'],
-//            ['id' => 'voedingnu', 'domain' => 'https://www.voedingnu.nl'],
-//            ['id' => 'automationnl', 'domain' => 'https://www.automationnl.nl'],
-//        ];
-
+        return 0;
+    }
+    public function getWebsites(): array
+    {
         $websites = [];
         /** @var Channel $channel */
         foreach ($this->channelRepository->findAll() as $channel) {
@@ -73,42 +82,47 @@ class GetSitePerformancesCommand extends Command
                 'domain' => 'https://www.' . $domain
             ];
         }
-        foreach ($websites as $website) {
-            $url = $website['domain'];
-            if ((filter_var($url, FILTER_VALIDATE_URL) === false) || (str_contains($url, 'localhost'))) {
-                continue;
-            }
-            $encodedUrl = urlencode($url);
-            try {
-                $ApiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
-                $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$encodedUrl&category=PERFORMANCE&key=$ApiKey";
-                $response = $this->client->get($request);
-                if ($response->getStatusCode() === 200) {
-                    $content = $response->getBody()->getContents();
-                    $data = json_decode($content, true);
-                    $speedIndex = $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null;
+        return $websites;
+    }
 
-                    if (!is_null($speedIndex)) {
-                        $dateTime = new \DateTimeImmutable();
-                        $sitePerformance = new SitePerformance($website['id'], $speedIndex, $dateTime);
-                        $output->writeln($sitePerformance->getSiteSpeed());
-                        $this->manager->persist($sitePerformance);
-                    }
-                } else {
+    public function isValidUrl(string $url): bool
+    {
+        return !((filter_var($url, FILTER_VALIDATE_URL) === false) || (str_contains($url, 'localhost')));
+    }
+
+    public function getSitePerformance(string $url, string $channelId): void
+    {
+        try{
+            $ApiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
+            $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&key=$ApiKey";
+            $response = $this->client->get($request);
+            if ($response->getStatusCode() === 200) {
+                $content = $response->getBody()->getContents();
+                $data = json_decode($content, true);
+                $speedIndex = $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null;
+                if (!is_null($speedIndex)) {
                     $dateTime = new \DateTimeImmutable();
-                    $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody(). '\n' . $dateTime;
-                    $this->logger->error('Get Site Performance Error: ' . $errorMessage);
+                    $sitePerformance = new SitePerformance($url, $speedIndex, $dateTime);
+                    $this->manager->persist($sitePerformance);
                 }
-            } catch (\InvalidArgumentException $e) {
+            } else {
                 $dateTime = new \DateTimeImmutable();
-                $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
-            } catch (GuzzleException $e) {
-                $dateTime = new \DateTimeImmutable();
-                $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
+                $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody(). '\n' . $dateTime;
+                $this->logger->error('Get Site Performance Error: ' . $errorMessage);
             }
         }
-        $this->manager->flush();
+        catch (GuzzleException $e) {
+            $dateTime = new \DateTimeImmutable();
+            $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
+        }
 
-        return 0;
+    }
+
+    /**
+     * @throws MongoDBException
+     */
+    public function saveSitePerformance(): void
+    {
+        $this->manager->flush();
     }
 }
