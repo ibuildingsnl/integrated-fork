@@ -28,6 +28,9 @@
             <argument type="service" id="guzzle" />
             <tag name="integrated_dashboard.widget" />
         </service>
-
+        <service id="Integrated\Bundle\DashboardBundle\Widgets\MostReadWidget">
+            <argument type="service" id="monolog.logger"/>
+            <tag name="integrated_dashboard.widget" />
+        </service>
     </services>
 </container>
