@@ -46,7 +46,13 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
         const someOption = document.createElement('option');
         someOption.value = 'choose';
         someOption.text = 'specific ' + settings.dataset.channelType + ' channels';
-        settings.closest('.publication-settings-aside').querySelector('[data-apply-to]')?.append(someOption);//, allOption);
+        const settingsContainer = settings.closest('.publication-settings-aside');
+        const applyToSelect = settingsContainer.querySelector('[data-apply-to]');
+        applyToSelect?.append(someOption, allOption);
+        applyToSelect?.addEventListener('click', function () {
+            showHideChannelSelect(settingsContainer);
+        });
+        showHideChannelSelect(settingsContainer);
     }
 
     // const type = settings.dataset.channelType;
@@ -75,6 +81,15 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     input.addEventListener('change', () => showHidePublicationSettingsButton(input));
     showHidePublicationSettingsButton(input);
 });
+
+function showHideChannelSelect(container) {
+    const channelSelect = container.querySelector('.settings-channels-choice');
+    if (container.querySelector('select[data-apply-to]').value === 'choose') {
+        channelSelect.classList.remove('hidden');
+    } else {
+        channelSelect.classList.add('hidden');
+    }
+}
 
 // Save & exit publication settings
 document.querySelectorAll('.publication-settings-popup').forEach(function (settings) {
