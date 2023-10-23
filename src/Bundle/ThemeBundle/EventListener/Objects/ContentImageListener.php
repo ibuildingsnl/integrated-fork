@@ -56,6 +56,9 @@ class ContentImageListener
     {
         if ($file = $this->objectManager->find(Content::class, $matches[1])) {
             $class = '';
+            $width = '';
+            $height = '';
+            $style = '';
             if (preg_match('/class="(.*?)"/', $matches[0], $imgClass)) {
                 $class = $imgClass[1];
             }
