@@ -435,21 +435,20 @@
                 </h3>
             </div>
             <div class="aside-item-list-container">
-
+                <div class="aside-item-list">
+                    {{ form_widget(form) }}
+                    <a class="btn btn-green" href="#">Ok</a>
+                </div>
                 <div class="settings-apply-to-menu">
                     Apply to
                     <select data-apply-to>
                         <option value="this">{{ form_label(form) }}</option>
                     </select>
                     <div class="hidden settings-channels-choice">
-                        <select class="select2" data-apply-channels>
+                        <select class="select2" data-apply-channels multiple>
                             <option>@todo: Add & filter channels</option>
                         </select>
                     </div>
-                </div>
-                <div class="aside-item-list">
-                    {{ form_widget(form) }}
-                    <a class="btn btn-green" href="#">Ok</a>
                 </div>
             </div>
         </div>
