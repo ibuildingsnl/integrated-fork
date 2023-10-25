@@ -55,8 +55,7 @@
                 {% endif %}
 
                 {% if hasSeoMetadata %}
-                    <a href="#"
-                       class="btn btn-white seo-button readability-{{ content.seoMetadata.readabilityScore|default('feedback') }} seo-{{ content.seoMetadata.seoScore|default('feedback') }}">SEO</a>
+                    <a href="#" class="btn btn-white seo-button readability-{{ content.seoMetadata.readabilityScore|default('feedback') }} seo-{{ content.seoMetadata.seoScore|default('feedback') }}">SEO</a>
                 {% endif %}
             {% endblock %}
         </div>

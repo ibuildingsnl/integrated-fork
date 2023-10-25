@@ -15,7 +15,7 @@ class YoastSeoLanguageProvider
     /**
      * @var array
      */
-    protected $languageToLocaleMapping = [
+    public const LANGUAGE_LOCALE_MAPPING = [
         'da' => 'da_DK',
         'de' => 'de_DE',
         'en' => '',
@@ -70,8 +70,8 @@ class YoastSeoLanguageProvider
      */
     protected function getValidLocale(string $interfaceLanguage): string
     {
-        if (\array_key_exists($interfaceLanguage, $this->languageToLocaleMapping)) {
-            return $this->languageToLocaleMapping[$interfaceLanguage];
+        if (\array_key_exists($interfaceLanguage, $this::LANGUAGE_LOCALE_MAPPING)) {
+            return $this::LANGUAGE_LOCALE_MAPPING[$interfaceLanguage];
         }
 
         return $interfaceLanguage;
