@@ -13,7 +13,7 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 
 final class LinkedInConnector implements ConnectorInterface
 {
-    public const NAME = 'LinkedIn';
+    public const NAME = 'linkedin';
 
     public function __construct(
         private readonly LinkedInFactory $factory,

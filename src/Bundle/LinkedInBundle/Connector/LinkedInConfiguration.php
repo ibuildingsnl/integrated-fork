@@ -40,7 +40,16 @@ final class LinkedInConfiguration implements OauthConfigInterface
             'scope' => ['w_organization_social', 'rw_organization_admin'] // array or string
         ];
 
-        if (!isset($_GET['code'])) {
+//        if (!isset($_GET['code'])) {
+//            // If we don't have an authorization code then get one
+//            $authUrl = $client->getAuthorizationUrl($options);
+//            $_SESSION['oauth2state'] = $client->getState();
+//            header('Location: ' . $authUrl);
+//            exit;
+//        }
+
+        $code = $event->getRequest()->get('code');
+        if ($code === null || $code === '') {
             // If we don't have an authorization code then get one
             $authUrl = $client->getAuthorizationUrl($options);
             $_SESSION['oauth2state'] = $client->getState();
@@ -101,6 +110,8 @@ final class LinkedInConfiguration implements OauthConfigInterface
             ];
         }
 
+        //array_combine(array_column($a, 'id'), array_column($a, 'name'));
+
         return $details;
     }
 
@@ -114,12 +125,12 @@ final class LinkedInConfiguration implements OauthConfigInterface
         ]);
 
         //get just the ids, [34572, 23463]
-        $organizations = $this->getRelatedOrganisations($client, $token);
-        $options->set('organizations', $organizations);
+//        $organizations = $this->getRelatedOrganisations($client, $token);
+//        $options->set('organizations', $organizations);
 
         //get the name, so we can show this to the user
-        $organizationDetails = $this->getOrganisationDetails($client, $token, $organizations);
-        $options->set('organizationDetails', $organizationDetails);
+//        $organizationDetails = $this->getOrganisationDetails($client, $token, $organizations);
+//        $options->set('organizationDetails', $organizationDetails);
 
         if (!$token) {
             return false;
