@@ -34,11 +34,15 @@ class IntegratedContentExtension extends AbstractExtension
         ];
     }
 
-    public function integratedContent(string $content): string
+    public function integratedContent(?string $content): string
     {
-        return $this->eventDispatcher
-            ->dispatch(new ContentRenderEvent($content), ContentRenderEvent::NAME)
-            ->getContent();
+        if ($content === null) {
+            return '';
+        } else {
+            return $this->eventDispatcher
+                ->dispatch(new ContentRenderEvent($content), ContentRenderEvent::NAME)
+                ->getContent();
+        }
     }
 
     public function getName(): string
