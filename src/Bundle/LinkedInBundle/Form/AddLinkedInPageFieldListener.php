@@ -2,19 +2,16 @@
 
 namespace Integrated\Bundle\LinkedInBundle\Form;
 
-//use JanuSoftware\Facebook\Facebook;
-use Integrated\Bundle\LinkedInBundle\Connector\LinkedInConnector;
+// use JanuSoftware\Facebook\Facebook;
 use Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 
 class AddLinkedInPageFieldListener implements EventSubscriberInterface
 {
-
 //    public function __construct(LinkedIn $linkedinFactory)
     public function __construct(LinkedInFactory $linkedinFactory)
     {
@@ -31,32 +28,26 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
         ];
     }
 
-    public function getRelatedOrganisations($client, $token): array {
+    public function getRelatedOrganisations($client, $token): array
+    {
         $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
-
         $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', 'api.linkedin.com/rest/organizationAcls?q=roleAssignee', $token, $requestOptions);
-
         $response = $client->getResponse($availableCompaniesRequest);
 
         $organizations = [];
         foreach (json_decode((string) $response->getBody())->elements as $element) {
             if ($element->state == 'APPROVED' && $element->role == 'ADMINISTRATOR') {
-                $organizations[] = str_replace("urn:li:organization:", "", $element->organization);
+                $organizations[] = str_replace('urn:li:organization:', '', $element->organization);
             }
         }
 
         return $organizations;
     }
 
-    public function getOrganisationDetails($client, $token, array $organizations): array {
-        $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
-
-        $url = 'api.linkedin.com/rest/organizations?ids=List(' . implode(",", $organizations) . ')';
-
+    public function getOrganisationDetailsByBatchRequest($client, $token, $organizations) {
+        $url = 'api.linkedin.com/rest/organizations?ids=List('.implode(',', $organizations).')';
         $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
-
         $response = $client->getResponse($availableCompaniesRequest);
-
         $responseBody = json_decode((string) $response->getBody())->results;
 
         $details = [];
@@ -64,19 +55,34 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
             $details[$responseBody->{$organizationId}->localizedName] = $organizationId;
         }
 
-//        dd($details);
+        return $details;
+    }
 
-//        foreach ($organizations as $organizationId) {
-//            $details[$organizationId] = [
-//                "id" => $organizationId,
-//                "id_full" => "urn:li:organization:" . $organizationId,
-//                'name' => $responseBody->{$organizationId}->localizedName
-//            ];
-//        }
+    public function getOrganisationDetailsBySingleRequest($client, $token, $requestOptions, array $organizations): array {
+        $responseBody = [];
+        foreach ($organizations as $organization) {
+            $url = 'api.linkedin.com/rest/organizations/' . $organization;
+            $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
+            $response = $client->getResponse($availableCompaniesRequest);
+            $responseBody[$organization] = json_decode((string) $response->getBody());
+        }
 
-        //array_combine(array_column($a, 'id'), array_column($a, 'name'));
+        $details = [];
+        foreach ($organizations as $organizationId) {
+            $details[$responseBody[$organizationId]->localizedName] = $organizationId;
+        }
 
         return $details;
+    }
+
+    public function getOrganisationDetails($client, $token, array $organizations): array
+    {
+        $requestOptions['headers'] = $this->linkedinFactory->getHeaders();
+
+        //Integrated can only make 2 batchrequests PER DAY
+        //Integrated can make 100 single requests PER DAY
+        //If we get more batchrequests, we can work with $this->>getOrganisationDetailsByBatchRequest
+        return $this->getOrganisationDetailsBySingleRequest($client, $token, $requestOptions, $organizations);
     }
 
     public function onPreSetData(FormEvent $event)
@@ -88,15 +94,7 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
             try {
                 $client = $this->linkedinFactory->createClient($formData['token']);
                 $organizations = $this->getRelatedOrganisations($client, $formData['token']);
-                $pages = $this->getOrganisationDetails($client, $formData["token"], $organizations);
-
-//                dd($oages);
-
-//                $pages = [
-//                    "water" => "vuur",
-//                    "zon" => "aarde",
-//                    "meerkoet" => "rare vogels",
-//                ];
+                $pages = $this->getOrganisationDetails($client, $formData['token'], $organizations);
 
                 ksort($pages);
 
@@ -106,8 +104,6 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
                     $formData['apiStatus'] = 'The linked account does not seem to be administrator of a LinkedIn page';
                 } else {
                     $formData['apiStatus'] = 'OK';
-
-//                    $form->add('page_token', TextType::class, ['attr' => ['readonly' => 'true']]);
                 }
             } catch (\Exception $e) {
                 $formData['token'] = null;
@@ -118,4 +114,3 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
         }
     }
 }
-
