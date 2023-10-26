@@ -30,6 +30,7 @@
         </service>
         <service id="Integrated\Bundle\DashboardBundle\Widgets\MostReadWidget">
             <argument type="service" id="monolog.logger"/>
+            <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <tag name="integrated_dashboard.widget" />
         </service>
     </services>

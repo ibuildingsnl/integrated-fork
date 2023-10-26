@@ -1,7 +1,10 @@
 <div>
-    <h1> <br> Most read</h1>
+    <h1> <br> Most {{ mostViewedPages | length }} read pages this month</h1>
     <nav class="article-list">
         <ul>
+            {% for article in mostViewedPages %}
+                <li> <b> {{ article.title }} | </b> {{ article.views }} views</li>
+            {% endfor %}
         </ul>
     </nav>
 </div>

@@ -3,7 +3,7 @@
     <nav class="article-list">
         <ul>
             {% for article in mostRecentArticles %}
-                <li>{{ article.title }} | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
+                <li><b>{{ article.title }}</b> | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
             {% endfor %}
         </ul>
     </nav>
