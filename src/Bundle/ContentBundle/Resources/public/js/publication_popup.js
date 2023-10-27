@@ -1,6 +1,13 @@
 const formActions = document.querySelector('.form-actions-extra');
-// @todo adapt
-const publishActions = document.querySelectorAll('.publishActions .publish_form');
+
+const popup = document.createElement('div');
+popup.className = 'category_wrapper close-outside';
+popup.innerText = 'Hello World';
+document.body.appendChild(popup);
+
+const publishActions = Array.from(document.querySelectorAll('.publication-settings'))
+    .map((e) => e.dataset.channelType)
+    .filter((v, i, a) => a.indexOf(v) === i);
 
 if (publishActions.length > 0) {
     // add top-bar menu item
@@ -21,69 +28,76 @@ if (publishActions.length > 0) {
     // add publishing options to newly added dropdown menu
     const menu = document.querySelector('#menu_publish');
     publishActions.forEach(function (action) {
+        if (action === 'Newsletter' || action === 'Website') {
+            // @todo make into a setting on channel type instead of hardcoded in js
+            return;
+        }
         const item = document.createElement('li');
         menu.appendChild(item);
         const a = document.createElement('a');
         a.className = 'popup-link';
-        a.innerText = action.querySelector('label').innerText;
+        a.innerText = 'Publish to ' + action;
         a.addEventListener('click', function () {
             // open popup
-            publishActions.forEach((a) => a.querySelector('.publishable').className = 'publishable');
-            action.querySelector('.publishable').className = 'publishable display';
-            document.querySelector('.publishActions').style = 'position: fixed; ' +
-                'height: 100%; ' +
-                'left:0; ' +
-                'right: 0; ' +
-                'top: 0; ' +
-                'background: rgba(0, 0, 0, 0.4)';
-            action.querySelectorAll('.aside-item-list').forEach((img) => img.style = 'display: block; min-height: 40px; height: fit-content;');
-            const textarea = action.querySelector('textarea');
-            if (textarea) {
-                textarea.value = getPublishIntro(160);
-            }
-            const title = action.querySelector('[name$="[title]"]');
-            if (title) {
-                title.value = document.querySelector('#integrated_content_title')?.value;
-            }
-            const image = action.querySelector('[image]');
-            if (image) {
-                //@todo assign featured image
-                image.value = document.querySelector('[featuredImage]')?.value;
-            }
+            const settings = document.querySelector('.publication-settings[data-channel-type="'+action+'"]').cloneNode(true);
+            popup.innerHTML = '';
+            popup.appendChild(settings);
+            popup.querySelectorAll('[id]').forEach(function (e) {
+                e.id += '_popup'; // prevent duplicate ids
+            });
+            popup.querySelector('label').className = 'hidden';
+            const channels = document.createElement('select');
+            channels.className = 'select2';
+            channels.multiple = true;
+            channels.dataset.applyChannels = true;
+            popup.appendChild(channels);
+
+            const a = document.createElement('a');
+            a.href = '#';
+            a.className = 'btn btn-green';
+            a.innerText = 'Apply choices';
+            a.addEventListener('click', function (ev) {
+                // Apply choices
+                const pubInputSelector = 'input,select,textarea';
+                const data = {};
+                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                    data[i] = input.value;
+                });
+                document.querySelectorAll(
+                    '.publication-settings[data-channel-type="' + action + '"]'
+                ).forEach(function (container) {
+                    if (!popup.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
+                        return;
+                    }
+                    container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                        input.value = data[i];
+                    });
+                    const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
+                    input.checked = true;
+                    const brand = input.closest('.brand-container');
+                    if (brand) {
+                        brand.querySelector('input.brand-choice').checked = true;
+                    }
+                });
+                popup.classList.remove('show');
+                ev.preventDefault();
+            });
+            popup.appendChild(a);
+
+            document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
+                const brand = input.closest('.brand-container');
+                let selected = input.checked;
+                if (brand && selected) {
+                    selected = brand.querySelector('input.brand-choice').checked;
+                }
+                const option = document.createElement('option');
+                option.value = input.value;
+                option.text = input.dataset.channelName;
+                option.selected = selected;
+                channels.append(option);
+            });
+            popup.classList.add('show');
         });
         item.appendChild(a);
-        action.querySelector('[for$="_use"]').style.display = 'none';
-        action.querySelector('.button-ok')?.addEventListener(
-            'click',
-            function () {
-                action.querySelector('[name$="[use]"]').click();
-                document.querySelector('#integrated_content_actions_save')?.click();
-            }
-        );
     });
-
-    // close on outside click
-    // @todo remove global event trigger from media gallery to turn this back on
-    // document.addEventListener('click', function (e) {
-    //     if (!e.target.closest('.publishable') && !e.target.closest('.popup-link')) {
-    //         closePublishPopup();
-    //     }
-    // });
-    document.querySelectorAll('.button-cancel').forEach(
-        (e) => e.addEventListener('click', closePublishPopup)
-    );
-}
-
-function closePublishPopup() {
-    publishActions.forEach((a) => a.querySelector('.publishable').className = 'publishable');
-    document.querySelector('.publishActions').style = '';
-}
-
-function cropPublishIntro(fullIntro, maxLength) {
-    const length = fullIntro.indexOf("\n");
-    return fullIntro.substring(0, Math.min(length, maxLength)) + (length > maxLength ? '...' : '');
-}
-
-function getPublishIntro(maxLength) {
-    return cropPublishIntro(tinymce.get("integrated_content_content").getContent({ format: "text" }), maxLength);
 }

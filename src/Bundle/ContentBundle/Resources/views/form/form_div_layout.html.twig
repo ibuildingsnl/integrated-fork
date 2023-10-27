@@ -423,6 +423,9 @@
     {% integrated_javascripts mode='append'
         'bundles/integratedcontent/js/publication_settings.js' %}
     {% endintegrated_javascripts %}
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_popup.js' %}
+    {% endintegrated_javascripts %}
 {% endblock %}
 
 {% block integrated_publication_settings_row %}
@@ -445,9 +448,7 @@
                         <option value="this">{{ form_label(form) }}</option>
                     </select>
                     <div class="hidden settings-channels-choice">
-                        <select class="select2" data-apply-channels multiple>
-                            <option>@todo: Add & filter channels</option>
-                        </select>
+                        <select class="select2" data-apply-channels multiple></select>
                     </div>
                 </div>
             </div>
