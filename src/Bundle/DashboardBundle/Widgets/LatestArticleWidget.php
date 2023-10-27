@@ -5,7 +5,7 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\Channel\ChannelInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class LatestArticleWidget implements WidgetInterface
 {

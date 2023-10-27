@@ -21,6 +21,7 @@ use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Common\Content\Channel\ChannelContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 class DashboardController extends AbstractController
 {
@@ -50,7 +51,7 @@ class DashboardController extends AbstractController
         return $this->renderDashboardView($channel->getName(), $renderedWidgets, $selectChannelForm);
     }
 
-    private function getChannel($request): \Integrated\Common\Content\Channel\ChannelInterface
+    private function getChannel($request): ChannelInterface
     {
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
         return $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
@@ -59,7 +60,7 @@ class DashboardController extends AbstractController
     /**
      * @throws MongoDBException
      */
-    private function renderWidgets(Channel $channel, $user): array
+    private function renderWidgets(ChannelInterface $channel, $user): array
     {
         $renderedWidgets = [];
         $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)

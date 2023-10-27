@@ -1,0 +1,66 @@
+<?php
+
+namespace Integrated\Bundle\AnalyticsBundle\Infrastructure;
+
+use Google\Client as GoogleApiClient;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Log\LoggerInterface;
+
+class AnalyticsRequest
+{
+
+    public function __construct(
+        private readonly string $credential,
+        private readonly LoggerInterface $logger
+    )
+    {
+    }
+    private string $response;
+
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    private function getAccessToken($googleCredentialPath)
+    {
+        $GoogleApiClient = new GoogleApiClient();
+        $GoogleApiClient->setAuthConfig($googleCredentialPath);
+        $GoogleApiClient->addScope('https://www.googleapis.com/auth/analytics.readonly');
+        $GoogleApiClient->useApplicationDefaultCredentials();
+
+        $token = $GoogleApiClient->fetchAccessTokenWithAssertion();
+
+        return $token['access_token'];
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function GoogleAnalyticsPostRequest(array $requestBody, string $propertyId): void
+    {
+        try {
+            $googleCredentialPath = $this->credential;
+            $accessToken = $this->getAccessToken($googleCredentialPath);
+
+            $apiUrl = "https://analyticsdata.googleapis.com/v1beta/properties/$propertyId:runReport";
+
+            $guzzleClient = new GuzzleClient();
+
+            $response = $guzzleClient->request('POST', $apiUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $requestBody,
+            ]);
+            $responseBody = $response->getBody()->getContents();
+        } catch (GuzzleException $e) {
+            // Handle other Guzzle exceptions here
+            $this->logger->error('Get Analytics Error: ' . $e->getMessage(). '\n');
+        }
+        $this->response = $responseBody ?? null;
+    }
+}

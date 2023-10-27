@@ -3,7 +3,7 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\Channel\ChannelInterface;
+use \Integrated\Common\Content\Channel\ChannelInterface;
 
 interface WidgetInterface
 {

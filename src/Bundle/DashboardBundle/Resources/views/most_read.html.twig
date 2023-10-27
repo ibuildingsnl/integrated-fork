@@ -1,5 +1,9 @@
 <div>
+    {% if (mostViewedPages is not iterable) %}
+    <h1> <br> {{ mostViewedPages }} </h1>
+    {% else %}
     <h1> <br> Most {{ mostViewedPages | length }} read pages this month</h1>
+    {% endif %}
     <nav class="article-list">
         <ul>
             {% for article in mostViewedPages %}

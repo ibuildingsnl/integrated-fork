@@ -2,46 +2,25 @@
 
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
-use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsDataFetcher;
-use Google\ApiCore\ApiException;
-use Google\ApiCore\ValidationException;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use GuzzleHttp\Exception\GuzzleException;
+use Integrated\Bundle\BrandBundle\Document\BrandProfile;
+use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\Channel\ChannelInterface;
+use \Integrated\Common\Content\Channel\ChannelInterface;
+use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Psr\Log\LoggerInterface;
-use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
-use Google\Analytics\Data\V1beta\DateRange;
-use Google\Analytics\Data\V1beta\Dimension;
-use Google\Analytics\Data\V1beta\Metric;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use GuzzleHttp\Client as GuzzleClient;
-use Google\Client as GoogleApiClient;
 
-use Google\Analytics\Data\V1beta\Filter;
-use Google\Analytics\Data\V1beta\FilterExpression;
-
-use Google\Cloud\Core\ExponentialBackoff;
-use Google\Cloud\Core\RestTrait;
 
 class MostReadWidget implements WidgetInterface
 {
 
-    protected const SLUGS = [
-        'article' => 'artikel',
-        'author' => 'auteur',
-        'news' => 'nieuws',
-        'notes' => 'notitie',
-        'partner' => 'partner',
-        'podcast' => 'podcast',
-        'video' => 'video',
-        'webinar' => 'webinar',
-    ];
-
-    protected string $propertyId = '348963659';
-
-
     public function __construct(
+        private readonly string $credential,
         private readonly LoggerInterface $logger,
-        private readonly string          $credential
+        private readonly DocumentManager $manager,
+        private readonly BrandRepository $brandRepository
     )
     {
     }
@@ -57,12 +36,19 @@ class MostReadWidget implements WidgetInterface
     }
 
     /**
-     * @throws ValidationException
-     * @throws ApiException
+     * @throws GuzzleException
      */
     public function params(ChannelInterface $channel, User $user): array
     {
-        $mostRead = [];
+        foreach ($this->brandRepository->all() as $brand) {
+            if ($brand->hasChannel($channel)) {
+                $propertyId = $brand->profile->analytics;
+            }
+        }
+        if (!isset($propertyId) || $propertyId == null)
+        {
+            return["mostViewedPages" => "No data found"];
+        }
         $requestBody = [
             "dateRanges" => [
                 [
@@ -90,20 +76,16 @@ class MostReadWidget implements WidgetInterface
             ],
             "limit" => 20
         ];
-
-        $responseJson = $this->GooggleAnalyticsPostRequest($requestBody);
-        // Convertir la réponse JSON en tableau associatif
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
+        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
+        $responseJson = $analyticsRequest->getResponse();
         $data = json_decode($responseJson, true);
 
-        // Initialiser un tableau pour stocker les données finales
         $mostViewedPages = [];
-
-        // Parcourir les lignes de la réponse
         foreach ($data['rows'] as $row) {
             $pageTitle = $row['dimensionValues'][0]['value'];
             $screenPageViews = (int) $row['metricValues'][0]['value'];
 
-            // Stocker les données dans le tableau associatif
             $mostViewedPages[] = [
                 'title' => $pageTitle,
                 'views' => $screenPageViews,
@@ -113,42 +95,4 @@ class MostReadWidget implements WidgetInterface
             "mostViewedPages" => $mostViewedPages
         ];
     }
-    function getAccessToken($googleCredentialPath)
-    {
-        $GoogleApiClient = new GoogleApiClient();
-        $GoogleApiClient->setAuthConfig($googleCredentialPath);
-        $GoogleApiClient->addScope('https://www.googleapis.com/auth/analytics.readonly');
-        $GoogleApiClient->useApplicationDefaultCredentials();
-
-        $token = $GoogleApiClient->fetchAccessTokenWithAssertion();
-
-        return $token['access_token'];
-    }
-
-    public function GooggleAnalyticsPostRequest(array $requestBody): ?string
-    {
-        $propertyId = $this->propertyId;
-        $googleCredentialPath = $this->credential;
-        $accessToken = $this->getAccessToken($googleCredentialPath);
-
-        $apiUrl = "https://analyticsdata.googleapis.com/v1beta/properties/$propertyId:runReport";
-
-        $guzzleClient = new GuzzleClient();
-
-        $response = $guzzleClient->request('POST', $apiUrl, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $requestBody,
-        ]);
-
-        $responseBody = $response->getBody()->getContents();
-
-        return $responseBody;
-    }
-
-
-
 }

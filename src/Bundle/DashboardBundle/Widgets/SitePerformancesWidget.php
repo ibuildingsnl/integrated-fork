@@ -3,16 +3,9 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\UserBundle\Model\User;
-use Integrated\Common\Channel\ChannelInterface;
+use \Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
-use Stratadox\Clock\Clock;
 
 
 class SitePerformancesWidget implements WidgetInterface
