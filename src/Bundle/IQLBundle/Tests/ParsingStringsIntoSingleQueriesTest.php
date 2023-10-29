@@ -27,7 +27,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             WrittenBy::author('John Doe'),
-            $this->parser->parse('written by John Doe'),
+            $this->parser->parse('written by John Doe')->data(),
         );
     }
 
@@ -35,7 +35,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             WrittenOn::date('01-01-2023'),
-            $this->parser->parse('written on 01-01-2023'),
+            $this->parser->parse('written on 01-01-2023')->data(),
         );
     }
 
@@ -43,7 +43,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             WrittenBefore::date('01-01-2023'),
-            $this->parser->parse('published before 01-01-2023'),
+            $this->parser->parse('written before 01-01-2023')->data(),
         );
     }
 
@@ -51,7 +51,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             WrittenAfter::date('01-01-2023'),
-            $this->parser->parse('published after 01-01-2023'),
+            $this->parser->parse('written after 01-01-2023')->data(),
         );
     }
 
@@ -59,7 +59,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             PublishedOn::date('01-01-2023'),
-            $this->parser->parse('published on 01-01-2023'),
+            $this->parser->parse('published on 01-01-2023')->data(),
         );
     }
 
@@ -67,7 +67,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             PublishedBefore::date('01-01-2023'),
-            $this->parser->parse('published before 01-01-2023'),
+            $this->parser->parse('published before 01-01-2023')->data(),
         );
     }
 
@@ -75,7 +75,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             PublishedAfter::date('01-01-2023'),
-            $this->parser->parse('published after 01-01-2023'),
+            $this->parser->parse('published after 01-01-2023')->data(),
         );
     }
 
@@ -83,7 +83,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
     {
         self::assertEquals(
             WithContentType::of('article'),
-            $this->parser->parse('articles'),
+            $this->parser->parse('articles')->data(),
         );
     }
 
