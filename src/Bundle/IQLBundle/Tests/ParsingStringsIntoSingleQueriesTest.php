@@ -3,7 +3,14 @@
 namespace Integrated\Bundle\IQLBundle\Tests;
 
 use Integrated\Bundle\IQLBundle\Parser\IQLParser;
-use Integrated\Bundle\IQLBundle\WithContentType;
+use Integrated\Bundle\IQLBundle\Specification\PublishedAfter;
+use Integrated\Bundle\IQLBundle\Specification\PublishedBefore;
+use Integrated\Bundle\IQLBundle\Specification\PublishedOn;
+use Integrated\Bundle\IQLBundle\Specification\WithContentType;
+use Integrated\Bundle\IQLBundle\Specification\WrittenAfter;
+use Integrated\Bundle\IQLBundle\Specification\WrittenBefore;
+use Integrated\Bundle\IQLBundle\Specification\WrittenBy;
+use Integrated\Bundle\IQLBundle\Specification\WrittenOn;
 use PHPUnit\Framework\TestCase;
 use Stratadox\Parser\Parser;
 
@@ -79,4 +86,10 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
             $this->parser->parse('articles'),
         );
     }
+
+    // @todo find by:
+    // - channel
+    // - properties?
+    // - relations
+    // - text in title/content
 }

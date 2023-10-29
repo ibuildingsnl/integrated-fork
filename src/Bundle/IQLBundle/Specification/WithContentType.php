@@ -1,8 +1,9 @@
 <?php
 
-namespace Integrated\Bundle\IQLBundle;
+namespace Integrated\Bundle\IQLBundle\Specification;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Stratadox\Specification\Contract\Specifies;
 use Stratadox\Specification\Specification;
 
@@ -20,6 +21,6 @@ final class WithContentType extends Specification
 
     public function isSatisfiedBy($object): bool
     {
-        return $object instanceof Content && $object->getContentType() === $this->type;
+        return $object instanceof Publication && $object->getContent()->getContentType() === $this->type;
     }
 }

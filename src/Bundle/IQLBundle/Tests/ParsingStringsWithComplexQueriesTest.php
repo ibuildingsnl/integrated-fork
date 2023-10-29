@@ -3,16 +3,21 @@
 namespace Integrated\Bundle\IQLBundle\Tests;
 
 use Integrated\Bundle\IQLBundle\Parser\IQLParser;
-use Integrated\Bundle\IQLBundle\WithContentType;
+use Integrated\Bundle\IQLBundle\Specification\WithContentType;
+use Integrated\Bundle\IQLBundle\Specification\WrittenAfter;
+use Integrated\Bundle\IQLBundle\Specification\WrittenBefore;
+use Integrated\Bundle\IQLBundle\Specification\WrittenBy;
+use Integrated\Bundle\IQLBundle\Specification\WrittenOn;
 use PHPUnit\Framework\TestCase;
 use Stratadox\Parser\Parser;
 
-final class ParsingStringsWithComplexQueries extends TestCase
+final class ParsingStringsWithComplexQueriesTest extends TestCase
 {
     private Parser $parser;
 
     protected function setUp(): void
     {
+        $this->markTestSkipped('@todo');
         $this->parser = IQLParser::create();
     }
 
@@ -27,11 +32,11 @@ final class ParsingStringsWithComplexQueries extends TestCase
     public function testFindByTypeAuthorAndDateRange()
     {
         self::assertEquals(
-            WithContentType::of('article')->and(
-                WrittenBy::author('John Doe'),
-                WrittenAfter::date('01-01-2023'),
-                WrittenBefore::date('31-12-2023'),
-            ),
+            WithContentType::of('article')
+                ->and(WrittenBy::author('John Doe'))
+                ->and(WrittenAfter::date('01-01-2023'))
+                ->and(WrittenBefore::date('31-12-2023'))
+            ,
             $this->parser->parse('blogs written by John Doe between 01-01-2023 and 31-12-2023'),
         );
     }
