@@ -313,7 +313,7 @@ class Article extends Content implements RankableInterface
         return $this->seoMetadata;
     }
 
-    public function getAddress(): Embedded\Address
+    public function getAddress(): ?Embedded\Address
     {
         return $this->address;
     }
