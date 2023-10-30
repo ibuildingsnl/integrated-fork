@@ -4,8 +4,8 @@ namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class YoastSeoLanguageProvider
 {
@@ -50,7 +50,7 @@ class YoastSeoLanguageProvider
         if (!$translationData->isHit()) {
             $filePath = new FileLocator(__DIR__.'/../YoastSeo/lang');
             // TODO: this is not the nicest way i think to link to the file
-            $filePath = $filePath->locate($locale . '.json');
+            $filePath = $filePath->locate($locale.'.json');
 
             if (file_exists($filePath)) {
                 $rawTranslationData = file_get_contents($filePath);
