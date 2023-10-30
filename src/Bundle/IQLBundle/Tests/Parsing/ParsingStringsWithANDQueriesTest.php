@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\IQLBundle\Tests;
+namespace Integrated\Bundle\IQLBundle\Tests\Parsing;
 
 use Integrated\Bundle\IQLBundle\Parser\IQLParser;
 use Integrated\Bundle\IQLBundle\Specification\WithContentType;
@@ -11,7 +11,7 @@ use Integrated\Bundle\IQLBundle\Specification\WrittenOn;
 use PHPUnit\Framework\TestCase;
 use Stratadox\Parser\Parser;
 
-final class ParsingStringsWithComplexQueriesTest extends TestCase
+final class ParsingStringsWithANDQueriesTest extends TestCase
 {
     private Parser $parser;
 

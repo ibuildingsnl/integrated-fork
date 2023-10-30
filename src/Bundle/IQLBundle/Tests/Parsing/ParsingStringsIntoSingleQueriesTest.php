@@ -1,6 +1,6 @@
 <?php
 
-namespace Integrated\Bundle\IQLBundle\Tests;
+namespace Integrated\Bundle\IQLBundle\Tests\Parsing;
 
 use Integrated\Bundle\IQLBundle\Parser\IQLParser;
 use Integrated\Bundle\IQLBundle\Specification\PublishedAfter;
