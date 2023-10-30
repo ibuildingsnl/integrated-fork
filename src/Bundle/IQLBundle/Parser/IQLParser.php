@@ -5,11 +5,14 @@ namespace Integrated\Bundle\IQLBundle\Parser;
 use Integrated\Bundle\IQLBundle\Specification\PublishedAfter;
 use Integrated\Bundle\IQLBundle\Specification\PublishedBefore;
 use Integrated\Bundle\IQLBundle\Specification\PublishedOn;
+use Integrated\Bundle\IQLBundle\Specification\PublishedTo;
+use Integrated\Bundle\IQLBundle\Specification\WithContent;
 use Integrated\Bundle\IQLBundle\Specification\WithContentType;
 use Integrated\Bundle\IQLBundle\Specification\WrittenAfter;
 use Integrated\Bundle\IQLBundle\Specification\WrittenBefore;
 use Integrated\Bundle\IQLBundle\Specification\WrittenBy;
 use Integrated\Bundle\IQLBundle\Specification\WrittenOn;
+use Stratadox\Parser\Helpers\Between;
 use Stratadox\Parser\Parser;
 use Stratadox\Parser\Parsers\Either;
 use Stratadox\Parser\Parsers\End;
@@ -37,6 +40,15 @@ final class IQLParser
                 ->andThen(any()->repeatableString()->map(fn (string $when) => PublishedBefore::date($when))),
             text('published after ')->ignore()
                 ->andThen(any()->repeatableString()->map(fn (string $when) => PublishedAfter::date($when))),
+            text('published to ')->ignore()
+                ->andThen(any()->repeatableString()->map(fn (string $which) => PublishedTo::channel($which))),
+
+            text('containing ')->ignore()
+                ->andThen(
+                    Between::escaped('"', '"', '\\')
+                        ->or(any()->repeatableString())
+                        ->map(fn (string $text) => WithContent::containing($text))
+                ),
 
             any()->except(End::with(text('s')))->repeatableString()
                 ->andThen('s')->map(fn ($a) => [WithContentType::of($a[0])])
