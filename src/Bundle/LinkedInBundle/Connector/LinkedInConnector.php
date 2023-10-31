@@ -28,11 +28,8 @@ final class LinkedInConnector implements ConnectorInterface
 
     public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options, array $settings): ?string
     {
-        // todo, decide where to put vars
         $linkedinVersion = '202309';
         $linkedinPostArticleUrl = 'https://api.linkedin.com/rest/posts';
-
-        // todo, get this working instead of linkedinAuthor
         $authorUrn = $options->get('page');
 
         if (!$options->has('token')) {
@@ -40,7 +37,6 @@ final class LinkedInConnector implements ConnectorInterface
         }
 
         $client = $this->factory->createClient($options->get('token'));
-
         $message = $settings['title']. " " .$settings['text']. " " . $this->linkMaker->urlFor($content, $channel);
 
         $requestOptions['headers'] = [
