@@ -31,7 +31,6 @@ final class LinkedInConnector implements ConnectorInterface
         // todo, decide where to put vars
         $linkedinVersion = '202309';
         $linkedinPostArticleUrl = 'https://api.linkedin.com/rest/posts';
-        $linkedinAuthor = '98903555';
 
         // todo, get this working instead of linkedinAuthor
         $authorUrn = $options->get('page');
@@ -42,23 +41,7 @@ final class LinkedInConnector implements ConnectorInterface
 
         $client = $this->factory->createClient($options->get('token'));
 
-//        try {
-//            dd($client->getResourceOwner($options->get('token')));
-//        } catch (Exception $e) {
-//            dd($e);
-//        }
-
-        $message = [
-            $settings['title'] ?? null,
-            $settings['text'] ?? null,
-            $this->linkMaker->urlFor($content, $channel),
-        ];
-
-        $message = implode("\n\n", $message);
-
-        $message2 = $settings['title']."\n\n".$settings['text']."\n\n".$this->linkMaker->urlFor($content, $channel);
-
-//        $message3 = "We will share the complete journey from start to finish";
+        $message = $settings['title']. " " .$settings['text']. " " . $this->linkMaker->urlFor($content, $channel);
 
         $requestOptions['headers'] = [
             'LinkedIn-Version' => $linkedinVersion,
@@ -67,8 +50,8 @@ final class LinkedInConnector implements ConnectorInterface
         ];
 
         $requestOptions['body'] = '{
-            "author": "urn:li:organization:'.$linkedinAuthor.'",
-            "commentary": "'.$message2.'",
+            "author": "urn:li:organization:'.$authorUrn.'",
+            "commentary": "'.$message.'",
             "visibility": "LOGGED_IN",
             "distribution": {
               "feedDistribution": "MAIN_FEED",

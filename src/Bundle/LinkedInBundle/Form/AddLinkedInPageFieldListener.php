@@ -106,6 +106,7 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
                     $formData['apiStatus'] = 'OK';
                 }
             } catch (\Exception $e) {
+                $formData['token'] = null;
                 $formData['apiStatus'] = 'Token seems to be invalid. Save the form to get a new one. ('.$e->getMessage().')';
             }
         } else {
