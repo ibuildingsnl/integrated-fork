@@ -156,6 +156,9 @@
         </service>
 
         <service id="Integrated\Bundle\ContentBundle\Controller\YoastSeoLanguageProvider">
+            <argument type="service" id="file_locator" />
+            <argument>@IntegratedContentBundle/YoastSeo/lang</argument>
+
             <tag name="controller.service_arguments" />
         </service>
 
