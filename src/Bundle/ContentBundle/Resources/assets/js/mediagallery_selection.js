@@ -43,10 +43,21 @@ function populateFormRelations() {
             types: JSON.parse(item.querySelector('.select_multimedia_button').dataset.types),
             input_selector: `input[name="${inputIdentifier}"]`,
             selected_images_selector: `#${id} .selected_images`,
-            wrap_selector: `#${id} .wrap`,
-            iframe_selector: `#${id} iframe`,
+            wrap_selector: `.${id}.wrap`,
+            iframe_selector: `.${id}.iframe`,
         };
         form_relations[id].types_url = getTypesUrl(form_relations[id].types);
+
+        var wrap = document.createElement('div');
+        wrap.className = `wrap media-library iframe-wrapper close-outside ${id}`;
+
+        // Create iframe element
+        var iframe = document.createElement('iframe');
+        iframe.className = `iframe ${id}`;
+
+        wrap.appendChild(iframe);
+        document.body.appendChild(wrap);
+
     });
 }
 
@@ -153,7 +164,7 @@ window.addEventListener('message', function(e) {
         closeMediaGallery();
         return;
     }
-    if (typeof e.data === 'string') {
+    if (typeof e.data === 'string' && e.data.length > 0) {
         const response_from_iframe = filterImages(JSON.parse(e.data));
         if (response_from_iframe.length > 0) {
             selectImagesToShow(response_from_iframe);

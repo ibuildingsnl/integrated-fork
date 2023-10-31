@@ -79,6 +79,7 @@ $('.integrated_tinymce').each(function(key, elem){
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats,
         setup: function (editor) {
+
             function addRemoveButton(element, className) {
                 const removeButton = editor.contentDocument.createElement('span');
                 removeButton.classList.add(className, 'remove');
@@ -99,6 +100,10 @@ $('.integrated_tinymce').each(function(key, elem){
             }
 
             editor.on('init', function() {
+
+                let event = new CustomEvent('tinyMCEInitialized', { detail: { editor } });
+                window.dispatchEvent(event);
+
                 const swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
                 const articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
 

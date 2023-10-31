@@ -14,6 +14,7 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address;
+use Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Content\Document\Storage\FileInterface;
@@ -156,6 +157,19 @@ class Article extends Content implements RankableInterface
     protected $address;
 
     /**
+     * @var Embedded\SeoMeta
+     */
+    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\SeoMetaType', options: [
+        'priority' => 430,
+        'attr' => [
+            'label' => 'Seo Metadata',
+            'style' => 'none',
+            'icon' => 'pin-alt',
+        ],
+    ])]
+    protected $seoMetadata;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -164,102 +178,47 @@ class Article extends Content implements RankableInterface
 
         $this->authors = new ArrayCollection();
         $this->address = new Address();
+        $this->seoMetadata = new SeoMeta();
     }
 
-    /**
-     * Get the title of the document.
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * Set the title of the document.
-     *
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
-    /**
-     * Get the content of the document.
-     *
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    /**
-     * Set the content of the document.
-     *
-     * @param string $content
-     *
-     * @return $this
-     */
-    public function setContent($content)
+    public function setContent(string $content): void
     {
         $this->content = $content;
-
-        return $this;
     }
 
-    /**
-     * Get the slug of the document.
-     *
-     * @return string
-     */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
-    /**
-     * Set the slug of the document.
-     *
-     * @param string $slug
-     *
-     * @return $this
-     */
-    public function setSlug($slug)
+    public function setSlug($slug): void
     {
         $this->slug = $slug;
-
-        return $this;
     }
 
-    /**
-     * Get the subtitle of the document.
-     *
-     * @return string
-     */
-    public function getSubtitle()
+    public function getSubtitle(): ?string
     {
         return $this->subtitle;
     }
 
-    /**
-     * Set the subtitle of the document.
-     *
-     * @param string $subtitle
-     *
-     * @return $this
-     */
-    public function setSubtitle($subtitle)
+    public function setSubtitle(string $subtitle): void
     {
         $this->subtitle = $subtitle;
-
-        return $this;
     }
 
     public function getFeaturedImage(): ?Image
@@ -272,196 +231,99 @@ class Article extends Content implements RankableInterface
         $this->featuredImage = $featuredImage;
     }
 
-    /**
-     * Get the authors of the document.
-     *
-     * @return Collection
-     */
-    public function getAuthors()
+    public function getAuthors(): ?Collection
     {
         return $this->authors;
     }
 
-    /**
-     * Set the authors of the document.
-     *
-     * @return $this
-     */
-    public function setAuthors(Collection $authors)
+    public function setAuthors(Collection $authors): void
     {
         $this->authors = $authors;
-
-        return $this;
     }
 
-    /**
-     * Add author to authors collection.
-     *
-     * @return $this
-     */
-    public function addAuthor(Embedded\Author $author)
+    public function addAuthor(Embedded\Author $author): void
     {
         if (!$this->authors->contains($author)) {
             $this->authors->add($author);
         }
-
-        return $this;
     }
 
-    /**
-     * @return bool true if this collection contained the specified element, false otherwise
-     */
-    public function removeAuthor(Embedded\Author $author)
+    public function removeAuthor(Embedded\Author $author): bool
     {
         return $this->authors->removeElement($author);
     }
 
-    /**
-     * Get the source of the document.
-     *
-     * @return string
-     */
-    public function getSource()
+    public function getSource(): ?string
     {
         return $this->source;
     }
 
-    /**
-     * Set the source of the document.
-     *
-     * @param string $source
-     *
-     * @return $this
-     */
-    public function setSource($source)
+    public function setSource(string $source): void
     {
         $this->source = $source;
-
-        return $this;
     }
 
-    /**
-     * Get the source URL of the document.
-     *
-     * @return string
-     */
-    public function getSourceUrl()
+    public function getSourceUrl(): ?string
     {
         return $this->sourceUrl;
     }
 
-    /**
-     * Set the source of the document.
-     *
-     * @param string $sourceUrl
-     *
-     * @return $this
-     */
-    public function setSourceUrl($sourceUrl)
+    public function setSourceUrl(string $sourceUrl): void
     {
         $this->sourceUrl = $sourceUrl;
-
-        return $this;
     }
 
-    /**
-     * Get the locale of the document.
-     *
-     * @return string
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
 
-    /**
-     * Set the locale of the document.
-     *
-     * @param string $locale
-     *
-     * @return $this
-     */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
-
-        return $this;
     }
 
-    /**
-     * Get the intro of the document.
-     *
-     * @return string
-     */
-    public function getIntro()
+    public function getIntro(): ?string
     {
         return $this->intro;
     }
 
-    /**
-     * Set the intro of the document.
-     *
-     * @param string $intro
-     *
-     * @return $this
-     */
-    public function setIntro($intro)
+    public function setIntro(string $intro): void
     {
         $this->intro = $intro;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
-
-        return $this;
     }
 
-    /**
-     * Get the address of the document.
-     *
-     * @return Embedded\Address
-     */
-    public function getAddress()
+    public function setSeoMetadata(Embedded\SeoMeta $seoMetadata): void
+    {
+        $this->seoMetadata = $seoMetadata;
+    }
+
+    public function getSeoMetadata(): ?Embedded\SeoMeta
+    {
+        return $this->seoMetadata;
+    }
+
+    public function getAddress(): ?Embedded\Address
     {
         return $this->address;
     }
 
-    /**
-     * Set the address of the document.
-     *
-     * @param Embedded\Address $address
-     *
-     * @return $this
-     */
-    public function setAddress(Embedded\Address $address = null)
+    public function setAddress(Embedded\Address $address = null): void
     {
         $this->address = $address;
-
-        return $this;
     }
 
-    /**
-     * Get the relative cover image URL for article.
-     *
-     * @return StorageInterface
-     */
-    public function getCover()
+    public function getCover(): ?StorageInterface
     {
         if ($this->getFeaturedImage() instanceof Image) {
             if ($this->getFeaturedImage()->getFile() instanceof StorageInterface) {
@@ -483,10 +345,7 @@ class Article extends Content implements RankableInterface
         return null;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->title;
     }
