@@ -160,7 +160,7 @@ document.addEventListener('keydown', function (ev) {
 });
 
 document.addEventListener('click', function (ev) {
-    if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder')) {
+    if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
         document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
             div.classList.remove('show');
         });
