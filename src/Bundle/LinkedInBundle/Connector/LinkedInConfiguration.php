@@ -40,21 +40,12 @@ final class LinkedInConfiguration implements OauthConfigInterface
             'scope' => ['w_organization_social', 'rw_organization_admin'], // array or string
         ];
 
-//        if (!isset($_GET['code'])) {
-//            // If we don't have an authorization code then get one
-//            $authUrl = $client->getAuthorizationUrl($options);
-//            $_SESSION['oauth2state'] = $client->getState();
-//            header('Location: ' . $authUrl);
-//            exit;
-//        }
-
         $code = $event->getRequest()->get('code');
         if ($code === null || $code === '') {
             // If we don't have an authorization code then get one
             $authUrl = $client->getAuthorizationUrl($options);
             $_SESSION['oauth2state'] = $client->getState();
-            header('Location: '.$authUrl);
-            exit;
+            return $authUrl;
         }
 
         try {
@@ -112,27 +103,21 @@ final class LinkedInConfiguration implements OauthConfigInterface
             ];
         }
 
-        // array_combine(array_column($a, 'id'), array_column($a, 'name'));
-
         return $details;
     }
 
     public function handleCallback(ConfigEvent $event, OptionsInterface $options): bool
     {
+        if (!$event->getRequest()->get('code')) {
+            return false;
+        }
+
         $client = $this->factory->createClient();
 
         // Try to get an access token (using the authorization code grant)
         $token = $client->getAccessToken('authorization_code', [
             'code' => $event->getRequest()->get('code'),
         ]);
-
-        // get just the ids, [34572, 23463]
-//        $organizations = $this->getRelatedOrganisations($client, $token);
-//        $options->set('organizations', $organizations);
-
-        // get the name, so we can show this to the user
-//        $organizationDetails = $this->getOrganisationDetails($client, $token, $organizations);
-//        $options->set('organizationDetails', $organizationDetails);
 
         if (!$token) {
             return false;
@@ -144,9 +129,7 @@ final class LinkedInConfiguration implements OauthConfigInterface
             throw ConfigurationException::encountered($e);
         }
 
-        $options
-            ->set('token', $token)
-            ->remove('request_token');
+        $options->set('token', $token->getToken());
 
         return true;
     }
