@@ -143,6 +143,13 @@ if (publishActions.length > 0) {
             popup.classList.add('show');
         });
         item.appendChild(a);
+
+    });
+    // close on outside click
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.publishable') && !e.target.closest('.popup-link') && !e.target.closest('.select2-selection__choice')) {
+            popup.classList.remove('show');
+        }
     });
 }
 
