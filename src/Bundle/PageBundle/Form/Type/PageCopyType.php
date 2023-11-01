@@ -51,7 +51,7 @@ class PageCopyType extends AbstractType
                 'targetChannel' => $options['targetChannel'],
             ]);
 
-            $builder->add('actions', ActionsType::class, ['buttons' => ['copy', 'cancel']]);
+            $builder->add('actions', ActionsType::class, ['buttons' => ['copy']]);
         }
     }
 
