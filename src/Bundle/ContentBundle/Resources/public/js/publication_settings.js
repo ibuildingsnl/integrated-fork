@@ -3,21 +3,38 @@ function showHidePublicationSettingsButton(input) {
 }
 
 function openPublishingSettings(channelId, input) {
+    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-aside');
+
+    if (settings.classList.contains('show')) {
+        settings.classList.remove('show');
+
+        document.querySelectorAll('.editor-overlay').forEach(div => {
+            div.classList.remove('show');
+        });
+
+        return;
+    }
+
     document.querySelectorAll('.publication-settings-aside').forEach(div => {
         div.classList.remove('show');
     });
     document.querySelectorAll('.editor-overlay').forEach(div => {
         div.classList.add('show');
     });
-    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-aside');
+
+
+
     if (!settings) {
         return;
     }
-    settings.classList.add('show') ;
-    settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
+    console.log(settings);
+
+    settings.classList.add('show');
+
+    settings.querySelectorAll('[name*="[startDate]"]').forEach(function(d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
     });
-    settings.querySelectorAll('[name*="[endDate]"]').forEach(function (d) {
+    settings.querySelectorAll('[name*="[endDate]"]').forEach(function(d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
     });
     settings.addEventListener('click', function (ev) {
