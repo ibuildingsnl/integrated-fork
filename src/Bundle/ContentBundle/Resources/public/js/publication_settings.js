@@ -56,10 +56,10 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     if (settings.dataset.channelType) {
         const allOption = document.createElement('option');
         allOption.value = 'type';
-        allOption.text = 'Apply to all ' + settings.dataset.channelType + ' channels';
+        allOption.text = pubSettings.applyToAll + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
         const someOption = document.createElement('option');
         someOption.value = 'choose';
-        someOption.text = 'Apply to specific ' + settings.dataset.channelType + ' channels';
+        someOption.text = pubSettings.applyToSpecific + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
         const settingsContainer = settings.closest('.publication-settings-aside');
         const applyToSelect = settingsContainer.querySelector('[data-apply-to]');
         applyToSelect?.append(someOption, allOption);

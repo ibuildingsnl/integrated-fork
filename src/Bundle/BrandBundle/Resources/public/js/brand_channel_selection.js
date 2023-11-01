@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const htmlContent = `
         <div class="aside-item-search">
             <i class="iconoir-search"></i>
-            <input type="text" class="brand-search" placeholder="Search in Brands">
+            <input type="text" class="brand-search" placeholder="`+ pubSettings.searchIn + ' ' + pubSettings.brands +`">
         </div>`;
 
     if (brandsDiv) {
@@ -37,7 +37,7 @@ function asideBrandSearch(el) {
     }
 }
 
-function openChannelList(input, toggle) {
+function toggleChannelList(input, toggle) {
     const brandContainer = input.closest('.brand-container');
 
     if (toggle === false) {
@@ -59,11 +59,17 @@ document.querySelectorAll('.brands input.brand-choice').forEach(function (input)
     showChannels.innerHTML = '<i class="iconoir-nav-arrow-down"></i>';
     showChannels.className = 'publication-channel-toggle-button';
     showChannels.addEventListener('click', function (ev) {
-        openChannelList(input, true);
+        toggleChannelList(input, true);
         ev.preventDefault();
     });
     input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
     input.showChannels = showChannels;
+
+    input.addEventListener('change', function() {
+        if (!input.checked) {
+            toggleChannelList(input, false);
+        }
+    })
 
 });
 
