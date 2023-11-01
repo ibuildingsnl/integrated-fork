@@ -22,12 +22,9 @@ function openPublishingSettings(channelId, input) {
         div.classList.add('show');
     });
 
-
-
     if (!settings) {
         return;
     }
-    console.log(settings);
 
     settings.classList.add('show');
 
