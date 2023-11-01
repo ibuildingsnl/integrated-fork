@@ -65,10 +65,6 @@ document.querySelectorAll('.brands input.brand-choice').forEach(function (input)
     input.closest('.checkbox').insertAdjacentElement('afterend', showChannels);
     input.showChannels = showChannels;
 
-    input.addEventListener('change', function() {
-        openChannelList(input, false);
-    })
-
 });
 
 document.querySelectorAll('.brands input.brand-choice').forEach((brandCheckbox) => {

@@ -440,16 +440,15 @@
             <div class="aside-item-list-container">
                 <div class="aside-item-list">
                     {{ form_widget(form) }}
-                    <a class="btn btn-green" href="#">Ok</a>
-                </div>
-                <div class="settings-apply-to-menu">
-                    Apply to
-                    <select data-apply-to>
-                        <option value="this">{{ form_label(form) }}</option>
-                    </select>
-                    <div class="hidden settings-channels-choice">
-                        <select class="select2" data-apply-channels multiple></select>
+                    <div class="settings-apply-to-menu">
+                        <select data-apply-to class="form-control mt-4 mb-4">
+                            <option value="this">{% trans %}Apply to{% endtrans %} {{ form_label(form) }}</option>
+                        </select>
+                        <div class="hidden settings-channels-choice">
+                            <select class="select2" data-apply-channels multiple></select>
+                        </div>
                     </div>
+                    <a class="btn btn-green" href="#">Ok</a>
                 </div>
             </div>
         </div>
