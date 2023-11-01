@@ -1246,6 +1246,14 @@
                 <source>Apply</source>
                 <target>Toepassen</target>
             </trans-unit>
+            <trans-unit id="316">
+                <source>Show full history</source>
+                <target>Toon alle geschiedenis</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>History</source>
+                <target>Geschiedenis</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
