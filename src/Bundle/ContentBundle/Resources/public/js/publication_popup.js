@@ -1,6 +1,13 @@
 const formActions = document.querySelector('.form-actions-extra');
-// @todo adapt
-const publishActions = document.querySelectorAll('.publishActions .publish_form');
+
+const popup = document.createElement('div');
+popup.className = 'publishActions ';
+popup.innerText = 'Hello World';
+document.body.appendChild(popup);
+
+const publishActions = Array.from(document.querySelectorAll('.publication-settings'))
+    .map((e) => e.dataset.channelType)
+    .filter((v, i, a) => a.indexOf(v) === i);
 
 if (publishActions.length > 0) {
     // add top-bar menu item
@@ -21,69 +28,130 @@ if (publishActions.length > 0) {
     // add publishing options to newly added dropdown menu
     const menu = document.querySelector('#menu_publish');
     publishActions.forEach(function (action) {
+        if (action === 'Newsletter' || action === 'Website') {
+            // @todo make into a setting on channel type instead of hardcoded in js
+            return;
+        }
         const item = document.createElement('li');
         menu.appendChild(item);
         const a = document.createElement('a');
         a.className = 'popup-link';
-        a.innerText = action.querySelector('label').innerText;
+        a.innerText = 'Publish to ' + action;
         a.addEventListener('click', function () {
             // open popup
-            publishActions.forEach((a) => a.querySelector('.publishable').className = 'publishable');
-            action.querySelector('.publishable').className = 'publishable display';
-            document.querySelector('.publishActions').style = 'position: fixed; ' +
-                'height: 100%; ' +
-                'left:0; ' +
-                'right: 0; ' +
-                'top: 0; ' +
-                'background: rgba(0, 0, 0, 0.4)';
-            action.querySelectorAll('.aside-item-list').forEach((img) => img.style = 'display: block; min-height: 40px; height: fit-content;');
-            const textarea = action.querySelector('textarea');
-            if (textarea) {
-                textarea.value = getPublishIntro(160);
-            }
-            const title = action.querySelector('[name$="[title]"]');
-            if (title) {
-                title.value = document.querySelector('#integrated_content_title')?.value;
-            }
-            const image = action.querySelector('[image]');
-            if (image) {
-                //@todo assign featured image
-                image.value = document.querySelector('[featuredImage]')?.value;
-            }
+            const settings = document.querySelector('.publication-settings[data-channel-type="'+action+'"]').cloneNode(true);
+            popup.innerHTML = '';
+            const settingsContainer = document.createElement('div');
+            settingsContainer.classList = 'close-outside publishable display';
+            settingsContainer.appendChild(settings);
+            popup.appendChild(settingsContainer);
+            popup.querySelectorAll('[id]').forEach(function (e) {
+                e.id += '_popup'; // prevent duplicate ids
+            });
+            popup.querySelector('label').className = 'hidden';
+            const channelContainer = document.createElement('div');
+            channelContainer.classList = 'form-item w-full flex flex-wrap channels integrated_channel_choice';
+
+            // Create label element
+            const label = document.createElement('label');
+            label.className = 'control-label w-full md:w-3/12 xl:w-2/12 3xl:w-1/12';
+            label.textContent = 'Kanalen';
+
+            // Create div element
+            const widgetDiv = document.createElement('div');
+            widgetDiv.className = 'w-full md:w-9/12 xl:w-10/12 3xl:w-11/12 widget';
+
+            // Create select element
+            const channels = document.createElement('select');
+            channels.className = 'select2';
+            channels.multiple = true;
+            channels.dataset.applyChannels = true;
+
+            const publishHeader = document.createElement('h3')
+            publishHeader.innerText = 'Publish to ' + action
+
+            // Append elements
+            channelContainer.appendChild(label);
+            channelContainer.appendChild(widgetDiv);
+            widgetDiv.appendChild(channels);
+            settingsContainer.prepend(channelContainer);
+            settingsContainer.prepend(publishHeader);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'flex justify-between mt-8';
+
+            //Add Apply button
+            const apply = document.createElement('a');
+            apply.href = '#';
+            apply.className = 'apply btn btn-green';
+            apply.innerText = 'Apply';
+            apply.addEventListener('click', function (ev) {
+                // Apply choices
+                const pubInputSelector = 'input,select,textarea';
+                const data = {};
+                settings.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                    data[i] = input.value;
+                });
+                document.querySelectorAll(
+                    '.publication-settings[data-channel-type="' + action + '"]'
+                ).forEach(function (container) {
+                    if (!popup.querySelector('[data-apply-channels] option:checked[value="'+container.dataset.publicationChannel+'"]')) {
+                        return;
+                    }
+                    container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
+                        input.value = data[i];
+                    });
+                    const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
+                    input.checked = true;
+                    const brand = input.closest('.brand-container');
+                    if (brand) {
+                        brand.querySelector('input.brand-choice').checked = true;
+                    }
+                });
+                popup.classList.remove('show');
+                ev.preventDefault();
+            });
+
+            //Add cancel Button
+            const cancel = document.createElement('a');
+            cancel.href = '#';
+            cancel.className = 'cancel btn btn-white';
+            cancel.innerText = 'Cancel';
+            cancel.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                popup.classList.remove('show');
+            });
+
+            buttonContainer.appendChild(apply);
+            buttonContainer.appendChild(cancel);
+            settingsContainer.appendChild(buttonContainer);
+
+            triggerSelect2();
+
+            document.querySelectorAll('input[data-channel-type="'+action+'"]').forEach(function (input) {
+                const brand = input.closest('.brand-container');
+                let selected = input.checked;
+                if (brand && selected) {
+                    selected = brand.querySelector('input.brand-choice').checked;
+                }
+                const option = document.createElement('option');
+                option.value = input.value;
+                option.text = input.dataset.channelName;
+                option.selected = selected;
+                channels.append(option);
+            });
+            popup.classList.add('show');
         });
         item.appendChild(a);
-        action.querySelector('[for$="_use"]').style.display = 'none';
-        action.querySelector('.button-ok')?.addEventListener(
-            'click',
-            function () {
-                action.querySelector('[name$="[use]"]').click();
-                document.querySelector('#integrated_content_actions_save')?.click();
-            }
-        );
     });
-
-    // close on outside click
-    // @todo remove global event trigger from media gallery to turn this back on
-    // document.addEventListener('click', function (e) {
-    //     if (!e.target.closest('.publishable') && !e.target.closest('.popup-link')) {
-    //         closePublishPopup();
-    //     }
-    // });
-    document.querySelectorAll('.button-cancel').forEach(
-        (e) => e.addEventListener('click', closePublishPopup)
-    );
 }
 
-function closePublishPopup() {
-    publishActions.forEach((a) => a.querySelector('.publishable').className = 'publishable');
-    document.querySelector('.publishActions').style = '';
-}
-
-function cropPublishIntro(fullIntro, maxLength) {
-    const length = fullIntro.indexOf("\n");
-    return fullIntro.substring(0, Math.min(length, maxLength)) + (length > maxLength ? '...' : '');
-}
-
-function getPublishIntro(maxLength) {
-    return cropPublishIntro(tinymce.get("integrated_content_content").getContent({ format: "text" }), maxLength);
+function triggerSelect2() {
+    $('select.select2').each(function() {
+        if ($(this).hasClass('select2-hidden-accessible')) {
+            // Select2 has been initialized
+        } else {
+            $(this).select2();
+        }
+    });
 }

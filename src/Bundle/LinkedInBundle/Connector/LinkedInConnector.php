@@ -8,8 +8,8 @@ use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
 use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
-use PHPUnit\Util\Xml\Exception;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use PHPUnit\Util\Xml\Exception;
 
 final class LinkedInConnector implements ConnectorInterface
 {
@@ -18,7 +18,8 @@ final class LinkedInConnector implements ConnectorInterface
     public function __construct(
         private readonly LinkedInFactory $factory,
         private readonly LinkMaker $linkMaker,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
@@ -27,46 +28,26 @@ final class LinkedInConnector implements ConnectorInterface
 
     public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options, array $settings): ?string
     {
-        //todo, decide where to put vars
         $linkedinVersion = '202309';
         $linkedinPostArticleUrl = 'https://api.linkedin.com/rest/posts';
-        $linkedinAuthor = '98903555';
+        $authorUrn = $options->get('page');
 
         if (!$options->has('token')) {
             throw new CouldNotPublish('An access token is required to create a LinkedIn exporter');
         }
 
         $client = $this->factory->createClient($options->get('token'));
-
-        try {
-            dd($client->getResourceOwner($options->get('token')));
-        } catch (Exception $e) {
-            dd($e);
-        }
-
-//        $options->set('user', $user);
-
-        $message = [
-            $settings['title'] ?? null,
-            $settings['text'] ?? null,
-            $this->linkMaker->urlFor($content, $channel),
-        ];
-
-        $message = implode("\n\n", $message);
-
-        $message2 = $settings["title"] . "\n\n" . $settings["text"] . "\n\n" . $this->linkMaker->urlFor($content, $channel);
-
-//        $message3 = "We will share the complete journey from start to finish";
+        $message = $settings['title']. " " .$settings['text']. " " . $this->linkMaker->urlFor($content, $channel);
 
         $requestOptions['headers'] = [
             'LinkedIn-Version' => $linkedinVersion,
             'X-Restli-Protocol-Version' => '2.0.0',
-            'Cookie' => 'lidc="b=TB74:s=T:r=T:a=T:p=T:g=3873:u=246:x=1:i=1696253933:t=1696335588:v=2:sig=AQEXD88VnyHqy_viJAtYHJ8KTJUl3teJ"; lidc="b=TB74:s=T:r=T:a=T:p=T:g=3878:u=248:x=1:i=1696404063:t=1696487562:v=2:sig=AQGWyk189Wd1cZaJcPTFnoDJPNX8moEn"; bcookie="v=2&23a437ae-3da8-47c3-8018-cbe1c396531b"'
+            'Cookie' => 'lidc="b=TB74:s=T:r=T:a=T:p=T:g=3873:u=246:x=1:i=1696253933:t=1696335588:v=2:sig=AQEXD88VnyHqy_viJAtYHJ8KTJUl3teJ"; lidc="b=TB74:s=T:r=T:a=T:p=T:g=3878:u=248:x=1:i=1696404063:t=1696487562:v=2:sig=AQGWyk189Wd1cZaJcPTFnoDJPNX8moEn"; bcookie="v=2&23a437ae-3da8-47c3-8018-cbe1c396531b"',
         ];
 
         $requestOptions['body'] = '{
-            "author": "urn:li:organization:' . $linkedinAuthor . '",
-            "commentary": "'. $message2 .'",
+            "author": "urn:li:organization:'.$authorUrn.'",
+            "commentary": "'.$message.'",
             "visibility": "LOGGED_IN",
             "distribution": {
               "feedDistribution": "MAIN_FEED",
@@ -88,11 +69,11 @@ final class LinkedInConnector implements ConnectorInterface
             dump($e->getMessage());
         }
 
-        if (!isset($response->getHeaders()["x-restli-id"][0])) {
-            throw new CouldNotPublish('Could not publish to LinkedIn: ' . $this->getErrorFromResponse($response));
+        if (!isset($response->getHeaders()['x-restli-id'][0])) {
+            throw new CouldNotPublish('Could not publish to LinkedIn: '.$this->getErrorFromResponse($response));
         }
 
-        return str_replace("urn:li:share:", "", $response->getHeaders()["x-restli-id"][0]);
+        return str_replace('urn:li:share:', '', $response->getHeaders()['x-restli-id'][0]);
     }
 
     private function getErrorFromResponse(array $response): string

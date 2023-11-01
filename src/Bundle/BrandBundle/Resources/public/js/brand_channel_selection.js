@@ -41,7 +41,6 @@ function openChannelList(input, toggle) {
     const brandContainer = input.closest('.brand-container');
 
     if (toggle === false) {
-        console.log('toggle is false');
         if (!input.checked) {
             brandContainer.classList.remove('show');
         } else {

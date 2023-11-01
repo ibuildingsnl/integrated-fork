@@ -1,4 +1,4 @@
-const primaryChannel = document.querySelector('.primary-channel');
+const primaryChannel = document.querySelector('select.primary-channel');
 
 if (primaryChannel) {
     const inputElements = document.querySelectorAll('.brands input.brand-channel-choice[data-can-be-primary="yes"]');
@@ -33,10 +33,23 @@ if (primaryChannel) {
         input.addEventListener('change', () => showHideMakePrimary(input));
     });
     updatePrimarySelectors();
-    const firstChoice = document.querySelector('.brands input.brand-channel-choice[data-can-be-primary="yes"]:not(:disabled)');
-    if (firstChoice) {
-        primaryChannel.value = firstChoice.value;
-        firstChoice.closest('li').classList.add('primary-channel');
-        updatePrimarySelectors();
+    if(primaryChannel.value) {
+        const primaryInput = document.querySelector(
+            'input.brand-channel-choice[data-can-be-primary="yes"][value="'+primaryChannel.value+'"]'
+        );
+        if (primaryInput) {
+            primaryInput.closest('li').classList.add('primary-channel');
+        }
+    } else {
+        for (const input of document.querySelectorAll('input.brand-choice:checked')) {
+            const firstChecked = input.closest('.brand-container')
+                .querySelector('input.brand-channel-choice[data-can-be-primary="yes"]:checked');
+            if (firstChecked) {
+                primaryChannel.value = firstChecked.value;
+                firstChecked.closest('li').classList.add('primary-channel');
+                updatePrimarySelectors();
+                break;
+            }
+        }
     }
 }

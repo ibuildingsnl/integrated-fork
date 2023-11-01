@@ -7,7 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-
 class LinkedInConfigType extends AbstractType
 {
     private $linkedin;
@@ -23,6 +22,7 @@ class LinkedInConfigType extends AbstractType
         $builder->addEventSubscriber(new AddLinkedInPageFieldListener($this->linkedin));
         $builder->add('token', TextType::class, ['attr' => ['readonly' => 'true']]);
         $builder->add('page', TextType::class, ['attr' => ['readonly' => 'false']]);
+        $builder->add('apiStatus', TextType::class, ['attr' => ['readonly' => 'false']]);
     }
 
     public function getBlockPrefix(): string
