@@ -6166,7 +6166,10 @@ function openSelectedOptions(elem) {
 }
 function toggleDropDownBackGround(hidden) {
   var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+  var taxonomyDropDownUnderlay = document.querySelector('#taxonomy_backdrop');
+  document.querySelector('body').classList.remove('popup-open');
   menuItemDropDownUnderlay.classList.toggle('hide', hidden);
+  taxonomyDropDownUnderlay.classList.toggle('hide', hidden);
   menuItemDropDownUnderlay.innerHTML = '';
 }
 function isElement(o) {
@@ -6711,7 +6714,8 @@ function setActiveTab() {
 }
 function togglePopup() {
   document.querySelector(current_relation.popup_selector).classList.toggle("show");
-  document.querySelector('#dropdown_overlay').classList.toggle("hide");
+  document.querySelector('#taxonomy_backdrop').classList.toggle("hide");
+  document.querySelector('body').classList.toggle("popup-open");
 }
 function toggleFullscreen() {
   if (selected_tab != '') {
