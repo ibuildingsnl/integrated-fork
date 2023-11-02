@@ -4575,11 +4575,11 @@ video {
 .mt-2{
   margin-top: 0.5rem;
 }
-.mt-8{
-  margin-top: 2rem;
-}
 .mt-4{
   margin-top: 1rem;
+}
+.mt-8{
+  margin-top: 2rem;
 }
 .block{
   display: block;
@@ -10268,6 +10268,9 @@ thead {
 /*TINEMCE*/
 .tox-tinymce {
   border-radius: 0 !important;
+}
+.tox-tinymce.tox .tox-throbber {
+  z-index: 10;
 }
 
 .tinymce-inline .tox-tinymce {

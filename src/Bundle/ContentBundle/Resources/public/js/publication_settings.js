@@ -63,7 +63,7 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
         const settingsContainer = settings.closest('.publication-settings-aside');
         const applyToSelect = settingsContainer.querySelector('[data-apply-to]');
         applyToSelect?.append(someOption, allOption);
-        applyToSelect?.addEventListener('click', function () {
+        applyToSelect?.addEventListener('change', function () {
             showHideChannelSelect(settingsContainer, settings.dataset.channelType);
         });
         showHideChannelSelect(settingsContainer, settings.dataset.channelType);
