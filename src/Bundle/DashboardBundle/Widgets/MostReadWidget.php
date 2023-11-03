@@ -11,6 +11,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use \Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class MostReadWidget implements WidgetInterface
@@ -38,8 +39,9 @@ class MostReadWidget implements WidgetInterface
     /**
      * @throws GuzzleException
      */
-    public function params(ChannelInterface $channel, User $user): array
+    public function params(ChannelInterface $channel, User $user, Request $request): array
     {
+        $dateRange = $request->query->get('most_read_date_range') ?? "30daysAgo";
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
                 $propertyId = $brand->profile->analytics;
@@ -52,7 +54,7 @@ class MostReadWidget implements WidgetInterface
         $requestBody = [
             "dateRanges" => [
                 [
-                    "startDate" => "30daysAgo",
+                    "startDate" => "$dateRange",
                     "endDate" => "yesterday"
                 ]
             ],
@@ -92,7 +94,8 @@ class MostReadWidget implements WidgetInterface
             ];
         }
         return [
-            "mostViewedPages" => $mostViewedPages
+            "mostViewedPages" => $mostViewedPages,
+            "dateRange" => $dateRange
         ];
     }
 }

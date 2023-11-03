@@ -4,14 +4,16 @@
 {% block content %}
     <div class="dashboard-container">
         <div class="channels">
-            <div class="channel-info">
-                <h1>Dashboard Analytics {{ channelName }}</h1>
-            </div>
-            <h2>Select Channel {{ channelName }}</h2>
+            <h2>Dashboard Analytics</h2>
             <div class="channel-form">
-                {{ form_start(channelForm, {'method': 'GET', 'action': path('integrated_dashboard_index'), 'attr': {'id': 'channelSelect'}}) }}
-                {{ form_widget(channelForm) }}
-                <button id="submitButton" style="display: none;" type="submit">Submit</button>
+                {{ form_start(channelForm) }}
+                {{ form_widget(channelForm, {
+                    'attr': {
+                        'class': 'dashboardForm-select'
+                    }
+                }) }}
+
+                <button id="submitChannelButton" style="display: none;" type="submit">Submit</button>
                 {{ form_end(channelForm) }}
             </div>
         </div>
@@ -72,11 +74,66 @@
 
 
     <script>
-        var channelSelect = document.getElementById("channelSelect");
-        var submitButton = document.getElementById("submitButton");
-        channelSelect.addEventListener("change", function () {
-            document.getElementById('submitButton').click()
+        const selectElements = document.querySelectorAll('.dashboardForm-select');
+        const submitButton = Object.assign(document.createElement('button'), {
+            id: 'submitAllButton',
+            type: 'submit',
+            textContent: 'Submit'
         });
+
+        //const submitButton = document.getElementById('submitAllButton');
+
+        function submitForm() {
+            const form = Object.assign(document.createElement('form'), {method: 'get'});
+
+            selectElements.forEach(function (selectElement) {
+                // Créez un champ d'entrée pour chaque élément <select>
+                const input = document.createElement('input');
+                input.type = 'hidden'; // Champ d'entrée masqué
+                input.name = selectElement.name; // Nom du champ basé sur l'attribut "name" de <select>
+                input.value = selectElement.value; // Valeur du champ basée sur la sélection de l'utilisateur
+
+                // Ajoutez le champ d'entrée au formulaire
+                form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            // Soumettez le formulaire
+            form.submit();
+        }
+
+        // Ajoutez un gestionnaire d'événement au bouton de soumission
+        submitButton.addEventListener('click', function () {
+            // Appelez la fonction submitForm lorsque le bouton est cliqué
+            submitForm();
+        });
+
+        // Ajoutez des gestionnaires d'événements aux éléments <select> pour soumettre le formulaire lorsque la valeur change
+        selectElements.forEach(function (selectElement) {
+            selectElement.addEventListener('change', function () {
+                submitForm(); // Soumettez le formulaire lorsque la valeur change
+            });
+        });
+
+        // Fonction pour restaurer les valeurs après la soumission
+        function restoreSelectValues() {
+            // Parcourez tous les éléments <select>
+            selectElements.forEach(function (selectElement) {
+                // Obtenez le nom de l'élément <select> (correspondant au nom du paramètre d'URL)
+                const selectName = selectElement.name;
+
+                // Obtenez la valeur du paramètre d'URL correspondant (si présent)
+                const urlParams = new URLSearchParams(window.location.search);
+                const paramValue = urlParams.get(selectName);
+
+                // Appliquez la valeur du paramètre d'URL à l'élément <select> s'il est défini
+                if (paramValue !== null) {
+                    selectElement.value = paramValue;
+                }
+            });
+        }
+
+        // Appelez la fonction restoreSelectValues pour restaurer les valeurs après la soumission
+        restoreSelectValues();
 
     </script>
 {% endblock content %}

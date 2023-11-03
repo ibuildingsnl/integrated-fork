@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class LatestArticleWidget implements WidgetInterface
 {
@@ -25,7 +26,7 @@ class LatestArticleWidget implements WidgetInterface
         return '@IntegratedDashboard/latest_articles_widget.html.twig';
     }
 
-    public function params(ChannelInterface $channel, User $user): array
+    public function params(ChannelInterface $channel, User $user, Request $request): array
     {
         $queryBuilder = $this->manager->createQueryBuilder(Article::class)
             ->field('channels.id')->equals($channel->getId())

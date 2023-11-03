@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\UserBundle\Model\User;
 use \Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class SitePerformancesWidget implements WidgetInterface
@@ -24,7 +25,7 @@ class SitePerformancesWidget implements WidgetInterface
         return '@IntegratedDashboard/site_performance.html.twig';
     }
 
-    public function params(ChannelInterface $channel, User $user): array
+    public function params(ChannelInterface $channel, User $user, Request $request): array
     {
         $channelPerformances = $this->manager->getRepository(SitePerformance::class)
             ->findBy(

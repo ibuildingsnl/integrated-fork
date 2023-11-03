@@ -46,8 +46,7 @@ class DashboardController extends AbstractController
         ]);
 
         $channel = $this->getChannel($request);
-        $renderedWidgets = $this->renderWidgets($channel, $user);
-
+        $renderedWidgets = $this->renderWidgets($channel, $user, $request);
         return $this->renderDashboardView($channel->getName(), $renderedWidgets, $selectChannelForm);
     }
 
@@ -60,7 +59,7 @@ class DashboardController extends AbstractController
     /**
      * @throws MongoDBException
      */
-    private function renderWidgets(ChannelInterface $channel, $user): array
+    private function renderWidgets(ChannelInterface $channel, $user, Request $request): array
     {
         $renderedWidgets = [];
         $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)
@@ -72,7 +71,7 @@ class DashboardController extends AbstractController
         foreach ($widgetConfigs as $config) {
             $widget = $this->widgets[$config->getWidgetName()] ?? null;
             if ($widget) {
-                $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel, $user));
+                $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel, $user, $request));
             }
         }
         return $renderedWidgets;
