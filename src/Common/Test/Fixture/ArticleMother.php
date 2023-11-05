@@ -6,6 +6,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\PublicationRepositoryInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * An object mother is a kind of class used in testing to help create example objects that you use for testing.
@@ -22,6 +23,7 @@ final class ArticleMother
     public function withoutChannels(): Article
     {
         $a = new Article();
+        $a->setContentType('article');
         $a->setTitle('title');
         $a->setContent('content');
         $a->setId(random_bytes(32));
@@ -29,10 +31,14 @@ final class ArticleMother
         return $a;
     }
 
-    public function withChannel(string $id = null): Article
+    public function withChannel(ChannelInterface|string $channel = null): Article
     {
         $a = $this->withoutChannels();
-        $a->addChannel($id ? ChannelMother::withId($id) : ChannelMother::make());
+        if ($channel instanceof ChannelInterface) {
+            $a->addChannel($channel);
+        } else {
+            $a->addChannel($channel ? ChannelMother::withId($channel) : ChannelMother::make());
+        }
 
         return $a;
     }

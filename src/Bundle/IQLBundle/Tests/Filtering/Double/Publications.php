@@ -1,23 +1,24 @@
 <?php
 
-namespace Integrated\Bundle\IQLBundle\Filtering\Double;
+namespace Integrated\Bundle\IQLBundle\Tests\Filtering\Double;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\IQLBundle\Domain\Query;
+use Integrated\Bundle\IQLBundle\Infrastructure\PublicationSorter;
 use Stratadox\Sorting\Contracts\Sorter;
-use Stratadox\Sorting\ObjectSorter;
 
 final class Publications
 {
     public function __construct(
-        private array $publications,
-        private ?Sorter $sorter,
+        private array $publications = [],
+        private ?Sorter $sorter = null,
     ) {
         if (!$this->sorter) {
-            $this->sorter = new ObjectSorter();
+            $this->sorter = new PublicationSorter();
         }
     }
 
+    /** @return Publication[] */
     public function findBy(Query $query): array
     {
         return array_slice($this->sorter->sort(

@@ -28,6 +28,13 @@ class PublishTime implements PublishTimeInterface
      */
     protected $endDate;
 
+    public static function withStartDate(\DateTimeInterface $start): PublishTimeInterface
+    {
+        $publishTime = new static();
+        $publishTime->setStartDate($start);
+        return $publishTime;
+    }
+
     /**
      * {@inheritdoc}
      */

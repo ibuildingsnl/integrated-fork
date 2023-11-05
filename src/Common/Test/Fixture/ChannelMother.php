@@ -11,11 +11,11 @@ use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
  */
 final class ChannelMother
 {
-    public static function withId(string $id): Channel
+    public static function withId(string $id, string $name = null): Channel
     {
         $c = new Channel();
         $c->setId($id);
-        $c->setName($id);
+        $c->setName($name ?: $id);
 
         return $c;
     }
