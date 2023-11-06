@@ -15,6 +15,10 @@ class SitePerformancesWidget implements WidgetInterface
         private readonly DocumentManager  $manager,
     ){}
 
+    public function id(): string
+    {
+        return 'site_performance';
+    }
     public function name(): string
     {
         return 'site performance';
@@ -67,4 +71,6 @@ class SitePerformancesWidget implements WidgetInterface
     {
         return round($milliValue / 1000, 2);
     }
+
+
 }

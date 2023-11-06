@@ -6,6 +6,7 @@ class WidgetConfig
 {
     public function __construct(
         private readonly string $id,
+        private readonly string $widgetId,
         private readonly string $widgetName,
         private readonly int $order
     ) {
@@ -15,7 +16,10 @@ class WidgetConfig
     {
         return $this->id;
     }
-
+    public function getWidgetId(): string
+    {
+        return $this->widgetId;
+    }
     public function getWidgetName(): string
     {
         return $this->widgetName;

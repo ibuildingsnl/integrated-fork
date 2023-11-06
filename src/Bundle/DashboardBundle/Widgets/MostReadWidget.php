@@ -18,14 +18,17 @@ class MostReadWidget implements WidgetInterface
 {
 
     public function __construct(
-        private readonly string $credential,
+        private readonly string          $credential,
         private readonly LoggerInterface $logger,
         private readonly DocumentManager $manager,
         private readonly BrandRepository $brandRepository
     )
     {
     }
-
+    public function id(): string
+    {
+        return 'most_read';
+    }
     public function name(): string
     {
         return 'most read';
@@ -47,9 +50,8 @@ class MostReadWidget implements WidgetInterface
                 $propertyId = $brand->profile->analytics;
             }
         }
-        if (!isset($propertyId) || $propertyId == null)
-        {
-            return["mostViewedPages" => "No data found"];
+        if (!isset($propertyId) || $propertyId == null) {
+            return ["mostViewedPages" => "No data found"];
         }
         $requestBody = [
             "dateRanges" => [
@@ -82,16 +84,17 @@ class MostReadWidget implements WidgetInterface
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseJson = $analyticsRequest->getResponse();
         $data = json_decode($responseJson, true);
-
         $mostViewedPages = [];
-        foreach ($data['rows'] as $row) {
-            $pageTitle = $row['dimensionValues'][0]['value'];
-            $screenPageViews = (int) $row['metricValues'][0]['value'];
+        if ($data != null) {
+            foreach ($data['rows'] as $row) {
+                $pageTitle = $row['dimensionValues'][0]['value'];
+                $screenPageViews = (int)$row['metricValues'][0]['value'];
 
-            $mostViewedPages[] = [
-                'title' => $pageTitle,
-                'views' => $screenPageViews,
-            ];
+                $mostViewedPages[] = [
+                    'title' => $pageTitle,
+                    'views' => $screenPageViews,
+                ];
+            }
         }
         return [
             "mostViewedPages" => $mostViewedPages,

@@ -5,6 +5,7 @@
 
     <document name="Integrated\Bundle\DashboardBundle\Document\WidgetConfig">
         <id field-name="id" strategy="auto" />
+        <field field-name="widgetId" type="string" />
         <field field-name="widgetName" type="string" />
         <field field-name="order" type="integer" />
     </document>

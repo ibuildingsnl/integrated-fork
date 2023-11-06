@@ -15,7 +15,10 @@ class LatestArticleWidget implements WidgetInterface
         private readonly int $amount
     ) {
     }
-
+    public function id(): string
+    {
+        return 'latest_articles';
+    }
     public function name(): string
     {
         return 'latest articles';

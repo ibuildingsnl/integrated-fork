@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -65,7 +66,6 @@ class GetSitePerformancesCommand extends Command
                 $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
             }
         }
-
         return 0;
     }
     public function getWebsites(): array

@@ -45,7 +45,6 @@ class AnalyticsRequest
             $accessToken = $this->getAccessToken($googleCredentialPath);
 
             $apiUrl = "https://analyticsdata.googleapis.com/v1beta/properties/$propertyId:runReport";
-
             $guzzleClient = new GuzzleClient();
 
             $response = $guzzleClient->request('POST', $apiUrl, [
@@ -61,6 +60,6 @@ class AnalyticsRequest
             // Handle other Guzzle exceptions here
             $this->logger->error('Get Analytics Error: ' . $e->getMessage(). '\n');
         }
-        $this->response = $responseBody ?? null;
+        $this->response = $responseBody ?? "";
     }
 }

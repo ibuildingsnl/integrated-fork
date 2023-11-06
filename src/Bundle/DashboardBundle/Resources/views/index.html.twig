@@ -9,18 +9,23 @@
                 {{ form_start(channelForm) }}
                 {{ form_widget(channelForm, {
                     'attr': {
-                        'class': 'dashboardForm-select'
+                        'class': 'dashboardForm-select dashboardForm-event',
                     }
                 }) }}
-
-                <button id="submitChannelButton" style="display: none;" type="submit">Submit</button>
                 {{ form_end(channelForm) }}
             </div>
+                <select class="dashboardForm-select" id="widget_choice" name="widget_choice[]" multiple>
+                    {% for widget in widgets %}
+                        <option value="{{ widget.id }}">{{ widget.name }}</option>
+                    {% endfor %}
+                </select>
+            <button onclick="submitForm()">Update</button>
         </div>
+
         <div class="widget-container">
-            {% for widget in widgets %}
+            {% for renderWidget in renderedWidgets %}
                 <div class="widget">
-                    {{ widget | raw }}
+                    {{ renderWidget | raw }}
                 </div>
                 {% if loop.index % 3 == 0 %}
                     <div class="clear"></div>
@@ -29,6 +34,111 @@
         </div>
     </div>
 
+
+
+    <script>
+
+        selectElements = document.querySelectorAll('.dashboardForm-select');
+        SelectEventListener = document.querySelectorAll('.dashboardForm-event');
+        const submitButton = Object.assign(document.createElement('button'), {
+            id: 'submitAllButton',
+            type: 'submit',
+            textContent: 'Submit'
+        });
+
+        //const submitButton = document.getElementById('submitAllButton');
+
+        function submitForm() {
+            // Créez un formulaire avec la méthode GET
+            const form = Object.assign(document.createElement('form'), { method: 'get' });
+
+            // Parcourez tous les éléments <select>
+            selectElements.forEach(function (selectElement) {
+                // Obtenez le nom de l'élément <select> (correspondant au nom du paramètre d'URL)
+                const selectName = selectElement.name;
+
+                // Parcourez toutes les options sélectionnées dans l'élément <select>
+                for (const option of selectElement.selectedOptions) {
+                    // Créez un champ d'entrée pour chaque option sélectionnée
+                    const input = document.createElement('input');
+                    input.type = 'hidden'; // Champ d'entrée masqué
+                    input.name = selectName; // Nom du champ basé sur l'attribut "name" de <select>
+                    input.value = option.value; // Valeur de l'option sélectionnée
+
+                    // Ajoutez le champ d'entrée au formulaire
+                    form.appendChild(input);
+                }
+            });
+
+            // Ajoutez le formulaire à la page (facultatif, dépend de votre structure HTML)
+            document.body.appendChild(form);
+
+            // Soumettez le formulaire
+            form.submit();
+        }
+
+
+        // Ajoutez un gestionnaire d'événement au bouton de soumission
+        submitButton.addEventListener('click', function () {
+            // Appelez la fonction submitForm lorsque le bouton est cliqué
+            submitForm();
+        });
+
+        // Ajoutez des gestionnaires d'événements aux éléments <select> pour soumettre le formulaire lorsque la valeur change
+        SelectEventListener.forEach(function (selectElement) {
+            selectElement.addEventListener('change', function () {
+                submitForm(); // Soumettez le formulaire lorsque la valeur change
+            });
+        });
+
+        // Fonction pour restaurer les valeurs après la soumission
+        function restoreSelectValues() {
+            // Parcourez tous les éléments <select>
+            selectElements.forEach(function (selectElement) {
+                // Obtenez le nom de l'élément <select> (correspondant au nom du paramètre d'URL)
+                const selectName = selectElement.name;
+
+                // Obtenez les valeurs des paramètres d'URL correspondant (si présents)
+                const urlParams = new URLSearchParams(window.location.search);
+                const paramValues = urlParams.getAll(selectName);
+
+                // Parcourez les options de l'élément <select>
+                Array.from(selectElement.options).forEach(function (option) {
+                    // Appliquez la valeur du paramètre d'URL à l'option si elle est incluse dans les paramètres
+                    if (paramValues.includes(option.value)) {
+                        option.selected = true;
+                    }
+                });
+            });
+        }
+
+        // function selectAllIfParamNotPresent() {
+        //     // Obtenez le nom du paramètre
+        //     const paramName = 'widget_choice';
+        //
+        //     // Obtenez les paramètres GET actuels
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //
+        //     // Vérifiez si le paramètre est présent
+        //     if (!urlParams.has(paramName)) {
+        //         // Le paramètre n'est pas présent, sélectionnez toutes les options de l'élément <select>
+        //         const selectElement = document.getElementById(paramName);
+        //         if (selectElement) {
+        //             for (let i = 0; i < selectElement.options.length; i++) {
+        //                 selectElement.options[i].selected = true;
+        //             }
+        //         }
+        //     }
+        // }
+        // // Appelez la fonction pour qu'elle s'exécute au chargement de la page
+        // selectAllIfParamNotPresent();
+
+
+        // Appelez la fonction restoreSelectValues pour restaurer les valeurs après la soumission
+        restoreSelectValues();
+
+
+    </script>
     <style>
         .dashboard-container {
             display: flex;
@@ -71,69 +181,4 @@
         }
     </style>
 
-
-
-    <script>
-        const selectElements = document.querySelectorAll('.dashboardForm-select');
-        const submitButton = Object.assign(document.createElement('button'), {
-            id: 'submitAllButton',
-            type: 'submit',
-            textContent: 'Submit'
-        });
-
-        //const submitButton = document.getElementById('submitAllButton');
-
-        function submitForm() {
-            const form = Object.assign(document.createElement('form'), {method: 'get'});
-
-            selectElements.forEach(function (selectElement) {
-                // Créez un champ d'entrée pour chaque élément <select>
-                const input = document.createElement('input');
-                input.type = 'hidden'; // Champ d'entrée masqué
-                input.name = selectElement.name; // Nom du champ basé sur l'attribut "name" de <select>
-                input.value = selectElement.value; // Valeur du champ basée sur la sélection de l'utilisateur
-
-                // Ajoutez le champ d'entrée au formulaire
-                form.appendChild(input);
-            });
-            document.body.appendChild(form);
-            // Soumettez le formulaire
-            form.submit();
-        }
-
-        // Ajoutez un gestionnaire d'événement au bouton de soumission
-        submitButton.addEventListener('click', function () {
-            // Appelez la fonction submitForm lorsque le bouton est cliqué
-            submitForm();
-        });
-
-        // Ajoutez des gestionnaires d'événements aux éléments <select> pour soumettre le formulaire lorsque la valeur change
-        selectElements.forEach(function (selectElement) {
-            selectElement.addEventListener('change', function () {
-                submitForm(); // Soumettez le formulaire lorsque la valeur change
-            });
-        });
-
-        // Fonction pour restaurer les valeurs après la soumission
-        function restoreSelectValues() {
-            // Parcourez tous les éléments <select>
-            selectElements.forEach(function (selectElement) {
-                // Obtenez le nom de l'élément <select> (correspondant au nom du paramètre d'URL)
-                const selectName = selectElement.name;
-
-                // Obtenez la valeur du paramètre d'URL correspondant (si présent)
-                const urlParams = new URLSearchParams(window.location.search);
-                const paramValue = urlParams.get(selectName);
-
-                // Appliquez la valeur du paramètre d'URL à l'élément <select> s'il est défini
-                if (paramValue !== null) {
-                    selectElement.value = paramValue;
-                }
-            });
-        }
-
-        // Appelez la fonction restoreSelectValues pour restaurer les valeurs après la soumission
-        restoreSelectValues();
-
-    </script>
 {% endblock content %}

@@ -4,6 +4,7 @@
         <ul>
             {% for article in mostRecentArticles %}
                 <li><b>{{ article.title }}</b> | {{ article.publishTime.startDate | date("d/m/Y") }}</li>
+                ________________________________
             {% endfor %}
         </ul>
     </nav>

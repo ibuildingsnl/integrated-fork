@@ -2,21 +2,23 @@
     {% if (mostViewedPages is not iterable) %}
         <h2><br> {{ mostViewedPages }} </h2>
     {% else %}
-        <h2><br> Most {{ mostViewedPages | length }} read pages</h2>
-        <h3>
-                <label for="choixMenu">date range :</label>
-                <select id="most_read_date_range" name="most_read_date_range" class="dashboardForm-select">
-                    <option value="30daysAgo">This month</option>
-                    <option value="90daysAgo">3 Last months</option>
-                    <option value="365daysAgo">This Year</option>
-                </select>
-                <button id="submitMostReadButton" style="display: none;" type="submit">Submit</button>
-        </h3>
+        <h2><br> Most {{ mostViewedPages | length }} read pages
+            <select id="most_read_date_range" name="most_read_date_range" class="dashboardForm-select dashboardForm-event">
+                <option value="30daysAgo">This month</option>
+                <option value="90daysAgo">3 Last months</option>
+                <option value="365daysAgo">This Year</option>
+            </select></h2>
     {% endif %}
     <nav class="article-list">
         <ul>
             {% for article in mostViewedPages %}
-                <li><b> {{ article.title }} | </b> {{ article.views }} views</li>
+                <div class="facet-wrappper">
+                                        <span class="facet-title">
+                                            <b> {{ article.title }} </b>
+                                        </span>
+                    <span class="facet-count">{{ article.views }}</span>
+                </div>
+                _________________________________________
             {% endfor %}
         </ul>
     </nav>
