@@ -3,21 +3,35 @@ function showHidePublicationSettingsButton(input) {
 }
 
 function openPublishingSettings(channelId, input) {
+    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-aside');
+
+    if (settings.classList.contains('show')) {
+        settings.classList.remove('show');
+
+        document.querySelectorAll('.editor-overlay').forEach(div => {
+            div.classList.remove('show');
+        });
+
+        return;
+    }
+
     document.querySelectorAll('.publication-settings-aside').forEach(div => {
         div.classList.remove('show');
     });
     document.querySelectorAll('.editor-overlay').forEach(div => {
         div.classList.add('show');
     });
-    const settings = document.querySelector('.publication-settings[data-publication-channel="'+channelId+'"]').closest('.publication-settings-aside');
+
     if (!settings) {
         return;
     }
-    settings.classList.add('show') ;
-    settings.querySelectorAll('[name*="[startDate]"]').forEach(function (d) {
+
+    settings.classList.add('show');
+
+    settings.querySelectorAll('[name*="[startDate]"]').forEach(function(d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
     });
-    settings.querySelectorAll('[name*="[endDate]"]').forEach(function (d) {
+    settings.querySelectorAll('[name*="[endDate]"]').forEach(function(d) {
         d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
     });
     settings.addEventListener('click', function (ev) {
@@ -42,14 +56,14 @@ document.querySelectorAll('[data-channel-selector]').forEach(function (input) {
     if (settings.dataset.channelType) {
         const allOption = document.createElement('option');
         allOption.value = 'type';
-        allOption.text = 'all ' + settings.dataset.channelType + ' channels';
+        allOption.text = pubSettings.applyToAll + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
         const someOption = document.createElement('option');
         someOption.value = 'choose';
-        someOption.text = 'specific ' + settings.dataset.channelType + ' channels';
+        someOption.text = pubSettings.applyToSpecific + ' ' + settings.dataset.channelType + ' ' + pubSettings.channels;
         const settingsContainer = settings.closest('.publication-settings-aside');
         const applyToSelect = settingsContainer.querySelector('[data-apply-to]');
         applyToSelect?.append(someOption, allOption);
-        applyToSelect?.addEventListener('click', function () {
+        applyToSelect?.addEventListener('change', function () {
             showHideChannelSelect(settingsContainer, settings.dataset.channelType);
         });
         showHideChannelSelect(settingsContainer, settings.dataset.channelType);

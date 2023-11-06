@@ -4575,6 +4575,9 @@ video {
 .mt-2{
   margin-top: 0.5rem;
 }
+.mt-4{
+  margin-top: 1rem;
+}
 .mt-8{
   margin-top: 2rem;
 }
@@ -10266,6 +10269,9 @@ thead {
 .tox-tinymce {
   border-radius: 0 !important;
 }
+.tox-tinymce.tox .tox-throbber {
+  z-index: 10;
+}
 
 .tinymce-inline .tox-tinymce {
   border-radius: 8px !important;
@@ -11091,6 +11097,10 @@ body.tox-fullscreen .content-wrapper {
 }
 #toolbar .toggle-settings.hidden {
   display: none !important;
+}
+
+.popup-open #toolbar {
+  z-index: 90;
 }
 
 .alert {
@@ -12556,7 +12566,7 @@ input.clr-color:focus {
   bottom: 0;
   margin: 2rem;
   padding: 2rem;
-  z-index: 9999;
+  z-index: 1050;
   border-radius: 8px;
   background-color: white;
 }
@@ -12564,10 +12574,12 @@ input.clr-color:focus {
   display: none !important;
 }
 .category_wrapper.show ul {
-  max-height: calc(100vh - 100px) !important;
+  max-height: calc(100vh - 240px) !important;
+  height: calc(100vh - 240px);
   padding: 1rem 0 !important;
   width: 100%;
   border: none !important;
+  column-fill: auto;
   column-count: 1;
 }
 @media only screen and (min-width: 640px) {
@@ -12650,6 +12662,32 @@ input.clr-color:focus {
   padding-left: 2rem;
   padding-right: 2rem;
   background-color: #ecf6fe;
+}
+
+.taxonomy_category div#taxonomy_backdrop {
+  background-color: rgb(0, 0, 0);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 60px;
+  z-index: 1040;
+  height: -webkit-fill-available;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  -webkit-transition: opacity 0.15s linear, visibility 0.15s linear;
+  -o-transition: opacity 0.15s linear, visibility 0.15s linear;
+  transition: opacity 0.15s linear, visibility 0.15s linear;
+  visibility: visible;
+}
+.taxonomy_category div#taxonomy_backdrop.hide {
+  opacity: 0;
+  -webkit-transition: opacity 0.15s linear, visibility 0.15s linear;
+  -o-transition: opacity 0.15s linear, visibility 0.15s linear;
+  transition: opacity 0.15s linear, visibility 0.15s linear;
+  visibility: hidden;
 }
 
 div.heading-switcher {

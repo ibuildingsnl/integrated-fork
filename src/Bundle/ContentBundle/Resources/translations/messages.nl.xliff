@@ -1226,6 +1226,34 @@
                 <source>These images are currently used in other content</source>
                 <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
             </trans-unit>
+            <trans-unit id="311">
+                <source>Apply to</source>
+                <target>Toepassen op</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>Apply to all</source>
+                <target>Toepassen op alle</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>Apply to specific</source>
+                <target>Toepassen op specifieke</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>Publish to</source>
+                <target>Publiceren naar</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>Apply</source>
+                <target>Toepassen</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>Show full history</source>
+                <target>Toon alle geschiedenis</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>History</source>
+                <target>Geschiedenis</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

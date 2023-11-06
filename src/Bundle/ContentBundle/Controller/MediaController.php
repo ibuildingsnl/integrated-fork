@@ -225,6 +225,7 @@ class MediaController extends AbstractController
                 } else { // new upload
                     // Creating a new file, creating a new class Image
                     $file = $this->mediaGalleryUploadFile->handleUpload($request);
+                    $this->taxonomyRelationManager->runSolrQueue();
                 }
 
                 $request->attributes->set('media_id', $file->getId());

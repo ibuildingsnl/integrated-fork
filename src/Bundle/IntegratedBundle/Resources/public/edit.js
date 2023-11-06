@@ -6166,7 +6166,10 @@ function openSelectedOptions(elem) {
 }
 function toggleDropDownBackGround(hidden) {
   var menuItemDropDownUnderlay = document.querySelector('#dropdown_overlay');
+  var taxonomyDropDownUnderlay = document.querySelector('#taxonomy_backdrop');
+  document.querySelector('body').classList.remove('popup-open');
   menuItemDropDownUnderlay.classList.toggle('hide', hidden);
+  taxonomyDropDownUnderlay.classList.toggle('hide', hidden);
   menuItemDropDownUnderlay.innerHTML = '';
 }
 function isElement(o) {
@@ -6557,7 +6560,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //Goal:
 //This code is to organise taxonomies
 //The input is a list of taxonomies with a tree structure. But we receive them as flat list with levels
-//There can be multiple of these in 1 page, for each we save a relation in the relations array
+//There can be multiple instances of this select option in 1 page, for each we save a relation in the relations array
 //The channels are involved: categories will be shown based on active channels
 
 //Keywords:
@@ -6567,17 +6570,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //selected_tab = The selected item of the tabs.
 
 //Key events:
-//User clicks channel
-//User clicks radio button
+//User clicks channel -> this has been changed to a brand
+//User clicks radio button to select a taxonomy
 //User enabled fullscreen
 //User disables fullscreen
 //User clicks tab
+
+//How it works
+//All taxonomies are shown to the user, grouped per parent taxonomy. This happens when 0 channels (or all channels) are selected.
+//When a user selects a channel, the name of the channel is added to a list: enabled_channels.
+//Then there is a matching and filtering of taxonomies based on that list. If the name of the taxonomy matches an item in the selected channels, it will be shown.
+//With a channel deselection, the reverse happens.
 
 //Flows:
 // - One where we setup everything
 // - One where we handle a specific category event
 
-var channels_selector = '#integrated_content_channels';
+var channels_selector = '#integrated_content_brands';
+//Children were added to brands, so we have to ignore those by focusing on the brand:
+var channel_brands_selector = ' input[type=checkbox].brand-choice';
 var pills_selector = '.enabled_categories_pills';
 var popup_selector = '.category_wrapper';
 var input_field_prefix = 'integrated_content_relations_';
@@ -6626,7 +6637,10 @@ function createNewRelation(relation_id) {
   };
 }
 function setupChannels() {
-  var channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]');
+  //If brands didnt have children:
+  // const channel_checkboxes = document.querySelectorAll(channels_selector + ' input[type=checkbox]')
+  //But they do:
+  var channel_checkboxes = document.querySelectorAll(channels_selector + channel_brands_selector);
   enabled_channels = getEnabledChannels(channel_checkboxes);
   return channel_checkboxes;
 }
@@ -6711,7 +6725,8 @@ function setActiveTab() {
 }
 function togglePopup() {
   document.querySelector(current_relation.popup_selector).classList.toggle("show");
-  document.querySelector('#dropdown_overlay').classList.toggle("hide");
+  document.querySelector('#taxonomy_backdrop').classList.toggle("hide");
+  document.querySelector('body').classList.toggle("popup-open");
 }
 function toggleFullscreen() {
   if (selected_tab != '') {
@@ -6727,12 +6742,14 @@ function toggleFullscreen() {
   window.popupShown = true;
 }
 function handleChannelClick(event) {
-  if (enabled_channels.includes(event.target.value)) {
+  //With channels this was event.target.value. With brands we have:
+  var channel_name = event.target.parentNode.innerText.trim().toLowerCase();
+  if (enabled_channels.includes(channel_name)) {
     enabled_channels = enabled_channels.filter(function (item) {
-      return item != event.target.value;
+      return item != channel_name;
     });
   } else {
-    enabled_channels.push(event.target.value);
+    enabled_channels.push(channel_name);
   }
   filterBasedOnChannels();
   updateDOMForAllRelations();
