@@ -78,8 +78,6 @@ class DashboardController extends AbstractController
             ->sort('order', 'asc')
             ->getQuery()
             ->execute();
-        //dd($selectedByFormWidgets);
-        //dd($widgetConfigs);
         foreach ($widgetConfigs as $config) {
             if (($selectedByFormWidgets == []) || (in_array($config->getWidgetId(), $selectedByFormWidgets))) {
                 $widget = $this->widgets[$config->getWidgetName()] ?? null;

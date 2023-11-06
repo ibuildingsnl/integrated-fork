@@ -3,16 +3,16 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use DateTimeImmutable;
 
-
-class MostReadWidget implements WidgetInterface
+class VisitorsActivityWidget implements WidgetInterface
 {
 
     public function __construct(
@@ -23,26 +23,25 @@ class MostReadWidget implements WidgetInterface
     )
     {
     }
+
     public function id(): string
     {
-        return 'most_read';
+        return 'visitors_activity';
     }
+
     public function name(): string
     {
-        return 'Most read';
+        return 'Visitors activity';
     }
 
     public function view(): string
     {
-        return '@IntegratedDashboard/most_read.html.twig';
+        return '@IntegratedDashboard/visitors_activity.html.twig';
     }
 
-    /**
-     * @throws GuzzleException
-     */
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
-        $dateRange = $request->query->get('most_read_date_range') ?? "30daysAgo";
+        $dateRange = $request->query->get('visitors_activity_date_range') ?? "7daysAgo";
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
                 $propertyId = $brand->profile->analytics;
@@ -54,48 +53,52 @@ class MostReadWidget implements WidgetInterface
         $requestBody = [
             "dateRanges" => [
                 [
-                    "startDate" => "$dateRange",
+                    "startDate" => $dateRange,
                     "endDate" => "yesterday"
                 ]
             ],
             "dimensions" => [
                 [
-                    "name" => "pageTitle"
-                ]
+                    "name" => "date"
+                ],
             ],
             "metrics" => [
                 [
-                    "name" => "screenPageViews"
+                    "name" => "activeUsers"
                 ]
             ],
             "orderBys" => [
                 [
-                    "metric" => [
-                        "metricName" => "screenPageViews"
-                    ],
-                    "desc" => true
+                    "dimension" => [
+                        "orderType" => "NUMERIC",
+                        "dimensionName" => "date"
+                    ]
                 ]
             ],
-            "limit" => 20
+            "metricAggregations" => [
+                "TOTAL"
+            ]
         ];
+
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseJson = $analyticsRequest->getResponse();
-        $data = json_decode($responseJson, true);
-        $mostViewedPages = [];
-        if ($data != null) {
-            foreach ($data['rows'] as $row) {
-                $pageTitle = $row['dimensionValues'][0]['value'];
-                $screenPageViews = (int)$row['metricValues'][0]['value'];
+        $responseData = json_decode($responseJson, true); // Convertit la réponse JSON en tableau associatif
+        $userCountsByDate = [];
+        if ($responseData != null) {
+            foreach ($responseData['rows'] as $row) {
+                $date = $row['dimensionValues'][0]['value'];
+                $activeUsers = $row['metricValues'][0]['value'];
+                $dateTime = DateTimeImmutable::createFromFormat('Ymd', $date);
 
-                $mostViewedPages[] = [
-                    'title' => $pageTitle,
-                    'views' => $screenPageViews,
+                $userCountsByDate[] = [
+                    'date' => $dateTime,
+                    'userCount' => $activeUsers,
                 ];
             }
         }
         return [
-            "mostViewedPages" => $mostViewedPages,
+            "userCountsByDate" => $userCountsByDate,
             "dateRange" => $dateRange
         ];
     }

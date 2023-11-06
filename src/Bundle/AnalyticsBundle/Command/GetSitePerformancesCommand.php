@@ -9,14 +9,11 @@ use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Client;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Bundle\DashboardBundle\Document\WidgetConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use GuzzleHttp\Exception\GuzzleException;
-use function Deployer\writeln;
 
 
 class GetSitePerformancesCommand extends Command

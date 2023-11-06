@@ -21,7 +21,7 @@ class LatestArticleWidget implements WidgetInterface
     }
     public function name(): string
     {
-        return 'latest articles';
+        return 'Latest articles';
     }
 
     public function view(): string

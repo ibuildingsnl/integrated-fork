@@ -21,7 +21,7 @@ class SitePerformancesWidget implements WidgetInterface
     }
     public function name(): string
     {
-        return 'site performance';
+        return 'Site performance';
     }
 
     public function view(): string

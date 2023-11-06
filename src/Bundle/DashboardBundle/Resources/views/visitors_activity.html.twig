@@ -1,0 +1,39 @@
+<div>
+
+    {% if (userCountsByDate is not iterable) %}
+        <h2><br> {{ userCountsByDate }} </h2>
+    {% else %}
+        <h2><br> Visitors activity
+            <select id="visitors_activity_date_range" name="visitors_activity_date_range"
+                    class="dashboardForm-select dashboardForm-event">
+                <option value="7daysAgo">This week</option>
+                <option value="30daysAgo">This month</option>
+                <option value="90daysAgo">3 Last months</option>
+                <option value="365daysAgo">This Year</option>
+            </select></h2>
+    {% endif %}
+    <div>
+        <table class="table-container">
+            <tr>
+                <td>Date</td>
+                <td>Number of Visitors</td>
+            </tr>
+            {% for row in userCountsByDate %}
+                <tr>
+                    <td>{{ row.date|date("m/d/Y") }}</td>
+                    <td>{{ row.userCount }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+</div>
+
+<style>
+    .table-container {
+        max-width: 300px;
+        overflow-x: hidden; /* Masquer le défilement horizontal si le contenu est trop large */
+        overflow-y: auto; /* Activer le défilement vertical si le contenu dépasse la hauteur */
+    }
+</style>
