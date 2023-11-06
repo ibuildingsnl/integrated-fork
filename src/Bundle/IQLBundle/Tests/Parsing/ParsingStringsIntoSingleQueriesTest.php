@@ -55,6 +55,7 @@ final class ParsingStringsIntoSingleQueriesTest extends TestCase
             $iql = 'published after 04-03-2011' => [PublishedAfter::date('04-03-2011'), $iql],
             $iql = 'articles' => [WithContentType::of('article'), $iql],
             $iql = 'blogs' => [WithContentType::of('blog'), $iql],
+            $iql = 'taxonomy items' => [WithContentType::of('taxonomy'), $iql],
             $iql = 'published to channel1' => [PublishedTo::channel('channel1'), $iql],
             $iql = 'published to Channel 2' => [PublishedTo::channel('Channel 2'), $iql],
             $iql = 'containing foo' => [WithContent::containing('foo'), $iql],
