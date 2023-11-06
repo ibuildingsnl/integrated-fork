@@ -5,6 +5,8 @@ namespace Integrated\Bundle\IQLBundle\Tests\Parsing;
 use Integrated\Bundle\IQLBundle\Parser\IQLParser;
 use Integrated\Bundle\IQLBundle\Specification\PublishedAfter;
 use Integrated\Bundle\IQLBundle\Specification\PublishedBefore;
+use Integrated\Bundle\IQLBundle\Specification\PublishedOn;
+use Integrated\Bundle\IQLBundle\Specification\WithContent;
 use Integrated\Bundle\IQLBundle\Specification\WithContentType;
 use Integrated\Bundle\IQLBundle\Specification\WrittenAfter;
 use Integrated\Bundle\IQLBundle\Specification\WrittenBefore;
@@ -41,16 +43,16 @@ final class ParsingStringsWithANDQueriesTest extends TestCase
     public function testFindByAuthorOnDate()
     {
         self::assertEquals(
-            WrittenBy::author('John Doe')->and(WrittenOn::date('01-01-2023')),
-            $this->parser->parse('written by John Doe, on 01-01-2023')->data(),
+            WrittenBy::author('John Doe')->and(PublishedOn::date('01-01-2023')),
+            $this->parser->parse('written by John Doe, published on 01-01-2023')->data(),
         );
     }
 
     public function testFindByTypeAuthorAndDate()
     {
         self::assertEquals(
-            WithContentType::of('blog')->and(WrittenBy::author('John Doe'))->and(WrittenOn::date('01-01-2023')),
-            $this->parser->parse('articles written by John Doe, on 01-01-2023')->data(),
+            WithContentType::of('article')->and(WrittenBy::author('John Doe'))->and(WrittenOn::date('01-01-2023')),
+            $this->parser->parse('articles written by John Doe, written on 01-01-2023')->data(),
         );
     }
 
@@ -59,10 +61,39 @@ final class ParsingStringsWithANDQueriesTest extends TestCase
         self::assertEquals(
             WithContentType::of('blog')
                 ->and(WrittenBy::author('John Doe'))
-                ->and(WrittenAfter::date('01-01-2023'))
-                ->and(WrittenBefore::date('31-12-2023'))
+                ->and(
+                    WrittenAfter::date('01-01-2023')->and(WrittenBefore::date('31-12-2023'))
+                )
             ,
             $this->parser->parse('blogs written by John Doe, written between 01-01-2023 and 31-12-2023')->data(),
+        );
+    }
+
+    public function testFindByTypeAuthorAndMultipleDates()
+    {
+        self::assertEquals(
+            WithContentType::of('blog')
+                ->and(WrittenBy::author('John Doe'))
+                ->and(WrittenOn::date('01-01-2023'))
+                ->and(PublishedBefore::date('01-01-2024'))
+            ,
+            $this->parser->parse('blogs written by John Doe, written on 01-01-2023 and published before 01-01-2024')->data(),
+        );
+    }
+
+    public function testFindByTypeAuthorContentAndMultipleDates()
+    {
+        self::assertEquals(
+            WithContentType::of('blog')
+                ->and(WrittenBy::author('Gandalf'))
+                ->and(WithContent::containing('foo'))
+                ->and(WrittenOn::date('01-01-2023'))
+                ->and(PublishedAfter::date('01-06-2023')->and(PublishedBefore::date('01-01-2024')))
+            ,
+            $this->parser->parse(
+                'blogs written by Gandalf, containing "foo" written on 01-01-2023 and ' .
+                'published between 01-06-2023 and 01-01-2024'
+            )->data(),
         );
     }
 }

@@ -16,6 +16,7 @@ use Stratadox\Parser\Helpers\Between;
 use Stratadox\Parser\Helpers\Cast;
 use Stratadox\Parser\Parser;
 use Stratadox\Parser\Parsers\Either;
+use Stratadox\Specification\Contract\Specifies;
 use function Stratadox\Parser\any;
 use function Stratadox\Parser\text;
 
@@ -23,9 +24,33 @@ final class IQLParser
 {
     public static function create(): Parser
     {
-        $d = text(' items')->or('s');
-        return any()->except($d->end())->repeatableString()->map(fn (string $type) => WithContentType::of($type))->andThen($d)
-            ->or(self::rules())->map(fn ($a) => $a[0]);
+        return self::contentType(' items', 's')->or(self::rules())
+            ->andThen(self::delimiter()->optional()->andThen(self::rules())->first()->repeatable())
+            ->map(function (array $result) {
+                $specification = ($result[0] ?? null);
+                if (!$specification instanceof Specifies) {
+                    return null;
+                }
+                if (!isset($result[1])) {
+                    return $specification;
+                }
+                if ($result[1] instanceof Specifies) {
+                    return $specification->and($result[1]);
+                }
+                foreach ($result[1] as $also) {
+                    $specification = $specification->and($also);
+                }
+                return $specification;
+            });
+    }
+
+    private static function contentType(Parser|string ...$suffix): Parser
+    {
+        $delimiter = Either::of(...$suffix);
+        return any()->except($delimiter->end()->or($delimiter->andThen(' ')))->repeatableString()
+            ->map(fn (string $type) => WithContentType::of($type))
+            ->andThen($delimiter)
+            ->first();
     }
 
     private static function rules(): Parser
@@ -48,7 +73,7 @@ final class IQLParser
                 'published between ',
                 fn (array $when) => [PublishedAfter::date($when[0])->and(PublishedBefore::date($when[1]))]
             ),
-        );
+        )->first();
     }
 
     private static function rule(Parser|string $prefix, \Closure $mapping): Parser
@@ -69,7 +94,7 @@ final class IQLParser
 
     private static function delimiter(): Parser
     {
-        return text(', ')->or(' or', ' and');
+        return text(', ')->or(' or ', ' and ')->ignore();
     }
 
     private static function quotedText(): Parser
