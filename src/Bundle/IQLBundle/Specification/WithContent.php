@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\IQLBundle\Specification;
 
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Stratadox\Specification\Contract\Specifies;
 use Stratadox\Specification\Specification;
@@ -26,9 +25,7 @@ final class WithContent extends Specification
         }
         $content = $object->getContent();
 
-        return $content instanceof Article && (
-            str_contains($content->getTitle(), $this->search) ||
-            str_contains($content->getContent(), $this->search)
-        );
+        return (method_exists($content, 'getTitle') && str_contains($content->getTitle(), $this->search)) ||
+            (method_exists($content, 'getContent') && str_contains($content->getContent(), $this->search));
     }
 }

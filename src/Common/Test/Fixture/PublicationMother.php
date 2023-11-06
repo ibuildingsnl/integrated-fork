@@ -7,6 +7,7 @@ use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Document\Content\Publication;
 use Integrated\Bundle\ContentBundle\Document\Content\Relation\Person;
+use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
 use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
@@ -58,6 +59,7 @@ final class PublicationMother
             'Chuck Norris',
         );
         $article->getContent()->setCreatedAt(new \DateTimeImmutable('01-01-1634'));
+        $article->getContent()->setUpdatedAt(new \DateTimeImmutable('02-01-2024'));
         return $article;
     }
 
@@ -70,6 +72,20 @@ final class PublicationMother
             PublishTime::withStartDate(new \DateTimeImmutable('01-05-1937')),
             'Bilbo Baggins',
             'Frodo Baggins',
+        );
+    }
+
+    public function rankedTaxonomy(string $rank): Publication
+    {
+        $content = new Taxonomy();
+        $content->setContentType('category');
+        $content->setCreatedAt(new \DateTimeImmutable('01-01-2000'));
+        $content->setRank($rank);
+        $content->setTitle('Taxonomy ranked '.$rank);
+        return new Publication(
+            $content,
+            ChannelMother::withId('taxonomy'),
+            (new PublishTime())->setStartDate(new \DateTimeImmutable('01-01-2000'))
         );
     }
 
@@ -96,6 +112,7 @@ final class PublicationMother
         $article->setTitle($title);
         $article->setContent($content);
         $article->setCreatedAt($when->getStartDate());
+        $article->setUpdatedAt($when->getStartDate());
         $article->setPublishTime($when);
         foreach ($authors as $name) {
             // @todo move to AuthorMother?
