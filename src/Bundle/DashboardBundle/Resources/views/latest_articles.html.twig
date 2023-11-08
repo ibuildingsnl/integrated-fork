@@ -1,5 +1,6 @@
-<div>
-    <h2> <br> Latest Articles (total: {{ mostRecentArticles | length }})</h2>
+<div class="{{ widget.id }}">
+    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
+    <h2><br> Latest Articles (total: {{ mostRecentArticles | length }})</h2>
     <nav class="article-list">
         <ul>
             {% for article in mostRecentArticles %}

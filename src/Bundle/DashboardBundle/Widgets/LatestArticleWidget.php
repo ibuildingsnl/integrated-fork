@@ -10,23 +10,31 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LatestArticleWidget implements WidgetInterface
 {
+    private readonly string $id;
+    private readonly string $name;
+    private readonly string $view;
+
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly int $amount
     ) {
+        $this->id = 'latest_articles';
+        $this->name = 'Latest articles';
+        $this->view = '@IntegratedDashboard/latest_articles.html.twig';
     }
     public function id(): string
     {
-        return 'latest_articles';
+        return $this->id;
     }
+
     public function name(): string
     {
-        return 'Latest articles';
+        return $this->name;
     }
 
     public function view(): string
     {
-        return '@IntegratedDashboard/latest_articles_widget.html.twig';
+        return $this->view;
     }
 
     public function params(ChannelInterface $channel, User $user, Request $request): array
@@ -39,6 +47,7 @@ class LatestArticleWidget implements WidgetInterface
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
         return [
+            "widget" => $this,
             'mostRecentArticles' => $mostRecentArticles,
             'channel' => $channel,
         ];

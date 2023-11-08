@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
@@ -14,34 +15,40 @@ use DateTimeImmutable;
 
 class VisitorsActivityWidget implements WidgetInterface
 {
+    private readonly string $id;
+    private readonly string $name;
+    private readonly string $view;
 
     public function __construct(
         private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly DocumentManager $manager,
         private readonly BrandRepository $brandRepository
-    )
-    {
+    ){
+        $this->id = 'visitors_activity';
+        $this->name = 'Visitors activity';
+        $this->view = '@IntegratedDashboard/visitors_activity.html.twig';
     }
 
     public function id(): string
     {
-        return 'visitors_activity';
+        return $this->id;
     }
 
     public function name(): string
     {
-        return 'Visitors activity';
+        return $this->name;
     }
 
     public function view(): string
     {
-        return '@IntegratedDashboard/visitors_activity.html.twig';
+        return $this->view;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
-        $dateRange = $request->query->get('visitors_activity_date_range') ?? "7daysAgo";
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
                 $propertyId = $brand->profile->analytics;
@@ -53,7 +60,7 @@ class VisitorsActivityWidget implements WidgetInterface
         $requestBody = [
             "dateRanges" => [
                 [
-                    "startDate" => $dateRange,
+                    "startDate" => '365daysAgo',
                     "endDate" => "yesterday"
                 ]
             ],
@@ -89,17 +96,18 @@ class VisitorsActivityWidget implements WidgetInterface
             foreach ($responseData['rows'] as $row) {
                 $date = $row['dimensionValues'][0]['value'];
                 $activeUsers = $row['metricValues'][0]['value'];
-                $dateTime = DateTimeImmutable::createFromFormat('Ymd', $date);
+                //$dateTime = DateTimeImmutable::createFromFormat('d/m/Y"', $date);
 
                 $userCountsByDate[] = [
-                    'date' => $dateTime,
+                    'date' => $date,
                     'userCount' => $activeUsers,
                 ];
             }
+            $userCountsByDate = array_reverse($userCountsByDate);
         }
         return [
+            "widget" => $this,
             "userCountsByDate" => $userCountsByDate,
-            "dateRange" => $dateRange
         ];
     }
 }

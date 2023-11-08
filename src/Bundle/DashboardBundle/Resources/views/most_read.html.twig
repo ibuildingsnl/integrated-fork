@@ -1,9 +1,11 @@
-<div>
+<div class="{{ widget.id }}">
+    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
     {% if (mostViewedPages is not iterable) %}
         <h2><br> {{ mostViewedPages }} </h2>
     {% else %}
         <h2><br> Most {{ mostViewedPages | length }} read pages
-            <select id="most_read_date_range" name="most_read_date_range" class="dashboardForm-select dashboardForm-event">
+            <select id="most_read_date_range" name="most_read_date_range"
+                    class="dashboardForm-select dashboardForm-event">
                 <option value="30daysAgo">This month</option>
                 <option value="90daysAgo">3 Last months</option>
                 <option value="365daysAgo">This Year</option>

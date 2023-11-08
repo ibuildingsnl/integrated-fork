@@ -14,27 +14,33 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MostReadWidget implements WidgetInterface
 {
+    private readonly string $id;
+    private readonly string $name;
+    private readonly string $view;
 
     public function __construct(
         private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly DocumentManager $manager,
         private readonly BrandRepository $brandRepository
     )
     {
+        $this->id = 'most_read';
+        $this->name = 'Most read';
+        $this->view = '@IntegratedDashboard/most_read.html.twig';
     }
+
     public function id(): string
     {
-        return 'most_read';
+        return $this->id;
     }
     public function name(): string
     {
-        return 'Most read';
+        return $this->name;
     }
 
     public function view(): string
     {
-        return '@IntegratedDashboard/most_read.html.twig';
+        return $this->view;
     }
 
     /**
@@ -95,6 +101,7 @@ class MostReadWidget implements WidgetInterface
             }
         }
         return [
+            "widget" => $this,
             "mostViewedPages" => $mostViewedPages,
             "dateRange" => $dateRange
         ];

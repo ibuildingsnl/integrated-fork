@@ -11,22 +11,30 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SitePerformancesWidget implements WidgetInterface
 {
+    private readonly string $id;
+    private readonly string $name;
+    private readonly string $view;
+
     public function __construct(
         private readonly DocumentManager  $manager,
-    ){}
-
+    ){
+        $this->id = 'site_performance';
+        $this->name = 'Site performance';
+        $this->view = '@IntegratedDashboard/site_performance.html.twig';
+    }
     public function id(): string
     {
-        return 'site_performance';
+        return $this->id;
     }
+
     public function name(): string
     {
-        return 'Site performance';
+        return $this->name;
     }
 
     public function view(): string
     {
-        return '@IntegratedDashboard/site_performance.html.twig';
+        return $this->view;
     }
 
     public function params(ChannelInterface $channel, User $user, Request $request): array
@@ -43,6 +51,7 @@ class SitePerformancesWidget implements WidgetInterface
             $averageSpeed = $this->getAverageSpeed($channelPerformances);
         }
         return [
+            "widget" => $this,
             'mostRecentSpeed' => $mostRecentSpeed ?? "Data not found",
             'averageSpeed' => $averageSpeed ?? "Data not found"
         ];

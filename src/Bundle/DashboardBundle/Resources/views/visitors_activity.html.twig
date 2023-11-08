@@ -1,34 +1,189 @@
-<div>
-
+<div class="{{ widget.id }}">
+    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
     {% if (userCountsByDate is not iterable) %}
         <h2><br> {{ userCountsByDate }} </h2>
     {% else %}
         <h2><br> Visitors activity
-            <select id="visitors_activity_date_range" name="visitors_activity_date_range"
-                    class="dashboardForm-select dashboardForm-event">
+            <select id="visitors_activity_date_range" name="visitors_activity_date_range" class="visitors_activity_date_range">
                 <option value="7daysAgo">This week</option>
                 <option value="30daysAgo">This month</option>
-                <option value="90daysAgo">3 Last months</option>
                 <option value="365daysAgo">This Year</option>
-            </select></h2>
+            </select>
+
+        </h2>
     {% endif %}
     <div>
-        <table class="table-container">
-            <tr>
-                <td>Date</td>
-                <td>Number of Visitors</td>
-            </tr>
-            {% for row in userCountsByDate %}
-                <tr>
-                    <td>{{ row.date|date("m/d/Y") }}</td>
-                    <td>{{ row.userCount }}</td>
-                </tr>
-            {% endfor %}
-        </table>
+        <canvas id="line-chart" width="80" height="45"></canvas>
     </div>
-
-
 </div>
+
+<script>
+
+
+
+    var userCountsByDateJS = [];
+    {% for row in userCountsByDate %}
+    var date = '{{ row.date }}';
+    // Extrayez l'année, le mois et le jour de la date
+    var year = date.substr(0, 4);
+    var month = date.substr(4, 2);
+    var day = date.substr(6, 2);
+    // Formatez la date comme "DD/MM/YY"
+    var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
+
+    userCountsByDateJS.push({
+        date: formattedDate,
+        userCount: parseInt('{{ row.userCount }}', 10)
+    });
+    {% endfor %}
+
+    // Récupérez les éléments nécessaires
+    var selectVisitorActivityDate = document.getElementById("visitors_activity_date_range");
+    var ctx = document.getElementById("line-chart").getContext('2d');
+    var chart; // Pour stocker l'objet Chart
+
+    // Fonction pour mettre à jour le graphe en fonction de la sélection
+    function updateChart(selectedValue) {
+        var dates = [];
+        var userCounts = [];
+        var dateformat;
+        //console.log(userCountsByDateJS);
+        // Remplissez les données en fonction de la sélection ici
+        switch (selectedValue) {
+            case "7daysAgo":
+                // Affiche simplement les données des 7 derniers jours
+                dateformat = 'DD/MM/YYYY'
+                var last7DaysData = userCountsByDateJS.slice(0, 7); // Sélectionne les 7 derniers éléments
+                last7DaysData.forEach(function (data) {
+                    dates.push(data.date);
+                    userCounts.push(data.userCount);
+                });
+                break;
+
+            case "30daysAgo":
+                // Affiche simplement les données des 30 derniers jours
+                dateformat = 'DD/MM/YYYY'
+                var last30DaysData = userCountsByDateJS.slice(0, 30); // Sélectionne les 30 derniers éléments
+                last30DaysData.forEach(function (data) {
+                    dates.push(data.date);
+                    userCounts.push(data.userCount);
+                });
+                console;
+                console.log(last30DaysData);
+                break;
+            case "365daysAgo":
+                // Affiche les données regroupées par mois sur 1 an
+                dateformat = 'MM/YYYY'
+                var monthlyAggregatedData = aggregateDataByMonth(userCountsByDateJS, 12); // Agréger par mois sur 1 an
+                monthlyAggregatedData.forEach(function (data) {
+                    dates.push(data.date);
+                    userCounts.push(data.userCount);
+                });
+                break;
+
+            default:
+                // Cas par défaut ou autre
+                break;
+        }
+        // Mettez à jour le graphe
+        if (chart) {
+            chart.destroy(); // Détruisez l'ancien graphe si existant
+        }
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    data: userCounts,
+                    label: "Number of Visitors",
+                    borderColor: "#c45850",
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: [{
+                        type: 'time',
+                        time: {
+                            parser: dateformat,
+                            tooltipFormat: dateformat,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    y: [{
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Number of Visitors'
+                        }
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'Visitors Activity'
+                }
+            }
+        });
+    }
+
+
+    // Fonction pour agréger les données par mois sur une période donnée (en nombre de mois)
+    function aggregateDataByMonth(data, numMonths) {
+        const aggregatedData = {};
+        console.log(data);
+
+        const parsedData = data.map(function (item) {
+            const dateParts = item.date.split('/'); // Sépare la date en parties (jour, mois, année)
+            return {
+                date: dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0], // Format en DD/MM/YYYY
+                userCount: parseInt(item.userCount, 10),
+            };
+        });
+        console.log(parsedData);
+        for (let i = 0; i < parsedData.length; i++) {
+            const currentDate = parsedData[i].date;
+            const currentMonth = currentDate.substr(3, 7); // Extrait le mois et l'année (MM/YYYY)
+            const userCount = parsedData[i].userCount;
+
+            if (!aggregatedData[currentMonth]) {
+                aggregatedData[currentMonth] = 0;
+            }
+
+            aggregatedData[currentMonth] += userCount;
+        }
+
+        const result = Object.keys(aggregatedData).map(function (month) {
+            return {
+                date: month,
+                userCount: aggregatedData[month],
+            };
+        });
+
+        if (numMonths && numMonths < result.length) {
+            result.splice(0, result.length - numMonths);
+        }
+        console.log(result)
+        return result;
+    }
+
+    // Ajoutez un gestionnaire d'événements pour le changement de sélection
+    selectVisitorActivityDate.addEventListener('change', function () {
+        var selectedValue = selectVisitorActivityDate.value;
+        updateChart(selectedValue);
+    });
+
+    // Appelez la fonction pour initialiser le graphe
+    var initialSelectedValue = selectVisitorActivityDate.value;
+    updateChart(initialSelectedValue);
+</script>
 
 <style>
     .table-container {

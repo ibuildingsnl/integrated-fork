@@ -47,10 +47,9 @@ class DashboardController extends AbstractController
             'multiple' => false,
             'return_object' => true, // true = object, false = ID
         ]);
-
         $channel = $this->getChannel($request);
-        $renderedWidgets = $this->renderWidgets($channel, $user, $request);
-        return $this->renderDashboardView($channel->getName(), $renderedWidgets, $selectChannelForm);
+        $widgetAllData = $this->renderWidgets($channel, $user, $request);
+        return $this->renderDashboardView($channel->getName(), $widgetAllData, $selectChannelForm);
     }
 
     private function getChannel($request): ChannelInterface
@@ -64,38 +63,31 @@ class DashboardController extends AbstractController
      */
     private function renderWidgets(ChannelInterface $channel, $user, Request $request): array
     {
-        $renderedWidgets = [];
-        $selectedByFormWidgets = [];
-        $widgetChoices = $request->query->all(); // Récupère tous les paramètres GET en tant qu'array
-
-        if(isset($widgetChoices['widget_choice']))
-        {
-            $selectedByFormWidgets = $widgetChoices['widget_choice']; // Accède à la liste des valeurs
-        }
-
+        $widgetAllData = [];
         $widgetConfigs = $this->manager->getRepository(WidgetConfig::class)
             ->createQueryBuilder()
             ->sort('order', 'asc')
             ->getQuery()
             ->execute();
         foreach ($widgetConfigs as $config) {
-            if (($selectedByFormWidgets == []) || (in_array($config->getWidgetId(), $selectedByFormWidgets))) {
-                $widget = $this->widgets[$config->getWidgetName()] ?? null;
-                if ($widget) {
-                    $renderedWidgets[] = $this->renderView($widget->view(), $widget->params($channel, $user, $request));
-                }
+            $widget = $this->widgets[$config->getWidgetName()] ?? null;
+            if ($widget) {
+                $widgetAllData[] = [
+                    'id' => $config->getWidgetId(),
+                    'name' => $config->getWidgetName(),
+                    'renderedView' => $this->renderView($widget->view(), $widget->params($channel, $user, $request)),
+                ];
             }
         }
-        return $renderedWidgets;
+        return $widgetAllData;
     }
 
-    private function renderDashboardView(string $channelName, array $renderedWidgets, $selectChannelForm): Response
+    private function renderDashboardView(string $channelName, array $widgetAllData, $selectChannelForm): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
             "channelName" => $channelName,
-            'renderedWidgets' => $renderedWidgets,
             "channelForm" => $selectChannelForm->createView(),
-            "widgets" => $this->widgets
+            "widgetAllData" => $widgetAllData
         ]);
     }
 }
