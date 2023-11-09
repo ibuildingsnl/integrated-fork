@@ -141,6 +141,10 @@ class ImageExtension extends AbstractExtension
             return $this->imageJson($image);
         }
 
+        if (\in_array(pathinfo($image, \PATHINFO_EXTENSION), $this->mimicFormats)) {
+            return $this->imageMimicHandling->open($image);
+        }
+
         $extension = pathinfo($image, \PATHINFO_EXTENSION);
         if (strtolower($extension) === 'pdf') {
             return $this->imageHandling->open('bundles/integratedintegrated/images/fallbacks/pdf-fallback.jpg');
