@@ -15,4 +15,8 @@ use Integrated\Common\Solr\Search\Type\AbstractType;
 
 class IntegratedContent extends AbstractType
 {
+    public function getParent(): ?string
+    {
+        return Content::class;
+    }
 }
