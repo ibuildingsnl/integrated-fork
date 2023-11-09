@@ -99,7 +99,7 @@ class GetSitePerformancesCommand extends Command
                 $speedIndex = $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null;
                 if (!is_null($speedIndex)) {
                     $dateTime = new \DateTimeImmutable();
-                    $sitePerformance = new SitePerformance($url, $speedIndex, $dateTime);
+                    $sitePerformance = new SitePerformance($channelId, $speedIndex, $dateTime);
                     $this->manager->persist($sitePerformance);
                 }
             } else {
