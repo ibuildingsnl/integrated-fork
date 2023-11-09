@@ -29,8 +29,6 @@ class IntegratedContentBlock extends AbstractType
 
     public function build(Query $query, array $options): void
     {
-        parent::build($query, $options);
-
         $helper = $query->getHelper();
         $escape = function ($param) use ($helper) {
             return $helper->escapePhrase($param);
@@ -173,6 +171,6 @@ class IntegratedContentBlock extends AbstractType
 
     public function getParent(): ?string
     {
-        return IntegratedContent::class;
+        return Content::class;
     }
 }
