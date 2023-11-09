@@ -90,13 +90,12 @@ class VisitorsActivityWidget implements WidgetInterface
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseJson = $analyticsRequest->getResponse();
-        $responseData = json_decode($responseJson, true); // Convertit la réponse JSON en tableau associatif
+        $responseData = json_decode($responseJson, true);
         $userCountsByDate = [];
         if ($responseData != null) {
             foreach ($responseData['rows'] as $row) {
                 $date = $row['dimensionValues'][0]['value'];
                 $activeUsers = $row['metricValues'][0]['value'];
-                //$dateTime = DateTimeImmutable::createFromFormat('d/m/Y"', $date);
 
                 $userCountsByDate[] = [
                     'date' => $date,

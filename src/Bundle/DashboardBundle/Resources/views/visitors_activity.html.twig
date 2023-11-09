@@ -25,11 +25,9 @@
     var userCountsByDateJS = [];
     {% for row in userCountsByDate %}
     var date = '{{ row.date }}';
-    // Extrayez l'année, le mois et le jour de la date
     var year = date.substr(0, 4);
     var month = date.substr(4, 2);
     var day = date.substr(6, 2);
-    // Formatez la date comme "DD/MM/YY"
     var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
 
     userCountsByDateJS.push({
@@ -38,30 +36,24 @@
     });
     {% endfor %}
 
-    // Récupérez les éléments nécessaires
     var selectVisitorActivityDate = document.getElementById("visitors_activity_date_range");
     var ctx = document.getElementById("line-chart").getContext('2d');
     var chart; // Pour stocker l'objet Chart
 
-    // Fonction pour mettre à jour le graphe en fonction de la sélection
     function updateChart(selectedValue) {
         var dates = [];
         var userCounts = [];
         var dateformat;
-        //console.log(userCountsByDateJS);
-        // Remplissez les données en fonction de la sélection ici
         switch (selectedValue) {
             case "7daysAgo":
-                // Affiche simplement les données des 7 derniers jours
                 dateformat = 'DD/MM/YYYY'
-                var last7DaysData = userCountsByDateJS.slice(0, 7); // Sélectionne les 7 derniers éléments
+                var last7DaysData = userCountsByDateJS.slice(0, 7);
                 last7DaysData.forEach(function (data) {
                     dates.push(data.date);
                     userCounts.push(data.userCount);
                 });
                 break;
             case "30daysAgo":
-                // Affiche simplement les données des 30 derniers jours
                 dateformat = 'DD/MM/YYYY'
                 var last30DaysData = userCountsByDateJS.slice(0, 30);
                 last30DaysData.forEach(function (data) {
@@ -101,7 +93,7 @@
                 labels: dates,
                 datasets: [{
                     data: userCounts,
-                    label: "Number of Visitors",
+                    label: "Visitors",
                     borderColor: "#c45850",
                     fill: false
                 }]
@@ -127,7 +119,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: 'Number of Visitors'
+                            labelString: 'Visitors'
                         }
                     }]
                 },
@@ -140,12 +132,10 @@
     }
 
 
-    // Fonction pour agréger les données par mois sur une période donnée (en nombre de mois)
     function aggregateDataByMonth(data, numMonths) {
         const aggregatedData = {};
 
         const parsedData = data.map(function (item) {
-            const dateParts = item.date.split('/'); // Sépare la date en parties (jour, mois, année)
             return {
                 date: item.date,
                 userCount: parseInt(item.userCount, 10),
@@ -154,7 +144,7 @@
 
         for (let i = 0; i < parsedData.length; i++) {
             const currentDate = parsedData[i].date;
-            const currentMonth = currentDate.substr(3, 7); // Extrait le mois et l'année (MM/YYYY)
+            const currentMonth = currentDate.substr(3, 7);
             const userCount = parsedData[i].userCount;
 
             if (!aggregatedData[currentMonth]) {
@@ -177,7 +167,6 @@
         return result;
     }
 
-    // Ajoutez un gestionnaire d'événements pour le changement de sélection
     selectVisitorActivityDate.addEventListener('change', function () {
         var selectedValue = selectVisitorActivityDate.value;
         updateChart(selectedValue);
@@ -198,7 +187,7 @@
 <style>
     .table-container {
         max-width: 300px;
-        overflow-x: hidden; /* Masquer le défilement horizontal si le contenu est trop large */
-        overflow-y: auto; /* Activer le défilement vertical si le contenu dépasse la hauteur */
+        overflow-x: hidden;
+        overflow-y: auto; 
     }
 </style>
