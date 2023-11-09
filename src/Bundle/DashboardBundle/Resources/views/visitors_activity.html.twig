@@ -14,67 +14,44 @@
         </h2>
     {% endif %}
     <div>
-        <canvas id="line-chart" width="80" height="45"></canvas>
+        <canvas id="Visitor_Activity-line-chart"></canvas>
     </div>
 </div>
 
 <script>
 
-
-
-    var userCountsByDateJS = [];
-    {% for row in userCountsByDate %}
-    var date = '{{ row.date }}';
-    var year = date.substr(0, 4);
-    var month = date.substr(4, 2);
-    var day = date.substr(6, 2);
-    var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
-
-    userCountsByDateJS.push({
-        date: formattedDate,
-        userCount: parseInt('{{ row.userCount }}', 10)
-    });
-    {% endfor %}
-
+    var chart;
     var selectVisitorActivityDate = document.getElementById("visitors_activity_date_range");
-    var ctx = document.getElementById("line-chart").getContext('2d');
-    var chart; // Pour stocker l'objet Chart
 
-    function updateChart(selectedValue) {
+    function updateVisitorActivityChart(selectedValue) {
+        var userCountsByDateJS = [
+            {% for row in userCountsByDate %}
+            formatUserCountData('{{ row.date }}', '{{ row.userCount }}'),
+            {% endfor %}
+        ];
+
+        var ctx = document.getElementById("Visitor_Activity-line-chart");
         var dates = [];
         var userCounts = [];
         var dateformat;
+
         switch (selectedValue) {
             case "7daysAgo":
-                dateformat = 'DD/MM/YYYY'
-                var last7DaysData = userCountsByDateJS.slice(0, 7);
-                last7DaysData.forEach(function (data) {
-                    dates.push(data.date);
-                    userCounts.push(data.userCount);
-                });
-                break;
             case "30daysAgo":
-                dateformat = 'DD/MM/YYYY'
-                var last30DaysData = userCountsByDateJS.slice(0, 30);
-                last30DaysData.forEach(function (data) {
+                dateformat = 'DD/MM/YYYY';
+                var slicedData = userCountsByDateJS.slice(0, selectedValue === "7daysAgo" ? 7 : 30);
+                slicedData.forEach(function (data) {
                     dates.push(data.date);
                     userCounts.push(data.userCount);
                 });
-                console;
-                console.log(last30DaysData);
                 break;
+
             case "6monthsAgo":
-                dateformat = 'MM/YYYY'
-                var monthlyAggregatedData = aggregateDataByMonth(userCountsByDateJS, 6);
-                monthlyAggregatedData.forEach(function (data) {
-                    dates.push(data.date);
-                    userCounts.push(data.userCount);
-                });
-                break;
             case "365daysAgo":
-                dateformat = 'MM/YYYY'
-                var monthlyAggregatedData = aggregateDataByMonth(userCountsByDateJS, 12);
-                monthlyAggregatedData.forEach(function (data) {
+                dateformat = 'MM/YYYY';
+                var numMonths = selectedValue === "6monthsAgo" ? 6 : 12;
+                var aggregatedData = aggregateDataByMonth(userCountsByDateJS, numMonths);
+                aggregatedData.forEach(function (data) {
                     dates.push(data.date);
                     userCounts.push(data.userCount);
                 });
@@ -131,6 +108,17 @@
         });
     }
 
+    function formatUserCountData(date, userCount) {
+        var year = date.substr(0, 4);
+        var month = date.substr(4, 2);
+        var day = date.substr(6, 2);
+        var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
+
+        return {
+            date: formattedDate,
+            userCount: parseInt(userCount, 10)
+        };
+    }
 
     function aggregateDataByMonth(data, numMonths) {
         const aggregatedData = {};
@@ -169,16 +157,15 @@
 
     selectVisitorActivityDate.addEventListener('change', function () {
         var selectedValue = selectVisitorActivityDate.value;
-        updateChart(selectedValue);
+        updateVisitorActivityChart(selectedValue);
     });
 
-    function chartFirstLoad()
-    {
+    function chartFirstLoad() {
         const selectName = selectVisitorActivityDate.name;
         const urlParams = new URLSearchParams(window.location.search);
         const paramValues = urlParams.get(selectName);
         var initialSelectedValue = paramValues ?? selectVisitorActivityDate.value;
-        updateChart(initialSelectedValue);
+        updateVisitorActivityChart(initialSelectedValue);
     }
 
     chartFirstLoad()
@@ -188,6 +175,6 @@
     .table-container {
         max-width: 300px;
         overflow-x: hidden;
-        overflow-y: auto; 
+        overflow-y: auto;
     }
 </style>

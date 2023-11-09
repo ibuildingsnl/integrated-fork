@@ -2,7 +2,7 @@
 {% block title %} Dashboard Analytics {% endblock title %}
 
 {% block content %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+=    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <div class="dashboard-container">
         <div class="channels">
             <h2>Dashboard Analytics</h2>
@@ -15,20 +15,35 @@
                 }) }}
                 {{ form_end(channelForm) }}
             </div>
-
-            <ul class="filters_list widget_choice">
-                {% for widget in widgetAllData %}
-                    <li class="checkbox">
-                        <label class="checkbox-container">
-                            <input type="checkbox" name="{{ widget.id }}" value="{{ widget.id }}" checked>
-                            <span class="checkmark"></span>
-                            <div class="facet-wrappper">
-                                <span class="facet-title">{{ widget.name }}</span>
-                            </div>
-                        </label>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="aside-item-holder">
+                <div class="aside-item-wrapper show">
+                    <div class="aside-item-header">
+                        <h3 class="aside-item-title">
+                    <span class="aside-item-icon">
+                        Widgets
+                    </span>
+                        </h3>
+                        <i id=widget_choice_arrow class="iconoir-nav-arrow-down"></i>
+                    </div>
+                    <div class="aside-widget-list" style="display: none;">
+                        <div class="aside-widget-list-container">
+                            {% for widget in widgetAllData %}
+                            <ul class="filters_list widget_choice">
+                                <li class="checkbox">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" name="{{ widget.id }}" value="{{ widget.id }}" checked>
+                                        <span class="checkmark"></span>
+                                        <div class="facet-wrappper">
+                                            <span class="facet-title">{{ widget.name }}</span>
+                                        </div>
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="widget-container">
@@ -46,6 +61,19 @@
 
 
     <script>
+        var menuHeader = document.querySelector('.aside-item-header');
+        menuHeader.addEventListener('click', function() {
+            dropdownWidget()
+        });
+        function dropdownWidget()
+        {
+            var menuList = document.querySelector('.aside-widget-list');
+            var arrow = document.getElementById('widget_choice_arrow');
+            menuList.style.display = (menuList.style.display === 'block') ? 'none' : 'block';
+            arrow.classList.toggle('iconoir-nav-arrow-down');
+            arrow.classList.toggle('iconoir-nav-arrow-up');
+        }
+
 
         const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
         checkboxes.forEach(function(checkbox) {
@@ -171,6 +199,10 @@
             flex-basis: 100%;
             height: 0;
             content: "";
+        }
+
+        .close-button{
+            color: red;
         }
 
     </style>
