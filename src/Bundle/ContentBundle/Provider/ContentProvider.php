@@ -299,7 +299,7 @@ class ContentProvider
         $query->setStart($offset);
 
         $query->setRows($limit);
-dump($query);
+
         if ($countResultset) {
             return $this->getNumFound($query);
         } else {
