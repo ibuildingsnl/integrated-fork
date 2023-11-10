@@ -1226,6 +1226,10 @@
                 <source>Select</source>
                 <target>Selecteer</target>
             </trans-unit>
+            <trans-unit id="311">
+                <source>Settings</source>
+                <target>Instellingen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
