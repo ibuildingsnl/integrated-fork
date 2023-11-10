@@ -80,6 +80,4 @@ class SitePerformancesWidget implements WidgetInterface
     {
         return round($milliValue / 1000, 2);
     }
-
-
 }

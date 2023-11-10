@@ -11,64 +11,21 @@
                 <option value="365daysAgo">This Year</option>
             </select></h2>
     {% endif %}
-        <nav class="article-list">
-            <ul>
-                {% for article in mostViewedPages %}
-                    <div class="facet-wrappper">
-                                            <span class="facet-title">
-                                                <b> {{ article.title }} </b>
-                                            </span>
-                        <span class="facet-count">{{ article.views }}</span>
-                    </div>
-                    __________________________________________
-                {% endfor %}
-            </ul>
-        </nav>
-{#    <canvas id="Most_Read-bar-chart" width="800" height="450"></canvas>#}
+
+            <nav class="article-list">
+                <ul>
+                    {% for article in mostViewedPages %}
+                        <div class="facet-wrappper">
+                                                <span class="facet-title">
+                                                    <b> {{ article.title }} </b>
+                                                </span>
+                            <span class="facet-count">{{ article.views }}</span>
+                        </div>
+                        __________________________________________
+                    {% endfor %}
+                </ul>
+            </nav>
 </div>
-
-<script>
-
-    var ctx = document.getElementById("Most_Read-bar-chart").getContext('2d');
-    var chart;
-
-    function updateMostReadChart() {
-
-        var title = [];
-        var views = [];
-        {% for row in mostViewedPages %}
-        title.push('{{ row.title }}');
-        views.push(parseInt('{{ row.views }}', 10));
-        {% endfor %}
-
-        if (chart) {
-            chart.destroy();
-        }
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: title,
-                datasets: [
-                    {
-                        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
-                        data: views
-                    }
-                ]
-            },
-            options: {
-                legend: {display: false},
-                title: {
-                    display: true,
-                    text: ""
-                }
-            }
-        });
-    }
-
-    //updateMostReadChart()
-
-</script>
 
 <style>
     .article-list {

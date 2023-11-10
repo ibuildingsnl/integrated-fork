@@ -160,7 +160,7 @@
         updateVisitorActivityChart(selectedValue);
     });
 
-    function chartFirstLoad() {
+    function visitorActivityChartFirstLoad() {
         const selectName = selectVisitorActivityDate.name;
         const urlParams = new URLSearchParams(window.location.search);
         const paramValues = urlParams.get(selectName);
@@ -168,7 +168,7 @@
         updateVisitorActivityChart(initialSelectedValue);
     }
 
-    chartFirstLoad()
+    visitorActivityChartFirstLoad()
 </script>
 
 <style>

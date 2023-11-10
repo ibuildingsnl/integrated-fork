@@ -82,7 +82,7 @@ class MostReadWidget implements WidgetInterface
                     "desc" => true
                 ]
             ],
-            "limit" => 20
+            "limit" => 10
         ];
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
