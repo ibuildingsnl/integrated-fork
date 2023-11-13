@@ -55,8 +55,17 @@ class VisitorsActivityWidget implements WidgetInterface
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
-            return ["mostViewedPages" => "No data found"];
+            return ["VisitorActivity" => "No data found"];
         }
+        $userCountsByDate = $this->getDataFromAnalytics($propertyId);
+        return [
+            "widget" => $this,
+            "userCountsByDate" => $userCountsByDate,
+        ];
+    }
+
+    public function getDataFromAnalytics(string $propertyId): array
+    {
         $requestBody = [
             "dateRanges" => [
                 [
@@ -89,8 +98,7 @@ class VisitorsActivityWidget implements WidgetInterface
 
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseJson = $analyticsRequest->getResponse();
-        $responseData = json_decode($responseJson, true);
+        $responseData = $analyticsRequest->getResponse();
         $userCountsByDate = [];
         if ($responseData != null) {
             foreach ($responseData['rows'] as $row) {
@@ -104,9 +112,6 @@ class VisitorsActivityWidget implements WidgetInterface
             }
             $userCountsByDate = array_reverse($userCountsByDate);
         }
-        return [
-            "widget" => $this,
-            "userCountsByDate" => $userCountsByDate,
-        ];
+        return $userCountsByDate;
     }
 }

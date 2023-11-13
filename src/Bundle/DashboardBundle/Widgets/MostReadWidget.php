@@ -57,6 +57,17 @@ class MostReadWidget implements WidgetInterface
         if (!isset($propertyId) || $propertyId == null) {
             return ["mostViewedPages" => "No data found"];
         }
+
+        $mostViewedPages = $this->getDataFromAnalytics($propertyId, $dateRange);
+
+        return [
+            "widget" => $this,
+            "mostViewedPages" => $mostViewedPages,
+            "dateRange" => $dateRange
+        ];
+    }
+    public function getDataFromAnalytics(string $propertyId, string $dateRange): array
+    {
         $requestBody = [
             "dateRanges" => [
                 [
@@ -86,11 +97,10 @@ class MostReadWidget implements WidgetInterface
         ];
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseJson = $analyticsRequest->getResponse();
-        $data = json_decode($responseJson, true);
+        $responseData = $analyticsRequest->getResponse();
         $mostViewedPages = [];
-        if ($data != null) {
-            foreach ($data['rows'] as $row) {
+        if ($responseData != null) {
+            foreach ($responseData['rows'] as $row) {
                 $pageTitle = $row['dimensionValues'][0]['value'];
                 $screenPageViews = (int)$row['metricValues'][0]['value'];
 
@@ -100,10 +110,6 @@ class MostReadWidget implements WidgetInterface
                 ];
             }
         }
-        return [
-            "widget" => $this,
-            "mostViewedPages" => $mostViewedPages,
-            "dateRange" => $dateRange
-        ];
+        return $mostViewedPages;
     }
 }

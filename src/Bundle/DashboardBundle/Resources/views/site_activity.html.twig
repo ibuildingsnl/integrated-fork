@@ -1,0 +1,9 @@
+<h2>Site Activity</h2>
+<h3>total visit : {{ totalViews }}</h3>
+<h3>Bounce Rate: {{ bounceRate }}%</h3>
+<h3>Top Countries:</h3>
+<ul>
+    {% for row in viewByCountry %}
+        <li>{{ row.country }}: {{ row.percentage }}% ({{ row.totalUser }})</li>
+    {% endfor %}
+</ul>
