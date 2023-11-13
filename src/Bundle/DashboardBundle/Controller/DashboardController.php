@@ -42,8 +42,6 @@ class DashboardController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $this->CheckWidgetDataBase();
-
         $user = $this->getUser();
         $selectChannelForm = $this->createForm(ChannelChoiceType::class, null, [
             'multiple' => false,
@@ -52,22 +50,6 @@ class DashboardController extends AbstractController
         $channel = $this->getChannel($request);
         $widgetAllData = $this->renderWidgets($channel, $user, $request);
         return $this->renderDashboardView($channel->getName(), $widgetAllData, $selectChannelForm);
-    }
-
-    private function CheckWidgetDataBase()
-    {
-        $widgetDB = $this->manager->getRepository(WidgetConfig::class)->findAll();
-        if (count($widgetDB) == 0)
-        {
-            $order = 1;
-            foreach ($this->widgets as $widget)
-            {
-                $widgetConfig = new WidgetConfig($widget->id(), $widget->name(), $order);
-                $this->manager->persist($widgetConfig);
-                $order++;
-            }
-            $this->manager->flush();
-        }
     }
 
     private function getChannel($request): ChannelInterface
