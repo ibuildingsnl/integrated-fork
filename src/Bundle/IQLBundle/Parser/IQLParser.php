@@ -24,7 +24,7 @@ final class IQLParser
 {
     public static function create(): Parser
     {
-        return self::contentType(' items', 's')->or(self::rules())
+        return self::contentType(text(' items')->or('s'))->or(self::rules())
             ->andThen(self::delimiter()->optional()->andThen(self::rules())->first()->repeatable())
             ->map(function (array $result) {
                 $specification = ($result[0] ?? null);
@@ -44,13 +44,14 @@ final class IQLParser
             });
     }
 
-    private static function contentType(Parser|string ...$suffix): Parser
+    private static function contentType(Parser $suffix): Parser
     {
-        $delimiter = Either::of(...$suffix);
-        return any()->except($delimiter->end()->or($delimiter->andThen(' ')))->repeatableString()
+        return any()->except($suffix->end()->or($suffix->andThen(' ')))->repeatableString()
             ->map(fn (string $type) => WithContentType::of($type))
-            ->andThen($delimiter)
-            ->first();
+            ->andThen($suffix)
+            ->first()
+            ->split(text(' and ')->or(' or '))
+            ->map(self::orMapping());
     }
 
     private static function rules(): Parser
@@ -73,7 +74,7 @@ final class IQLParser
                 'published between ',
                 fn (array $when) => [PublishedAfter::date($when[0])->and(PublishedBefore::date($when[1]))]
             ),
-        )->first();
+        )->first()->split(' or ')->map(self::orMapping());
     }
 
     private static function rule(Parser|string $prefix, \Closure $mapping): Parser
@@ -100,5 +101,13 @@ final class IQLParser
     private static function quotedText(): Parser
     {
         return Between::escaped('"', '"', '\\');
+    }
+
+    private static function orMapping(): \Closure
+    {
+        return fn (array $specs) => var_dump($a = array_reduce(
+            $specs,
+            fn (?Specifies $carry, Specifies $spec) => $carry ? $carry->or($spec) : $spec,
+        )) ?: $a;
     }
 }
