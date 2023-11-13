@@ -4,15 +4,16 @@ namespace Integrated\Bundle\DashboardBundle\Document;
 
 class WidgetConfig
 {
+    private string $id;
+
     public function __construct(
-        private readonly string $id,
         private readonly string $widgetId,
         private readonly string $widgetName,
         private readonly int $order
     ) {
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -24,9 +25,9 @@ class WidgetConfig
     {
         return $this->widgetName;
     }
-
     public function getOrder(): int
     {
         return $this->order;
     }
+
 }
