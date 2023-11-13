@@ -11,6 +11,7 @@
 
 namespace Integrated\MongoDB\Serializer\Normalizer;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -101,6 +102,10 @@ class DocumentNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     protected function supports($class)
     {
-        return !$this->getDocumentManager()->getMetadataFactory()->isTransient($class);
+        if ($this->getDocumentManager()->getMetadataFactory()->hasMetadataFor($class)) {
+            $class = $this->getDocumentManager()->getClassMetadata($class)->getName();
+        }
+
+        return !$this->getDocumentManager()->getMetadataFactory()->isTransient(ClassUtils::getRealClass($class));
     }
 }

@@ -1218,6 +1218,18 @@
                 <source>These images are currently used in other content</source>
                 <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
             </trans-unit>
+            <trans-unit id="309">
+                <source>Your content starts here</source>
+                <target>Je content begint hier</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>Select</source>
+                <target>Selecteer</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>Settings</source>
+                <target>Instellingen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
