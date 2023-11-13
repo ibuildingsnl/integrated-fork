@@ -59,7 +59,7 @@ class DashboardController extends AbstractController
         $widgetDB = $this->manager->getRepository(WidgetConfig::class)->findAll();
         if (count($widgetDB) == 0)
         {
-            $order = 0;
+            $order = 1;
             foreach ($this->widgets as $widget)
             {
                 $widgetConfig = new WidgetConfig($widget->id(), $widget->name(), $order);
