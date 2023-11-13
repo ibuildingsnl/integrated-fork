@@ -3,26 +3,26 @@
     overflow: hidden;
 }
 
+
 .publication-settings-aside {
-    background: #fff;
-    z-index: 99999999;
     background-color: #ffffff;
     border-left: 1px solid #dee3e9;
     height: calc(100vh - 110px);
     margin-top: -1px;
     order: 1;
     overflow: auto;
-    position: absolute;
-    right: 0;
+    position: fixed;
+    right: 350px;
+    top: 110px;
     width: 350px;
-    top: 0;
     visibility: hidden;
     transform: translateX(350px);
-    transition: all 0.3s linear;
+    transition: all 0.3s ease-in-out;
+    z-index: 20;
 
     &.show {
         transform: translateX(0px);
-        transition: all 0.3s linear;
+        transition: all 0.3s ease-in-out;
         visibility: visible;
     }
 
@@ -42,13 +42,13 @@
 }
 
 .editor-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: 0;
+    left: 250px;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1050;
+    z-index: 20;
     -webkit-transition: opacity .15s linear, visibility .15s linear;
     -o-transition: opacity .15s linear, visibility .15s linear;
     transition: opacity .15s linear, visibility .15s linear;

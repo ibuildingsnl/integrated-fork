@@ -68,7 +68,7 @@ class RegisterContentStyleParametersPass implements CompilerPassInterface
             }
 
             if ($type == self::STYLE_FORMAT) {
-                $availableFormatParams = ['title', 'inline', 'block', 'selector', 'classes', 'styles', 'attributes', 'exact', 'wrapper'];
+                $availableFormatParams = ['title', 'inline', 'format', 'deep', 'split', 'block', 'selector', 'classes', 'styles', 'attributes', 'exact', 'wrapper'];
 
                 $formatParams = [];
                 foreach ($option->childNodes as $formatParam) {

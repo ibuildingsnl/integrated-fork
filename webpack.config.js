@@ -75,18 +75,19 @@ webpackConfig = Encore.setOutputPath('./src/Bundle/IntegratedBundle/Resources/pu
     })
     .cleanupOutputBeforeBuild()
     .autoProvidejQuery()
-    .enableSassLoader()
-    .enableSourceMaps(false)
-    .enableVersioning(false)
-    .disableSingleRuntimeChunk()
     .enablePostCssLoader((options) => {
         options.postcssOptions = {
             path: './postcss.config.js',
         };
     })
+    .enableSassLoader(options => {
+        options.implementation = require('sass');
+    })
+    .enableSourceMaps(false)
+    .enableVersioning(false)
+    .disableSingleRuntimeChunk()
     .addLoader({ test: /\.handlebars$/, loader: 'handlebars-loader' })
     .getWebpackConfig();
-
 
 webpackConfig.resolve.alias = {
     typeahead: PathResolver.resolve(__dirname, 'node_modules/typeahead.js/dist/typeahead.bundle.js'),

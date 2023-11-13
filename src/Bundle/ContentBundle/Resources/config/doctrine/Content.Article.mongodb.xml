@@ -24,6 +24,10 @@
                 field="address"
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Address" />
 
+        <embed-one
+            field="seoMetadata"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\SeoMeta" />
+
         <embed-many
                 field="authors"
                 target-document="Integrated\Bundle\ContentBundle\Document\Content\Embedded\Author" />
