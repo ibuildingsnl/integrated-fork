@@ -1,180 +1,197 @@
-<div class="{{ widget.id }}">
-    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
-    {% if (userCountsByDate is not iterable) %}
-        <h2><br> {{ userCountsByDate }} </h2>
-    {% else %}
-        <h2><br> Visitors activity
-            <select id="visitors_activity_date_range" name="visitors_activity_date_range" class="dashboardForm-select">
-                <option value="7daysAgo">This week</option>
-                <option value="30daysAgo">This month</option>
-                <option value="6monthsAgo">This semester</option>
-                <option value="365daysAgo">This Year</option>
+<div class="widget col-middle w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            {% if (userCountsByDate is not iterable) %}
+                <h2>{{ userCountsByDate }}</h2>
+            {% else %}
+                <h2>{% trans %}Visitors activity{% endtrans %}</h2>
+            {% endif %}
+            <select id="visitors_activity_date_range" name="visitors_activity_date_range"
+                    class="dashboardForm-select">
+                <option value="7daysAgo">{% trans %}This week{% endtrans %}</option>
+                <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
+                <option value="6monthsAgo">{% trans %}This semester{% endtrans %}</option>
+                <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
             </select>
-
-        </h2>
-    {% endif %}
-    <div>
-        <canvas id="Visitor_Activity-line-chart"></canvas>
+        </div>
+        <div class="widget-content">
+            <h3>{% trans %}Visitors{% endtrans %}</h3>
+            <div id="visitor-count"></div>
+            <canvas id="Visitor_Activity-line-chart"></canvas>
+        </div>
     </div>
+    <script>
+
+        var chart;
+        var selectVisitorActivityDate = document.getElementById('visitors_activity_date_range');
+
+        function updateVisitorActivityChart(selectedValue) {
+            var userCountsByDateJS = [
+                {% for row in userCountsByDate %}
+                formatUserCountData('{{ row.date }}', '{{ row.userCount }}'),
+                {% endfor %}
+            ];
+
+            console.log(userCountsByDateJS);
+
+            var ctx = document.getElementById('Visitor_Activity-line-chart');
+            var dates = [];
+            var userCounts = [];
+            var dateformat;
+
+            switch (selectedValue) {
+                case '7daysAgo':
+                case '30daysAgo':
+                    dateformat = 'DD/MM/YYYY';
+                    var slicedData = userCountsByDateJS.slice(0, selectedValue === '7daysAgo' ? 7 : 30);
+                    slicedData.forEach(function(data) {
+                        dates.push(data.date);
+                        userCounts.push(data.userCount);
+                    });
+                    break;
+
+                case '6monthsAgo':
+                case '365daysAgo':
+                    dateformat = 'MM/YYYY';
+                    var numMonths = selectedValue === '6monthsAgo' ? 6 : 12;
+                    var aggregatedData = aggregateDataByMonth(userCountsByDateJS, numMonths);
+                    aggregatedData.forEach(function(data) {
+                        dates.push(data.date);
+                        userCounts.push(data.userCount);
+                    });
+                    break;
+
+                default:
+                    break;
+            }
+            if (chart) {
+                chart.destroy();
+            }
+
+            visitorCountElement = document.getElementById("visitor-count");
+            visitorCountElement.textContent = userCounts.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates.reverse(),
+                    datasets: [
+                        {
+                            data: userCounts,
+                            label: 'Visitors',
+                            borderColor: '#00ae93',
+                            backgroundColor: 'rgba(0, 174, 147, 0.3)',
+                            fill: true,
+                            tension: 0.1
+                        }],
+                },
+                options: {
+                    plugins: {
+                        customCanvasBackgroundColor: {
+                            color: 'white',
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: [
+                            {
+                                grid: {
+                                    display: false
+                                },
+                                type: 'time',
+                                time: {
+                                    parser: dateformat,
+                                    tooltipFormat: dateformat,
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Date',
+                                },
+                            }],
+                        y: [
+                            {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Visitors',
+                                },
+                            }],
+                    },
+                    title: {
+                        display: true,
+                        text: 'Visitors Activity',
+                    },
+                },
+            });
+        }
+
+        function formatUserCountData(date, userCount) {
+            var year = date.substr(0, 4);
+            var month = date.substr(4, 2);
+            var day = date.substr(6, 2);
+            var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
+
+            return {
+                date: formattedDate,
+                userCount: parseInt(userCount, 10),
+            };
+        }
+
+        function aggregateDataByMonth(data, numMonths) {
+            const aggregatedData = {};
+
+            const parsedData = data.map(function(item) {
+                return {
+                    date: item.date,
+                    userCount: parseInt(item.userCount, 10),
+                };
+            });
+
+            for (let i = 0; i < parsedData.length; i++) {
+                const currentDate = parsedData[i].date;
+                const currentMonth = currentDate.substr(3, 7);
+                const userCount = parsedData[i].userCount;
+
+                if (!aggregatedData[currentMonth]) {
+                    aggregatedData[currentMonth] = 0;
+                }
+                aggregatedData[currentMonth] += userCount;
+            }
+
+            result = (Object.keys(aggregatedData).map(function(month) {
+                return {
+                    date: month,
+                    userCount: aggregatedData[month],
+                };
+            })).reverse();
+
+            if (numMonths && numMonths < result.length) {
+                result.splice(0, result.length - numMonths);
+            }
+
+            return result;
+        }
+
+        selectVisitorActivityDate.addEventListener('change', function() {
+            var selectedValue = selectVisitorActivityDate.value;
+            updateVisitorActivityChart(selectedValue);
+        });
+
+        function visitorActivityChartFirstLoad() {
+            const selectName = selectVisitorActivityDate.name;
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramValues = urlParams.get(selectName);
+            var initialSelectedValue = paramValues ?? selectVisitorActivityDate.value;
+            updateVisitorActivityChart(initialSelectedValue);
+        }
+
+        visitorActivityChartFirstLoad();
+    </script>
 </div>
 
-<script>
-
-    var chart;
-    var selectVisitorActivityDate = document.getElementById("visitors_activity_date_range");
-
-    function updateVisitorActivityChart(selectedValue) {
-        var userCountsByDateJS = [
-            {% for row in userCountsByDate %}
-            formatUserCountData('{{ row.date }}', '{{ row.userCount }}'),
-            {% endfor %}
-        ];
-
-        var ctx = document.getElementById("Visitor_Activity-line-chart");
-        var dates = [];
-        var userCounts = [];
-        var dateformat;
-
-        switch (selectedValue) {
-            case "7daysAgo":
-            case "30daysAgo":
-                dateformat = 'DD/MM/YYYY';
-                var slicedData = userCountsByDateJS.slice(0, selectedValue === "7daysAgo" ? 7 : 30);
-                slicedData.forEach(function (data) {
-                    dates.push(data.date);
-                    userCounts.push(data.userCount);
-                });
-                break;
-
-            case "6monthsAgo":
-            case "365daysAgo":
-                dateformat = 'MM/YYYY';
-                var numMonths = selectedValue === "6monthsAgo" ? 6 : 12;
-                var aggregatedData = aggregateDataByMonth(userCountsByDateJS, numMonths);
-                aggregatedData.forEach(function (data) {
-                    dates.push(data.date);
-                    userCounts.push(data.userCount);
-                });
-                break;
-
-            default:
-                break;
-        }
-        if (chart) {
-            chart.destroy();
-        }
-
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    data: userCounts,
-                    label: "Visitors",
-                    borderColor: "#c45850",
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: [{
-                        type: 'time',
-                        time: {
-                            parser: dateformat,
-                            tooltipFormat: dateformat,
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Date'
-                        }
-                    }],
-                    y: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Visitors'
-                        }
-                    }]
-                },
-                title: {
-                    display: true,
-                    text: 'Visitors Activity'
-                }
-            }
-        });
-    }
-
-    function formatUserCountData(date, userCount) {
-        var year = date.substr(0, 4);
-        var month = date.substr(4, 2);
-        var day = date.substr(6, 2);
-        var formattedDate = day + '/' + month + '/' + year.substr(2, 2);
-
-        return {
-            date: formattedDate,
-            userCount: parseInt(userCount, 10)
-        };
-    }
-
-    function aggregateDataByMonth(data, numMonths) {
-        const aggregatedData = {};
-
-        const parsedData = data.map(function (item) {
-            return {
-                date: item.date,
-                userCount: parseInt(item.userCount, 10),
-            };
-        });
-
-        for (let i = 0; i < parsedData.length; i++) {
-            const currentDate = parsedData[i].date;
-            const currentMonth = currentDate.substr(3, 7);
-            const userCount = parsedData[i].userCount;
-
-            if (!aggregatedData[currentMonth]) {
-                aggregatedData[currentMonth] = 0;
-            }
-            aggregatedData[currentMonth] += userCount;
-        }
-
-        result = (Object.keys(aggregatedData).map(function (month) {
-            return {
-                date: month,
-                userCount: aggregatedData[month],
-            };
-        })).reverse();
-
-        if (numMonths && numMonths < result.length) {
-            result.splice(0, result.length - numMonths);
-        }
-
-        return result;
-    }
-
-    selectVisitorActivityDate.addEventListener('change', function () {
-        var selectedValue = selectVisitorActivityDate.value;
-        updateVisitorActivityChart(selectedValue);
-    });
-
-    function visitorActivityChartFirstLoad() {
-        const selectName = selectVisitorActivityDate.name;
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramValues = urlParams.get(selectName);
-        var initialSelectedValue = paramValues ?? selectVisitorActivityDate.value;
-        updateVisitorActivityChart(initialSelectedValue);
-    }
-
-    visitorActivityChartFirstLoad()
-</script>
-
-<style>
-    .table-container {
-        max-width: 300px;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-</style>

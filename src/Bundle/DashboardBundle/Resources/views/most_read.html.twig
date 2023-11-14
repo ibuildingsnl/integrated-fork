@@ -1,35 +1,29 @@
-<div class="{{ widget.id }}">
-    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
-    {% if (mostViewedPages is not iterable) %}
-        <h2><br> {{ mostViewedPages }} </h2>
-    {% else %}
-        <h2><br> Most {{ mostViewedPages | length }} read pages
+<div class="widget col-left w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            {% if (mostViewedPages is not iterable) %}
+                <h2>{{ mostViewedPages }}</h2>
+            {% else %}
+                <h2>{% trans %}Most read content{% endtrans %}</h2>
+            {% endif %}
             <select id="most_read_date_range" name="most_read_date_range"
                     class="dashboardForm-select dashboardForm-event">
-                <option value="30daysAgo">This month</option>
-                <option value="90daysAgo">3 Last months</option>
-                <option value="365daysAgo">This Year</option>
-            </select></h2>
-    {% endif %}
-
-            <nav class="article-list">
-                <ul>
-                    {% for article in mostViewedPages %}
-                        <div class="facet-wrappper">
-                                                <span class="facet-title">
-                                                    <b> {{ article.title }} </b>
-                                                </span>
-                            <span class="facet-count">{{ article.views }}</span>
-                        </div>
-                        __________________________________________
-                    {% endfor %}
-                </ul>
-            </nav>
+                <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
+                <option value="90daysAgo">{% trans %}3 Last months{% endtrans %}</option>
+                <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
+            </select>
+        </div>
+        <nav class="article-list">
+            <ul>
+                {% for article in mostViewedPages %}
+                    <li class="facet-wrappper">
+                        <span class="facet-title">
+                            <b> {{ article.title }} </b>
+                        </span>
+                        <span class="facet-count">{{ article.views }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
 </div>
-
-<style>
-    .article-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-</style>

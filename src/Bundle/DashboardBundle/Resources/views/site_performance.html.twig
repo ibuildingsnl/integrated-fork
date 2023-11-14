@@ -1,5 +1,79 @@
-<div class="{{ widget.id }}">
-    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
-    <h2><br> Most recent speed: {{ mostRecentSpeed }} </h2>
-    <h3> Average speed over the week: {{ averageSpeed }}  </h3>
+<div class="widget col-right w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            <h2>{% trans %}Site Speed{% endtrans %}</h2>
+            <div class="switcher">
+                <div class="btn mobile">
+                    <i class="iconoir-smartphone-device"></i>
+                    {% trans %}Mobile{% endtrans %}
+                </div>
+                <div class="btn desktop active">
+                    <i class="iconoir-computer"></i>
+                    {% trans %}Desktop{% endtrans %}
+                </div>
+            </div>
+        </div>
+        <div class="widget-content flex">
+            <div class="w-1/2 flex items-center justify-center">
+                <div class="progress-circle">
+                    <div class="progress-center"></div>
+                    <span class="progress-value">93</span>
+                </div>
+            </div>
+            <div class="w-1/2 flex flex-wrap -mr-2">
+                <div class="w-1/2 p-2">
+                    <div class="lighthouse-value">
+                    <span class="value">0.4 s</span>
+                    <span class="label">{% trans %}TTFB{% endtrans %}</span>
+                    </div>
+                </div>
+                <div class="w-1/2 p-2">
+                    <div class="lighthouse-value">
+                    <span class="value">{{ mostRecentSpeed }} s</span>
+                    <span class="label">{% trans %}Loading speed{% endtrans %}</span>
+                    </div>
+                </div>
+                <div class="w-1/2 p-2">
+                    <div class="lighthouse-value">
+                    <span class="value">1.1 s</span>
+                    <span class="label">{% trans %}Speed index{% endtrans %}</span>
+                    </div>
+                </div>
+                <div class="w-1/2 p-2">
+                    <div class="lighthouse-value">
+                    <span class="value">20 ms</span>
+                    <span class="label">{% trans %}Total Blocking Time{% endtrans %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressValue = 93; // site score
+            const progressCircle = document.querySelector('.progress-circle');
+            const progressValueDisplay = document.querySelector('.progress-value');
+
+            function getColorForPercentage(pct) {
+                if (pct <= 20) return '#ff0000'; // red
+                if (pct <= 40) return '#ff8000'; // orange-red
+                if (pct <= 60) return '#ffff00'; // yellow
+                if (pct <= 80) return '#80ff00'; // yellow-green
+                return '#00AE93'; // green
+            }
+
+            const color = getColorForPercentage(progressValue);
+
+            progressCircle.style.background = `conic-gradient(
+                ${color} 0%,
+                ${color} ${progressValue * 3.6}deg,
+                #f2f2f2 ${progressValue * 3.6}deg,
+                #f2f2f2 100%
+             )`;
+
+            progressValueDisplay.textContent = progressValue;
+        });
+    </script>
 </div>
+

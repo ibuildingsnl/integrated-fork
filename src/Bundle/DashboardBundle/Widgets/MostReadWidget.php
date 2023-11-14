@@ -93,7 +93,7 @@ class MostReadWidget implements WidgetInterface
                     "desc" => true
                 ]
             ],
-            "limit" => 10
+            "limit" => 5 //why not set this in services.xml since you did it for Latest articles also?
         ];
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);

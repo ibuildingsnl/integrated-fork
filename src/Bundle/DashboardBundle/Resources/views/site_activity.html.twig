@@ -1,13 +1,28 @@
-<div class="{{ widget.id }}">
-
-    <button class="close-button" data-widget-id="{{ widget.id }}">Close X</button>
-    <h2>Site Activity</h2>
-    <h3>total visit : {{ totalViews }}</h3>
-    <h3>Bounce Rate: {{ bounceRate }}%</h3>
-    <h3>Top Countries:</h3>
-    <ul>
-        {% for row in viewByCountry %}
-            <li>{{ row.country }}: {{ row.percentage }}% ({{ row.totalUser }})</li>
-        {% endfor %}
-    </ul>
+<div class="widget w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            <h2>{% trans %}Site Activity{% endtrans %}</h2>
+        </div>
+        <div class="widget-content flex">
+            <div class="w-1/2">
+                <div class="visitors">
+                    <h3>{% trans %}Total visits{% endtrans %}: <span class="value">{{ totalViews }}</span></h3>
+                    <h3>{% trans %}Bounce Rate{% endtrans %}: <span class="value">{{ bounceRate }}%</span></h3>
+                </div>
+            </div>
+            <div class="w-1/2">
+                <h3>{% trans %}Top Locations{% endtrans %}:</h3>
+                <ul class="visitor-regions">
+                    {% for row in viewByCountry %}
+                        <li><span class="location">{{ row.country }}</span>
+                            <div class="percetage-full">
+                                <div class="percentage-part" style="width:{{ row.percentage }}%"></div>
+                            </div>
+                            <div class="hidden">{{ row.totalUser }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>

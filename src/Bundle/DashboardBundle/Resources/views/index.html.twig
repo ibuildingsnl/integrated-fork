@@ -4,208 +4,120 @@
 {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <div class="dashboard-container">
-        <div class="channels">
-            <h2>Dashboard Analytics</h2>
-            <div class="channel-form">
-                {{ form_start(channelForm) }}
-                {{ form_widget(channelForm, {
-                    'attr': {
-                        'class': 'dashboardForm-select dashboardForm-event',
-                    }
-                }) }}
-                {{ form_end(channelForm) }}
+        <div class="page-title w-full">
+            <div class="heading flex justify-between w-full">
+                <div class="heading-switcher">
+                    <h1 class="heading">{% block heading %}{% trans %}Dashboard{% endtrans %}{% endblock heading %}</h1>
+                </div>
             </div>
-            <div class="aside-item-holder">
-                <div class="aside-item-wrapper show">
-                    <div class="aside-item-header">
-                        <h3 class="aside-item-title">
-                    <span class="aside-item-icon">
-                        Widgets
-                    </span>
-                        </h3>
-                        <i id=widget_choice_arrow class="iconoir-nav-arrow-down"></i>
-                    </div>
-                    <div class="aside-widget-list" style="display: none;">
-                        <div class="aside-widget-list-container">
+
+            <div class="options">
+                <ul class="content-navigator-menu">
+                    <li>
+                        {{ form_start(channelForm) }}
+                        {{ form_widget(channelForm, {'attr': {'class': 'dashboardForm-select dashboardForm-event',}}) }}
+                        {{ form_end(channelForm) }}
+                    </li>
+                    <li class="dropdown close-outside" data-underlay="no">
+                        <a data-toggle="dropdown" role="button" id="sorting-list"
+                           class="btn btn-select space-between"><span>{% trans %}Widgets{% endtrans %}</span>
+                            <i class="iconoir-nav-arrow-down"></i>
+                        </a>
+                        <ul class="dropdown-menu filters_list widget_choice">
                             {% for widget in widgetAllData %}
-                            <ul class="filters_list widget_choice">
                                 <li class="checkbox">
                                     <label class="checkbox-container">
-                                        <input type="checkbox" name="{{ widget.id }}" value="{{ widget.id }}" checked>
+                                        <input type="checkbox" name="{{ widget.id }}" value="{{ widget.id }}"
+                                               checked>
                                         <span class="checkmark"></span>
-                                        <div class="facet-wrappper">
+                                        <div class="facet-wrapper">
                                             <span class="facet-title">{{ widget.name }}</span>
                                         </div>
                                     </label>
                                 </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <div class="widget-container">
+        <div class="widgets-wrapper">
             {% for widget in widgetAllData %}
-                <div class="widget">
-                    {{ widget.renderedView | raw }}
-                </div>
-                {% if loop.index % 3 == 0 %}
-                    <div class="clear"></div>
-                {% endif %}
+                {{ widget.renderedView | raw }}
             {% endfor %}
         </div>
-    </div>
 
+        <script>
+            const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const widgetId = this.name;
+                    const widgetContainer = document.querySelector(`.${widgetId}`).parentNode;
 
-
-    <script>
-        var menuHeader = document.querySelector('.aside-item-header');
-        menuHeader.addEventListener('click', function() {
-            dropdownWidget()
-        });
-        function dropdownWidget()
-        {
-            var menuList = document.querySelector('.aside-widget-list');
-            var arrow = document.getElementById('widget_choice_arrow');
-            menuList.style.display = (menuList.style.display === 'block') ? 'none' : 'block';
-            arrow.classList.toggle('iconoir-nav-arrow-down');
-            arrow.classList.toggle('iconoir-nav-arrow-up');
-        }
-
-
-        const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                const widgetId = this.name;
-                const widgetContainer = document.querySelector(`.${widgetId}`);
-
-                if (this.checked) {
-                    widgetContainer.style.display = '';
-                } else {
-                    widgetContainer.style.display = 'none';
-                }
-            });
-        });
-
-        const closeButtons = document.querySelectorAll('.close-button');
-        closeButtons.forEach(function (closeButton) {
-            closeButton.addEventListener('click', function () {
-                const widgetId = closeButton.getAttribute('data-widget-id');
-                const checkbox = document.querySelector(`.widget_choice input[name="${widgetId}"]`);
-                checkbox.checked = false;
-
-                const changeEvent = new Event('change', {
-                    bubbles: true,
-                    cancelable: true,
-                });
-                checkbox.dispatchEvent(changeEvent);
-            });
-        });
-
-        selectElements = document.querySelectorAll('.dashboardForm-select');
-        SelectEventListener = document.querySelectorAll('.dashboardForm-event');
-        const submitButton = Object.assign(document.createElement('button'), {
-            id: 'submitAllButton',
-            type: 'submit',
-            textContent: 'Submit'
-        });
-
-        function submitForm() {
-            const form = Object.assign(document.createElement('form'), {method: 'get'});
-
-            selectElements.forEach(function (selectElement) {
-                const selectName = selectElement.name;
-                for (const option of selectElement.selectedOptions) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = selectName;
-                    input.value = option.value;
-                    form.appendChild(input);
-                }
-            });
-
-            document.body.appendChild(form);
-
-            form.submit();
-        }
-
-        submitButton.addEventListener('click', function () {
-            submitForm();
-        });
-        SelectEventListener.forEach(function (selectElement) {
-            selectElement.addEventListener('change', function () {
-                submitForm();
-            });
-        });
-
-        function restoreSelectValues() {
-            selectElements.forEach(function (selectElement) {
-                const selectName = selectElement.name;
-                const urlParams = new URLSearchParams(window.location.search);
-                const paramValues = urlParams.getAll(selectName);
-
-                Array.from(selectElement.options).forEach(function (option) {
-                    if (paramValues.includes(option.value)) {
-                        option.selected = true;
+                    if (this.checked) {
+                        widgetContainer.style.display = '';
+                    } else {
+                        widgetContainer.style.display = 'none';
                     }
                 });
             });
-        }
 
-        restoreSelectValues();
+            selectElements = document.querySelectorAll('.dashboardForm-select');
+            SelectEventListener = document.querySelectorAll('.dashboardForm-event');
+            const submitButton = Object.assign(document.createElement('button'), {
+                id: 'submitAllButton',
+                type: 'submit',
+                textContent: 'Submit',
+            });
+
+            function submitForm() {
+                const form = Object.assign(document.createElement('form'), {method: 'get'});
+
+                selectElements.forEach(function(selectElement) {
+                    const selectName = selectElement.name;
+                    for (const option of selectElement.selectedOptions) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = selectName;
+                        input.value = option.value;
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+
+                form.submit();
+            }
+
+            submitButton.addEventListener('click', function() {
+                submitForm();
+            });
+
+            SelectEventListener.forEach(function(selectElement) {
+                selectElement.addEventListener('change', function() {
+                    submitForm();
+                });
+            });
+
+            function restoreSelectValues() {
+                selectElements.forEach(function(selectElement) {
+                    const selectName = selectElement.name;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const paramValues = urlParams.getAll(selectName);
+
+                    Array.from(selectElement.options).forEach(function(option) {
+                        if (paramValues.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    });
+                });
+            }
+
+            restoreSelectValues();
+        </script>
+    </div>
 
 
-    </script>
-    <style>
-        .dashboard-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            overflow: auto;
-            max-height: calc(100vh - 60px);
-        }
-
-        .channels {
-            flex-basis: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-        }
-
-        .channel-info {
-            flex: 1;
-        }
-
-        .channel-form {
-            flex: 1;
-        }
-
-        .widget-container {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-
-        .widget {
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
-            width: 40%;
-        }
-
-        .clear {
-            flex-basis: 100%;
-            height: 0;
-            content: "";
-        }
-
-        .close-button{
-            color: red;
-        }
-
-    </style>
 
 {% endblock content %}
