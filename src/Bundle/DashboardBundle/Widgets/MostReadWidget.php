@@ -55,7 +55,11 @@ class MostReadWidget implements WidgetInterface
             }
         }
         if (!isset($propertyId) || $propertyId == null) {
-            return ["mostViewedPages" => "No data found"];
+            return [
+                "widget" => $this,
+                "mostViewedPages" => "No data found",
+                "dateRange" => $dateRange
+            ];
         }
 
         $mostViewedPages = $this->getDataFromAnalytics($propertyId, $dateRange);

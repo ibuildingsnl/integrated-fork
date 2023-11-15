@@ -55,7 +55,15 @@ class DashboardController extends AbstractController
     private function getChannel($request): ChannelInterface
     {
         $selectedByFormChannel = $request->query->get('integrated_channel_choice');
-        return $this->manager->getRepository(Channel::class)->find($selectedByFormChannel) ?? $this->channelContext->getChannel();
+        $channelRepository = $this->manager->getRepository(Channel::class);
+
+        if ($selectedByFormChannel !== null) {
+            $selectedChannel = $channelRepository->findOneBy(['id' => $selectedByFormChannel]);
+        } else {
+            $selectedChannel = $this->channelContext->getChannel();
+        }
+        return $selectedChannel ?? $channelRepository->findAll()[0];
+
     }
 
     /**
