@@ -80,6 +80,7 @@ class BrandProfileType extends AbstractType
                     'data-multiple' => false,
                     'help_text' => '<span>Use a 512x512 sized image for the best result</span>',
                     'data-exclusive-to' => 'website',
+                    'state' => 'show',
                 ],
             ]
         );
