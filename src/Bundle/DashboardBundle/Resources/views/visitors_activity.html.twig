@@ -15,8 +15,26 @@
             </select>
         </div>
         <div class="widget-content">
-            <h3>{% trans %}Visitors{% endtrans %}</h3>
-            <div id="visitor-count"></div>
+            <div class="flex flex-wrap -mx-2 pb-4">
+                <div class="w-1/3 px-2 user-count">
+                    <div class="content">
+                        <h3>{% trans %}Visitors{% endtrans %}</h3>
+                        <div id="visitor-count"></div>
+                    </div>
+                </div>
+                <div class="w-1/3 px-2 user-count">
+                    <div class="content">
+                        <h3>{% trans %}Bounce Ratio{% endtrans %}</h3>
+                        <div id="bounce-count">47.39%</div>
+                    </div>
+                </div>
+                <div class="w-1/3 px-2 user-count">
+                    <div class="content">
+                        <h3>{% trans %}Page Views{% endtrans %}</h3>
+                        <div id="visitor-count">18439</div>
+                    </div>
+                </div>
+            </div>
             <canvas id="Visitor_Activity-line-chart"></canvas>
         </div>
     </div>
@@ -68,8 +86,9 @@
                 chart.destroy();
             }
 
-            visitorCountElement = document.getElementById("visitor-count");
-            visitorCountElement.textContent = userCounts.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            visitorCountElement = document.getElementById('visitor-count');
+            visitorCountElement.textContent = userCounts.reduce(
+                (accumulator, currentValue) => accumulator + currentValue, 0);
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -82,14 +101,15 @@
                             borderColor: '#00ae93',
                             backgroundColor: 'rgba(0, 174, 147, 0.3)',
                             fill: true,
-                            tension: 0.1
+                            tension: 0.1,
+                            rotation: 90,
                         }],
                 },
                 options: {
                     plugins: {
                         customCanvasBackgroundColor: {
                             color: 'white',
-                        }
+                        },
                     },
                     responsive: true,
                     maintainAspectRatio: true,
@@ -97,7 +117,7 @@
                         x: [
                             {
                                 grid: {
-                                    display: false
+                                    display: false,
                                 },
                                 type: 'time',
                                 time: {
@@ -112,7 +132,7 @@
                         y: [
                             {
                                 grid: {
-                                    display: false
+                                    display: false,
                                 },
                                 ticks: {
                                     beginAtZero: true,
