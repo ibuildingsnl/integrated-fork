@@ -25,7 +25,7 @@
                 <div class="w-1/3 px-2 user-count VA-graphic-button-change" onclick="changeTypeOfGraph('bounceRate')">
                     <div class="content">
                         <h3>{% trans %}Bounce Ratio{% endtrans %}</h3>
-                        <div id="bounce-count">47.39%</div>
+                        <div id="bounceRate-count">47.39%</div>
                     </div>
                 </div>
                 <div class="w-1/3 px-2 user-count VA-graphic-button-change" onclick="changeTypeOfGraph('screenPageViews')">
@@ -40,20 +40,21 @@
     </div>
     <script>
 
+        var typeOfGraph ="userCount"
         var chart;
         var selectVisitorActivityDate = document.getElementById('visitors_activity_date_range');
         selectVisitorActivityDate.addEventListener('change', function () {
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         });
 
-        function updateVisitorActivityChart(selectedValue, typeOfGraph = "userCount") {
+        function updateVisitorActivityChart(selectedValue) {
 
             var allDatas = [
                 {% for row in userActivityByDate %}
                 formatDataCountData('{{ row.date }}', '{{ row.userCount }}', '{{ row.screenPageViews }}', '{{ row.bounceRate }}'),
                 {% endfor %}
             ];
-
+            updateTotalCount(allDatas, selectedValue)
             if (typeOfGraph == "bounceRate") {
                 var userActivityByDateJS = allDatas.map(data => ({
                     date: data.date,
@@ -101,12 +102,8 @@
                 default:
                     break;
             }
-            chartData = datasetByGraph(typeOfGraph, dataCounts)
+            chartData = datasetByGraph(dataCounts)
             if (chart) {chart.destroy();}
-
-            visitorCountElement = document.getElementById('visitor-count');
-            visitorCountElement.textContent = dataCounts.reduce(
-                (accumulator, currentValue) => accumulator + currentValue, 0);
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -160,7 +157,7 @@
             });
         }
 
-        function formatDataCountData(date, userCount, screenPagViews, bounceRate) {
+        function formatDataCountData(date, userCount, screenPageViews, bounceRate) {
             var year = date.substr(0, 4);
             var month = date.substr(4, 2);
             var day = date.substr(6, 2);
@@ -169,13 +166,14 @@
             return {
                 date: formattedDate,
                 userCount: parseInt(userCount, 10),
-                screenPagViews: parseInt(screenPagViews, 10),
+                screenPageViews: parseInt(screenPageViews, 10),
                 bounceRate: parseInt(bounceRate, 10),
             };
         }
 
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
+            const daysInMonth = {};
 
             const parsedData = data.map(function (item) {
                 return {
@@ -183,17 +181,26 @@
                     dataCount: parseInt(item.dataCount, 10),
                 };
             });
-
             for (let i = 0; i < parsedData.length; i++) {
                 const currentDate = parsedData[i].date;
                 const currentMonth = currentDate.substr(3, 7);
                 const dataCount = parsedData[i].dataCount;
-
                 if (!aggregatedData[currentMonth]) {
                     aggregatedData[currentMonth] = 0;
+                    daysInMonth[currentMonth] = 0;
                 }
                 aggregatedData[currentMonth] += dataCount;
+                daysInMonth[currentMonth]++;
             }
+
+            if (typeOfGraph == "bounceRate")
+            {
+                for (const month in aggregatedData)
+                {
+                    aggregatedData[month] = (aggregatedData[month]/daysInMonth[month]).toFixed(2);
+                }
+            }
+            console.log(aggregatedData);
 
             result = (Object.keys(aggregatedData).map(function (month) {
                 return {
@@ -209,7 +216,7 @@
             return result;
         }
 
-        function datasetByGraph(typeOfGraph, dataCounts) {
+        function datasetByGraph(dataCounts) {
             if (typeOfGraph == "bounceRate") {
                 return {
                     data: dataCounts,
@@ -251,10 +258,38 @@
             updateVisitorActivityChart(initialSelectedValue);
         }
 
-        function changeTypeOfGraph(typeOfGRaph) {
-            updateVisitorActivityChart(selectVisitorActivityDate.value, typeOfGRaph);
+        function changeTypeOfGraph(changeType) {
+            typeOfGraph = changeType;
+            updateVisitorActivityChart(selectVisitorActivityDate.value);
         }
+        function updateTotalCount(allDatas, dateRange)
+        {
+            let totalUserCount = 0;
+            let totalScreenPageViews = 0;
+            let totalBounceRate = 0;
 
+            var visitorCountElement = document.getElementById('visitor-count');
+            var pageViewCountElement = document.getElementById('pageViews-count');
+            var bouncerateCountElement = document.getElementById('bounceRate-count');
+
+            const rangeLimits = {
+                '7daysAgo': 7,
+                '30daysAgo': 30,
+                '6monthsAgo': 182,
+                '365daysAgo': 365
+            };
+            const limit = rangeLimits[dateRange];
+            for (let i = 0; i < allDatas.length && i < limit; i++) {
+                totalUserCount += allDatas[i].userCount;
+                totalScreenPageViews += allDatas[i].screenPageViews;
+                totalBounceRate += allDatas[i].bounceRate;
+            }
+            totalBounceRate = (totalBounceRate/rangeLimits[dateRange]).toFixed(2) +"%"
+
+            visitorCountElement.textContent = totalUserCount;
+            pageViewCountElement.textContent = totalScreenPageViews;
+            bouncerateCountElement.textContent = totalBounceRate;
+        }
         visitorActivityChartFirstLoad();
     </script>
 </div>
