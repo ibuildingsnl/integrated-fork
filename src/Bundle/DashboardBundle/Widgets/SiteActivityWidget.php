@@ -43,9 +43,12 @@ class SiteActivityWidget implements WidgetInterface
         return $this->view;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
-
+        $dateRange = $request->query->get('site_activity_date_range') ?? "30daysAgo";
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
                 $propertyId = $brand->profile->analytics;
@@ -54,7 +57,7 @@ class SiteActivityWidget implements WidgetInterface
         if (!isset($propertyId) || $propertyId == null) {
             return ["SiteActivity" => "No data found"];
         }
-        $allDatas = $this->getDataFromAnalytics($propertyId);
+        $allDatas = $this->getDataFromAnalytics($propertyId, $dateRange);
         $siteActivity = $allDatas['siteActivity'];
         $totalViews = $allDatas['siteTotals']['totalUser'];
         $bounceRate = $allDatas['siteTotals']['bounceRate'];
@@ -71,12 +74,12 @@ class SiteActivityWidget implements WidgetInterface
     /**
      * @throws GuzzleException
      */
-    public function getDataFromAnalytics(string $propertyId): array
+    public function getDataFromAnalytics(string $propertyId, string $dateRange): array
     {
         $requestBody = [
             "dateRanges" => [
                 [
-                    "startDate" => "365daysAgo",
+                    "startDate" => "$dateRange",
                     "endDate" => "today"
                 ]
             ],

@@ -2,6 +2,13 @@
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
             <h2>{% trans %}Site Activity{% endtrans %}</h2>
+            <select id="site_activity_date_range" name="site_activity_date_range"
+                    class="dashboardForm-select dashboardForm-event">
+                <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
+                <option value="90daysAgo">{% trans %}3 Last months{% endtrans %}</option>
+                <option value="182daysAgo">{% trans %}This semester{% endtrans %}</option>
+                <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
+            </select>
         </div>
         <div class="widget-content flex">
             <div class="w-1/3">

@@ -57,22 +57,19 @@ class VisitorsActivityWidget implements WidgetInterface
         if (!isset($propertyId) || $propertyId == null) {
             return ["VisitorActivity" => "No data found"];
         }
-        $userCountsByDate = $this->getDataFromAnalytics($propertyId);
+        $userActivityByDate = $this->getDataFromAnalytics($propertyId);
         return [
             "widget" => $this,
-            "userCountsByDate" => $userCountsByDate,
+            "userActivityByDate" => $userActivityByDate,
         ];
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getDataFromAnalytics(string $propertyId): array
     {
         $requestBody = [
-            "dateRanges" => [
-                [
-                    "startDate" => '365daysAgo',
-                    "endDate" => "yesterday"
-                ]
-            ],
             "dimensions" => [
                 [
                     "name" => "date"
@@ -81,14 +78,18 @@ class VisitorsActivityWidget implements WidgetInterface
             "metrics" => [
                 [
                     "name" => "activeUsers"
-                ]
-            ],
-            "orderBys" => [
+                ],
                 [
-                    "dimension" => [
-                        "orderType" => "NUMERIC",
-                        "dimensionName" => "date"
-                    ]
+                    "name" => "bounceRate"
+                ],
+                [
+                    "name" => "screenPageViews"
+                ],
+            ],
+            "dateRanges" => [
+                [
+                    "startDate" => '365daysAgo',
+                    "endDate" => "today"
                 ]
             ],
             "metricAggregations" => [
@@ -99,19 +100,23 @@ class VisitorsActivityWidget implements WidgetInterface
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseData = $analyticsRequest->getResponse();
-        $userCountsByDate = [];
+        $userActivityByDate = [];
         if ($responseData != null) {
             foreach ($responseData['rows'] as $row) {
                 $date = $row['dimensionValues'][0]['value'];
                 $activeUsers = $row['metricValues'][0]['value'];
+                $bounceRate = $row['metricValues'][1]['value'];
+                $screenPageViews = $row['metricValues'][2]['value'];
 
-                $userCountsByDate[] = [
+                $userActivityByDate[] = [
                     'date' => $date,
                     'userCount' => $activeUsers,
+                    'bounceRate' => round($bounceRate * 100,2),
+                    'screenPageViews' => $screenPageViews,
                 ];
             }
-            $userCountsByDate = array_reverse($userCountsByDate);
+            $userActivityByDate = array_reverse($userActivityByDate);
         }
-        return $userCountsByDate;
+        return $userActivityByDate;
     }
 }

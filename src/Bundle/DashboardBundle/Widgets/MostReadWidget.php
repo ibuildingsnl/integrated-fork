@@ -76,7 +76,7 @@ class MostReadWidget implements WidgetInterface
             "dateRanges" => [
                 [
                     "startDate" => "$dateRange",
-                    "endDate" => "yesterday"
+                    "endDate" => "today"
                 ]
             ],
             "dimensions" => [
