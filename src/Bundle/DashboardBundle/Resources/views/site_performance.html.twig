@@ -1,3 +1,4 @@
+{% if siteData is not null %}
 <div class="widget col-right w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
@@ -24,25 +25,25 @@
                 <div class="flex flex-wrap -mr-2">
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">0.4 s</span>
+                            <span class="value">{{ siteData.serverResponseTime }} s</span>
                             <span class="label">{% trans %}TTFB{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ mostRecentSpeed }} s</span>
+                            <span class="value">{{ siteData.timeToInteractive }} s</span>
                             <span class="label">{% trans %}Loading speed{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">1.1 s</span>
+                            <span class="value">{{ siteData.speedIndex }} s</span>
                             <span class="label">{% trans %}Speed index{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">20 ms</span>
+                            <span class="value">{{ siteData.totalBlockingTime }} ms</span>
                             <span class="label">{% trans %}Total Blocking Time{% endtrans %}</span>
                         </div>
                     </div>
@@ -53,7 +54,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const progressValue = 93; // site score
+            const progressValue = {{ siteData.siteScore }}; // site score
             const progressCircle = document.querySelector('.progress-circle');
             const progressValueDisplay = document.querySelector('.progress-value');
 
@@ -78,4 +79,5 @@
         });
     </script>
 </div>
+{% endif %}
 

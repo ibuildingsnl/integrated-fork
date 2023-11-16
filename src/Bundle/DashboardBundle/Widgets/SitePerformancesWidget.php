@@ -47,12 +47,18 @@ class SitePerformancesWidget implements WidgetInterface
             );
         if($channelPerformances != null)
         {
-            $mostRecentSpeed = $this->MilliToSecond($channelPerformances[0]->getSiteSpeed());
+            $siteData= [
+                'siteScore' => $channelPerformances[0]->getSiteScore() * 100 ?? 0,
+                'speedIndex' => $this->MilliToSecond($channelPerformances[0]->getSpeedIndex()) ?? 0,
+                'timeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getTimeToInteractive()) ?? 0,
+                'serverResponseTime' => $this->MilliToSecond($channelPerformances[0]->getServerResponseTime()) ?? 0,
+                'totalBlockingTime' => round($channelPerformances[0]->getTotalBlockingTime()) ?? 0,
+            ];
             $averageSpeed = $this->getAverageSpeed($channelPerformances);
         }
         return [
             "widget" => $this,
-            'mostRecentSpeed' => $mostRecentSpeed ?? "Data not found",
+            'siteData' => $siteData ?? null,
             'averageSpeed' => $averageSpeed ?? "Data not found"
         ];
 
@@ -64,7 +70,7 @@ class SitePerformancesWidget implements WidgetInterface
         $count = 0;
         $averageSpeed = 0;
         foreach ($channelPerformances as $performance) {
-            $speed = $performance->getSiteSpeed();
+            $speed = $performance->getSpeedIndex();
             if ($speed !== null) {
                 $totalSpeed += $speed;
                 $count++;

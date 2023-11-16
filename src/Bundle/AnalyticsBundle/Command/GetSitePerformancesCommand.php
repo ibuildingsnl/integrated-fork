@@ -96,16 +96,33 @@ class GetSitePerformancesCommand extends Command
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();
                 $data = json_decode($content, true);
-                $siteScore = $data['lighthouseResult']['categories']['performance']['score'] ?? null;
-                $speedIndex = $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null;
-                $timeToInteractive = $data['lighthouseResult']['audits']['interactive']['numericValue'] ?? null;
-                $serverResponseTime = $data['lighthouseResult']['audits']['server-response-time']['numericValue'] ?? null; //Value in MS
-                $totalBlockingTime = $data['lighthouseResult']['audits']['total-blocking-time']['numericValue'] ?? null; //Value in MS
-                if (!is_null($speedIndex)) {
+                $siteData= [
+                    'siteScore' => $data['lighthouseResult']['categories']['performance']['score'] ?? null,
+                    'speedIndex' => $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null,
+                    'timeToInteractive' => $data['lighthouseResult']['audits']['interactive']['numericValue'] ?? null,
+                    'serverResponseTime' => $data['lighthouseResult']['audits']['server-response-time']['numericValue'] ?? null,
+                    'totalBlockingTime' => $data['lighthouseResult']['audits']['total-blocking-time']['numericValue'] ?? null,
+                ];
+                if (
+                    $siteData['siteScore'] !== null &&
+                    $siteData['speedIndex'] !== null &&
+                    $siteData['timeToInteractive'] !== null &&
+                    $siteData['serverResponseTime'] !== null &&
+                    $siteData['totalBlockingTime'] !== null
+                ){
                     $dateTime = new \DateTimeImmutable();
-                    $sitePerformance = new SitePerformance($channelId, $speedIndex, $dateTime);
+                    $sitePerformance = new SitePerformance(
+                        $channelId,
+                        (float)$siteData['siteScore'],
+                        (float)$siteData['speedIndex'],
+                        (float)$siteData['timeToInteractive'],
+                        (float)$siteData['serverResponseTime'],
+                        (float)$siteData['totalBlockingTime'],
+                        $dateTime,
+                    );
                     $this->manager->persist($sitePerformance);
                 }
+
             } else {
                 $dateTime = new \DateTimeImmutable();
                 $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody(). '\n' . $dateTime;
