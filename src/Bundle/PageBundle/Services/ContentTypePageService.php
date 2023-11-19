@@ -51,6 +51,7 @@ class ContentTypePageService
         $contentTypePage->setControllerService($controller['service']);
         $contentTypePage->setControllerAction($controller['controller_actions'][0]);
 
+        $this->dm->persist($channel);
         $this->dm->persist($contentTypePage);
         $this->dm->flush();
     }
