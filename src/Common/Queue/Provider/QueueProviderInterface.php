@@ -28,8 +28,9 @@ interface QueueProviderInterface
      * @param mixed  $payload  The payload
      * @param int    $delay    The delay in seconds
      * @param int    $priority The priority ranging from -10 to 10
+     * @param int    $attempt  The amount of times the message has been rescheduled
      */
-    public function push($channel, $payload, $delay = 0, $priority = 0);
+    public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0);
 
     /**
      * Pull one or more messaged from the queue.

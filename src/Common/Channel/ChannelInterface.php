@@ -11,6 +11,7 @@
 
 namespace Integrated\Common\Channel;
 
+use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Common\Security\PermissionInterface;
 
 /**
@@ -48,4 +49,8 @@ interface ChannelInterface
      * @return bool
      */
     public function getPrimaryDomainRedirect();
+
+    public function getLogo(): ?Image;
+
+    public function getColor(): ?string;
 }

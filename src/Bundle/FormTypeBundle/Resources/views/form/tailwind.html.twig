@@ -131,12 +131,13 @@
                                             <i class="iconoir-nav-arrow-down"></i>
                                             <span>
                                                 {{ field.vars.value.title|
+                                                default(field.vars.value.name|
                                                 default(field.vars.value.label|
                                                 default(field.vars.value.block|
                                                 default(field.vars.value.text|
                                                 default(field.vars.value.frequency|
                                                 default(form.vars.default_title|
-                                                default('Item')))))) }}
+                                                default('Item')))))))|raw }}
                                             </span>
                                         </a>
                                         {% if form.vars.allow_delete %}
@@ -247,7 +248,7 @@
             <div class="aside-item-search">
                 <i class="iconoir-search"></i>
                 <input type="text" class="list-search"
-                       placeholder="{% trans %}Search in{% endtrans %} {{ label }}">
+                       placeholder="{% trans %}Search in{% endtrans %} {{ label|trans }}">
             </div>
         {% endif %}
         <ul {{ block('widget_container_attributes') }}>
@@ -712,7 +713,7 @@
         {% else %}
             <button
                 type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}
-                <span>{{ label }}</span></button>
+                <span>{{ label|trans }}</span></button>
         {% endif %}
     {% endapply %}
 {% endblock button_widget %}

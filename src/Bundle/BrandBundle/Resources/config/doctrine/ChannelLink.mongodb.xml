@@ -1,0 +1,14 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Integrated\Bundle\BrandBundle\Document\ChannelLink" collection="channel_link">
+
+        <id strategy="auto" />
+        <embed-one field="type" target-document="Integrated\Bundle\BrandBundle\Document\LinkType" />
+        <reference-one field="channel" target-document="Integrated\Bundle\ContentBundle\Document\Channel\Channel" />
+        <field field-name="default" type="boolean" />
+
+    </document>
+</doctrine-mongo-mapping>

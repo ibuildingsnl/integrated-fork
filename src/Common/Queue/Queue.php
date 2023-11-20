@@ -56,9 +56,9 @@ class Queue implements QueueInterface
     /**
      * {@inheritdoc}
      */
-    public function push($payload, $delay = 0, $priority = self::PRIORITY_MEDIUM)
+    public function push($payload, $delay = 0, $priority = self::PRIORITY_MEDIUM, $attempt = 0)
     {
-        $this->provider->push($this->channel, $payload, $delay, $priority);
+        $this->provider->push($this->channel, $payload, $delay, $priority, $attempt);
     }
 
     /**

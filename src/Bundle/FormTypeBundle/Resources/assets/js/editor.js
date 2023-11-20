@@ -31,13 +31,31 @@ $('.integrated_tinymce').each(function(key, elem){
 
     let style_formats = [
         {title: 'Paragraph', format: 'p'},
-        {title: 'Heading 2', block: 'h2' },
-        {title: 'Heading 3', block: 'h3' },
+        {title: 'Heading', block: 'h2' },
+        {title: 'Subheading', block: 'h3' },
         {title: 'Heading 4', block: 'h4' },
         {title: 'Heading 5', block: 'h5' },
+        {title: 'Blockquote', format: 'blockquote'},
+        {title: 'Cite', format: 'cite'},
     ];
 
-    style_formats = style_formats.concat(element.data('format_styles'));
+    let custom_styles = element.data('format_styles');
+
+    custom_styles = custom_styles.map(style => {
+        const newStyle = {...style};
+
+        for (const property in newStyle) {
+            if (newStyle[property] === 'true') {
+                newStyle[property] = true;
+            } else if (newStyle[property] === 'false') {
+                newStyle[property] = false;
+            }
+        }
+
+        return newStyle;
+    });
+
+    style_formats = style_formats.concat(custom_styles);
 
     tinymce.init({
         target: elem,
@@ -53,9 +71,16 @@ $('.integrated_tinymce').each(function(key, elem){
         menubar: 'edit view insert format tools table',
         branding: false,
         toolbar:
-            "styles | bold italic underline subscript superscript | bullist numlist | " +
+            "styles | bold italic underline subscript superscript | bullist numlist | alignleft aligncenter alignright alignjustify | " +
             "link anchor table charmap | integratedimage integratedgallery integratedvideo image media | print | " +
             "pastetext searchreplace | code fullscreen",
+        formats: {
+            alignleft: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-left'},
+            aligncenter: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-center'},
+            alignright: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-right'},
+            alignjustify: {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'align-justify'},
+            cite: {block: 'cite'}
+        },
         toolbar_sticky: false,
         toolbar_location: 'top',
         statusbar: true,
@@ -73,6 +98,7 @@ $('.integrated_tinymce').each(function(key, elem){
         document_base_url : element.data('document_base_url'),
         style_formats: style_formats,
         setup: function (editor) {
+
             function addRemoveButton(element, className) {
                 const removeButton = editor.contentDocument.createElement('span');
                 removeButton.classList.add(className, 'remove');
@@ -93,6 +119,10 @@ $('.integrated_tinymce').each(function(key, elem){
             }
 
             editor.on('init', function() {
+
+                let event = new CustomEvent('tinyMCEInitialized', { detail: { editor } });
+                window.dispatchEvent(event);
+
                 const swiperSlides = editor.contentDocument.querySelectorAll('.swiper-slide');
                 const articleSwiper = editor.contentDocument.querySelectorAll('.article-swiper');
 

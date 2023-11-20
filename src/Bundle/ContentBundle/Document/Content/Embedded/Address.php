@@ -71,249 +71,108 @@ class Address
     #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\HiddenType', options: ['attr' => ['data-itemorder' => 'collection']])]
     protected $order = 0;
 
-    /**
-     * Get the type of the document.
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * Set the type of the document.
-     *
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
-
-        return $this;
     }
 
-    /**
-     * Get the name of the document.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set the name of the document.
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
-    /**
-     * Get the title.
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->address1.', '.$this->getCity();
     }
 
-    /**
-     * Get the address1 of the document.
-     *
-     * @return string
-     */
-    public function getAddress1()
+    public function getAddress1(): ?string
     {
         return $this->address1;
     }
 
-    /**
-     * Set the address1 of the document.
-     *
-     * @param string $address1
-     *
-     * @return $this
-     */
-    public function setAddress1($address1)
+    public function setAddress1($address1): void
     {
         $this->address1 = $address1;
-
-        return $this;
     }
 
-    /**
-     * Get the address2 of the document.
-     *
-     * @return string
-     */
-    public function getAddress2()
+    public function getAddress2(): ?string
     {
         return $this->address2;
     }
 
-    /**
-     * Set the address2 of the document.
-     *
-     * @param string $address2
-     *
-     * @return $this
-     */
-    public function setAddress2($address2)
+    public function setAddress2($address2): void
     {
         $this->address2 = $address2;
-
-        return $this;
     }
 
-    /**
-     * Get the zipcode of the document.
-     *
-     * @return string
-     */
-    public function getZipcode()
+    public function getZipcode(): ?string
     {
         return $this->zipcode;
     }
 
-    /**
-     * Set the zipcode of the document.
-     *
-     * @param string $zipcode
-     *
-     * @return $this
-     */
-    public function setZipcode($zipcode)
+    public function setZipcode($zipcode): void
     {
         $this->zipcode = $zipcode;
-
-        return $this;
     }
 
-    /**
-     * Get the city of the document.
-     *
-     * @return string
-     */
-    public function getCity()
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    /**
-     * Set the city of the document.
-     *
-     * @param string $city
-     *
-     * @return $this
-     */
-    public function setCity($city)
+    public function setCity($city): void
     {
         $this->city = $city;
-
-        return $this;
     }
 
-    /**
-     * Get the state of the document.
-     *
-     * @return string
-     */
-    public function getState()
+    public function getState(): ?string
     {
         return $this->state;
     }
 
-    /**
-     * Set the state of the document.
-     *
-     * @param string $state
-     *
-     * @return $this
-     */
-    public function setState($state)
+    public function setState($state): void
     {
         $this->state = $state;
-
-        return $this;
     }
 
-    /**
-     * Get the country of the document.
-     *
-     * @return string
-     */
-    public function getCountry()
+    public function getCountry(): ?string
     {
         return $this->country;
     }
 
-    /**
-     * Set the country of the document.
-     *
-     * @param string $country
-     *
-     * @return $this
-     */
-    public function setCountry($country)
+    public function setCountry($country): void
     {
         $this->country = $country;
-
-        return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
-    /**
-     * @param int $order
-     *
-     * @return $this
-     */
-    public function setOrder($order)
+    public function setOrder($order): void
     {
         $this->order = (int) $order;
-
-        return $this;
     }
 
-    /**
-     * Get the location of the document.
-     *
-     * @return Location
-     */
-    public function getLocation()
+    public function getLocation(): ?Location
     {
         return $this->location;
     }
 
-    /**
-     * Set the location of the document.
-     *
-     * @param Location $location
-     *
-     * @return $this
-     */
-    public function setLocation(Location $location = null)
+    public function setLocation(Location $location = null): void
     {
         $this->location = $location;
-
-        return $this;
     }
 }

@@ -12,9 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Document\Channel;
 
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
-use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Contact;
-use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Social;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -81,31 +78,6 @@ class Channel implements ChannelInterface
     protected $primaryDomainRedirect;
 
     /**
-     * @var Collection<Contact>
-     */
-    protected $contacts;
-
-    /**
-     * @var Collection<Social>
-     */
-    protected $social;
-
-    /**
-     * @var string
-     */
-    protected $vat;
-
-    /**
-     * @var string
-     */
-    protected $companyId;
-
-    /**
-     * @var string
-     */
-    protected $analytics;
-
-    /**
      * @var mixed[]
      */
     protected $options = [];
@@ -138,388 +110,142 @@ class Channel implements ChannelInterface
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return Image|null
-     */
-    public function getLogo()
+    public function getLogo(): ?Image
     {
         return $this->logo;
     }
 
-    /**
-     * @return $this
-     */
-    public function setLogo(?Image $logo)
+    public function setLogo(?Image $logo): void
     {
         $this->logo = $logo;
-
-        return $this;
     }
 
-    /**
-     * @return Image|null
-     */
-    public function getFavicon()
+    public function getFavicon(): Image|null
     {
         return $this->favicon;
     }
 
-    /**
-     * @return $this
-     */
-    public function setFavicon(?Image $favicon)
+    public function setFavicon(?Image $favicon): void
     {
         $this->favicon = $favicon;
-
-        return $this;
     }
 
-    /**
-     * @return Contact[]
-     */
-    public function getContacts()
-    {
-        return $this->contacts;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setContacts(Collection $contacts)
-    {
-        $this->contacts = $contacts;
-
-        return $this;
-    }
-
-    /**
-     * @param Contact $contact
-     *
-     * @return $this
-     */
-    public function addContact(Contact $contact = null)
-    {
-        if ($contact !== null) {
-            $this->contacts->add($contact);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function removeContact(Contact $contact)
-    {
-        return $this->contacts->removeElement($contact);
-    }
-
-    /**
-     * @return Social[]
-     */
-    public function getSocial()
-    {
-        return $this->social;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setSocial(Collection $social)
-    {
-        $this->social = $social;
-
-        return $this;
-    }
-
-    /**
-     * @param Social $social
-     *
-     * @return $this
-     */
-    public function addSocial(Social $social = null)
-    {
-        if ($social !== null) {
-            $this->social->add($social);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function removeSocial(Social $social)
-    {
-        return $this->social->removeElement($social);
-    }
-
-    /**
-     * @return string
-     */
-    public function getVat()
-    {
-        return $this->vat;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setVat(string $vat)
-    {
-        $this->vat = $vat;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCompanyId()
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setCompanyID(string $companyId)
-    {
-        $this->companyId = $companyId;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnalytics()
-    {
-        return $this->analytics;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setAnalytics(string $analytics)
-    {
-        $this->analytics = $analytics;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getColor(): ?string
     {
         return $this->color;
     }
 
-    /**
-     * @return $this
-     */
-    public function setColor(?string $color)
+    public function setColor(?string $color): void
     {
         $this->color = $color;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSecondaryColor()
+    public function getSecondaryColor(): ?string
     {
         return $this->secondarycolor;
     }
 
-    /**
-     * @return $this
-     */
-    public function setSecondaryColor(?string $secondarycolor)
+    public function setSecondaryColor(?string $secondarycolor): void
     {
         $this->secondarycolor = $secondarycolor;
-
-        return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setDomains(array $domains)
+    public function setDomains(array $domains): void
     {
         $this->domains = $domains;
-
-        return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getDomains()
+    public function getDomains(): array
     {
         return $this->domains ?: [];
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * Overrider all the option with a new set of values for this content type.
-     *
-     * @param string[] $options
-     *
-     * @return $this
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = [];
 
         foreach ($options as $name => $value) {
             $this->setOption($name, $value);
         }
-
-        return $this;
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getOption($name)
+    public function getOption(string $name): mixed
     {
-        if (isset($this->options[$name])) {
-            return $this->options[$name];
-        }
-
-        return null;
+        return $this->options[$name] ?? null;
     }
 
-    /**
-     * Set the value of the specified key.
-     *
-     * @param string     $name
-     * @param mixed|null $value
-     *
-     * @return $this
-     */
-    public function setOption($name, $value = null)
+    public function setOption(string $name, mixed $value = null): void
     {
         if ($value === null) {
             unset($this->options[$name]);
         } else {
             $this->options[$name] = $value;
         }
-
-        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOption($name)
+    public function hasOption(string $name): bool
     {
         return isset($this->options[$name]);
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?string
     {
         return $this->primaryDomain;
     }
 
-    /**
-     * @param string $primaryDomain
-     */
-    public function setPrimaryDomain($primaryDomain)
+    public function setPrimaryDomain(string $primaryDomain): void
     {
         $this->primaryDomain = $primaryDomain;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPrimaryDomainRedirect()
+    public function getPrimaryDomainRedirect(): bool
     {
         return $this->primaryDomainRedirect;
     }
 
-    /**
-     * @param bool $primaryDomainRedirect
-     */
-    public function setPrimaryDomainRedirect($primaryDomainRedirect)
+    public function setPrimaryDomainRedirect(bool $primaryDomainRedirect): void
     {
         $this->primaryDomainRedirect = $primaryDomainRedirect;
     }
 
-    public function defaultPrimaryDomain()
+    public function defaultPrimaryDomain(): void
     {
-        if (!$this->primaryDomain) {
+        if (!$this->primaryDomain && $this->domains) {
             $this->primaryDomain = reset($this->domains);
         }
     }
@@ -529,32 +255,19 @@ class Channel implements ChannelInterface
         return (bool) $this->ipProtected;
     }
 
-    /**
-     * @return $this
-     */
-    public function setIpProtected(bool $protected)
+    public function setIpProtected(bool $protected): void
     {
-        $this->ipProtected = $protected ? true : null;
-
-        return $this;
+        $this->ipProtected = $protected;
     }
 
-    /**
-     * @return Scope
-     */
-    public function getScope()
+    public function getScope(): ?Scope
     {
         return $this->scopeInstance;
     }
 
-    /**
-     * @return $this
-     */
-    public function setScope(Scope $scope = null)
+    public function setScope(?Scope $scope): void
     {
         $this->scopeInstance = $scope;
         $this->scope = $scope ? $scope->getId() : null;
-
-        return $this;
     }
 }

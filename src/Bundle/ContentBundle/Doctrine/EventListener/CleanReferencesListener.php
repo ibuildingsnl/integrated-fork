@@ -32,20 +32,20 @@ class CleanReferencesListener implements EventSubscriber
         ];
     }
 
-        public function preRemove(LifecycleEventArgs $args)
-        {
-            // Get document
-            $document = $args->getDocument();
-            // Get document manager
-            $dm = $args->getDocumentManager();
-            // Document must be instanceof Content
-            if ($document instanceof Content) {
-                $dm->createQueryBuilder(Content::class)
-                    ->updateMany()
-                    ->field('relations.references.$id')->equals($document->getId())
-                    ->field('relations.$.references')->pull(['$id' => $document->getId()])
-                    ->getQuery()
-                    ->execute();
-            }
+    public function preRemove(LifecycleEventArgs $args)
+    {
+        // Get document
+        $document = $args->getDocument();
+        // Get document manager
+        $dm = $args->getDocumentManager();
+        // Document must be instance of Content
+        if ($document instanceof Content) {
+            $dm->createQueryBuilder(Content::class)
+                ->updateMany()
+                ->field('relations.references.$id')->equals($document->getId())
+                ->field('relations.$.references')->pull(['$id' => $document->getId()])
+                ->getQuery()
+                ->execute();
         }
+    }
 }

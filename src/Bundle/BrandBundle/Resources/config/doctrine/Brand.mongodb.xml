@@ -1,0 +1,17 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Integrated\Bundle\BrandBundle\Document\Brand" collection="brand">
+
+        <id field-name="id" strategy="NONE" />
+        <reference-one field="profile" target-document="Integrated\Bundle\BrandBundle\Document\BrandProfile">
+            <cascade><persist/><remove/></cascade>
+        </reference-one>
+        <reference-many field="channelLinks" orphan-removal="true" target-document="Integrated\Bundle\BrandBundle\Document\ChannelLink">
+            <cascade><persist/><remove/></cascade>
+        </reference-many>
+
+    </document>
+</doctrine-mongo-mapping>

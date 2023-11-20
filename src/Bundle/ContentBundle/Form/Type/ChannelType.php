@@ -11,7 +11,6 @@
 
 namespace Integrated\Bundle\ContentBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\CollectionType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\ColorType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\TailwindCollectionType;
 use Integrated\Bundle\UserBundle\Model\Scope;
@@ -133,18 +132,6 @@ class ChannelType extends AbstractType
             'priority' => 500,
             'attr' => ['class' => 'primary-domain-input'], ]);
 
-        $builder->add('contacts', CollectionType::class, [
-            'entry_type' => 'Integrated\Bundle\ContentBundle\Form\Type\ContactType',
-            'priority' => 490,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'add_button_text' => 'Add contact',
-            'label' => 'Address',
-            'attr' => ['location' => 'editor', 'style' => 'editor', 'state' => 'show'],
-        ]);
-
-        $builder->add('social', SocialsType::class, ['priority' => 480]);
-
         $builder->add(
             $builder->create('permissions', FormType::class, [
                 'inherit_data' => true,
@@ -161,40 +148,6 @@ class ChannelType extends AbstractType
                 ]
             )
         );
-
-        $builder->add(
-            $builder->create('company_data', FormType::class, [
-                'inherit_data' => true,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'city',
-                ],
-            ])->add(
-                'companyId',
-                TextType::class,
-                [
-                    'label' => 'Company ID',
-                    'required' => false,
-                ]
-            )->add(
-                'vat',
-                TextType::class,
-                [
-                    'required' => false,
-                ]
-            )
-        );
-
-        $builder->add('analytics', TextType::class, [
-            'label' => 'Analytics ID',
-            'attr' => [
-                'location' => 'sidebar',
-                'style' => 'sidebar',
-                'icon' => 'graph-up',
-            ],
-            'required' => false,
-        ]);
 
         $builder->add(
             $builder->create('channel_options', FormType::class, [

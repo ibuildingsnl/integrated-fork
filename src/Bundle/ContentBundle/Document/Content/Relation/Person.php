@@ -15,9 +15,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Job;
 use Integrated\Bundle\ContentBundle\Document\Content\Image;
+use Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType;
+use Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Document\Storage\Embedded\StorageInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 /**
  * Document type Relation\Person.
@@ -31,6 +34,7 @@ class Person extends Relation
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 990,
         'label' => 'First name',
         'attr' => ['style' => 'editor', 'state' => 'show'],
     ], location: 'editor')]
@@ -40,6 +44,7 @@ class Person extends Relation
      * @var string
      */
     #[Type\Field(options: [
+        'priority' => 980,
         'label' => 'Last name',
         'attr' => ['style' => 'editor', 'state' => 'show'],
     ], location: 'editor')]
@@ -48,7 +53,7 @@ class Person extends Relation
     /**
      * @var string
      */
-    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', options: [
+    #[Type\Field(type: ChoiceType::class, options: [
         'placeholder' => 'Select gender',
         'choices' => ['Male' => 'Male', 'Female' => 'Female'],
         'attr' => ['style' => 'sidebar', 'state' => 'show', 'icon' => 'female'],
@@ -78,7 +83,7 @@ class Person extends Relation
      * @var Collection Job[]
      */
     #[Type\Field(
-        type: 'Integrated\Bundle\ContentBundle\Form\Type\Job\ContactPersonsType',
+        type: ContactPersonsType::class,
         options: ['attr' => ['style' => 'editor', 'state' => 'show']],
         location: 'editor'
     )]
@@ -87,7 +92,7 @@ class Person extends Relation
     /**
      * @var Image
      */
-    #[Type\Field(type: 'Integrated\Bundle\ContentBundle\Form\Type\MediaGalleryType', options: [
+    #[Type\Field(type: MediaGalleryType::class, options: [
         'attr' => [
             'style' => 'sidebar',
             'icon' => 'media-image',
@@ -224,7 +229,7 @@ class Person extends Relation
         return $this;
     }
 
-    public function getCover()
+    public function getCover(): ?StorageInterface
     {
         if ($this->getPicture() instanceof Image) {
             if ($this->getPicture()->getFile() instanceof StorageInterface) {
@@ -235,10 +240,7 @@ class Person extends Relation
         return null;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return trim($this->firstName.' '.$this->lastName);
     }

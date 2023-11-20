@@ -31,7 +31,6 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Create',
                         'button_class' => 'orange no-icon',
-                        'translation_domain' => 'IntegratedChannelBundle',
                     ],
                 ],
                 'save' => [
@@ -39,7 +38,6 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Update',
                         'button_class' => 'green no-icon',
-                        'translation_domain' => 'IntegratedChannelBundle',
                     ],
                 ],
                 'delete' => [
@@ -47,7 +45,6 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Delete',
                         'button_class' => 'orange',
-                        'translation_domain' => 'IntegratedChannelBundle',
                     ],
                 ],
                 'cancel' => [
@@ -55,7 +52,6 @@ class ActionsType extends BaseActionsType
                     'options' => [
                         'label' => 'Back',
                         'button_class' => 'white icon-left',
-                        'translation_domain' => 'IntegratedChannelBundle',
                         'attr' => [
                             'formnovalidate' => 'formnovalidate',
                             'data-dismiss' => 'modal',

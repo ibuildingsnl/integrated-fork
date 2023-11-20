@@ -45,13 +45,11 @@ class NewsController extends AbstractController
     }
 
     /**
-     * @return array
-     *
      * @Template
      *
      * @throws \Exception
      */
-    public function index()
+    public function index(): array
     {
         $channel = $this->context->getChannel();
 
@@ -78,7 +76,7 @@ class NewsController extends AbstractController
 
         return [
             'channel' => $channel,
-            'locale' => $this->getParameter('locale'),
+            'locale' => $this->getParameter('kernel.default_locale'),
             'documents' => $documents,
         ];
     }

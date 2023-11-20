@@ -69,14 +69,10 @@ class Exporter implements ExporterInterface
         }
 
         foreach ($this->getExporters($channel, $publicationDate) as $exporter) {
-            try {
-                $response = $exporter->export($content, $state, $channel);
+            $response = $exporter->export($content, $state, $channel);
 
-                if ($response instanceof ExporterResponse) {
-                    $this->save($content, $response);
-                }
-            } catch (\Exception $e) {
-                // @todo probably should log this somewhere
+            if ($response instanceof ExporterResponse) {
+                $this->save($content, $response);
             }
         }
     }
@@ -92,19 +88,15 @@ class Exporter implements ExporterInterface
             $exporters = [];
 
             foreach ($this->resolver->getConfigs($channel) as $config) {
-                try {
-                    $publicationStartDate = $config->getPublicationStartDate();
-                    if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
-                        continue;
-                    }
+                $publicationStartDate = $config->getPublicationStartDate();
+                if ($publicationStartDate && $publicationDate && $publicationStartDate > $publicationDate) {
+                    continue;
+                }
 
-                    $adaptor = $this->registry->getAdapter($config->getAdapter());
+                $adaptor = $this->registry->getAdapter($config->getAdapter());
 
-                    if ($adaptor instanceof ExportableInterface) {
-                        $exporters[] = $adaptor->getExporter($config);
-                    }
-                } catch (\Exception $e) {
-                    // @todo probably should log this somewhere
+                if ($adaptor instanceof ExportableInterface) {
+                    $exporters[] = $adaptor->getExporter($config);
                 }
             }
 

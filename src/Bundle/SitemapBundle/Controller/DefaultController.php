@@ -53,13 +53,11 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @return array
-     *
      * @Template
      *
      * @throws \Exception
      */
-    public function index()
+    public function index(): array
     {
         $channel = $this->context->getChannel();
 
@@ -79,25 +77,24 @@ class DefaultController extends AbstractController
             ->field('contentType')->in($this->contentTypeInformation->getPublishingAllowedContentTypes($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel.$id')->equals($channel->getId()))
             ->addOr($queryBuilder->expr()->field('primaryChannel')->exists(false))
-            ->getQuery();
+            ->getQuery()
+            ->execute();
 
         if (!$count) {
             throw new NotFoundHttpException();
         }
 
         return [
-            'count' => min(ceil($count / 50000), 50000),
+            'count' => min(ceil((int) $count / 50000), 50000),
         ];
     }
 
     /**
-     * @return array
-     *
      * @Template
      *
      * @throws \Exception
      */
-    public function list($page)
+    public function list($page): array
     {
         $channel = $this->context->getChannel();
 

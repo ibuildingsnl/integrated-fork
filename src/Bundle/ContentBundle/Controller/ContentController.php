@@ -170,11 +170,8 @@ class ContentController extends AbstractController
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
-            $options['contenttypes'] = [];
-
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),
@@ -208,12 +205,13 @@ class ContentController extends AbstractController
             'facets' => $paginator->getCustomParameters()['result']->getFacetSet()->getFacets(),
             'locks' => $this->getLocks($paginator),
             'relations' => $relations,
-            'filters' => $options,
             'selection' => $selection,
             'isSelectionEditable' => $editableSelection,
             'searchSelections' => $this->getUser() ? $repo->findForUser($this->getUser()) : [],
             'searchSelectionForm' => $searchSelectionForm->createView(),
             'contentTypes' => $this->contentTypeManager->getAll(),
+            'route' => $request->attributes->get('_route'),
+            'queryParams' => array_merge($request->query->all(), $options),
         ]);
     }
 

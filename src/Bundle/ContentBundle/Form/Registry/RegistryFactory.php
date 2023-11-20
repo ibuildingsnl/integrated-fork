@@ -12,6 +12,7 @@
 namespace Integrated\Bundle\ContentBundle\Form\Registry;
 
 use Integrated\Bundle\ContentBundle\Form\Type\CheckboxSwitcherType;
+use Integrated\Bundle\FormTypeBundle\Form\Type\EditorType;
 use Integrated\Common\ContentType\Form\Custom\Type;
 use Integrated\Common\ContentType\Form\Custom\Type\Registry;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -45,6 +46,12 @@ class RegistryFactory
             ->setName('Textarea')
         ;
 
+        $tinyMCEType = new Type();
+        $tinyMCEType
+            ->setType(EditorType::class)
+            ->setName('TinyMCE Editor')
+        ;
+
         $checkbox = new Type();
         $checkbox
             ->setType(CheckboxType::class)
@@ -60,6 +67,7 @@ class RegistryFactory
         $registry
             ->add($text)
             ->add($textarea)
+            ->add($tinyMCEType)
             ->add($checkbox)
             ->add($checkboxSwitcher)
         ;

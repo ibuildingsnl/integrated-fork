@@ -45,7 +45,7 @@ class QueueProvider implements QueueProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function push($channel, $payload, $delay = 0, $priority = 0)
+    public function push($channel, $payload, $delay = 0, $priority = 0, $attempt = 0)
     {
         $channel = (string) $channel;
         $payload = serialize($payload);
@@ -57,7 +57,7 @@ class QueueProvider implements QueueProviderInterface
             'channel' => $channel,
             'payload' => $payload,
             'priority' => $priority,
-            'attempts' => 0,
+            'attempts' => $attempt,
             'time_created' => $timestamp,
             'time_updated' => $timestamp,
             'time_execute' => $timestamp + $delay,
