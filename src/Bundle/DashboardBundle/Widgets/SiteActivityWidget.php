@@ -86,7 +86,10 @@ class SiteActivityWidget implements WidgetInterface
             "dimensions" => [
                 [
                     "name" => "country"
-                ]
+                ],
+                [
+                    "name" => "city"
+                ],
             ],
             "metrics" => [
                 [
@@ -120,18 +123,20 @@ class SiteActivityWidget implements WidgetInterface
              'siteTotals' => $siteTotals,
             ];
         }
-
         return $allDatas;
     }
+
     private function getSiteActivity(array $responseData): array
     {
         $siteActivity = [];
         foreach ($responseData['rows'] as $row) {
             $country = $row['dimensionValues'][0]['value'];
+            $city = $row['dimensionValues'][1]['value'];
             $bounceRate = (int)$row['metricValues'][0]['value'];
             $totalUser = (int)$row['metricValues'][1]['value'];
             $siteActivity[] = [
                 'country' => $country,
+                'city' => $city,
                 'bounceRate' => round($bounceRate * 100,2),
                 'totalUser' => $totalUser,
             ];
@@ -150,31 +155,195 @@ class SiteActivityWidget implements WidgetInterface
 
     private function getViewByCountry(array $sortedCountries, float $totalVisits): array
     {
-        usort($sortedCountries, function ($a, $b) {
+        $viewByCountry = [];
+        $viewByCity = [];
+
+        foreach ($sortedCountries as $activity) {
+            $country = $activity['country'];
+            $city = !empty($activity['city']) ? $activity['city'] : 'other';
+            $totalUser = $activity['totalUser'];
+
+            if (!isset($viewByCountry[$country])) {
+                $viewByCountry[$country] = [
+                    'country' => $country,
+                    'totalUser' => 0,
+                    'percentage' => 0,
+                ];
+            }
+
+            $viewByCountry[$country]['totalUser'] += $totalUser;
+
+            if (!isset($viewByCity[$country][$city])) {
+                $viewByCity[$country][$city] = [
+                    'city' => $city,
+                    'totalUser' => 0,
+                    'percentage' => 0,
+                ];
+            }
+
+            $viewByCity[$country][$city]['totalUser'] += $totalUser;
+        }
+
+        foreach ($viewByCountry as &$countryData) {
+            $percentage = round(($countryData['totalUser'] / $totalVisits) * 100, 2);
+            $countryData['percentage'] = $percentage;
+
+            uasort($viewByCity[$countryData['country']], function ($a, $b) {
+                return $b['totalUser'] - $a['totalUser'];
+            });
+
+            $otherCities = array_slice($viewByCity[$countryData['country']], 9);
+            $otherTotalUser = 0;
+            foreach ($otherCities as $otherCity) {
+                $otherTotalUser += $otherCity['totalUser'];
+            }
+
+            $countryData['cities'] = array_slice($viewByCity[$countryData['country']], 0, 9, true);
+            $countryData['cities']['Other'] = [
+                'city' => 'Other',
+                'totalUser' => $otherTotalUser,
+                'percentage' => round(($otherTotalUser / $countryData['totalUser']) * 100, 2),
+            ];
+        }
+
+
+        uasort($viewByCountry, function ($a, $b) {
             return $b['totalUser'] - $a['totalUser'];
         });
 
-        $topCountries = array_slice($sortedCountries, 0, 9, true);
-        $otherCountries = array_slice($sortedCountries, 9);
+        $topCountries = array_slice($viewByCountry, 0, 9, true);
+        $topOtherCountries = $this->processTopCities($sortedCountries, $topCountries);
 
-        foreach ($topCountries as $country => $activity) {
-            $percentage = round((($activity['totalUser'] / $totalVisits) * 100),2);
-            $viewByCountry[$country] = [
-                'country' => $activity['country'],
-                'totalUser' => $activity['totalUser'],
-                'percentage' => $percentage,
-            ];
-        }
+        $otherCountries = array_slice($viewByCountry, 9);
+
         $otherVisits = 0;
         foreach ($otherCountries as $activity) {
             $otherVisits += $activity['totalUser'];
         }
-        $viewByCountry['other'] = [
+
+        $topCountries['other'] = [
             'country' => 'other',
             'totalUser' => $otherVisits,
             'percentage' => ($otherVisits / $totalVisits) * 100,
+            'cities' => $topOtherCountries,
         ];
-        return $viewByCountry;
+        $this->processUndefinedCities($topCountries);
+        return $topCountries;
     }
 
+    function processUndefinedCities(array &$topCountries): void
+    {
+        foreach ($topCountries as &$countryData) {
+            if (isset($countryData['cities'])) {
+                $undefinedCities = [];
+                $otherCityData = null;
+
+                foreach ($countryData['cities'] as $cityName => $cityData) {
+                    if ($cityName === "Other") {
+                        $otherCityData = $cityData;
+                        unset($countryData['cities'][$cityName]);
+                    } elseif ($cityName === "" || $cityName === "(undefined)" || $cityName === "(not set)") {
+                        $undefinedCities[] = $cityData;
+                        unset($countryData['cities'][$cityName]);
+                    }
+                }
+
+                if (!empty($undefinedCities)) {
+                    $totalUser = 0;
+                    $percentage = 0;
+
+                    foreach ($undefinedCities as $cityData) {
+                        $totalUser += $cityData['totalUser'];
+                        $percentage += $cityData['percentage'];
+                    }
+
+                    if ($otherCityData !== null) {
+                        $totalUser += $otherCityData['totalUser'];
+                        $percentage += $otherCityData['percentage'];
+                    }
+
+                    $countryData['cities']['Other'] = [
+                        'city' => 'Other',
+                        'totalUser' => $totalUser,
+                        'percentage' => $percentage,
+                    ];
+                }
+            }
+        }
+
+        $this->calculateCityPercentages($topCountries);
+    }
+
+    function processTopCities(array $data, array $topCountries): array
+    {
+        $citiesData = [];
+
+        // Récupérer la liste des pays du tableau topCountries
+        $excludedCountries = array_keys($topCountries);
+
+        foreach ($data as $row) {
+            $cityName = $row['city'];
+            $countryName = $row['country'];
+
+            // Ignorer les pays du tableau topCountries
+            if (in_array($countryName, $excludedCountries)) {
+                continue;
+            }
+
+            if ($cityName === "" || $cityName === "(undefined)" || $cityName === "(not set)")
+            {
+                $cityName = 'Unknown city';
+            }
+            $fullCityName = $cityName . " (" . $countryName . ")";
+            $totalUser = $row['totalUser'];
+
+            if (!isset($citiesData[$cityName])) {
+                $citiesData[$cityName] = [
+                    'city' => $fullCityName,
+                    'totalUser' => $totalUser,
+                    'percentage' => 0,
+                ];
+            } else {
+                $citiesData[$cityName]['totalUser'] += $totalUser;
+            }
+        }
+
+        // Trier le tableau par le nombre total d'utilisateurs de manière décroissante
+        usort($citiesData, function ($a, $b) {
+            return $b['totalUser'] - $a['totalUser'];
+        });
+
+        // Sélectionner les 9 premières villes
+        $topCities = array_slice($citiesData, 0, 9, true);
+        // Calculer le pourcentage pour chaque ville
+        $totalUsers = array_sum(array_column($citiesData, 'totalUser'));
+        foreach ($topCities as &$city) {
+            $city['percentage'] = ($city['totalUser'] / $totalUsers) * 100;
+        }
+
+        // Calculer le cumul des autres villes
+        $otherCities = array_slice($citiesData, 9);
+        $otherTotalUsers = array_sum(array_column($otherCities, 'totalUser'));
+
+        // Ajouter l'entrée "Other"
+        $topCities['Other'] = [
+            'city' => 'Other',
+            'totalUser' => $otherTotalUsers,
+            'percentage' => ($otherTotalUsers / $totalUsers) * 100,
+        ];
+        return $topCities;
+    }
+
+    function calculateCityPercentages(array &$topCountries): void
+    {
+        foreach ($topCountries as &$countryData) {
+            if (isset($countryData['cities'])) {
+                $totalUser = $countryData['totalUser'];
+
+                foreach ($countryData['cities'] as &$cityData) {
+                    $cityData['percentage'] = round(($cityData['totalUser'] / $totalUser) * 100, 2);
+                }
+            }
+        }
+    }
 }

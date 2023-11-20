@@ -21,7 +21,8 @@
                 <h3>{% trans %}Top Locations{% endtrans %}:</h3>
                 <ul class="visitor-regions">
                     {% for row in viewByCountry %}
-                        <li><span class="location">{{ row.country }}</span>
+                        <li onmouseover="updateCityList('{{ row.country }}')" onmouseout="updateCityList('')">
+                            <span class="location">{{ row.country }}</span>
                             <div class="percetage-full">
                                 <div class="percentage-part" style="width:{{ row.percentage }}%"></div>
                             </div>
@@ -30,6 +31,60 @@
                     {% endfor %}
                 </ul>
             </div>
+            <div class="cities">
+            </div>
         </div>
     </div>
+
+    <script>
+
+        const viewByCountry = {{ viewByCountry | json_encode | raw }};
+
+        function updateCityList(country) {
+            var citiesContainer = document.querySelector('.cities');
+
+            var existingList = document.querySelector('.visitor-cities');
+            if (existingList) {
+                citiesContainer.removeChild(existingList);
+            }
+
+            var ul = document.createElement('ul');
+            ul.classList.add('visitor-regions');
+            ul.classList.add('visitor-cities');
+            var selectedCountryData = viewByCountry[country];
+
+            if (selectedCountryData) {
+                for (var cityName in selectedCountryData.cities) {
+                    var cityData = selectedCountryData.cities[cityName];
+
+                    var li = document.createElement('li');
+
+                    var spanLocation = document.createElement('span');
+                    spanLocation.classList.add('location');
+                    spanLocation.textContent = cityData.city;
+
+                    var divPercentageFull = document.createElement('div');
+                    divPercentageFull.classList.add('percentage-full');
+
+                    var divPercentagePart = document.createElement('div');
+                    divPercentagePart.classList.add('percentage-part');
+                    divPercentagePart.style.width = cityData.percentage + '%';
+
+                    divPercentageFull.appendChild(divPercentagePart);
+
+                    var divUserCount = document.createElement('div');
+                    divUserCount.classList.add('user-count');
+                    divUserCount.textContent = cityData.totalUser;
+
+                    li.appendChild(spanLocation);
+                    li.appendChild(divPercentageFull);
+                    li.appendChild(divUserCount);
+                    ul.appendChild(li);
+                }
+            }
+            citiesContainer.appendChild(ul);
+        }
+
+    </script>
 </div>
+
