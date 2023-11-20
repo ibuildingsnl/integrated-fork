@@ -8,67 +8,111 @@ class SitePerformance
 {
     private readonly string $id;
     private string $channelID;
-    private float $speedIndex;
-    private float $siteScore;
-    private float $timeToInteractive;
-    private float $serverResponseTime;
-    private float $totalBlockingTime;
+
+    private float $desktopSpeedIndex;
+    private float $desktopSiteScore;
+    private float $desktopTimeToInteractive;
+    private float $desktopServerResponseTime;
+    private float $desktopTotalBlockingTime;
+
+    private float $mobileSpeedIndex;
+    private float $mobileSiteScore;
+    private float $mobileTimeToInteractive;
+    private float $mobileServerResponseTime;
+    private float $mobileTotalBlockingTime;
+
     private DateTimeImmutable $dateTime;
 
     public function __construct(
         string $channelID,
-        float $siteScore,
-        float $speedIndex,
-        float $timeToInteractive,
-        float $serverResponseTime,
-        float $totalBlockingTime,
-        DateTimeImmutable $dateTime,
+
+        float $desktopSiteScore,
+        float $desktopSpeedIndex,
+        float $desktopTimeToInteractive,
+        float $desktopServerResponseTime,
+        float $desktopTotalBlockingTime,
+
+        float $mobileSiteScore,
+        float $mobileSpeedIndex,
+        float $mobileTimeToInteractive,
+        float $mobileServerResponseTime,
+        float $mobileTotalBlockingTime,
+        DateTimeImmutable $dateTime
     ) {
         $this->channelID = $channelID;
-        $this->speedIndex = $speedIndex;
-        $this->siteScore = $siteScore;
-        $this->timeToInteractive = $timeToInteractive;
-        $this->serverResponseTime = $serverResponseTime;
-        $this->totalBlockingTime = $totalBlockingTime;
+        $this->desktopSpeedIndex = $desktopSpeedIndex;
+        $this->desktopSiteScore = $desktopSiteScore;
+        $this->desktopTimeToInteractive = $desktopTimeToInteractive;
+        $this->desktopServerResponseTime = $desktopServerResponseTime;
+        $this->desktopTotalBlockingTime = $desktopTotalBlockingTime;
+
+        $this->mobileSpeedIndex = $mobileSpeedIndex;
+        $this->mobileSiteScore = $mobileSiteScore;
+        $this->mobileTimeToInteractive = $mobileTimeToInteractive;
+        $this->mobileServerResponseTime = $mobileServerResponseTime;
+        $this->mobileTotalBlockingTime = $mobileTotalBlockingTime;
+
         $this->dateTime = $dateTime;
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getChannel(): string
+    public function getChannelID(): string
     {
         return $this->channelID;
     }
 
-    public function getSiteScore(): float
+    public function getDesktopSiteScore(): float
     {
-        return $this->siteScore;
+        return $this->desktopSiteScore;
     }
 
-    public function getSpeedIndex(): float
+    public function getDesktopSpeedIndex(): float
     {
-        return $this->speedIndex;
+        return $this->desktopSpeedIndex;
     }
 
-    public function getTimeToInteractive(): float
+    public function getDesktopTimeToInteractive(): float
     {
-        return $this->timeToInteractive;
+        return $this->desktopTimeToInteractive;
     }
 
-    public function getServerResponseTime(): float
+    public function getDesktopServerResponseTime(): float
     {
-        return $this->serverResponseTime;
+        return $this->desktopServerResponseTime;
     }
 
-    public function getTotalBlockingTime(): float
+    public function getDesktopTotalBlockingTime(): float
     {
-        return $this->totalBlockingTime;
+        return $this->desktopTotalBlockingTime;
     }
+
+    public function getMobileSiteScore(): float
+    {
+        return $this->mobileSiteScore;
+    }
+
+    public function getMobileSpeedIndex(): float
+    {
+        return $this->mobileSpeedIndex;
+    }
+
+    public function getMobileTimeToInteractive(): float
+    {
+        return $this->mobileTimeToInteractive;
+    }
+
+    public function getMobileServerResponseTime(): float
+    {
+        return $this->mobileServerResponseTime;
+    }
+
+    public function getMobileTotalBlockingTime(): float
+    {
+        return $this->mobileTotalBlockingTime;
+    }
+
     public function getDateTime(): DateTimeImmutable
     {
         return $this->dateTime;
     }
 }
+

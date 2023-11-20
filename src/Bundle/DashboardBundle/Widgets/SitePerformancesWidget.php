@@ -3,10 +3,13 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\UserBundle\Model\User;
 use \Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Bundle\AnalyticsBundle\Document\SitePerformance;
 use Symfony\Component\HttpFoundation\Request;
+use GuzzleHttp\Client;
+
 
 
 class SitePerformancesWidget implements WidgetInterface
@@ -39,50 +42,38 @@ class SitePerformancesWidget implements WidgetInterface
 
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
+
         $channelPerformances = $this->manager->getRepository(SitePerformance::class)
             ->findBy(
                 ['channelID' => $channel->getId()],
                 ['dateTime' => 'DESC'],
-                7
+                1
             );
         if($channelPerformances != null)
         {
-            $siteData= [
-                'siteScore' => $channelPerformances[0]->getSiteScore() * 100 ?? 0,
-                'speedIndex' => $this->MilliToSecond($channelPerformances[0]->getSpeedIndex()) ?? 0,
-                'timeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getTimeToInteractive()) ?? 0,
-                'timeToFirstByte' => round($channelPerformances[0]->getServerResponseTime()) ?? 0,
-                'totalBlockingTime' => round($channelPerformances[0]->getTotalBlockingTime()) ?? 0,
+            $desktopSiteData = [
+                'desktopSiteScore' => $channelPerformances[0]->getDesktopSiteScore() * 100 ?? 0,
+                'desktopSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getDesktopSpeedIndex()) ?? 0,
+                'desktopTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getDesktopTimeToInteractive()) ?? 0,
+                'desktopTimeToFirstByte' => round($channelPerformances[0]->getDesktopServerResponseTime()) ?? 0,
+                'desktopTotalBlockingTime' => round($channelPerformances[0]->getDesktopTotalBlockingTime()) ?? 0,
+               ];
+            $mobileSiteData = [
+                'mobileSiteScore' => $channelPerformances[0]->getMobileSiteScore() * 100 ?? 0,
+                'mobileSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getMobileSpeedIndex()) ?? 0,
+                'mobileTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getMobileTimeToInteractive()) ?? 0,
+                'mobileTimeToFirstByte' => round($channelPerformances[0]->getMobileServerResponseTime()) ?? 0,
+                'mobileTotalBlockingTime' => round($channelPerformances[0]->getMobileTotalBlockingTime()) ?? 0,
             ];
-            $averageSpeed = $this->getAverageSpeed($channelPerformances);
         }
         return [
             "widget" => $this,
-            'siteData' => $siteData ?? null,
-            'averageSpeed' => $averageSpeed ?? "Data not found"
+            'desktopSiteData' => $desktopSiteData ?? null,
+            'mobileSiteData' => $mobileSiteData ?? null,
         ];
-
     }
 
-    private function getAverageSpeed(array $channelPerformances): float
-    {
-        $totalSpeed = 0;
-        $count = 0;
-        $averageSpeed = 0;
-        foreach ($channelPerformances as $performance) {
-            $speed = $performance->getSpeedIndex();
-            if ($speed !== null) {
-                $totalSpeed += $speed;
-                $count++;
-            }
-        }
-        if ($count > 0) {
-            $averageSpeed = $totalSpeed / $count;
-        }
-        return $this->MilliToSecond($averageSpeed) ?? "No data found";
-    }
-
-    private function MilliToSecond(float $milliValue): float
+      private function MilliToSecond(float $milliValue): float
     {
         return round($milliValue / 1000, 2);
     }

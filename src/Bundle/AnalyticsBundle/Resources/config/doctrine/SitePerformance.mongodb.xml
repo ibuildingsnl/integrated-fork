@@ -6,11 +6,16 @@
     <document name="Integrated\Bundle\AnalyticsBundle\Document\SitePerformance">
         <id field-name="id" strategy="auto" />
         <field field-name="channelID" type="string" />
-        <field field-name="speedIndex" type="float" />
-        <field field-name="siteScore" type="float" />
-        <field field-name="timeToInteractive" type="float" />
-        <field field-name="serverResponseTime" type="float" />
-        <field field-name="totalBlockingTime" type="float" />
+        <field field-name="desktopSpeedIndex" type="float" />
+        <field field-name="desktopSiteScore" type="float" />
+        <field field-name="desktopTimeToInteractive" type="float" />
+        <field field-name="desktopServerResponseTime" type="float" />
+        <field field-name="desktopTotalBlockingTime" type="float" />
+        <field field-name="mobileSpeedIndex" type="float" />
+        <field field-name="mobileSiteScore" type="float" />
+        <field field-name="mobileTimeToInteractive" type="float" />
+        <field field-name="mobileServerResponseTime" type="float" />
+        <field field-name="mobileTotalBlockingTime" type="float" />
         <field field-name="dateTime" type="date_immutable" />
     </document>
 

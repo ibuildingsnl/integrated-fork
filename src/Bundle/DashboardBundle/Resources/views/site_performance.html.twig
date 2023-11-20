@@ -1,14 +1,14 @@
-{% if siteData is not null %}
+{% if desktopSiteData is not null and mobileSiteData is not null%}
 <div class="widget col-right w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
             <h2>{% trans %}Site Speed{% endtrans %}</h2>
             <div class="switcher">
-                <div class="btn mobile" id="mobile-button" onclick="MobileDesktopButton()">
+                <div class="btn mobile" id="mobile-button" onclick="MobileDesktopButton('mobile')">
                     <i class="iconoir-smartphone-device"></i>
                     {% trans %}Mobile{% endtrans %}
                 </div>
-                <div class="btn desktop active" id="desktop-button" onclick="MobileDesktopButton()">
+                <div class="btn desktop active" id="desktop-button" onclick="MobileDesktopButton('desktop')">
                     <i class="iconoir-computer"></i>
                     {% trans %}Desktop{% endtrans %}
                 </div>
@@ -25,25 +25,25 @@
                 <div class="flex flex-wrap -mr-2">
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ siteData.timeToFirstByte }} ms</span>
+                            <span id="timeToFirstByte" class="value"></span>
                             <span class="label">{% trans %}TTFB{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ siteData.timeToInteractive }} s</span>
+                            <span id="timeToInteractive" class="value">s</span>
                             <span class="label">{% trans %}Loading speed{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ siteData.speedIndex }} s</span>
+                            <span id="speedIndex" class="value">s</span>
                             <span class="label">{% trans %}Time to Interactive{% endtrans %}</span>
                         </div>
                     </div>
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ siteData.totalBlockingTime }} ms</span>
+                            <span id="totalBlockingTime" class="value">ms</span>
                             <span class="label">{% trans %}Total Blocking Time{% endtrans %}</span>
                         </div>
                     </div>
@@ -54,7 +54,39 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const progressValue = {{ siteData.siteScore }}; // site score
+            MobileDesktopButton("desktop")
+        });
+
+        const desktopSiteData = {{ desktopSiteData | json_encode | raw }};
+        const mobileSiteData = {{ mobileSiteData | json_encode | raw }};
+        function MobileDesktopButton(device)
+        {
+            var mobileButton = document.getElementById('mobile-button');
+            var desktopMobile = document.getElementById('desktop-button');
+            var timeToFirstByte = document.getElementById('timeToFirstByte');
+            var timeToInteractive = document.getElementById('timeToInteractive');
+            var speedIndex = document.getElementById('speedIndex');
+            var totalBlockingTime = document.getElementById('totalBlockingTime');
+
+            console.log(mobileSiteData);
+            if (device == "desktop") {
+                timeToFirstByte.innerText = desktopSiteData.desktopTimeToFirstByte + " ms";
+                timeToInteractive.innerText = desktopSiteData.desktopTimeToInteractive + " s";
+                speedIndex.innerText = desktopSiteData.desktopSpeedIndex + " s";
+                totalBlockingTime.innerText = desktopSiteData.desktopTotalBlockingTime + " ms";
+                var progressValue = desktopSiteData.desktopSiteScore;
+                mobileButton.classList.remove('active')
+                desktopMobile.classList.add('active')
+
+            } else if (device == "mobile") {
+                timeToFirstByte.innerText = mobileSiteData.mobileTimeToFirstByte + " ms";
+                timeToInteractive.innerText = mobileSiteData.mobileTimeToInteractive+ " s";
+                speedIndex.innerText = mobileSiteData.mobileSpeedIndex+ " s";
+                totalBlockingTime.innerText = mobileSiteData.mobileTotalBlockingTime + " ms";
+                var progressValue = mobileSiteData.mobileSiteScore
+                mobileButton.classList.add('active')
+                desktopMobile.classList.remove('active')
+            }
             const progressCircle = document.querySelector('.progress-circle');
             const progressValueDisplay = document.querySelector('.progress-value');
 
@@ -76,15 +108,9 @@
              )`;
 
             progressValueDisplay.textContent = progressValue;
-        });
-
-        function MobileDesktopButton()
-        {
-            var mobileButton = document.getElementById('mobile-button')
-            var buttonDesktop = document.getElementById('desktop-button')
-            mobileButton.classList.toggle('active')
-            buttonDesktop.classList.toggle('active')
         }
+
+
     </script>
 </div>
 {% endif %}

@@ -56,7 +56,7 @@ class GetSitePerformancesCommand extends Command
             }
             $encodedUrl = urlencode($url);
             try {
-                $this->getSitePerformance($encodedUrl, $website['id']);
+                $this->getSitePerformance($encodedUrl, $website['id'],$output);
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {
                 $dateTime = new \DateTimeImmutable();
@@ -87,54 +87,81 @@ class GetSitePerformancesCommand extends Command
         return !((filter_var($url, FILTER_VALIDATE_URL) === false) || (str_contains($url, 'localhost')));
     }
 
-    public function getSitePerformance(string $url, string $channelId): void
+    public function getSitePerformance(string $url, string $channelId, $output): void
     {
-        try{
-            $ApiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
-            $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&key=$ApiKey";
+        $apiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
+
+        $desktopData = $this->getPerformanceData($url, $apiKey, 'desktop');
+        $mobileData = $this->getPerformanceData($url, $apiKey, 'mobile');
+
+        $dateTime = new \DateTimeImmutable();
+
+        $sitePerformance = new SitePerformance(
+            $channelId,
+            (float)$desktopData['siteScore'],
+            (float)$desktopData['speedIndex'],
+            (float)$desktopData['timeToInteractive'],
+            (float)$desktopData['serverResponseTime'],
+            (float)$desktopData['totalBlockingTime'],
+
+            (float)$mobileData['siteScore'],
+            (float)$mobileData['speedIndex'],
+            (float)$mobileData['timeToInteractive'],
+            (float)$mobileData['serverResponseTime'],
+            (float)$mobileData['totalBlockingTime'],
+            $dateTime
+        );
+        $this->manager->persist($sitePerformance);
+    }
+
+    private function getPerformanceData(string $url, string $apiKey, string $strategy): ?array
+    {
+        $performanceData = null;
+
+        try {
+            $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&strategy=$strategy&key=$apiKey";
             $response = $this->client->get($request);
+
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();
                 $data = json_decode($content, true);
-                $siteData= [
+
+                $siteData = [
                     'siteScore' => $data['lighthouseResult']['categories']['performance']['score'] ?? null,
                     'speedIndex' => $data['lighthouseResult']['audits']['speed-index']['numericValue'] ?? null,
                     'timeToInteractive' => $data['lighthouseResult']['audits']['interactive']['numericValue'] ?? null,
                     'serverResponseTime' => $data['lighthouseResult']['audits']['server-response-time']['numericValue'] ?? null,
                     'totalBlockingTime' => $data['lighthouseResult']['audits']['total-blocking-time']['numericValue'] ?? null,
                 ];
+
                 if (
                     $siteData['siteScore'] !== null &&
                     $siteData['speedIndex'] !== null &&
                     $siteData['timeToInteractive'] !== null &&
                     $siteData['serverResponseTime'] !== null &&
                     $siteData['totalBlockingTime'] !== null
-                ){
-                    $dateTime = new \DateTimeImmutable();
-                    $sitePerformance = new SitePerformance(
-                        $channelId,
-                        (float)$siteData['siteScore'],
-                        (float)$siteData['speedIndex'],
-                        (float)$siteData['timeToInteractive'],
-                        (float)$siteData['serverResponseTime'],
-                        (float)$siteData['totalBlockingTime'],
-                        $dateTime,
-                    );
-                    $this->manager->persist($sitePerformance);
+                ) {
+                    $performanceData = [
+                        "siteScore" => $siteData['siteScore'],
+                        "speedIndex" => $siteData['speedIndex'],
+                        "timeToInteractive" => $siteData['timeToInteractive'],
+                        "serverResponseTime" => $siteData['serverResponseTime'],
+                        "totalBlockingTime" => $siteData['totalBlockingTime'],
+                    ];
                 }
-
             } else {
                 $dateTime = new \DateTimeImmutable();
-                $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody(). '\n' . $dateTime;
+                $errorMessage = 'Status Code:' . $response->getStatusCode() . '|' . $response->getHeaderLine() . '\n' . $response->getBody() . '\n' . $dateTime;
                 $this->logger->error('Get Site Performance Error: ' . $errorMessage);
             }
-        }
-        catch (GuzzleException $e) {
+        } catch (GuzzleException $e) {
             $dateTime = new \DateTimeImmutable();
-            $this->logger->error('Get Site Performance Error: ' . $e->getMessage(). '\n' . $dateTime);
+            $this->logger->error('Get Site Performance Error: ' . $e->getMessage() . '\n' . $dateTime);
         }
 
+        return $performanceData;
     }
+
 
     /**
      * @throws MongoDBException
