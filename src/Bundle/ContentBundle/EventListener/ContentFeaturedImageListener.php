@@ -53,20 +53,23 @@ class ContentFeaturedImageListener implements EventSubscriberInterface
 
     public function buildForm(ValidationEvent $event): void
     {
-        //check which content needs this besides article
-        if ($event->getContent()->getContentType() == 'article') {
-            $content = $this->documentManager->getRepository(Content::class)->find($event->getContent()->getId());
+        $content = $this->documentManager->getRepository(Content::class)->find($event->getContent()->getId());
 
-            if ($content->getFeaturedImage() != null) {
-                $image = $this->documentManager->getRepository(Content::class)->find($content->getFeaturedImage()->getId());
+        if ($content === null) {
+            $content = $event->getContent();
+        }
 
-                $content->addRelation((new Relation())
+        if ($content->getFeaturedImage() != null) {
+            $image = $this->documentManager->getRepository(Content::class)->find($content->getFeaturedImage()->getId());
+
+            $content->addRelation(
+                (new Relation())
                     ->setRelationId('__featured_image')
                     ->setRelationType('embedded')
-                    ->addReference($image));
+                    ->addReference($image)
+            );
 
-                $this->flusher->flush();
-            }
+            $this->flusher->flush();
         }
     }
 }
