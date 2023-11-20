@@ -13,13 +13,12 @@ namespace Integrated\Bundle\ContentBundle\Document\Content;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Metadata;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\ChannelableInterface;
-use Integrated\Common\Content\ConnectorInterface;
+use Integrated\Common\Content\ConnectableInterface;
 use Integrated\Common\Content\ConnectorTrait;
 use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Content\Embedded\RelationInterface;
@@ -33,7 +32,7 @@ use Integrated\Common\Content\PublishTimeInterface;
 use Integrated\Common\Content\RegistryInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 
-abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectorInterface, FeaturedInterface, PremiumInterface
+abstract class Content implements ContentInterface, ExtensibleInterface, MetadataInterface, ChannelableInterface, PublishableInterface, ConnectableInterface, FeaturedInterface, PremiumInterface
 {
     use ConnectorTrait;
     use ExtensibleTrait;
@@ -49,7 +48,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     protected $channels;
 
     /**
-     * @var Channel
+     * @var ChannelInterface
      */
     protected $primaryChannel;
 
@@ -586,7 +585,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
     }
 
     /**
-     * @return Channel|null
+     * @return ChannelInterface|null
      */
     public function getPrimaryChannel()
     {

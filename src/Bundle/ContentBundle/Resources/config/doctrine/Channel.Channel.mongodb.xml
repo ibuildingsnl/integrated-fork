@@ -22,8 +22,15 @@
         <field field-name="scope" type="string" />
 
         <reference-one
-                field="logo"
-                target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
+            field="type"
+            target-document="Integrated\Bundle\ContentBundle\Document\Channel\ChannelType"
+        >
+            <cascade><persist/><remove/></cascade>
+        </reference-one>
+
+        <reference-one
+            field="logo"
+            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
         />
 
         <reference-one
@@ -32,8 +39,8 @@
         />
 
         <embed-many
-                field="permissions"
-                target-document="Integrated\Bundle\ContentBundle\Document\Permission\Embedded\Permission"
+            field="permissions"
+            target-document="Integrated\Bundle\ContentBundle\Document\Permission\Embedded\Permission"
         />
 
         <lifecycle-callbacks>

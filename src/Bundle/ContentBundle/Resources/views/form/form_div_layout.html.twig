@@ -497,6 +497,58 @@
     {{ block('integrated_collection_widget') }}
 {% endblock %}
 
+{% block integrated_publication_settings_container_row %}
+
+    <div class="publication-settings-container">
+        {{ form_widget(form) }}
+    </div>
+
+    <script>
+        const pubSettings = {
+            'applyTo': '{% trans %}Apply to{% endtrans %}',
+            'applyToAll': '{% trans %}Apply to all{% endtrans %}',
+            'applyToSpecific': '{% trans %}Apply to specific{% endtrans %}',
+            'channels': '{% trans %}Channels{% endtrans %}',
+            'searchIn': '{% trans %}Search in{% endtrans %}',
+            'brands': '{% trans %}Brands{% endtrans %}',
+        }
+    </script>
+
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_settings.js' %}
+    {% endintegrated_javascripts %}
+    {% integrated_javascripts mode='append'
+        'bundles/integratedcontent/js/publication_popup.js' %}
+    {% endintegrated_javascripts %}
+{% endblock %}
+
+{% block integrated_publication_settings_row %}
+    <div class="aside-options publication-settings-aside">
+        <div class="publication-settings-popup aside-item-wrapper show">
+            <div class="aside-item-header">
+                <h3 class="aside-item-title">
+                    <i class="iconoir-telegram"></i>
+                    <span class="aside-item-icon">{% trans %}Publish to{% endtrans %} {{ form_label(form) }}</span>
+                </h3>
+            </div>
+            <div class="aside-item-list-container">
+                <div class="aside-item-list">
+                    {{ form_widget(form) }}
+                    <div class="settings-apply-to-menu">
+                        <select data-apply-to class="form-control mt-4 mb-4">
+                            <option value="this">{% trans %}Apply to{% endtrans %} {{ form_label(form) }}</option>
+                        </select>
+                        <div class="hidden settings-channels-choice mb-4">
+                            <select class="select2" data-apply-channels multiple></select>
+                        </div>
+                    </div>
+                    <a class="btn btn-green" href="#">{% trans %}Apply{% endtrans %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block integrated_content_bulk_actions_row %}
     {{ form_widget(form) }}
 {% endblock %}

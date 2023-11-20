@@ -155,6 +155,6 @@ class PriorityResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected function getChannel()
     {
-        return $this->createMock('Integrated\\Common\\Channel\\ChannelInterface');
+        return $this->createMock(ChannelInterface::class);
     }
 }

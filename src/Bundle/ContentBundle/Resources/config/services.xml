@@ -40,6 +40,10 @@
             <argument type="service" id="integrated_content.form.factory.event_dispatcher"/>
         </service>
 
+        <service id="Integrated\Bundle\ContentBundle\Services\PublicationSettingsProvider"
+                 class="Integrated\Bundle\ContentBundle\Services\PublicationTimeSettingsProvider">
+        </service>
+
         <service id="integrated_content.services.main_flusher" class="Integrated\Common\Services\MainFlusher">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_solr.indexer.mongodb.subscriber" />

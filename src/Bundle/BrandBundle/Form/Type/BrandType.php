@@ -10,6 +10,6 @@ class BrandType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('profile', BrandProfileType::class, ['data_class' => BrandProfile::class]);
+        $builder->add('profile', BrandProfileType::class, ['data_class' => BrandProfile::class, 'label' => false]);
     }
 }

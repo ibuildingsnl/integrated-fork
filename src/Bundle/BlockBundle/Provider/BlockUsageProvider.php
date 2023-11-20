@@ -14,6 +14,7 @@ namespace Integrated\Bundle\BlockBundle\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Johan Liefers <johan@e-active.nl>
@@ -46,7 +47,7 @@ class BlockUsageProvider
     protected $currentChannel = null;
 
     /**
-     * @var Channel[]
+     * @var ChannelInterface[]
      */
     protected $channels = [];
 
@@ -106,7 +107,7 @@ class BlockUsageProvider
     /**
      * @param string $id
      *
-     * @return Channel|null
+     * @return ChannelInterface|null
      */
     public function getChannel($id)
     {

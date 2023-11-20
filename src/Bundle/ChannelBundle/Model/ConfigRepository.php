@@ -12,9 +12,9 @@
 namespace Integrated\Bundle\ChannelBundle\Model;
 
 use Doctrine\ORM\EntityRepository;
-use Integrated\Common\Channel\ChannelInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigInterface;
 use Integrated\Common\Channel\Connector\Config\ConfigManagerInterface;
+use Integrated\Common\Content\Channel\ChannelInterface;
 
 /**
  * @author Jan Sanne Mulder <jansanne@e-active.nl>

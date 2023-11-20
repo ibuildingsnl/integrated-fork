@@ -26,11 +26,11 @@ class PublicationsExtension implements TypeExtensionInterface
         }
         foreach ($this->publications->forContent($data) as $publication) {
             $container->add(
-                'pub_start_'.$publication->getChannel()->getId(),
+                'publication_start_'.$publication->getChannel()->getId().'_index_date',
                 $publication->getTime()->getStartDate()?->format('Y-m-d\TH:i:s\Z'),
             );
             $container->add(
-                'pub_end_'.$publication->getChannel()->getId(),
+                'publication_end_'.$publication->getChannel()->getId().'_index_date',
                 $publication->getTime()->getEndDate()?->format('Y-m-d\TH:i:s\Z'),
             );
         }

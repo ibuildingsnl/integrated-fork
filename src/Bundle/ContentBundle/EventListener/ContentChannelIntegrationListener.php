@@ -17,6 +17,7 @@ use Integrated\Bundle\ContentBundle\Form\EventListener\ChannelDefaultDataListene
 use Integrated\Bundle\ContentBundle\Form\EventListener\ChannelEnforcerListener;
 use Integrated\Bundle\ContentBundle\Form\EventListener\ChannelPermissionListener;
 use Integrated\Bundle\ContentBundle\Form\Type\PrimaryChannelType;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Integrated\Common\Content\Form\Event\BuilderEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Security\PermissionInterface;
@@ -149,14 +150,15 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                         'icon' => 'network-alt',
                     ],
                     'choice_attr' => function ($value) use ($enforce) {
-                        if ($value instanceof Channel && (
-                            isset(
-                                $enforce[$value->getId()]
-                            ) || !$this->authorizationChecker->isGranted(
-                                PermissionInterface::WRITE,
-                                $value
-                            ))) {
-                            return ['disabled' => 'disabled'];
+                        if ($value instanceof Channel) {
+                            if (!$this->authorizationChecker->isGranted(PermissionInterface::WRITE, $value)) {
+                                return ['disabled' => 'disabled'];
+                            }
+
+                            return [
+                                'data-channel-selector' => $value->getId(),
+                                'data-channel-name' => $value->getName(),
+                            ] + (isset($enforce[$value->getId()]) ? ['disabled' => 'disabled'] : []);
                         }
 
                         return [];
@@ -193,22 +195,18 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
     /**
      * @param array $ids
      *
-     * @return Channel[]
+     * @return ChannelInterface[]
      */
-    protected function getChannels(array $ids = null)
+    protected function getChannels(array $ids = null): array
     {
         if ($ids === []) {
             return [];
         }
 
-        $criteria = [];
+        $criteria = ['$or' => []];
 
-        if ($ids) {
-            $criteria['$or'] = [];
-
-            foreach ($ids as $id) {
-                $criteria['$or'][] = ['id' => $id];
-            }
+        foreach ($ids ?: [] as $id) {
+            $criteria['$or'][] = ['id' => $id];
         }
 
         return $this->repository->findBy($criteria);
