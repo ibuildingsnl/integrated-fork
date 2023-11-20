@@ -1,9 +1,28 @@
 {% apply spaceless %}
     {% set items = [] %}
+
     {% for content in pagination %}
-        {% set item = {'id': content.id, 'title': content.__toString(), 'href': path('integrated_content_content_edit', {'id': content.id})} %}
+        {% set item = {
+            'id': content.id,
+            'title': content.__toString(),
+            'href': path('integrated_content_content_edit',
+            {'id': content.id})
+        } %}
         {% set items = items|merge([item]) %}
     {% endfor %}
-    {% set data = {'pagination': pagination|json_pagination , 'items': items} %}
+
+    {% for block in blocks %}
+        {% set blockItem = {
+            'id': block.id,
+            'title': 'Block: ' + block.__toString(),
+            'href': path('integrated_block_block_edit', {'id': block.id}),
+        } %}
+        {% set items = items|merge([blockItem]) %}
+    {% endfor %}
+
+    {% set combinedData = {
+        'pagination': pagination|json_pagination,
+        'items': items
+    } %}
 {% endapply %}
-{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+{{ combinedData|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
