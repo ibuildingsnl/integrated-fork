@@ -4,11 +4,11 @@
         <div class="widget-header">
             <h2>{% trans %}Site Speed{% endtrans %}</h2>
             <div class="switcher">
-                <div class="btn mobile">
+                <div class="btn mobile" id="mobile-button" onclick="MobileDesktopButton()">
                     <i class="iconoir-smartphone-device"></i>
                     {% trans %}Mobile{% endtrans %}
                 </div>
-                <div class="btn desktop active">
+                <div class="btn desktop active" id="desktop-button" onclick="MobileDesktopButton()">
                     <i class="iconoir-computer"></i>
                     {% trans %}Desktop{% endtrans %}
                 </div>
@@ -25,7 +25,7 @@
                 <div class="flex flex-wrap -mr-2">
                     <div class="w-1/2 p-2">
                         <div class="lighthouse-value">
-                            <span class="value">{{ siteData.serverResponseTime }} s</span>
+                            <span class="value">{{ siteData.timeToFirstByte }} ms</span>
                             <span class="label">{% trans %}TTFB{% endtrans %}</span>
                         </div>
                     </div>
@@ -77,6 +77,14 @@
 
             progressValueDisplay.textContent = progressValue;
         });
+
+        function MobileDesktopButton()
+        {
+            var mobileButton = document.getElementById('mobile-button')
+            var buttonDesktop = document.getElementById('desktop-button')
+            mobileButton.classList.toggle('active')
+            buttonDesktop.classList.toggle('active')
+        }
     </script>
 </div>
 {% endif %}

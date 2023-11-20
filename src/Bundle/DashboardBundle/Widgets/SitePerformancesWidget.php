@@ -51,7 +51,7 @@ class SitePerformancesWidget implements WidgetInterface
                 'siteScore' => $channelPerformances[0]->getSiteScore() * 100 ?? 0,
                 'speedIndex' => $this->MilliToSecond($channelPerformances[0]->getSpeedIndex()) ?? 0,
                 'timeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getTimeToInteractive()) ?? 0,
-                'serverResponseTime' => $this->MilliToSecond($channelPerformances[0]->getServerResponseTime()) ?? 0,
+                'timeToFirstByte' => round($channelPerformances[0]->getServerResponseTime()) ?? 0,
                 'totalBlockingTime' => round($channelPerformances[0]->getTotalBlockingTime()) ?? 0,
             ];
             $averageSpeed = $this->getAverageSpeed($channelPerformances);
