@@ -90,7 +90,7 @@ class IntegratedContent extends AbstractType
             foreach ($options['pub_channels'] as $channel) {
                 $channel = $helper->escapeTerm($channel);
                 $query->createFilterQuery('pub_channel_'.$channel)
-                    ->setQuery('(pub_start_'.$channel.'_index_date: [* TO NOW]) AND (pub_end_'.$channel.'_index_date: [NOW TO *])');
+                    ->setQuery('(publication_start_'.$channel.'_index_date: [* TO NOW]) AND (publication_end_'.$channel.'_index_date: [NOW TO *])');
             }
         }
 
