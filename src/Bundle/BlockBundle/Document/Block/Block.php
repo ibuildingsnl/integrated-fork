@@ -11,9 +11,13 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Common\Block\BlockInterface;
+use Integrated\Common\Content\Embedded\RelationInterface as BlockRelationInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -78,6 +82,11 @@ abstract class Block implements BlockInterface
     protected $locked = false;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $blockRelations;
+
+    /**
      * @var array
      */
     protected $groups = [];
@@ -90,6 +99,7 @@ abstract class Block implements BlockInterface
         $this->createdAt = new \DateTime();
         $this->publishedAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+        $this->blockRelations = new ArrayCollection();
     }
 
     /**
@@ -354,6 +364,58 @@ abstract class Block implements BlockInterface
             }
             $this->groups[] = (int) $group;
         }
+    }
+
+    public function getBlockRelations()
+    {
+        // should always be instanceOf collection, but due to corrupt database can sometimes be null
+        if (!$this->blockRelations instanceof Collection) {
+            $this->blockRelations = new ArrayCollection();
+        }
+
+        return $this->blockRelations;
+    }
+
+    public function setBlockRelations(Collection $blockRelations)
+    {
+        foreach ($blockRelations as $blockRelation) {
+            if ($blockRelation instanceof BlockRelationInterface) {
+                $this->addBlockRelation($blockRelation);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addBlockRelation(BlockRelationInterface $blockRelation)
+    {
+        if ($exist = $this->getBlockRelation($blockRelation->getRelationId())) {
+            $exist->addReferences($blockRelation->getReferences());
+        } else {
+            $this->getBlockRelations()->add($blockRelation);
+        }
+
+        return $this;
+    }
+
+    public function removeBlockRelation(BlockRelationInterface $blockRelation)
+    {
+        $this->getBlockRelations()->removeElement($blockRelation);
+
+        return $this;
+    }
+
+    public function getBlockRelation($blockRelationId)
+    {
+        return $this->getBlockRelations()->filter(function ($blockRelation) use ($blockRelationId) {
+            if ($blockRelation instanceof BlockRelationInterface) {
+                if ($blockRelation->getRelationId() == $blockRelationId) {
+                    return true;
+                }
+            }
+
+            return false;
+        })->first();
     }
 
     /**

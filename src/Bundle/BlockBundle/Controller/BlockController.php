@@ -19,9 +19,13 @@ use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
+use Integrated\Common\Content\Form\Event\BlockEvent;
+use Integrated\Common\Content\Form\Event\ValidationEvent;
+use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,16 +57,23 @@ class BlockController extends AbstractController
      */
     protected $provider;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         DocumentManager $documentManager,
         PaginatorInterface $paginator,
-        FilterQueryProvider $provider
+        FilterQueryProvider $provider,
+        EventDispatcherInterface $dispatcher,
     ) {
         $this->metadataFactory = $metadataFactory;
         $this->documentManager = $documentManager;
         $this->paginator = $paginator;
         $this->provider = $provider;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -224,6 +235,10 @@ class BlockController extends AbstractController
             }
 
             if ($form->isValid()) {
+                if ($this->dispatcher->hasListeners(Events::BLOCK_VALIDATE)) {
+                    $this->dispatcher->dispatch(new BlockEvent($block),Events::BLOCK_VALIDATE);
+                }
+
                 $this->documentManager->flush();
 
                 if ('iframe.html' === $request->getRequestFormat()) {
