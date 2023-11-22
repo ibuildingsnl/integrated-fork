@@ -2,17 +2,13 @@
 
 namespace Integrated\Bundle\BlockBundle\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\PersistentCollection;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
 use Integrated\Common\Content\Form\Event\BlockEvent;
-use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Services\MainFlusher;
-use ReflectionClass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BlockImageListener implements EventSubscriberInterface
@@ -52,20 +48,20 @@ class BlockImageListener implements EventSubscriberInterface
             foreach ($block->getSubscriptions() as $subscription) {
                 $this->processImage($block, function () use ($subscription) {
                     return $subscription->getImage();
-                },'__subscription_image');
+                }, '__subscription_image');
             }
         }
 
         if (method_exists($block, 'getImage')) {
             $this->processImage($block, function () use ($block) {
                 return $block->getImage();
-            },'__image');
+            }, '__image');
         }
 
         if (method_exists($block, 'getImageOverlay')) {
             $this->processImage($block, function () use ($block) {
                 return $block->getImageOverlay();
-            },'__image_overlay');
+            }, '__image_overlay');
         }
 
         $this->flusher->flush();
@@ -86,6 +82,7 @@ class BlockImageListener implements EventSubscriberInterface
                 $imageGetter()->getId()
             );
         }
+
         return null;
     }
 

@@ -20,7 +20,6 @@ use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Form\Event\BlockEvent;
-use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -236,7 +235,7 @@ class BlockController extends AbstractController
 
             if ($form->isValid()) {
                 if ($this->dispatcher->hasListeners(Events::BLOCK_VALIDATE)) {
-                    $this->dispatcher->dispatch(new BlockEvent($block),Events::BLOCK_VALIDATE);
+                    $this->dispatcher->dispatch(new BlockEvent($block), Events::BLOCK_VALIDATE);
                 }
 
                 $this->documentManager->flush();

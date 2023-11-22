@@ -39,5 +39,4 @@ class BlockEvent extends Event
     {
         return $this->block;
     }
-
 }
