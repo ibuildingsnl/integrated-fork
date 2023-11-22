@@ -4554,6 +4554,9 @@ video {
   margin-left: -0.5rem;
   margin-right: -0.5rem;
 }
+.-mr-2{
+  margin-right: -0.5rem;
+}
 .mb-0{
   margin-bottom: 0px;
 }
@@ -4577,9 +4580,6 @@ video {
 }
 .mt-8{
   margin-top: 2rem;
-}
-.-mr-2{
-  margin-right: -0.5rem;
 }
 .block{
   display: block;
@@ -4617,14 +4617,14 @@ video {
 .w-1\/2{
   width: 50%;
 }
-.w-full{
-  width: 100%;
-}
 .w-1\/3{
   width: 33.333333%;
 }
 .w-2\/3{
   width: 66.666667%;
+}
+.w-full{
+  width: 100%;
 }
 .min-w-0{
   min-width: 0px;
@@ -4724,6 +4724,9 @@ video {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.pb-4{
+  padding-bottom: 1rem;
+}
 .pl-0{
   padding-left: 0px;
 }
@@ -4735,9 +4738,6 @@ video {
 }
 .pr-4{
   padding-right: 1rem;
-}
-.pb-4{
-  padding-bottom: 1rem;
 }
 .text-center{
   text-align: center;
@@ -13148,29 +13148,29 @@ nav.article-list ul li:first-child {
   font-size: 4rem; /* Adjust size as needed */
   font-weight: bold;
 }
-.widget-content ul.visitor-regions li {
+.widget-content ul.visitor-regions li, .widget-content ul.visitor-cities li {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.widget-content ul.visitor-regions li span.location {
+.widget-content ul.visitor-regions li span.location, .widget-content ul.visitor-cities li span.location {
   width: 140px;
   display: block;
   color: #5a5a5a;
   font-size: 0.9rem;
 }
-.widget-content ul.visitor-regions li .percetage-full {
+.widget-content ul.visitor-regions li .percetage-full, .widget-content ul.visitor-cities li .percetage-full {
   width: calc(100% - 110px);
   background-color: #e6e6e6;
   height: 6px;
   border-radius: 8px;
 }
-.widget-content ul.visitor-regions li .percetage-full .percentage-part {
+.widget-content ul.visitor-regions li .percetage-full .percentage-part, .widget-content ul.visitor-cities li .percetage-full .percentage-part {
   background-color: #04ae93;
   border-radius: 8px;
   height: 6px;
 }
-.widget-content ul.visitor-regions li .user-count {
+.widget-content ul.visitor-regions li .user-count, .widget-content ul.visitor-cities li .user-count {
   width: 60px;
   margin-left: 10px;
   background-color: #e5e5e5;
@@ -13180,13 +13180,23 @@ nav.article-list ul li:first-child {
   border-radius: 4px;
   font-size: 0.9rem;
 }
+.widget-content ul.visitor-regions li {
+  cursor: pointer;
+}
+.widget-content ul.visitor-regions li:hover .user-count {
+  background-color: #03ae93;
+  color: white;
+}
 .widget-content .visitors {
   height: 100%;
-  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding-right: 2rem;
+  padding-left: 2rem;
+  display: none;
+}
+.widget-content .visitors.show {
+  display: flex;
 }
 .widget-content .visitors h3 {
   font-weight: 400;
@@ -13198,12 +13208,22 @@ nav.article-list ul li:first-child {
   font-size: 2rem;
   line-height: 3rem;
 }
+.widget-content .cities {
+  display: none;
+  padding-left: 1rem;
+  border-left: 1px solid #e6e6e6;
+  height: 100%;
+}
+.widget-content .cities.show {
+  display: block;
+}
 
 .user-count .content {
   background-color: #f2f2f2;
   padding: 0.5rem;
   border-radius: 8px;
   text-align: center;
+  cursor: pointer;
 }
 .user-count .content h3 {
   font-weight: 400;
@@ -13213,6 +13233,13 @@ nav.article-list ul li:first-child {
 .user-count .content > div {
   font-weight: bold;
   font-size: 1.2rem;
+}
+.user-count.active .content {
+  background-color: #03ae93;
+  color: white;
+}
+.user-count.active .content h3 {
+  color: white;
 }
 /*!********************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[1].use[2]!./src/Bundle/WorkflowBundle/Resources/assets/css/style.css ***!
