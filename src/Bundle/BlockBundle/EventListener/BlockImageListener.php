@@ -2,7 +2,9 @@
 
 namespace Integrated\Bundle\BlockBundle\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\PersistentCollection;
 use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\Relation;
@@ -10,6 +12,7 @@ use Integrated\Common\Content\Form\Event\BlockEvent;
 use Integrated\Common\Content\Form\Event\ValidationEvent;
 use Integrated\Common\Content\Form\Events;
 use Integrated\Common\Services\MainFlusher;
+use ReflectionClass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BlockImageListener implements EventSubscriberInterface
@@ -35,42 +38,69 @@ class BlockImageListener implements EventSubscriberInterface
 
     public function buildForm(BlockEvent $event): void
     {
-        $block = $this->documentManager->getRepository(Block::class)->find($event->getBlock());
+        $block = $this->documentManager->getRepository(Block::class)->find($event->getBlock()->getId());
 
         if ($block === null) {
             $block = $event->getBlock();
         }
 
-        if (method_exists($block, 'getFeaturedImage')) {
-            if ($block->getFeaturedImage() != null) {
-                $image = $this->documentManager->getRepository(Content::class)->find(
-                    $block->getFeaturedImage()->getId()
-                );
+        foreach ($block->getRelations() as $relation) {
+            $block->removeRelation($relation);
+        }
 
-                $block->addRelation(
-                    (new Relation())
-                        ->setRelationId('__featured_image')
-                        ->setRelationType('embedded')
-                        ->addReference($image)
-                );
-
-                $this->flusher->flush();
+        if (method_exists($block, 'getSubscriptions')) {
+            foreach ($block->getSubscriptions() as $subscription) {
+                $this->processImage($block, function () use ($subscription) {
+                    return $subscription->getImage();
+                },'__subscription_image');
             }
         }
 
         if (method_exists($block, 'getImage')) {
-            if ($block->getPicture() != null) {
-                $image = $this->documentManager->getRepository(Content::class)->find($block->getPicture()->getId());
+            $this->processImage($block, function () use ($block) {
+                return $block->getImage();
+            },'__image');
+        }
 
-                $block->addRelation(
-                    (new Relation())
-                        ->setRelationId('__image')
-                        ->setRelationType('embedded')
-                        ->addReference($image)
-                );
+        if (method_exists($block, 'getImageOverlay')) {
+            $this->processImage($block, function () use ($block) {
+                return $block->getImageOverlay();
+            },'__image_overlay');
+        }
 
-                $this->flusher->flush();
-            }
+        $this->flusher->flush();
+    }
+
+    private function processImage($block, $imageGetter, $relationId)
+    {
+        $image = $this->getImageFromBlock($imageGetter);
+        if ($image) {
+            $this->addRelationToBlock($block, $image, $relationId);
+        }
+    }
+
+    private function getImageFromBlock($imageGetter)
+    {
+        if ($imageGetter() != null) {
+            return $this->documentManager->getRepository(Content::class)->find(
+                $imageGetter()->getId()
+            );
+        }
+        return null;
+    }
+
+    private function addRelationToBlock($block, $image, $relationId)
+    {
+        if (!$block->getRelation($relationId)) {
+            $block->addRelation(
+                (new Relation())
+                    ->setRelationId($relationId)
+                    ->setRelationType('embedded')
+                    ->addReference($image)
+            );
+        } else {
+            $relation = $block->getRelation($relationId);
+            $relation->addReference($image);
         }
     }
 }

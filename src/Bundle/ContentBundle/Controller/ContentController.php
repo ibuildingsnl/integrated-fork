@@ -824,11 +824,7 @@ class ContentController extends AbstractController
         $query = $qb->getQuery();
 
         $blockQb = $this->documentManager->createQueryBuilder(Block::class);
-        $expr1 = $blockQb->expr()->field('image.$id')->equals($content->getId());
-        $expr2 = $blockQb->expr()->field('imageOverlay.$id')->equals($content->getId());
-
-        $blockQb->addOr($expr1);
-        $blockQb->addOr($expr2);
+        $blockQb->field('relations.references.$id')->equals($content->getId());
 
         $blockQuery = $blockQb->getQuery();
 

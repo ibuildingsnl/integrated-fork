@@ -369,11 +369,11 @@ abstract class Block implements BlockInterface
     public function getRelations()
     {
         // should always be instanceOf collection, but due to corrupt database can sometimes be null
-        if (!$this->relation instanceof Collection) {
-            $this->relation = new ArrayCollection();
+        if (!$this->relations instanceof Collection) {
+            $this->relations = new ArrayCollection();
         }
 
-        return $this->relation;
+        return $this->relations;
     }
 
     public function setRelations(Collection $relations)
@@ -424,5 +424,13 @@ abstract class Block implements BlockInterface
     public function __toString()
     {
         return $this->getId();
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }
