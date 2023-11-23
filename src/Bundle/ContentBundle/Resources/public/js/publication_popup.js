@@ -141,6 +141,11 @@ if (publishActions.length > 0) {
                 channels.append(option);
             });
             popup.classList.add('show');
+
+            var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent', settings);
+
+            window.dispatchEvent(openPublishSettingsEvent);
+
         });
         item.appendChild(a);
 

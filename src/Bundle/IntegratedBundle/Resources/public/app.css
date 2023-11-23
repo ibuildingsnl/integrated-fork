@@ -6158,6 +6158,8 @@ input#block_edit_id.disabled {
 .date-text {
   color: #03ae93;
   cursor: pointer;
+  height: 33px;
+  line-height: 33px;
 }
 
 /* HREFS */
@@ -11714,6 +11716,23 @@ pre#editor {
 }
 .publishActions .form-item select {
   height: 33px;
+  padding: 0.4rem 1rem;
+}
+.publishActions .form-item .tailwind-datetime {
+  padding-right: 30%;
+  padding-top: 0 !important;
+}
+.publishActions .form-item .tailwind-datetime .clear-date {
+  top: 0;
+  right: 0;
+  height: 33px;
+  line-height: 33px;
+}
+.publishActions .form-item .tailwind-datetime .set-now-date {
+  top: 0;
+  right: 55px;
+  height: 33px;
+  line-height: 33px;
 }
 .publishActions .widget {
   width: calc(100% - 120px);

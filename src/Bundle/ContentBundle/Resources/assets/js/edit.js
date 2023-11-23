@@ -28,10 +28,7 @@ function prepDateTimeFields() {
             } else {
                 dateText.textContent = dateSelection.closest('.aside-item-wrapper').getAttribute('data-set-date-text');
             }
-            dateText.onclick = function() {
-                console.log('clicked it')
-                toggleDateSelection(true, dateSelection, dateText);
-            };
+            console.log(dateText)
             dateSelection.parentNode.insertBefore(dateText, dateSelection);
         } else {
             dateText = dateSelection.parentNode.querySelector('.date-text');
@@ -44,9 +41,6 @@ function prepDateTimeFields() {
             okButton = document.createElement('span');
             okButton.className = 'ok-date';
             okButton.textContent = 'OK';
-            okButton.onclick = function() {
-                toggleDateSelection(false, dateSelection, dateText);
-            };
 
             dateSelection.appendChild(okButton);
         } else {
@@ -58,40 +52,6 @@ function prepDateTimeFields() {
             setToNowButton = document.createElement('span');
             setToNowButton.className = 'set-now-date';
             setToNowButton.textContent = 'Set to Now';
-            setToNowButton.onclick = function() {
-                const now = new Date();
-                const dayElement = dateSelection.querySelector(
-                    '[id$="_date_day"]')
-                    ? dateSelection.querySelector('[id$="_date_day"]')
-                    : dateSelection.querySelector('[id$="_date_day_popup"]');
-                const monthElement = dateSelection.querySelector(
-                    '[id$="_date_month"]')
-                    ? dateSelection.querySelector('[id$="_date_month"]')
-                    : dateSelection.querySelector('[id$="_date_month_popup"]');
-                const yearElement = dateSelection.querySelector(
-                    '[id$="_date_year"]')
-                    ? dateSelection.querySelector('[id$="_date_year"]')
-                    : dateSelection.querySelector('[id$="_date_year_popup"]');
-                const hourElement = dateSelection.querySelector(
-                    '[id$="_time_hour"]')
-                    ? dateSelection.querySelector('[id$="_time_hour"]')
-                    : dateSelection.querySelector('[id$="_time_hour_popup"]');
-                const minuteElement = dateSelection.querySelector(
-                    '[id$="_time_minute"]')
-                    ? dateSelection.querySelector('[id$="_time_minute"]')
-                    : dateSelection.querySelector('[id$="_time_minute_popup"]');
-
-                if (dayElement && monthElement && yearElement && hourElement &&
-                    minuteElement) {
-                    dayElement.value = now.getDate().toString();
-                    monthElement.value = (now.getMonth() + 1).toString(); // Months are 0-indexed
-                    yearElement.value = now.getFullYear().toString();
-                    hourElement.value = now.getHours().toString();
-                    minuteElement.value = now.getMinutes().toString();
-                }
-
-                updateDateText(dateSelection, dateText);
-            };
 
             dateSelection.appendChild(setToNowButton);
         } else {
@@ -102,15 +62,61 @@ function prepDateTimeFields() {
             clearButton = document.createElement('span');
             clearButton.className = 'clear-date';
             clearButton.textContent = 'Reset';
-            clearButton.onclick = function() {
-                console.log('Clear')
-                clearDateTimeFields(dateSelection);
-                updateDateText(dateSelection, dateText);
-            };
+
             dateSelection.appendChild(clearButton);
         } else {
             clearButton = dateSelection.querySelector('.clear-date');
         }
+
+        dateText.onclick = function() {
+            console.log('clicked it')
+            toggleDateSelection(true, dateSelection, dateText);
+        };
+
+        okButton.onclick = function() {
+            toggleDateSelection(false, dateSelection, dateText);
+        };
+
+        clearButton.onclick = function() {
+            console.log('Clear')
+            clearDateTimeFields(dateSelection);
+            updateDateText(dateSelection, dateText);
+        };
+
+        setToNowButton.onclick = function() {
+            const now = new Date();
+            const dayElement = dateSelection.querySelector(
+                '[id$="_date_day"]')
+                ? dateSelection.querySelector('[id$="_date_day"]')
+                : dateSelection.querySelector('[id$="_date_day_popup"]');
+            const monthElement = dateSelection.querySelector(
+                '[id$="_date_month"]')
+                ? dateSelection.querySelector('[id$="_date_month"]')
+                : dateSelection.querySelector('[id$="_date_month_popup"]');
+            const yearElement = dateSelection.querySelector(
+                '[id$="_date_year"]')
+                ? dateSelection.querySelector('[id$="_date_year"]')
+                : dateSelection.querySelector('[id$="_date_year_popup"]');
+            const hourElement = dateSelection.querySelector(
+                '[id$="_time_hour"]')
+                ? dateSelection.querySelector('[id$="_time_hour"]')
+                : dateSelection.querySelector('[id$="_time_hour_popup"]');
+            const minuteElement = dateSelection.querySelector(
+                '[id$="_time_minute"]')
+                ? dateSelection.querySelector('[id$="_time_minute"]')
+                : dateSelection.querySelector('[id$="_time_minute_popup"]');
+
+            if (dayElement && monthElement && yearElement && hourElement &&
+                minuteElement) {
+                dayElement.value = now.getDate().toString();
+                monthElement.value = (now.getMonth() + 1).toString(); // Months are 0-indexed
+                yearElement.value = now.getFullYear().toString();
+                hourElement.value = now.getHours().toString();
+                minuteElement.value = now.getMinutes().toString();
+            }
+
+            updateDateText(dateSelection, dateText);
+        };
 
         dateSelection.style.display = 'none';
 
