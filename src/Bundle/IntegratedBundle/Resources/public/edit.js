@@ -8403,15 +8403,19 @@ $(function () {
         });
         $assigned.removeAttr('disabled');
         $.each(response.fields, function (field, values) {
-          var $el = $('.' + field);
-          if ($el) {
-            $el.removeAttr('required');
-            $el.removeAttr('disabled');
-            $el.parents('.form-group').show();
+          var $el = $('.form-item.' + field);
+          if ($el.length) {
+            var $inputs = $el.find('select, input, textarea');
+            $inputs.removeAttr('required').removeAttr('disabled');
+            $el.show();
             if (values.disabled) {
-              $el.attr('disabled', 'disabled').parents('.form-group').hide();
+              $inputs.attr('disabled', 'disabled');
+              $el.hide();
             } else if (values.required) {
-              $el.attr('required', 'required');
+              $inputs.attr('required', 'required');
+            }
+            if ($inputs.hasClass('select2-hidden-accessible')) {
+              $inputs.trigger('change.select2');
             }
           }
         });
