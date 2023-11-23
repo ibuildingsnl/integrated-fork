@@ -22,27 +22,27 @@ class Event extends Article
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 495,
         'label' => 'Event start',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
+        'attr' => ['style' => 'sidebar', 'icon' => 'calendar', 'class' => 'datetime', 'data-set-date-text' => 'Set start date'],
     ], location: 'sidebar')]
     protected $startDate;
 
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: [
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
         'priority' => 494,
         'label' => 'Event end',
-        'attr' => ['style' => 'sidebar', 'icon' => 'calendar'],
+        'attr' => ['style' => 'sidebar', 'icon' => 'calendar', 'class' => 'datetime', 'data-set-date-text' => 'Set end date'],
     ], location: 'sidebar')]
     protected $endDate;
 
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www']], location: 'sidebar')]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www', 'data-set-date-text' => 'Set date and time']], location: 'sidebar')]
     protected $website;
 
     /**
@@ -50,6 +50,9 @@ class Event extends Article
      */
     public function getStartDate()
     {
+        if ($this->startDate === null) {
+            return new \DateTime();
+        }
         return $this->startDate;
     }
 

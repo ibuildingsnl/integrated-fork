@@ -1254,6 +1254,26 @@
                 <source>History</source>
                 <target>Geschiedenis</target>
             </trans-unit>
+            <trans-unit id="318">
+                <source>Set deadline</source>
+                <target>Deadline instellen</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>Set depublication date</source>
+                <target>Einddatum instellen</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>Set publication date</source>
+                <target>Publicatiedatum instellen</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>End date</source>
+                <target>Einddatum</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>Start date</source>
+                <target>Publicatiedatum</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

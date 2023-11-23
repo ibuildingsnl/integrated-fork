@@ -11,7 +11,7 @@
 
 namespace Integrated\Bundle\WorkflowBundle\Form\Type;
 
-use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Integrated\Bundle\FormTypeBundle\Form\Type\Select2Type;
 use Integrated\Bundle\UserBundle\Doctrine\UserManager;
 use Integrated\Bundle\WorkflowBundle\Form\EventListener\WorkflowDefaultDataListener;
@@ -82,7 +82,7 @@ class WorkflowFormType extends AbstractType
             ]
         );
 
-        $builder->add('deadline', DateTimeType::class, ['attr' => ['class' => 'form-control deadline']]);
+        $builder->add('deadline', DateTimeType::class, ['placeholder' => ' ', 'attr' => ['class' => 'form-control deadline', 'data-set-date-text' => 'Set deadline']]);
 
         $builder->addEventSubscriber(new WorkflowDefaultDataListener($this->tokenStorage));
     }

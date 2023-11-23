@@ -597,11 +597,16 @@ pre#editor {
             flex-direction: column;
         }
     }
-    .form-item .control-label {
-        width: 100px;
+    .form-item {
+        .control-label {
+            width: 120px;
+        }
+        select {
+            height: 33px;
+        }
     }
     .widget {
-        width: calc(100% - 100px);
+        width: calc(100% - 120px);
         input {
             max-width: 100%;
         }

@@ -6095,6 +6095,71 @@ input#block_edit_id.disabled {
   background-color: #dfe3e9;
 }
 
+.tailwind-datetime {
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+.tailwind-datetime .tailwind-date {
+  display: flex;
+  width: 70%;
+}
+.tailwind-datetime .tailwind-date select:first-child {
+  width: 121px;
+}
+.tailwind-datetime .tailwind-time {
+  display: flex;
+  width: 40%;
+  align-items: center;
+}
+.tailwind-datetime .tailwind-time select:last-child {
+  margin-left: 0.25rem;
+}
+.tailwind-datetime select {
+  margin-right: 0.25rem;
+  display: block;
+  background-image: unset !important;
+}
+.tailwind-datetime span.ok-date {
+  height: 32px;
+  background-color: #03ae93;
+  width: 42px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+.tailwind-datetime span.set-now-date {
+  position: absolute;
+  top: -25px;
+  right: 55px;
+  color: #04ae93;
+  cursor: pointer;
+  border: 1px solid #dee3e9;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 8px 0 0 8px;
+}
+.tailwind-datetime span.clear-date {
+  position: absolute;
+  right: 0;
+  top: -25px;
+  color: #c64230;
+  cursor: pointer;
+  border: 1px solid #dee3e9;
+  border-left: 0;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 0 8px 8px 0;
+}
+
+.date-text {
+  color: #03ae93;
+  cursor: pointer;
+}
+
 /* HREFS */
 .href-red {
   color: #FF0000;
@@ -11645,10 +11710,13 @@ pre#editor {
   flex-direction: column;
 }
 .publishActions .form-item .control-label {
-  width: 100px;
+  width: 120px;
+}
+.publishActions .form-item select {
+  height: 33px;
 }
 .publishActions .widget {
-  width: calc(100% - 100px);
+  width: calc(100% - 120px);
 }
 .publishActions .widget input {
   max-width: 100%;

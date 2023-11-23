@@ -33,6 +33,9 @@ class PublishTime implements PublishTimeInterface
      */
     public function getStartDate(): ?\DateTimeInterface
     {
+        if ($this->startDate === null) {
+            return new \DateTime();
+        }
         return $this->startDate;
     }
 

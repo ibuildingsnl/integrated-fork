@@ -28,20 +28,22 @@ function openPublishingSettings(channelId, input) {
 
     settings.classList.add('show');
 
-    settings.querySelectorAll('[name*="[startDate]"]').forEach(function(d) {
-        d.value = d.value || document.querySelector('[name="integrated_content[publishTime][startDate]"]')?.value;
+
+    settings.querySelectorAll('[name*="[startDate][date][day]"], [name*="[startDate][date][month]"], [name*="[startDate][date][year]"], [name*="[startDate][time][hour]"], [name*="[startDate][time][minute]"]').forEach(function(d) {
+        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
+        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][startDate]${fieldNamePart}"]`)?.value;
+        d.value = d.value || correspondingValue;
     });
-    settings.querySelectorAll('[name*="[endDate]"]').forEach(function(d) {
-        d.value = d.value || document.querySelector('[name="integrated_content[publishTime][endDate]"]')?.value;
+
+    settings.querySelectorAll('[name*="[endDate][date][day]"], [name*="[endDate][date][month]"], [name*="[endDate][date][year]"], [name*="[endDate][time][hour]"], [name*="[endDate][time][minute]"]').forEach(function(d) {
+        const fieldNamePart = d.name.match(/\[(date|time)\]\[(day|month|year|hour|minute)]/)[0];
+        const correspondingValue = document.querySelector(`[name="integrated_content[publishTime][endDate]${fieldNamePart}"]`)?.value;
+        d.value = d.value || correspondingValue;
     });
-    settings.addEventListener('click', function (ev) {
-        if (!settings.querySelector('.publication-settings-aside.show').contains(ev.target)) {
-            settings.classList.remove('show') ;
-        }
-        document.querySelectorAll('.editor-overlay').forEach(div => {
-            div.classList.remove('show');
-        });
-    });
+
+    var openPublishSettingsEvent = new CustomEvent('openPublishSettingsEvent', settings);
+
+    window.dispatchEvent(openPublishSettingsEvent);
 }
 
 // Add publication settings buttons
@@ -174,13 +176,15 @@ document.addEventListener('keydown', function (ev) {
 });
 
 document.addEventListener('click', function (ev) {
-    if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
-        document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
-            div.classList.remove('show');
-        });
-        document.querySelectorAll('.editor-overlay.show').forEach(div => {
-            div.classList.remove('show');
-        });
+    if (document.querySelectorAll('.publication-settings-aside.show')) {
+        if (!ev.target.closest('.publication-settings-aside') && !ev.target.closest('.aside-holder') && !ev.target.closest('#toolbar')) {
+            document.querySelectorAll('.publication-settings-aside.show').forEach(div => {
+                div.classList.remove('show');
+            });
+            document.querySelectorAll('.editor-overlay.show').forEach(div => {
+                div.classList.remove('show');
+            });
+        }
     }
 });
 

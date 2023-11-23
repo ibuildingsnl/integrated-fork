@@ -13,9 +13,9 @@ namespace Integrated\Bundle\ContentBundle\Form\Type;
 
 use Integrated\Bundle\ContentBundle\Document\Content\Embedded\PublishTime;
 use Integrated\Bundle\ContentBundle\Form\DataTransformer\MaxDateTimeTransformer;
-use Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType;
 use Integrated\Common\Content\PublishTimeInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
@@ -31,11 +31,20 @@ class PublishTimeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('startDate', DateTimeType::class);
+        $builder->add('startDate', DateTimeType::class, [
+            'placeholder' => ' ',
+            'attr' => [
+                'data-set-date-text' => 'Set publication date'
+            ]
+        ]);
 
         $builder->add(
-            $builder->create('endDate', DateTimeType::class)
-                ->addModelTransformer(new MaxDateTimeTransformer())
+            $builder->create('endDate', DateTimeType::class, [
+                'placeholder' => ' ',
+                'attr' => [
+                    'data-set-date-text' => 'Set depublication date'
+                ]
+        ])->addModelTransformer(new MaxDateTimeTransformer())
         );
     }
 
@@ -50,7 +59,7 @@ class PublishTimeType extends AbstractType
                 if (!$publishTime) {
                     return;
                 }
-                $startDate = $publishTime->getStartDate();
+                $startDate = $publishTime->getStartDate() ?: new \DateTime();
                 $endDate = $publishTime->getEndDate();
 
                 if (!$startDate instanceof \DateTime) {

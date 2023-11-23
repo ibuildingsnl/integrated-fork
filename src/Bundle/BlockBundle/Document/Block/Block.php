@@ -57,13 +57,23 @@ abstract class Block implements BlockInterface
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', location: 'custom')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
+        'attr' => [
+            'data-set-date-text' => 'Set publication date'
+        ]
+    ], location: 'custom')]
     protected $publishedAt;
 
     /**
      * @var \DateTime
      */
-    #[Type\Field(type: 'Integrated\Bundle\FormTypeBundle\Form\Type\DateTimeType', options: ['required' => false], location: 'custom')]
+    #[Type\Field(type: 'Symfony\Component\Form\Extension\Core\Type\DateTimeType', options: [
+        'placeholder' => ' ',
+        'required' => false,
+        'attr' => [
+            'data-set-date-text' => 'Set depublication date'
+        ]
+    ], location: 'custom')]
     protected $publishedUntil;
 
     /**
@@ -206,6 +216,9 @@ abstract class Block implements BlockInterface
      */
     public function getPublishedAt()
     {
+        if ($this->publishedAt === null) {
+            return new \DateTime();
+        }
         return $this->publishedAt;
     }
 

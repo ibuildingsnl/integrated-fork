@@ -871,3 +871,76 @@ input#block_edit_id.disabled {
     pointer-events: none;
     background-color: #dfe3e9;
 }
+
+.tailwind-datetime {
+    display: flex;
+    width: 100%;
+    position: relative;
+
+    .tailwind-date {
+        display: flex;
+        width: 70%;
+
+        select:first-child {
+            width: 121px;
+        }
+    }
+
+    .tailwind-time {
+        display: flex;
+        width: 40%;
+        align-items: center;
+
+        select:last-child {
+            margin-left: .25rem;
+        }
+    }
+
+    select {
+        margin-right: .25rem;
+        display: block;
+        background-image: unset !important;
+    }
+
+    span.ok-date {
+        height: 32px;
+        background-color: #03ae93;
+        width: 42px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        border-radius: 8px;
+        color: white;
+        cursor:pointer;
+    }
+
+    span.set-now-date {
+        position: absolute;
+        top: -25px;
+        right: 55px;
+        color: #04ae93;
+        cursor: pointer;
+        border: 1px solid #dee3e9;
+        padding-right: 10px;
+        padding-left: 10px;
+        border-radius: 8px 0 0 8px;
+    }
+    span.clear-date {
+        position: absolute;
+        right: 0;
+        top: -25px;
+        color: #c64230;
+        cursor: pointer;
+        border: 1px solid #dee3e9;
+        border-left: 0;
+        padding-right: 10px;
+        padding-left: 10px;
+        border-radius: 0 8px 8px 0;
+    }
+}
+
+.date-text {
+    color: #03ae93;
+    cursor: pointer;
+}
+
