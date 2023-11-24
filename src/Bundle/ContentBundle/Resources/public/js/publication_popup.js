@@ -101,12 +101,22 @@ if (publishActions.length > 0) {
                     container.querySelectorAll(pubInputSelector).forEach(function (input, i) {
                         input.value = data[i];
                     });
+
                     const input = document.querySelector('input[data-channel-selector="'+container.dataset.publicationChannel+'"]');
                     input.checked = true;
+                    var event = new Event('change', { 'bubbles': true, 'cancelable': true });
+                    input.dispatchEvent(event);
+
                     const brand = input.closest('.brand-container');
                     if (brand) {
                         brand.querySelector('input.brand-choice').checked = true;
+
+                        brand.querySelectorAll('.publication-channel-toggle-button')
+                        .forEach((brandChannelsToggle) => {
+                            brandChannelsToggle.style.display = input.checked ? 'flex' : 'none';
+                        });
                     }
+
                 });
                 popup.classList.remove('show');
                 ev.preventDefault();

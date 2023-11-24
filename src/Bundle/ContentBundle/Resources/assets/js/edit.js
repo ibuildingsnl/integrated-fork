@@ -28,7 +28,6 @@ function prepDateTimeFields() {
             } else {
                 dateText.textContent = dateSelection.closest('.aside-item-wrapper').getAttribute('data-set-date-text');
             }
-            console.log(dateText)
             dateSelection.parentNode.insertBefore(dateText, dateSelection);
         } else {
             dateText = dateSelection.parentNode.querySelector('.date-text');
@@ -69,7 +68,6 @@ function prepDateTimeFields() {
         }
 
         dateText.onclick = function() {
-            console.log('clicked it')
             toggleDateSelection(true, dateSelection, dateText);
         };
 
@@ -78,7 +76,6 @@ function prepDateTimeFields() {
         };
 
         clearButton.onclick = function() {
-            console.log('Clear')
             clearDateTimeFields(dateSelection);
             updateDateText(dateSelection, dateText);
         };
@@ -125,7 +122,6 @@ function prepDateTimeFields() {
 }
 
 function toggleDateSelection(showSelection, dateSelection, dateText) {
-    console.log(dateSelection)
     if (showSelection) {
         dateSelection.style.display = 'flex';
         dateText.style.display = 'none';
