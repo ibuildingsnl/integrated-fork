@@ -1219,10 +1219,22 @@
                 <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
             </trans-unit>
             <trans-unit id="309">
+                <source>Your content starts here</source>
+                <target>Je content begint hier</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>Select</source>
+                <target>Selecteer</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>Settings</source>
+                <target>Instellingen</target>
+            </trans-unit>
+            <trans-unit id="312">
                 <source>New brand</source>
                 <target>Nieuw merk</target>
             </trans-unit>
-            <trans-unit id="310">
+            <trans-unit id="313">
                 <source>Brands</source>
                 <target>Merken</target>
             </trans-unit>

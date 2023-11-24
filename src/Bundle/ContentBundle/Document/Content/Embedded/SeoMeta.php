@@ -7,27 +7,27 @@ class SeoMeta
     /**
      * @var string
      */
-    protected $metaTitle;
+    protected $metaTitle = '';
 
     /**
      * @var string
      */
-    protected $metaDescription;
+    protected $metaDescription = '';
 
     /**
      * @var string
      */
-    protected $focusKeyphrase;
+    protected $focusKeyphrase = '';
 
     /**
      * @var string
      */
-    protected $seoScore;
+    protected $seoScore = '';
 
     /**
      * @var string
      */
-    protected $readabilityScore;
+    protected $readabilityScore = '';
 
     public function getFocuskeyphrase(): ?string
     {

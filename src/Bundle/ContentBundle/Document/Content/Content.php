@@ -150,6 +150,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         $this->publishTime = new PublishTime();
         $this->channels = new ArrayCollection();
         $this->connectors = new ArrayCollection();
+        $this->disabled = false;
     }
 
     /**

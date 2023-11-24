@@ -2,67 +2,48 @@
 
 namespace Integrated\Bundle\ContentBundle\Controller;
 
+use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class YoastSeoLanguageProvider
+class YoastSeoLanguageProvider extends AbstractController
 {
-    public function __construct()
-    {
-    }
-
     /**
-     * @var array
+     * @var array<string, string>
      */
-    protected $languageToLocaleMapping = [
-        'da' => 'da_DK',
-        'de' => 'de_DE',
-        'en' => '',
-        'es' => 'es_ES',
-        'fi' => 'fi',
-        'fr' => 'fr_FR',
-        'km' => '',
-        'lv' => '',
+    public const LANGUAGE_LOCALE_MAPPING = [
         'nl' => 'nl_NL',
-        'no' => '',
-        'pl' => 'pl_PL',
-        'pt-BR' => 'pt_BR',
-        'ru' => 'ru_RU',
-        'zh-CN' => 'zh_CN',
     ];
+
+    public function __construct(
+        private readonly FileLocator $locator,
+        private readonly string $location,
+    ) {
+    }
 
     /**
      * Returns json data containing the Yoast SEO translations for the current users backend language.
      *
      * @throws InvalidArgumentException
      */
-    public function fetchTranslations(): JsonResponse
+    public function fetchTranslations(Request $request): JsonResponse
     {
-        $interfaceLanguage = 'nl';
+        $interfaceLanguage = $request->getLocale();
+
         $locale = $this->getValidLocale($interfaceLanguage);
 
-        $cache = new FilesystemAdapter();
+        $path = $this->locator->locate(sprintf('%s/%s.json', $this->location, $locale));
 
-        $translationData = $cache->getItem('translations.'.$locale);
-
-        if (!$translationData->isHit()) {
-            $reflection = new \ReflectionClass('Integrated\Bundle\ContentBundle\Document\Content\Article');
-            // TODO: this is not the nicest way i think to link to the file
-            $filePath = sprintf('%s/../../YoastSeo/lang/%s.json', \dirname($reflection->getFilename()), $locale);
-
-            if (file_exists($filePath)) {
-                $rawTranslationData = file_get_contents($filePath);
-                $translationData->set(json_decode($rawTranslationData, true));
-                $cache->save($translationData);
-            } else {
-                return new JsonResponse(
-                    ['error' => sprintf('No translation available for language %s', $interfaceLanguage)]
-                );
-            }
+        if (file_exists($path)) {
+            return new JsonResponse(file_get_contents($path), Response::HTTP_OK, [], true);
+        } else {
+            return new JsonResponse(
+                ['error' => sprintf('No translation available for language %s', $interfaceLanguage)]
+            );
         }
-
-        return new JsonResponse($translationData->get());
     }
 
     /**
@@ -70,8 +51,8 @@ class YoastSeoLanguageProvider
      */
     protected function getValidLocale(string $interfaceLanguage): string
     {
-        if (\array_key_exists($interfaceLanguage, $this->languageToLocaleMapping)) {
-            return $this->languageToLocaleMapping[$interfaceLanguage];
+        if (\array_key_exists($interfaceLanguage, $this::LANGUAGE_LOCALE_MAPPING)) {
+            return $this::LANGUAGE_LOCALE_MAPPING[$interfaceLanguage];
         }
 
         return $interfaceLanguage;

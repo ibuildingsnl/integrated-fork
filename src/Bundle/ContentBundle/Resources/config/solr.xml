@@ -76,11 +76,13 @@
 
         <!-- query -->
 
-        <service id="integrated_content.solr.query.integrated_content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent">
+        <service id="integrated_content.solr.query.content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\Content">
             <argument type="service" id="integrated_content.solr.query.sorting_options" />
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="event_dispatcher" />
         </service>
+
+        <service id="integrated_content.solr.query.integrated_content" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContent" />
 
         <service id="integrated_content.solr.query.integrated_content_block" class="Integrated\Bundle\ContentBundle\Solr\Query\Type\IntegratedContentBlock" />
 
