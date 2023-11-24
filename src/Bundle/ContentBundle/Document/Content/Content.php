@@ -461,7 +461,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function isPremium(): ?bool
     {
-        return $this->premium ?: null;
+        return $this->premium;
     }
 
     public function setPremium(bool $premium): static
@@ -473,7 +473,7 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
 
     public function isFeatured(): ?bool
     {
-        return $this->featured ?: null;
+        return $this->featured;
     }
 
     public function setFeatured(bool $featured): static
@@ -483,9 +483,9 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
         return $this;
     }
 
-    public function isDisabled(): bool
+    public function isDisabled(): ?bool
     {
-        return $this->disabled ?: false;
+        return $this->disabled;
     }
 
     /**
