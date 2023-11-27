@@ -39,11 +39,16 @@ class LatestArticleWidget implements WidgetInterface
 
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
+        $currentDateTime = new \DateTimeImmutable();
+
         $queryBuilder = $this->manager->createQueryBuilder(Article::class)
             ->field('channels.id')->equals($channel->getId())
+            ->field('publishTime.startDate')->lte($currentDateTime)
             ->sort('publishTime.startDate', 'desc')
             ->limit($this->amount);
+
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
+
 
         return [
             "widget" => $this,
