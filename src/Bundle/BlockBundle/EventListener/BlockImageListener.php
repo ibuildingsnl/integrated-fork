@@ -13,19 +13,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BlockImageListener implements EventSubscriberInterface
 {
-    private $documentManager;
-    private $flusher;
-
-    public function __construct(DocumentManager $documentManager, MainFlusher $flusher)
-    {
-        $this->documentManager = $documentManager;
-        $this->flusher = $flusher;
+    public function __construct(
+        private readonly DocumentManager $documentManager,
+        private readonly MainFlusher $flusher
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::BLOCK_VALIDATE => ['buildForm', -60],

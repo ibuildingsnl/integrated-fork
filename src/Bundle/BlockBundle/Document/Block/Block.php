@@ -365,7 +365,7 @@ abstract class Block implements BlockInterface
         }
     }
 
-    public function getRelations()
+    public function getRelations(): Collection
     {
         // should always be instanceOf collection, but due to corrupt database can sometimes be null
         if (!$this->relations instanceof Collection) {
@@ -375,7 +375,7 @@ abstract class Block implements BlockInterface
         return $this->relations;
     }
 
-    public function setRelations(Collection $relations)
+    public function setRelations(Collection $relations): static
     {
         foreach ($relations as $relation) {
             if ($relation instanceof RelationInterface) {
@@ -386,7 +386,7 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    public function addRelation(RelationInterface $relation)
+    public function addRelation(RelationInterface $relation): static
     {
         if ($exist = $this->getRelation($relation->getRelationId())) {
             $exist->addReferences($relation->getReferences());
@@ -397,7 +397,7 @@ abstract class Block implements BlockInterface
         return $this;
     }
 
-    public function removeRelation(RelationInterface $relation)
+    public function removeRelation(RelationInterface $relation): static
     {
         $this->getRelations()->removeElement($relation);
 
@@ -423,13 +423,5 @@ abstract class Block implements BlockInterface
     public function __toString()
     {
         return $this->getId();
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return get_object_vars($this);
     }
 }

@@ -3,7 +3,7 @@
     <div class="content_columns_holder">
         <div class="w-full sm:w-2/3 content_column">
             <div class="content_column_inner">
-                {% for content in blocks %}
+                {% for content in blockpagination %}
                     <div class="item_row">
                         <h3 class="title">
                             <a target="_blank" href="{{ path('integrated_block_block_edit', {id: content.id}) }}">

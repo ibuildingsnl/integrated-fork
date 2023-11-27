@@ -818,15 +818,15 @@ class ContentController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
-        $qb = $this->documentManager->createQueryBuilder(Content::class);
-        $qb->field('relations.references.$id')->equals($content->getId());
+        $query = $this->documentManager->createQueryBuilder(Content::class)
+                                       ->field('relations.references.$id')
+                                       ->equals($content->getId())
+                                       ->getQuery();
 
-        $query = $qb->getQuery();
-
-        $blockQb = $this->documentManager->createQueryBuilder(Block::class);
-        $blockQb->field('relations.references.$id')->equals($content->getId());
-
-        $blockQuery = $blockQb->getQuery();
+        $blockQuery = $this->documentManager->createQueryBuilder(Block::class)
+                                            ->field('relations.references.$id')
+                                            ->equals($content->getId())
+                                            ->getQuery();
 
         /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->getPaginator()->paginate(
@@ -845,7 +845,7 @@ class ContentController extends AbstractController
         return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
-            'blocks' => $blockPagination,
+            'blockpagination' => $blockPagination,
         ]);
     }
 

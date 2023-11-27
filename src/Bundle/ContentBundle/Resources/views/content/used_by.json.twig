@@ -11,7 +11,7 @@
         {% set items = items|merge([item]) %}
     {% endfor %}
 
-    {% for block in blocks %}
+    {% for block in blockpagination %}
         {% set blockItem = {
             'id': block.id,
             'title': 'Block: ' ~ block.__toString(),
