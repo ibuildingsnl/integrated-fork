@@ -21,7 +21,8 @@ class MostReadWidget implements WidgetInterface
     public function __construct(
         private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository
+        private readonly BrandRepository $brandRepository,
+        private readonly int $limit,
     )
     {
         $this->id = 'most_read';
@@ -97,7 +98,7 @@ class MostReadWidget implements WidgetInterface
                     "desc" => true
                 ]
             ],
-            "limit" => 5 //why not set this in services.xml since you did it for Latest articles also?
+            "limit" => $this->limit 
         ];
         $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
