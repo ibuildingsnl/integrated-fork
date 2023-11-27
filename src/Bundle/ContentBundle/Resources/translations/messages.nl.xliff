@@ -1202,6 +1202,34 @@
                 <source>Copy</source>
                 <target>Kopieer</target>
             </trans-unit>
+            <trans-unit id="305">
+                <source>Remove images</source>
+                <target>Verwijder afbeeldingen</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>Delete images</source>
+                <target>Verwijder afbeeldingen</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>Are you sure you want to delete these files?</source>
+                <target>Weet je zeker dat deze afbeeldingen verwijderd kunnen worden?</target>
+            </trans-unit>
+            <trans-unit id="308">
+                <source>These images are currently used in other content</source>
+                <target>Deze afbeeldingen zijn op dit moment in gebruik bij deze content</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>Your content starts here</source>
+                <target>Je content begint hier</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>Select</source>
+                <target>Selecteer</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>Settings</source>
+                <target>Instellingen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -50,7 +50,7 @@
         "scheb/2fa-bundle": "^6.0",
         "scheb/2fa-google-authenticator": "^6.0",
         "sensio/framework-extra-bundle": "~5.0",
-        "solarium/solarium": "^6.2",
+        "solarium/solarium": "6.2.*",
         "swiftmailer/swiftmailer": "~6.1",
         "symfony/asset": "^5.4",
         "symfony/cache": "^5.4",

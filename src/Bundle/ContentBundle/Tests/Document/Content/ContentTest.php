@@ -43,7 +43,9 @@ abstract class ContentTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetIdFunction()
     {
         $id = 'abc123';
-        $this->assertEquals($id, $this->getContent()->setId($id)->getId());
+        $content = $this->getContent();
+        $content->setId($id);
+        $this->assertEquals($id, $content->getId());
     }
 
     /**
@@ -52,7 +54,9 @@ abstract class ContentTest extends \PHPUnit\Framework\TestCase
     public function testGetAndSetContentTypeFunction()
     {
         $contentType = 'type';
-        $this->assertEquals($contentType, $this->getContent()->setContentType($contentType)->getContentType());
+        $content = $this->getContent();
+        $content->setContentType($contentType);
+        $this->assertEquals($contentType, $content->getContentType());
     }
 
     /**
