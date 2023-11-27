@@ -92,6 +92,14 @@ class VisitorsActivityWidget implements WidgetInterface
                     "endDate" => "today"
                 ]
             ],
+            "orderBys" =>
+                [
+                    "dimension" => [
+                    "orderType"=> "NUMERIC",
+                    "dimensionName" => "date"
+                ],
+                "desc" => false,
+                ],
             "metricAggregations" => [
                 "TOTAL"
             ]

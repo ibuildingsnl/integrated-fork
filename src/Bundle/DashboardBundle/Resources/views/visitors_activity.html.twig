@@ -49,11 +49,12 @@
 
         function updateVisitorActivityChart(selectedValue) {
 
-            var allDatas = [
+           var allDatas = [
                 {% for row in userActivityByDate %}
                 formatDataCountData('{{ row.date }}', '{{ row.userCount }}', '{{ row.screenPageViews }}', '{{ row.bounceRate }}'),
                 {% endfor %}
             ];
+
             updateTotalCount(allDatas, selectedValue)
             if (typeOfGraph == "bounceRate") {
                 var userActivityByDateJS = allDatas.map(data => ({
@@ -71,7 +72,6 @@
                     dataCount: data.userCount,
                 }));
             }
-
             var ctx = document.getElementById('Visitor_Activity-line-chart');
             var dates = [];
             var dataCounts = [];
@@ -86,6 +86,8 @@
                         dates.push(data.date);
                         dataCounts.push(data.dataCount);
                     });
+                    dates.reverse()
+                    dataCounts.reverse()
                     break;
 
                 case '6monthsAgo':
@@ -97,6 +99,7 @@
                         dates.push(data.date);
                         dataCounts.push(data.dataCount);
                     });
+                    console.log()
                     break;
 
                 default:
@@ -108,7 +111,7 @@
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dates.reverse(),
+                    labels: dates,
                     datasets: [chartData],
                 },
                 options: {
@@ -174,7 +177,7 @@
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
             const daysInMonth = {};
-
+            console.log(data);
             const parsedData = data.map(function (item) {
                 return {
                     date: item.date,
