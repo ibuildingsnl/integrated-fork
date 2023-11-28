@@ -19,7 +19,8 @@ class WoodwingController extends AbstractController
         private readonly ObjectRepository $taxonomies,
         private readonly Flusher          $flusher,
         private readonly string           $apiSecret,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): Response
     {

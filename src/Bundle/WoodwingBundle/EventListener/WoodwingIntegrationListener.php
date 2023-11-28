@@ -37,20 +37,21 @@ class WoodwingIntegrationListener implements EventSubscriberInterface
         $type = $this->types->getType($this->contentType);
         $this->content->add($original);
         foreach ($this->publications->forContent($original) as $publication) {
-            if (
-                $publication->getChannel()->getType()->getName() === 'woodwing' &&
-                $publication->getSettings()['send'] ?? false
-            ) {
-                $publication->setSetting('send', false);
-
-                $woodwingPost = $type->create();
-                assert($woodwingPost instanceof WoodwingPost);
-                $woodwingPost->setOriginal($original);
-                $woodwingPost->populate();
-                $woodwingPost->edition = $this->content->find($publication->getSettings()['edition'] ?? null);
-                $woodwingPost->layout = $this->content->find($publication->getSettings()['layout'] ?? null);
-                $this->content->add($woodwingPost);
+            if ($publication->getChannel()->getType()->getName() !== 'woodwing') {
+                continue;
             }
+            if (!$publication->getSettings()['send'] ?? false) {
+                continue;
+            }
+            $publication->setSetting('send', false);
+
+            $woodwingPost = $type->create();
+            assert($woodwingPost instanceof WoodwingPost);
+            $woodwingPost->setOriginal($original);
+            $woodwingPost->populate();
+            $woodwingPost->edition = $this->content->find($publication->getSettings()['edition'] ?? null);
+            $woodwingPost->layout = $this->content->find($publication->getSettings()['layout'] ?? null);
+            $this->content->add($woodwingPost);
         }
     }
 }
