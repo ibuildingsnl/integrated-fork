@@ -8,51 +8,67 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
+        <service id="integrated_woodwing.woodwing_post.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument type="string">\Integrated\Bundle\WoodwingBundle\Document\WoodwingPost</argument>
+        </service>
+
+        <service id="integrated_woodwing.taxonomy.repository" class="Doctrine\ODM\MongoDB\Repository\DocumentRepository">
+            <factory service="doctrine_mongodb.odm.document_manager" method="getRepository" />
+            <argument type="string">\Integrated\Bundle\ContentBundle\Document\Content\Taxonomy</argument>
+        </service>
+
+        <service id="Integrated\Bundle\WoodwingBundle\Controller\WoodwingController" autowire="true" autoconfigure="true">
+            <argument type="service" id="integrated_woodwing.woodwing_post.repository" />
+            <argument type="service" id="integrated_woodwing.taxonomy.repository" />
+            <argument type="service" id="integrated_content.services.flusher" />
+            <argument>%env(resolve:WOODWING_API_SECRET)%</argument>
+
+            <tag name="controller.service_arguments" />
+            <tag name="container.service_subscriber" />
+
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
         <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
             <argument>woodwing</argument>
             <argument>woodwing</argument>
             <argument type="expression">false</argument>
             <argument>woodwing</argument>
-            <argument>\Integrated\Bundle\WoodwingBundle\Form\LinkedInPublicationType</argument>
+            <argument>Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType</argument>
 
             <tag name="integrated_channel.type" />
         </service>
 
-        <service id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConfigType">
-            <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingFactory"></argument>
-<!--            <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>-->
-<!--            <argument type="service" id="integrated_content.routing.generator" ></argument>-->
+        <service id="Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType">
+            <argument type="service" id="integrated_content.content_repository" />
+
+            <tag name="form.type" />
         </service>
 
-
-        <service id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingFactory">
-            <argument>%env(resolve:LINKEDIN_CONSUMER_KEY)%</argument>
-            <argument>%env(resolve:LINKEDIN_CONSUMER_SECRET)%</argument>
-            <argument type="service" id="integrated_content.routing.generator" ></argument>
-        </service>
+        <service id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConfigType" />
 
         <service id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConnector" />
 
         <service id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConfiguration" />
 
-<!--        <service id="Integrated\Bundle\WoodwingBundle\Form\AddLinkedInPageFieldListener" >-->
-<!--            <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\LinkedInFactory" />-->
-<!--&lt;!&ndash;            <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\LinkedInConfiguration" />&ndash;&gt;-->
-<!--&lt;!&ndash;            <tag name="integrated_channel.connector" />&ndash;&gt;-->
-<!--        </service>-->
-
-        <service id="td_connector.woodwing" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
+        <service id="integrated_connector.woodwing" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
             <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConnector" />
             <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConfiguration" />
             <argument type="service" id="logger" />
+
             <tag name="integrated_channel.connector" />
         </service>
 
-        <service id="td_connector.listener.woodwing" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorConfigSubscriber">
-            <argument type="service" id="Integrated\Bundle\WoodwingBundle\Connector\WoodwingConfiguration" />
-            <argument key="$em" type="service" id="doctrine.orm.entity_manager" />
+        <service id="Integrated\Bundle\WoodwingBundle\EventListener\WoodwingIntegrationListener">
+            <argument type="service" id="integrated_content.content_type.manager" />
+            <argument type="service" id="integrated_content.content_repository" />
+            <argument type="service" id="integrated_content.publication_repository" />
+            <argument>woodwing_post</argument>
 
-            <tag name="kernel.event_subscriber" />
+            <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
     </services>

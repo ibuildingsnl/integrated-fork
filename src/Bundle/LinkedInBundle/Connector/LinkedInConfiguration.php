@@ -2,7 +2,6 @@
 
 namespace Integrated\Bundle\LinkedInBundle\Connector;
 
-// use Abraham\LinkedInOAuth\LinkedInOAuthException;
 use Integrated\Bundle\ChannelBundle\Event\ConfigEvent;
 use Integrated\Bundle\ChannelBundle\Model\ConfigurationException;
 use Integrated\Bundle\ChannelBundle\Model\OauthConfigInterface;
@@ -125,7 +124,7 @@ final class LinkedInConfiguration implements OauthConfigInterface
 
         try {
             $response = $this->factory->createClient($token->getToken());
-        } catch (LinkedInOAuthException $e) {
+        } catch (\Throwable $e) {
             throw ConfigurationException::encountered($e);
         }
 

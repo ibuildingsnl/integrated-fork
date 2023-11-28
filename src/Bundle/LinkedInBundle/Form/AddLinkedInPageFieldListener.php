@@ -2,26 +2,23 @@
 
 namespace Integrated\Bundle\LinkedInBundle\Form;
 
-// use JanuSoftware\Facebook\Facebook;
 use Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 class AddLinkedInPageFieldListener implements EventSubscriberInterface
 {
-//    public function __construct(LinkedIn $linkedinFactory)
-    public function __construct(LinkedInFactory $linkedinFactory)
-    {
-        $this->linkedinFactory = $linkedinFactory;
+    public function __construct(
+        private readonly LinkedInFactory $linkedinFactory
+    ) {
     }
 
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'onPreSetData',
