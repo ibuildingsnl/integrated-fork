@@ -182,6 +182,12 @@ class BaseConverter
     ) {
         $result = ExecuteImporter::initializeResult();
 
+        $result['messages'][] = '[INFO] Processing content for external images and files';
+
+        // In Src/Sunra/PhpSimple/simplehtmldom_1_5/simple_html_dom.php We need to change the follwing lines into;
+        // R696: $pattern = "/([\w\-:\*]*)(?:\#([\w-]+)|\.([\w\-]+))?(?:\[@?(!?[\w\-:]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
+        // R1378 if (!preg_match("/^[\w\-:]+$/", $tag)) {
+
         $tags = ['a', 'img'];
         foreach ($tags as $tag) {
             if (!is_bool($html)) {
@@ -242,6 +248,7 @@ class BaseConverter
 
                     if (strlen($element->caption) > 0) {
                         $newData['Image Caption'] = $element->caption;
+                        $result['messages'][] = '[CAPTION] Caption found: ' . $element->caption;
                     }
 
                     if ($href) {
@@ -418,7 +425,7 @@ class BaseConverter
             $newRelation->setRelationType($relation->getType());
 
             if (!\is_array($value)) {
-                $value = preg_split('/[|,]/', $value);
+                $value = preg_split('/[|]/', $value);
             }
 
             foreach ($value as $valueName) {
