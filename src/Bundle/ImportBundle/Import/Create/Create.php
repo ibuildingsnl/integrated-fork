@@ -192,7 +192,7 @@ class Create
 
             if (array_key_exists('Image Caption', $newData) && strlen($newData['Image Caption']) > 0) {
                 $caption = html_entity_decode($newData['Image Caption']);
-                $file->setDescription($caption);
+                $newFile->setDescription($caption);
                 $result['messages'][] = "[CAPTION] Trying to set Caption '{$caption}'";
             }
 
