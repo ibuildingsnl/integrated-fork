@@ -56,7 +56,7 @@ class GetSitePerformancesCommand extends Command
             }
             $encodedUrl = urlencode($url);
             try {
-                $this->getSitePerformance($encodedUrl, $website['id'],$output);
+                $this->getSitePerformance($encodedUrl, $website['id'], $output);
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {
                 $dateTime = new \DateTimeImmutable();
@@ -76,11 +76,33 @@ class GetSitePerformancesCommand extends Command
             }
             $websites[] = [
                 'id' => $channel->getId(),
-                'domain' => 'https://www.' . $domain
+                'domain' => $this->getCleanUrl($domain)
             ];
         }
+        /*
+        $websites[] = [
+            'id' => 'bakkersinbedrijf',
+            'domain' => $this->getCleanUrl('bakkersinbedrijf.nl')
+        ];
+        */
         return $websites;
     }
+
+    function getCleanUrl($url): string
+    {
+    $parsedUrl = parse_url($url);
+
+    $host = $parsedUrl['host'] ?? '';
+    $path = $parsedUrl['path'] ?? '';
+    $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+    $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+
+    $host = str_replace('www.', '', $host);
+
+    return 'https://'.$host . $path . $query . $fragment;
+    }
+
+
 
     public function isValidUrl(string $url): bool
     {
@@ -117,6 +139,7 @@ class GetSitePerformancesCommand extends Command
     private function getPerformanceData(string $url, string $apiKey, string $strategy): ?array
     {
         $performanceData = null;
+
 
         try {
             $request = "https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&category=PERFORMANCE&strategy=$strategy&key=$apiKey";
