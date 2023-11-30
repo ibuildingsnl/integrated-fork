@@ -3,11 +3,11 @@
     <div class="content_columns_holder">
         <div class="w-full sm:w-2/3 content_column">
             <div class="content_column_inner">
-                {% for content in pagination %}
+                {% for block in pagination %}
                     <div class="item_row">
                         <h3 class="title">
-                            <a target="_blank" href="{{ path('integrated_content_content_edit', {id: content.id}) }}">
-                                {{ content }}
+                            <a target="_blank" href="{{ path('integrated_block_block_edit', {id: block.id}) }}">
+                                {{ block }}
                             </a>
                         </h3>
                     </div>

@@ -1,12 +1,12 @@
 {% apply spaceless %}
     {% set items = [] %}
 
-    {% for content in pagination %}
+    {% for block in pagination %}
         {% set item = {
-            'id': content.id,
-            'title': content.__toString(),
-            'href': path('integrated_content_content_edit',
-            {'id': content.id})
+            'id': block.id,
+            'title': block.__toString(),
+            'href': path('integrated_block_block_edit',
+            {'id': block.id})
         } %}
         {% set items = items|merge([item]) %}
     {% endfor %}

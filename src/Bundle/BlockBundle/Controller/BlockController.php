@@ -17,6 +17,7 @@ use Integrated\Bundle\BlockBundle\Form\Type\BlockEditType;
 use Integrated\Bundle\BlockBundle\Form\Type\BlockFilterType;
 use Integrated\Bundle\BlockBundle\Provider\FilterQueryProvider;
 use Integrated\Bundle\ChannelBundle\Form\Type\ActionsType;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Block\BlockInterface;
 use Integrated\Common\Content\Form\Event\BlockEvent;
@@ -316,5 +317,28 @@ class BlockController extends AbstractController
         $builder->add('actions', ActionsType::class, ['buttons' => ['delete', 'cancel']]);
 
         return $builder->getForm();
+    }
+
+    /**
+     * @return Response
+     */
+    public function usedBy(Content $content, Request $request)
+    {
+        $query = $this->documentManager->createQueryBuilder(Block::class)
+                                            ->field('relations.references.$id')
+                                            ->equals($content->getId())
+                                            ->getQuery();
+
+        /** @var $paginator \Knp\Component\Pager\Paginator */
+        $pagination = $this->paginator->paginate(
+            $query,
+            $request->query->get('page', 1),
+            $request->query->get('limit', 15)
+        );
+
+        return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
+            'content' => $content,
+            'pagination' => $pagination,
+        ]);
     }
 }

@@ -12,7 +12,6 @@
 namespace Integrated\Bundle\ContentBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Integrated\Bundle\BlockBundle\Document\Block\Block;
 use Integrated\Bundle\ContentBundle\Doctrine\ContentTypeManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\File;
@@ -823,11 +822,6 @@ class ContentController extends AbstractController
                                        ->equals($content->getId())
                                        ->getQuery();
 
-        $blockQuery = $this->documentManager->createQueryBuilder(Block::class)
-                                            ->field('relations.references.$id')
-                                            ->equals($content->getId())
-                                            ->getQuery();
-
         /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->getPaginator()->paginate(
             $query,
@@ -835,17 +829,9 @@ class ContentController extends AbstractController
             $request->query->get('limit', 15)
         );
 
-        /** @var $paginator \Knp\Component\Pager\Paginator */
-        $blockPagination = $this->getPaginator()->paginate(
-            $blockQuery,
-            $request->query->get('page', 1),
-            $request->query->get('limit', 15)
-        );
-
         return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
-            'blockpagination' => $blockPagination,
         ]);
     }
 
