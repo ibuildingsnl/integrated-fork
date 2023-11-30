@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
@@ -19,10 +20,9 @@ class MostReadWidget implements WidgetInterface
     private readonly string $view;
 
     public function __construct(
-        private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository,
-        private readonly int $limit,
+        private readonly DocumentManager $manager,
+        private readonly int             $limit,
     )
     {
         $this->id = 'most_read';
@@ -34,6 +34,7 @@ class MostReadWidget implements WidgetInterface
     {
         return $this->id;
     }
+
     public function name(): string
     {
         return $this->name;
@@ -47,74 +48,57 @@ class MostReadWidget implements WidgetInterface
     /**
      * @throws GuzzleException
      */
+
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
-        $dateRange = $request->query->get('most_read_date_range') ?? "30daysAgo";
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            return [
-                "widget" => $this,
-                "mostViewedPages" => "No data found",
-                "dateRange" => $dateRange
-            ];
-        }
 
-        $mostViewedPages = $this->getDataFromAnalytics($propertyId, $dateRange);
+        $mostReadArticles = $this->getDataFromDB($channel);
 
         return [
             "widget" => $this,
-            "mostViewedPages" => $mostViewedPages,
-            "dateRange" => $dateRange
+            "mostReadArticles" => $mostReadArticles,
+            "dateRange" => "7daysAgo"
         ];
     }
-    public function getDataFromAnalytics(string $propertyId, string $dateRange): array
-    {
-        $requestBody = [
-            "dateRanges" => [
-                [
-                    "startDate" => "$dateRange",
-                    "endDate" => "today"
-                ]
-            ],
-            "dimensions" => [
-                [
-                    "name" => "pageTitle"
-                ]
-            ],
-            "metrics" => [
-                [
-                    "name" => "screenPageViews"
-                ]
-            ],
-            "orderBys" => [
-                [
-                    "metric" => [
-                        "metricName" => "screenPageViews"
-                    ],
-                    "desc" => true
-                ]
-            ],
-            "limit" => $this->limit 
-        ];
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseData = $analyticsRequest->getResponse();
-        $mostViewedPages = [];
-        if ($responseData != null) {
-            foreach ($responseData['rows'] as $row) {
-                $pageTitle = $row['dimensionValues'][0]['value'];
-                $screenPageViews = (int)$row['metricValues'][0]['value'];
 
-                $mostViewedPages[] = [
-                    'title' => $pageTitle,
-                    'views' => $screenPageViews,
+    public function getDataFromDB($channel)
+    {
+        $views = [
+            'weekly' => 'weeklyViews',
+            'monthly' => 'monthlyViews',
+            'quarterly' => 'quarterlyViews',
+            'semester' => 'semesterViews',
+            'yearly' => 'yearlyViews',
+        ];
+
+        $mostReadArticles = [];
+
+        foreach ($views as $viewKey => $viewValue) {
+            $articlesDB = $this->manager->createQueryBuilder(Article::class)
+                ->field('channels.id')->equals($channel->getId())
+                ->field("metadata.data.$viewValue")
+                ->sort("metadata.data.$viewValue", 'desc')
+                ->limit($this->limit)
+                ->getQuery()
+                ->execute();
+
+            $articles = [];
+
+            foreach ($articlesDB as $article) {
+                $articles[] = [
+                    'id' => $article->getId(),
+                    'slug' => $article->getSlug(),
+                    'title' => $article->getTitle(),
+                    'views' => $article->getMetadata()->get($viewValue),
                 ];
             }
+
+            $mostReadArticles["{$viewKey}MostReadArticles"] = $articles;
         }
-        return $mostViewedPages;
+
+        return $mostReadArticles;
     }
+
 }
+
+

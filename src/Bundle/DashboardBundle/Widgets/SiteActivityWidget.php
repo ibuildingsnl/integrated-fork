@@ -58,6 +58,16 @@ class SiteActivityWidget implements WidgetInterface
             return ["SiteActivity" => "No data found"];
         }
         $allDatas = $this->getDataFromAnalytics($propertyId, $dateRange);
+
+        if ($allDatas == null) {
+            return [
+                "SiteActivity" => "No data found",
+                "widget" => $this,
+                "totalViews" => "No data found",
+                "bounceRate" => "No data found",
+                "viewByCountry" => [],
+            ];
+        }
         $siteActivity = $allDatas['siteActivity'];
         $totalViews = $allDatas['siteTotals']['totalUser'];
         $bounceRate = $allDatas['siteTotals']['bounceRate'];
@@ -115,12 +125,12 @@ class SiteActivityWidget implements WidgetInterface
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseData = $analyticsRequest->getResponse();
         $allDatas = [];
-        if ($responseData != null) {
+        if ($responseData != null and isset($responseData['rows'])) {
             $siteActivity = $this->getSiteActivity($responseData);
             $siteTotals = $this->getSiteTotals($responseData);
             $allDatas = [
-             'siteActivity' => $siteActivity,
-             'siteTotals' => $siteTotals,
+                'siteActivity' => $siteActivity,
+                'siteTotals' => $siteTotals,
             ];
         }
         return $allDatas;
@@ -137,7 +147,7 @@ class SiteActivityWidget implements WidgetInterface
             $siteActivity[] = [
                 'country' => $country,
                 'city' => $city,
-                'bounceRate' => round($bounceRate * 100,2),
+                'bounceRate' => round($bounceRate * 100, 2),
                 'totalUser' => $totalUser,
             ];
         }
@@ -148,9 +158,9 @@ class SiteActivityWidget implements WidgetInterface
     {
         $totalsData = $responseData['totals'][0];
         return [
-            'bounceRate' => round(($totalsData['metricValues'][0]['value'] * 100),2),
+            'bounceRate' => round(($totalsData['metricValues'][0]['value'] * 100), 2),
             'totalUser' => $totalsData['metricValues'][1]['value'],
-            ];
+        ];
     }
 
     private function getViewByCountry(array $sortedCountries, float $totalVisits): array
@@ -290,8 +300,7 @@ class SiteActivityWidget implements WidgetInterface
                 continue;
             }
 
-            if ($cityName === "" || $cityName === "(undefined)" || $cityName === "(not set)")
-            {
+            if ($cityName === "" || $cityName === "(undefined)" || $cityName === "(not set)") {
                 $cityName = 'Unknown city';
             }
             $fullCityName = $cityName . " (" . $countryName . ")";

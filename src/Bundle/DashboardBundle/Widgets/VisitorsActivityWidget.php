@@ -109,7 +109,7 @@ class VisitorsActivityWidget implements WidgetInterface
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseData = $analyticsRequest->getResponse();
         $userActivityByDate = [];
-        if ($responseData != null) {
+        if ($responseData != null and isset($responseData['rows'])) {
             foreach ($responseData['rows'] as $row) {
                 $date = $row['dimensionValues'][0]['value'];
                 $activeUsers = $row['metricValues'][0]['value'];

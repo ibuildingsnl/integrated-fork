@@ -31,10 +31,9 @@
             <tag name="integrated_dashboard.widget" />
         </service>
         <service id="Integrated\Bundle\DashboardBundle\Widgets\MostReadWidget">
-            <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
             <argument type="service" id="monolog.logger"/>
-            <argument type="service" id="integrated_brand.brand.repository" />
-            <argument type="expression">5</argument>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="expression">6</argument>
             <tag name="integrated_dashboard.widget" />
         </service>
         <service id="Integrated\Bundle\DashboardBundle\Widgets\VisitorsActivityWidget">

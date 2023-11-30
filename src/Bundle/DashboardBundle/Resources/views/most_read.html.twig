@@ -1,29 +1,57 @@
 <div class="widget col-left w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
-            {% if (mostViewedPages is not iterable) %}
-                <h2>{{ mostViewedPages }}</h2>
+            {% if (mostReadArticles is not iterable) %}
+                <h2>{{ mostReadArticles }}</h2>
             {% else %}
                 <h2>{% trans %}Most read content{% endtrans %}</h2>
             {% endif %}
             <select id="most_read_date_range" name="most_read_date_range"
-                    class="dashboardForm-select dashboardForm-event">
-                <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
-                <option value="90daysAgo">{% trans %}3 Last months{% endtrans %}</option>
-                <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
+                    class="dashboardForm-select">
+                <option value="weeklyMostReadArticles">{% trans %}This week{% endtrans %}</option>
+                <option value="monthlyMostReadArticles">{% trans %}This month{% endtrans %}</option>
+                <option value="quarterlyMostReadArticles">{% trans %}This quarter{% endtrans %}</option>
+                <option value="semesterMostReadArticles">{% trans %}This semester{% endtrans %}</option>
+                <option value="yearlyMostReadArticles">{% trans %}This Year{% endtrans %}</option>
             </select>
         </div>
-        <nav class="article-list">
+        <nav class="article-list" id="articleList">
             <ul>
-                {% for article in mostViewedPages %}
-                    <li class="facet-wrappper">
-                        <span class="facet-title">
-                            <b> {{ article.title }} </b>
-                        </span>
-                        <span class="facet-count">{{ article.views }}</span>
-                    </li>
-                {% endfor %}
+
             </ul>
         </nav>
     </div>
+    <script>
+        const mostReadArticles = {{ mostReadArticles | json_encode | raw }};
+
+        const selectMostReadDate = document.getElementById('most_read_date_range');
+
+        updateMostRead('weeklyMostReadArticles')
+        selectMostReadDate.addEventListener('change', function() {
+            updateMostRead(selectMostReadDate.value);
+        });
+
+        function updateMostRead(dateRange) {
+            var articleListContainer = document.getElementById('articleList');
+            var ulElement = articleListContainer.querySelector('ul');
+            ulElement.innerHTML = '';
+
+            mostReadArticles[dateRange].forEach((article) => {
+                var liElement = document.createElement('li');
+                liElement.classList.add('facet-wrappper');
+
+                var titleElement = document.createElement('span');
+                titleElement.classList.add('facet-title');
+                titleElement.innerHTML = `<b>${article.title}</b>`;
+                liElement.appendChild(titleElement);
+
+                var countElement = document.createElement('span');
+                countElement.classList.add('facet-count');
+                countElement.textContent = article.views;
+                liElement.appendChild(countElement);
+
+                ulElement.appendChild(liElement);
+            });
+        }
+    </script>
 </div>
