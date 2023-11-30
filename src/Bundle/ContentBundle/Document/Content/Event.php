@@ -42,7 +42,7 @@ class Event extends Article
     /**
      * @var string
      */
-    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www', 'data-set-date-text' => 'Set date and time']], location: 'sidebar')]
+    #[Type\Field(options: ['attr' => ['style' => 'sidebar', 'icon' => 'www']], location: 'sidebar')]
     protected $website;
 
     /**
