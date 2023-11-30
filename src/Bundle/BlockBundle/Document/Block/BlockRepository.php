@@ -11,9 +11,14 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Integrated\Bundle\ContentBundle\Document\Content\Content;
+use Integrated\Bundle\ContentBundle\Document\Relation\Relation;
 use Integrated\Bundle\PageBundle\Document\Page\Page;
+use Integrated\Common\Content\ContentInterface;
 use Integrated\Common\Form\Mapping\MetadataFactoryInterface;
+use Solarium\Core\Query\DocumentInterface;
 
 /**
  * @author Vasil Pascal <developer.optimum@gmail.com>
@@ -109,6 +114,57 @@ class BlockRepository extends DocumentRepository
 
             }')
             ->getQuery();
+    }
+
+    /**
+     * Get items which have the current document linked.
+     *
+     * @param bool $filterPublished
+     *
+     * @return \Doctrine\MongoDB\Query\Builder
+     *
+     * @throws \Exception
+     */
+    public function getUsedBy(ArrayCollection $content, Relation $relation = null, Content $excludeContent = null, $filterPublished = true)
+    {
+        if ($excludeContent !== null) {
+            $excludeContent = $excludeContent->getId();
+        }
+
+        $contentIds = [];
+        foreach ($content as $contentItem) {
+            if ($contentItem instanceof ContentInterface) {
+                if (!$excludeContent) {
+                    $excludeContent = $contentItem->getId();
+                }
+
+                $contentIds[] = $contentItem->getId();
+            }
+
+            if ($contentItem instanceof DocumentInterface) {
+                if (!$excludeContent) {
+                    $excludeContent = $contentItem->type_id;
+                }
+
+                $contentIds[] = $contentItem->type_id;
+            }
+        }
+
+        $query = $this->createQueryBuilder()
+                      ->field('relations.references.$id')->in($contentIds)
+                      ->field('id')->notEqual($excludeContent);
+
+        if ($filterPublished) {
+            $query->field('disabled')->equals(false)
+                  ->field('publishTime.startDate')->lte(new \DateTime())
+                  ->field('publishTime.endDate')->gte(new \DateTime());
+        }
+
+        if ($relation) {
+            $query->field('relations.relationId')->equals($relation->getId());
+        }
+
+        return $query;
     }
 
     /**

@@ -10,19 +10,9 @@
         } %}
         {% set items = items|merge([item]) %}
     {% endfor %}
-
-    {% for block in blockpagination %}
-        {% set blockItem = {
-            'id': block.id,
-            'title': 'Block: ' ~ block.__toString(),
-            'href': path('integrated_block_block_edit', {'id': block.id}),
-        } %}
-        {% set items = items|merge([blockItem]) %}
-    {% endfor %}
-
-    {% set combinedData = {
+    {% set data = {
         'pagination': pagination|json_pagination,
         'items': items
     } %}
 {% endapply %}
-{{ combinedData|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+{{ data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
