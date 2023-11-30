@@ -11,9 +11,12 @@
 
 namespace Integrated\Bundle\BlockBundle\Document\Block;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Integrated\Bundle\SlugBundle\Mapping\Attributes\Slug;
 use Integrated\Bundle\UserBundle\Model\GroupInterface;
 use Integrated\Common\Block\BlockInterface;
+use Integrated\Common\Content\Embedded\RelationInterface;
 use Integrated\Common\Form\Mapping\Attributes as Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -78,6 +81,11 @@ abstract class Block implements BlockInterface
     protected $locked = false;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $relations;
+
+    /**
      * @var array
      */
     protected $groups = [];
@@ -90,6 +98,7 @@ abstract class Block implements BlockInterface
         $this->createdAt = new \DateTime();
         $this->publishedAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+        $this->relations = new ArrayCollection();
     }
 
     /**
@@ -354,6 +363,58 @@ abstract class Block implements BlockInterface
             }
             $this->groups[] = (int) $group;
         }
+    }
+
+    public function getRelations(): Collection
+    {
+        // should always be instanceOf collection, but due to corrupt database can sometimes be null
+        if (!$this->relations instanceof Collection) {
+            $this->relations = new ArrayCollection();
+        }
+
+        return $this->relations;
+    }
+
+    public function setRelations(Collection $relations): static
+    {
+        foreach ($relations as $relation) {
+            if ($relation instanceof RelationInterface) {
+                $this->addRelation($relation);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addRelation(RelationInterface $relation): static
+    {
+        if ($exist = $this->getRelation($relation->getRelationId())) {
+            $exist->addReferences($relation->getReferences());
+        } else {
+            $this->getRelations()->add($relation);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(RelationInterface $relation): static
+    {
+        $this->getRelations()->removeElement($relation);
+
+        return $this;
+    }
+
+    public function getRelation($relationId)
+    {
+        return $this->getRelations()->filter(function ($relation) use ($relationId) {
+            if ($relation instanceof RelationInterface) {
+                if ($relation->getRelationId() == $relationId) {
+                    return true;
+                }
+            }
+
+            return false;
+        })->first();
     }
 
     /**

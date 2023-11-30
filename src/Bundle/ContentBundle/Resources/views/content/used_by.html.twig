@@ -3,10 +3,19 @@
     <div class="content_columns_holder">
         <div class="w-full sm:w-2/3 content_column">
             <div class="content_column_inner">
+                {% for content in blockpagination %}
+                    <div class="item_row">
+                        <h3 class="title">
+                            <a target="_blank" href="{{ path('integrated_block_block_edit', {id: content.id}) }}">
+                                {{ content }}
+                            </a>
+                        </h3>
+                    </div>
+                {% endfor %}
                 {% for content in pagination %}
                     <div class="item_row">
                         <h3 class="title">
-                            <a href="{{ path('integrated_content_content_edit', {id: content.id}) }}">
+                            <a target="_blank" href="{{ path('integrated_content_content_edit', {id: content.id}) }}">
                                 {{ content }}
                             </a>
                         </h3>
