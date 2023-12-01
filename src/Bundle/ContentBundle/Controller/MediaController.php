@@ -270,10 +270,12 @@ class MediaController extends AbstractController
 
         $this->taxonomyRelationManager->runSolrQueue();
 
-        return new JsonResponse([
-                                    'message' => 'Removed some items',
-                                    'ids' => $deletedIds,
-                                ]);
+        return new JsonResponse(
+            [
+                'message' => 'Removed some items',
+                'ids' => $deletedIds,
+            ]
+        );
     }
 
     private function getUsedBy(array $idSelection): Response

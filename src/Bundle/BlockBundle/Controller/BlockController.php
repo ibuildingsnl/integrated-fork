@@ -324,10 +324,11 @@ class BlockController extends AbstractController
      */
     public function usedBy(Content $content, Request $request)
     {
-        $query = $this->documentManager->createQueryBuilder(Block::class)
-                                            ->field('relations.references.$id')
-                                            ->equals($content->getId())
-                                            ->getQuery();
+        $query = $this->documentManager
+            ->createQueryBuilder(Block::class)
+            ->field('relations.references.$id')
+            ->equals($content->getId())
+            ->getQuery();
 
         /** @var $paginator \Knp\Component\Pager\Paginator */
         $pagination = $this->paginator->paginate(
@@ -336,7 +337,7 @@ class BlockController extends AbstractController
             $request->query->get('limit', 15)
         );
 
-        return $this->render('@IntegratedContent/content/used_by.'.$request->getRequestFormat().'.twig', [
+        return $this->render('@IntegratedBlock/block/used_by.'.$request->getRequestFormat().'.twig', [
             'content' => $content,
             'pagination' => $pagination,
         ]);
