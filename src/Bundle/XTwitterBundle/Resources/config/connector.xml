@@ -30,6 +30,8 @@
         <service id="td_connector.twitter" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">
             <argument type="service" id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConnector" />
             <argument type="service" id="Integrated\Bundle\XTwitterBundle\Connector\TwitterConfiguration" />
+            <argument type="service" id="logger" />
+
             <tag name="integrated_channel.connector" />
         </service>
 

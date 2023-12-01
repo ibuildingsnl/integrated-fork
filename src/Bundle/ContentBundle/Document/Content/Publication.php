@@ -13,7 +13,7 @@ class Publication
         private readonly Content $content,
         private readonly ChannelInterface $channel,
         private PublishTimeInterface $time,
-        private readonly array $settings = [],
+        private array $settings = [],
     ) {
     }
 
@@ -45,6 +45,11 @@ class Publication
     public function getSettings(): array
     {
         return $this->settings;
+    }
+
+    public function setSetting(string $key, mixed $value): void
+    {
+        $this->settings[$key] = $value;
     }
 
     public function __get(string $name)

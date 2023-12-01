@@ -4,14 +4,13 @@ namespace Integrated\Bundle\WoodwingBundle\Controller;
 
 use Doctrine\Persistence\ObjectRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
+use Integrated\Bundle\WoodwingBundle\Document\WoodwingPost;
 use Integrated\Common\Services\Flusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-//use TD\Bundle\PublishingBundle\Domain\Notifiable;
-use Integrated\Bundle\WoodwingBundle\Domain\WoodwingPost;
 
 class WoodwingController extends AbstractController
 {
@@ -20,7 +19,8 @@ class WoodwingController extends AbstractController
         private readonly ObjectRepository $taxonomies,
         private readonly Flusher          $flusher,
         private readonly string           $apiSecret,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): Response
     {
@@ -47,7 +47,7 @@ class WoodwingController extends AbstractController
         $unpublishedArticles = $this->woodwingPosts->findBy(['pickedUpAt' => null, 'edition.id' => $issue]);
 
         return new JsonResponse([
-            'publication_id' => $edition->getPrimaryChannel()->getName(),
+            'publication_id' => $edition->getPrimaryChannel()?->getName() ?: 'Unknown',
             'issue_id' => $issue,
             'issue_name' => $edition->getTitle(),
             'articles' => array_map(fn(WoodwingPost $post) => $post->show(), $unpublishedArticles),
@@ -62,7 +62,6 @@ class WoodwingController extends AbstractController
         $post = $this->woodwingPosts->find($article);
 
         $post->pickedUpAt = new \DateTime();
-//        $post->addNote('Article picked up by Woodwing', Notifiable::SUCCESS);
 
         $this->flusher->flush();
 

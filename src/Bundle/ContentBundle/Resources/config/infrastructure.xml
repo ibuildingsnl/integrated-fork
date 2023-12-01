@@ -31,31 +31,31 @@
             <tag name="integrated_channel.type" />
         </service>
 
-        <service id="integrated_channel.type.woodwing" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
-            <argument>woodwing</argument>
-            <argument>Woodwing</argument>
-            <argument type="expression">false</argument>
+<!--        <service id="integrated_channel.type.woodwing" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
+<!--            <argument>woodwing</argument>-->
+<!--            <argument>Woodwing</argument>-->
+<!--            <argument type="expression">false</argument>-->
 
-            <tag name="integrated_channel.type" />
-        </service>
+<!--            <tag name="integrated_channel.type" />-->
+<!--        </service>-->
 
-        <service id="integrated_channel.type.linkedin" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
-            <argument>linkedin</argument>
-            <argument>LinkedIn</argument>
-            <argument type="expression">false</argument>
-            <argument>linkedin</argument>
+<!--        <service id="integrated_channel.type.linkedin" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
+<!--            <argument>linkedin</argument>-->
+<!--            <argument>LinkedIn</argument>-->
+<!--            <argument type="expression">false</argument>-->
+<!--            <argument>linkedin</argument>-->
 
-            <tag name="integrated_channel.type" />
-        </service>
+<!--            <tag name="integrated_channel.type" />-->
+<!--        </service>-->
 
-        <service id="integrated_channel.type.facebook" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
-            <argument>facebook</argument>
-            <argument>Facebook (meta)</argument>
-            <argument type="expression">false</argument>
-            <argument>facebook</argument>
+<!--        <service id="integrated_channel.type.facebook" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">-->
+<!--            <argument>facebook</argument>-->
+<!--            <argument>Facebook (meta)</argument>-->
+<!--            <argument type="expression">false</argument>-->
+<!--            <argument>facebook</argument>-->
 
-            <tag name="integrated_channel.type" />
-        </service>
+<!--            <tag name="integrated_channel.type" />-->
+<!--        </service>-->
 
     </services>
 

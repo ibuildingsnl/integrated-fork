@@ -2,26 +2,23 @@
 
 namespace Integrated\Bundle\LinkedInBundle\Form;
 
-// use JanuSoftware\Facebook\Facebook;
 use Integrated\Bundle\LinkedInBundle\Connector\LinkedInFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 class AddLinkedInPageFieldListener implements EventSubscriberInterface
 {
-//    public function __construct(LinkedIn $linkedinFactory)
-    public function __construct(LinkedInFactory $linkedinFactory)
-    {
-        $this->linkedinFactory = $linkedinFactory;
+    public function __construct(
+        private readonly LinkedInFactory $linkedinFactory
+    ) {
     }
 
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'onPreSetData',
@@ -43,22 +40,24 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
 
         return $organizations;
     }
+//
+//    public function getOrganisationDetailsByBatchRequest($client, $token, $organizations)
+//    {
+//        $url = 'api.linkedin.com/rest/organizations?ids=List('.implode(',', $organizations).')';
+//        $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
+//        $response = $client->getResponse($availableCompaniesRequest);
+//        $responseBody = json_decode((string) $response->getBody())->results;
+//
+//        $details = [];
+//        foreach ($organizations as $organizationId) {
+//            $details[$responseBody->{$organizationId}->localizedName] = $organizationId;
+//        }
+//
+//        return $details;
+//    }
 
-    public function getOrganisationDetailsByBatchRequest($client, $token, $organizations) {
-        $url = 'api.linkedin.com/rest/organizations?ids=List('.implode(',', $organizations).')';
-        $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
-        $response = $client->getResponse($availableCompaniesRequest);
-        $responseBody = json_decode((string) $response->getBody())->results;
-
-        $details = [];
-        foreach ($organizations as $organizationId) {
-            $details[$responseBody->{$organizationId}->localizedName] = $organizationId;
-        }
-
-        return $details;
-    }
-
-    public function getOrganisationDetailsBySingleRequest($client, $token, $requestOptions, array $organizations): array {
+    public function getOrganisationDetailsBySingleRequest($client, $token, $requestOptions, array $organizations): array
+    {
         $responseBody = [];
         foreach ($organizations as $organization) {
             $url = 'api.linkedin.com/rest/organizations/' . $organization;

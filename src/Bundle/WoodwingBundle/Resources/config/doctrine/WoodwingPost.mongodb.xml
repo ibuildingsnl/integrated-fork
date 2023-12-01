@@ -3,7 +3,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Integrated\Bundle\WoodwingBundle\Document\Domain\WoodwingPost">
+    <document name="Integrated\Bundle\WoodwingBundle\Document\WoodwingPost">
 
         <reference-one
             field="layout"
@@ -16,7 +16,6 @@
         <field field-name="subtitle" type="string" />
         <field field-name="intro" type="string" />
         <field field-name="body" type="string" />
-        <field field-name="originalBody" type="string" />
 
         <field field-name="pickedUpAt" type="date" />
 
