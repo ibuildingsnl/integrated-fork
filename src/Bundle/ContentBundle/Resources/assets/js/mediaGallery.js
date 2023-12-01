@@ -274,7 +274,6 @@ function showUsedByPopup(json_response) {
 }
 
 function showUsedByToUser(json_response) {
-    console.log(json_response)
     for (let to_delete_item of json_response.used_by) {
 
         let new_item = document.querySelector('#used_image').cloneNode(true)
@@ -309,8 +308,6 @@ async function confirmDelete(confirmed_by_user) {
 
     const response = await deleteData(bulkdelete_path, json_content)
     const json_response = await response.json()
-
-    console.log(json_response);
 
     document.querySelector('#used_images').innerHTML = ''
     if (confirmed_by_user === false) {
