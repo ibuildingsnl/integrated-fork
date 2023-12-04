@@ -10,6 +10,7 @@
                     class="dashboardForm-select">
                 <option value="7daysAgo">{% trans %}This week{% endtrans %}</option>
                 <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
+                <option value="3monthsAgo">{% trans %}This quarter{% endtrans %}</option>
                 <option value="6monthsAgo">{% trans %}This semester{% endtrans %}</option>
                 <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
             </select>
@@ -90,8 +91,18 @@
                     dataCounts.reverse()
                     break;
 
+                case '3monthsAgo' :
+                    dateformat = 'DD/MM/YYYY';
+                    var aggregatedData = aggregateDataByWeek(userActivityByDateJS, 13);
+                    console.log('dehors');
+                    aggregatedData.forEach(function (data) {
+                        dates.push(data.date);
+                        dataCounts.push(data.dataCount);
+                    });
+                    break;
                 case '6monthsAgo':
                 case '365daysAgo':
+
                     dateformat = 'MM/YYYY';
                     var numMonths = selectedValue === '6monthsAgo' ? 6 : 12;
                     var aggregatedData = aggregateDataByMonth(userActivityByDateJS, numMonths);
@@ -172,6 +183,47 @@
                 bounceRate: parseInt(bounceRate, 10),
             };
         }
+
+        function aggregateDataByWeek(data, numWeeks, typeOfGraph) {
+            const aggregatedData = {};
+            const daysInWeek = {};
+            const parsedData = data.map(function (item) {
+                return {
+                    date: item.date,
+                    dataCount: parseInt(item.dataCount, 10),
+                };
+            });
+
+            for (let i = 0; i < parsedData.length; i += 7) {
+                const pack = parsedData.slice(i, i + 7);
+                const startWeekDate = pack[pack.length - 1].date;
+                const cumulDataCount = pack.reduce((total, jour) => total + jour.dataCount, 0);
+
+                aggregatedData[startWeekDate] = cumulDataCount ;
+            }
+            console.log(aggregatedData);
+
+            if (typeOfGraph === "bounceRate") {
+                for (const week in aggregatedData) {
+                    aggregatedData[week] = (aggregatedData[week] / daysInWeek[week]).toFixed(2);
+                }
+            }
+
+            const result = Object.keys(aggregatedData).map(function (week) {
+                return {
+                    date: week,
+                    dataCount: aggregatedData[week],
+                };
+            }).reverse();
+
+            if (numWeeks && numWeeks < result.length) {
+                result.splice(0, result.length - numWeeks);
+            }
+
+            return result;
+        }
+
+
 
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
@@ -276,6 +328,7 @@
             const rangeLimits = {
                 '7daysAgo': 7,
                 '30daysAgo': 30,
+                '3monthsAgo': 90,
                 '6monthsAgo': 182,
                 '365daysAgo': 365
             };
@@ -292,6 +345,56 @@
             bouncerateCountElement.textContent = totalBounceRate;
         }
         visitorActivityChartFirstLoad();
+
+
+        // Le tableau initial
+        const initialData = [
+            {date: '04/12/23', dataCount: 10} ,
+            {date: '03/12/23', dataCount: 474},
+            {date: '02/12/23', dataCount: 475},
+            {date: '01/12/23', dataCount: 424},
+            {date: '30/11/23', dataCount: 490},
+            {date: '29/11/23', dataCount: 581},
+            {date: '28/11/23', dataCount: 517},
+            {date: '27/11/23', dataCount: 449},
+            {date: '26/11/23', dataCount: 339},
+            {date: '25/11/23', dataCount: 328},
+            {date: '24/11/23', dataCount: 569},
+            {date: '23/11/23', dataCount: 733},
+            {date: '22/11/23', dataCount: 528},
+            {date: '21/11/23', dataCount: 428},
+            {date: '20/11/23', dataCount: 410},
+            {date: '19/11/23', dataCount: 352},
+            {date: '18/11/23', dataCount: 317},
+            {date: '17/11/23', dataCount: 422},
+            {date: '16/11/23', dataCount: 516},
+            {date: '15/11/23', dataCount: 625},
+            {date: '14/11/23', dataCount: 503},
+            {date: '13/11/23', dataCount: 455},
+        ];
+
+        // Fonction pour diviser le tableau en packs de 7 jours
+        function diviserEnPacks(data) {
+            const nouveauTableau = [];
+
+            for (let i = 0; i < data.length; i += 7) {
+                const pack = data.slice(i, i + 7);
+                const datePlusAncienne = pack[pack.length - 1].date; // Date la plus vieille du pack
+                const cumulDataCount = pack.reduce((total, jour) => total + jour.dataCount, 0); // Cumul des dataCount
+
+                nouveauTableau.push({ date: datePlusAncienne, dataCount: cumulDataCount });
+            }
+
+            return nouveauTableau;
+        }
+
+        // Appeler la fonction avec le tableau initial
+        const nouveauTableau = diviserEnPacks(initialData);
+
+        // Afficher le résultat
+        console.log(nouveauTableau);
+
+
     </script>
 </div>
 
