@@ -37,7 +37,7 @@ class LatestArticleWidget implements WidgetInterface
         return $this->view;
     }
 
-    public function params(ChannelInterface $channel, User $user, Request $request): array
+    public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
         $currentDateTime = new \DateTimeImmutable();
 

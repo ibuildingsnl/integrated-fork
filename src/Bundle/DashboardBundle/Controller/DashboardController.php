@@ -84,7 +84,7 @@ class DashboardController extends AbstractController
                 $widgetAllData[] = [
                     'id' => $config->getWidgetId(),
                     'name' => $config->getWidgetName(),
-                    'renderedView' => $this->renderView($widget->getView(), $widget->params($channel, $user, $request)),
+                    'renderedView' => $this->renderView($widget->getView(), $widget->getParams($channel, $user, $request)),
                 ];
             }
         }

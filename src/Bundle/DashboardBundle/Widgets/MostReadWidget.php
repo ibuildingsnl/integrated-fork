@@ -49,7 +49,7 @@ class MostReadWidget implements WidgetInterface
      * @throws GuzzleException
      */
 
-    public function params(ChannelInterface $channel, User $user, Request $request): array
+    public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
 
         $mostReadArticles = $this->getDataFromDB($channel);
