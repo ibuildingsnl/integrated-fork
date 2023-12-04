@@ -52,14 +52,14 @@ class SitePerformancesWidget implements WidgetInterface
         if($channelPerformances != null)
         {
             $desktopSiteData = [
-                'desktopSiteScore' => $channelPerformances[0]->getDesktopSiteScore() * 100 ?? 0,
+                'desktopSiteScore' => round(($channelPerformances[0]->getDesktopSiteScore() * 100 ?? 0),1),
                 'desktopSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getDesktopSpeedIndex()) ?? 0,
                 'desktopTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getDesktopTimeToInteractive()) ?? 0,
                 'desktopTimeToFirstByte' => round($channelPerformances[0]->getDesktopServerResponseTime()) ?? 0,
                 'desktopTotalBlockingTime' => round($channelPerformances[0]->getDesktopTotalBlockingTime()) ?? 0,
                ];
             $mobileSiteData = [
-                'mobileSiteScore' => $channelPerformances[0]->getMobileSiteScore() * 100 ?? 0,
+                'mobileSiteScore' => round(($channelPerformances[0]->getMobileSiteScore() * 100 ?? 0),1),
                 'mobileSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getMobileSpeedIndex()) ?? 0,
                 'mobileTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getMobileTimeToInteractive()) ?? 0,
                 'mobileTimeToFirstByte' => round($channelPerformances[0]->getMobileServerResponseTime()) ?? 0,

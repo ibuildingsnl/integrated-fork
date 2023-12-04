@@ -48,38 +48,50 @@ class SiteActivityWidget implements WidgetInterface
      */
     public function params(ChannelInterface $channel, User $user, Request $request): array
     {
-        $dateRange = $request->query->get('site_activity_date_range') ?? "30daysAgo";
         foreach ($this->brandRepository->all() as $brand) {
             if ($brand->hasChannel($channel)) {
                 $propertyId = $brand->profile->analytics;
             }
         }
+
         if (!isset($propertyId) || $propertyId == null) {
             return ["SiteActivity" => "No data found"];
         }
-        $allDatas = $this->getDataFromAnalytics($propertyId, $dateRange);
 
-        if ($allDatas == null) {
-            return [
-                "SiteActivity" => "No data found",
-                "widget" => $this,
-                "totalViews" => "No data found",
-                "bounceRate" => "No data found",
-                "viewByCountry" => [],
-            ];
-        }
-        $siteActivity = $allDatas['siteActivity'];
-        $totalViews = $allDatas['siteTotals']['totalUser'];
-        $bounceRate = $allDatas['siteTotals']['bounceRate'];
-        $viewByCountry = $this->getViewByCountry($siteActivity, $totalViews);
-
-        return [
-            "widget" => $this,
-            "totalViews" => $totalViews,
-            "bounceRate" => $bounceRate,
-            "viewByCountry" => $viewByCountry,
+        $dateRanges = [
+            'weeklySiteActivity' => '7daysAgo',
+            'monthlySiteActivity' => '30daysAgo',
+            'quarterlySiteActivity' => '90daysAgo',
+            'semesterSiteActivity' => '182daysAgo',
+            'yearlySiteActivity' => '365daysAgo',
         ];
+
+        $allDatas = [];
+        foreach ($dateRanges as $key => $dateRange) {
+            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $dateRange);
+        }
+
+        $result = [
+            "widget" => $this,
+            "totalViews" => [],
+            "bounceRate" => [],
+            "viewByCountry" => [],
+        ];
+
+        foreach ($allDatas as $key => $data) {
+            if ($data == null) {
+                $result['totalViews'][$key] = "No data found";
+                $result['bounceRate'][$key] = "No data found";
+                $result['viewByCountry'][$key] = [];
+            } else {
+                $result['totalViews'][$key] = $data['siteTotals']['totalUser'];
+                $result['bounceRate'][$key] = $data['siteTotals']['bounceRate'];
+                $result['viewByCountry'][$key] = $this->getViewByCountry($data['siteActivity'], $result['totalViews'][$key]);
+            }
+        }
+        return $result;
     }
+
 
     /**
      * @throws GuzzleException

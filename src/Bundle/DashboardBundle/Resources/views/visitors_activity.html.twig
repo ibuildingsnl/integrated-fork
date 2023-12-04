@@ -99,7 +99,6 @@
                         dates.push(data.date);
                         dataCounts.push(data.dataCount);
                     });
-                    console.log()
                     break;
 
                 default:
@@ -177,7 +176,6 @@
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
             const daysInMonth = {};
-            console.log(data);
             const parsedData = data.map(function (item) {
                 return {
                     date: item.date,
@@ -203,8 +201,6 @@
                     aggregatedData[month] = (aggregatedData[month]/daysInMonth[month]).toFixed(2);
                 }
             }
-            console.log(aggregatedData);
-
             result = (Object.keys(aggregatedData).map(function (month) {
                 return {
                     date: month,
