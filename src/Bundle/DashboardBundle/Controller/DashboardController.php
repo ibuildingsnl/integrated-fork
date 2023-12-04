@@ -36,7 +36,7 @@ class DashboardController extends AbstractController
     {
         /** @var WidgetInterface $widget */
         foreach ($this->allWidgets as $widget) {
-            $this->widgets[$widget->name()] = $widget;
+            $this->widgets[$widget->getName()] = $widget;
         }
     }
 
@@ -84,7 +84,7 @@ class DashboardController extends AbstractController
                 $widgetAllData[] = [
                     'id' => $config->getWidgetId(),
                     'name' => $config->getWidgetName(),
-                    'renderedView' => $this->renderView($widget->view(), $widget->params($channel, $user, $request)),
+                    'renderedView' => $this->renderView($widget->getView(), $widget->params($channel, $user, $request)),
                 ];
             }
         }

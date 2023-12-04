@@ -29,17 +29,17 @@ class VisitorsActivityWidget implements WidgetInterface
         $this->view = '@IntegratedDashboard/visitors_activity.html.twig';
     }
 
-    public function id(): string
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function view(): string
+    public function getView(): string
     {
         return $this->view;
     }

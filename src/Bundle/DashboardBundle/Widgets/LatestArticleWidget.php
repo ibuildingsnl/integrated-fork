@@ -22,17 +22,17 @@ class LatestArticleWidget implements WidgetInterface
         $this->name = 'Latest articles';
         $this->view = '@IntegratedDashboard/latest_articles.html.twig';
     }
-    public function id(): string
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function view(): string
+    public function getView(): string
     {
         return $this->view;
     }
@@ -56,4 +56,5 @@ class LatestArticleWidget implements WidgetInterface
             'channel' => $channel,
         ];
     }
+
 }

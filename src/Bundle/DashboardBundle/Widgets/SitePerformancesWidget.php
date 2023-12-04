@@ -25,17 +25,17 @@ class SitePerformancesWidget implements WidgetInterface
         $this->name = 'Site performance';
         $this->view = '@IntegratedDashboard/site_performance.html.twig';
     }
-    public function id(): string
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function view(): string
+    public function getView(): string
     {
         return $this->view;
     }
