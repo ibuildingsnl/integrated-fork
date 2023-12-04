@@ -6,30 +6,30 @@
             {% else %}
                 <h2>{% trans %}Most read content{% endtrans %}</h2>
             {% endif %}
-            <select id="most_read_date_range" name="most_read_date_range"
-                    class="dashboardForm-select">
-                <option value="weeklyMostReadArticles">{% trans %}This week{% endtrans %}</option>
-                <option value="monthlyMostReadArticles">{% trans %}This month{% endtrans %}</option>
-                <option value="quarterlyMostReadArticles">{% trans %}This quarter{% endtrans %}</option>
-                <option value="semesterMostReadArticles">{% trans %}This semester{% endtrans %}</option>
-                <option value="yearlyMostReadArticles">{% trans %}This Year{% endtrans %}</option>
-            </select>
         </div>
         <nav class="article-list" id="articleList">
-            <ul>
-
-            </ul>
+            <ul></ul>
         </nav>
     </div>
     <script>
         const mostReadArticles = {{ mostReadArticles | json_encode | raw }};
+        const selectMostReadDate = document.getElementById('select_date_range');
 
-        const selectMostReadDate = document.getElementById('most_read_date_range');
-
-        updateMostRead('weeklyMostReadArticles')
-        selectMostReadDate.addEventListener('change', function() {
-            updateMostRead(selectMostReadDate.value);
+        updateMostRead(dateRangeMostReadSelection(selectMostReadDate.value));
+        selectMostReadDate.addEventListener('change', function () {
+            updateMostRead(dateRangeMostReadSelection(selectMostReadDate.value));
         });
+
+        function dateRangeMostReadSelection(selectedDateRange) {
+            const dateRangeMapping = {
+                'weekly': 'weeklyMostReadArticles',
+                'monthly': 'monthlyMostReadArticles',
+                'quarterly': 'quarterlyMostReadArticles',
+                'semester': 'semesterMostReadArticles',
+                'yearly': 'yearlyMostReadArticles'
+            };
+            return dateRangeMapping[selectedDateRange] || selectedDateRange;
+        }
 
         function updateMostRead(dateRange) {
             var articleListContainer = document.getElementById('articleList');

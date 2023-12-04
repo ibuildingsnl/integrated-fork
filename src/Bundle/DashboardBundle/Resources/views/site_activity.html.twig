@@ -2,13 +2,6 @@
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
             <h2>{% trans %}Site Activity{% endtrans %}</h2>
-            <select id="site_activity_date_range" name="site_activity_date_range" class="dashboardForm-select" onchange="updateViewByCountry()">
-                <option value="weeklySiteActivity">{% trans %}This week{% endtrans %}</option>
-                <option value="monthlySiteActivity">{% trans %}This month{% endtrans %}</option>
-                <option value="quarterlySiteActivity">{% trans %}3 Last months{% endtrans %}</option>
-                <option value="semesterSiteActivity">{% trans %}This semester{% endtrans %}</option>
-                <option value="yearlySiteActivity">{% trans %}This Year{% endtrans %}</option>
-            </select>
         </div>
         <div class="widget-content flex">
             <div class="w-2/3 pr-4">
@@ -19,7 +12,7 @@
             <div class="w-1/3">
                 <div class="visitors show">
                     <h3>{% trans %}Total visits{% endtrans %}: <span class="value" id="total_views"></span></h3>
-                    <h3>{% trans %}Bounce Rate{% endtrans %}: <span class="value" id="bounce_rate"></span>%</h3>
+                    <h3>{% trans %}Bounce Rate{% endtrans %}: <span class="value" id="bounce_rate"></span></h3>
                 </div>
                 <div class="cities">
                     <h3>{% trans %}Top Cities{% endtrans %}:</h3>
@@ -38,12 +31,28 @@
         let currentTotalViews = null;
         let currentBounceRate = null;
 
+        var selectSiteActivityDate = document.getElementById('select_date_range');
+        selectSiteActivityDate.addEventListener('change', function () {
+            updateViewByCountry();
+        });
+
+        function dateRangeVisitorsActivitySelection(selectedDateRange) {
+            const dateRangeMapping = {
+                'weekly': 'weeklySiteActivity',
+                'monthly': 'monthlySiteActivity',
+                'quarterly': 'quarterlySiteActivity',
+                'semester': 'semesterSiteActivity',
+                'yearly': 'yearlySiteActivity'
+            };
+            return dateRangeMapping[selectedDateRange] || selectedDateRange;
+        }
+
 
         function updateViewByCountry() {
-            const selectedDateRange = document.getElementById('site_activity_date_range').value;
-            currentViewByCountryData = viewByCountryData[selectedDateRange];
-            currentTotalViews = totalViews[selectedDateRange]
-            currentBounceRate = bounceRate[selectedDateRange]
+            const selectedSiteActivityDateRange = dateRangeVisitorsActivitySelection(selectSiteActivityDate.value);
+            currentViewByCountryData = viewByCountryData[selectedSiteActivityDateRange];
+            currentTotalViews = totalViews[selectedSiteActivityDateRange]
+            currentBounceRate = bounceRate[selectedSiteActivityDateRange]
             renderViewByCountry();
         }
 
@@ -67,7 +76,6 @@
 
                 const divPercentagePart = document.createElement('div');
                 divPercentagePart.classList.add('percentage-part');
-                divPercentagePart.style.width = row.percentage + '%';
 
                 divPercentageFull.appendChild(divPercentagePart);
 
@@ -82,7 +90,7 @@
             }
 
             document.getElementById('total_views').textContent = currentTotalViews;
-            document.getElementById('bounce_rate').textContent = currentBounceRate
+            document.getElementById('bounce_rate').textContent = currentBounceRate + ' %';
 
             const selectedCountry = document.querySelector('.visitor-regions li.selected');
             if (selectedCountry) {

@@ -38,6 +38,16 @@
                             {% endfor %}
                         </ul>
                     </li>
+                    <li>
+                        <select id="select_date_range" name="select_date_range"
+                                class="dashboardForm-select">
+                            <option value="weekly">{% trans %}This week{% endtrans %}</option>
+                            <option value="monthly">{% trans %}This month{% endtrans %}</option>
+                            <option value="quarterly">{% trans %}This quarter{% endtrans %}</option>
+                            <option value="semester">{% trans %}This semester{% endtrans %}</option>
+                            <option value="yearly">{% trans %}This Year{% endtrans %}</option>
+                        </select>
+                    <li>
                 </ul>
             </div>
         </div>
@@ -49,9 +59,10 @@
         </div>
 
         <script>
+            var selectDateRange = document.getElementById('select_date_range');
             const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
                     const widgetId = this.name;
                     const widgetContainer = document.querySelector(`.${widgetId}`).parentNode;
 
@@ -74,7 +85,7 @@
             function submitForm() {
                 const form = Object.assign(document.createElement('form'), {method: 'get'});
 
-                selectElements.forEach(function(selectElement) {
+                selectElements.forEach(function (selectElement) {
                     const selectName = selectElement.name;
                     for (const option of selectElement.selectedOptions) {
                         const input = document.createElement('input');
@@ -90,23 +101,23 @@
                 form.submit();
             }
 
-            submitButton.addEventListener('click', function() {
+            submitButton.addEventListener('click', function () {
                 submitForm();
             });
 
-            SelectEventListener.forEach(function(selectElement) {
-                selectElement.addEventListener('change', function() {
+            SelectEventListener.forEach(function (selectElement) {
+                selectElement.addEventListener('change', function () {
                     submitForm();
                 });
             });
 
             function restoreSelectValues() {
-                selectElements.forEach(function(selectElement) {
+                selectElements.forEach(function (selectElement) {
                     const selectName = selectElement.name;
                     const urlParams = new URLSearchParams(window.location.search);
                     const paramValues = urlParams.getAll(selectName);
 
-                    Array.from(selectElement.options).forEach(function(option) {
+                    Array.from(selectElement.options).forEach(function (option) {
                         if (paramValues.includes(option.value)) {
                             option.selected = true;
                         }

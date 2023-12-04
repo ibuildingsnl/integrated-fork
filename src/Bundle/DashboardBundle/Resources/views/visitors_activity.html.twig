@@ -6,14 +6,6 @@
             {% else %}
                 <h2>{% trans %}Visitors activity{% endtrans %}</h2>
             {% endif %}
-            <select id="visitors_activity_date_range" name="visitors_activity_date_range"
-                    class="dashboardForm-select">
-                <option value="7daysAgo">{% trans %}This week{% endtrans %}</option>
-                <option value="30daysAgo">{% trans %}This month{% endtrans %}</option>
-                <option value="3monthsAgo">{% trans %}This quarter{% endtrans %}</option>
-                <option value="6monthsAgo">{% trans %}This semester{% endtrans %}</option>
-                <option value="365daysAgo">{% trans %}This Year{% endtrans %}</option>
-            </select>
         </div>
         <div class="widget-content">
             <div class="flex flex-wrap -mx-2 pb-4">
@@ -43,7 +35,7 @@
 
         var typeOfGraph ="userCount"
         var chart;
-        var selectVisitorActivityDate = document.getElementById('visitors_activity_date_range');
+        var selectVisitorActivityDate = document.getElementById('select_date_range');
         selectVisitorActivityDate.addEventListener('change', function () {
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         });
@@ -79,10 +71,10 @@
             var dateformat;
 
             switch (selectedValue) {
-                case '7daysAgo':
-                case '30daysAgo':
+                case 'weekly':
+                case 'monthly':
                     dateformat = 'DD/MM/YYYY';
-                    var slicedData = userActivityByDateJS.slice(0, selectedValue === '7daysAgo' ? 7 : 30);
+                    var slicedData = userActivityByDateJS.slice(0, selectedValue === 'weekly' ? 7 : 30);
                     slicedData.forEach(function (data) {
                         dates.push(data.date);
                         dataCounts.push(data.dataCount);
@@ -91,7 +83,7 @@
                     dataCounts.reverse()
                     break;
 
-                case '3monthsAgo' :
+                case 'quarterly' :
                     dateformat = 'DD/MM/YYYY';
                     var aggregatedData = aggregateDataByWeek(userActivityByDateJS, 13);
                     console.log('dehors');
@@ -100,11 +92,11 @@
                         dataCounts.push(data.dataCount);
                     });
                     break;
-                case '6monthsAgo':
-                case '365daysAgo':
+                case 'semester':
+                case 'yearly':
 
                     dateformat = 'MM/YYYY';
-                    var numMonths = selectedValue === '6monthsAgo' ? 6 : 12;
+                    var numMonths = selectedValue === 'semester' ? 6 : 12;
                     var aggregatedData = aggregateDataByMonth(userActivityByDateJS, numMonths);
                     aggregatedData.forEach(function (data) {
                         dates.push(data.date);
@@ -326,11 +318,11 @@
             var bouncerateCountElement = document.getElementById('bounceRate-count');
 
             const rangeLimits = {
-                '7daysAgo': 7,
-                '30daysAgo': 30,
-                '3monthsAgo': 90,
-                '6monthsAgo': 182,
-                '365daysAgo': 365
+                'weekly': 7,
+                'monthly': 30,
+                'quarterly': 90,
+                'semester': 182,
+                'yearly': 365
             };
             const limit = rangeLimits[dateRange];
             for (let i = 0; i < allDatas.length && i < limit; i++) {
@@ -345,55 +337,6 @@
             bouncerateCountElement.textContent = totalBounceRate;
         }
         visitorActivityChartFirstLoad();
-
-
-        // Le tableau initial
-        const initialData = [
-            {date: '04/12/23', dataCount: 10} ,
-            {date: '03/12/23', dataCount: 474},
-            {date: '02/12/23', dataCount: 475},
-            {date: '01/12/23', dataCount: 424},
-            {date: '30/11/23', dataCount: 490},
-            {date: '29/11/23', dataCount: 581},
-            {date: '28/11/23', dataCount: 517},
-            {date: '27/11/23', dataCount: 449},
-            {date: '26/11/23', dataCount: 339},
-            {date: '25/11/23', dataCount: 328},
-            {date: '24/11/23', dataCount: 569},
-            {date: '23/11/23', dataCount: 733},
-            {date: '22/11/23', dataCount: 528},
-            {date: '21/11/23', dataCount: 428},
-            {date: '20/11/23', dataCount: 410},
-            {date: '19/11/23', dataCount: 352},
-            {date: '18/11/23', dataCount: 317},
-            {date: '17/11/23', dataCount: 422},
-            {date: '16/11/23', dataCount: 516},
-            {date: '15/11/23', dataCount: 625},
-            {date: '14/11/23', dataCount: 503},
-            {date: '13/11/23', dataCount: 455},
-        ];
-
-        // Fonction pour diviser le tableau en packs de 7 jours
-        function diviserEnPacks(data) {
-            const nouveauTableau = [];
-
-            for (let i = 0; i < data.length; i += 7) {
-                const pack = data.slice(i, i + 7);
-                const datePlusAncienne = pack[pack.length - 1].date; // Date la plus vieille du pack
-                const cumulDataCount = pack.reduce((total, jour) => total + jour.dataCount, 0); // Cumul des dataCount
-
-                nouveauTableau.push({ date: datePlusAncienne, dataCount: cumulDataCount });
-            }
-
-            return nouveauTableau;
-        }
-
-        // Appeler la fonction avec le tableau initial
-        const nouveauTableau = diviserEnPacks(initialData);
-
-        // Afficher le résultat
-        console.log(nouveauTableau);
-
 
     </script>
 </div>
