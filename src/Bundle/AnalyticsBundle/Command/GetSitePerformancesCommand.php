@@ -18,6 +18,7 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class GetSitePerformancesCommand extends Command
 {
+    private OutputInterface $output;
     /**
      * Constructor.
      */
@@ -45,8 +46,9 @@ class GetSitePerformancesCommand extends Command
      * {@inheritdoc}
      * @throws MongoDBException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->output = $output;
         $websites = $this->getWebsites();
 
         foreach ($websites as $website) {
@@ -56,7 +58,8 @@ class GetSitePerformancesCommand extends Command
             }
             $encodedUrl = urlencode($url);
             try {
-                $this->getSitePerformance($encodedUrl, $website['id'], $output);
+                $this->output->writeln('- Getting '.$website['domain'].'\'s Site performance datas');
+                $this->getSitePerformance($encodedUrl, $website['id']);
                 $this->saveSitePerformance();
             } catch (\InvalidArgumentException $e) {
                 $dateTime = new \DateTimeImmutable();
@@ -79,12 +82,17 @@ class GetSitePerformancesCommand extends Command
                 'domain' => $this->getCleanUrl($domain)
             ];
         }
-        /*
+
         $websites[] = [
             'id' => 'bakkersinbedrijf',
             'domain' => $this->getCleanUrl('bakkersinbedrijf.nl')
         ];
-        */
+
+        $websites[] = [
+            'id' => 'vismagazine',
+            'domain' => $this->getCleanUrl('vismagazine.nl')
+        ];
+
         return $websites;
     }
 
@@ -109,7 +117,7 @@ class GetSitePerformancesCommand extends Command
         return !((filter_var($url, FILTER_VALIDATE_URL) === false) || (str_contains($url, 'localhost')));
     }
 
-    public function getSitePerformance(string $url, string $channelId, $output): void
+    public function getSitePerformance(string $url, string $channelId): void
     {
         $apiKey = 'AIzaSyCy9x4Iu2dvAJo6MVpSu9x-LNKQOF-7p9c';
 

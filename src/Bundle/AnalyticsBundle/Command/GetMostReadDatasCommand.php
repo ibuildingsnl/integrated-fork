@@ -55,17 +55,19 @@ class GetMostReadDatasCommand extends Command
         $this->output = $output;
         $channels = $this->getChannels();
         foreach ($channels as $channel) {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s datas');
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Most read datas');
             foreach ($this->brandRepository->all() as $brand) {
                 if ($brand->hasChannel($channel)) {
                     $propertyId = $brand->profile->analytics;
                 }
             }
-            if (isset($propertyId)) {
-                $this->sendDataFromAnalyticsToDb($propertyId, $channel);
+            if (!isset($propertyId))
+            {
+                $this->logger->error('Get Most read Error: no property ID found');
+                return 0;
             }
+            $this->sendDataFromAnalyticsToDb($propertyId, $channel);
         }
-
         return 0;
     }
 

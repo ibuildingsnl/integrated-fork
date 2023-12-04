@@ -28,7 +28,7 @@ class WidgetDatabaseCommand extends Command
         parent::__construct();
         /** @var WidgetInterface $widget */
         foreach ($this->allWidgets as $widget) {
-            $this->widgets[$widget->name()] = $widget;
+            $this->widgets[$widget->getName()] = $widget;
         }
     }
 
@@ -65,7 +65,7 @@ class WidgetDatabaseCommand extends Command
         if (count($widgets) == 0) {
             $order = 1;
             foreach ($this->widgets as $widget) {
-                $widgetConfig = new WidgetConfig($widget->id(), $widget->name(), $order);
+                $widgetConfig = new WidgetConfig($widget->getId(), $widget->getName(), $order);
                 $this->manager->persist($widgetConfig);
                 $order++;
             }

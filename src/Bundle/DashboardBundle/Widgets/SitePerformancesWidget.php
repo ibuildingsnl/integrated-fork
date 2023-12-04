@@ -44,26 +44,25 @@ class SitePerformancesWidget implements WidgetInterface
     {
 
         $channelPerformances = $this->manager->getRepository(SitePerformance::class)
-            ->findBy(
+            ->findOneBy(
                 ['channelID' => $channel->getId()],
-                ['dateTime' => 'DESC'],
-                1
+                ['dateTime' => 'DESC']
             );
         if($channelPerformances != null)
         {
             $desktopSiteData = [
-                'desktopSiteScore' => round(($channelPerformances[0]->getDesktopSiteScore() * 100 ?? 0),1),
-                'desktopSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getDesktopSpeedIndex()) ?? 0,
-                'desktopTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getDesktopTimeToInteractive()) ?? 0,
-                'desktopTimeToFirstByte' => round($channelPerformances[0]->getDesktopServerResponseTime()) ?? 0,
-                'desktopTotalBlockingTime' => round($channelPerformances[0]->getDesktopTotalBlockingTime()) ?? 0,
+                'desktopSiteScore' => round(($channelPerformances->getDesktopSiteScore() * 100 ?? 0),1),
+                'desktopSpeedIndex' => $this->MilliToSecond($channelPerformances->getDesktopSpeedIndex()) ?? 0,
+                'desktopTimeToInteractive' => $this->MilliToSecond($channelPerformances->getDesktopTimeToInteractive()) ?? 0,
+                'desktopTimeToFirstByte' => round($channelPerformances->getDesktopServerResponseTime()) ?? 0,
+                'desktopTotalBlockingTime' => round($channelPerformances->getDesktopTotalBlockingTime()) ?? 0,
                ];
             $mobileSiteData = [
-                'mobileSiteScore' => round(($channelPerformances[0]->getMobileSiteScore() * 100 ?? 0),1),
-                'mobileSpeedIndex' => $this->MilliToSecond($channelPerformances[0]->getMobileSpeedIndex()) ?? 0,
-                'mobileTimeToInteractive' => $this->MilliToSecond($channelPerformances[0]->getMobileTimeToInteractive()) ?? 0,
-                'mobileTimeToFirstByte' => round($channelPerformances[0]->getMobileServerResponseTime()) ?? 0,
-                'mobileTotalBlockingTime' => round($channelPerformances[0]->getMobileTotalBlockingTime()) ?? 0,
+                'mobileSiteScore' => round(($channelPerformances->getMobileSiteScore() * 100 ?? 0),1),
+                'mobileSpeedIndex' => $this->MilliToSecond($channelPerformances->getMobileSpeedIndex()) ?? 0,
+                'mobileTimeToInteractive' => $this->MilliToSecond($channelPerformances->getMobileTimeToInteractive()) ?? 0,
+                'mobileTimeToFirstByte' => round($channelPerformances->getMobileServerResponseTime()) ?? 0,
+                'mobileTotalBlockingTime' => round($channelPerformances->getMobileTotalBlockingTime()) ?? 0,
             ];
         }
         return [

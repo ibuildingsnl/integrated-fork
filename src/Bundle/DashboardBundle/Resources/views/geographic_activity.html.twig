@@ -1,7 +1,7 @@
 <div class="widget w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
-            <h2>{% trans %}Site Activity{% endtrans %}</h2>
+            <h2>{% trans %}Geographic Activity{% endtrans %}</h2>
         </div>
         <div class="widget-content flex">
             <div class="w-2/3 pr-4">
@@ -31,38 +31,37 @@
         let currentTotalViews = null;
         let currentBounceRate = null;
 
-        var selectSiteActivityDate = document.getElementById('select_date_range');
-        selectSiteActivityDate.addEventListener('change', function () {
+        var selectGeographicActivityDate = document.getElementById('select_date_range');
+        selectGeographicActivityDate.addEventListener('change', function () {
             updateViewByCountry();
         });
 
-        function dateRangeVisitorsActivitySelection(selectedDateRange) {
+        function dateRangeGeographicActivitySelection(selectedDateRange) {
             const dateRangeMapping = {
-                'weekly': 'weeklySiteActivity',
-                'monthly': 'monthlySiteActivity',
-                'quarterly': 'quarterlySiteActivity',
-                'semester': 'semesterSiteActivity',
-                'yearly': 'yearlySiteActivity'
+                'weekly': 'weeklyGeographicActivity',
+                'monthly': 'monthlyGeographicActivity',
+                'quarterly': 'quarterlyGeographicActivity',
+                'semester': 'semesterGeographicActivity',
+                'yearly': 'yearlyGeographicActivity'
             };
             return dateRangeMapping[selectedDateRange] || selectedDateRange;
         }
 
 
         function updateViewByCountry() {
-            const selectedSiteActivityDateRange = dateRangeVisitorsActivitySelection(selectSiteActivityDate.value);
-            currentViewByCountryData = viewByCountryData[selectedSiteActivityDateRange];
-            currentTotalViews = totalViews[selectedSiteActivityDateRange]
-            currentBounceRate = bounceRate[selectedSiteActivityDateRange]
+            const selectedGeographicActivityDateRange = dateRangeGeographicActivitySelection(selectGeographicActivityDate.value);
+            currentViewByCountryData = viewByCountryData[selectedGeographicActivityDateRange];
+            currentTotalViews = totalViews[selectedGeographicActivityDateRange]
+            currentBounceRate = bounceRate[selectedGeographicActivityDateRange]
             renderViewByCountry();
         }
 
         function renderViewByCountry() {
             const visitorRegionsList = document.getElementById('visitor_regions_list');
-            visitorRegionsList.innerHTML = ''; // Clear the existing list
+            visitorRegionsList.innerHTML = '';
 
             for (const country in currentViewByCountryData) {
                 const row = currentViewByCountryData[country];
-
                 const li = document.createElement('li');
                 li.onmouseover = () => updateCityList(country, true);
                 li.onmouseout = () => updateCityList('', false);

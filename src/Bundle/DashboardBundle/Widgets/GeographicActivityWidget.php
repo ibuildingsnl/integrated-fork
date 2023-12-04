@@ -2,6 +2,7 @@
 
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
@@ -9,8 +10,11 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use DateTimeImmutable;
+use Integrated\Bundle\AnalyticsBundle\Document\GeographicActivity;
 
-class SiteActivityWidget implements WidgetInterface
+
+class GeographicActivityWidget implements WidgetInterface
 {
 
     private readonly string $id;
@@ -20,12 +24,13 @@ class SiteActivityWidget implements WidgetInterface
     public function __construct(
         private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository
+        private readonly BrandRepository $brandRepository,
+        private readonly DocumentManager $manager,
     )
     {
-        $this->id = 'site_activity';
-        $this->name = 'Site activity';
-        $this->view = '@IntegratedDashboard/site_activity.html.twig';
+        $this->id = 'geographic_activity';
+        $this->name = 'Geographic activity';
+        $this->view = '@IntegratedDashboard/geographic_activity.html.twig';
     }
 
     public function getId(): string
@@ -48,28 +53,13 @@ class SiteActivityWidget implements WidgetInterface
      */
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
+        $geographicActivity = $this->manager->getRepository(GeographicActivity::class)
+            ->findOneBy(
+                ['channelID' => $channel->getId()],
+                ['dateTime' => 'DESC']
+            );
 
-        if (!isset($propertyId) || $propertyId == null) {
-            return ["SiteActivity" => "No data found"];
-        }
-
-        $dateRanges = [
-            'weeklySiteActivity' => '7daysAgo',
-            'monthlySiteActivity' => '30daysAgo',
-            'quarterlySiteActivity' => '90daysAgo',
-            'semesterSiteActivity' => '182daysAgo',
-            'yearlySiteActivity' => '365daysAgo',
-        ];
-
-        $allDatas = [];
-        foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $dateRange);
-        }
+        $allDatas = $geographicActivity->getGeographicActivity();
 
         $result = [
             "widget" => $this,
@@ -78,6 +68,7 @@ class SiteActivityWidget implements WidgetInterface
             "viewByCountry" => [],
         ];
 
+        //dd($allDatas);
         foreach ($allDatas as $key => $data) {
             if ($data == null) {
                 $result['totalViews'][$key] = "No data found";
@@ -86,93 +77,10 @@ class SiteActivityWidget implements WidgetInterface
             } else {
                 $result['totalViews'][$key] = $data['siteTotals']['totalUser'];
                 $result['bounceRate'][$key] = $data['siteTotals']['bounceRate'];
-                $result['viewByCountry'][$key] = $this->getViewByCountry($data['siteActivity'], $result['totalViews'][$key]);
+                $result['viewByCountry'][$key] = $this->getViewByCountry($data['GeographicActivity'], $result['totalViews'][$key]);
             }
         }
         return $result;
-    }
-
-
-    /**
-     * @throws GuzzleException
-     */
-    public function getDataFromAnalytics(string $propertyId, string $dateRange): array
-    {
-        $requestBody = [
-            "dateRanges" => [
-                [
-                    "startDate" => "$dateRange",
-                    "endDate" => "today"
-                ]
-            ],
-            "dimensions" => [
-                [
-                    "name" => "country"
-                ],
-                [
-                    "name" => "city"
-                ],
-            ],
-            "metrics" => [
-                [
-                    "name" => "bounceRate"
-                ],
-                [
-                    "name" => "totalUsers"
-                ]
-            ],
-            "orderBys" => [
-                [
-                    "metric" => [
-                        "metricName" => "totalUsers"
-                    ],
-                    "desc" => true
-                ]
-            ],
-            "metricAggregations" => [
-                "TOTAL"
-            ]
-        ];
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseData = $analyticsRequest->getResponse();
-        $allDatas = [];
-        if ($responseData != null and isset($responseData['rows'])) {
-            $siteActivity = $this->getSiteActivity($responseData);
-            $siteTotals = $this->getSiteTotals($responseData);
-            $allDatas = [
-                'siteActivity' => $siteActivity,
-                'siteTotals' => $siteTotals,
-            ];
-        }
-        return $allDatas;
-    }
-
-    private function getSiteActivity(array $responseData): array
-    {
-        $siteActivity = [];
-        foreach ($responseData['rows'] as $row) {
-            $country = $row['dimensionValues'][0]['value'];
-            $city = $row['dimensionValues'][1]['value'];
-            $bounceRate = (int)$row['metricValues'][0]['value'];
-            $totalUser = (int)$row['metricValues'][1]['value'];
-            $siteActivity[] = [
-                'country' => $country,
-                'city' => $city,
-                'bounceRate' => round($bounceRate * 100, 2),
-                'totalUser' => $totalUser,
-            ];
-        }
-        return $siteActivity;
-    }
-
-    private function getSiteTotals(array $responseData): array
-    {
-        $totalsData = $responseData['totals'][0];
-        return [
-            'bounceRate' => round(($totalsData['metricValues'][0]['value'] * 100), 2),
-            'totalUser' => $totalsData['metricValues'][1]['value'],
-        ];
     }
 
     private function getViewByCountry(array $sortedCountries, float $totalVisits): array
@@ -354,6 +262,7 @@ class SiteActivityWidget implements WidgetInterface
         ];
         return $topCities;
     }
+
 
     function calculateCityPercentages(array &$topCountries): void
     {
