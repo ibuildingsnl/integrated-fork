@@ -25,6 +25,7 @@
         "ext-json": "*",
         "abraham/twitteroauth": "^2|^3",
         "darsyn/ip": "^4.0",
+        "kub-at/php-simple-html-dom-parser": "1.9.1",
         "devture/mongodb-migrations-bundle": "^4.0",
         "doctrine/cache": "^1.11",
         "doctrine/data-fixtures": ">= 1.5.1",
