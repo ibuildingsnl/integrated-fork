@@ -36,7 +36,6 @@ class SortOptions
         return (bool) ($this->options[$name] ?? false);
     }
 
-
     public function hasByField(string $fieldName): bool
     {
         foreach ($this->options as $option) {
@@ -57,7 +56,8 @@ class SortOptions
         throw new \InvalidArgumentException(sprintf('Sorting option "%s" does not exist', $name));
     }
 
-    public function getByField(string $fieldName): SortOption {
+    public function getByField(string $fieldName): SortOption
+    {
         foreach ($this->options as $option) {
             if ($option->field === $fieldName) {
                 return $option;
