@@ -133,7 +133,7 @@ class Content extends AbstractType
                 return $this->sorting->get('rel')->field;
             }
 
-            return $this->sorting->get('changed')->field;
+            return $this->sorting->get('time')->field;
         });
 
         $resolver->setNormalizer('order', function (Options $options, $value) {
