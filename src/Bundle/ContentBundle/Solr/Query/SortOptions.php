@@ -22,7 +22,9 @@ class SortOptions
     {
         foreach ($options as $index => $option) {
             if (!$option instanceof SortOption) {
-                throw new \InvalidArgumentException(sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class));
+                throw new \InvalidArgumentException(
+                    sprintf('Sorting option "%s" is not an instance of "%s"', $index, SortOption::class)
+                );
             }
 
             $this->options[$option->name] = $option;
