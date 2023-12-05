@@ -206,7 +206,7 @@ class IntegratedContentBlock extends AbstractType
                 return $value;
             }
 
-            return $this->sorting->get($options['sort'])->order;
+            return $this->sorting->getByField($options['sort'])->order;
         });
     }
 
