@@ -34,7 +34,7 @@
 
         <service id="integrated_brand.type.woodwing" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
             <argument>woodwing</argument>
-            <argument>woodwing</argument>
+            <argument>WoodWing</argument>
             <argument type="expression">false</argument>
             <argument>woodwing</argument>
             <argument>Integrated\Bundle\WoodwingBundle\Form\WoodwingPublicationType</argument>

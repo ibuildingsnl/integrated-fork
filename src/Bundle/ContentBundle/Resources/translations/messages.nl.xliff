@@ -1274,6 +1274,10 @@
                 <source>Start date</source>
                 <target>Publicatiedatum</target>
             </trans-unit>
+            <trans-unit id="323">
+                <source>Don't change status</source>
+                <target>Status niet veranderen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

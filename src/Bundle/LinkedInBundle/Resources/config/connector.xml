@@ -10,7 +10,7 @@
 
         <service id="integrated_brand.type.linkedin" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
             <argument>linkedin</argument>
-            <argument>linkedin</argument>
+            <argument>LinkedIn</argument>
             <argument type="expression">false</argument>
             <argument>linkedin</argument>
             <argument>\Integrated\Bundle\LinkedInBundle\Form\LinkedInPublicationType</argument>
