@@ -49,12 +49,12 @@ class LatestArticleWidget implements WidgetInterface
 
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
-
-        return [
+        $result = [
             "widget" => $this,
             'mostRecentArticles' => $mostRecentArticles,
             'channel' => $channel,
         ];
+        return $result;
     }
 
 }

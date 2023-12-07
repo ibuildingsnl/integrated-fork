@@ -1,0 +1,64 @@
+<div class="widget w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            <h2>{% trans %}Device type{% endtrans %}</h2>
+        </div>
+        <div class="widget-content flex">
+            <canvas id="Device_Type-doughnut-chart" width="800" height="450"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const deviceTypeDatas = {{ deviceType | json_encode | raw }};
+
+        const selectDeviceTypeDate = document.getElementById('select_date_range');
+        selectDeviceTypeDate.addEventListener('change', function () {
+            updateDeviceTypeChart();
+        });
+        updateDeviceTypeChart();
+
+        function dateRangeDeviceTypeSelection() {
+            const dateRangeMapping = {
+                'weekly': 'weeklyDeviceType',
+                'monthly': 'monthlyDeviceType',
+                'quarterly': 'quarterlyDeviceType',
+                'semester': 'semesterDeviceType',
+                'yearly': 'yearlyDeviceType'
+            };
+            return dateRangeMapping[selectDeviceTypeDate.value] || selectedDateRange;
+        }
+
+        function updateDeviceTypeChart() {
+            var selectedDeviceTypeDateRange = dateRangeDeviceTypeSelection(selectDeviceTypeDate.value);
+
+            const devices = deviceTypeDatas[selectedDeviceTypeDateRange].map(item => item.device);
+            const amounts = deviceTypeDatas[selectedDeviceTypeDateRange].map(item => item.amount);
+            var ctx = document.getElementById('Device_Type-doughnut-chart');
+
+            if (chart) {chart.destroy();}
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: devices,
+                    datasets: [
+                        {
+                            label: "Type of device",
+                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                            data: amounts
+                        }
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'type of device'
+                    }
+                }
+            });
+        }
+
+
+
+
+    </script>
+</div>

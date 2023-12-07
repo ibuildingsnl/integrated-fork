@@ -22,9 +22,6 @@ class GeographicActivityWidget implements WidgetInterface
     private readonly string $view;
 
     public function __construct(
-        private readonly string          $credential,
-        private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository,
         private readonly DocumentManager $manager,
     )
     {
@@ -58,9 +55,7 @@ class GeographicActivityWidget implements WidgetInterface
                 ['channelID' => $channel->getId()],
                 ['dateTime' => 'DESC']
             );
-
         $allDatas = $geographicActivity->getGeographicActivity();
-
         $result = [
             "widget" => $this,
             "totalViews" => [],

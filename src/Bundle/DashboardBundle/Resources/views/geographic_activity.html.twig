@@ -24,9 +24,12 @@
     </div>
 
     <script>
-        const viewByCountryData = {{ viewByCountry | json_encode | raw }};
+
         const totalViews = {{ totalViews | json_encode | raw }};
         const bounceRate = {{ bounceRate | json_encode | raw }};
+        const viewByCountryData = {{ viewByCountry | json_encode | raw }};
+        var chart;
+
         let currentViewByCountryData = null;
         let currentTotalViews = null;
         let currentBounceRate = null;

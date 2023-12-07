@@ -35,10 +35,12 @@
 
         var typeOfGraph ="userCount"
         var chart;
-        var selectVisitorActivityDate = document.getElementById('select_date_range');
+        const selectVisitorActivityDate = document.getElementById('select_date_range');
         selectVisitorActivityDate.addEventListener('change', function () {
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         });
+
+        visitorActivityChartFirstLoad();
 
         function updateVisitorActivityChart(selectedValue) {
 
@@ -215,8 +217,6 @@
             return result;
         }
 
-
-
         function aggregateDataByMonth(data, numMonths) {
             const aggregatedData = {};
             const daysInMonth = {};
@@ -307,8 +307,8 @@
             typeOfGraph = changeType;
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         }
-        function updateTotalCount(allDatas, dateRange)
-        {
+
+        function updateTotalCount(allDatas, dateRange) {
             let totalUserCount = 0;
             let totalScreenPageViews = 0;
             let totalBounceRate = 0;
@@ -336,7 +336,6 @@
             pageViewCountElement.textContent = totalScreenPageViews;
             bouncerateCountElement.textContent = totalBounceRate;
         }
-        visitorActivityChartFirstLoad();
 
     </script>
 </div>
