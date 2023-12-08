@@ -102,14 +102,14 @@
             {% if (panel_heading is defined and panel_heading == 'true') %}
                 {% set prototype_html = '<a data-toggle="collapse"><i class="iconoir-nav-arrow-down"></i><span>' ~ form.vars.default_title|default('Item') ~ '</span></a>' %}
                 {% if form.vars.allow_delete %}
-                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-xmark"></i></a>' %}
                 {% endif %}
                 {% set prototype_html = '<div class="panel-heading"><h4 class="panel-title">' ~ prototype_html ~ '</h4></div>' %}
                 {% set prototype_html = prototype_html ~ '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) ~ '</div></div>' %}
             {% else %}
                 {% set prototype_html = '<div id="__id__" class="panel-collapse collapse in"><div class="panel-body">' ~ form_widget(prototype, prototype_vars) %}
                 {% if form.vars.allow_delete %}
-                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-cancel"></i></a>' %}
+                    {% set prototype_html = prototype_html ~ '<a href="javascript:;" class="remove" title="' ~ 'Remove'|trans({}, translation_domain) ~ '" data-removefield="collection" data-field="__id__"><i class="iconoir-xmark"></i></a>' %}
                 {% endif %}
                 {% set prototype_html = prototype_html ~ '</div></div>' %}
             {% endif %}
@@ -144,7 +144,7 @@
                                             <a href="javascript:;" class="remove"
                                                title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
                                                data-removefield="collection" data-field="{{ field.vars.id }}">
-                                                <i class="iconoir-cancel"></i>
+                                                <i class="iconoir-xmark"></i>
                                             </a>
                                         {% endif %}
                                     </h4>
@@ -160,7 +160,7 @@
                                             <a href="javascript:;" class="remove"
                                                title="{{ form.vars.delete_button_text|trans({}, translation_domain) }}"
                                                data-removefield="collection" data-field="{{ field.vars.id }}">
-                                                <i class="iconoir-cancel"></i>
+                                                <i class="iconoir-xmark"></i>
                                             </a>
                                         {% endif %}
                                     {% endif %}
@@ -888,7 +888,7 @@
         {% set help_text = help_text|default('') %}
         {% if help_text is not empty %}
             <span class="help-block"><i
-                    class="iconoir-info-empty"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
+                    class="iconoir-info-circle"></i> {{ help_text|trans({}, translation_domain)|raw }}</span>
         {% endif %}
     {% endapply %}
 {% endblock form_help %}

@@ -33,6 +33,22 @@
             <tag name="integrated_content.form.event_subscriber"/>
         </service>
 
+        <service id="integrated_content.form.featuredimage.listener"
+                 class="Integrated\Bundle\ContentBundle\EventListener\ContentFeaturedImageListener">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="integrated_content.services.main_flusher" />
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+        <service id="Integrated\Bundle\BlockBundle\EventListener\BlockImageListener">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager"/>
+            <argument type="service" id="integrated_content.services.main_flusher" />
+
+            <tag name="integrated_content.form.event_subscriber"/>
+        </service>
+
+
         <service id="integrated_content.form.relations.listener" class="Integrated\Bundle\ContentBundle\EventListener\ContentRelationsIntegrationListener">
             <argument type="string">relations</argument>
             <argument type="string">Integrated\Bundle\ContentBundle\Form\Type\RelationsType</argument>
