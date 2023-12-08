@@ -26,7 +26,7 @@ use Integrated\Bundle\ImportBundle\Import\Provider\File as ImportFile;
 use Integrated\Bundle\IntegratedBundle\Controller\AbstractController;
 use Integrated\Bundle\StorageBundle\Storage\Manager;
 use Integrated\Common\Content\Form\ContentFormType;
-use Sunra\PhpSimple\HtmlDomParser;
+use KubAT\PhpSimple\HtmlDomParser;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
