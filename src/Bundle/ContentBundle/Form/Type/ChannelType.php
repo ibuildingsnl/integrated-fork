@@ -83,64 +83,6 @@ class ChannelType extends AbstractType
             ]
         );
 
-        $builder->add(
-            $builder->create('colors', FormType::class, [
-                'inherit_data' => true,
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'droplet',
-                ],
-            ])->add(
-                'color',
-                ColorType::class,
-                [
-                    'label' => 'Primary Color',
-                    'required' => false,
-                ]
-            )->add(
-                'secondarycolor',
-                ColorType::class,
-                [
-                    'label' => 'Secondary Color',
-                    'required' => false,
-                    'attr' => ['data-exclusive-to' => 'website'],
-                ]
-            )
-        );
-
-        $builder->add(
-            'logo',
-            MediaGalleryType::class,
-            [
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'media-image',
-                    'data-types' => '[{"type":"image","name":"Image"}]',
-                    'data-emptytext' => 'Select logo',
-                    'data-multiple' => false,
-                ],
-            ]
-        );
-
-        $builder->add(
-            'favicon',
-            MediaGalleryType::class,
-            [
-                'attr' => [
-                    'location' => 'sidebar',
-                    'style' => 'sidebar',
-                    'icon' => 'media-image',
-                    'data-types' => '[{"type":"image","name":"Image"}]',
-                    'data-emptytext' => 'Select Favicon 512x512',
-                    'data-multiple' => false,
-                    'help_text' => '<span>Use a 512x512 sized image for the best result</span>',
-                    'data-exclusive-to' => 'website',
-                ],
-            ]
-        );
-
         $builder->add('domains', TailwindCollectionType::class, [
             'priority' => 500,
             'label' => 'Domains (example.com)',
