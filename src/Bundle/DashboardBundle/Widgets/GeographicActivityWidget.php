@@ -11,7 +11,7 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use DateTimeImmutable;
-use Integrated\Bundle\AnalyticsBundle\Document\GeographicActivity;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 
 
 class GeographicActivityWidget implements WidgetInterface
@@ -50,12 +50,12 @@ class GeographicActivityWidget implements WidgetInterface
      */
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        $geographicActivity = $this->manager->getRepository(GeographicActivity::class)
+        $geographicActivity = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
-                ['channelID' => $channel->getId()],
+                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $geographicActivity->getGeographicActivity();
+        $allDatas = $geographicActivity->getDatas();
         $result = [
             "widget" => $this,
             "totalViews" => [],

@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
@@ -46,84 +47,20 @@ class DeviceTypeWidget implements WidgetInterface
     }
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            return ["DeviceType" => "No data found"];
-        }
-        //$deviceType = $this->getDataFromAnalytics($propertyId, $channel, '365daysAgo');
+        $deviceType = $this->manager->getRepository(AnalyticsData::class)
+            ->findOneBy(
+                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['dateTime' => 'DESC']
+            );
+        $allDatas = $deviceType->getDatas();
 
-
-        $dateRanges = [
-            'weeklyDeviceType' => '7daysAgo',
-            'monthlyDeviceType' => '30daysAgo',
-            'quarterlyDeviceType' => '90daysAgo',
-            'semesterDeviceType' => '182daysAgo',
-            'yearlyDeviceType' => '365daysAgo',
-        ];
-
-        $maxElements = 9;
-        $allDatas = [];
-        foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
-            if (count($allDatas[$key]) > $maxElements)
-            {
-                $allDatas[$key] = $this->processDeviceType($allDatas[$key], $maxElements);
-            }
-        }
-
-        //dd($allDatas);
         return [
             "widget" => $this,
-            "deviceType" => $allDatas,
-        ];
+            "deviceType" => $allDatas ?? [],
+        ];;
     }
 
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        {
-            $requestBody = [
-                "dateRanges" => [
-                    [
-                        "startDate" => $dateRange,
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "deviceCategory"
-                    ],
-                ],
-                "metrics" => [
-                    [
-                        "name" => "screenPageViews"
-                    ]
-                ],
-            ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
-            $deviceType = [];
-            if ($responseData != null and isset($responseData['rows'])) {
-                foreach ($responseData['rows'] as $row) {
-                    $deviceCategory = $row['dimensionValues'][0]['value'];
-                    $screenPageViews = (int)$row['metricValues'][0]['value'];
-                    $deviceType[] = [
-                        'device' => $deviceCategory,
-                        'amount' => $screenPageViews,
-                    ];
-                }
-            } else {
-                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
-                $this->logger->error($message);
-                //$this->output->writeln($message);
-            }
-        }
-        return $deviceType;
-    }
+
 
     function processDeviceType(array $trafficAcquisition, $maxElements): array
     {

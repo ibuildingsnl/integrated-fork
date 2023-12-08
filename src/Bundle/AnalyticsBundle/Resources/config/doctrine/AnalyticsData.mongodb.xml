@@ -3,10 +3,11 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                     http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Integrated\Bundle\AnalyticsBundle\Document\GeographicActivity">
+    <document name="Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData">
         <id field-name="id" strategy="auto" />
         <field field-name="channelID" type="string" />
-        <field field-name="geographicActivity" type="hash" />
+        <field field-name="dataType" type="string" />
+        <field field-name="datas" type="hash" />
         <field field-name="dateTime" type="date_immutable" />
     </document>
 

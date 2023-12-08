@@ -5,29 +5,36 @@ namespace Integrated\Bundle\AnalyticsBundle\Document;
 use DateTimeImmutable;
 
 
-class GeographicActivity
+class AnalyticsData
 {
     private readonly string $id;
     private string $channelID;
-    private array $geographicActivity;
+    private string $dataType;
+    private array $datas;
     private DateTimeImmutable $dateTime;
 
     public function __construct(
         string $channelID,
-        array $geographicActivity,
+        string $dataType,
+        array $datas,
         DateTimeImmutable $dateTime
     ) {
         $this->channelID = $channelID;
-        $this->geographicActivity = $geographicActivity;
+        $this->datas = $datas;
+        $this->dataType = $dataType;
         $this->dateTime = $dateTime;
     }
     public function getChannelID(): string
     {
         return $this->channelID;
     }
-    public function getGeographicActivity(): array
+    public function getDataType(): string
     {
-        return $this->geographicActivity;
+        return $this->dataType;
+    }
+    public function getDatas(): array
+    {
+        return $this->datas;
     }
     public function getDateTime(): DateTimeImmutable
     {

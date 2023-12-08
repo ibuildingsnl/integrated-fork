@@ -14,12 +14,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DateTimeImmutable;
-use Integrated\Bundle\AnalyticsBundle\Document\GeographicActivity;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 
 class GetGeographicActivityCommand extends Command
 {
     private OutputInterface $output;
-
     /**
      * Constructor.
      */
@@ -78,7 +77,7 @@ class GetGeographicActivityCommand extends Command
     /**
      * @throws GuzzleException
      */
-    public function getDataFromAnalytics(string $propertyId, string $dateRange): array
+    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
     {
         $requestBody = [
             "dateRanges" => [
@@ -126,6 +125,10 @@ class GetGeographicActivityCommand extends Command
                 'GeographicActivity' => $GeographicActivity,
                 'siteTotals' => $siteTotals,
             ];
+        } else {
+            $message = "Get Geographic Activity Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+            $this->logger->error($message);
+            $this->output->writeln($message);
         }
         return $allDatas;
     }
@@ -152,10 +155,10 @@ class GetGeographicActivityCommand extends Command
 
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $dateRange);
+            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
         }
 
-        $geographicActivity = new GeographicActivity($channel->getId(), $allDatas, new DateTimeImmutable());
+        $geographicActivity = new AnalyticsData($channel->getId(), 'geographic_activity', $allDatas, new DateTimeImmutable());
         $this->manager->persist($geographicActivity);
     }
 
