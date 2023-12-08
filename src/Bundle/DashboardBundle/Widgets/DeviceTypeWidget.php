@@ -54,32 +54,38 @@ class DeviceTypeWidget implements WidgetInterface
             );
         $allDatas = $deviceType->getDatas();
 
+        $maxElements = 10;
+        foreach ($allDatas as &$dateRangeData) {
+            if (count($dateRangeData) > $maxElements) {
+                $dateRangeData = $this->processOtherDeviceType($dateRangeData, $maxElements-1);
+            }
+        }
         return [
             "widget" => $this,
             "deviceType" => $allDatas ?? [],
-        ];;
+        ];
     }
 
 
-
-    function processDeviceType(array $trafficAcquisition, $maxElements): array
+    function processOtherDeviceType(array $dateRangeData, $maxElements): array
     {
-        $otherSessions = 0;
+        $otherDevices = 0;
 
         // Calcul du cumul des sessions et stockage des sources à partir du 10ème élément
-        for ($i = $maxElements; $i < count($trafficAcquisition); $i++) {
-            $otherSessions += $trafficAcquisition[$i]['sessions'];
+        for ($i = $maxElements; $i < count($dateRangeData); $i++) {
+            $otherDevices += $dateRangeData[$i]['amount'];
         }
 
         // Suppression des éléments à partir du 10ème
-        array_splice($trafficAcquisition, $maxElements);
+        array_splice($dateRangeData, $maxElements);
 
         // Ajout de l'élément "Other" avec le cumul des sessions
-        $trafficAcquisition[] = [
-            'source' => 'Other',
-            'sessions' => $otherSessions
+        $dateRangeData[] = [
+            'device' => 'Other',
+            'amount' => $otherDevices
         ];
+        //dd($dateRangeData);
 
-        return $trafficAcquisition;
+        return $dateRangeData;
     }
 }

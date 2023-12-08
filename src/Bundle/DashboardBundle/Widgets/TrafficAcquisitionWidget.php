@@ -64,12 +64,12 @@ class TrafficAcquisitionWidget implements WidgetInterface
         ];
 
         $allDatas = [];
-        $maxElements = 9;
+        $maxElements = 10;
         foreach ($dateRanges as $key => $dateRange) {
             $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
             if (count($allDatas[$key]) > $maxElements)
             {
-                $allDatas[$key] = $this->processTrafficAcquisition($allDatas[$key], $maxElements);
+                $allDatas[$key] = $this->processTrafficAcquisition($allDatas[$key], $maxElements-1);
             }
         }
         return [
@@ -78,19 +78,16 @@ class TrafficAcquisitionWidget implements WidgetInterface
         ];
     }
 
-    function processTrafficAcquisition(array $trafficAcquisition, $maxElements): array
+    function processOtherTrafficAcquisition(array $trafficAcquisition, $maxElements): array
     {
         $otherSessions = 0;
 
-        // Calcul du cumul des sessions et stockage des sources à partir du 10ème élément
         for ($i = $maxElements; $i < count($trafficAcquisition); $i++) {
             $otherSessions += $trafficAcquisition[$i]['sessions'];
         }
 
-        // Suppression des éléments à partir du 10ème
         array_splice($trafficAcquisition, $maxElements);
 
-        // Ajout de l'élément "Other" avec le cumul des sessions
         $trafficAcquisition[] = [
             'source' => 'Other',
             'sessions' => $otherSessions
