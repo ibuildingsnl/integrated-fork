@@ -11,6 +11,7 @@
 
 namespace Integrated\Bundle\ContentBundle\Solr\Type;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Bundle\ContentBundle\Document\Content\Taxonomy;
@@ -19,6 +20,20 @@ use Integrated\Common\Converter\Type\TypeInterface;
 
 class TaxonomyType implements TypeInterface
 {
+    /**
+     * @var DocumentManager $documentManager
+     */
+    private $documentManager;
+
+    /**
+     * @param DocumentManager         $documentManager
+     */
+
+    public function __construct(DocumentManager $documentManager)
+    {
+        $this->documentManager = $documentManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -43,6 +58,15 @@ class TaxonomyType implements TypeInterface
                     $container->add('facet_'.$relation->getRelationId(), $content->getTitle());
                     $container->add('taxonomy_'.$relation->getRelationId().'_string', $content->getTitle());
                     foreach ($content->getChannels() as $channel) {
+                        $parentId = $this->documentManager
+                            ->getRepository(Content::class)
+                            ->findOneBy(['_id' => $content->getParentID()]);
+
+                        if ($channel->getName() === $parentId?->getTitle()) {
+                            $container->add('taxonomy_parent_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                        } else {
+                            $container->add('taxonomy_child_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
+                        }
                         $container->add('taxonomy_'.$channel->getId().'_'.$relation->getRelationId().'_string', $content->getTitle());
                     }
                 }
