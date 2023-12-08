@@ -34,17 +34,15 @@
     <script>
 
         var typeOfGraph ="userCount"
-        var chart;
+        var visitorActivityChart;
         const selectVisitorActivityDate = document.getElementById('select_date_range');
         selectVisitorActivityDate.addEventListener('change', function () {
             updateVisitorActivityChart(selectVisitorActivityDate.value);
         });
 
-        visitorActivityChartFirstLoad();
-
         function updateVisitorActivityChart(selectedValue) {
 
-           var allDatas = [
+            var allDatas = [
                 {% for row in userActivityByDate %}
                 formatDataCountData('{{ row.date }}', '{{ row.userCount }}', '{{ row.screenPageViews }}', '{{ row.bounceRate }}'),
                 {% endfor %}
@@ -110,9 +108,9 @@
                     break;
             }
             chartData = datasetByGraph(dataCounts)
-            if (chart) {chart.destroy();}
+            if (visitorActivityChart) {visitorActivityChart.destroy();}
 
-            chart = new Chart(ctx, {
+            visitorActivityChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: dates,
@@ -336,7 +334,7 @@
             pageViewCountElement.textContent = totalScreenPageViews;
             bouncerateCountElement.textContent = totalBounceRate;
         }
+        visitorActivityChartFirstLoad();
 
     </script>
 </div>
-

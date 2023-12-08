@@ -11,9 +11,8 @@ use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class DeviceTypeWidget implements WidgetInterface
+class TrafficAcquisitionWidget implements WidgetInterface
 {
-
     private readonly string $id;
     private readonly string $name;
     private readonly string $view;
@@ -21,13 +20,13 @@ class DeviceTypeWidget implements WidgetInterface
     public function __construct(
         private readonly DocumentManager $manager,
         private readonly string          $credential,
-        private readonly LoggerInterface  $logger,
-        private readonly BrandRepository  $brandRepository,
+        private readonly LoggerInterface $logger,
+        private readonly BrandRepository $brandRepository,
     )
     {
-        $this->id = 'device_type';
-        $this->name = 'Device type';
-        $this->view = '@IntegratedDashboard/device_type.html.twig';
+        $this->id = 'traffic_acquisition';
+        $this->name = 'Traffic acquisition';
+        $this->view = '@IntegratedDashboard/traffic_acquisition.html.twig';
     }
 
     public function getId(): string
@@ -44,6 +43,7 @@ class DeviceTypeWidget implements WidgetInterface
     {
         return $this->view;
     }
+
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
         foreach ($this->brandRepository->all() as $brand) {
@@ -54,78 +54,31 @@ class DeviceTypeWidget implements WidgetInterface
         if (!isset($propertyId) || $propertyId == null) {
             return ["DeviceType" => "No data found"];
         }
-        //$deviceType = $this->getDataFromAnalytics($propertyId, $channel, '365daysAgo');
-
 
         $dateRanges = [
-            'weeklyDeviceType' => '7daysAgo',
-            'monthlyDeviceType' => '30daysAgo',
-            'quarterlyDeviceType' => '90daysAgo',
-            'semesterDeviceType' => '182daysAgo',
-            'yearlyDeviceType' => '365daysAgo',
+            'weeklyTrafficAcquisition' => '7daysAgo',
+            'monthlyTrafficAcquisition' => '30daysAgo',
+            'quarterlyTrafficAcquisition' => '90daysAgo',
+            'semesterTrafficAcquisition' => '182daysAgo',
+            'yearlyTrafficAcquisition' => '365daysAgo',
         ];
 
-        $maxElements = 9;
         $allDatas = [];
+        $maxElements = 9;
         foreach ($dateRanges as $key => $dateRange) {
             $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
             if (count($allDatas[$key]) > $maxElements)
             {
-                $allDatas[$key] = $this->processDeviceType($allDatas[$key], $maxElements);
+                $allDatas[$key] = $this->processTrafficAcquisition($allDatas[$key], $maxElements);
             }
         }
-
-        //dd($allDatas);
         return [
             "widget" => $this,
-            "deviceType" => $allDatas,
+            "trafficAcquisition" => $allDatas,
         ];
     }
 
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        {
-            $requestBody = [
-                "dateRanges" => [
-                    [
-                        "startDate" => $dateRange,
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "deviceCategory"
-                    ],
-                ],
-                "metrics" => [
-                    [
-                        "name" => "screenPageViews"
-                    ]
-                ],
-            ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
-            $deviceType = [];
-            if ($responseData != null and isset($responseData['rows'])) {
-                foreach ($responseData['rows'] as $row) {
-                    $deviceCategory = $row['dimensionValues'][0]['value'];
-                    $screenPageViews = (int)$row['metricValues'][0]['value'];
-                    $deviceType[] = [
-                        'device' => $deviceCategory,
-                        'amount' => $screenPageViews,
-                    ];
-                }
-            } else {
-                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
-                $this->logger->error($message);
-                //$this->output->writeln($message);
-            }
-        }
-        return $deviceType;
-    }
-
-    function processDeviceType(array $trafficAcquisition, $maxElements): array
+    function processTrafficAcquisition(array $trafficAcquisition, $maxElements): array
     {
         $otherSessions = 0;
 
@@ -143,6 +96,51 @@ class DeviceTypeWidget implements WidgetInterface
             'sessions' => $otherSessions
         ];
 
+        return $trafficAcquisition;
+    }
+
+
+    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
+    {
+        {
+            $requestBody = [
+                "dateRanges" => [
+                    [
+                        "startDate" => $dateRange,
+                        "endDate" => "today"
+                    ]
+                ],
+                "dimensions" => [
+                    [
+                        "name" => "sessionDefaultChannelGroup"
+                    ],
+                ],
+                "metrics" => [
+                    [
+                        "name" => "sessions"
+                    ]
+                ],
+
+            ];
+            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
+            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
+            $responseData = $analyticsRequest->getResponse();
+            $trafficAcquisition = [];
+            if ($responseData != null and isset($responseData['rows'])) {
+                foreach ($responseData['rows'] as $row) {
+                    $source = $row['dimensionValues'][0]['value'];
+                    $sessions = (int)$row['metricValues'][0]['value'];
+                    $trafficAcquisition[] = [
+                        'source' => $source,
+                        'sessions' => $sessions,
+                    ];
+                }
+            } else {
+                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+                $this->logger->error($message);
+                //$this->output->writeln($message);
+            }
+        }
         return $trafficAcquisition;
     }
 }

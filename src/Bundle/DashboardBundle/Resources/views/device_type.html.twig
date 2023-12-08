@@ -10,7 +10,7 @@
 
     <script>
         const deviceTypeDatas = {{ deviceType | json_encode | raw }};
-
+        var deviceTypeChart;
         const selectDeviceTypeDate = document.getElementById('select_date_range');
         selectDeviceTypeDate.addEventListener('change', function () {
             updateDeviceTypeChart();
@@ -35,15 +35,15 @@
             const amounts = deviceTypeDatas[selectedDeviceTypeDateRange].map(item => item.amount);
             var ctx = document.getElementById('Device_Type-doughnut-chart');
 
-            if (chart) {chart.destroy();}
-            chart = new Chart(ctx, {
+            if (deviceTypeChart) {deviceTypeChart.destroy();}
+            deviceTypeChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: devices,
                     datasets: [
                         {
                             label: "Type of device",
-                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#5D5D5D", "#FF6600", "#33CC33", "#FFCC00", "#9900FF"],
                             data: amounts
                         }
                     ]
@@ -56,9 +56,5 @@
                 }
             });
         }
-
-
-
-
     </script>
 </div>

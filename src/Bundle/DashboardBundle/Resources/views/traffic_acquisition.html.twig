@@ -1,0 +1,61 @@
+<div class="widget w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            <h2>{% trans %}Traffic acquisition{% endtrans %}</h2>
+        </div>
+        <div class="widget-content flex">
+            <canvas id="Traffic_Acquisition-doughnut-chart" width="800" height="450"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const trafficAcquisitionDatas = {{ trafficAcquisition | json_encode | raw }};
+        var trafficAcquisitionChart;
+        const selectTrafficAcquisitionDate = document.getElementById('select_date_range');
+        selectTrafficAcquisitionDate.addEventListener('change', function () {
+            updateTrafficAcquisitionChart();
+        });
+        updateTrafficAcquisitionChart();
+
+        function dateRangeTrafficAcquisitionSelection() {
+            const dateRangeMapping = {
+                'weekly': 'weeklyTrafficAcquisition',
+                'monthly': 'monthlyTrafficAcquisition',
+                'quarterly': 'quarterlyTrafficAcquisition',
+                'semester': 'semesterTrafficAcquisition',
+                'yearly': 'yearlyTrafficAcquisition'
+            };
+            return dateRangeMapping[selectTrafficAcquisitionDate.value] || selectedDateRange;
+        }
+
+        function updateTrafficAcquisitionChart() {
+            var selectedTrafficAcquisitionDateRange = dateRangeTrafficAcquisitionSelection(selectTrafficAcquisitionDate.value);
+            console.log(trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange]);
+            const source = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.source);
+            const sessions = trafficAcquisitionDatas[selectedTrafficAcquisitionDateRange].map(item => item.sessions);
+
+            var ctx = document.getElementById('Traffic_Acquisition-doughnut-chart');
+
+            if (trafficAcquisitionChart) {trafficAcquisitionChart.destroy();}
+            trafficAcquisitionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: source,
+                    datasets: [
+                        {
+                            label: "Type of device",
+                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#5D5D5D", "#FF6600", "#33CC33", "#FFCC00", "#9900FF"],
+                            data: sessions
+                        }
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'type of device'
+                    }
+                }
+            });
+        }
+    </script>
+</div>

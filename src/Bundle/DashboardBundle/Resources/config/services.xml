@@ -53,5 +53,12 @@
             <argument type="service" id="integrated_brand.brand.repository" />
             <tag name="integrated_dashboard.widget" />
         </service>
+        <service id="Integrated\Bundle\DashboardBundle\Widgets\TrafficAcquisitionWidget">
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
+            <argument type="service" id="monolog.logger"/>
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <tag name="integrated_dashboard.widget" />
+        </service>
     </services>
 </container>
