@@ -588,7 +588,8 @@ abstract class Content implements ContentInterface, ExtensibleInterface, Metadat
      */
     public function getPrimaryChannel()
     {
-        if (null === $this->primaryChannel && $this->channels->count() || !$this->channels->contains($this->primaryChannel)) {
+        if (null === $this->primaryChannel && $this->channels->count() ||
+            !$this->channels->contains($this->primaryChannel) && $this->channels->count()) {
             return $this->channels->first();
         }
 
