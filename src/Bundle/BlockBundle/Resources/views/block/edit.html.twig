@@ -48,7 +48,7 @@
                                     <div class="status-options">
                                         {% if form.publishedAt is defined %}
                                             <div class="status published">
-                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_block_block_delete', {'id': block.id}) }}">
