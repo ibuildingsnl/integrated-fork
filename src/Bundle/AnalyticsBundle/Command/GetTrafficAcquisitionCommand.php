@@ -14,7 +14,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DateTimeImmutable;
 
 
 class GetTrafficAcquisitionCommand extends Command
@@ -53,34 +52,21 @@ class GetTrafficAcquisitionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
+        $channels = $analyticsRequest->getChannels();
 
-        $channels = $this->getChannels();
         foreach ($channels as $channel)
         {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Trafic Acquisition  datas');
-            $propertyId = $this->getPropertyID($channel);
-            $allDatas = $this->getData($channel, $propertyId);
-            $this->setDataToDB($channel, $this->dataType, $allDatas);
+            $allDatas = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
-
         return 1;
     }
-    public function getPropertyID(ChannelInterface $channel): ?string
-    {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            $this->logger->error($channel->getName(). ' Error: no property ID found');
-            return null;
-        }
-        return $propertyId;
-    }
 
-    public function getData(ChannelInterface $channel, $propertyId): array
+    public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
+        $analyticsRequest->getPropertyID($channel);
         $dateRanges = [
             'weeklyTrafficAcquisition' => '7daysAgo',
             'monthlyTrafficAcquisition' => '30daysAgo',
@@ -91,20 +77,6 @@ class GetTrafficAcquisitionCommand extends Command
 
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
-        }
-        return $allDatas;
-    }
-    public function setDataToDB(ChannelInterface $channel, $dataType ,$allDatas): void
-    {
-        $trafficAcquisition = new AnalyticsData($channel->getId(), $dataType, $allDatas, new DateTimeImmutable());
-        $this->manager->persist($trafficAcquisition);
-        $this->manager->flush();
-    }
-
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        {
             $requestBody = [
                 "dateRanges" => [
                     [
@@ -124,37 +96,24 @@ class GetTrafficAcquisitionCommand extends Command
                 ],
 
             ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
-            $trafficAcquisition = [];
-            if ($responseData != null and isset($responseData['rows'])) {
-                foreach ($responseData['rows'] as $row) {
-                    $source = $row['dimensionValues'][0]['value'];
-                    $sessions = (int)$row['metricValues'][0]['value'];
-                    $trafficAcquisition[] = [
-                        'source' => $source,
-                        'sessions' => $sessions,
-                    ];
-                }
-            } else {
+            $responseData = $analyticsRequest->getDataFromAnalytics($analyticsRequest, $channel, $requestBody);
+            if ($responseData == null){
                 $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
+                continue;
             }
-        }
-        return $trafficAcquisition;
-    }
-
-    public function getChannels(): array
-    {
-        $channels = [];
-        foreach ($this->channelRepository->findAll() as $channel) {
-            if ($channel->getPrimaryDomain() != null)
-            {
-                $channels[] = $channel;
+            $trafficAcquisition = [];
+            foreach ($responseData['rows'] as $row) {
+                $source = $row['dimensionValues'][0]['value'];
+                $sessions = (int)$row['metricValues'][0]['value'];
+                $trafficAcquisition[] = [
+                    'source' => $source,
+                    'sessions' => $sessions,
+                ];
             }
+            $allDatas[$key] = $trafficAcquisition;
         }
-        return $channels;
+        return $allDatas;
     }
 }

@@ -3,6 +3,7 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
@@ -22,7 +23,9 @@ class VisitorsActivityWidget implements WidgetInterface
     public function __construct(
         private readonly string          $credential,
         private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository
+        private readonly BrandRepository $brandRepository,
+        private readonly ObjectRepository $channelRepository,
+        private readonly DocumentManager  $manager,
     ){
         $this->id = 'visitors_activity';
         $this->name = 'Visitors activity';
@@ -105,7 +108,7 @@ class VisitorsActivityWidget implements WidgetInterface
             ]
         ];
 
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseData = $analyticsRequest->getResponse();
         $userActivityByDate = [];

@@ -114,7 +114,7 @@ class GetGeographicActivityCommand extends Command
                 "TOTAL"
             ]
         ];
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
         $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
         $responseData = $analyticsRequest->getResponse();
         $allDatas = [];

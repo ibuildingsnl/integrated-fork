@@ -2,17 +2,26 @@
 
 namespace Integrated\Bundle\AnalyticsBundle\Infrastructure;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 use Google\Client as GoogleApiClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
+use Integrated\Bundle\BrandBundle\Document\BrandRepository;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
+use DateTimeImmutable;
 
 class AnalyticsRequest
 {
 
     public function __construct(
         private readonly string $credential,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly BrandRepository  $brandRepository,
+        private readonly ObjectRepository $channelRepository,
+        private readonly DocumentManager  $manager,
     )
     {
     }
@@ -61,5 +70,45 @@ class AnalyticsRequest
             $this->logger->error('Get Analytics Error: ' . $e->getMessage(). '\n');
         }
         $this->response = $responseBody ?? "";
+    }
+    public function getDataFromAnalytics(AnalyticsRequest $analyticsRequest, ChannelInterface $channel, array $requestBody): ?array
+    {
+        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $analyticsRequest->getPropertyID($channel));
+        $responseData = $analyticsRequest->getResponse();
+        if ($responseData != null && isset($responseData['rows'])) {
+            return $responseData;
+        }
+        return null;
+    }
+
+    public function getChannels(): array
+    {
+        $channels = [];
+        foreach ($this->channelRepository->findAll() as $channel) {
+            if ($channel->getPrimaryDomain() != null)
+            {
+                $channels[] = $channel;
+            }
+        }
+        return $channels;
+    }
+    public function getPropertyID(ChannelInterface $channel): ?string
+    {
+        foreach ($this->brandRepository->all() as $brand) {
+            if ($brand->hasChannel($channel)) {
+                $propertyId = $brand->profile->analytics;
+            }
+        }
+        if (!isset($propertyId) || $propertyId == null) {
+            $this->logger->error($channel->getName(). ' Error: no property ID found');
+            return null;
+        }
+        return $propertyId;
+    }
+    public function setDataToDB(ChannelInterface $channel, $dataType ,$allDatas): void
+    {
+        $analyticsData = new AnalyticsData($channel->getId(), $dataType, $allDatas, new DateTimeImmutable());
+        $this->manager->persist($analyticsData);
+        $this->manager->flush();
     }
 }

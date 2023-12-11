@@ -4,14 +4,14 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest">
+        </service>
         <service id="Integrated\Bundle\AnalyticsBundle\Command\GetSitePerformancesCommand">
             <argument type="service" id="doctrine_mongodb.odm.document_manager" />
             <argument type="service" id="integrated_channel.repository.channel" />
             <argument type="service" id="guzzle" />
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
-        </service>
-        <service id="Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest">
         </service>
         <service id="Integrated\Bundle\AnalyticsBundle\Command\GetMostReadDatasCommand">
             <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>

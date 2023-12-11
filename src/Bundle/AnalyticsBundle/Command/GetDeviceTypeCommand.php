@@ -115,7 +115,7 @@ class GetDeviceTypeCommand extends Command
                     ]
                 ],
             ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
+            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
             $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
             $responseData = $analyticsRequest->getResponse();
             $deviceType = [];
@@ -136,6 +136,7 @@ class GetDeviceTypeCommand extends Command
         }
         return $deviceType;
     }
+    
 
     public function getChannels(): array
     {
