@@ -20,6 +20,7 @@ use DateTimeImmutable;
 class GetDeviceTypeCommand extends Command
 {
     private OutputInterface $output;
+    private string $dataType = "device_type";
     /**
      * Constructor.
      */
@@ -51,28 +52,21 @@ class GetDeviceTypeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
+        $channels = $analyticsRequest->getChannels();
 
-        $channels = $this->getChannels();
         foreach ($channels as $channel)
         {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Device Type datas');
-            $this->setDataToDB($channel);
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Trafic Acquisition  datas');
+            $allDatas = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
-
-        $this->manager->flush();
         return 1;
     }
-    public function setDataToDB(ChannelInterface $channel): void
+
+    public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            $this->logger->error('Get Device Type Error: no property ID found');
-            return;
-        }
+        $analyticsRequest->getPropertyID($channel);
 
         $dateRanges = [
             'weeklyDeviceType' => '7daysAgo',
@@ -84,19 +78,6 @@ class GetDeviceTypeCommand extends Command
 
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId,$channel, $dateRange);
-        }
-
-        $deviceType = new AnalyticsData($channel->getId(), 'device_type', $allDatas, new DateTimeImmutable());
-        $this->manager->persist($deviceType);
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        {
             $requestBody = [
                 "dateRanges" => [
                     [
@@ -115,38 +96,25 @@ class GetDeviceTypeCommand extends Command
                     ]
                 ],
             ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
-            $deviceType = [];
-            if ($responseData != null and isset($responseData['rows'])) {
-                foreach ($responseData['rows'] as $row) {
-                    $deviceCategory = $row['dimensionValues'][0]['value'];
-                    $screenPageViews = (int)$row['metricValues'][0]['value'];
-                    $deviceType[] = [
-                        'device' => $deviceCategory,
-                        'amount' => $screenPageViews,
-                    ];
-                }
-            } else {
+
+            $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
+            if ($responseData == null){
                 $message = "Get Device Type Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
                 $this->logger->error($message);
                 $this->output->writeln($message);
+                continue;
             }
-        }
-        return $deviceType;
-    }
-    
-
-    public function getChannels(): array
-    {
-        $channels = [];
-        foreach ($this->channelRepository->findAll() as $channel) {
-            if ($channel->getPrimaryDomain() != null)
-            {
-                $channels[] = $channel;
+            $deviceType = [];
+            foreach ($responseData['rows'] as $row) {
+                $deviceCategory = $row['dimensionValues'][0]['value'];
+                $screenPageViews = (int)$row['metricValues'][0]['value'];
+                $deviceType[] = [
+                    'device' => $deviceCategory,
+                    'amount' => $screenPageViews,
+                ];
             }
+            $allDatas[$key] = $deviceType;
         }
-        return $channels;
+        return $allDatas;
     }
 }

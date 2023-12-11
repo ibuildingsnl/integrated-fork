@@ -19,6 +19,7 @@ use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 class GetGeographicActivityCommand extends Command
 {
     private OutputInterface $output;
+    private string $dataType = "geographic_activity";
     /**
      * Constructor.
      */
@@ -50,100 +51,20 @@ class GetGeographicActivityCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
+        $channels = $analyticsRequest->getChannels();
 
-        $channels = $this->getChannels();
         foreach ($channels as $channel)
         {
-            $this->output->writeln('- Getting '.$channel->getName().'\'s Geographic activity datas');
-            $this->setDataToDB($channel);
+            $this->output->writeln('- Getting '.$channel->getName().'\'s Geographic activity  datas');
+            $allDatas = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
-
-        $this->manager->flush();
         return 1;
     }
-
-    public function getChannels(): array
+    public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
-        $channels = [];
-        foreach ($this->channelRepository->findAll() as $channel) {
-            if ($channel->getPrimaryDomain() != null)
-            {
-                $channels[] = $channel;
-            }
-        }
-        return $channels;
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        $requestBody = [
-            "dateRanges" => [
-                [
-                    "startDate" => "$dateRange",
-                    "endDate" => "today"
-                ]
-            ],
-            "dimensions" => [
-                [
-                    "name" => "country"
-                ],
-                [
-                    "name" => "city"
-                ],
-            ],
-            "metrics" => [
-                [
-                    "name" => "bounceRate"
-                ],
-                [
-                    "name" => "totalUsers"
-                ]
-            ],
-            "orderBys" => [
-                [
-                    "metric" => [
-                        "metricName" => "totalUsers"
-                    ],
-                    "desc" => true
-                ]
-            ],
-            "metricAggregations" => [
-                "TOTAL"
-            ]
-        ];
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
-        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseData = $analyticsRequest->getResponse();
-        $allDatas = [];
-        if ($responseData != null and isset($responseData['rows'])) {
-            $GeographicActivity = $this->getGeographicActivity($responseData);
-            $siteTotals = $this->getSiteTotals($responseData);
-            $allDatas = [
-                'GeographicActivity' => $GeographicActivity,
-                'siteTotals' => $siteTotals,
-            ];
-        } else {
-            $message = "Get Geographic Activity Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
-            $this->logger->error($message);
-            $this->output->writeln($message);
-        }
-        return $allDatas;
-    }
-
-    public function setDataToDB(ChannelInterface $channel): void
-    {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            $this->logger->error('Get Geographic activity Error: no property ID found');
-            return;
-        }
+        $analyticsRequest->getPropertyID($channel);
 
         $dateRanges = [
             'weeklyGeographicActivity' => '7daysAgo',
@@ -153,15 +74,64 @@ class GetGeographicActivityCommand extends Command
             'yearlyGeographicActivity' => '365daysAgo',
         ];
 
+
         $allDatas = [];
         foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
+            $requestBody = [
+                "dateRanges" => [
+                    [
+                        "startDate" => "$dateRange",
+                        "endDate" => "today"
+                    ]
+                ],
+                "dimensions" => [
+                    [
+                        "name" => "country"
+                    ],
+                    [
+                        "name" => "city"
+                    ],
+                ],
+                "metrics" => [
+                    [
+                        "name" => "bounceRate"
+                    ],
+                    [
+                        "name" => "totalUsers"
+                    ]
+                ],
+                "orderBys" => [
+                    [
+                        "metric" => [
+                            "metricName" => "totalUsers"
+                        ],
+                        "desc" => true
+                    ]
+                ],
+                "metricAggregations" => [
+                    "TOTAL"
+                ]
+            ];
+            $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
+            if ($responseData == null){
+                $message = "Get Geographic Activity Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+                $this->logger->error($message);
+                $this->output->writeln($message);
+                continue;
+            }
+            $geographicAndTotal = [];
+            foreach ($responseData['rows'] as $row) {
+                $GeographicActivity = $this->getGeographicActivity($responseData);
+                $siteTotals = $this->getSiteTotals($responseData);
+                $geographicAndTotal = [
+                    'GeographicActivity' => $GeographicActivity,
+                    'siteTotals' => $siteTotals,
+                ];
+            }
+            $allDatas[$key] = $geographicAndTotal;
         }
-
-        $geographicActivity = new AnalyticsData($channel->getId(), 'geographic_activity', $allDatas, new DateTimeImmutable());
-        $this->manager->persist($geographicActivity);
+        return $allDatas;
     }
-
     private function getGeographicActivity(array $responseData): array
     {
         $GeographicActivity = [];

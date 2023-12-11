@@ -5,6 +5,7 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Exception\GuzzleException;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
@@ -52,82 +53,16 @@ class VisitorsActivityWidget implements WidgetInterface
      */
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            return ["VisitorActivity" => "No data found"];
-        }
-        $userActivityByDate = $this->getDataFromAnalytics($propertyId);
+        $deviceType = $this->manager->getRepository(AnalyticsData::class)
+            ->findOneBy(
+                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['dateTime' => 'DESC']
+            );
+        $allDatas = $deviceType->getDatas();
+
         return [
             "widget" => $this,
-            "userActivityByDate" => $userActivityByDate,
+            "userActivityByDate" => $allDatas['visitorsActivity'] ?? [],
         ];
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    public function getDataFromAnalytics(string $propertyId): array
-    {
-        $requestBody = [
-            "dimensions" => [
-                [
-                    "name" => "date"
-                ],
-            ],
-            "metrics" => [
-                [
-                    "name" => "activeUsers"
-                ],
-                [
-                    "name" => "bounceRate"
-                ],
-                [
-                    "name" => "screenPageViews"
-                ],
-            ],
-            "dateRanges" => [
-                [
-                    "startDate" => '365daysAgo',
-                    "endDate" => "today"
-                ]
-            ],
-            "orderBys" =>
-                [
-                    "dimension" => [
-                    "orderType"=> "NUMERIC",
-                    "dimensionName" => "date"
-                ],
-                "desc" => false,
-                ],
-            "metricAggregations" => [
-                "TOTAL"
-            ]
-        ];
-
-        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
-        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-        $responseData = $analyticsRequest->getResponse();
-        $userActivityByDate = [];
-        if ($responseData != null and isset($responseData['rows'])) {
-            foreach ($responseData['rows'] as $row) {
-                $date = $row['dimensionValues'][0]['value'];
-                $activeUsers = $row['metricValues'][0]['value'];
-                $bounceRate = $row['metricValues'][1]['value'];
-                $screenPageViews = $row['metricValues'][2]['value'];
-
-                $userActivityByDate[] = [
-                    'date' => $date,
-                    'userCount' => $activeUsers,
-                    'bounceRate' => round($bounceRate * 100,2),
-                    'screenPageViews' => $screenPageViews,
-                ];
-            }
-            $userActivityByDate = array_reverse($userActivityByDate);
-        }
-        return $userActivityByDate;
     }
 }

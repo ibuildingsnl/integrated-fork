@@ -5,10 +5,12 @@ namespace Integrated\Bundle\AnalyticsBundle\Command;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\Persistence\ObjectRepository;
+use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
+use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -97,23 +99,23 @@ class GetMostReadDatasCommand extends Command
     {
         $pagesDatas = [];
 
-        $weeklyDatas = $this->getDataFromAnalytics($propertyId, $channel, "7daysAgo");
-        $monthlyDatas = $this->getDataFromAnalytics($propertyId, $channel, "3daysAgo");
-        $quarterlyDatas = $this->getDataFromAnalytics($propertyId, $channel, "90daysAgo");
-        $semesterDatas = $this->getDataFromAnalytics($propertyId, $channel, "182daysAgo");
-        $yearlyDatas = $this->getDataFromAnalytics($propertyId, $channel, "365daysAgo");
+        $weeklyDatas = $this->getData($propertyId, $channel, "7daysAgo");
+        $monthlyDatas = $this->getData($propertyId, $channel, "3daysAgo");
+        $quarterlyDatas = $this->getData($propertyId, $channel, "90daysAgo");
+        $semesterDatas = $this->getData($propertyId, $channel, "182daysAgo");
+        $yearlyDatas = $this->getData($propertyId, $channel, "365daysAgo");
 
 
-        foreach ($weeklyDatas as $entry) {
+        foreach ($yearlyDatas as $entry) {
             $slug = $entry['slug'];
             $pagesDatas[] = [
                 'title' => $entry['title'],
                 'slug' => $slug,
-                'weeklyViews' => $entry['views'] ?? null,
+                'weeklyViews' => $this->getViewsBySlug($slug, $weeklyDatas),
                 'monthlyViews' => $this->getViewsBySlug($slug, $monthlyDatas),
                 'quarterlyViews' => $this->getViewsBySlug($slug, $quarterlyDatas),
                 'semesterViews' => $this->getViewsBySlug($slug, $semesterDatas),
-                'yearlyViews' => $this->getViewsBySlug($slug, $yearlyDatas),
+                'yearlyViews' => $entry['views'] ?? null
             ];
         }
 
@@ -141,7 +143,10 @@ class GetMostReadDatasCommand extends Command
         }
     }
 
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
+    /**
+     * @throws GuzzleException
+     */
+    public function getData(string $propertyId, $channel, string $dateRange): array
     {
         {
             $requestBody = [
@@ -166,7 +171,7 @@ class GetMostReadDatasCommand extends Command
                 ],
             ];
             $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
+            $analyticsRequest->googleAnalyticsPostRequest($requestBody, $propertyId);
             $responseData = $analyticsRequest->getResponse();
             $mostViewedPages = [];
             if ($responseData != null and isset($responseData['rows'])) {
@@ -188,5 +193,4 @@ class GetMostReadDatasCommand extends Command
         }
         return $mostViewedPages;
     }
-
 }

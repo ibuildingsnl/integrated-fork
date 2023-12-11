@@ -47,7 +47,7 @@ class AnalyticsRequest
     /**
      * @throws GuzzleException
      */
-    public function GoogleAnalyticsPostRequest(array $requestBody, string $propertyId): void
+    public function googleAnalyticsPostRequest(array $requestBody, string $propertyId): void
     {
         try {
             $googleCredentialPath = $this->credential;
@@ -71,10 +71,14 @@ class AnalyticsRequest
         }
         $this->response = $responseBody ?? "";
     }
-    public function getDataFromAnalytics(AnalyticsRequest $analyticsRequest, ChannelInterface $channel, array $requestBody): ?array
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getDataFromAnalytics(ChannelInterface $channel, array $requestBody): ?array
     {
-        $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $analyticsRequest->getPropertyID($channel));
-        $responseData = $analyticsRequest->getResponse();
+        $this->googleAnalyticsPostRequest($requestBody, $this->getPropertyID($channel));
+        $responseData = $this->getResponse();
         if ($responseData != null && isset($responseData['rows'])) {
             return $responseData;
         }

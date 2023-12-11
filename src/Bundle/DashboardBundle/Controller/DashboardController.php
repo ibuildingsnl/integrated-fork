@@ -77,7 +77,6 @@ class DashboardController extends AbstractController
             ->sort('order', 'asc')
             ->getQuery()
             ->execute();
-
         foreach ($widgetConfigs as $config) {
             $widget = $this->widgets[$config->getWidgetName()] ?? null;
             if ($widget) {

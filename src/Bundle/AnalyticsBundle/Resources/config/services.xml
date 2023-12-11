@@ -45,5 +45,13 @@
             <argument type="service" id="monolog.logger"/>
             <tag name="console.command" />
         </service>
+        <service id="Integrated\Bundle\AnalyticsBundle\Command\GetVisitorsActivityCommand">
+            <argument>%env(resolve:GOOGLE_APPLICATION_CREDENTIALS)%</argument>
+            <argument type="service" id="doctrine_mongodb.odm.document_manager" />
+            <argument type="service" id="integrated_channel.repository.channel" />
+            <argument type="service" id="integrated_brand.brand.repository" />
+            <argument type="service" id="monolog.logger"/>
+            <tag name="console.command" />
+        </service>
     </services>
 </container>

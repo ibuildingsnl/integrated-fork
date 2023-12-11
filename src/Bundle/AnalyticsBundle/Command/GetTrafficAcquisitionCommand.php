@@ -96,7 +96,7 @@ class GetTrafficAcquisitionCommand extends Command
                 ],
 
             ];
-            $responseData = $analyticsRequest->getDataFromAnalytics($analyticsRequest, $channel, $requestBody);
+            $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             if ($responseData == null){
                 $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
                 $this->logger->error($message);
