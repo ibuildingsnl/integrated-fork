@@ -23,6 +23,7 @@ use function Deployer\writeln;
 class GetMostReadDatasCommand extends Command
 {
     private OutputInterface $output;
+    private string $dataType = "most_read";
 
     /**
      * Constructor.
@@ -55,30 +56,22 @@ class GetMostReadDatasCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
-        $channels = $this->getChannels();
-        foreach ($channels as $channel) {
+        $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
+        $channels = $analyticsRequest->getChannels();
+        foreach ($channels as $channel)
+        {
             $this->output->writeln('- Getting '.$channel->getName().'\'s Most read datas');
-            foreach ($this->brandRepository->all() as $brand) {
-                if ($brand->hasChannel($channel)) {
-                    $propertyId = $brand->profile->analytics;
-                }
-            }
-            if (!isset($propertyId))
-            {
-                $this->logger->error('Get Most read Error: no property ID found');
-                return 0;
-            }
-            $this->sendDataFromAnalyticsToDb($propertyId, $channel);
+            $allDatas = $this->getData($channel, $analyticsRequest);
+            $analyticsRequest->setDataToDB($channel, $this->dataType, $allDatas);
         }
-        return 0;
+        return 1;
     }
 
     public function getChannels(): array
     {
         $channels = [];
         foreach ($this->channelRepository->findAll() as $channel) {
-            if ($channel->getPrimaryDomain() != null)
-            {
+            if ($channel->getPrimaryDomain() != null) {
                 $channels[] = $channel;
             }
         }
@@ -95,16 +88,17 @@ class GetMostReadDatasCommand extends Command
         return null;
     }
 
-    public function sendDataFromAnalyticsToDb(string $propertyId, $channel): void
+    public function sendDataFromAnalyticsToDb(AnalyticsRequest $analyticsRequest, $channel): void
     {
         $pagesDatas = [];
+        $allDatas = $this->getData($analyticsRequest, $channel);
+        if ($allDatas == []) {return;}
 
-        $weeklyDatas = $this->getData($propertyId, $channel, "7daysAgo");
-        $monthlyDatas = $this->getData($propertyId, $channel, "3daysAgo");
-        $quarterlyDatas = $this->getData($propertyId, $channel, "90daysAgo");
-        $semesterDatas = $this->getData($propertyId, $channel, "182daysAgo");
-        $yearlyDatas = $this->getData($propertyId, $channel, "365daysAgo");
-
+        $weeklyDatas = $allDatas['weeklyMostRead'];
+        $monthlyDatas = $allDatas['monthlyMostRead'];
+        $quarterlyDatas = $allDatas['quarterlyMostRead'];
+        $semesterDatas = $allDatas['semesterMostRead'];
+        $yearlyDatas = $allDatas['yearlyMostRead'];
 
         foreach ($yearlyDatas as $entry) {
             $slug = $entry['slug'];
@@ -136,6 +130,7 @@ class GetMostReadDatasCommand extends Command
                 $metadata->set('quarterlyViews', $page['quarterlyViews']);
                 $metadata->set('semesterViews', $page['semesterViews']);
                 $metadata->set('yearlyViews', $page['yearlyViews']);
+                $this->output->writeln($page['slug']);
             }
             $this->manager->flush();
         } catch (\Throwable $throwable) {
@@ -146,9 +141,18 @@ class GetMostReadDatasCommand extends Command
     /**
      * @throws GuzzleException
      */
-    public function getData(string $propertyId, $channel, string $dateRange): array
+    public function getData($channel, $analyticsRequest): array
     {
-        {
+        $dateRanges = [
+            'weeklyMostReadArticles' => '7daysAgo',
+            'monthlyMostReadArticles' => '30daysAgo',
+            'quarterlyMostReadArticles' => '90daysAgo',
+            'semesterMostReadArticles' => '182daysAgo',
+            'yearlyMostReadArticles' => '365daysAgo',
+        ];
+
+        $allDatas = [];
+        foreach ($dateRanges as $key => $dateRange) {
             $requestBody = [
                 "dateRanges" => [
                     [
@@ -170,11 +174,13 @@ class GetMostReadDatasCommand extends Command
                     ]
                 ],
             ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger, $this->brandRepository, $this->channelRepository, $this->manager);
-            $analyticsRequest->googleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
+            $responseData = $analyticsRequest->getDataFromAnalytics($channel, $requestBody);
             $mostViewedPages = [];
-            if ($responseData != null and isset($responseData['rows'])) {
+            if ($responseData == null) {
+                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
+                $this->logger->error($message);
+                $this->output->writeln($message);
+            } else {
                 foreach ($responseData['rows'] as $row) {
                     $pageTitle = $row['dimensionValues'][0]['value'];
                     $fullPageUrl = $row['dimensionValues'][1]['value'];
@@ -185,12 +191,9 @@ class GetMostReadDatasCommand extends Command
                         'views' => $screenPageViews,
                     ];
                 }
-            } else {
-                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
-                $this->logger->error($message);
-                $this->output->writeln($message);
+                $allDatas[$key] = $mostViewedPages;
             }
         }
-        return $mostViewedPages;
+        return $allDatas;
     }
 }

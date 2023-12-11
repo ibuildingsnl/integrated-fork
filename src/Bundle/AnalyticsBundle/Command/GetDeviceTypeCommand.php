@@ -66,8 +66,6 @@ class GetDeviceTypeCommand extends Command
 
     public function getData(ChannelInterface $channel, $analyticsRequest): array
     {
-        $analyticsRequest->getPropertyID($channel);
-
         $dateRanges = [
             'weeklyDeviceType' => '7daysAgo',
             'monthlyDeviceType' => '30daysAgo',

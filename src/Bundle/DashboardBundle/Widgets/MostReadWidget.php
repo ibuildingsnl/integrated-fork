@@ -4,6 +4,7 @@ namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use GuzzleHttp\Exception\GuzzleException;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
 use Integrated\Bundle\ContentBundle\Document\Content\Article;
@@ -52,12 +53,19 @@ class MostReadWidget implements WidgetInterface
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
 
-        $mostReadArticles = $this->getDataFromDB($channel);
+        $deviceType = $this->manager->getRepository(AnalyticsData::class)
+            ->findOneBy(
+                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['dateTime' => 'DESC']
+            );
+        $allDatas = $deviceType->getDatas();
 
+        foreach ($allDatas as $key => $values) {
+            $slicedDatas[$key] = array_slice($values, 0, $this->limit);
+        }
         return [
             "widget" => $this,
-            "mostReadArticles" => $mostReadArticles,
-            "dateRange" => "7daysAgo"
+            "mostReadArticles" => $slicedDatas,
         ];
     }
 
