@@ -21,9 +21,6 @@ class DeviceTypeWidget implements WidgetInterface
 
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly string          $credential,
-        private readonly LoggerInterface  $logger,
-        private readonly BrandRepository  $brandRepository,
     )
     {
         $this->id = 'device_type';
@@ -70,16 +67,12 @@ class DeviceTypeWidget implements WidgetInterface
     function processOtherDeviceType(array $dateRangeData, $maxElements): array
     {
         $otherDevices = 0;
-
-        // Calcul du cumul des sessions et stockage des sources à partir du 10ème élément
         for ($i = $maxElements; $i < count($dateRangeData); $i++) {
             $otherDevices += $dateRangeData[$i]['amount'];
         }
 
-        // Suppression des éléments à partir du 10ème
         array_splice($dateRangeData, $maxElements);
 
-        // Ajout de l'élément "Other" avec le cumul des sessions
         $dateRangeData[] = [
             'device' => 'Other',
             'amount' => $otherDevices

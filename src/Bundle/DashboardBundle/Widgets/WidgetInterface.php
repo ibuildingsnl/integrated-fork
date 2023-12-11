@@ -12,4 +12,6 @@ interface WidgetInterface
     public function getName(): string;
     public function getView(): string;
     public function getParams(ChannelInterface $channel, User $user, Request $request): array;
+
+
 }

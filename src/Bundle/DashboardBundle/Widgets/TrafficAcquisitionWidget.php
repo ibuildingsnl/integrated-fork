@@ -3,13 +3,14 @@
 namespace Integrated\Bundle\DashboardBundle\Widgets;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Integrated\Bundle\AnalyticsBundle\Document\AnalyticsData;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\DashboardBundle\Widgets\WidgetInterface;
 use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use DateTimeImmutable;
 
 class TrafficAcquisitionWidget implements WidgetInterface
 {
@@ -19,9 +20,6 @@ class TrafficAcquisitionWidget implements WidgetInterface
 
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly string          $credential,
-        private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository,
     )
     {
         $this->id = 'traffic_acquisition';
@@ -46,37 +44,27 @@ class TrafficAcquisitionWidget implements WidgetInterface
 
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
-        foreach ($this->brandRepository->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                $propertyId = $brand->profile->analytics;
-            }
-        }
-        if (!isset($propertyId) || $propertyId == null) {
-            return ["DeviceType" => "No data found"];
-        }
 
-        $dateRanges = [
-            'weeklyTrafficAcquisition' => '7daysAgo',
-            'monthlyTrafficAcquisition' => '30daysAgo',
-            'quarterlyTrafficAcquisition' => '90daysAgo',
-            'semesterTrafficAcquisition' => '182daysAgo',
-            'yearlyTrafficAcquisition' => '365daysAgo',
-        ];
+        $trafficAcquisition = $this->manager->getRepository(AnalyticsData::class)
+            ->findOneBy(
+                ['channelID' => $channel->getId(), 'dataType' => $this->id ],
+                ['dateTime' => 'DESC']
+            );
+        $allDatas = $trafficAcquisition->getDatas();
 
-        $allDatas = [];
         $maxElements = 10;
-        foreach ($dateRanges as $key => $dateRange) {
-            $allDatas[$key] = $this->getDataFromAnalytics($propertyId, $channel, $dateRange);
-            if (count($allDatas[$key]) > $maxElements)
-            {
-                $allDatas[$key] = $this->processTrafficAcquisition($allDatas[$key], $maxElements-1);
+        foreach ($allDatas as &$dateRangeData) {
+            if (count($dateRangeData) > $maxElements) {
+                $dateRangeData = $this->processOtherTrafficAcquisition($dateRangeData, $maxElements-1);
             }
         }
+
         return [
             "widget" => $this,
             "trafficAcquisition" => $allDatas,
         ];
     }
+
 
     function processOtherTrafficAcquisition(array $trafficAcquisition, $maxElements): array
     {
@@ -93,51 +81,6 @@ class TrafficAcquisitionWidget implements WidgetInterface
             'sessions' => $otherSessions
         ];
 
-        return $trafficAcquisition;
-    }
-
-
-    public function getDataFromAnalytics(string $propertyId, $channel, string $dateRange): array
-    {
-        {
-            $requestBody = [
-                "dateRanges" => [
-                    [
-                        "startDate" => $dateRange,
-                        "endDate" => "today"
-                    ]
-                ],
-                "dimensions" => [
-                    [
-                        "name" => "sessionDefaultChannelGroup"
-                    ],
-                ],
-                "metrics" => [
-                    [
-                        "name" => "sessions"
-                    ]
-                ],
-
-            ];
-            $analyticsRequest = new AnalyticsRequest($this->credential, $this->logger);
-            $analyticsRequest->GoogleAnalyticsPostRequest($requestBody, $propertyId);
-            $responseData = $analyticsRequest->getResponse();
-            $trafficAcquisition = [];
-            if ($responseData != null and isset($responseData['rows'])) {
-                foreach ($responseData['rows'] as $row) {
-                    $source = $row['dimensionValues'][0]['value'];
-                    $sessions = (int)$row['metricValues'][0]['value'];
-                    $trafficAcquisition[] = [
-                        'source' => $source,
-                        'sessions' => $sessions,
-                    ];
-                }
-            } else {
-                $message = "Get Most Read Error: No datas found for" . $channel->getName() . "in date range: $dateRange \n";
-                $this->logger->error($message);
-                //$this->output->writeln($message);
-            }
-        }
         return $trafficAcquisition;
     }
 }
