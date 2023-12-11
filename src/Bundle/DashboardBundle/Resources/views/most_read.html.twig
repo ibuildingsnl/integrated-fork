@@ -12,7 +12,23 @@
         </nav>
     </div>
     <script>
-        const mostReadArticles = {{ mostReadArticles | json_encode | raw }};
+
+        var mostReadArticles = {
+            {% for period, articles in mostReadArticles %}
+            "{{ period|replace({'weekly': 'weekly', 'monthly': 'monthly', 'quarterly': 'quarterly', 'semester': 'semester', 'yearly': 'yearly'}) }}": [
+                {% set filteredArticles = articles|filter(row => row.slug != '') %}
+                {% for row in filteredArticles %}
+                {
+                    title: "{{ row.title }}",
+                    slug: "{{ row.slug }}",
+                    views: {{ row.views }},
+                    path: {% if row.id is not null %}"{{ path('integrated_content_content_edit', {id: row.id}) }}"{% else %}""{% endif %}
+                },
+                {% endfor %}
+            ],
+            {% endfor %}
+        };
+
         const selectMostReadDate = document.getElementById('select_date_range');
 
         updateMostRead(dateRangeMostReadSelection(selectMostReadDate.value));
@@ -40,18 +56,21 @@
                 var liElement = document.createElement('li');
                 liElement.classList.add('facet-wrappper');
 
-                var titleElement = document.createElement('span');
-                titleElement.classList.add('facet-title');
-                titleElement.innerHTML = `<b>${article.title}</b>`;
-                liElement.appendChild(titleElement);
+                var linkElement = document.createElement('a');
+                linkElement.setAttribute('target', '_blank');
+                linkElement.setAttribute('href', article.path);
+                linkElement.innerHTML = `<b>${article.title}</b>`;
 
                 var countElement = document.createElement('span');
                 countElement.classList.add('facet-count');
                 countElement.textContent = article.views;
+
+                liElement.appendChild(linkElement);
                 liElement.appendChild(countElement);
 
                 ulElement.appendChild(liElement);
             });
         }
+
     </script>
 </div>

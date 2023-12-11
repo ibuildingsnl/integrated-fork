@@ -115,8 +115,10 @@
                 selectElements.forEach(function (selectElement) {
                     const selectName = selectElement.name;
                     const urlParams = new URLSearchParams(window.location.search);
-                    const paramValues = urlParams.getAll(selectName);
-
+                    var paramValues = urlParams.getAll(selectName);
+                    if(selectName == 'integrated_channel_choice' && paramValues == ""){
+                        paramValues = ['{{ channelId }}'];
+                    }
                     Array.from(selectElement.options).forEach(function (option) {
                         if (paramValues.includes(option.value)) {
                             option.selected = true;
@@ -128,7 +130,4 @@
             restoreSelectValues();
         </script>
     </div>
-
-
-
 {% endblock content %}

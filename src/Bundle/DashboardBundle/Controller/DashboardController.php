@@ -49,7 +49,7 @@ class DashboardController extends AbstractController
         ]);
         $channel = $this->getChannel($request);
         $widgetAllData = $this->renderWidgets($channel, $user, $request);
-        return $this->renderDashboardView($channel->getName(), $widgetAllData, $selectChannelForm);
+        return $this->renderDashboardView($channel->getId(), $widgetAllData, $selectChannelForm);
     }
 
     private function getChannel($request): ChannelInterface
@@ -90,10 +90,10 @@ class DashboardController extends AbstractController
         return $widgetAllData;
     }
 
-    private function renderDashboardView(string $channelName, array $widgetAllData, $selectChannelForm): Response
+    private function renderDashboardView(string $channelId, array $widgetAllData, $selectChannelForm): Response
     {
         return $this->render('@IntegratedDashboard/index.html.twig', [
-            "channelName" => $channelName,
+            "channelId" => $channelId,
             "channelForm" => $selectChannelForm->createView(),
             "widgetAllData" => $widgetAllData
         ]);

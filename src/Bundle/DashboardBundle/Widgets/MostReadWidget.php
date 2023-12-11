@@ -53,58 +53,42 @@ class MostReadWidget implements WidgetInterface
     public function getParams(ChannelInterface $channel, User $user, Request $request): array
     {
 
-        $deviceType = $this->manager->getRepository(AnalyticsData::class)
+        $mostReadArticle = $this->manager->getRepository(AnalyticsData::class)
             ->findOneBy(
                 ['channelID' => $channel->getId(), 'dataType' => $this->id ],
                 ['dateTime' => 'DESC']
             );
-        $allDatas = $deviceType->getDatas();
 
+        $allDatas = $mostReadArticle->getDatas();
         foreach ($allDatas as $key => $values) {
-            $slicedDatas[$key] = array_slice($values, 0, $this->limit);
+            $filteredValues = array_filter($values, function ($element) {
+                return $element["slug"] !== "";
+            });
+
+            $slicedValues = array_slice($filteredValues, 0, $this->limit);
+            $slicedDatas[$key] = array_values($slicedValues);
+
+            foreach ($slicedDatas[$key] as &$element) { // Utilisation de "&" pour obtenir une référence à chaque élément
+                $article = $this->manager
+                    ->getRepository(Article::class)
+                    ->findOneBy([
+                        'slug' => $element['slug'],
+                        'channels.id' => $channel->getId(),
+                    ]);
+
+                if ($article !== null) {
+                    $element['id'] = $article->getId();
+                } else {
+                    $element['id'] = null;
+                }
+            }
+            unset($element); // Dissocier la référence de la dernière itération
         }
+        //dd($slicedDatas);
         return [
             "widget" => $this,
             "mostReadArticles" => $slicedDatas,
         ];
-    }
-
-    public function getDataFromDB($channel)
-    {
-        $views = [
-            'weekly' => 'weeklyViews',
-            'monthly' => 'monthlyViews',
-            'quarterly' => 'quarterlyViews',
-            'semester' => 'semesterViews',
-            'yearly' => 'yearlyViews',
-        ];
-
-        $mostReadArticles = [];
-
-        foreach ($views as $viewKey => $viewValue) {
-            $articlesDB = $this->manager->createQueryBuilder(Article::class)
-                ->field('channels.id')->equals($channel->getId())
-                ->field("metadata.data.$viewValue")
-                ->sort("metadata.data.$viewValue", 'desc')
-                ->limit($this->limit)
-                ->getQuery()
-                ->execute();
-
-            $articles = [];
-
-            foreach ($articlesDB as $article) {
-                $articles[] = [
-                    'id' => $article->getId(),
-                    'slug' => $article->getSlug(),
-                    'title' => $article->getTitle(),
-                    'views' => $article->getMetadata()->get($viewValue),
-                ];
-            }
-
-            $mostReadArticles["{$viewKey}MostReadArticles"] = $articles;
-        }
-
-        return $mostReadArticles;
     }
 
 }
