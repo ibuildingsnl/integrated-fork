@@ -192,8 +192,10 @@ class ContentProvider
             }
         }
 
-        $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
-        $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        if ($contentType) {
+            $contentTypesQuery = $query->createFilterQuery('contenttypes')->addTag('contenttypes');
+            $this->setContentTypes($contentType, $contentTypesQuery, $filter, $request);
+        }
 
         // If the workflow bundle is loaded then only display the results that the
         // user has read rights to

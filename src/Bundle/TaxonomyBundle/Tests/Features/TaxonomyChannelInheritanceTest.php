@@ -27,10 +27,19 @@ final class TaxonomyChannelInheritanceTest extends TestCase
         $this->taxonomies = new MemoryTaxonomyRepository();
         $this->listener = new TaxonomyChannelInheritanceListener($this->taxonomies);
 
+        $hobbitsChannel = new Channel();
+        $hobbitsChannel->setId('hobbits');
+
+        $elvesChannel = new Channel();
+        $elvesChannel->setId('elves');
+
+        $wizardsChannel = new Channel();
+        $wizardsChannel->setId('wizards');
+
         $this->channels = [
-            'hobbits' => (new Channel())->setId('hobbits'),
-            'elves' => (new Channel())->setId('elves'),
-            'wizards' => (new Channel())->setId('wizards'),
+            'hobbits' => $hobbitsChannel,
+            'elves' => $elvesChannel,
+            'wizards' => $wizardsChannel,
         ];
     }
 

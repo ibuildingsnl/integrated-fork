@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>Brands</source>
+                <target>Merken</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>View full (uncategorized) reference for:</source>
+                <target>Bekijk de volledige (niet-gecategoriseerde) lijst van:</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>All channels</source>
+                <target>Alle kanalen</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>All connectors</source>
+                <target>Alle connectoren</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>Brand</source>
+                <target>Merk</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

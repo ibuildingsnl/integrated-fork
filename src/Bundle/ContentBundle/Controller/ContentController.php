@@ -170,11 +170,8 @@ class ContentController extends AbstractController
         // all this relations stuff is only used on the json response
         $relations = [];
         if ($options['relation'] ?? null) {
-            $options['contenttypes'] = [];
-
             if ($relation = $this->getDoctrineODM()->getRepository(Relation::class)->find($options['relation'])) {
                 foreach ($relation->getTargets() as $target) {
-                    $options['contenttypes'][] = $target->getId();
                     $relations[] = [
                         'href' => $this->generateUrl('integrated_content_content_new', ['class' => $target->getClass(), 'type' => $target->getId(), 'relation' => $relation->getId()]),
                         'name' => $target->getName(),

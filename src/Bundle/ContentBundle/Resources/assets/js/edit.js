@@ -131,6 +131,13 @@ function toggleDateSelection(showSelection, dateSelection, dateText) {
         updateDateText(dateSelection, dateText);
     }
 }
+$('form[name="integrated_content"]').on('keyup keypress', function(e) {
+    var keyCode = e.keyCode || e.which;
+    if (keyCode === 13) {
+        e.preventDefault();
+        return false;
+    }
+});
 
 function updateDateText(dateSelection, dateText) {
     const dayElement = dateSelection.querySelector('[id$="_date_day"]')

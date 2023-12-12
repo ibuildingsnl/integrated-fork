@@ -1278,6 +1278,18 @@
                 <source>Don't change status</source>
                 <target>Status niet veranderen</target>
             </trans-unit>
+            <trans-unit id="324">
+                <source>Your content starts here</source>
+                <target>Je content begint hier</target>
+            </trans-unit>
+            <trans-unit id="325">
+                <source>Select</source>
+                <target>Selecteer</target>
+            </trans-unit>
+            <trans-unit id="326">
+                <source>Settings</source>
+                <target>Instellingen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
