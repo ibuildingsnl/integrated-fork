@@ -45,26 +45,6 @@ class Channel implements ChannelInterface
     protected ?ChannelType $type;
 
     /**
-     * @var Image
-     */
-    protected $logo;
-
-    /**
-     * @var Image
-     */
-    protected $favicon;
-
-    /**
-     * @var string
-     */
-    protected $color;
-
-    /**
-     * @var string
-     */
-    protected $secondarycolor;
-
-    /**
      * @var array
      */
     protected $domains;

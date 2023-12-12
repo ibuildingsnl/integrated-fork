@@ -10,8 +10,6 @@
 
         <id field-name="id" strategy="NONE" />
         <field field-name="name" type="string" />
-        <field field-name="color" type="string" />
-        <field field-name="secondarycolor" type="string" />
         <field field-name="domains" type="collection" />
         <field field-name="primaryDomain" type="string" />
         <field field-name="primaryDomainRedirect" type="bool" />
@@ -27,16 +25,6 @@
         >
             <cascade><persist/><remove/></cascade>
         </reference-one>
-
-        <reference-one
-            field="logo"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
-        />
-
-        <reference-one
-            field="favicon"
-            target-document="Integrated\Bundle\ContentBundle\Document\Content\Image"
-        />
 
         <embed-many
             field="permissions"
