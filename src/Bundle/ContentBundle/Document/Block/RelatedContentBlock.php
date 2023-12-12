@@ -206,7 +206,7 @@ class RelatedContentBlock extends Block
     /**
      * @return Relation
      */
-    public function getRelation($relationId)
+    public function getRelation($relationId = null)
     {
         return $this->relation;
     }
