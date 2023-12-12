@@ -147,7 +147,7 @@ class ContentChannelIntegrationListener implements EventSubscriberInterface
                         'location' => 'sidebar',
                         'style' => 'sidebar',
                         'state' => 'show search',
-                        'icon' => 'network-alt',
+                        'icon' => 'network-reverse',
                     ],
                     'choice_attr' => function ($value) use ($enforce) {
                         if ($value instanceof Channel) {

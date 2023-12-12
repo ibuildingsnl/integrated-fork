@@ -107,7 +107,7 @@ class Channel implements ChannelInterface
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name ?: '';
     }

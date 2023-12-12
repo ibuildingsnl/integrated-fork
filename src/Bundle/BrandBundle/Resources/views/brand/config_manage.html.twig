@@ -14,14 +14,14 @@
                     {% block sidebar %}
                         <div class="aside-header">
                             <button class="toggle-filters toggle-options-sidebar"  data-target="aside-options" type="button">
-                                <i class="iconoir-cancel"></i>
+                                <i class="iconoir-xmark"></i>
                             </button>
                             <span>{% trans %}Options{% endtrans %}</span>
                         </div>
                         <div class="aside-item-wrapper show">
                             <div class="aside-item-header">
                                 <h3 class="aside-item-title">
-                                    <i class="iconoir-info-empty"></i>
+                                    <i class="iconoir-info-circle"></i>
                                     <span class="aside-item-icon">{% trans %}Status{% endtrans %}</span>
                                 </h3>
                                 <i class="iconoir-nav-arrow-up"></i>
@@ -52,7 +52,7 @@
                                     <div class="status-options">
                                         {% if config.publicationStartDate is defined and ('now'|date('U') > config.publicationStartDate|date('U'))%}
                                             <div class="status published">
-                                                <i class="iconoir-check-circled-outline"></i> {% trans %}Published{% endtrans %}
+                                                <i class="iconoir-check-circle"></i> {% trans %}Published{% endtrans %}
                                             </div>
                                             <a class="delete"
                                                href="{{ path('integrated_channel_config_delete', {'id': config.id}) }}">

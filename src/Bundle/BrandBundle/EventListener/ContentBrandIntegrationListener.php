@@ -45,7 +45,7 @@ class ContentBrandIntegrationListener implements EventSubscriberInterface
             'attr' => [
                 'location' => 'sidebar',
                 'style' => 'sidebar',
-                'icon' => 'network-alt',
+                'icon' => 'network-reverse',
                 'class' => 'brands',
                 'state' => 'show',
             ],

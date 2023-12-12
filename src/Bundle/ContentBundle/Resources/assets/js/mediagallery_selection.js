@@ -3,7 +3,6 @@ const mediagallery_link = '/admin/media/';
 
 window.onload = async function() {
     populateFormRelations();
-    generateSrcAttributeForIframes();
     await populateSelectedImages(); // wait for populateSelectedImages() to finish
     setupFormRelations();
     addEventListeners();
@@ -64,13 +63,6 @@ function populateFormRelations() {
 function getTypesUrl(types) {
     return types.reduce((accumulator, currentValue) => accumulator +
         'available_contenttypes[]=' + currentValue.type + '&', '');
-}
-
-function generateSrcAttributeForIframes() {
-    Object.values(form_relations).forEach(form_relation => {
-        const link = `${mediagallery_link}${form_relation.modus}?page=1&${form_relation.types_url}`;
-        document.querySelector(form_relation.iframe_selector).setAttribute('src', link);
-    });
 }
 
 function addEventListeners() {
@@ -197,6 +189,15 @@ function reloadMediaLibrary() {
 
 function showMediaGallery(selected_relation) {
     window.popupShown = true;
+
+    const iframe = document.querySelector(selected_relation.iframe_selector);
+    const currentSrc = iframe.getAttribute('src');
+
+    // Check if the 'src' attribute is not set or empty
+    if (!currentSrc) {
+        const link = `${mediagallery_link}${selected_relation.modus}?page=1&${selected_relation.types_url}`;
+        iframe.setAttribute('src', link);
+    }
 
     document.querySelector(selected_relation.wrap_selector).classList.add('show');
     document.querySelector('#dropdown_overlay').classList.remove('hide');
