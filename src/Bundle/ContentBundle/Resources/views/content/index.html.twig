@@ -101,7 +101,7 @@
                     <td class="channels">
                         {% if document.channels is defined and document.channels is not null %}
                         <div
-                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }})">
+                            class="favicon-wrapper {% if document.channels|length > 3 %}hover-popout{% endif %}" style="--color: {{ type.options.color|default('gray') }}">
                             {% if document.channels|length > 3 %}
                                 <span class="channel-popout">3+</span>
                             {% endif %}
