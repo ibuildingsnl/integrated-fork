@@ -19,7 +19,7 @@ if (primaryChannel) {
         const makePrimary = document.createElement('a');
         makePrimary.href = '#';
         makePrimary.title = 'Make primary';
-        makePrimary.innerHTML = '<i class="iconoir-1st-medal"></i>';
+        makePrimary.innerHTML = '<i class="iconoir-medal-1st"></i>';
         makePrimary.className = 'make-primary';
         input.closest('li').appendChild(makePrimary);
         input.makePrimary = makePrimary;

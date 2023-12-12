@@ -318,8 +318,8 @@
         {% set featuredImage = asset('bundles/integratedintegrated/images/favicon/apple-touch-icon.png') %}
     {% endif %}
 
-    {% if documentNode.primaryChannel.favicon.file is defined and documentNode.primaryChannel.favicon.file is not null %}
-        {% set faviconSrc = image(documentNode.primaryChannel.favicon.file).cropResize(50, 50).__toString %}
+    {% if documentNode.primaryChannel|integrated_brand.favicon.file is defined and documentNode.primaryChannel|integrated_brand.favicon.file is not null %}
+        {% set faviconSrc = image(documentNode.primaryChannel|integrated_brand.favicon.file).cropResize(50, 50).__toString %}
     {% else %}
         {% set faviconSrc = asset('bundles/integratedintegrated/images/favicon/favicon-32x32.png') %}
     {% endif %}
