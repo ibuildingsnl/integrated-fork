@@ -25,11 +25,13 @@ class BrandExtension extends AbstractExtension
         ];
     }
 
-    public function getBrandForChannel(ChannelInterface $channel): ?Brand
+    public function getBrandForChannel(?ChannelInterface $channel): ?Brand
     {
-        foreach ($this->brands->all() as $brand) {
-            if ($brand->hasChannel($channel)) {
-                return $brand;
+        if ($channel instanceof ChannelInterface) {
+            foreach ($this->brands->all() as $brand) {
+                if ($brand->hasChannel($channel)) {
+                    return $brand;
+                }
             }
         }
 
