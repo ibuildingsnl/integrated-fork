@@ -178,10 +178,7 @@ class Channel implements ChannelInterface
         return $this->name;
     }
 
-    /**
-     * @return Image|null
-     */
-    public function getLogo()
+    public function getLogo(): ?Image
     {
         return $this->logo;
     }
@@ -215,7 +212,7 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @return Contact[]
+     * @return Collection
      */
     public function getContacts()
     {
@@ -255,7 +252,7 @@ class Channel implements ChannelInterface
     }
 
     /**
-     * @return Social[]
+     * @return Collection
      */
     public function getSocial()
     {
