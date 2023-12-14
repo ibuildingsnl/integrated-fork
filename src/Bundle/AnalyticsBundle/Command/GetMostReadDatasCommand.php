@@ -8,16 +8,11 @@ use Doctrine\Persistence\ObjectRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Integrated\Bundle\AnalyticsBundle\Infrastructure\AnalyticsRequest;
 use Integrated\Bundle\BrandBundle\Document\BrandRepository;
-use Integrated\Bundle\ContentBundle\Document\Channel\Channel;
-use Integrated\Bundle\ContentBundle\Document\Content\Article;
-use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\ODM\MongoDB\Query\Builder;
-use function Deployer\output;
-use function Deployer\writeln;
+
 
 
 class GetMostReadDatasCommand extends Command

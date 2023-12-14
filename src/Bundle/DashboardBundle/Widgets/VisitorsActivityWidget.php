@@ -22,10 +22,6 @@ class VisitorsActivityWidget implements WidgetInterface
     private readonly string $view;
 
     public function __construct(
-        private readonly string          $credential,
-        private readonly LoggerInterface $logger,
-        private readonly BrandRepository $brandRepository,
-        private readonly ObjectRepository $channelRepository,
         private readonly DocumentManager  $manager,
     ){
         $this->id = 'visitors_activity';

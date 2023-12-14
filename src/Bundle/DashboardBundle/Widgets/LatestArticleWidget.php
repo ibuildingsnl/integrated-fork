@@ -8,6 +8,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+
 class LatestArticleWidget implements WidgetInterface
 {
     private readonly string $id;
@@ -16,7 +17,7 @@ class LatestArticleWidget implements WidgetInterface
 
     public function __construct(
         private readonly DocumentManager $manager,
-        private readonly int $amount
+        private readonly int $limit
     ) {
         $this->id = 'latest_articles';
         $this->name = 'Latest articles';
@@ -45,14 +46,13 @@ class LatestArticleWidget implements WidgetInterface
             ->field('channels.id')->equals($channel->getId())
             ->field('publishTime.startDate')->lte($currentDateTime)
             ->sort('publishTime.startDate', 'desc')
-            ->limit($this->amount);
+            ->limit($this->limit);
 
         $mostRecentArticles = $queryBuilder->getQuery()->execute();
 
         $result = [
             "widget" => $this,
             'mostRecentArticles' => $mostRecentArticles,
-            'channel' => $channel,
         ];
         return $result;
     }

@@ -12,6 +12,7 @@ use Integrated\Bundle\UserBundle\Model\User;
 use Integrated\Common\Content\Channel\ChannelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 class MostReadWidget implements WidgetInterface
@@ -21,7 +22,6 @@ class MostReadWidget implements WidgetInterface
     private readonly string $view;
 
     public function __construct(
-        private readonly LoggerInterface $logger,
         private readonly DocumentManager $manager,
         private readonly int             $limit,
     )

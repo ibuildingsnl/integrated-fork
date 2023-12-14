@@ -805,6 +805,7 @@ class ContentController extends AbstractController
             $result = $this->getSolarium()->select($query);
 
             $assignedContent = $result->getDocuments();
+
         }
 
         return $this->render('@IntegratedContent/content/navdropdowns.html.twig', [

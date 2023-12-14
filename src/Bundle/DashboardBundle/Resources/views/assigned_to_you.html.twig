@@ -1,0 +1,22 @@
+<div class="widget col-left w-full">
+    <div class="widget-container {{ widget.id }}">
+        <div class="widget-header">
+            {% if (assignedToYou is not iterable) %}
+                <h2>{{ assignedToYou }}</h2>
+            {% else %}
+                <h2>{% trans %}Assigned to you{% endtrans %}</h2>
+            {% endif %}
+        </div>
+        <nav class="article-list" id="articleList">
+            <ul>
+                {% for article in assignedToYou %}
+                    <li class="facet-wrappper">
+                        <span class="facet-title">
+                            <b><a target="_blank" href="{{ article.path }}">{{ article.title }}</a></b>
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+</div>
