@@ -132,7 +132,8 @@ function setActiveTab() {
 
 function togglePopup() {
     document.querySelector(current_relation.popup_selector).classList.toggle("show");
-    document.querySelector('#dropdown_overlay').classList.toggle("hide");
+    document.querySelector('#taxonomy_backdrop').classList.toggle("hide");
+    document.querySelector('body').classList.toggle("popup-open");
 }
 
 function toggleFullscreen() {
