@@ -38,7 +38,7 @@ final class TwitterConfiguration implements OauthConfigInterface
         try {
             $response = $client->oauth(
                 'oauth/request_token',
-                ['oauth_callback' => $this->generator->generate(
+                ['callbackUrl' => $this->generator->generate(
                     'integrated_channel_config_external_return',
                     [],
                     UrlGeneratorInterface::ABSOLUTE_URL
