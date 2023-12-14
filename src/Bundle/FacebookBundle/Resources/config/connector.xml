@@ -8,11 +8,11 @@
 
         <defaults autowire="true" autoconfigure="true"/>
 
-        <service id="integrated_channel.type.facebook" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
+        <service id="integrated_brand.type.facebook" class="Integrated\Bundle\ContentBundle\Infrastructure\ChannelTypeFactory">
             <argument>facebook</argument>
             <argument>Facebook</argument>
             <argument type="expression">false</argument>
-            <argument>Facebook</argument>
+            <argument>facebook</argument>
             <argument>\Integrated\Bundle\FacebookBundle\Form\FacebookPublicationType</argument>
 
             <tag name="integrated_channel.type" />
