@@ -57,15 +57,39 @@
                 {{ widget.renderedView | raw }}
             {% endfor %}
         </div>
-
+        <style>
+            .checkbox-container.disabled-widget {
+                color: #999;
+                cursor: not-allowed;
+            }
+        </style>
         <script>
+            const allWidgetJS = {{ widgetAllData | json_encode | raw }};
+
+            function disableNonExistentWidgets() {
+                const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
+
+                checkboxes.forEach(function (checkbox) {
+                    const widgetId = checkbox.name;
+                    const widgetContainer = document.querySelector(`.${widgetId}`);
+
+                    if (!widgetContainer) {
+                        checkbox.checked = false;
+                        checkbox.disabled = true;
+                        checkbox.parentNode.classList.add('disabled-widget'); // Ajoute une classe pour styliser en tant que widget désactivé
+                    } else {
+                        checkbox.disabled = false;
+                        checkbox.parentNode.classList.remove('disabled-widget'); // Assurez-vous que la classe est retirée si le widget est dans la liste
+                    }
+                });
+            }
+            disableNonExistentWidgets();
             var selectDateRange = document.getElementById('select_date_range');
             const checkboxes = document.querySelectorAll('.widget_choice input[type="checkbox"]');
             checkboxes.forEach(function (checkbox) {
                 checkbox.addEventListener('change', function () {
                     const widgetId = this.name;
                     const widgetContainer = document.querySelector(`.${widgetId}`).parentNode;
-
                     if (this.checked) {
                         widgetContainer.style.display = '';
                     } else {

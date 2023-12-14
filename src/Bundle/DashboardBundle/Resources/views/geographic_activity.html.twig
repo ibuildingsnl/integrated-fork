@@ -1,4 +1,5 @@
-<div class="widget w-full">
+{% if viewByCountry is not null and totalViews is not null and bounceRate is not null%}
+    <div class="widget w-full">
     <div class="widget-container {{ widget.id }}">
         <div class="widget-header">
             <h2>{% trans %}Geographic Activity{% endtrans %}</h2>
@@ -156,3 +157,4 @@
         }
     </script>
 </div>
+{% endif %}

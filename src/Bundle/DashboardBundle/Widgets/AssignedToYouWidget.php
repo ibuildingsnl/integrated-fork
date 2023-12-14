@@ -69,6 +69,10 @@ class AssignedToYouWidget implements WidgetInterface
                 ->findOneBy(
                     ['id' => $solarArticle->type_id]
                 );
+            if ($article->getTitle() == "Technologie: l'essort de windows Millenium")
+            {
+                //dd($solarArticle);
+            }
             $assignedToYou[] = [
                 'id' => $article->getId(),
                 'title' =>$article->getTitle(),
@@ -97,6 +101,4 @@ class AssignedToYouWidget implements WidgetInterface
 
         return ($dateA > $dateB) ? -1 : 1;
     }
-
-
 }
