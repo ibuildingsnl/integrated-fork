@@ -27,6 +27,10 @@ class FacebookConfiguration implements OauthConfigInterface
 
     public function prepareAuthLink(ConfigEvent $event, OptionsInterface $options): ?string
     {
+        if($options->has('token_secret')) {
+            return null;
+        }
+
         return $this->client->getAuthUrl();
     }
 
@@ -44,7 +48,6 @@ class FacebookConfiguration implements OauthConfigInterface
             return false;
         }
 
-        $options['token_type'] = $accessToken['token_type'];
         $options['token_secret'] = $accessToken['access_token'];
 
         return true;

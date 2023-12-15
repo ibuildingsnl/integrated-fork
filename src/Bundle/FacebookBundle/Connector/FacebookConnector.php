@@ -27,14 +27,12 @@ class FacebookConnector implements ConnectorInterface
 
     public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options, array $settings): ?string
     {
-        if (!$options->has('token_secret')) {
+        if (!$options->has('page_token')) {
             throw new CouldNotPublish('An access token and secret are required to create a facebook exporter');
         }
 
-        dd($options);
-
         return $this->client->postToPage(
-            $options['token_secret'],
+            $options['page_token'],
             $options['page'],
             $settings['title'],
             $settings['text'],

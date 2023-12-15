@@ -25,6 +25,9 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
 
     public function onPreSetData(FormEvent $event): void
     {
+//        $formData['token_secret'] = null;
+//        return;
+
         $form = $event->getForm();
         $formData = $event->getData();
 
@@ -46,9 +49,16 @@ class PopulateFacebookPageFieldListener implements EventSubscriberInterface
             } else {
                 $form->add('page', ChoiceType::class, ['choices' => $choices]);
                 $formData['api_status'] = 'OK';
+
+                if(!isset($formData['page'])) {
+                    return;
+                }
+
+                $token = $this->client->getPageToken($formData['token_secret'], $formData['page'], $pages);
+                $formData['page_token'] = $token;
             }
         } catch (\Exception $exception) {
-            $formData['token'] = null;
+            $formData['token_secret'] = null;
             $form['api_status'] = 'Invalid token. Save the form to obtain a new token.';
         }
     }

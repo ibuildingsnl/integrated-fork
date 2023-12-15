@@ -28,7 +28,7 @@ class FacebookClient
                 'pages_manage_engagement',
                 'pages_manage_posts',
                 'pages_read_engagement',
-                'pages_read_user_engagement',
+//                'pages_read_user_engagement',
                 'pages_show_list',
             ]),
         ];
@@ -59,41 +59,64 @@ class FacebookClient
         return $data;
     }
 
-    public function getUserId(string $bearerToken): string {
+    public function getUserId(string $userToken): string {
         $response = $this->client->get("{$this->baseUrl}/me?fields=id", [
             'headers' => [
-                'Authorization' => "Bearer {$bearerToken}",
+                'Authorization' => "Bearer {$userToken}",
             ],
         ]);
 
         return json_decode($response->getBody()->getContents())->id;
     }
 
-    public function getPages(string $bearerToken): array {
-        $userId = $this->getUserId($bearerToken);
+    public function getPages(string $userToken): array {
+        $userId = $this->getUserId($userToken);
 
         $response = $this->client->get("{$this->baseUrl}/{$userId}/accounts", [
             'headers' => [
-                'Authorization' => "Bearer {$bearerToken}"
+                'Authorization' => "Bearer {$userToken}"
             ]
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function postToPage(string $bearerToken, string $pageId, string $title, string $message, ?string $link): string {
+    public function postToPage(string $userToken, string $pageId, ?string $title, ?string $message, ?string $link): string {
+        $title = $title ? $title . "\n\n" : '';
+        $message = $message ? $message . "\n\n" :  '';
+
         $response = $this->client->post("{$this->baseUrl}/{$pageId}/feed", [
             'headers' => [
-                'Authorization' => "Bearer {$bearerToken}",
+                'Authorization' => "Bearer {$userToken}",
             ],
             'json' => [
-                'message' => "{$title}\n\n{$message}",
-                'link' => $link,
+                'message' => "{$title}{$message}{$link}",
                 'published' => true,
             ]
         ]);
 
         return json_decode($response->getBody()->getContents(), true)['id'];
+    }
+
+    /**
+     * @param string $userToken
+     * @param string $pageId
+     * @param array|null $pages If you already have done a call to fetch pages, you can reuse the result by passing the array here
+     * @return string|null
+     */
+    public function getPageToken(string $userToken, string $pageId, ?array $pages = null): ?string
+    {
+        if(!$pages) {
+            $pages = $this->getPages($userToken)['data'];
+        }
+
+        foreach ($pages as $page) {
+            if($page['id'] === $pageId) {
+                return $page['access_token'];
+            }
+        }
+
+        return null;
     }
 
     private function assocArrayToQueryString(array $array): string {
