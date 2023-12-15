@@ -27,10 +27,20 @@
             <argument>https://localhost.e-active.nl/admin/connector/config/external/return</argument>
         </service>
 
-        <service id="Integrated\Bundle\FacebookBundle\Connector\FacebookConnector" />
+        <service id="Integrated\Bundle\FacebookBundle\Connector\FacebookConnector">
+            <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient"/>
+        </service>
 
         <service id="Integrated\Bundle\FacebookBundle\Connector\FacebookConfiguration">
             <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient"/>
+        </service>
+
+        <service id="Integrated\Bundle\FacebookBundle\Connector\FacebookConfigType">
+            <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient"/>
+        </service>
+
+        <service id="Integrated\Bundle\FacebookBundle\Form\PopulateFacebookPageFieldListener" >
+            <argument type="service" id="Integrated\Bundle\FacebookBundle\Connector\FacebookClient" />
         </service>
 
         <service id="td_connector.facebook" class="Integrated\Bundle\ChannelBundle\Adaptor\ConnectorAdapter">

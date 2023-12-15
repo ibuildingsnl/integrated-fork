@@ -25,9 +25,11 @@ class FacebookClient
             'redirect_uri' => $this->redirectUrl,
             'response_type' => 'code',
             'scope' => implode(',', [
+                'pages_manage_engagement',
                 'pages_manage_posts',
+                'pages_read_engagement',
+                'pages_read_user_engagement',
                 'pages_show_list',
-                'pages_read_engagement'
             ]),
         ];
 
@@ -55,6 +57,43 @@ class FacebookClient
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data;
+    }
+
+    public function getUserId(string $bearerToken): string {
+        $response = $this->client->get("{$this->baseUrl}/me?fields=id", [
+            'headers' => [
+                'Authorization' => "Bearer {$bearerToken}",
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents())->id;
+    }
+
+    public function getPages(string $bearerToken): array {
+        $userId = $this->getUserId($bearerToken);
+
+        $response = $this->client->get("{$this->baseUrl}/{$userId}/accounts", [
+            'headers' => [
+                'Authorization' => "Bearer {$bearerToken}"
+            ]
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function postToPage(string $bearerToken, string $pageId, string $title, string $message, ?string $link): string {
+        $response = $this->client->post("{$this->baseUrl}/{$pageId}/feed", [
+            'headers' => [
+                'Authorization' => "Bearer {$bearerToken}",
+            ],
+            'json' => [
+                'message' => "{$title}\n\n{$message}",
+                'link' => $link,
+                'published' => true,
+            ]
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true)['id'];
     }
 
     private function assocArrayToQueryString(array $array): string {

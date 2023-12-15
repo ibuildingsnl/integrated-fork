@@ -2,16 +2,26 @@
 
 namespace Integrated\Bundle\FacebookBundle\Connector;
 
+use Integrated\Bundle\FacebookBundle\Form\PopulateFacebookPageFieldListener;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class FacebookConfigType extends AbstractType
 {
+    public function __construct(
+        private readonly FacebookClient $client
+    )
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('token', TextType::class, ['attr' => ['readonly' => 'true']]);
+        $builder->addEventSubscriber(new PopulateFacebookPageFieldListener($this->client));
         $builder->add('token_secret', TextType::class, ['attr' => ['readonly' => 'true']]);
+        $builder->add('page', ChoiceType::class, ['choices' => ['Please finish setting up connection to Facebook' => 'false'], 'attr' => ['disabled' => 'true']]);
+        $builder->add('api_status', TextType::class, ['attr' => ['readonly' => 'true']]);
     }
 
     public function getBlockPrefix()

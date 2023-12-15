@@ -4,6 +4,7 @@ namespace Integrated\Bundle\FacebookBundle\Connector;
 
 use Integrated\Bundle\ChannelBundle\Model\ConnectorInterface;
 use Integrated\Bundle\ChannelBundle\Model\CouldNotPublish;
+use Integrated\Bundle\ChannelBundle\Services\LinkMaker;
 use Integrated\Bundle\ContentBundle\Document\Content\Content;
 use Integrated\Common\Channel\Connector\Config\OptionsInterface;
 use Integrated\Common\Content\Channel\ChannelInterface;
@@ -12,6 +13,13 @@ class FacebookConnector implements ConnectorInterface
 {
     public const NAME = 'facebook';
 
+    public function __construct(
+        private readonly FacebookClient $client,
+        private readonly LinkMaker $linkMaker,
+    )
+    {
+    }
+
     public function getName(): string
     {
         return static::NAME;
@@ -19,8 +27,18 @@ class FacebookConnector implements ConnectorInterface
 
     public function publish(Content $content, ChannelInterface $channel, OptionsInterface $options, array $settings): ?string
     {
-        if (!$options->has('token') || !$options->has('token_secret')) {
+        if (!$options->has('token_secret')) {
             throw new CouldNotPublish('An access token and secret are required to create a facebook exporter');
         }
+
+        dd($options);
+
+        return $this->client->postToPage(
+            $options['token_secret'],
+            $options['page'],
+            $settings['title'],
+            $settings['text'],
+            $this->linkMaker->urlFor($content, $channel)
+        );
     }
 }
