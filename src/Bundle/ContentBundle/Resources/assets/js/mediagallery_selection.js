@@ -1,12 +1,13 @@
 let form_relations = {}; //this holds all the form relation objects with an id
 const mediagallery_link = '/admin/media/';
 
-window.onload = async function() {
+window.addEventListener('load', function() {
     populateFormRelations();
-    await populateSelectedImages(); // wait for populateSelectedImages() to finish
-    setupFormRelations();
-    addEventListeners();
-};
+    populateSelectedImages().then(() => {
+        setupFormRelations();
+        addEventListeners();
+    });
+});
 
 function setupFormRelations() {
     Object.values(form_relations).forEach(form_relation => {
@@ -29,8 +30,10 @@ function populateSelectedImages() {
 }
 
 function populateFormRelations() {
+    console.log('populateFormRelations');
     document.querySelectorAll('.mediagallery_selector').forEach((item) => {
         const id = item.getAttribute('id');
+        console.log('populateFormRelations: ' + id);
         const inputIdentifier = item.parentNode.classList.contains('relation') ?
             `integrated_content[relations][${id}]` :
             item.querySelector('.selected_images').getAttribute('data-fieldName');

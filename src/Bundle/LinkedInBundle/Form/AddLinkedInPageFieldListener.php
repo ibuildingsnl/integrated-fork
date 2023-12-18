@@ -40,21 +40,21 @@ class AddLinkedInPageFieldListener implements EventSubscriberInterface
 
         return $organizations;
     }
-//
-//    public function getOrganisationDetailsByBatchRequest($client, $token, $organizations)
-//    {
-//        $url = 'api.linkedin.com/rest/organizations?ids=List('.implode(',', $organizations).')';
-//        $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
-//        $response = $client->getResponse($availableCompaniesRequest);
-//        $responseBody = json_decode((string) $response->getBody())->results;
-//
-//        $details = [];
-//        foreach ($organizations as $organizationId) {
-//            $details[$responseBody->{$organizationId}->localizedName] = $organizationId;
-//        }
-//
-//        return $details;
-//    }
+
+    public function getOrganisationDetailsByBatchRequest($client, $token, $organizations)
+    {
+        $url = 'api.linkedin.com/rest/organizations?ids=List('.implode(',', $organizations).')';
+        $availableCompaniesRequest = $client->getAuthenticatedRequest('GET', $url, $token, $requestOptions);
+        $response = $client->getResponse($availableCompaniesRequest);
+        $responseBody = json_decode((string) $response->getBody())->results;
+
+        $details = [];
+        foreach ($organizations as $organizationId) {
+            $details[$responseBody->{$organizationId}->localizedName] = $organizationId;
+        }
+
+        return $details;
+    }
 
     public function getOrganisationDetailsBySingleRequest($client, $token, $requestOptions, array $organizations): array
     {
